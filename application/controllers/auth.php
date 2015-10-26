@@ -27,14 +27,22 @@ class Auth extends REST2_Controller
 			$platform = isset($clientInfo['platform']) ? $clientInfo['platform'] : null;
 			if ($platform && $platform == 'ios') {
 				if ($clientInfo['platform_data'] && $clientInfo['platform_data']['ios_bundle_id']) {
-					if ($clientInfo['platform_data']['ios_bundle_id'] != $API['package_name']) {
-						$this->response($this->error->setError('PACKAGE_NAME_NOT_MATCH', $required), 200);
+					if (isset($API['package_name']) && $API['package_name']) {
+						if ($clientInfo['platform_data']['ios_bundle_id'] != $API['package_name']) {
+							$this->response($this->error->setError('PACKAGE_NAME_NOT_MATCH'), 200);
+						}
+					} else {
+						$this->response($this->error->setError('PACKAGE_NAME_NOT_PROVIDE'), 200);
 					}
 				}
 			} elseif (($platform && $platform == 'android')) {
 				if ($clientInfo['platform_data'] && $clientInfo['platform_data']['android_package_name']) {
-					if ($clientInfo['platform_data']['android_package_name'] != $API['package_name']) {
-						$this->response($this->error->setError('PACKAGE_NAME_NOT_MATCH', $required), 200);
+					if (isset($API['package_name'])) {
+						if ($clientInfo['platform_data']['android_package_name'] != $API['package_name']) {
+							$this->response($this->error->setError('PACKAGE_NAME_NOT_MATCH'), 200);
+						}
+					}else {
+						$this->response($this->error->setError('PACKAGE_NAME_NOT_PROVIDE'), 200);
 					}
 				}
 			}
