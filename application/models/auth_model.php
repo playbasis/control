@@ -8,45 +8,49 @@ class Auth_model extends MY_Model
 		parent::__construct();
 		$this->load->library('mongo_db');
 	}
+
 	public function getApiInfo($data)
 	{
 		$this->set_site_mongodb(0);
 
-        $this->mongo_db->select(array(
-            'site_id',
-            'client_id'
-        ));
-        $this->mongo_db->where(array(
-            'api_key' => $data['key'],
-            'api_secret' => $data['secret'],
-            'status' => true,
-            'deleted' => false
-        ));
-        $this->mongo_db->limit(1);
-        $cl_info = $this->mongo_db->get('playbasis_platform_client_site');
-        if($cl_info){
-            $this->mongo_db->select(array(
-                '_id',
-                'client_id',
-                'domain_name',
-                'site_name'
-            ));
-            $this->mongo_db->where(array(
-                '_id' => $cl_info[0]['site_id'],
-                'client_id' => $cl_info[0]['client_id'],
-                'status' => true
-            ));
-            $result = $this->mongo_db->get('playbasis_client_site');
-            if($result)
-            {
-                $result = $result[0];
-                $result['site_id'] = $result['_id'];
-                $result['platform_id'] = $cl_info[0]['_id'];
-                unset($result['_id']);
-                return $result;
-            }
-        }
-
+		$this->mongo_db->select(array(
+			'site_id',
+			'client_id',
+			'platform',
+			'data'
+		));
+		$this->mongo_db->where(array(
+			'api_key' => $data['key'],
+			'api_secret' => $data['secret'],
+			'status' => true,
+			'deleted' => false
+		));
+		$this->mongo_db->limit(1);
+		$cl_info = $this->mongo_db->get('playbasis_platform_client_site');
+		if($cl_info){
+			$this->mongo_db->select(array(
+				'_id',
+				'client_id',
+				'domain_name',
+				'site_name'
+			));
+			$this->mongo_db->where(array(
+				'_id' => $cl_info[0]['site_id'],
+				'client_id' => $cl_info[0]['client_id'],
+				'status' => true
+			));
+			$result = $this->mongo_db->get('playbasis_client_site');
+			if($result)
+			{
+				$result = $result[0];
+				$result['site_id'] = $result['_id'];
+				$result['platform_id'] = $cl_info[0]['_id'];
+				$result['platform'] = $cl_info[0]['platform'];
+				$result['platform_data'] = $cl_info[0]['data'];
+				unset($result['_id']);
+				return $result;
+			}
+		}
 		return array();
 	}
 	public function generateToken($data)
