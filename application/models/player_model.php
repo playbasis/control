@@ -2399,6 +2399,33 @@ class Player_model extends MY_Model
         return $results ? $results[0] : array();
     }
 
+    public function getPlayerByUsername($site_id, $username = null)
+    {
+        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('username', $username);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
+    public function getPlayerByEmail($site_id, $email = null)
+    {
+        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('email', $email);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
+    public function authPlayer($site_id, $player_id, $password)
+    {
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('_id', $player_id);
+        $this->mongo_db->where('password', $password);
+        $results = $this->mongo_db->count('playbasis_player');
+        return $results ? true : false;
+    }
+
     public function existsCode($code) {
         $this->mongo_db->where('code', $code);
         $this->mongo_db->limit(1);
