@@ -1142,6 +1142,71 @@ class User extends MY_Controller
         $this->render_page('template_beforelogin');
     }
 
+    public function player_reset_password($code='') {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['form'] = 'referral/'.$code;
+        $this->data['title'] = 'Reset Password';
+
+        if (!$code) {
+            // TODO(Rook): This should render form for user to reset password manually by input username/email and reset code then redirect to change pwd form page
+
+            $this->data['topic_message'] = 'Password reset code is required to access this page';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+//
+//        $player = $this->Player_model->getPlayerByCode($code);
+//        if (!$player) {
+//            $this->data['topic_message'] = 'Your referral code is invalid.';
+//            $this->data['message'] = 'Please contact Playbasis.';
+//            $this->data['main'] = 'partial/something_wrong';
+//            $this->load->vars($this->data);
+//            $this->render_page('template_beforelogin');
+//            return;
+//        }
+//        $this->data['by'] = $player;
+//
+//        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//            $data = $this->input->post();
+//            $this->_api = $this->playbasisapi;
+//            $platforms = $this->App_model->getPlatFormByAppId(array(
+//                'site_id' => $player['site_id'],
+//            ));
+//            if ($platforms) $platforms = $platforms[0];
+//            $this->_api->set_api_key($platforms['api_key']);
+//            $this->_api->set_api_secret($platforms['api_secret']);
+//            $this->_api->auth();
+//            $status = $this->_api->register($data['username'], $data['username'], $data['email'], array(
+//                'first_name' => $data['firstname'],
+//                'last_name' => $data['lastname'],
+//            ));
+//            $error = null;
+//            if ($status->success) { // register player B successfully (A invite B)
+//                $this->_api->engine($data['username'], 'invited'); // send action player B refer A (B invited)
+//                $this->_api->engine($player['cl_player_id'], 'invite'); // send action player A was referred (A invite)
+//            } else {
+//                $error = $status->message;
+//            }
+//            if ($this->input->post('format') == 'json') {
+//                echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'Your registration has been saved!' : $error));
+//                exit();
+//            }
+//        }
+//
+//        if ($player) {
+//            $app = $this->App_model->getApp($player['site_id']);
+//            $this->data['app_name'] = $app['site_name'];
+//            $this->data['referral_code'] = $code;
+//        }
+//        $this->data['main'] = 'partial/referral_partial';
+//        $this->load->vars($this->data);
+//        $this->render_page('template_beforelogin');
+    }
+
     private function findGoodsToPlayerByGoodsId($goods_id, $goods_list) {
         foreach ($goods_list as $goods) {
             if ($goods['goods_id'] == $goods_id) return $goods;
