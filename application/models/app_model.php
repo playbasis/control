@@ -375,15 +375,15 @@ class App_model extends MY_Model
 
         $c = $this->mongo_db->insert('playbasis_platform_client_site', $data_insert);
 
-        $keys = $this->genAccessKey($c);
+        $key = $this->genAccessKey($c);
         $secret = $this->genAccessSecret($c);
 
         $this->mongo_db->where('_id',  new MongoID($c));
-        $this->mongo_db->set('api_key', $keys);
+        $this->mongo_db->set('api_key', $key);
         $this->mongo_db->set('api_secret', $secret);
         $this->mongo_db->update('playbasis_platform_client_site');
 
-        return $data['site_id'];
+        return array($data['site_id'], array('key' => $key, 'secret' => $secret));
     }
 
     public function editApp($platform_id, $data){
