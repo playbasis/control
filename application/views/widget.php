@@ -27,7 +27,7 @@
             <div class="control-group">
                 <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
                 <div class="controls">
-                    <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
+                    <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>" value="<?php echo TEST_PLAYER_ID; ?>" />
                 </div>
             </div>
 

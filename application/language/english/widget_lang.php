@@ -57,7 +57,7 @@ $lang['form_height']						= 'Height';
 $lang['form_color']							= "Theme Color";
 $lang['form_rankby']						= "Rank by";
 $lang['form_type_display']					= "Type point display";
-$lang['form_player_id']					= "Player ID for test";
+$lang['form_player_id']					= "Player ID";
 $lang['form_cssfile']						= "URL Custom CSS File";
 $lang['form_rule_id']						= "Rule ID";
 

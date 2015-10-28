@@ -324,7 +324,7 @@ class App extends MY_Controller
                     /* pre-register test player */
                     $pkg_name = isset($data_platform['ios_bundle_id']) ? $data_platform['ios_bundle_id'] : (isset($data_platform["android_package_name"]) ? $data_platform["android_package_name"] : null);
                     $this->createTestPlayer($keySecret, array(
-                        'cl_player_id' => 'test',
+                        'cl_player_id' => TEST_PLAYER_ID,
                         'username' => 'test',
                         'email' => 'test@email.com',
                         'first_name' => 'Firstname',
