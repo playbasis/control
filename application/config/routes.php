@@ -60,6 +60,7 @@ $route['referral/'.ANY_STRING] = 'user/referral/$1';
 $route['referral'] = 'user/referral';
 $route['merchant_verify'] = 'user/merchant';
 $route['merchant_logout'] = 'user/merchant_logout';
+$route['cms_login'] = 'cms/login';
 
 $route['404_override'] = 'error/error_404';
 
