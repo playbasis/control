@@ -2445,6 +2445,25 @@ class Player_model extends MY_Model
         return $code;
     }
 
+    public function existsPasswordResetCode($code) {
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->count('playbasis_player_password_reset') > 0;
+    }
+
+    public function generatePasswordResetCode($pb_player_id) {
+        $code = null;
+        for ($i=0; $i < 2; $i++) {
+            $code = get_random_code(24, false, true, true);
+            if (!$this->existsPasswordResetCode($code)) break;
+        }
+        if (!$code) throw new Exception('Cannot generate unique player code');
+        $this->mongo_db->where('_id', $pb_player_id);
+        $this->mongo_db->set('code', $code);
+        $this->mongo_db->update('playbasis_player_password_reset');
+        return $code;
+    }
+
 	public function storeDeviceToken($data)
 	{
 		$mongoDate = new MongoDate(time());
