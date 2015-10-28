@@ -530,25 +530,25 @@
 							"Description": "access token returned from Auth"
 						},
 						{
-							"Name": "password",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "Password as stored in Playbasis's database"
-						},
-						{
 							"Name": "email",
 							"Required": "N",
 							"Default": "",
 							"Type": "string",
-							"Description": "email as used in client's website"
+							"Description": "email as used in client's website (either email or username is required)"
 						},
 						{
 							"Name": "username",
 							"Required": "N",
 							"Default": "",
 							"Type": "string",
-							"Description": "session id of the player"
+							"Description": "username as used in client's website (either email or username is required)"
+						},
+						{
+							"Name": "password",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "password as stored in Playbasis's database"
 						}
 					]
 				},
