@@ -155,6 +155,38 @@
 	.item-plan-action{
 		padding-top: 20px;
 	}
+	.current-plan-text{
+		border-radius: 4px;
+		border: 1px solid #ddd;
+	}
+	.plan-btn,
+	.current-plan-text{
+		height: 30px;
+		line-height: 30px;
+		padding: 4px 12px;
+		display: inline-block;
+	}
+	.plan-btn{
+		background: #86559C;
+		color: #fff;
+		border: 0;
+		text-shadow: none;
+	}
+	.plan-btn:hover{
+		background: #734388;
+		color: #fff;
+	}
+	.plan-btn:focus{
+		background: #86559C;
+		color: #fff;	
+	}
+	.plan-btn.plan-enterprise-btn,
+	.plan-btn.plan-enterprise-btn:focus{
+		background: #ff8b2e;
+	}
+	.plan-btn.plan-enterprise-btn:hover{
+		background: #ff7929;
+	}
 	@media all and (max-width: 1145px) {
 		.item-plan-main-feature ul li{
 				font-size: 10px;
@@ -221,11 +253,20 @@
 			font-size: 13px;
 			text-align: center;
 		}
+		.item-plan-action{
+			border-top: 1px solid #f4f4f4;
+			
+		}
+		.item-plan-action>a,
+		.item-plan-action>span{
+			margin-bottom: 20px;		
+		}
 		
 	}
 </style>
 
 <?php
+
     	$plans = json_decode( file_get_contents( base_url().'json/plans.json') , true );
     	$full_feature_plan = end($plans);
 
@@ -351,17 +392,28 @@
 						</div>
 					<?php endforeach; ?>
 
+					<?php $current_plan_id = !empty( $user_plan['_id']->{'$id'} ) ? $user_plan['_id']->{'$id'} : ''; ?>
 					<div class="item-plan-kit text-center item-plan-action">
 						<?php if( !empty($plans_id[ $plan['name'] ]) ): ?>
-							
 							<?php if( $plan['name'] == 'enterprise' ): ?>
-								<a href="javascript:void(0)" data-plan-id="<?php echo $plans_id[ $plan['name'] ];  ?>" class="btn plan-btn">Email us</a>
+								
+								<?php if( $current_plan_id != $plans_id[ $plan['name'] ] ): ?>
+									<a href="mailto:info@playbasis.com" data-plan-id="<?php echo $plans_id[ $plan['name'] ];  ?>" class="btn plan-btn plan-enterprise-btn">Email us</a>
+								<?php else: ?>
+									<span class="current-plan-text">Current Plan</span>
+								<?php endif; ?>
+
 							<?php else: ?>
-								<a href="javascript:void(0)"  data-plan-id="<?php echo $plans_id[ $plan['name'] ];  ?>" class="btn plan-btn">Choose Plan</a>
+								
+								<?php if( $current_plan_id != $plans_id[ $plan['name'] ] ): ?>
+									<a href="javascript:void(0)"  data-plan-id="<?php echo $plans_id[ $plan['name'] ];  ?>" class="btn plan-btn">Choose Plan</a>
+								<?php else: ?>
+									<span class="current-plan-text">Current Plan</span>
+								<?php endif; ?>
+								
 							<?php endif; ?>
 						<?php endif; ?>
 
-						
 					</div>
 
 				</div>
