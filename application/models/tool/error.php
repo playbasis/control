@@ -191,6 +191,10 @@ class Error extends CI_Model
             $errorData['message'] = "Session is invalid";
             $errorData['error_code'] = '0209';
             break;
+        case 'PASSWORD_INCORRECT':
+            $errorData['message'] = "Password incorrect";
+            $errorData['error_code'] = '0210';
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';

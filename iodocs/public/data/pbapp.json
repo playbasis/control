@@ -516,6 +516,43 @@
 					]
 				},
 				{
+					"MethodName": "Player Auth",
+					"Synopsis": "Authenticate player with data in Playbasis system then login and also create session.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/auth",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "email",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "email as used in client's website (either email or username is required)"
+						},
+						{
+							"Name": "username",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "username as used in client's website (either email or username is required)"
+						},
+						{
+							"Name": "password",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "password as stored in Playbasis's database"
+						}
+					]
+				},
+				{
 					"MethodName": "Logout",
 					"Synopsis": "Tell Playbasis system that a player has logged out.",
 					"HTTPMethod": "POST",

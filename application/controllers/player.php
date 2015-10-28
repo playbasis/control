@@ -1,7 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
-require_once(APPPATH.'controllers/engine.php');
+require_once(APPPATH . 'controllers/engine.php');
+define('AUTH_SESSION_TIMEOUT', 1440); //1440 secs
+
 class Player extends REST2_Controller
 {
 	public function __construct()
@@ -747,6 +749,70 @@ class Player extends REST2_Controller
 
 		$this->response($this->resp->setRespond($player), 200);
 	}
+
+	public function auth_post()
+	{
+		$required = $this->input->checkParam(array(
+			'password'
+		));
+		$username = $this->input->post('username');
+		$email = $this->input->post('email');
+		if (!$email && !$username) {
+			array_push($required, 'username', 'email');
+		}
+		if ($required) {
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		}
+
+		$password = $this->input->post('password');
+
+		$player = null;
+		if ($email) {
+			$player = $this->player_model->getPlayerByEmail($this->site_id, $email);
+		} elseif ($username && is_null($player)) {
+			$player = $this->player_model->getPlayerByUsername($this->site_id, $username);
+		} else {
+			$player = null;
+		}
+		if (!$player) {
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		}
+
+		$auth = $this->player_model->authPlayer($this->site_id, $player['_id'], $password);
+		if (!$auth) {
+			$this->response($this->error->setError('PASSWORD_INCORRECT'), 200);
+		}
+
+		//trigger and log event
+		$eventMessage = $this->utility->getEventMessage('login');
+		$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
+			'client_id' => $this->client_id,
+			'site_id' => $this->site_id,
+			'pb_player_id' => $player['_id'],
+			'action_log_id' => null
+		));
+		//publish to node stream
+		$this->node->publish(array(
+			'pb_player_id' => $player['_id'],
+			'action_name' => 'login',
+			'action_icon' => 'fa-sign-in',
+			'message' => $eventMessage
+		), $this->validToken['domain_name'], $this->validToken['site_id']);
+
+		/* Optionally, keep track of session */
+		$session_id = get_random_code(40, true, true, true);
+		$session_expires_in = AUTH_SESSION_TIMEOUT;
+		if ($session_id) {
+			$this->player_model->login($this->client_id, $this->site_id, $player['_id'], $session_id,
+				$session_expires_in);
+		}
+
+		$this->response($this->resp->setRespond(array(
+			'cl_player_id' => $player['cl_player_id'],
+			'session_id' => $session_id
+		)), 200);
+	}
+
 	public function points_get($player_id = '')
 	{
 		if(!$player_id)
