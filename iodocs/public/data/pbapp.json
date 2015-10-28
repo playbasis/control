@@ -23,13 +23,6 @@
 							"Default": "",
 							"Type": "string",
 							"Description": "api secret issued by Playbasis"
-						},
-						{
-							"Name": "pkg_name",
-							"Required": "n",
-							"Default": "",
-							"Type": "string",
-							"Description": "'Bundle ID' for iOS App or 'Package name' for Android App"
 						}
 					]
 				},
@@ -2683,7 +2676,63 @@
                     ]
                 }
             ]
-        }
+        },
+	  	{
+			"name" : "CMS API",
+		  	"methods" :[
+			  	{
+					"MethodName": "Get Articles",
+					"Synopsis": "list articles by category",
+					"HTTPMethod": "POST",
+					"URI": "/CMS/getArticles",
+					"RequiresOAuth": "N",
+					"parameters": [
+					  {
+						"Name": "token",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "access token returned from Auth"
+					  },
+					  {
+						"Name": "client_id",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "client id"
+					  },
+					  {
+						"Name": "site_id",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "site id"
+					  },
+					  {
+						"Name": "category",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "Category of contents"
+					  },
+					  {
+						"Name": "paging",
+						"Required": "N",
+						"Default": "",
+						"Type": "string",
+						"Description": "how many contents per page"
+					  },
+					  {
+						"Name": "page",
+						"Required": "N",
+						"Default": "",
+						"Type": "string",
+						"Description": "number of page"
+					  }
+					]
+				}
+			]
+	  	}
 
 	]
 }
