@@ -73,7 +73,7 @@
                             <?php } ?>
                         <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
+                        <td class="center" colspan="8"><?php echo str_replace('[img]', '<img src="'.base_url().'image/walk_through/level.png" data-thumb="'.base_url().'image/walk_through/step1.png" alt="" />', $this->lang->line('text_guide_level')); ?></td>
                     </tr>
                         <?php } ?>
                     </tbody>
