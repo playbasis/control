@@ -1,0 +1,326 @@
+[
+  {
+    "plan_name":"Basic",
+    "name": "free",
+    "title": "Free",
+    "price": "Free",
+    "main_feature": [
+      "1 Apps",
+      "1 Admin Users",
+      "Basic Support"
+    ],
+    "kits": [
+      {
+        "name": "build_kit",
+        "title": "Build Kit",
+        "feature": [
+          "Authentication",
+          "Widget",
+          "SDK",
+          "Player Registration",
+          "Player Login",
+          "Player Social Login",
+          "Player Profile",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "name": "game_kit",
+        "title": "Game Kit",
+        "feature": [
+          "Rule Execution",
+          "Actions",
+          "Badges",
+          "Points",
+          "Levels",
+          "Leader Board",
+          "Quizes / Polls",
+          "Quests / Missions",
+          "",
+          ""
+        ]
+      },
+      {
+        "name": "reward_kit",
+        "title": "Reward Kit",
+        "feature": [
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "name": "data_kit",
+        "title": "Data Kit",
+        "feature": [
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    ]
+  },
+  {
+    "plan_name":"Advanced",
+    "name": "s",
+    "title": "Startup",
+    "price": "$299",
+    "main_feature": [
+      "2 Apps",
+      "2 Admin Users",
+      "Basic Support"
+    ],
+    "kits": [
+      {
+        "name": "build_kit",
+        "title": "Build Kit",
+        "feature": [
+          "Authentication",
+          "Widget",
+          "SDK",
+          "Player Registration",
+          "Player Login",
+          "Player Social Login",
+          "Player Profile",
+          "10,000 Email",
+          "SMS",
+          ""
+        ]
+      },
+      {
+        "name": "game_kit",
+        "title": "Game Kit",
+        "feature": [
+          "Rule Execution",
+          "Actions",
+          "Badges",
+          "Points",
+          "Levels",
+          "Leader Board",
+          "Quizes / Polls",
+          "Quests / Missions",
+          "Activity Feed",
+          ""
+        ]
+      },
+      {
+        "name": "reward_kit",
+        "title": "Reward Kit",
+        "feature": [
+          "Reward Store",
+          "10,000<br>Redeem Goods",
+          "Digital Coupons",
+          "Virtual Currencies"
+        ]
+      },
+      {
+        "name": "data_kit",
+        "title": "Data Kit",
+        "feature": [
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    ]
+  },
+  {
+    "plan_name":"Business",
+    "name": "m",
+    "title": "Business",
+    "price": "$599",
+    "main_feature": [
+      "2 Apps",
+      "2 Admin Users",
+      "Basic Support"
+    ],
+    "kits": [
+      {
+        "name": "build_kit",
+        "title": "Build Kit",
+        "feature": [
+          "Authentication",
+          "Widget",
+          "SDK",
+          "Player Registration",
+          "Player Login",
+          "Player Social Login",
+          "Player Profile",
+          "30,000 Email",
+          "SMS",
+          "10,000 <br>Push Notification"
+        ]
+      },
+      {
+        "name": "game_kit",
+        "title": "Game Kit",
+        "feature": [
+          "Rule Execution",
+          "Actions",
+          "Badges",
+          "Points",
+          "Levels",
+          "Leader Board",
+          "Quizes / Polls",
+          "Quests / Missions",
+          "Activity Feed",
+          "Social Feed"
+        ]
+      },
+      {
+        "name": "reward_kit",
+        "title": "Reward Kit",
+        "feature": [
+          "Reward Store",
+          "30,000<br>Redeem Goods",
+          "Digital Coupons",
+          "Virtual Currencies"
+        ]
+      },
+      {
+        "name": "data_kit",
+        "title": "Data Kit",
+        "feature": [
+          "30 Days Data Retention <br>Data Export",
+          "15 Days Data Retention <br>Engagement Analytics",
+          "",
+          ""
+        ]
+      }
+    ]
+  },
+  {
+    "plan_name":"Professional",
+    "name": "l",
+    "title": "Professional",
+    "price": "$1999",
+    "main_feature": [
+      "2 Apps",
+      "2 Admin Users",
+      "Basic Support"
+    ],
+    "kits": [
+      {
+        "name": "build_kit",
+        "title": "Build Kit",
+        "feature": [
+          "Authentication",
+          "Widget",
+          "SDK",
+          "Player Registration",
+          "Player Login",
+          "Player Social Login",
+          "Player Profile",
+          "100,000 Email",
+          "SMS",
+          "30,000 <br>Push Notification"
+        ]
+      },
+      {
+        "name": "game_kit",
+        "title": "Game Kit",
+        "feature": [
+          "Rule Execution",
+          "Actions",
+          "Badges",
+          "Points",
+          "Levels",
+          "Leader Board",
+          "Quizes / Polls",
+          "Quests / Missions",
+          "Activity Feed",
+          "Social Feed"
+        ]
+      },
+      {
+        "name": "reward_kit",
+        "title": "Reward Kit",
+        "feature": [
+          "Reward Store",
+          "100,000<br>Redeem Goods",
+          "Digital Coupons",
+          "Virtual Currencies"
+        ]
+      },
+      {
+        "name": "data_kit",
+        "title": "Data Kit",
+        "feature": [
+          "90 Days Data Retention <br>Data Export",
+          "30 Days Data Retention <br>Engagement Analytics",
+          "1,000 Results/Query <br>CRM",
+          "1 Connector <br>Data Import"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "enterprise",
+    "title": "Enterprise",
+    "price": "CALL US",
+    "main_feature": [
+      "Scalable Apps",
+      "Scalable Admin Users",
+      "Dedicated Support"
+    ],
+    "kits": [
+      {
+        "name": "build_kit",
+        "title": "Build Kit",
+        "feature": [
+          "Authentication",
+          "Widget",
+          "SDK",
+          "Player Registration",
+          "Player Login",
+          "Player Social Login",
+          "Player Profile",
+          "500,000+ Email",
+          "SMS",
+          "100,000+ <br>Push Notification"
+        ]
+      },
+      {
+        "name": "game_kit",
+        "title": "Game Kit",
+        "feature": [
+          "Rule Execution",
+          "Actions",
+          "Badges",
+          "Points",
+          "Levels",
+          "Leader Board",
+          "Quizes / Polls",
+          "Quests / Missions",
+          "Activity Feed",
+          "Social Feed"
+        ]
+      },
+      {
+        "name": "reward_kit",
+        "title": "Reward Kit",
+        "feature": [
+          "Reward Store",
+          "500,000+<br>Redeem Goods",
+          "Digital Coupons",
+          "Virtual Currencies"
+        ]
+      },
+      {
+        "name": "data_kit",
+        "title": "Data Kit",
+        "feature": [
+          "Scalable <br>Data Export",
+          "Scalable <br>Engagement Analytics",
+          "Scalable <br>CRM",
+          "Scalable <br>Data Import"
+        ]
+      }
+    ]
+  }
+]
