@@ -32,9 +32,6 @@
                         <td></td>
                         <td></td>
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
-                        <?php if(!$client_id){?>
-                            <td></td>
-                        <?php }?>
                         <td></td>
                         <td></td>
                         <td class="right">
@@ -82,8 +79,13 @@
                                         </td>   
                                 </tr>
                             <?php }?>
+                        <?php }else{?>
+                                <tr>
+                                    <td class="center" colspan="6">
+                                        No quest
+                                    </td>
+                                </tr>
                         <?php }?>
-                    
                 </tbody>
             </table>
         <?php echo form_close();?>
