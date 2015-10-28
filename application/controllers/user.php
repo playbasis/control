@@ -972,10 +972,17 @@ class User extends MY_Controller
             $platforms = $this->App_model->getPlatFormByAppId(array(
                 'site_id' => $player['site_id'],
             ));
-            if ($platforms) $platforms = $platforms[0];
-            $this->_api->set_api_key($platforms['api_key']);
-            $this->_api->set_api_secret($platforms['api_secret']);
-            $this->_api->auth();
+            $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
+            if (!$platform) {
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => 'fail', 'message' => 'Cannot find any active platform'));
+                    exit();
+                }
+            }
+            $this->_api->set_api_key($platform['api_key']);
+            $this->_api->set_api_secret($platform['api_secret']);
+            $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
+            $this->_api->auth($pkg_name);
             $status = $this->_api->register($data['username'], $data['username'], $data['email'], array(
                 'first_name' => $data['firstname'],
                 'last_name' => $data['lastname'],
