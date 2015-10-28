@@ -32,7 +32,6 @@ class Badge extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->getList(0);
-        
     }
 
     public function page($offset=0) {
@@ -324,14 +323,13 @@ class Badge extends MY_Controller
             $this->load->model('Reward_model');
 
             // get all client badges id
-            $client_badges = $this->Badge_model->getAllBadgeIdByClientId($client_id);
+            $client_badges = $this->Badge_model->getAllBadgeIdByClientId($client_id, $site_id);
             // sync template
             $this->Badge_model->syncTemplate($client_badges, $client_id, $site_id);
 
             $badge_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
 
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
-
 
             $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
 
