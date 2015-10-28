@@ -11,6 +11,7 @@ echo form_open('goods/delete',$attributes);
             <?php if(!$client_id){?>
                 <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
             <?php }?>
+            <td class="left" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
             <td class="right" style="width:100px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
@@ -62,7 +63,7 @@ echo form_open('goods/delete',$attributes);
             <?php } ?>
         <?php } else { ?>
             <tr>
-                <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
+                <td class="center" colspan="<?php echo !$client_id ? 9 : 8; ?>"><?php echo $this->lang->line('text_no_results'); ?></td>
             </tr>
         <?php } ?>
         </tbody>

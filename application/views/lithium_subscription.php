@@ -37,7 +37,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if (isset($subscriptions)) { ?>
+                    <?php if (isset($subscriptions) && $subscriptions) { ?>
                         <?php foreach ($subscriptions as $subscription) { ?>
                             <tr>
                                 <td style="text-align: center;"><?php if (isset($subscription['selected']) && $subscription['selected']) { ?>

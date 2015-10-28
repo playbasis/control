@@ -39,7 +39,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if (isset($webhooks)) { ?>
+                    <?php if (isset($webhooks) && $webhooks) { ?>
                         <?php foreach ($webhooks as $webhook) { ?>
                             <tr>
                                 <td style="text-align: center;"><?php if (isset($webhook['selected']) && $webhook['selected']) { ?>

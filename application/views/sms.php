@@ -44,7 +44,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <?php if (!empty($templates)) { ?>
+                            <?php if (isset($templates) && $templates) { ?>
                             <?php foreach ($templates as $sms) { ?>
                             <tr <?php if (isset($sms["is_template"]) && $sms["is_template"]) {?> class="sms_template" <?php } ?>>
                                 <td style="text-align: center;">

@@ -54,7 +54,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($levels) { ?>
+                    <?php if (isset($levels) && $levels) { ?>
                         <?php foreach ($levels as $level) { ?>
                         <tr>
                             <td style="text-align: center;"><?php if ($level['selected']) { ?>

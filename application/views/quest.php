@@ -40,7 +40,7 @@
                         </td>
                     </tr>
                     
-                        <?php if(isset($quests)){?>
+                        <?php if(isset($quests) && $quests){?>
                             <?php foreach($quests as $quest){?>
                                 <tr>
                                     <td style="text-align: center;"><?php if (isset($quest['selected'])) { ?>
