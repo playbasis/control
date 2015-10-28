@@ -301,9 +301,10 @@ class App extends MY_Controller
                         "platform" => strtolower($this->input->post('platform')),
                         "data" => $data_platform
                     );
-                    $site_id = $this->App_model->addApp($insert_data);
+                    list($site_id, $keySecret) = $this->App_model->addApp($insert_data);
 
-                    $this->session->set_userdata('site_id',$site_id );
+                    /* switch to new app immediately */
+                    $this->session->set_userdata('site_id', $site_id);
 
                     $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
@@ -320,6 +321,16 @@ class App extends MY_Controller
                     );
                     $this->Client_model->editClientPlan($client_id, $plan_subscription['plan_id'], $another_data);
 
+                    /* pre-register test player */
+                    $pkg_name = isset($data_platform['ios_bundle_id']) ? $data_platform['ios_bundle_id'] : (isset($data_platform["android_package_name"]) ? $data_platform["android_package_name"] : null);
+                    $this->createTestPlayer($keySecret, array(
+                        'cl_player_id' => 'test',
+                        'username' => 'test',
+                        'email' => 'test@email.com',
+                        'first_name' => 'Firstname',
+                        'last_name' => 'Lastname',
+                    ), $pkg_name);
+
                     $this->session->data['success'] = $this->lang->line('text_success');
 
                     redirect('app', 'refresh');
@@ -328,15 +339,24 @@ class App extends MY_Controller
                         echo json_encode($this->lang->line('text_fail_app_exists'));
                         exit();
                     }
-
                     $this->data['message'] = $this->lang->line('text_fail_app_exists');
                 }
-
             }
         }
 
         $this->getForm();
+    }
 
+    private function createTestPlayer($keySecret, $data, $pkg_name) {
+        $this->_api = $this->playbasisapi;
+        $this->_api->set_api_key($keySecret['key']);
+        $this->_api->set_api_secret($keySecret['secret']);
+        $this->_api->auth($pkg_name);
+        $status = $this->_api->register($data['cl_player_id'], $data['username'], $data['email'], array(
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+        ));
+        return $status && isset($status->success) && $status->success;
     }
 
     public function delete() {
