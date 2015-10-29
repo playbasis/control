@@ -161,7 +161,6 @@
         </div>
         <!-- end : rules-list container -->
 
-
         <!-- start : jigsaw container -->
         <div class="row span6 rule_jigsaws_container" style='margin-top:20px;overflow:auto'>
             <div class="span12 action_panel_jigsaws">
@@ -441,10 +440,10 @@
     var jsonString_Condition = <?php echo json_encode($conditionList); ?>;
     var jsonString_Reward    = <?php echo json_encode($rewardList); ?>;
     var jsonString_Feedback  = <?php echo json_encode($feedbackList); ?>;
-    var jsonString_Group = <?php echo json_encode($groupList); ?>;
+    var jsonString_Group     = <?php echo json_encode($groupList); ?>;
     var jsonString_Email     = <?php echo json_encode($emailList); ?>;
     var jsonString_Sms       = <?php echo json_encode($smsList); ?>;
-    var jsonString_Push       = <?php echo json_encode($pushList); ?>;
+    var jsonString_Push      = <?php echo json_encode($pushList); ?>;
 
     //var jsonString_RulesList= '<?php //print_r($ruleList);?>';
     var requestedSet         = '<?php echo $requestParams; ?>';
