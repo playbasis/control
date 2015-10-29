@@ -289,6 +289,7 @@ $route['Promo/name/' . ANY_STRING] = 'promo/detailByName/$1';
 
 //CMS API
 $route['CMS/getArticles'] = 'cms/getArticles';
+$route['CMS/getArticle'] = 'cms/getArticle';
 
 //misc
 //$route['test']	= 'playbasis/test';

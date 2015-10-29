@@ -2709,6 +2709,13 @@
 						"Description": "site id"
 					  },
 					  {
+						"Name": "type",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "Type of contents"
+					  },
+					  {
 						"Name": "category",
 						"Required": "Y",
 						"Default": "",
@@ -2730,6 +2737,43 @@
 						"Description": "number of page"
 					  }
 					]
+				},
+				{
+				  "MethodName": "Get Article",
+				  "Synopsis": "list article by id",
+				  "HTTPMethod": "POST",
+				  "URI": "/CMS/getArticle",
+				  "RequiresOAuth": "N",
+				  "parameters": [
+					{
+					  "Name": "token",
+					  "Required": "Y",
+					  "Default": "",
+					  "Type": "string",
+					  "Description": "access token returned from Auth"
+					},
+					{
+					  "Name": "client_id",
+					  "Required": "Y",
+					  "Default": "",
+					  "Type": "string",
+					  "Description": "client id"
+					},
+					{
+					  "Name": "site_id",
+					  "Required": "Y",
+					  "Default": "",
+					  "Type": "string",
+					  "Description": "site id"
+					},
+					{
+					  "Name": "article_id",
+					  "Required": "Y",
+					  "Default": "",
+					  "Type": "string",
+					  "Description": "id of content"
+					}
+				  ]
 				}
 			]
 	  	}

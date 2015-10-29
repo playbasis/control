@@ -8,19 +8,58 @@ class CMS_model extends MY_Model
         $this->config->load('playbasis');
         $this->load->library('mongo_db');
     }
-    public function listArticles($type,$category,$site_id,$client_id)  // add paging later
+    public function listArticles($data)  // add paging later
     {
 
-        $site = new MongoID($site_id);
-        $client = new MongoID($client_id);
+        $site = new MongoID($data['site_id']);
+        $client = new MongoID($data['client_id']);
         $cms = $this->getCmsInfo($client,$site);
         $info = array(
-            'type'=> $type,
-            'filter[article-category]' => $category
+            'type'=> $data['type'],
+            'category' => $data['category'],
+            'filter[article-category]' => $data['category'],
+            'filter[posts_per_page]' => $data['paging'],
+            'page' => $data['page']
         );
         if($cms)
         {
-            $url = 'https://cms.pbapp.net/'.$cms['site_name'].'/wp-json/posts?type='.$type.'&filter[article-category]='.$category;
+            $url = 'https://cms.pbapp.net/'.$cms['site_slug'].'/wp-json/posts?type='.$data['type'].'&filter[article-category]='.$data['category'].'&filter[posts_per_page]='.$data['paging'].'&page='.$data['page'];
+            $ch = curl_init( $url );
+            curl_setopt( $ch, CURLOPT_URL, $url);
+            //curl_setopt( $ch, CURLOPT_POSTFIELDS, $info);
+            //curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1);
+            curl_setopt( $ch, CURLOPT_HEADER, 0);
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1);
+
+            $result = curl_exec( $ch );
+            $objects = json_decode($result);
+            $response = array();
+            foreach($objects as $object)
+            {
+                $temp = array(
+                    'id' => $object->ID,
+                    'title' => $object->title,
+                    'subtitle' => $object->excerpt,
+                    'thumbnail' => $object->featured_image,
+
+                );
+                array_push($response,$temp);
+            }
+            return isset($response) != null ? $response : null;
+        }
+        return null;
+
+
+    }
+    public function getArticleByID($data)  // add paging later
+    {
+
+        $site = new MongoID($data['site_id']);
+        $client = new MongoID($data['client_id']);
+        $cms = $this->getCmsInfo($client,$site);
+        if($cms)
+        {
+            $url = 'https://cms.pbapp.net/'.$cms['site_slug'].'/wp-json/posts/'.$data['id'];
             $ch = curl_init( $url );
             curl_setopt( $ch, CURLOPT_URL, $url);
             //curl_setopt( $ch, CURLOPT_POSTFIELDS, $info);
@@ -30,11 +69,7 @@ class CMS_model extends MY_Model
 
             $result = curl_exec( $ch );
             $object = json_decode($result);
-            if($object->success)
-            {
-                $response = $object->response;
-                return $response;
-            }
+            return isset($object) != null ? $object : null;
         }
         return null;
 
