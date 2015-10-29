@@ -21,7 +21,6 @@ class Rule extends MY_Controller
     }
 
     public function index() {
-
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
             die();
@@ -42,23 +41,12 @@ class Rule extends MY_Controller
         $this->load->model('Sms_model');
         $this->load->model('Push_model');
 
-        $s_siteId = $this->User_model->getSiteId();
-        $s_clientId = $this->User_model->getClientId();
-        $this->data["isAdmin"] = false;
-
-        $adminGroup = $this->User_model->getAdminGroupID();
-        if ($this->User_model->isAdmin()) {
-            $s_siteId = $adminGroup;
-            $s_clientId = $adminGroup;
-            $this->data["isAdmin"] = true;
-            // for query mongodb purpose
-            $client_id = "";
-            $site_id = "";
-        } else {
-            // for query mongodb purpose
-            $client_id = $s_clientId;
-            $site_id = $s_siteId;
-        }
+        $isAdmin = $this->User_model->isAdmin();
+        $client_id = $isAdmin ? null : $this->User_model->getClientId();
+        $site_id = $isAdmin ? null : $this->User_model->getSiteId();
+        $s_clientId = ''.$client_id;
+        $s_siteId = ''.$site_id;
+        $this->data["isAdmin"] = $isAdmin;
 
         $this->data['jsonConfig_siteId'] = $s_siteId;
         $this->data['jsonConfig_clientId'] = $s_clientId;
@@ -67,20 +55,20 @@ class Rule extends MY_Controller
         $this->data['conditionList'] = array();
         $this->data['rewardList'] = array();
         $this->data['feedbackList'] = array();
+        $this->data['groupList'] = array();
         $this->data['emailList'] = array();
         $this->data['smsList'] = array();
         $this->data['pushList'] = array();
 
-        if($s_clientId){
+        //if($s_clientId){
             $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
             $conditionList = $this->Rule_model->getConditionJigsawList($site_id, $client_id);
             $rewardList = $this->Rule_model->getRewardJigsawList($site_id, $client_id);
             $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
             $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
             $pushList = $this->Push_model->listTemplatesBySiteId($site_id);
-            $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList,$pushList);
+            $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList, $pushList);
             $groupList = $this->Rule_model->getGroupJigsawList($site_id, $client_id);
-
 
             $this->data['actionList'] = $actionList;
             $this->data['conditionList'] = $conditionList;
@@ -90,19 +78,15 @@ class Rule extends MY_Controller
             $this->data['emailList'] = $emailList;
             $this->data['smsList'] = $smsList;
             $this->data['pushList'] = $pushList;
-        }
+        //}
 
         $this->data['jsonIcons'] = array();
         $this->data['requestParams'] = '&siteId='.$s_siteId.'&clientId='.$s_clientId;
         $this->data['main'] = 'rule';
 
         // Template
-        $templates = $this->Rule_model->getRulesByCombinationId(
-            $adminGroup,
-            $adminGroup
-        );
+        $templates = $this->Rule_model->getRulesByCombinationId(null, null);
         $this->data["ruleTemplate"] = array();
-
         if(!isset($templates["error"])){
             foreach ($templates as $template) {
                 $name = $template["name"];
@@ -115,21 +99,18 @@ class Rule extends MY_Controller
     }
 
     public function jsonGetRules(){
-        $adminGroup = $this->User_model->getAdminGroupID();
-        $userGroup = $this->User_model->getUserGroupId();
         if ($this->User_model->isAdmin()) {
-            $s_siteId = $adminGroup;
-            $s_clientId = $adminGroup;
+            $siteId = null;
+            $clientId = null;
         } else {
-            $s_siteId = $this->User_model->getSiteId();
-            $s_clientId = $this->User_model->getClientId();
+            $siteId = $this->User_model->getSiteId();
+            $clientId = $this->User_model->getClientId();
         }
 
-        $actionList = $this->Rule_model->getActionJigsawList($s_siteId, $s_clientId);
-        $conditionList = $this->Rule_model->getConditionJigsawList($s_siteId, $s_clientId);
-        $rewardList = $this->Rule_model->getRewardJigsawList($s_siteId, $s_clientId);
-        $pushList = $this->Push_model->listTemplatesBySiteId($s_siteId);
-        $result = $this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId, array(
+        $actionList = $this->Rule_model->getActionJigsawList($siteId, $clientId);
+        $conditionList = $this->Rule_model->getConditionJigsawList($siteId, $clientId);
+        $rewardList = $this->Rule_model->getRewardJigsawList($siteId, $clientId);
+        $result = $this->Rule_model->getRulesByCombinationId($siteId, $clientId, array(
             'actionList' => $this->makeListOfId($actionList, 'specific_id'),
             'actionNameDict' => $this->makeDict($actionList, 'specific_id', 'name'),
             'conditionList' => $this->makeListOfId($conditionList, 'id'),
@@ -139,18 +120,15 @@ class Rule extends MY_Controller
     }
 
     public function setRuleState() {
-        $adminGroup = $this->User_model->getAdminGroupID();
         if ($this->User_model->isAdmin()) {
-            $s_siteId = $adminGroup;
-            $s_clientId = $adminGroup;
+            $siteId = null;
+            $clientId = null;
         } else {
-            $s_siteId = $this->User_model->getSiteId();
-            $s_clientId = $this->User_model->getClientId();
+            $siteId = $this->User_model->getSiteId();
+            $clientId = $this->User_model->getClientId();
         }
 
         if(!$this->input->post('ruleId') &&
-           !$this->input->post('siteId') &&
-           !$this->input->post('clientId') &&
            !$this->input->post('state')){
             $this->jsonErrorResponse();
             return;
@@ -172,8 +150,8 @@ class Rule extends MY_Controller
             $this->Rule_model->changeRuleState(
                 $this->input->post('ruleId'),
                 $state,
-                $s_siteId,
-                $s_clientId)));
+                $siteId,
+                $clientId)));
     }
 
     public function jsonSaveRule(){
@@ -193,8 +171,6 @@ class Rule extends MY_Controller
 
     public function jsonCloneRule(){
         $id = $this->input->post("id");
-        $client_id = $this->input->post("client_id");
-        $site_id = $this->input->post("site_id");
         if(!$id){
             $this->jsonErrorResponse();
             return;
@@ -205,9 +181,17 @@ class Rule extends MY_Controller
             return;
         }
 
+        if ($this->User_model->isAdmin()) {
+            $siteId = null;
+            $clientId = null;
+        } else {
+            $siteId = $this->User_model->getSiteId();
+            $clientId = $this->User_model->getClientId();
+        }
+
         $this->output->set_output(json_encode(
             $this->Rule_model->cloneRule(
-                $id, $client_id, $site_id)));
+                $id, $clientId, $siteId)));
     }
 
     /*
@@ -242,18 +226,15 @@ class Rule extends MY_Controller
     }
 
     public function deleteRule(){
-        $adminGroup = $this->User_model->getAdminGroupID();
         if ($this->User_model->isAdmin()) {
-            $s_siteId = $adminGroup;
-            $s_clientId = $adminGroup;
+            $siteId = null;
+            $clientId = null;
         } else {
-            $s_siteId = $this->User_model->getSiteId();
-            $s_clientId = $this->User_model->getClientId();
+            $siteId = $this->User_model->getSiteId();
+            $clientId = $this->User_model->getClientId();
         }
         /*start  : Wrap all of this to be reqireParam('post','rulesID')*/
-        if(!$this->input->post('ruleId') &&
-           !$this->input->post('siteId') &&
-           !$this->input->post('clientId')){
+        if(!$this->input->post('ruleId')){
             $this->jsonErrorResponse();
             return;
         }
@@ -266,8 +247,8 @@ class Rule extends MY_Controller
         $this->output->set_output(json_encode(
             $this->Rule_model->deleteRule(
                 $this->input->post('ruleId'),
-                $s_siteId,
-                $s_clientId)));
+                $siteId,
+                $clientId)));
     }
 
     public function loadBadges() {
@@ -329,13 +310,12 @@ class Rule extends MY_Controller
     }
 
     public function jsonGetRuleById(){
-        $adminGroup = $this->User_model->getAdminGroupID();
         if ($this->User_model->isAdmin()) {
-            $s_siteId = $adminGroup;
-            $s_clientId = $adminGroup;
+            $siteId = null;
+            $clientId = null;
         } else {
-            $s_siteId = $this->User_model->getSiteId();
-            $s_clientId = $this->User_model->getClientId();
+            $siteId = $this->User_model->getSiteId();
+            $clientId = $this->User_model->getClientId();
         }
 
         if(!$this->input->get('ruleId')){
@@ -344,8 +324,8 @@ class Rule extends MY_Controller
         }
 
         $rule = $this->Rule_model->getRuleById(
-            $s_siteId,
-            $s_clientId,
+            $siteId,
+            $clientId,
             $this->input->get('ruleId'));
 
         if($rule){
@@ -376,7 +356,7 @@ class Rule extends MY_Controller
     }
 
     private function makeDict($arr, $keyField, $valField) {
-        if (!$arr || !is_array($arr)) return null;
+        if (!$arr || !is_array($arr)) return array();
         $ret = array();
         foreach ($arr as $each) {
             $ret[$each[$keyField]] = $each[$valField];
