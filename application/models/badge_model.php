@@ -270,6 +270,7 @@ class Badge_model extends MY_Model
             $badge['date_added'] = $d;
             $badge['date_modified'] = $d;
             unset($badge['is_template']);
+            unset($badge['_id']);
         }
         return $this->mongo_db->batch_insert('playbasis_badge_to_client', $badges, array("w" => 0, "j" => false));
     }
