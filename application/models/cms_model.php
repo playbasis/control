@@ -16,6 +16,7 @@ class CMS_model extends MY_Model
             $value = $results[0];
             if($value['site_id'] != $data["site_id"])
             {
+
                 if($value['site_name'] == $site_name)
                 {
                     $site_name = $site_name."-1";
@@ -29,18 +30,23 @@ class CMS_model extends MY_Model
 
             }
 
+        }else
+        {
+            $site_name = str_replace(' ','-',$site_name);
         }
 
 
         $info = array(
             'role' => 'editor',
             'site_slug' => $site_name,
+            'site_name' => $data['site_name'],
             'site_id' => $data['site_id'],
             'client_id' => $data['client_id'],
-            'site_name' => $site_name,
             'admin_name' => $data['user_name'],
             'admin_id' => $data['user_id'],
-            'admin_email' => $data['user_email']
+            'admin_email' => $data['user_email'],
+            'firstname' => $data['firstname'],
+            'lastname' => $data['lastname'],
         );
 
 
@@ -62,9 +68,11 @@ class CMS_model extends MY_Model
             $data_insert = array(
                 'client_id' => $data['client_id'],
                 'site_id' => $data['site_id'],
-                'site_name' => $site_name,
+                'site_slug' => $site_name,
+                'site_name' => $data['site_name'],
                 'cms_site_id' => $response->cms_site_id,
                 'cms_admin_id' => $response->cms_admin_id,
+                'user_admin_id' => $data['user_id'],
                 'date_created' =>  new MongoDate(strtotime(date("Y-m-d H:i:s")))
             );
             $this->mongo_db->insert('playbasis_cms_site', $data_insert);
@@ -85,8 +93,16 @@ class CMS_model extends MY_Model
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_cms_site");
-        return $results[0] != null ? $results[0] : null;
+        return isset($results[0]) != null ? $results[0] : null;
 
+    }
+    public function getCmsBySiteSlug($site_slug)
+    {
+        $this->set_site_mongodb(0);
+        $this->mongo_db->where('site_slug', $site_slug);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_cms_site");
+        return isset($results[0]) != null ? $results[0] : null;
     }
     public function updateUserPermission($data)
     {
@@ -94,8 +110,10 @@ class CMS_model extends MY_Model
         $data_insert = array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
-            'site_name' => $data['site_name'],
+            'site_slug' => $data['site_slag'],
             'user_id' => $data['user_id'],
+            'username' => $data['username'],
+            'email' => $data['email'],
             'role' => $data['role'],
             'date_created' =>  new MongoDate(strtotime(date("Y-m-d H:i:s")))
         );
@@ -112,7 +130,7 @@ class CMS_model extends MY_Model
         ));
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_cms_user");
-        return $results[0] != null ? $results[0] : null;
+        return isset($results[0]) != null ? $results[0] : null;
 
     }
     public function getTotalUserBySite($client_id,$site_id)
@@ -138,6 +156,17 @@ class CMS_model extends MY_Model
         $user_data = $this->mongo_db->count("playbasis_cms_user");
 
         return $user_data;
+    }
+    public function getUserBySite($filter)
+    {
+        $this->set_site_mongodb(0); // use default in case of pending users
+        $this->mongo_db->where(array(
+            'client_id'=> $filter['client_id'],
+            'site_id'=> $filter['site_id']
+        ));
+        $results = $this->mongo_db->get("playbasis_cms_user");
+        return $results != null ? $results : null;
+
     }
 
 

@@ -14,12 +14,14 @@ class User extends MY_Controller
         $this->load->model('User_model');
         $this->load->model('Player_model');
         $this->load->model('Client_model');
+        $this->load->model('CMS_model');
         $this->load->model('App_model');
         $this->load->model('Plan_model');
 //        $this->load->model('Domain_model');
         $this->load->model('App_model');
         $this->load->model('Merchant_model');
         $this->load->model('Goods_model');
+        $this->load->model('User_group_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -1355,6 +1357,38 @@ class User extends MY_Controller
         }
     }
 
+    public function cms_login()
+    {
+        $username = $this->input->post('username');
+        $password = $this->input->post('password');
+        $site_slug = $this->input->post('site_slug');
+        $result = $this->User_model->cms_login($username,$password);
+        if(isset($result))
+        {
+            $user = $this->User_model->getUserInfo($result);
+            $client = $this->User_model->getClientIdByUserId($user['_id']);
+            $cms = $this->CMS_model->getCmsBySiteSlug($site_slug);
+            $site_slug = $client == $cms['client_id'] ? $site_slug : false;
+
+            $userGroup = $this->User_group_model->getUserGroupInfo($user['user_group_id']);
+            $permission = $userGroup['permission'];
+            $modify = $permission['modify'];
+
+            $editor = array_search('cms',$modify) != -1 ? true : false;
+
+            $role = $editor ? 'editor' : 'contributor';
+            $response = array(
+                'username' => $user['username'],
+                'email' => $user['email'],
+                'site_slug' => $site_slug,
+                'role' => $role
+            );
+            echo json_encode(array('status' => 'success', 'message' => validation_errors(),'response' => $response));
+        }else
+        {
+            echo json_encode(array('status' => 'failed'));
+        }
+    }
     public function checksession(){
         if($this->session->userdata('user_id')){
             echo json_encode(array("status" => "login"));
