@@ -438,7 +438,7 @@ class Rule_model extends MY_Model
         return $this->mongo_db->count("playbasis_feature_to_client") > 0;
     }
 
-    function saveRule($input){
+    public function saveRule($input){
         $response = function($msg) {
             return array("success" => $msg);
         };
@@ -489,6 +489,75 @@ class Rule_model extends MY_Model
         }
     }
 
+    private function listRulesTemplate() {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', null);
+        $this->mongo_db->where('site_id', null);
+        $this->mongo_db->where('active_status', true);
+        return $this->mongo_db->get("playbasis_rule");
+    }
+
+    private function findIdByTemplateJigsawId($jigsaw_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('jigsaw_id', intval($jigsaw_id));
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_jigsaw");
+        return $results ? $results[0]['_id'] : null;
+    }
+
+    private function findRewardIdByTemplateRewardName($name) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_reward");
+        return $results ? $results[0]['_id'] : null;
+    }
+
+    public function copyRulesFromTemplate($client_id, $site_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $d = new MongoDate();
+        $rules = $this->listRulesTemplate();
+        if ($rules) foreach ($rules as &$rule) {
+            $rule['client_id'] = $client_id;
+            $rule['site_id'] = $site_id;
+            $rule['date_added'] = $d;
+            $rule['date_modified'] = $d;
+            foreach ($rule['jigsaw_set'] as &$each) {
+                switch ($each['category']) {
+                case 'ACTION':
+                    break;
+                case 'CONDITION':
+                    $specific_id = ''.$this->findIdByTemplateJigsawId($each['specific_id']);
+                    $each['id'] = $specific_id;
+                    $each['specific_id'] = $specific_id;
+                    $each['config']['condition_id'] = $specific_id;
+                    break;
+                case 'REWARD':
+                    $reward_id = ''.$this->findRewardIdByTemplateRewardName($each['name']);
+                    $each['specific_id'] = $reward_id;
+                    $each['config']['reward_id'] = $reward_id;
+                    break;
+                case 'GROUP':
+                    $specific_id = ''.$this->findIdByTemplateJigsawId($each['specific_id']);
+                    $each['id'] = $specific_id;
+                    $each['specific_id'] = $specific_id;
+                    $each['config']['group_id'] = $specific_id;
+                    foreach ($each['dataSet'][0]['value'] as $i => &$element) {
+                        $reward_id = ''.$this->findRewardIdByTemplateRewardName($element['name']);
+                        $element['specific_id'] = $reward_id;
+                        $element['config']['reward_id'] = $reward_id;
+                        $each['config']['group_container'][$i]['reward_id'] = $reward_id;
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+            unset($rule['_id']);
+        }
+        return $this->mongo_db->batch_insert('playbasis_rule', $rules, array("w" => 0, "j" => false));
+    }
+
     /*
      * Clone Rule from Template to Client's rule
      * template rule cannot duplicate in client table
@@ -498,7 +567,7 @@ class Rule_model extends MY_Model
      * @param string $site_id
      * @return array
      */
-    function cloneRule($rule_id, $client_id, $site_id){
+    public function cloneRule($rule_id, $client_id, $site_id){
         $response = function($msg) {
             return array("success" => $msg);
         };

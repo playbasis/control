@@ -11,6 +11,7 @@ class App extends MY_Controller
         $this->load->model('Client_model');
         $this->load->model('Plan_model');
         $this->load->model('Badge_model');
+        $this->load->model('Rule_model');
 
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
@@ -324,6 +325,9 @@ class App extends MY_Controller
 
                     /* preset badges */
                     $this->Badge_model->copyBadgesFromTemplate($client_id, $site_id);
+
+                    /* preset rules*/
+                    $this->Rule_model->copyRulesFromTemplate($client_id, $site_id);
 
                     /* pre-register test player */
                     $pkg_name = isset($data_platform['ios_bundle_id']) ? $data_platform['ios_bundle_id'] : (isset($data_platform["android_package_name"]) ? $data_platform["android_package_name"] : null);
