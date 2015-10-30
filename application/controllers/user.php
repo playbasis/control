@@ -1144,6 +1144,89 @@ class User extends MY_Controller
         $this->render_page('template_beforelogin');
     }
 
+    public function player_reset_password($code='') {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = 'Reset Password';
+
+        if (!$code) {
+            // TODO(Rook): This should render form for user to reset password manually by input username/email and reset code then redirect to change pwd form page
+
+            $this->data['topic_message'] = 'Password reset code is required to access this page';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+
+        $player = $this->Player_model->getPlayerByPasswordResetCode($code);
+        if (!$player) {
+            $this->data['topic_message'] = 'Your password reset code is invalid.';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+
+        $sess_data = array(
+            'player'=>$player
+        );
+        $this->session->set_userdata($sess_data);
+
+        if($this->session->userdata('player')) {
+
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[8]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if($this->form_validation->run()) {
+                    $new_password = $this->input->post('password');
+
+                    $this->Player_model->setPlayerPasswordByPlayerId($player['pb_player_id'], $new_password);
+                    $this->Player_model->deletePasswordResetCode($code);
+                    $this->session->unset_userdata('user');
+
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode(array('status' => 'success', 'message' => 'You password has been changed. You can login again with new password.'));
+                        exit();
+                    }
+
+                    $this->data['topic_message'] = 'Your password has been changed!';
+                    $this->data['message'] = 'You password has been changed. You can login again with new password.';
+                    $this->data['main'] = 'partial/something_wrong';
+                    $this->render_page('template_beforelogin');
+                }else{
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode(array('status' => 'error', 'message' => validation_errors()));
+                        exit();
+                    }
+                }
+            }
+
+            if ($player) {
+                $player_info = $this->Player_model->getPlayerById($player['pb_player_id']);
+                $this->data['player_info'] = $player_info;
+                $this->data['password_recovery_code'] = $code;
+            }
+            $this->data['main'] = 'partial/playerresetpassword_partial';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+        }
+    }
+
+    public function player_reset_password_complete() {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = 'Reset Password';
+        $this->data['topic_message'] = 'Completed Reset Password';
+        $this->data['message'] = 'You password has been changed. You can now login again with new password.';
+        $this->data['main'] = 'partial/something_wrong';
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
+    }
+
     private function findGoodsToPlayerByGoodsId($goods_id, $goods_list) {
         foreach ($goods_list as $goods) {
             if ($goods['goods_id'] == $goods_id) return $goods;
