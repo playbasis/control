@@ -467,6 +467,108 @@ class User_model extends MY_Model
         }
     }
 
+    public function cms_login($u, $p){
+        $this->set_site_mongodb(0);
+        $this->mongo_db->select(array('salt'));
+        $regex = array('$regex' => new MongoRegex("/^".preg_quote(db_clean($u, 255))."$/i"));
+        $this->mongo_db->where('username', $regex);
+        $this->mongo_db->limit(1);
+        $Q = $this->mongo_db->get('user');
+
+        if (count($Q) > 0) {
+            $row = $Q[0];
+
+            $this->mongo_db->select(array('_id','user_id','username','user_group_id','database','ip'));
+            $this->mongo_db->where('username', $regex);
+            $this->mongo_db->where('password', db_clean(dohash($p, $row['salt']), 40));
+            $this->mongo_db->where('status', true);
+            $this->mongo_db->limit(1);
+            $Q = $this->mongo_db->get('user');
+
+            if (count($Q) > 0) {
+
+                // update new salt
+                $salt = get_random_password(10, 10);
+                $data = array('salt' => db_clean($salt, 40),
+                    'password' => db_clean(dohash($p, $salt), 40)
+                );
+                $this->mongo_db->where('username', $regex);
+                $this->mongo_db->set('last_login', date('Y-m-d H:i:s'));
+                $this->mongo_db->set($data);
+                $this->mongo_db->update('user');
+
+                // $this->user_id
+                $row = $Q[0];
+                $this->user_id = $row['_id'];
+                $this->username = $row['username'];
+                $this->user_group_id = $row['user_group_id'];
+                $this->database = $row['database'];
+                $ip = $row['ip'];
+
+                // $this->permission
+                $this->mongo_db->select(array('permission'));
+                $this->mongo_db->where('_id', $this->user_group_id);
+                $this->mongo_db->limit(1);
+                $Q3 = $this->mongo_db->get('user_group');
+                if(count($Q3)>0){
+                    $row3 = $Q3[0];
+                    $permissions = $row3['permission'];
+                    if (is_array($permissions)) {
+                        foreach ($permissions as $key => $value) {
+                            $this->permission[$key] = $value;
+                        }
+                    }
+                }else{
+                    $this->logout();
+                    return false;
+                }
+
+                // $this->client_id
+                $this->mongo_db->select(array('client_id'));
+                $this->mongo_db->where('user_id', new MongoID($this->user_id));
+                $this->mongo_db->where('status', true);
+                $this->mongo_db->limit(1);
+                $Q1 = $this->mongo_db->get('user_to_client');
+                if(count($Q1)>0){
+                    $row1 = $Q1[0];
+                    $this->client_id = $row1['client_id'];
+                }else{
+                    $this->client_id = null;
+                }
+
+                if($this->getAdminGroupID() || $this->client_id){
+
+                    // $this->site_id
+                    $this->site_id = $this->fetchSiteId($this->client_id);
+                    $this->mobile = $this->findMobileByClientId($this->client_id);
+
+                    $this->set_site_mongodb($this->site_id);
+
+                    $this->session->set_userdata('multi_login', $this->setMultiLoginKey($this->user_id));
+                    $this->session->set_userdata('user_id',$this->user_id );
+                    $this->session->set_userdata('username',$this->username );
+                    $this->session->set_userdata('user_group_id',$this->user_group_id );
+                    $this->session->set_userdata('database',$this->database );
+                    $this->session->set_userdata('client_id',$this->client_id );
+                    $this->session->set_userdata('site_id',$this->site_id );
+                    $this->session->set_userdata('permission',$this->permission );
+                    $this->session->set_userdata('ip',$ip );
+                    $this->session->set_userdata('mobile',$this->mobile );
+                }else {
+                    $this->logout();
+                    return false;
+                }
+
+
+            } else {
+                $this->logout();
+                return false;
+            }
+
+            return $this->user_id;
+        }
+    }
+
     public function logout() {
         $this->session->unset_userdata('user_id');
         $this->session->unset_userdata('username');

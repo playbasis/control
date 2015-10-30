@@ -19,6 +19,7 @@
             <a href="#tab-requests"><?php echo $this->lang->line('tab_requests'); ?></a>
             <a href="#tab-limits"><?php echo $this->lang->line('tab_limits'); ?></a>
             <a href="#tab-widget"><?php echo $this->lang->line('tab_widget'); ?></a>
+            <a href="#tab-cms"><?php echo $this->lang->line('tab_cms'); ?></a>
             <?php if($name!=""){?>
                 <a href="#tab-clients"><?php echo $this->lang->line('tab_clients'); ?></a>
             <?php }?>
@@ -319,6 +320,37 @@
                                 <td class="left">
                                     <?php
                                     echo form_checkbox('limit_widget['.$key.'][limit]', 'true', (isset($value)&&($value=='true'||$value))?true:false);
+                                    ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td class="center" colspan="2"><?php echo $this->lang->line('text_no_results'); ?></td>
+                        </tr>
+                    <?php } ?>
+                    <tr>
+                        <td class="center" colspan="2">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab-cms">
+                <table class="list">
+                    <thead>
+                    <tr>
+                        <td class="left"><?php echo $this->lang->line('column_name_feature'); ?></td>
+                        <td class="left" style="width: 150px;"><?php echo $this->lang->line('column_limit'); ?></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if ($limit_cms) { ?>
+                        <?php foreach ($limit_cms as $key=>$value) { ?>
+                            <tr>
+                                <td class="left"><?php echo ucfirst($key); ?></td>
+                                <td class="left">
+                                    <?php
+                                    echo form_checkbox('limit_cms['.$key.'][limit]', 'true', (isset($value)&&($value=='true'||$value))?true:false);
                                     ?>
                                 </td>
                             </tr>

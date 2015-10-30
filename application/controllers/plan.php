@@ -499,6 +499,12 @@ class Plan extends MY_Controller
             "treasure" => null,
             "trackevent" => null,
         );
+
+        $default_limit_cms = array(
+            "article" => null,
+            "news" => null,
+            "event" => null,
+        );
         if ($this->input->post('limit_widget')) {
             $this->data['limit_widget'] = $this->input->post('limit_widget');
         } elseif (!empty($plan_info) && isset($plan_info['limit_widget'])){
@@ -513,6 +519,22 @@ class Plan extends MY_Controller
         } else {
             // Client don't have this field in DB, use default
             $this->data["limit_widget"] = $default_limit_widgets;
+        }
+
+        if ($this->input->post('limit_cms')) {
+            $this->data['limit_cms'] = $this->input->post('limit_cms');
+        } elseif (!empty($plan_info) && isset($plan_info['limit_cms'])){
+            $this->data['limit_cms'] = $plan_info["limit_cms"];
+            // merge with default, prevent missing fields
+            foreach($this->data['limit_cms'] as $k=>$v){
+                if (!array_key_exists($k, $default_limit_cms)) {
+                    unset($this->data['limit_cms'][$k]);
+                }
+            }
+            $this->data["limit_cms"] = array_merge($default_limit_cms, $this->data["limit_cms"]);
+        } else {
+            // Client don't have this field in DB, use default
+            $this->data["limit_cms"] = $default_limit_cms;
         }
 
         $this->data['client_id'] = $this->User_model->getClientId();

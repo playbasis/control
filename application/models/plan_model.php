@@ -375,6 +375,13 @@ class Plan_model extends MY_Model
             }
             $dinsert['limit_widget'] = $limit_widget;
         }
+        if (isset($data['limit_cms'])) {
+            $limit_cms = array();
+            foreach ($data['limit_cms'] as $key => $value) {
+                $limit_cms[$key] = ($value['limit'] != null && $value['limit'] !== '' ? true : false);
+            }
+            $dinsert['limit_cms'] = $limit_cms;
+        }
         if (isset($data['limit_req'])) {
             $limit_req = array();
             for ($i=0; $i<sizeof($data['limit_req']); $i++) {
@@ -467,6 +474,13 @@ class Plan_model extends MY_Model
                 $limit_widget[$key] = ($value['limit'] != null && $value['limit'] !== '' ? true : false);
             }
             $this->mongo_db->set('limit_widget', $limit_widget);
+        }
+        if (isset($data['limit_cms'])) {
+            $limit_cms = array();
+            foreach ($data['limit_cms'] as $key => $value) {
+                $limit_cms[$key] = ($value['limit'] != null && $value['limit'] !== '' ? true : false);
+            }
+            $this->mongo_db->set('limit_cms', $limit_cms);
         }
         if (isset($data['limit_req'])) {
             $limit_req = array();
@@ -567,6 +581,29 @@ class Plan_model extends MY_Model
             throw new Exception("getPlanLimitById plan_id not found");
         }
     }
+
+    /**
+     * Return Permission Display CMS by Plan ID
+     * @param plan_id string
+     * @return array | null
+     */
+    public function getPlanDisplayCMS($plan_id)
+    {
+        $this->mongo_db->select(array('limit_cms'));
+        $this->mongo_db->where(array(
+            '_id' => $plan_id,
+        ));
+        $res = $this->mongo_db->get('playbasis_plan');
+        if ($res) {
+            $res = $res[0];
+            return isset($res['limit_cms'])?$res['limit_cms']:null;
+        }
+        else {
+            throw new Exception("getPlanLimitById plan_id not found");
+        }
+    }
+
+    /**
 
     /**
      * Return Permission limitation by Plan ID

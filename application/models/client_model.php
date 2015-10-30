@@ -579,5 +579,16 @@ class Client_model extends MY_Model
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update('playbasis_stripe');
     }
+    public function getSiteInfo($client_id,$site_id)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('_id', new MongoID($site_id));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_client_site');
+        return $result[0] != null ? $result[0] : null;
+    }
 }
 ?>
