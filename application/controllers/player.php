@@ -830,7 +830,7 @@ class Player extends REST2_Controller
 		$player['pwd_reset_code'] = $this->player_model->generatePasswordResetCode($player['_id']);
 
 		$this->response($this->resp->setRespond(array(
-			'url' => $this->config->item('CONTROL_DASHBOARD_URL') . '/player/password/reset/' . $player['pwd_reset_code'])
+			'url' => $this->config->item('CONTROL_DASHBOARD_URL') . 'player/password/reset/' . $player['pwd_reset_code'])
 		), 200);
 	}
 
