@@ -265,9 +265,9 @@ class Rule extends MY_Controller
 
             foreach($badges as &$b){
                 $b['_id'] = $b['_id']."";
-                if (isset($b['badge_id'])) $b['badge_id'] = $b['badge_id']."";
-                if (isset($b['client_id'])) $b['client_id'] = $b['client_id']."";
-                if (isset($b['site_id'])) $b['site_id'] = $b['site_id']."";
+                $b['badge_id'] = isset($b['badge_id']) ? $b['badge_id']."" : $b['_id'];
+                $b['client_id'] = isset($b['client_id']) ? $b['client_id']."" : null;
+                $b['site_id'] = isset($b['site_id']) ? $b['site_id']."" : null;
             }
             $json['badges'] = $badges;
 
