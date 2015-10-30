@@ -13,27 +13,16 @@ class CMS extends REST2_Controller
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
-    public function getArticles_post()
+    public function getArticles_get()
     {
-        $required = $this->input->checkParam(array(
-            'client_id',
-            'site_id',
-            'category',
-            'type'
-        ));
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-        $client_id = $this->input->post('client_id');
-        $site_id = $this->input->post('site_id');
-        $category = $this->input->post('category');
-        $type = $this->input->post('type');
-        $paging = $this->input->post('paging');
-        $page = $this->input->post('page');
+        $category = $this->input->get('category');
+        $type = $this->input->get('type');
+        $paging = $this->input->get('paging');
+        $page = $this->input->get('page');
 
         $data = array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
             'type' => $type,
             'category' => $category,
             'paging' => $paging,
@@ -43,28 +32,18 @@ class CMS extends REST2_Controller
         $results = $this->CMS_model->listArticles($data);
         $this->response($this->resp->setRespond($results), 200);
     }
-    public function getArticle_post()
+    public function getArticle_get($article_id)
     {
-        $required = $this->input->checkParam(array(
-            'client_id',
-            'site_id',
-            'article_id'
-        ));
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-        $client_id = $this->input->post('client_id');
-        $site_id = $this->input->post('site_id');
-        $id = $this->input->post('article_id');
-
         $data = array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
-            'id' => $id
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'id' => $article_id
         );
-
         $results = $this->CMS_model->getArticleByID($data);
         $this->response($this->resp->setRespond($results), 200);
+
+
+
     }
 }
 

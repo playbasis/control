@@ -2683,31 +2683,10 @@
 			  	{
 					"MethodName": "Get Articles",
 					"Synopsis": "list articles by category",
-					"HTTPMethod": "POST",
+					"HTTPMethod": "GET",
 					"URI": "/CMS/getArticles",
 					"RequiresOAuth": "N",
 					"parameters": [
-					  {
-						"Name": "token",
-						"Required": "Y",
-						"Default": "",
-						"Type": "string",
-						"Description": "access token returned from Auth"
-					  },
-					  {
-						"Name": "client_id",
-						"Required": "Y",
-						"Default": "",
-						"Type": "string",
-						"Description": "client id"
-					  },
-					  {
-						"Name": "site_id",
-						"Required": "Y",
-						"Default": "",
-						"Type": "string",
-						"Description": "site id"
-					  },
 					  {
 						"Name": "type",
 						"Required": "Y",
@@ -2741,31 +2720,10 @@
 				{
 				  "MethodName": "Get Article",
 				  "Synopsis": "list article by id",
-				  "HTTPMethod": "POST",
-				  "URI": "/CMS/getArticle",
+				  "HTTPMethod": "GET",
+				  "URI": "/CMS/getArticle/:article_id",
 				  "RequiresOAuth": "N",
 				  "parameters": [
-					{
-					  "Name": "token",
-					  "Required": "Y",
-					  "Default": "",
-					  "Type": "string",
-					  "Description": "access token returned from Auth"
-					},
-					{
-					  "Name": "client_id",
-					  "Required": "Y",
-					  "Default": "",
-					  "Type": "string",
-					  "Description": "client id"
-					},
-					{
-					  "Name": "site_id",
-					  "Required": "Y",
-					  "Default": "",
-					  "Type": "string",
-					  "Description": "site id"
-					},
 					{
 					  "Name": "article_id",
 					  "Required": "Y",
