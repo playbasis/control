@@ -456,6 +456,29 @@
 					]
 				},
 				{
+					"MethodName": "Reset player password",
+					"Synopsis": "Reset player password that store in Playbasis system.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/password/email",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "email",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "email as used in client's website"
+						}
+					]
+				},
+				{
 					"MethodName": "Delete",
 					"Synopsis": "Permenently delete a player from Playbasis database.",
 					"HTTPMethod": "POST",
