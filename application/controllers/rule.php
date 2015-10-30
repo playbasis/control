@@ -254,38 +254,32 @@ class Rule extends MY_Controller
     public function loadBadges() {
         $this->load->model('Badge_model');
 
-        $adminGroup = $this->User_model->getAdminGroupID();
-        if ($this->User_model->isAdmin()) {
-            $site_id = $adminGroup;
-        } else {
-            $site_id  = $this->User_model->getSiteId();
-        }
-
-        if ($site_id) {
+        $site_id = $this->User_model->isAdmin() ? null : $this->User_model->getSiteId();
+        //if ($site_id) {
             $badge_data = array (
                 'site_id'=> $site_id,
                 'sort'=>'sort_order'
             );
 
-            $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
+            $badges = $site_id ? $this->Badge_model->getBadgeBySiteId($badge_data) : $this->Badge_model->listBadgesTemplate();
 
             foreach($badges as &$b){
                 $b['_id'] = $b['_id']."";
-                $b['badge_id'] = $b['badge_id']."";
-                $b['client_id'] = $b['client_id']."";
-                $b['site_id'] = $b['site_id']."";
+                if (isset($b['badge_id'])) $b['badge_id'] = $b['badge_id']."";
+                if (isset($b['client_id'])) $b['client_id'] = $b['client_id']."";
+                if (isset($b['site_id'])) $b['site_id'] = $b['site_id']."";
             }
             $json['badges'] = $badges;
 
             $this->output->set_output(json_encode($json));
-        }
+        //}
     }
 
     public function loadGoods() {
         $this->load->model('Badge_model');
         $this->load->model('Goods_model');
 
-        $results = $this->Goods_model->getGroupsAggregate($this->session->userdata('site_id'));
+        $results = $this->Goods_model->getGroupsAggregate($this->User_model->getSiteId());
         $ids = array();
         $group_name = array();
         foreach ($results as $i => $result) {
@@ -297,7 +291,7 @@ class Rule extends MY_Controller
             $ids = array_merge($ids, $list);
         }
 
-        $goods_list = $this->Goods_model->getGoodsBySiteId(array('site_id' => $this->session->userdata('site_id'), 'sort' => 'sort_order', '$nin' => $ids));
+        $goods_list = $this->Goods_model->getGoodsBySiteId(array('site_id' => $this->User_model->getSiteId(), 'sort' => 'sort_order', '$nin' => $ids));
         foreach($goods_list as &$g){
             $g['_id'] = $g['_id']."";
             $g['goods_id'] = $g['goods_id']."";

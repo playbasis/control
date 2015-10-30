@@ -139,7 +139,7 @@ class Badge_model extends MY_Model
         }
 
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('site_id', $data['site_id'] ? new MongoID($data['site_id']) : null);
         $results = $this->mongo_db->get("playbasis_badge_to_client");
 
         return $results;
@@ -190,7 +190,7 @@ class Badge_model extends MY_Model
         }
 
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('client_id', $data['client_id'] ? new MongoID($data['client_id']) : null);
         $results = $this->mongo_db->get("playbasis_badge_to_client");
 
         return $results;
@@ -208,7 +208,7 @@ class Badge_model extends MY_Model
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('site_id', $data['site_id'] ? new MongoID($data['site_id']) : null);
         $total = $this->mongo_db->count("playbasis_badge_to_client");
 
         return $total;
