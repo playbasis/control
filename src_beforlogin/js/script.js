@@ -202,7 +202,61 @@ jQuery(document).ready( function($) {
     }
   });
 
+    //==== Validate Reset Player Password form=======//
+    $('#playerresetpassword_form').validate({
+        rules: {
+            password: {
+                minlength: 8
+            },
+            confirm_password: {
+                equalTo: "#reset-password"
+            }
+        },
+        submitHandler: function (form) {
+            $.ajax({
+                type: 'post',
+                url: baseUrlPath + "player/password/reset/" + $('#password-recovery-code').val(),
+                data: $(form).serialize() + '&format=json',
+                cache: false,
+                dataType: 'json'
+            })
+                .done(function (data) {
+                    if (before_debug)console.log(data);
+                    if (data.message) {
+                        var messageAlert = data.message;
+                    } else {
+                        var messageAlert = message_error_default;
+                    }
+                    if (data.status == 'error') {
+                        $('.registration-resetpassword').pbAlert({
+                            content: messageAlert,
+                            type: 'error'
+                        });
+                    } else {
+                        $('.registration-resetpassword').pbAlert({
+                            content: messageAlert,
+                            type: 'success'
+                        });
+                        $('#playerresetpassword_form').find('input').attr('disabled',true);
+                        setTimeout(function () {
+                            window.location = baseUrlPath + "player/password/reset/completed";
+                        }, 5000);
+                    }
+                })
+                .fail(function (data) {
+                    $('.registration-resetpassword').pbAlert({
+                        content: message_error_default
+                    });
+                })
+                .always(function (data) {
+                    $(form).find('input').attr('disabled', false);
+                });
 
+            $(form).find('input').attr('disabled', true);
+            return false;
+
+        }
+    });
 
   //==== Validate Forgot Password form=======//
   $('#forgotpassword_form').validate({

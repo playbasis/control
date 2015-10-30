@@ -1145,7 +1145,6 @@ class User extends MY_Controller
     public function player_reset_password($code='') {
         $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['form'] = 'referral/'.$code;
         $this->data['title'] = 'Reset Password';
 
         if (!$code) {
@@ -1158,53 +1157,72 @@ class User extends MY_Controller
             $this->render_page('template_beforelogin');
             return;
         }
-//
-//        $player = $this->Player_model->getPlayerByCode($code);
-//        if (!$player) {
-//            $this->data['topic_message'] = 'Your referral code is invalid.';
-//            $this->data['message'] = 'Please contact Playbasis.';
-//            $this->data['main'] = 'partial/something_wrong';
-//            $this->load->vars($this->data);
-//            $this->render_page('template_beforelogin');
-//            return;
-//        }
-//        $this->data['by'] = $player;
-//
-//        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//            $data = $this->input->post();
-//            $this->_api = $this->playbasisapi;
-//            $platforms = $this->App_model->getPlatFormByAppId(array(
-//                'site_id' => $player['site_id'],
-//            ));
-//            if ($platforms) $platforms = $platforms[0];
-//            $this->_api->set_api_key($platforms['api_key']);
-//            $this->_api->set_api_secret($platforms['api_secret']);
-//            $this->_api->auth();
-//            $status = $this->_api->register($data['username'], $data['username'], $data['email'], array(
-//                'first_name' => $data['firstname'],
-//                'last_name' => $data['lastname'],
-//            ));
-//            $error = null;
-//            if ($status->success) { // register player B successfully (A invite B)
-//                $this->_api->engine($data['username'], 'invited'); // send action player B refer A (B invited)
-//                $this->_api->engine($player['cl_player_id'], 'invite'); // send action player A was referred (A invite)
-//            } else {
-//                $error = $status->message;
-//            }
-//            if ($this->input->post('format') == 'json') {
-//                echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'Your registration has been saved!' : $error));
-//                exit();
-//            }
-//        }
-//
-//        if ($player) {
-//            $app = $this->App_model->getApp($player['site_id']);
-//            $this->data['app_name'] = $app['site_name'];
-//            $this->data['referral_code'] = $code;
-//        }
-//        $this->data['main'] = 'partial/referral_partial';
-//        $this->load->vars($this->data);
-//        $this->render_page('template_beforelogin');
+
+        $player = $this->Player_model->getPlayerByPasswordResetCode($code);
+        if (!$player) {
+            $this->data['topic_message'] = 'Your password reset code is invalid.';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+
+        $sess_data = array(
+            'player'=>$player
+        );
+        $this->session->set_userdata($sess_data);
+
+        if($this->session->userdata('player')) {
+
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[8]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if($this->form_validation->run()) {
+                    $new_password = $this->input->post('password');
+
+                    $this->Player_model->setPlayerPasswordByPlayerId($player['pb_player_id'], $new_password);
+                    $this->Player_model->deletePasswordResetCode($code);
+                    $this->session->unset_userdata('user');
+
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode(array('status' => 'success', 'message' => 'You password has been changed. You can login again with new password.'));
+                        exit();
+                    }
+
+                    $this->data['topic_message'] = 'Your password has been changed!';
+                    $this->data['message'] = 'You password has been changed. You can login again with new password.';
+                    $this->data['main'] = 'partial/something_wrong';
+                    $this->render_page('template_beforelogin');
+                }else{
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode(array('status' => 'error', 'message' => validation_errors()));
+                        exit();
+                    }
+                }
+            }
+
+            if ($player) {
+                $player_info = $this->Player_model->getPlayerById($player['pb_player_id']);
+                $this->data['player_info'] = $player_info;
+                $this->data['password_recovery_code'] = $code;
+            }
+            $this->data['main'] = 'partial/playerresetpassword_partial';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+        }
+    }
+
+    public function player_reset_password_complete() {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = 'Reset Password';
+        $this->data['topic_message'] = 'Completed Reset Password';
+        $this->data['message'] = 'You password has been changed. You can now login again with new password.';
+        $this->data['main'] = 'partial/something_wrong';
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
     }
 
     private function findGoodsToPlayerByGoodsId($goods_id, $goods_list) {

@@ -1627,11 +1627,27 @@ class Player_model extends MY_Model
     }
 
     public function getPlayerByPasswordResetCode($code) {
-        $this->mongo_db->select(array('client_id','site_id','cl_player_id','email','username','first_name','last_name'));
+        $this->mongo_db->select(array('pb_player_id'));
         $this->mongo_db->where('code', $code);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_player_password_reset');
         return $results ? $results[0] : array();
+    }
+
+    public function deletePasswordResetCode($code) {
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->delete('playbasis_player_password_reset');
+        return $result;
+    }
+
+    public function setPlayerPasswordByPlayerId($player_id, $password)
+    {
+        $this->mongo_db->where('_id', $player_id);
+        $this->mongo_db->set('password', do_hash($password));
+        $this->mongo_db->set('date_modified', new MongoDate());
+        $result = $this->mongo_db->update('playbasis_player');
+        return $result;
     }
 }
 ?>

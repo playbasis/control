@@ -60,6 +60,7 @@ $route['referral/'.ANY_STRING] = 'user/referral/$1';
 $route['referral'] = 'user/referral';
 $route['merchant_verify'] = 'user/merchant';
 $route['merchant_logout'] = 'user/merchant_logout';
+$route['player/password/reset/completed'] = 'user/player_reset_password_complete';
 $route['player/password/reset/'.ANY_STRING] = 'user/player_reset_password/$1';
 $route['player/password/reset'] = 'user/player_reset_password';
 
