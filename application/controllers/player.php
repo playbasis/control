@@ -813,6 +813,27 @@ class Player extends REST2_Controller
 		)), 200);
 	}
 
+	public function forgotPasswordEmail_post()
+	{
+		$required = $this->input->checkParam(array(
+			'email'
+		));
+		if ($required) {
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		}
+
+		$email = $this->input->post('email');
+		$player = $this->player_model->getPlayerByEmail($this->site_id, $email);
+		if (!$player) {
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		}
+		$player['pwd_reset_code'] = $this->player_model->generatePasswordResetCode($player['_id']);
+
+		$this->response($this->resp->setRespond(array(
+			'url' => $this->config->item('CONTROL_DASHBOARD_URL') . 'player/password/reset/' . $player['pwd_reset_code'])
+		), 200);
+	}
+
 	public function points_get($player_id = '')
 	{
 		if(!$player_id)
