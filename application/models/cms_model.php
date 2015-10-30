@@ -23,7 +23,8 @@ class CMS_model extends MY_Model
         );
         if($cms)
         {
-            $url = 'https://cms.pbapp.net/'.$cms['site_slug'].'/wp-json/posts?type='.$data['type'].'&filter[article-category]='.$data['category'].'&filter[posts_per_page]='.$data['paging'].'&page='.$data['page'];
+
+            $url = $this->config->item('CMS_URL').$cms['site_slug'].'/wp-json/posts?type='.$data['type'].'&filter[article-category]='.$data['category'].'&filter[posts_per_page]='.$data['paging'].'&page='.$data['page'];
             $ch = curl_init( $url );
             curl_setopt( $ch, CURLOPT_URL, $url);
             //curl_setopt( $ch, CURLOPT_POSTFIELDS, $info);
@@ -59,7 +60,7 @@ class CMS_model extends MY_Model
         $cms = $this->getCmsInfo($client,$site);
         if($cms)
         {
-            $url = 'https://cms.pbapp.net/'.$cms['site_slug'].'/wp-json/posts/'.$data['id'];
+            $url = $this->config->item('CMS_URL').$cms['site_slug'].'/wp-json/posts/'.$data['id'];
             $ch = curl_init( $url );
             curl_setopt( $ch, CURLOPT_URL, $url);
             //curl_setopt( $ch, CURLOPT_POSTFIELDS, $info);

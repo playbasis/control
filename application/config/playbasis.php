@@ -9,6 +9,7 @@ $config['REPORT_SKIP_CHECK_IMG_PATH'] = false;
 //$config['REPORT_SKIP_CHECK_IMG_PATH'] = true;
 $config['REPORT_DIR'] = 'report/';
 $config['REPORT_URL'] = 'http://report.pbapp.net/';
+$config['CMS_URL'] = 'https://cms.pbapp.net/';
 $config['REPORT_PDF'] = true;
 $config['REPORT_EMAIL'] = true;
 //$config['REPORT_EMAIL'] = false;
