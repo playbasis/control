@@ -276,7 +276,7 @@
 							"Required": "N",
 							"Default": "",
 							"Type": "string",
-							"Description": "hashed password"
+							"Description": "password of the player"
 						},
 						{
 							"Name": "first_name",
@@ -412,7 +412,7 @@
 							"Required": "N",
 							"Default": "",
 							"Type": "string",
-							"Description": "hashed password"
+							"Description": "password of the player"
 						},
 						{
 							"Name": "first_name",
@@ -564,7 +564,7 @@
 							"Required": "Y",
 							"Default": "",
 							"Type": "string",
-							"Description": "password as stored in Playbasis's database"
+							"Description": "password of the player"
 						}
 					]
 				},

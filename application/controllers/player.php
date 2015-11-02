@@ -353,7 +353,7 @@ class Player extends REST2_Controller
 		if ($instagramId) {
 			$playerInfo['instagram_id'] = $instagramId;
 		}
-		$password = $this->input->post('password');
+		$password = do_hash($this->input->post('password'));
 		if ($password) {
 			$playerInfo['password'] = $password;
 		}
@@ -526,7 +526,7 @@ class Player extends REST2_Controller
 		$instagramId = $this->input->post('instagram_id');
 		if($instagramId)
 			$playerInfo['instagram_id'] = $instagramId;
-		$password = $this->input->post('password');
+		$password = do_hash($this->input->post('password'));
 		if($password)
 			$playerInfo['password'] = $password;
 		$gender = $this->input->post('gender');
@@ -764,7 +764,7 @@ class Player extends REST2_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		}
 
-		$password = $this->input->post('password');
+		$password = do_hash($this->input->post('password'));
 
 		$player = null;
 		if ($email) {
