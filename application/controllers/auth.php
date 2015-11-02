@@ -16,39 +16,18 @@ class Auth extends REST2_Controller
 			'api_key',
 			'api_secret'
 		));
-		if ($required) {
+		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		}
 		$API['key'] = $this->input->post('api_key');
 		$API['secret'] = $this->input->post('api_secret');
-		$API['package_name'] = $this->input->post('pkg_name');
 		$clientInfo = $this->auth_model->getApiInfo($API);
-		if ($clientInfo) {
-			$platform = isset($clientInfo['platform']) ? $clientInfo['platform'] : null;
-			if ($platform && $platform == 'ios') {
-				if ($clientInfo['platform_data'] && $clientInfo['platform_data']['ios_bundle_id']) {
-					if (isset($API['package_name']) && $API['package_name']) {
-						if ($clientInfo['platform_data']['ios_bundle_id'] != $API['package_name']) {
-							$this->response($this->error->setError('PACKAGE_NAME_NOT_MATCH'), 200);
-						}
-					} else {
-						$this->response($this->error->setError('PACKAGE_NAME_NOT_PROVIDE'), 200);
-					}
-				}
-			} elseif (($platform && $platform == 'android')) {
-				if ($clientInfo['platform_data'] && $clientInfo['platform_data']['android_package_name']) {
-					if (isset($API['package_name'])) {
-						if ($clientInfo['platform_data']['android_package_name'] != $API['package_name']) {
-							$this->response($this->error->setError('PACKAGE_NAME_NOT_MATCH'), 200);
-						}
-					}else {
-						$this->response($this->error->setError('PACKAGE_NAME_NOT_PROVIDE'), 200);
-					}
-				}
-			}
+		if($clientInfo)
+		{
 			$token = $this->auth_model->generateToken(array_merge($clientInfo, $API));
 			$this->response($this->resp->setRespond($token), 200);
-		} else {
+		}
+		else
+		{
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET', $required), 200);
 		}
 	}
