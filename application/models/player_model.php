@@ -2366,49 +2366,6 @@ class Player_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_player_session');
         return $results ? $results[0] : null;
     }
-    public function registerDevice($data,$site_id)
-    {
-        $mongoDate = new MongoDate(time());
-        $this->mongo_db->select(null);
-        $this->mongo_db->where(array(
-            'pb_player_id' =>$data['pb_player_id'],
-            'site_id' => $data['site_id'],
-            'client_id' => $data['client_id'],
-            'uuid' => $data['uuid'],
-            'device_token' => $data['device_token']
-        ));
-        $this->mongo_db->limit(1);
-        $results = $this->mongo_db->get('playbasis_player_device');
-        if(!$results)
-        {
-            $this->mongo_db->insert('playbasis_player_device', array(
-                'pb_player_id' => $data['pb_player_id'],
-                'site_id' => $data['site_id'],
-                'client_id' => $data['client_id'],
-                'uuid' => $data['uuid'],
-                'device_token' => $data['device_token'],
-                'device_description' => $data['device_description'],
-                'device_name' => $data['device_name'],
-                'status' => true,
-                'date_added' => $mongoDate,
-                'date_modified' => $mongoDate,
-
-            ));
-        }
-        else{
-            $this->set_site_mongodb($site_id);
-            $this->mongo_db->where(array(
-                'pb_player_id' => new MongoId($data['player_id']),
-                'site_id' => new MongoId($data['site_id']),
-                'client_id' => $data['client_id'],
-                'udid' => $data['udid']
-            ));
-            $this->mongo_db->set('device_token',$data['device_token']);
-            $this->mongo_db->set('device_description',$data['device_description']);
-            $this->mongo_db->set('date_modified',$mongoDate);
-            $this->mongo_db->update('playbasis_player_device');
-        }
-    }
 
     public function isAnonymous($client_id, $site_id, $cl_player_id=null, $pb_player_id=null)
     {
@@ -2442,6 +2399,33 @@ class Player_model extends MY_Model
         return $results ? $results[0] : array();
     }
 
+    public function getPlayerByUsername($site_id, $username = null)
+    {
+        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('username', $username);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
+    public function getPlayerByEmail($site_id, $email = null)
+    {
+        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('email', $email);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
+    public function authPlayer($site_id, $player_id, $password)
+    {
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('_id', $player_id);
+        $this->mongo_db->where('password', $password);
+        $results = $this->mongo_db->count('playbasis_player');
+        return $results ? true : false;
+    }
+
     public function existsCode($code) {
         $this->mongo_db->where('code', $code);
         $this->mongo_db->limit(1);
@@ -2460,23 +2444,62 @@ class Player_model extends MY_Model
         $this->mongo_db->update('playbasis_player');
         return $code;
     }
+
+    public function existsPasswordResetCode($code) {
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->count('playbasis_player_password_reset') > 0;
+    }
+
+    public function generatePasswordResetCode($pb_player_id)
+    {
+        $code = null;
+        for ($i = 0; $i < 2; $i++) {
+            $code = get_random_code(8, false, true, true);
+            if (!$this->existsPasswordResetCode($code)) {
+                break;
+            }
+        }
+        if (!$code) {
+            throw new Exception('Cannot generate unique player code');
+        }
+
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $records = $this->mongo_db->get('playbasis_player_password_reset');
+        if (!$records) {
+            $this->mongo_db->insert('playbasis_player_password_reset', array(
+                'pb_player_id' => $pb_player_id,
+                'code' => $code,
+                'date_expire' => new MongoDate(strtotime("+1 day")),
+            ));
+        } else {
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+            $this->mongo_db->set('code', $code);
+            $this->mongo_db->set('date_expire', new MongoDate(strtotime("+1 day")));
+            $this->mongo_db->update('playbasis_player_password_reset');
+        }
+        return $code;
+    }
+
 	public function storeDeviceToken($data)
 	{
 		$mongoDate = new MongoDate(time());
 
 		$this->mongo_db->select(null);
 		$this->mongo_db->where(array(
+			'client_id' => new MongoId($data['client_id']),
+			'site_id' => new MongoId($data['site_id']),
 			'pb_player_id' => new MongoId($data['pb_player_id']),
 			'device_token' => $data['device_token']
 		));
 		$this->mongo_db->limit(1);
 		$results = $this->mongo_db->get('playbasis_player_device');
-		if(!$results)
+		if (!$results)
 		{
 			$this->mongo_db->insert('playbasis_player_device', array(
-
-				'pb_player_id' => new MongoId($data['pb_player_id']),
+				'client_id' => new MongoId($data['client_id']),
 				'site_id' => new MongoId($data['site_id']),
+				'pb_player_id' => new MongoId($data['pb_player_id']),
 				'device_token' => $data['device_token'],
 				'device_description' => $data['device_description'],
 				'device_name' => $data['device_name'],
@@ -2484,10 +2507,19 @@ class Player_model extends MY_Model
 				'status' => true,
 				'date_added' => $mongoDate,
 				'date_modified' => $mongoDate,
-
 			));
 		}
+	}
 
+	public function listDevices($client_id, $site_id, $pb_player_id, $fields=null)
+	{
+		if ($fields) $this->mongo_db->select($fields);
+		$this->mongo_db->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'pb_player_id' => $pb_player_id,
+		));
+		return $this->mongo_db->get('playbasis_player_device');
 	}
 }
 

@@ -54,6 +54,7 @@ class Quiz extends REST2_Controller
         $this->load->model('reward_model');
         $this->load->model('email_model');
         $this->load->model('sms_model');
+        $this->load->model('push_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -386,6 +387,14 @@ class Quiz extends REST2_Controller
                             break;
                         case 'sms':
                             $this->processSms(array(
+                                'client_id' => $this->client_id,
+                                'site_id' => $this->site_id,
+                                'pb_player_id' => $pb_player_id,
+                                'template_id' => $template_id,
+                            ));
+                            break;
+                        case 'push':
+                            $this->processPushNotification(array(
                                 'client_id' => $this->client_id,
                                 'site_id' => $this->site_id,
                                 'pb_player_id' => $pb_player_id,
@@ -830,6 +839,46 @@ class Quiz extends REST2_Controller
         $response = $this->twiliomini->sms($from, $to, $message);
         $this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
         return $response->IsError;
+    }
+
+    private function processPushNotification($input)
+    {
+        /* check permission according to billing cycle */
+        $access = true;
+        try {
+            $this->client_model->permissionProcess(
+                $input['client_id'],
+                $input['site_id'],
+                "notifications",
+                "push"
+            );
+        } catch(Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED")
+                $access = false;
+        }
+        if (!$access) return false;
+
+        /* get devices */
+        $player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+        $devices = $this->player_model->listDevices($input['client_id'], $input['site_id'], $input['pb_player_id'], array('device_token', 'os_type'));
+        if (!$devices) return false;
+
+        /* check valid template_id */
+        $template = $this->push_model->getTemplateById($input['site_id'], $input['template_id']);
+        if (!$template) return false;
+
+        /* send push notification */
+        if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($input['pb_player_id']);
+        $message = $this->utility->replace_template_vars($template['body'], $player);
+        foreach ($devices as $device) {
+            $this->push_model->initial(array(
+                'device_token' => $device['device_token'],
+                'messages' => $message,
+                'badge_number' => 1,
+                'data' => null,
+            ), $device['os_type']);
+        }
+        return true;
     }
 
     /**

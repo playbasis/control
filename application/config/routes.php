@@ -106,6 +106,8 @@ $route['Player/'.ANY_STRING.'/sessions'] = 'player/sessions/$1';
 $route['Player/sessions'] = 'player/sessions';
 $route['Player/session/'.ANY_STRING] = 'player/session/$1';
 $route['Player/session'] = 'player/session';
+$route['Player/auth'] = 'player/auth';
+$route['Player/password/email'] = 'player/forgotPasswordEmail';
 
 $route['Player/rank/'.ANY_STRING.'/'.ANY_NUMBER] = 'player/rank/$1/$2';
 $route['Player/rank/'.ANY_STRING] = 'player/rank/$1/20';
@@ -217,6 +219,10 @@ $route['Service/commentActivityFeed/'.ANY_STRING] = 'service/comment_activity/$1
 $route['Service/commentActivityFeed'] = 'service/comment_activity';
 $route['Service/reset_point'] = 'service/reset_point';
 
+//Internal API
+$route['Internal/listLimitFeature'] = 'internal/listLimitFeature';
+
+
 //Quest
 //$route['quest/testquest'] = 'quest/testQuest';
 $route['Quest/'.ANY_STRING] = 'quest/index/$1';
@@ -281,6 +287,11 @@ $route['Promo'] = 'promo/list';
 $route['Promo/list'] = 'promo/list';
 $route['Promo/name'] = 'promo/detailByName';
 $route['Promo/name/' . ANY_STRING] = 'promo/detailByName/$1';
+
+//CMS API
+$route['CMS/getArticles'] = 'cms/getArticles';
+$route['CMS/getArticle'] = 'cms/getArticle';
+$route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 
 //misc
 //$route['test']	= 'playbasis/test';

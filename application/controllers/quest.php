@@ -1465,6 +1465,19 @@ class Quest extends REST2_Controller
         $template = $this->email_model->getTemplateById($input['site_id'], $input['input']['template_id']);
         if (!$template) return false;
 
+        /* player-2 */
+        if (isset($input['player-2'])) {
+            $player2 = $this->player_model->getById($input['site_id'], $input['player-2']);
+            if ($player2) {
+                $player['first_name-2'] = $player2['first_name'];
+                $player['last_name-2'] = $player2['last_name'];
+                $player['cl_player_id-2'] = $player2['cl_player_id'];
+                $player['email-2'] = $player2['email'];
+                $player['phone_number-2'] = $player2['phone_number'];
+                if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) $player['code-2'] = $this->player_model->generateCode($input['player-2']);
+            }
+        }
+
         /* send email */
         $from = EMAIL_FROM;
         $to = $email;
@@ -1502,6 +1515,19 @@ class Quest extends REST2_Controller
         $template = $this->sms_model->getTemplateById($input['site_id'], $input['input']['template_id']);
         if (!$template) return false;
 
+        /* player-2 */
+        if (isset($input['player-2'])) {
+            $player2 = $this->player_model->getById($input['site_id'], $input['player-2']);
+            if ($player2) {
+                $player['first_name-2'] = $player2['first_name'];
+                $player['last_name-2'] = $player2['last_name'];
+                $player['cl_player_id-2'] = $player2['cl_player_id'];
+                $player['email-2'] = $player2['email'];
+                $player['phone_number-2'] = $player2['phone_number'];
+                if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) $player['code-2'] = $this->player_model->generateCode($input['player-2']);
+            }
+        }
+
         /* send SMS */
         $this->config->load("twilio",TRUE);
         $config = $this->sms_model->getSMSClient($input['client_id'], $input['site_id']);
@@ -1520,31 +1546,58 @@ class Quest extends REST2_Controller
 
     protected function processPushNotification($input)
     {
-        $where = array(
-            'client_id' => $input['client_id'],
-            'site_id' => $input['site_id'],
-            'pb_player_id' => $input['pb_player_id'],
-        );
-        $this->mongo_db->select('device_token');
-        $this->mongo_db->where($where);
-        $results = $this->mongo_db->get('playbasis_player_device');
+        /* check permission according to billing cycle */
+        $access = true;
+        try {
+            $this->client_model->permissionProcess(
+                $input['client_id'],
+                $input['site_id'],
+                "notifications",
+                "push"
+            );
+        } catch(Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED")
+                $access = false;
+        }
+        if (!$access) return false;
+
+        /* get devices */
+        $player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+        $devices = $this->player_model->listDevices($input['client_id'], $input['site_id'], $input['pb_player_id'], array('device_token', 'os_type'));
+        if (!$devices) return false;
 
         /* check valid template_id */
-        $template = $this->email_model->getTemplateById($input['site_id'], $input['input']['template_id']);
+        $template = $this->push_model->getTemplateById($input['site_id'], $input['input']['template_id']);
         if (!$template) return false;
 
-
-        $notificationInfo = array_merge($where, array(
-            'messages' => $template['body'],
-            'badge_number' => 1
-        ));
-            //'data' => $data,
-        foreach($results as $device)
-        {
-            $notificationInfo['device_token'] = $device['device_token'];
-            $this->push_model->initial($notificationInfo, $device['type']);
+        /* player-2 */
+        if (isset($input['player-2'])) {
+            $player2 = $this->player_model->getById($input['site_id'], $input['player-2']);
+            if ($player2) {
+                $player['first_name-2'] = $player2['first_name'];
+                $player['last_name-2'] = $player2['last_name'];
+                $player['cl_player_id-2'] = $player2['cl_player_id'];
+                $player['email-2'] = $player2['email'];
+                $player['phone_number-2'] = $player2['phone_number'];
+                if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) $player['code-2'] = $this->player_model->generateCode($input['player-2']);
+            }
         }
+
+        /* send push notification */
+        if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($input['pb_player_id']);
+        if (isset($input['coupon'])) $player['coupon'] = $input['coupon'];
+        $message = $this->utility->replace_template_vars($template['body'], $player);
+        foreach ($devices as $device) {
+            $this->push_model->initial(array(
+                'device_token' => $device['device_token'],
+                'messages' => $message,
+                'badge_number' => 1,
+                'data' => null,
+            ), $device['os_type']);
+        }
+        return true;
     }
+
     /**
      * Use with array_walk and array_walk_recursive.
      * Recursive iterable items to modify array's value

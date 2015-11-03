@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
-require_once(APPPATH.'controllers/engine.php');
+require_once(APPPATH . 'controllers/engine.php');
 class Player extends REST2_Controller
 {
 	public function __construct()
@@ -351,7 +351,7 @@ class Player extends REST2_Controller
 		if ($instagramId) {
 			$playerInfo['instagram_id'] = $instagramId;
 		}
-		$password = $this->input->post('password');
+		$password = do_hash($this->input->post('password'));
 		if ($password) {
 			$playerInfo['password'] = $password;
 		}
@@ -430,7 +430,7 @@ class Player extends REST2_Controller
 				'pb_player_id' => $playerA['_id'],
 				'action_id' => $inviteAction['action_id'],
 				'action_name' => 'invite',
-				'url' => $player_id,
+				'player-2' => $pb_player_id,
 				'test' => false
 			));
 			$engine->processRule($input, $this->validToken, null, null);
@@ -440,7 +440,7 @@ class Player extends REST2_Controller
 				'pb_player_id' => $pb_player_id,
 				'action_id' => $invitedAction['action_id'],
 				'action_name' => 'invited',
-				'url' => $playerA['cl_player_id'],
+				'player-2' => $playerA['_id'],
 				'test' => false
 			));
 			$engine->processRule($input, $this->validToken, null, null);
@@ -524,7 +524,7 @@ class Player extends REST2_Controller
 		$instagramId = $this->input->post('instagram_id');
 		if($instagramId)
 			$playerInfo['instagram_id'] = $instagramId;
-		$password = $this->input->post('password');
+		$password = do_hash($this->input->post('password'));
 		if($password)
 			$playerInfo['password'] = $password;
 		$gender = $this->input->post('gender');
@@ -640,7 +640,6 @@ class Player extends REST2_Controller
 					}
 				}
 			}
-			//$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		}
 
 		//trigger and log event
@@ -665,16 +664,6 @@ class Player extends REST2_Controller
 		if ($session_id) {
 			$this->player_model->login($this->client_id, $this->site_id, $pb_player_id, $session_id, $session_expires_in);
 		}
-
-		/*$this->player_model->registerDevice(array(
-			'pb_player_id' => $pb_player_id,
-			'site_id' => $this->validToken['site_id'],
-			'client_id' => $this->validToken['client_id'],
-			'uuid' => $this->validToken['uuid'],
-			'device_token' => $this->validToken['device_token'],
-			'device_description' => $this->validToken['device_description'],
-			'device_name' => $this->validToken['device_name']
-		),$this->validToken['site_id']);*/
 
 		$this->response($this->resp->setRespond(), 200);
 	}
@@ -758,6 +747,91 @@ class Player extends REST2_Controller
 
 		$this->response($this->resp->setRespond($player), 200);
 	}
+
+	public function auth_post()
+	{
+		$required = $this->input->checkParam(array(
+			'password'
+		));
+		$username = $this->input->post('username');
+		$email = $this->input->post('email');
+		if (!$email && !$username) {
+			array_push($required, 'username', 'email');
+		}
+		if ($required) {
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		}
+
+		$password = do_hash($this->input->post('password'));
+
+		$player = null;
+		if ($email) {
+			$player = $this->player_model->getPlayerByEmail($this->site_id, $email);
+		} elseif ($username && is_null($player)) {
+			$player = $this->player_model->getPlayerByUsername($this->site_id, $username);
+		} else {
+			$player = null;
+		}
+		if (!$player) {
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		}
+
+		$auth = $this->player_model->authPlayer($this->site_id, $player['_id'], $password);
+		if (!$auth) {
+			$this->response($this->error->setError('PASSWORD_INCORRECT'), 200);
+		}
+
+		//trigger and log event
+		$eventMessage = $this->utility->getEventMessage('login');
+		$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
+			'client_id' => $this->client_id,
+			'site_id' => $this->site_id,
+			'pb_player_id' => $player['_id'],
+			'action_log_id' => null
+		));
+		//publish to node stream
+		$this->node->publish(array(
+			'pb_player_id' => $player['_id'],
+			'action_name' => 'login',
+			'action_icon' => 'fa-sign-in',
+			'message' => $eventMessage
+		), $this->validToken['domain_name'], $this->validToken['site_id']);
+
+		/* Optionally, keep track of session */
+		$session_id = get_random_code(40, true, true, true);
+		$session_expires_in = PLAYER_AUTH_SESSION_TIMEOUT;
+		if ($session_id) {
+			$this->player_model->login($this->client_id, $this->site_id, $player['_id'], $session_id,
+				$session_expires_in);
+		}
+
+		$this->response($this->resp->setRespond(array(
+			'cl_player_id' => $player['cl_player_id'],
+			'session_id' => $session_id
+		)), 200);
+	}
+
+	public function forgotPasswordEmail_post()
+	{
+		$required = $this->input->checkParam(array(
+			'email'
+		));
+		if ($required) {
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		}
+
+		$email = $this->input->post('email');
+		$player = $this->player_model->getPlayerByEmail($this->site_id, $email);
+		if (!$player) {
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		}
+		$player['pwd_reset_code'] = $this->player_model->generatePasswordResetCode($player['_id']);
+
+		$this->response($this->resp->setRespond(array(
+			'url' => $this->config->item('CONTROL_DASHBOARD_URL') . 'player/password/reset/' . $player['pwd_reset_code'])
+		), 200);
+	}
+
 	public function points_get($player_id = '')
 	{
 		if(!$player_id)

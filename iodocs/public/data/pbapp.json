@@ -276,7 +276,7 @@
 							"Required": "N",
 							"Default": "",
 							"Type": "string",
-							"Description": "hashed password"
+							"Description": "password of the player"
 						},
 						{
 							"Name": "first_name",
@@ -412,7 +412,7 @@
 							"Required": "N",
 							"Default": "",
 							"Type": "string",
-							"Description": "hashed password"
+							"Description": "password of the player"
 						},
 						{
 							"Name": "first_name",
@@ -445,6 +445,29 @@
 							"Default": "",
 							"Type": "string",
 							"Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
+						}
+					]
+				},
+				{
+					"MethodName": "Reset player password",
+					"Synopsis": "Reset player password that store in Playbasis system.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/password/email",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "email",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "email as used in client's website"
 						}
 					]
 				},
@@ -505,6 +528,43 @@
 							"Default": "",
 							"Type": "string",
 							"Description": "session expires in seconds"
+						}
+					]
+				},
+				{
+					"MethodName": "Player Auth",
+					"Synopsis": "Authenticate player with data in Playbasis system then login and also create session.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/auth",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "email",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "email as used in client's website (either email or username is required)"
+						},
+						{
+							"Name": "username",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "username as used in client's website (either email or username is required)"
+						},
+						{
+							"Name": "password",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "password of the player"
 						}
 					]
 				},
@@ -2639,6 +2699,65 @@
                     ]
                 }
             ]
-        }
+        },
+	  	{
+			"name" : "CMS API",
+		  	"methods" :[
+			  	{
+					"MethodName": "Get Articles",
+					"Synopsis": "list articles by category",
+					"HTTPMethod": "GET",
+					"URI": "/CMS/getArticles",
+					"RequiresOAuth": "N",
+					"parameters": [
+					  {
+						"Name": "type",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "Type of contents"
+					  },
+					  {
+						"Name": "category",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "Category of contents"
+					  },
+					  {
+						"Name": "paging",
+						"Required": "N",
+						"Default": "",
+						"Type": "string",
+						"Description": "how many contents per page"
+					  },
+					  {
+						"Name": "page",
+						"Required": "N",
+						"Default": "",
+						"Type": "string",
+						"Description": "number of page"
+					  }
+					]
+				},
+				{
+				  "MethodName": "Get Article",
+				  "Synopsis": "list article by id",
+				  "HTTPMethod": "GET",
+				  "URI": "/CMS/getArticle/:article_id",
+				  "RequiresOAuth": "N",
+				  "parameters": [
+					{
+					  "Name": "article_id",
+					  "Required": "Y",
+					  "Default": "",
+					  "Type": "string",
+					  "Description": "id of content"
+					}
+				  ]
+				}
+			]
+	  	}
+
 	]
 }

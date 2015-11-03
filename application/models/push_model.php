@@ -205,16 +205,17 @@ class Push_model extends MY_Model
         }
     }
 
-    public function getIosSetup($client_id = null, $site_id = null) {
+    public function getIosSetup($client_id=null, $site_id=null) {
         $this->set_site_mongodb($site_id);
-        //$this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('client_id', $client_id);
         $results = $this->mongo_db->get("playbasis_push_ios");
         return $results ? $results[0] : null;
     }
-    public function getAndroidSetup($client_id = null,$site_id = null)
+
+    public function getAndroidSetup($client_id=null, $site_id=null)
     {
         $this->set_site_mongodb($site_id);
-        //$this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('client_id', $client_id);
         $results = $this->mongo_db->get("playbasis_push_android");
         return $results ? $results[0] : null;
     }
@@ -227,13 +228,13 @@ class Push_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_push_to_client');
         return $results ? $results[0] : null;
     }
+
     public function listDevice($pb_player_id)
     {
         $this->mongo_db->select(null);
         $this->mongo_db->where(array(
             'pb_player_id' => new MongoId($pb_player_id),
         ));
-        $results = $this->mongo_db->get('playbasis_player_device');
-        return $results;
+        return $this->mongo_db->get('playbasis_player_device');
     }
 }
