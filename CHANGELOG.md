@@ -1,8 +1,44 @@
 # Change Log
 
-## [v2.2.25](https://github.com/playbasis/control/tree/v2.2.25)
+## [v2.2.26](https://github.com/playbasis/control/tree/v2.2.26) (2015-11-03)
 
-[Full Changelog](https://github.com/playbasis/control/compare/change_action_of_referral_program...HEAD)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_bug_cannot_update_rule_status...v2.2.26)
+
+**Implemented enhancements:**
+
+- Feature/pb 146 reset player password [\#40](https://github.com/playbasis/control/pull/40) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Feature/preset rules [\#38](https://github.com/playbasis/control/pull/38) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Allow admin to create rule templates [\#37](https://github.com/playbasis/control/pull/37) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Impl preset badges [\#36](https://github.com/playbasis/control/pull/36) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Modify referral program page to take into account pkg\_name when calling /Auth API [\#34](https://github.com/playbasis/control/pull/34) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Set default value of player\_id for widget preview to be TEST\_PLAYER\_ID [\#33](https://github.com/playbasis/control/pull/33) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Feature/create test player when adding a site [\#32](https://github.com/playbasis/control/pull/32) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+**Fixed bugs:**
+
+- Fix problem cannot use badge as reward for rule in case of admin [\#41](https://github.com/playbasis/control/pull/41) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+**Merged pull requests:**
+
+- Feature/cms [\#39](https://github.com/playbasis/control/pull/39) ([patsita-playbasis](https://github.com/patsita-playbasis))
+- Feature/plans price [\#35](https://github.com/playbasis/control/pull/35) ([notjiam](https://github.com/notjiam))
+
+## [fix_bug_cannot_update_rule_status](https://github.com/playbasis/control/tree/fix_bug_cannot_update_rule_status) (2015-10-26)
+[Full Changelog](https://github.com/playbasis/control/compare/add_debug_log_when_sending_auth_code_via_sms...fix_bug_cannot_update_rule_status)
+
+## [add_debug_log_when_sending_auth_code_via_sms](https://github.com/playbasis/control/tree/add_debug_log_when_sending_auth_code_via_sms) (2015-10-22)
+[Full Changelog](https://github.com/playbasis/control/compare/v2.2.25...add_debug_log_when_sending_auth_code_via_sms)
+
+**Implemented enhancements:**
+
+- Update referral page to make use of register player API [\#31](https://github.com/playbasis/control/pull/31) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+**Fixed bugs:**
+
+- Make sure we save client\_id in \_push\_android and \_push\_ios [\#30](https://github.com/playbasis/control/pull/30) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [v2.2.25](https://github.com/playbasis/control/tree/v2.2.25) (2015-10-19)
+[Full Changelog](https://github.com/playbasis/control/compare/change_action_of_referral_program...v2.2.25)
 
 **Implemented enhancements:**
 
