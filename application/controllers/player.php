@@ -2,8 +2,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once(APPPATH . 'controllers/engine.php');
-define('AUTH_SESSION_TIMEOUT', 1440); //1440 secs
-
 class Player extends REST2_Controller
 {
 	public function __construct()
@@ -801,7 +799,7 @@ class Player extends REST2_Controller
 
 		/* Optionally, keep track of session */
 		$session_id = get_random_code(40, true, true, true);
-		$session_expires_in = AUTH_SESSION_TIMEOUT;
+		$session_expires_in = PLAYER_AUTH_SESSION_TIMEOUT;
 		if ($session_id) {
 			$this->player_model->login($this->client_id, $this->site_id, $player['_id'], $session_id,
 				$session_expires_in);
