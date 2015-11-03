@@ -151,6 +151,10 @@ class Error extends CI_Model
             $errorData['message'] = "Cannot find client ID";
             $errorData['error_code'] = '0013';
             break;
+        case 'CLIENTSITE_NOTFOUND':
+            $errorData['message'] = "Cannot find client ID and site ID in playbasis_permission";
+            $errorData['error_code'] = '0014';
+            break;
         case 'USER_NOT_EXIST':
             $errorData['message'] = "User doesn't exist";
             $errorData['error_code'] = '0200';

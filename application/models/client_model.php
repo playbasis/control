@@ -835,7 +835,7 @@ class Client_model extends MY_Model
         // get "date_start" && "date_expire" of client for permission processing
         $myplan_id = $this->getPlanIdByClientId($client_id);
         $myplan = $this->getPlanById($myplan_id);
-        $free_flag = $myplan['price'] <= 0;
+        $free_flag = !isset($myplan['price']) || $myplan['price'] <= 0;
         $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
 
         // get current usage
