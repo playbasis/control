@@ -63,7 +63,7 @@
                             }else{
                         ?>
                     <tr>
-                        <td colspan="5">
+                        <td class="center" colspan="5">
                         No quiz
                         </td>
                     </tr>

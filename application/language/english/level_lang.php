@@ -10,7 +10,10 @@ $lang['text_all']				= 'All';
 $lang['text_success']			= 'You have successfully created a level';
 $lang['text_success_update']	= 'You have successfully updated a level';
 $lang['text_success_delete']	= 'You have successfully deleted level(s)';
-
+$lang['text_guide_level']		= 'You can add levels automatically using one of provided templates: Curve, Pokemon, Disgea. Just choose how many levels you need and select template.<br>
+Level progression for each template (for first 20 levels):<br>
+[img]<br>
+You can also add levels manually.';
 
 // Button
 $lang['button_add']						= 'Add Badge';

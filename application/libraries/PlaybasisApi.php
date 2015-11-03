@@ -31,10 +31,11 @@ class PlaybasisApi{
         $this->api_secret = $api_secret;
     }
 
-    public function auth(){
+    public function auth($pkg_name=null){
         $result = $this->_post('Auth', array(
             'api_key' => $this->api_key,
             'api_secret' => $this->api_secret,
+            'pkg_name' => $pkg_name,
         ));
         if (isset($result->response->token)) $this->token = $result->response->token;
         return $result;

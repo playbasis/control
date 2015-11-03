@@ -35,7 +35,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <?php if (isset($custompoints)) { ?>
+                            <?php if (isset($custompoints) && $custompoints) { ?>
                             <?php foreach ($custompoints as $cs) { ?>
                             <tr>
                                 <td style="text-align: center;">
@@ -55,7 +55,7 @@
                                 <?php } ?>
                             <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="3"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                             <?php } ?>
                         </tbody>

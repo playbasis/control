@@ -36,7 +36,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($events) { ?>
+                    <?php if (isset($events) && $events) { ?>
                         <?php foreach ($events as $event) { ?>
                             <tr>
                                 <td style="text-align: center;"><?php if (isset($event['selected']) && $event['selected']) { ?>

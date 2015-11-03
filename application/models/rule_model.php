@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Rule_model extends MY_Model
 {
-    public function getActionJigsawList($siteId="",$clientId=""){
+    public function getActionJigsawList($siteId,$clientId){
         if (filter_var($clientId, FILTER_VALIDATE_BOOLEAN) !=
             filter_var($siteId, FILTER_VALIDATE_BOOLEAN))
             throw new Exception("error_xor_client_site");
@@ -19,8 +19,8 @@ class Rule_model extends MY_Model
         ));
         $this->mongo_db->where('status',  true);
         if ($clientId) {
-            $this->mongo_db->where('site_id',  new MongoID($siteId));
-            $this->mongo_db->where('client_id',  new MongoID($clientId));
+            $this->mongo_db->where('site_id', $siteId);
+            $this->mongo_db->where('client_id', $clientId);
             $results = $this->mongo_db->get("playbasis_action_to_client");
         } else {
             $results = $this->mongo_db->get("playbasis_action");
@@ -75,8 +75,8 @@ class Rule_model extends MY_Model
         ));
         $this->mongo_db->where('category', 'CONDITION');
         if ($clientId) {
-            $this->mongo_db->where('site_id', new MongoID($siteId));
-            $this->mongo_db->where('client_id', new MongoID($clientId));
+            $this->mongo_db->where('site_id', $siteId);
+            $this->mongo_db->where('client_id', $clientId);
             $results = $this->mongo_db->get("playbasis_game_jigsaw_to_client");
         } else {
             $results = $this->mongo_db->get("playbasis_jigsaw");
@@ -129,8 +129,8 @@ class Rule_model extends MY_Model
         ));
         $this->mongo_db->where('status', true);
         if ($clientId) {
-            $this->mongo_db->where('site_id', new MongoID($siteId));
-            $this->mongo_db->where('client_id', new MongoID($clientId));
+            $this->mongo_db->where('site_id', $siteId);
+            $this->mongo_db->where('client_id', $clientId);
             $ds = $this->mongo_db->get("playbasis_reward_to_client");
         } else {
             $ds = $this->mongo_db->get("playbasis_reward");
@@ -218,8 +218,8 @@ class Rule_model extends MY_Model
         ));
         $this->mongo_db->where('category', 'GROUP');
         if ($clientId) {
-            $this->mongo_db->where('site_id', new MongoID($siteId));
-            $this->mongo_db->where('client_id', new MongoID($clientId));
+            $this->mongo_db->where('site_id', $siteId);
+            $this->mongo_db->where('client_id', $clientId);
             $results = $this->mongo_db->get("playbasis_game_jigsaw_to_client");
         } else {
             $results = $this->mongo_db->get("playbasis_jigsaw");
@@ -258,7 +258,7 @@ class Rule_model extends MY_Model
     public function getFeedbackJigsawList($siteId, $clientId, $emailList, $smsList,$pushList) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $output = array();
-        if ($this->Feature_model->getFeatureExistByClientId($clientId, 'email') && !empty($emailList)) {
+        if ($this->getFeatureExistByClientId($clientId, 'email') && !empty($emailList)) {
             $type = 'email';
             $output[] = array(
                 '_id' => $type,
@@ -301,7 +301,7 @@ class Rule_model extends MY_Model
                 'category' => 'FEEDBACK',
             );
         }
-        if ($this->Feature_model->getFeatureExistByClientId($clientId, 'sms') && !empty($smsList)) {
+        if ($this->getFeatureExistByClientId($clientId, 'sms') && !empty($smsList)) {
             $type = 'sms';
             $output[] = array(
                 '_id' => $type,
@@ -336,7 +336,7 @@ class Rule_model extends MY_Model
             );
         }
 
-        if ($this->Feature_model->getFeatureExistByClientId($clientId, 'push') && !empty($pushList)) {
+        if ($this->getFeatureExistByClientId($clientId, 'push') && !empty($pushList)) {
             $type = 'push';
             $output[] = array(
                 '_id' => $type,
@@ -438,7 +438,7 @@ class Rule_model extends MY_Model
         return $this->mongo_db->count("playbasis_feature_to_client") > 0;
     }
 
-    function saveRule($input){
+    public function saveRule($input){
         $response = function($msg) {
             return array("success" => $msg);
         };
@@ -447,8 +447,8 @@ class Rule_model extends MY_Model
 
         if($input['rule_id']=='undefined'){
             $res = $this->mongo_db->insert('playbasis_rule', array(
-                'client_id' =>  new MongoID($input['client_id']),
-                'site_id' =>  new MongoID($input['site_id']),
+                'client_id' => $input['client_id'] ? new MongoID($input['client_id']) : null,
+                'site_id' => $input['site_id'] ? new MongoID($input['site_id']) : null,
                 'action_id' => new MongoID($input['action_id']),
                 'name' => $input['name'],
                 'description' => $input['description'],
@@ -469,8 +469,8 @@ class Rule_model extends MY_Model
             $rule = $this->getById($input['rule_id']);
             if ($rule) {
                 $this->mongo_db->where('_id', new MongoID($input['rule_id']));
-                $this->mongo_db->set('client_id', new MongoID($input['client_id']));
-                $this->mongo_db->set('site_id', new MongoID($input['site_id']));
+                $this->mongo_db->set('client_id', $input['client_id'] ? new MongoID($input['client_id']) : null);
+                $this->mongo_db->set('site_id', $input['site_id'] ? new MongoID($input['site_id']) : null);
                 $this->mongo_db->set('action_id', new MongoID($input['action_id']));
                 $this->mongo_db->set('name', $input['name']);
                 $this->mongo_db->set('description', $input['description']);
@@ -489,6 +489,75 @@ class Rule_model extends MY_Model
         }
     }
 
+    private function listRulesTemplate() {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', null);
+        $this->mongo_db->where('site_id', null);
+        $this->mongo_db->where('active_status', true);
+        return $this->mongo_db->get("playbasis_rule");
+    }
+
+    private function findIdByTemplateJigsawId($jigsaw_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('jigsaw_id', intval($jigsaw_id));
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_jigsaw");
+        return $results ? $results[0]['_id'] : null;
+    }
+
+    private function findRewardIdByTemplateRewardName($name) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_reward");
+        return $results ? $results[0]['_id'] : null;
+    }
+
+    public function copyRulesFromTemplate($client_id, $site_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $d = new MongoDate();
+        $rules = $this->listRulesTemplate();
+        if ($rules) foreach ($rules as &$rule) {
+            $rule['client_id'] = $client_id;
+            $rule['site_id'] = $site_id;
+            $rule['date_added'] = $d;
+            $rule['date_modified'] = $d;
+            foreach ($rule['jigsaw_set'] as &$each) {
+                switch ($each['category']) {
+                case 'ACTION':
+                    break;
+                case 'CONDITION':
+                    $specific_id = ''.$this->findIdByTemplateJigsawId($each['specific_id']);
+                    $each['id'] = $specific_id;
+                    $each['specific_id'] = $specific_id;
+                    $each['config']['condition_id'] = $specific_id;
+                    break;
+                case 'REWARD':
+                    $reward_id = ''.$this->findRewardIdByTemplateRewardName($each['name']);
+                    $each['specific_id'] = $reward_id;
+                    $each['config']['reward_id'] = $reward_id;
+                    break;
+                case 'GROUP':
+                    $specific_id = ''.$this->findIdByTemplateJigsawId($each['specific_id']);
+                    $each['id'] = $specific_id;
+                    $each['specific_id'] = $specific_id;
+                    $each['config']['group_id'] = $specific_id;
+                    foreach ($each['dataSet'][0]['value'] as $i => &$element) {
+                        $reward_id = ''.$this->findRewardIdByTemplateRewardName($element['name']);
+                        $element['specific_id'] = $reward_id;
+                        $element['config']['reward_id'] = $reward_id;
+                        $each['config']['group_container'][$i]['reward_id'] = $reward_id;
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+            unset($rule['_id']);
+        }
+        return $this->mongo_db->batch_insert('playbasis_rule', $rules, array("w" => 0, "j" => false));
+    }
+
     /*
      * Clone Rule from Template to Client's rule
      * template rule cannot duplicate in client table
@@ -498,14 +567,12 @@ class Rule_model extends MY_Model
      * @param string $site_id
      * @return array
      */
-    function cloneRule($rule_id, $client_id, $site_id){
+    public function cloneRule($rule_id, $client_id, $site_id){
         $response = function($msg) {
             return array("success" => $msg);
         };
         try {
             $rule_obj = new MongoID($rule_id);
-            $client_obj = new MongoID($client_id);
-            $site_obj = new MongoID($site_id);
         } catch (Exception $e) {
             return $response(false);
         }
@@ -515,8 +582,8 @@ class Rule_model extends MY_Model
         $is_client_used = $this->mongo_db->get_where("playbasis_rule",
             array(
                 "clone_id" => $rule_obj,
-                "client_id" => $client_obj,
-                "site_id" => $site_obj
+                "client_id" => $client_id,
+                "site_id" => $site_id
             )
         );
         // get template rule
@@ -527,8 +594,8 @@ class Rule_model extends MY_Model
                 $template["clone_id"] = $template["_id"];
                 $template["_id"] = new MongoID();
                 // save to client
-                $template["client_id"] = $client_obj;
-                $template["site_id"] = $site_obj;
+                $template["client_id"] = $client_id;
+                $template["site_id"] = $site_id;
                 $template["active_status"] = false;
                 $template["date_added"] = new MongoDate();
                 $template["date_modified"] = new MongoDate();
@@ -565,8 +632,8 @@ class Rule_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($ruleId));
-        $this->mongo_db->where('site_id', new MongoID($siteId));
-        $this->mongo_db->where('client_id', new MongoID($clientId));
+        $this->mongo_db->where('site_id', $siteId);
+        $this->mongo_db->where('client_id', $clientId);
         $res = $this->mongo_db->delete('playbasis_rule');
 
         if($res){
@@ -580,8 +647,8 @@ class Rule_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($ruleId));
-        $this->mongo_db->where('site_id', new MongoID($siteId));
-        $this->mongo_db->where('client_id', new MongoID($clientId));
+        $this->mongo_db->where('site_id', $siteId);
+        $this->mongo_db->where('client_id', $clientId);
         $this->mongo_db->set('active_status', (bool)$state);
         $res = $this->mongo_db->update('playbasis_rule');
 
@@ -596,9 +663,9 @@ class Rule_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         try{
-            $this->mongo_db->where('site_id', new MongoID($siteId));
-            $this->mongo_db->where('client_id', new MongoID($clientId));
             $this->mongo_db->where('_id', new MongoID($ruleId));
+            $this->mongo_db->where('site_id', $siteId);
+            $this->mongo_db->where('client_id', $clientId);
             $results = $this->mongo_db->get("playbasis_rule");
             $ds = $this->unserializeRuleSet($results);
 
@@ -617,22 +684,8 @@ class Rule_model extends MY_Model
         return false;
     }
 
-    public function getRulesByCombinationId($siteId, $clientId, $params=array('actionList' => null, 'actionNameDict' => null, 'conditionList' => null, 'rewardList' => null)) {
+    public function getRulesByCombinationId($siteId, $clientId, $params=array('actionList' => null, 'actionNameDict' => array(), 'conditionList' => null, 'rewardList' => null)) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $output = array(
-            'error'=>1,
-            'success'=>false,
-            'msg'=>'Error , invalid request format or missing parameter'
-        );
-
-        try {
-            $siteObj = new MongoID($siteId);
-            $clientObj = new MongoID($clientId);
-        }
-        catch (Exception $e) {
-            return $output;
-        }
 
         $this->mongo_db->select(array(
             '_id',
@@ -647,10 +700,8 @@ class Rule_model extends MY_Model
             'date_added',
             'date_modified'
         ));
-        $this->mongo_db->where('site_id', $siteObj);
-        $this->mongo_db->where('client_id', $clientObj);
-        if ($clientObj == $siteObj) // Admin
-            $this->mongo_db->where('active_status', true);
+        $this->mongo_db->where('site_id', $siteId);
+        $this->mongo_db->where('client_id', $clientId);
         $results = $this->mongo_db->get("playbasis_rule");
 
         $output = array(
@@ -663,7 +714,7 @@ class Rule_model extends MY_Model
             if(count($results)>0) {
                 /* init */
                 $rules = array();
-                $usage = $this->countUsage($siteObj);
+                $usage = $this->countUsage($siteId);
                 if ($usage) foreach ($usage as $each) {
                     $rules[$each['_id']['rule_id']->{'$id'}] = $each['n'];
                 }

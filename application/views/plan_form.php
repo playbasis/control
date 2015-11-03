@@ -19,6 +19,7 @@
             <a href="#tab-requests"><?php echo $this->lang->line('tab_requests'); ?></a>
             <a href="#tab-limits"><?php echo $this->lang->line('tab_limits'); ?></a>
             <a href="#tab-widget"><?php echo $this->lang->line('tab_widget'); ?></a>
+            <a href="#tab-cms"><?php echo $this->lang->line('tab_cms'); ?></a>
             <?php if($name!=""){?>
                 <a href="#tab-clients"><?php echo $this->lang->line('tab_clients'); ?></a>
             <?php }?>
@@ -97,7 +98,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($plan_features) { ?>
+                    <?php if (isset($plan_features) && $plan_features) { ?>
                         <?php foreach ($plan_features as $feature) { ?>
                         <tr>
                             <td style="text-align: center;">
@@ -126,13 +127,12 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"></td>
-
                         <td class="left"><?php echo $this->lang->line('column_name_action'); ?></td>
                         <td class="left"><?php echo $this->lang->line('column_name_owner'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($plan_actions) { ?>
+                    <?php if (isset($plan_actions) && $plan_actions) { ?>
                         <?php foreach ($plan_actions as $action) { ?>
                         <tr>
                             <td style="text-align: center;">
@@ -163,7 +163,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($plan_jigsaws) { ?>
+                    <?php if (isset($plan_jigsaws) && $plan_jigsaws) { ?>
                         <?php foreach ($plan_jigsaws as $jigsaw) { ?>
                         <tr>
                             <td style="text-align: center;">
@@ -196,7 +196,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($plan_rewards) { ?>
+                    <?php if (isset($plan_rewards) && $plan_rewards) { ?>
                         <?php foreach ($plan_rewards as $reward) { ?>
                         <tr>
                             <td class="left"><?php echo ucfirst($reward['name']); ?></td>
@@ -241,7 +241,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($limit_noti) { ?>
+                    <?php if (isset($limit_noti) && $limit_noti) { ?>
                         <?php foreach ($limit_noti as $key=>$value) { ?>
                         <tr>
                             <td class="left"><?php echo strtoupper($key); ?></td>
@@ -277,7 +277,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($limit_others) { ?>
+                    <?php if (isset($limit_others) && $limit_others) { ?>
                         <?php foreach ($limit_others as $key=>$value) { ?>
                         <tr>
                             <td class="left"><?php echo ucfirst($key); ?></td>
@@ -313,13 +313,44 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($limit_widget) { ?>
+                    <?php if (isset($limit_widget) && $limit_widget) { ?>
                         <?php foreach ($limit_widget as $key=>$value) { ?>
                             <tr>
                                 <td class="left"><?php echo ucfirst($key); ?></td>
                                 <td class="left">
                                     <?php
                                     echo form_checkbox('limit_widget['.$key.'][limit]', 'true', (isset($value)&&($value=='true'||$value))?true:false);
+                                    ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td class="center" colspan="2"><?php echo $this->lang->line('text_no_results'); ?></td>
+                        </tr>
+                    <?php } ?>
+                    <tr>
+                        <td class="center" colspan="2">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab-cms">
+                <table class="list">
+                    <thead>
+                    <tr>
+                        <td class="left"><?php echo $this->lang->line('column_name_feature'); ?></td>
+                        <td class="left" style="width: 150px;"><?php echo $this->lang->line('column_limit'); ?></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if ($limit_cms) { ?>
+                        <?php foreach ($limit_cms as $key=>$value) { ?>
+                            <tr>
+                                <td class="left"><?php echo ucfirst($key); ?></td>
+                                <td class="left">
+                                    <?php
+                                    echo form_checkbox('limit_cms['.$key.'][limit]', 'true', (isset($value)&&($value=='true'||$value))?true:false);
                                     ?>
                                 </td>
                             </tr>

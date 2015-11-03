@@ -75,5 +75,8 @@ define('NUMBER_OF_RECORDS_PER_PAGE', 10);
 
 define('API_SERVER', 'https://api.pbapp.net');
 define('NODE_SERVER', 'https://node.pbapp.net');
+define('WIDGET_SERVER', 'widget.pbapp.net');
+
+define('TEST_PLAYER_ID', 'test');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

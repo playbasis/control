@@ -149,71 +149,72 @@ class Push_model extends MY_Model
         return true;
     }
 
-    public function getIosSetup($client_id=null){
+    public function getIosSetup($client_id=null) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
         $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_push_ios");
-
         return $results ? $results[0] : null;
     }
 
-    public function updateIos($data){
+    public function updateIos($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $client_id = isset($data['client_id']) && !empty($data['client_id']) ? new MongoId($data['client_id']) : null;
         $env = isset($data['env']) && !empty($data['env']) ? $data['env'] : null;
-        if($this->getIosSetup($env)){
-            //$this->mongo_db->where('client_id', $client_id);
+        $d = new MongoDate();
+        if ($this->getIosSetup($env)) {
+            $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('env', $data['push-env']);
             $this->mongo_db->set('certificate', $data['push-certificate']);
             $this->mongo_db->set('password', $data['push-password']);
             $this->mongo_db->set('ca', $data['push-ca']);
-            $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+            $this->mongo_db->set('date_modified', $d);
             $this->mongo_db->update('playbasis_push_ios');
-        }else{
+        } else {
             $this->mongo_db->insert('playbasis_push_ios', array(
-                //'client_id' => $client_id,
+                'client_id' => $client_id,
                 'env' => $data['push-env'],
                 'certificate' => $data['push-certificate'],
                 'password' => $data['push-password'] ,
                 'ca' => $data['push-ca'],
-                'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                'date_modified' => $d,
+                'date_added' => $d
             ));
         }
     }
-    public function getAndroidSetup($client_id = null)
+
+    public function getAndroidSetup($client_id=null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
         $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_push_android");
-
         return $results ? $results[0] : null;
     }
+
     public function updateAndroid($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        //$client_id = isset($data['client_id']) && !empty($data['client_id']) ? new MongoId($data['client_id']) : null;
+        $client_id = isset($data['client_id']) && !empty($data['client_id']) ? new MongoId($data['client_id']) : null;
         $api_key = isset($data['api_key']) && !empty($data['api_key']) ? $data['api_key'] : null;
-        if($this->getAndroidSetup($api_key)){
-            //$this->mongo_db->where('client_id', $client_id);
+        $d = new MongoDate();
+        if ($this->getAndroidSetup($api_key)) {
+            $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('api_key', $data['push-key']);
             $this->mongo_db->set('sender_id', $data['push-sender']);
-            $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+            $this->mongo_db->set('date_modified', $d);
             $this->mongo_db->update('playbasis_push_android');
-        }else{
+        } else {
             $this->mongo_db->insert('playbasis_push_android', array(
-                //'client_id' => $client_id,
+                'client_id' => $client_id,
                 'api_key' => $data['push-key'],
                 'sender_id' => $data['push-sender'],
-                'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                'date_modified' => $d,
+                'date_added' => $d
             ));
         }
-
     }
 }
 ?>

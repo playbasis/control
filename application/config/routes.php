@@ -60,6 +60,10 @@ $route['referral/'.ANY_STRING] = 'user/referral/$1';
 $route['referral'] = 'user/referral';
 $route['merchant_verify'] = 'user/merchant';
 $route['merchant_logout'] = 'user/merchant_logout';
+$route['cms_login'] = 'user/cms_login';
+$route['player/password/reset/completed'] = 'user/player_reset_password_complete';
+$route['player/password/reset/'.ANY_STRING] = 'user/player_reset_password/$1';
+$route['player/password/reset'] = 'user/player_reset_password';
 
 $route['404_override'] = 'error/error_404';
 

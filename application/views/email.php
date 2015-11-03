@@ -38,7 +38,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <?php if (!empty($templates)) { ?>
+                            <?php if (isset($templates) && $templates) { ?>
                             <?php foreach ($templates as $email) { ?>
                             <tr <?php if (isset($email["is_template"]) && $email["is_template"]) {?> class="email_template" <?php } ?>>
                                 <td style="text-align: center;">
@@ -62,7 +62,7 @@
                                 <?php } ?>
                             <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="6"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                             <?php } ?>
                         </tbody>

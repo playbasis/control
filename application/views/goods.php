@@ -49,7 +49,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <?php if (isset($goods_list)) { ?>
+                            <?php if (isset($goods_list) && $goods_list) { ?>
                             <?php foreach ($goods_list as $goods) { ?>
                             <tr>
                                 <td style="text-align: center;">
@@ -96,7 +96,7 @@
                                 <?php } ?>
                             <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                             <?php } ?>
                         </tbody>

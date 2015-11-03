@@ -54,7 +54,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <?php if (!empty($templates)) { ?>
+                            <?php if (isset($templates) && $templates) { ?>
                             <?php foreach ($templates as $each) { ?>
                             <tr <?php if (isset($each["is_template"]) && $each["is_template"]) {?> class="push_template" <?php } ?>>
                                 <td style="text-align: center;">

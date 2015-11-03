@@ -42,7 +42,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($plans) { ?>
+                    <?php if (isset($plans) && $plans) { ?>
                         <?php foreach ($plans as $plan) { ?>
                         <tr>
                             <td style="text-align: center;"><?php if ($plan['selected']) { ?>
@@ -63,7 +63,7 @@
                             <?php } ?>
                         <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="4"><?php echo $this->lang->line('text_no_results'); ?></td>
+                        <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
                     </tr>
                         <?php } ?>
                     </tbody>

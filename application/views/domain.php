@@ -39,7 +39,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if (isset($domain_list)) { ?>
+                    <?php if (isset($domain_list) && $domain_list) { ?>
                         <?php foreach ($domain_list as $domain) { ?>
                         <tr>
                             <td style="text-align: center;">
