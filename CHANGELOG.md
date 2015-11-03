@@ -1,8 +1,80 @@
 # Change Log
 
-## [2.1.38](https://github.com/playbasis/api/tree/2.1.38)
+## [2.1.39](https://github.com/playbasis/api/tree/2.1.39) (2015-11-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39...2.1.39-alpha.8)
 
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.38-alpha.12...HEAD)
+## [2.1.39-alpha.8](https://github.com/playbasis/api/tree/2.1.39-alpha.8) (2015-11-02)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39-alpha.7...2.1.39-alpha.8)
+
+**Implemented enhancements:**
+
+- perform password hash with SHA1 on all player method [\#49](https://github.com/playbasis/api/pull/49) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+**Fixed bugs:**
+
+- perform password hash with SHA1 on all player method [\#49](https://github.com/playbasis/api/pull/49) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.1.39-alpha.7](https://github.com/playbasis/api/tree/2.1.39-alpha.7) (2015-10-30)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39-alpha.6...2.1.39-alpha.7)
+
+**Implemented enhancements:**
+
+- Feature/pb 143 send forgot password link [\#48](https://github.com/playbasis/api/pull/48) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Add API endpoint for `Player/auth` [\#46](https://github.com/playbasis/api/pull/46) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+**Merged pull requests:**
+
+- Feature/cms [\#47](https://github.com/playbasis/api/pull/47) ([patsita-playbasis](https://github.com/patsita-playbasis))
+
+## [2.1.39-alpha.6](https://github.com/playbasis/api/tree/2.1.39-alpha.6) (2015-10-26)
+[Full Changelog](https://github.com/playbasis/api/compare/fix_bug_missing_new_statement...2.1.39-alpha.6)
+
+## [fix_bug_missing_new_statement](https://github.com/playbasis/api/tree/fix_bug_missing_new_statement) (2015-10-26)
+[Full Changelog](https://github.com/playbasis/api/compare/fix_bug_didnt_fire_rule_for_register_player_api...fix_bug_missing_new_statement)
+
+## [fix_bug_didnt_fire_rule_for_register_player_api](https://github.com/playbasis/api/tree/fix_bug_didnt_fire_rule_for_register_player_api) (2015-10-26)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39-alpha.5...fix_bug_didnt_fire_rule_for_register_player_api)
+
+## [2.1.39-alpha.5](https://github.com/playbasis/api/tree/2.1.39-alpha.5) (2015-10-26)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39-alpha.4...2.1.39-alpha.5)
+
+**Implemented enhancements:**
+
+- Add Feature app package name authentication verify [\#45](https://github.com/playbasis/api/pull/45) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.1.39-alpha.4](https://github.com/playbasis/api/tree/2.1.39-alpha.4) (2015-10-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39-alpha.3...2.1.39-alpha.4)
+
+**Merged pull requests:**
+
+- create internal end-point for cms [\#44](https://github.com/playbasis/api/pull/44) ([patsita-playbasis](https://github.com/patsita-playbasis))
+
+## [2.1.39-alpha.3](https://github.com/playbasis/api/tree/2.1.39-alpha.3) (2015-10-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39-alpha.2...2.1.39-alpha.3)
+
+**Fixed bugs:**
+
+- Feature/support template var in push notification [\#43](https://github.com/playbasis/api/pull/43) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.1.39-alpha.2](https://github.com/playbasis/api/tree/2.1.39-alpha.2) (2015-10-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39-alpha.1...2.1.39-alpha.2)
+
+**Fixed bugs:**
+
+- Move model code out of controller & make sure we use "os\_type", not "type" [\#42](https://github.com/playbasis/api/pull/42) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.1.39-alpha.1](https://github.com/playbasis/api/tree/2.1.39-alpha.1) (2015-10-21)
+[Full Changelog](https://github.com/playbasis/api/compare/change_way_to_calculate_active_paying...2.1.39-alpha.1)
+
+**Implemented enhancements:**
+
+- Support player-2 information in template variables for referral program [\#41](https://github.com/playbasis/api/pull/41) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [change_way_to_calculate_active_paying](https://github.com/playbasis/api/tree/change_way_to_calculate_active_paying) (2015-10-20)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.38...change_way_to_calculate_active_paying)
+
+## [2.1.38](https://github.com/playbasis/api/tree/2.1.38) (2015-10-19)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.38-alpha.12...2.1.38)
 
 **Merged pull requests:**
 
@@ -70,17 +142,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule...2.1.38-alpha.1)
 
 ## [fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule](https://github.com/playbasis/api/tree/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule) (2015-10-07)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
 
 **Implemented enhancements:**
 
 - Implementimg new feature for PIN code verification [\#32](https://github.com/playbasis/api/pull/32) ([burachit-playbasis](https://github.com/burachit-playbasis))
 
-## [2.1.37](https://github.com/playbasis/api/tree/2.1.37) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...2.1.37)
-
 ## [2.1.37-alpha.6](https://github.com/playbasis/api/tree/2.1.37-alpha.6) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37-alpha.6)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...2.1.37-alpha.6)
+
+## [2.1.37](https://github.com/playbasis/api/tree/2.1.37) (2015-10-02)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37)
 
 **Merged pull requests:**
 
@@ -429,13 +501,13 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.3...2.1.24-alpha.4)
 
 ## [2.1.24-alpha.3](https://github.com/playbasis/api/tree/2.1.24-alpha.3) (2015-04-27)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.3)
-
-## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.3)
 
 ## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.2)
+
+## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.1)
 
 ## [2.1.20-alpha.1](https://github.com/playbasis/api/tree/2.1.20-alpha.1) (2015-03-18)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.19-alpha.1...2.1.20-alpha.1)
@@ -624,22 +696,22 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.3...2.1.1-alpha.2)
 
 ## [2.1.1-beta.3](https://github.com/playbasis/api/tree/2.1.1-beta.3) (2014-06-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.1...2.1.1-beta.3)
-
-## [2.1.1-beta.1](https://github.com/playbasis/api/tree/2.1.1-beta.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.1...2.1.1-beta.1)
-
-## [2.1.1-rc.1](https://github.com/playbasis/api/tree/2.1.1-rc.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.1...2.1.1-rc.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.1...2.1.1-beta.3)
 
 ## [2.1.1-alpha.1](https://github.com/playbasis/api/tree/2.1.1-alpha.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-rc.1...2.1.1-alpha.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.1...2.1.1-alpha.1)
 
-## [2.1.0-rc.1](https://github.com/playbasis/api/tree/2.1.0-rc.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-beta.1...2.1.0-rc.1)
+## [2.1.1-rc.1](https://github.com/playbasis/api/tree/2.1.1-rc.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.1...2.1.1-rc.1)
+
+## [2.1.1-beta.1](https://github.com/playbasis/api/tree/2.1.1-beta.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-beta.1...2.1.1-beta.1)
 
 ## [2.1.0-beta.1](https://github.com/playbasis/api/tree/2.1.0-beta.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-alpha.1...2.1.0-beta.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-rc.1...2.1.0-beta.1)
+
+## [2.1.0-rc.1](https://github.com/playbasis/api/tree/2.1.0-rc.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-alpha.1...2.1.0-rc.1)
 
 ## [2.1.0-alpha.1](https://github.com/playbasis/api/tree/2.1.0-alpha.1) (2014-06-06)
 [Full Changelog](https://github.com/playbasis/api/compare/1.0-ALPHA.2...2.1.0-alpha.1)
