@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+<link rel="stylesheet" type="text/css" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 <style type="text/css">
 	#content.plan-price-wrapper{
 		background: #fff;
