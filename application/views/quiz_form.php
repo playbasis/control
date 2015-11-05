@@ -633,8 +633,44 @@ function find_template($data, $type, $template_id) {
                                                         }
                                                         ?>
                                                     </div>
+                                                    <div id="push-panel">
+                                                        <?php
+                                                        if($pushes){
+                                                            ?>
+                                                            <br>
+                                                            <button id="push-entry" type="button" class="btn btn-success btn-large btn-block"><?php echo $this->lang->line('entry_push'); ?></button>
+                                                            <div class="pushes">
+                                                                <div class="reward-panel">
+                                                                    <?php
+                                                                    foreach($pushes as $push){
+                                                                        ?>
 
-                                                    
+                                                                        <?php
+                                                                        $user_b = "";
+                                                                        foreach($badge_user_set as $b){
+                                                                            if($b["badge_id"] == $badge['badge_id']){
+                                                                                $user_b = $b["badge_value"];
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                        ?>
+                                                                        <div class="each-push-template">
+                                                                            <label>
+                                                                                <?php $template = find_template($grade, 'push', $push['_id']); ?>
+                                                                                <?php $checked = $template && isset($template['checked']) && $template['checked']; ?>
+                                                                                <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][push][<?php echo $push['_id']; ?>][checked]" <?php echo $checked ? 'checked' : ''; ?>> <?php echo $push['name']; ?></h3>
+                                                                            </label>
+                                                                        </div>
+                                                                        <?php
+                                                                    }
+                                                                    ?>
+                                                                </div>
+                                                            </div>
+                                                            <?php
+                                                        }
+                                                        ?>
+                                                    </div>
+
 
                                                 </div>
                                             </td>
@@ -669,12 +705,14 @@ function find_template($data, $type, $template_id) {
         $(".rewards").hide();
         $(".emails").hide();
         $(".smses").hide();
+        $(".pushes").hide();
         $("#exp-entry").live('click', function() {$(this).parent().find(".exp").toggle()});
         $("#point-entry").live('click', function() {$(this).parent().find(".point").toggle()});
         $("#badge-entry").live('click', function() {$(this).parent().find(".badges").toggle()});
         $("#reward-entry").live('click', function() {$(this).parent().find(".rewards").toggle()});
         $("#email-entry").live('click', function() {$(this).parent().find(".emails").toggle()});
         $("#sms-entry").live('click', function() {$(this).parent().find(".smses").toggle()});
+        $("#push-entry").live('click', function() {$(this).parent().find(".pushes").toggle()});
 
         $('#tabs a').tabs();
 
@@ -917,6 +955,31 @@ function find_template($data, $type, $template_id) {
                         <?php
                         }
                         ?>
+                    </div>\
+                </div>\
+            <?php
+            }
+            ?>
+        </div>\
+        <div id="pushes-panel">\
+            <?php
+            if($pushes){
+                ?>
+                <br>\
+                <button id="push-entry" type="button" class="btn btn-success btn-large btn-block"><?php echo $this->lang->line('entry_push'); ?></button>\
+                <div class="pushes hide">\
+                    <div class="reward-panel">\
+                    <?php
+                    foreach($pushes as $push){
+                        ?>
+                        <div class="each-push-template">\
+                        <label>\
+                        <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][push][<?php echo $push['_id']; ?>]" > <?php echo $push['name']; ?></h3>\
+                        </label>\
+                        </div>\
+                    <?php
+                    }
+                    ?>
                     </div>\
                 </div>\
             <?php
