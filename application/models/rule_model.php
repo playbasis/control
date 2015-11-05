@@ -517,7 +517,8 @@ class Rule_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $d = new MongoDate();
         $rules = $this->listRulesTemplate();
-        if ($rules) foreach ($rules as &$rule) {
+        if (!$rules) return false;
+        foreach ($rules as &$rule) {
             $rule['client_id'] = $client_id;
             $rule['site_id'] = $site_id;
             $rule['date_added'] = $d;
