@@ -19,6 +19,7 @@ class Quest extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Email_model');
         $this->load->model('Sms_model');
+        $this->load->model('Push_model');
         $this->load->model('Rule_model');
         $this->load->model('Goods_model');
         $this->load->model('Permission_model');
@@ -364,6 +365,11 @@ class Quest extends MY_Controller
         case "SMS":
             $query_data['template_id'] = $object_data[$key_id];
             $template_detail = $this->Sms_model->getTemplate($query_data['template_id']);
+            $condition_data = array('name' => isset($template_detail['name']) ? $template_detail['name'] : '', 'message' => $template_detail && isset($template_detail['body']) ? $template_detail['body'] : '');
+            break;
+        case "PUSH":
+            $query_data['template_id'] = $object_data[$key_id];
+            $template_detail = $this->Push_model->getTemplate($query_data['template_id']);
             $condition_data = array('name' => isset($template_detail['name']) ? $template_detail['name'] : '', 'message' => $template_detail && isset($template_detail['body']) ? $template_detail['body'] : '');
             break;
         }
@@ -886,6 +892,12 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['template_id'] = $rr['template_id'];
                                 $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['feedback_data'] = $rr['feedback_data'];
                                 $countSmses++;
+                            }
+                            if($rr['feedback_type'] == 'PUSH'){
+                                $this->data['editMission'][$missionCount]['editPushRew'][$countPushes]['feedback_type'] = $rr['feedback_type'];
+                                $this->data['editMission'][$missionCount]['editPushRew'][$countPushes]['template_id'] = $rr['template_id'];
+                                $this->data['editMission'][$missionCount]['editPushRew'][$countPushes]['feedback_data'] = $rr['feedback_data'];
+                                $countPushes++;
                             }
                         }
                     }

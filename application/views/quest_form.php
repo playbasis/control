@@ -399,7 +399,7 @@
                                         <div class="item-container">
                                             <?php foreach($editPushRew as $push){ ?>
 
-                                                <div class="clearfix item-wrapper pushes-item-wrapper" data-id-sms="<?php echo $push['template_id'] ?>">
+                                                <div class="clearfix item-wrapper pushes-item-wrapper" data-id-push="<?php echo $push['template_id'] ?>">
                                                     <h4 class="span10"><?php echo $push['feedback_data']['name'];?></h4>
                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
                                                     <div class="clearfix"></div>
