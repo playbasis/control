@@ -19,6 +19,7 @@ class Quest extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Email_model');
         $this->load->model('Sms_model');
+        $this->load->model('Push_model');
         $this->load->model('Rule_model');
         $this->load->model('Goods_model');
         $this->load->model('Permission_model');
@@ -366,6 +367,11 @@ class Quest extends MY_Controller
             $template_detail = $this->Sms_model->getTemplate($query_data['template_id']);
             $condition_data = array('name' => isset($template_detail['name']) ? $template_detail['name'] : '', 'message' => $template_detail && isset($template_detail['body']) ? $template_detail['body'] : '');
             break;
+        case "PUSH":
+            $query_data['template_id'] = $object_data[$key_id];
+            $template_detail = $this->Push_model->getTemplate($query_data['template_id']);
+            $condition_data = array('name' => isset($template_detail['name']) ? $template_detail['name'] : '', 'message' => $template_detail && isset($template_detail['body']) ? $template_detail['body'] : '');
+            break;
         }
         return $condition_data;
     }
@@ -386,6 +392,7 @@ class Quest extends MY_Controller
         $this->load->model('Sms_model');
         $this->load->model('Image_model');
         $this->load->model('Level_model');
+        $this->load->model('Push_model');
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
@@ -447,6 +454,8 @@ class Quest extends MY_Controller
         $this->data['emails'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'email') ? $this->Email_model->listTemplatesBySiteId($data['site_id']) : null;
 
         $this->data['smses'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'sms') ? $this->Sms_model->listTemplatesBySiteId($data['site_id']) : null;
+
+        $this->data['pushes'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'push') ? $this->Push_model->listTemplatesBySiteId($data['site_id']) : null;
 
         if($quest_id != null && isset($editQuest) && !empty($editQuest)){
             // $data['quest_id'] = $quest_id;
@@ -654,6 +663,7 @@ class Quest extends MY_Controller
             if(isset($editQuest['feedbacks'])){
                 $countEmails = 0;
                 $countSmses = 0;
+                $countPushes = 0;
                 foreach($editQuest['feedbacks'] as $feedback){
                     if($feedback['feedback_type'] == 'EMAIL'){
                         $this->data['editEmailRew'][$countEmails]['feedback_type'] = $feedback['feedback_type'];
@@ -667,6 +677,12 @@ class Quest extends MY_Controller
                         $this->data['editSmsRew'][$countSmses]['template_id'] = isset($feedback['template_id'])?$feedback['template_id']:null;
                         $this->data['editSmsRew'][$countSmses]['feedback_data'] = isset($feedback['feedback_data'])?$feedback['feedback_data']:null;
                         $countSmses++;
+                    }
+                    if($feedback['feedback_type'] == 'PUSH'){
+                        $this->data['editPushRew'][$countPushes]['feedback_type'] = $feedback['feedback_type'];
+                        $this->data['editPushRew'][$countPushes]['template_id'] = isset($feedback['template_id'])?$feedback['template_id']:null;
+                        $this->data['editPushRew'][$countPushes]['feedback_data'] = isset($feedback['feedback_data'])?$feedback['feedback_data']:null;
+                        $countPushes++;
                     }
                 }
             }
@@ -861,6 +877,7 @@ class Quest extends MY_Controller
 
                     $countEmails = 0;
                     $countSmses = 0;
+                    $countPushes = 0;
                     if(isset($mission['feedbacks'])){
                         foreach($mission['feedbacks'] as $rr){
                             if($rr['feedback_type'] == 'EMAIL'){
@@ -875,6 +892,12 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['template_id'] = $rr['template_id'];
                                 $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['feedback_data'] = $rr['feedback_data'];
                                 $countSmses++;
+                            }
+                            if($rr['feedback_type'] == 'PUSH'){
+                                $this->data['editMission'][$missionCount]['editPushRew'][$countPushes]['feedback_type'] = $rr['feedback_type'];
+                                $this->data['editMission'][$missionCount]['editPushRew'][$countPushes]['template_id'] = $rr['template_id'];
+                                $this->data['editMission'][$missionCount]['editPushRew'][$countPushes]['feedback_data'] = $rr['feedback_data'];
+                                $countPushes++;
                             }
                         }
                     }
