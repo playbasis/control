@@ -348,6 +348,9 @@ class Quest_model extends MY_Model{
             if(isset($data[$field]) && !is_null($data[$field])){
                 $this->mongo_db->set($field, $data[$field]);
             }
+            else{
+                $this->mongo_db->set($field, null);
+            }
         }
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->update('playbasis_quest_to_client');
