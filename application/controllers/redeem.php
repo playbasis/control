@@ -242,6 +242,9 @@ class Redeem extends REST2_Controller
             if (empty($merchantRedeem)) {
                 $merchantGoodsGroups = $this->merchant_model->getMerchantGoodsGroups($this->validToken['client_id'],
                     $this->validToken['site_id'], $goods['group']);
+                if(empty($merchantGoodsGroups)){
+                    $this->response($this->error->setError('PIN_CODE_INVALID'), 200);
+                }
                 $branches_allow = array();
                 foreach ($merchantGoodsGroups as $merchantGoodsGroup) {
                     foreach ($merchantGoodsGroup['branches_allow'] as $branch) {
