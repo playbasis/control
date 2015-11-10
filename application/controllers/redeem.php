@@ -214,24 +214,23 @@ class Redeem extends REST2_Controller
     public function merchantGoodsGroup_post()
     {
         $required = $this->input->checkParam(array(
-            'player_id',
             'goods_id',
             'pincode'
         ));
         if ($required) {
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         }
+        $goods_id = $this->input->post('goods_id');
+        $validToken = $this->validToken;
+        $player_id = $this->player_model->getPbAndCilentIdByGoodsId($validToken, new MongoId($goods_id));
 
-        $cl_player_id = $this->input->post('player_id');
-        $validToken = array_merge($this->validToken, array(
-            'cl_player_id' => $cl_player_id
-        ));
-        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        $pb_player_id = $player_id['pb_player_id'];
+        $cl_player_id = $player_id['cl_player_id'];
+
         if (!$pb_player_id) {
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
 
-        $goods_id = $this->input->post('goods_id');
         $goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $this->validToken['site_id'],
             new MongoId($goods_id));
 
