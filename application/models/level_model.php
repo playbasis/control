@@ -91,6 +91,10 @@ class Level_model extends MY_Model
         return $level_data;
     }
 
+    public function getLevelConditions()
+    {
+        return $this->mongo_db->get('playbasis_level_to_condition');
+    }
     public function getTotalLevelsSite($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
