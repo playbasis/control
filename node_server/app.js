@@ -51,7 +51,7 @@ app.configure(function(){
 	app.use(feedParser);
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
-	
+
 });
 
 app.configure('development', function(){
@@ -120,7 +120,7 @@ db.once('open', function callback(){
 //console.log('connecting to db...');
 
 var redisSubClients = Object(); //an object holding redis clients that subscribed to a channel
-var redisPubClient = redis.createClient(); //redis client for publishing feeds
+var redisPubClient = redis.createClient(REDIS_SERVER_PORT, REDIS_SERVER_ADDRESS); //redis client for publishing feeds
 
 redisPubClient.on('error', function(err){
 	console.log('redis pub-client err: ' + err);
