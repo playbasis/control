@@ -51,16 +51,7 @@ app.configure(function(){
 	app.use(feedParser);
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
-
-	if (!process.env.NON_SSL_MODE) {
-		options = {
-			key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-			cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-			ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
-			requestCert: true,
-			rejectUnauthorized: false
-		}
-	}
+	
 });
 
 app.configure('development', function(){
