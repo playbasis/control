@@ -1,7 +1,7 @@
 require('newrelic');
 
 var REDIS_SERVER_PORT = 6379;
-var REDIS_SERVER_ADDRESS = '127.0.0.1';//'46.137.248.96';
+var REDIS_SERVER_ADDRESS = 'redis';//'46.137.248.96';
 var METHOD_PUBLISH_FEED = '/activitystream';
 var CHANNEL_PREFIX = 'as_';
 
@@ -20,13 +20,7 @@ var express = require('express')
 	//, mysql = require('mysql')
 	, fs = require('fs');
 
-var options = {
-	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
-	requestCert: true,
-	rejectUnauthorized: false
-};
+var options = {};
 
 //special parser for the activity feed
 function feedParser(req, res, next){
@@ -57,6 +51,16 @@ app.configure(function(){
 	app.use(feedParser);
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
+
+	if (!process.env.NON_SSL_MODE) {
+		options = {
+			key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+			cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+			ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+			requestCert: true,
+			rejectUnauthorized: false
+		}
+	}
 });
 
 app.configure('development', function(){
@@ -87,8 +91,8 @@ var mongoose = require('mongoose');
 
 var ClientSite;
 var NodeLog;
-db = mongoose.createConnection('dbv2.pbapp.net', 'core', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis', auth: { authSource: "admin" } });
-//db = mongoose.createConnection('localhost', 'core', 27017);
+//db = mongoose.createConnection('dbv2.pbapp.net', 'core', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis', auth: { authSource: "admin" } });
+db = mongoose.createConnection('192.168.10.1', 'core', 27017);
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
 
