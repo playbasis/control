@@ -53,7 +53,7 @@ app.configure(function(){
 	app.use(feedParser);
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
-    if (!process.env.NON_SSL_MODE){
+	if (!process.env.NON_SSL_MODE){
 		option = {
 			key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
 			cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
@@ -93,14 +93,14 @@ var mongoose = require('mongoose');
 var ClientSite;
 var NodeLog;
 db = mongoose.createConnection(
-	process.env['MONGO_HOST_ADDR'] || 'dbv2.pbapp.net',
-	'core',
-	process.env['MONGO_HOST_PORT'] || 27017,
-	{
-		user: process.env['MONGO_HOST_USERNAME'] || 'admin',
-		pass: process.env['MONGO_HOST_PASSWORD'] || 'mongodbpasswordplaybasis', //
-		auth: process.env['MONGO_HOST_AUTH']     || { authSource: "admin" }   //
-	});
+    process.env['MONGO_HOST_ADDR'] || 'dbv2.pbapp.net',
+    'core',
+    process.env['MONGO_HOST_PORT'] || 27017,
+    {
+        user: process.env['MONGO_HOST_USERNAME'] || 'admin',
+        pass: process.env['MONGO_HOST_PASSWORD'] || 'mongodbpasswordplaybasis', //
+        auth: process.env['MONGO_HOST_AUTH']     || { authSource: "admin" }   //
+    });
 //db = mongoose.createConnection(process.env['MONGO_HOST_ADDR'] || '192.168.10.1', 'core', 27017);
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
