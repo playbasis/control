@@ -97,9 +97,9 @@ db = mongoose.createConnection(
 	'core',
 	process.env['MONGO_HOST_PORT'] || 27017,
 	{
-		user: process.env['MONGO_HOST_USERNAME'], // 'admin'
-		pass: process.env['MONGO_HOST_PASSWORD'], // 'mongodbpasswordplaybasis'
-		auth: process.env['MONGO_HOST_AUTH']      // { authSource: "admin" }
+		user: process.env['MONGO_HOST_USERNAME'] || 'admin',
+		pass: process.env['MONGO_HOST_PASSWORD'] || 'mongodbpasswordplaybasis', //
+		auth: process.env['MONGO_HOST_AUTH']     || { authSource: "admin" }   //
 	});
 //db = mongoose.createConnection(process.env['MONGO_HOST_ADDR'] || '192.168.10.1', 'core', 27017);
 db.on('error', console.error.bind(console, 'connection error:'));
