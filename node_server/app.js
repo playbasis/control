@@ -1,7 +1,9 @@
 require('newrelic');
 
 var REDIS_SERVER_PORT = 6379;
-var REDIS_SERVER_ADDRESS = '127.0.0.1';//'46.137.248.96';
+var REDIS_SERVER_ADDRESS = process.env['REDIS_SERVER_ADDRESS'] || '127.0.0.1';//'46.137.248.96';
+var REDIS_CLIENT_PORT = 6379;
+var REDIS_CLIENT_ADDRESS = process.env['REDIS_CLIENT_ADDRESS'] || '127.0.0.1';
 var METHOD_PUBLISH_FEED = '/activitystream';
 var CHANNEL_PREFIX = 'as_';
 
@@ -20,13 +22,7 @@ var express = require('express')
 	//, mysql = require('mysql')
 	, fs = require('fs');
 
-var options = {
-	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
-	requestCert: true,
-	rejectUnauthorized: false
-};
+var options = {};
 
 //special parser for the activity feed
 function feedParser(req, res, next){
@@ -57,6 +53,15 @@ app.configure(function(){
 	app.use(feedParser);
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
+	if (!process.env.NON_SSL_MODE){
+		option = {
+			key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+			cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+			ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+			requestCert: true,
+			rejectUnauthorized: false
+		}
+	}
 });
 
 app.configure('development', function(){
@@ -87,8 +92,16 @@ var mongoose = require('mongoose');
 
 var ClientSite;
 var NodeLog;
-db = mongoose.createConnection('dbv2.pbapp.net', 'core', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis', auth: { authSource: "admin" } });
-//db = mongoose.createConnection('localhost', 'core', 27017);
+db = mongoose.createConnection(
+    process.env['MONGO_HOST_ADDR'] || 'dbv2.pbapp.net',
+    'core',
+    process.env['MONGO_HOST_PORT'] || 27017,
+    {
+        user: process.env['MONGO_HOST_USERNAME'] || 'admin',
+        pass: process.env['MONGO_HOST_PASSWORD'] || 'mongodbpasswordplaybasis', //
+        auth: process.env['MONGO_HOST_AUTH']     || { authSource: "admin" }   //
+    });
+//db = mongoose.createConnection(process.env['MONGO_HOST_ADDR'] || '192.168.10.1', 'core', 27017);
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
 
@@ -125,7 +138,7 @@ db.once('open', function callback(){
 //console.log('connecting to db...');
 
 var redisSubClients = Object(); //an object holding redis clients that subscribed to a channel
-var redisPubClient = redis.createClient(); //redis client for publishing feeds
+var redisPubClient = redis.createClient(REDIS_SERVER_PORT, REDIS_SERVER_ADDRESS); //redis client for publishing feeds
 
 redisPubClient.on('error', function(err){
 	console.log('redis pub-client err: ' + err);
@@ -135,7 +148,7 @@ redisPubClient.on('error', function(err){
 function createRedisSubClient(channel){
 
 	//assert(!redisSubClients[channel]);
-	redisSubClients[channel] = redis.createClient(REDIS_SERVER_PORT, REDIS_SERVER_ADDRESS);
+	redisSubClients[channel] = redis.createClient(REDIS_CLIENT_PORT, REDIS_CLIENT_ADDRESS);
 
 	redisSubClients[channel].on('error', function(err){
 		console.log('redis sub-client err: ' + err);
