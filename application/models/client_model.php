@@ -541,7 +541,7 @@ class Client_model extends MY_Model
         if(!$result)
             return;
         $goodsInfo = $result[0];
-        $mongoDate = new MongoDate(time());
+        $mongoDate = new MongoDate();
 
         if (!is_null($goodsInfo['quantity'])){
         	$remainingQuantity = $goodsInfo['quantity'] - $quantity;
@@ -831,15 +831,18 @@ class Client_model extends MY_Model
      * @param (notifications | requests | others) $type
      * @particular string $field
      */
-    public function permissionProcess($client_id, $site_id, $type, $field, $inc=1) {
+    public function permissionProcess($client_id, $site_id, $type, $field, $inc=1, $client_date=null) {
+	    $myplan = null;
         // get "date_start" && "date_expire" of client for permission processing
-        $myplan_id = $this->getPlanIdByClientId($client_id);
-        $myplan = $this->getPlanById($myplan_id);
-        $free_flag = !isset($myplan['price']) || $myplan['price'] <= 0;
-        $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
+	    if (!$client_date) {
+		    $myplan_id = $this->getPlanIdByClientId($client_id);
+		    $myplan = $this->getPlanById($myplan_id);
+		    $free_flag = !isset($myplan['price']) || $myplan['price'] <= 0;
+		    $client_date = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
+	    }
 
         // get current usage
-        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $clientDate);
+        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $client_date);
 
         // get limit by plan
         $limit = $this->getPlanLimitById($site_id, $usage["plan_id"], $type, $field);
@@ -851,6 +854,8 @@ class Client_model extends MY_Model
         } else {  // increase service usage
             $this->updatePermission($client_id, $site_id, $type, $field, $inc);
         }
+
+	    return array($client_date, $myplan);
     }
 
     /*
@@ -860,15 +865,9 @@ class Client_model extends MY_Model
      * @param (notifications | requests | others) $type
      * @particular string $field
      */
-    public function permissionCheck($client_id, $site_id, $type, $field) {
-        // get "date_start" && "date_expire" of client for permission processing
-        $myplan_id = $this->getPlanIdByClientId($client_id);
-        $myplan = $this->getPlanById($myplan_id);
-        $free_flag = $myplan['price'] <= 0;
-        $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
-
+    public function permissionCheck($client_id, $site_id, $type, $field, $client_date) {
         // get current usage
-        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $clientDate);
+        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $client_date);
 
         // get limit by plan
         $limit = $this->getPlanLimitById($site_id, $usage["plan_id"], $type, $field);

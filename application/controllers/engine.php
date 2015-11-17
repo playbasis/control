@@ -430,7 +430,8 @@ class Engine extends Quest
 				$client_id,
 				$site_id,
 				"others",
-				"rule"
+				"rule",
+				$this->client_date
 			);
 		}
 
@@ -813,7 +814,8 @@ class Engine extends Quest
 					$site_id,
 					"others",
 					"rule",
-					$count
+					$count,
+					$this->client_date
 				);
 			}
 		}  // close foreach($ruleSet as $rule)

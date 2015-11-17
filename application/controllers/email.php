@@ -27,7 +27,9 @@ class Email extends REST2_Controller
                 $this->client_id,
                 $this->site_id,
                 "notifications",
-                "email"
+                "email",
+	            1,
+	            $this->client_date
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")
@@ -66,7 +68,9 @@ class Email extends REST2_Controller
 				$this->client_id,
 				$this->site_id,
 				"notifications",
-				"email"
+				"email",
+				1,
+				$this->client_date
 			);
 		} catch(Exception $e) {
 			if ($e->getMessage() == "LIMIT_EXCEED")
@@ -128,7 +132,9 @@ class Email extends REST2_Controller
 				$this->client_id,
 				$this->site_id,
 				"notifications",
-				"email"
+				"email",
+				1,
+				$this->client_date
 			);
 		} catch(Exception $e) {
 			if ($e->getMessage() == "LIMIT_EXCEED")

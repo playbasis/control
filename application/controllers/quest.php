@@ -52,7 +52,8 @@ class Quest extends REST2_Controller
                     $client_id,
                     $site_id,
                     "others",
-                    "quest_usage"
+                    "quest_usage",
+                    $this->client_date
                 );
             } catch (Exception $e) {
                 /* we have to suppress LIMIT_EXCEED exception here because this quest processing is just a part of /Engine/rule call */
@@ -312,7 +313,9 @@ class Quest extends REST2_Controller
                             $client_id,
                             $site_id,
                             "others",
-                            "quest_usage"
+                            "quest_usage",
+                            1,
+                            $this->client_date
                         );
                     } catch (Exception $e) {
                         /* we have to suppress LIMIT_EXCEED exception here because this quest processing is just a part of /Engine/rule call */
@@ -1444,7 +1447,9 @@ class Quest extends REST2_Controller
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "email"
+                "email",
+                1,
+                $this->client_date
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")
@@ -1498,7 +1503,9 @@ class Quest extends REST2_Controller
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "sms"
+                "sms",
+                1,
+                $this->client_date
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")
@@ -1553,7 +1560,9 @@ class Quest extends REST2_Controller
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "push"
+                "push",
+                1,
+                $this->client_date
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")

@@ -25,7 +25,9 @@ class Pb_sms extends REST2_Controller
                 $this->client_id,
                 $this->site_id,
                 "notifications",
-                "sms"
+                "sms",
+                1,
+                $this->client_date
             );
             $access = true;
         } catch(Exception $e) {
