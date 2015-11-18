@@ -17,6 +17,8 @@ abstract class REST2_Controller extends REST_Controller
 	protected $validToken;
 	protected $client_id;
 	protected $site_id;
+	protected $client_date;
+	protected $client_plan;
 	private $log_id;
 
 	/**
@@ -96,7 +98,7 @@ abstract class REST2_Controller extends REST_Controller
             $url = "/".$url;
         }
         try {
-            $this->client_model->permissionProcess(
+            list($this->client_date, $this->client_plan) = $this->client_model->permissionProcess(
                 $this->client_id,
                 $this->site_id,
                 "requests",
@@ -117,8 +119,7 @@ abstract class REST2_Controller extends REST_Controller
         }
 
         /* 1.5 Check if mobile phone has been set-up for free accounts */
-        $myplan_id = $this->client_model->getPlanIdByClientId($this->client_id);
-        if ($myplan_id == FREE_PLAN) {
+        if ($this->client_plan['_id'] == FREE_PLAN) {
             if (!$this->client_model->hasSetUpMobile($this->client_id) && time() >= strtotime(DATE_FREE_ACCOUNT_SHOULD_SETUP_MOBILE)) {
                 $this->response($this->error->setError("SETUP_MOBILE"), 200);
             }

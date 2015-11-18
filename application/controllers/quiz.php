@@ -769,7 +769,9 @@ class Quiz extends REST2_Controller
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "email"
+                "email",
+                1,
+                $this->client_date
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")
@@ -809,7 +811,9 @@ class Quiz extends REST2_Controller
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "sms"
+                "sms",
+                1,
+                $this->client_date
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")
@@ -850,7 +854,9 @@ class Quiz extends REST2_Controller
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "push"
+                "push",
+                1,
+                $this->client_date
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")

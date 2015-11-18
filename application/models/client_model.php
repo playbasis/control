@@ -491,7 +491,7 @@ class Client_model extends MY_Model
 			'site_name'		  => (isset($logData['site_name']))		  ? $logData['site_name']		: '',
 			'date_added'	  => (isset($logData['rule_time']))		  ? $logData['rule_time']		: $mongoDate,
 			'date_modified'	  => $mongoDate
-		));
+		), array("w" => 0, "j" => false));
 	}
 	public function getBadgeById($badgeId, $site_id)
 	{
@@ -531,7 +531,7 @@ class Client_model extends MY_Model
             'quantity'
         ));
         $this->mongo_db->where(array(
-            'client_id' => $is_sponsor ? null : $client_id,
+            //'client_id' => $is_sponsor ? null : $client_id,
             'site_id' => $is_sponsor ? null : $site_id,
             'goods_id' => $goodsId,
             'deleted' => false
@@ -541,7 +541,7 @@ class Client_model extends MY_Model
         if(!$result)
             return;
         $goodsInfo = $result[0];
-        $mongoDate = new MongoDate(time());
+        $mongoDate = new MongoDate();
 
         if (!is_null($goodsInfo['quantity'])){
         	$remainingQuantity = $goodsInfo['quantity'] - $quantity;
@@ -570,7 +570,7 @@ class Client_model extends MY_Model
         $this->mongo_db->where('client_id', $is_sponsor ? null : $client_id);
         $this->mongo_db->where('site_id', $is_sponsor ? null : $site_id);
         $this->mongo_db->where('goods_id', $goodsId);
-        $this->mongo_db->update('playbasis_goods_to_client');
+        $this->mongo_db->update('playbasis_goods_to_client', array("w" => 0, "j" => false));
 
         //update player badge table
         $this->mongo_db->where(array(
@@ -586,7 +586,7 @@ class Client_model extends MY_Model
             ));
             $this->mongo_db->set('date_modified', $mongoDate);
             $this->mongo_db->inc('value', intval($quantity));
-            $this->mongo_db->update('playbasis_goods_to_player');
+            $this->mongo_db->update('playbasis_goods_to_player', array("w" => 0, "j" => false));
         }
         else
         {
@@ -600,7 +600,7 @@ class Client_model extends MY_Model
                 'value' => intval($quantity),
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate
-            ));
+            ), array("w" => 0, "j" => false));
         }
     }
 
@@ -831,15 +831,18 @@ class Client_model extends MY_Model
      * @param (notifications | requests | others) $type
      * @particular string $field
      */
-    public function permissionProcess($client_id, $site_id, $type, $field, $inc=1) {
+    public function permissionProcess($client_id, $site_id, $type, $field, $inc=1, $client_date=null) {
+	    $myplan = null;
         // get "date_start" && "date_expire" of client for permission processing
-        $myplan_id = $this->getPlanIdByClientId($client_id);
-        $myplan = $this->getPlanById($myplan_id);
-        $free_flag = !isset($myplan['price']) || $myplan['price'] <= 0;
-        $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
+	    if (!$client_date) {
+		    $myplan_id = $this->getPlanIdByClientId($client_id);
+		    $myplan = $this->getPlanById($myplan_id);
+		    $free_flag = !isset($myplan['price']) || $myplan['price'] <= 0;
+		    $client_date = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
+	    }
 
         // get current usage
-        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $clientDate);
+        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $client_date);
 
         // get limit by plan
         $limit = $this->getPlanLimitById($site_id, $usage["plan_id"], $type, $field);
@@ -851,6 +854,8 @@ class Client_model extends MY_Model
         } else {  // increase service usage
             $this->updatePermission($client_id, $site_id, $type, $field, $inc);
         }
+
+	    return array($client_date, $myplan);
     }
 
     /*
@@ -860,15 +865,9 @@ class Client_model extends MY_Model
      * @param (notifications | requests | others) $type
      * @particular string $field
      */
-    public function permissionCheck($client_id, $site_id, $type, $field) {
-        // get "date_start" && "date_expire" of client for permission processing
-        $myplan_id = $this->getPlanIdByClientId($client_id);
-        $myplan = $this->getPlanById($myplan_id);
-        $free_flag = $myplan['price'] <= 0;
-        $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
-
+    public function permissionCheck($client_id, $site_id, $type, $field, $client_date) {
         // get current usage
-        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $clientDate);
+        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $client_date);
 
         // get limit by plan
         $limit = $this->getPlanLimitById($site_id, $usage["plan_id"], $type, $field);
