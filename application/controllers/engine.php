@@ -283,17 +283,12 @@ class Engine extends Quest
 
 			//process regular data
 			if (!$test)
-				$required = $this->input->checkParam(array('token'));
-			if($required)
-				$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
-
-			if (!$test)
 				$required = $this->input->checkParam(array('action', 'player_id'));
 			if($required)
 				$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
 			if (!$test)
-				$validToken = $this->auth_model->findToken($this->input->post('token'));
+				$validToken = $this->validToken;
 			else
 				$validToken = array(
 					"client_id" => new MongoId($this->input->post("client_id")),
