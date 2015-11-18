@@ -531,7 +531,7 @@ class Client_model extends MY_Model
             'quantity'
         ));
         $this->mongo_db->where(array(
-            'client_id' => $is_sponsor ? null : $client_id,
+            //'client_id' => $is_sponsor ? null : $client_id,
             'site_id' => $is_sponsor ? null : $site_id,
             'goods_id' => $goodsId,
             'deleted' => false
