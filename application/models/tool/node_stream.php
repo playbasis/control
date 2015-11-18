@@ -28,7 +28,7 @@ class Node_stream extends MY_Model
 			'Content-Type: text/plain; charset=utf-8'				// set Content-Type
 		));
 		curl_setopt($ch, CURLOPT_USERAGENT, 'CURL AGENT');			// set agent
-		curl_setopt($ch, CURLOPT_TIMEOUT, 10);						// times for execute
+		curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);					// times for execute
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);				// times for try to connect 
 		curl_setopt($ch, CURLOPT_POST, TRUE);						// use POST 
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $message);				// data
