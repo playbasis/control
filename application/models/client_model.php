@@ -491,7 +491,7 @@ class Client_model extends MY_Model
 			'site_name'		  => (isset($logData['site_name']))		  ? $logData['site_name']		: '',
 			'date_added'	  => (isset($logData['rule_time']))		  ? $logData['rule_time']		: $mongoDate,
 			'date_modified'	  => $mongoDate
-		));
+		), array("w" => 0, "j" => false));
 	}
 	public function getBadgeById($badgeId, $site_id)
 	{
