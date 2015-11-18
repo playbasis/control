@@ -678,6 +678,18 @@ class Client_model extends MY_Model
         return array('date_start' => new MongoDate(strtotime("-1 month", $curr)), 'date_expire' => new MongoDate($curr));
     }
 
+    public function adjustCurrentUsageDate($date_start) {
+        if (!$date_start) return array("date_start" => null, "date_expire" => null);
+        $init_date_start = $date_start->sec;
+        $init_date_expire = strtotime("+1 month", $init_date_start);
+        $curr = $init_date_expire;
+        $today = time();
+        while ($curr < $today) {
+            $curr = strtotime("+1 month", $curr);
+        }
+        return array('date_start' => new MongoDate(strtotime("-1 month", $curr)), 'date_expire' => new MongoDate($curr));
+    }
+
     /**
      * Return Permission limitation by Plan ID
      * in particular type and field
@@ -688,15 +700,10 @@ class Client_model extends MY_Model
      * @param field string
      * @return integer | null
      */
-    public function getPlanLimitById($site_id, $plan_id, $type, $field=null)
+    public function getPlanLimitById($plan, $type, $field=null)
     {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->where(array(
-            '_id' => $plan_id,
-        ));
-        $res = $this->mongo_db->get('playbasis_plan');
+        $res = $plan;
         if ($res) {
-            $res = $res[0];
             $limit = 'limit_'.$type;
             if (isset($res[$limit])) {
                 if ($field) {
@@ -718,45 +725,24 @@ class Client_model extends MY_Model
      * in particular type and field
      * e.g. notifications email
      * If Client doesn't has Billing cyle return 0
-     * @param client_id string
-     * @param site_id string
      * @param type notifications | requests | others
      * @param field string
+     * @param client_data array('usage' => , 'date' => array('date_start' => MongoDate(), 'date_expire' => MongoDate()))
      * @return array('plan_id' => string, 'value' => integer) | null
      */
-    public function getPermissionUsage($client_id, $site_id, $type, $field, $clientDate)
+    public function getPermissionUsage($type, $field, $client_data)
     {
-        // wrong type
         if (!in_array($type, array("notifications", "requests", "others")))
             throw new Exception("WRONG_TYPE");
 
-        $this->set_site_mongodb($site_id);
-
-        // Get current bill usage
-        $this->mongo_db->select(
-            array(
-                "_id",
-                "plan_id",
-                "date_start",
-                "date_expire",
-                "usage.". $type. ".". $field)
-        );
-        $this->mongo_db->where(array(
-            'client_id' => $client_id,
-            'site_id' => $site_id
-        ));
-        $this->mongo_db->order_by(array('date_modified' => 'desc'));
-        $this->mongo_db->limit(1);
-        $res = $this->mongo_db->get('playbasis_permission');
-
         $result = array();
+	    $res = $client_data['usage'];
         if ($res) {
-            $res = $res[0];
             $result["plan_id"] = $res["plan_id"];
 
             // Sync current bill usage with Client bill
             try {
-                $this->syncPermissionDate($clientDate, $res);
+                $this->syncPermissionDate($client_data['date'], $res);
                 // check this limitation on this client-site
                 if (isset($res['usage'][$type]) && isset($res['usage'][$type][$field]))
                     $result["value"] = $res['usage'][$type][$field];
@@ -826,26 +812,18 @@ class Client_model extends MY_Model
     /*
      * Check & Update permission usage
      * Always update if limit is not exceed
+     * @param client_data array('usage' => , 'date' => array('date_start' => MongoDate(), 'date_expire' => MongoDate()), 'plan' => )
      * @param string $client_id
      * @param string $site_id
      * @param (notifications | requests | others) $type
      * @particular string $field
      */
-    public function permissionProcess($client_id, $site_id, $type, $field, $inc=1, $client_date=null) {
-	    $myplan = null;
-        // get "date_start" && "date_expire" of client for permission processing
-	    if (!$client_date) {
-		    $myplan_id = $this->getPlanIdByClientId($client_id);
-		    $myplan = $this->getPlanById($myplan_id);
-		    $free_flag = !isset($myplan['price']) || $myplan['price'] <= 0;
-		    $client_date = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
-	    }
-
+    public function permissionProcess($client_data, $client_id, $site_id, $type, $field, $inc=1) {
         // get current usage
-        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $client_date);
+        $usage = $this->getPermissionUsage($type, $field, $client_data);
 
         // get limit by plan
-        $limit = $this->getPlanLimitById($site_id, $usage["plan_id"], $type, $field);
+        $limit = $this->getPlanLimitById($client_data['plan'], $type, $field);
 
         // compare
         if ($limit !== null && ($usage["value"] >= $limit || $usage["value"]+$inc > $limit)) {
@@ -854,29 +832,38 @@ class Client_model extends MY_Model
         } else {  // increase service usage
             $this->updatePermission($client_id, $site_id, $type, $field, $inc);
         }
-
-	    return array($client_date, $myplan);
     }
 
     /*
      * Check permission usage
+     * @param client_data array('usage' => , 'date' => array('date_start' => MongoDate(), 'date_expire' => MongoDate()), 'plan' => )
      * @param string $client_id
      * @param string $site_id
      * @param (notifications | requests | others) $type
      * @particular string $field
      */
-    public function permissionCheck($client_id, $site_id, $type, $field, $client_date) {
+    public function permissionCheck($client_data, $client_id, $site_id, $type, $field) {
         // get current usage
-        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $client_date);
+        $usage = $this->getPermissionUsage($type, $field, $client_data);
 
         // get limit by plan
-        $limit = $this->getPlanLimitById($site_id, $usage["plan_id"], $type, $field);
+        $limit = $this->getPlanLimitById($client_data['plan'], $type, $field);
 
         // compare
         if ($limit !== null && $usage["value"] >= $limit) {
             // no permission to use this service
             throw new Exception("LIMIT_EXCEED");
         }
+    }
+
+    public function getClientSiteUsage($client_id, $site_id) {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->order_by(array('date_modified' => -1)); // ensure we use only latest record, assumed to be the current chosen plan
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_permission');
+        if ($results) return $results[0];
+        throw new Exception("CLIENTSITE_NOTFOUND");
     }
 
     public function insertRuleUsage($client_id, $site_id, $rule_id, $pb_player_id, $value) {

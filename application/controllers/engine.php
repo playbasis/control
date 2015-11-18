@@ -422,11 +422,11 @@ class Engine extends Quest
 		/* [rule usage] check rule usage against the associated plan */
 		if (!$input["test"]) {
 			$this->client_model->permissionCheck(
+				$this->client_data,
 				$client_id,
 				$site_id,
 				"others",
-				"rule",
-				$this->client_date
+				"rule"
 			);
 		}
 
@@ -805,12 +805,12 @@ class Engine extends Quest
 					$count
 				);
 				$this->client_model->permissionProcess(
+					$this->client_data,
 					$client_id,
 					$site_id,
 					"others",
 					"rule",
-					$count,
-					$this->client_date
+					$count
 				);
 			}
 		}  // close foreach($ruleSet as $rule)

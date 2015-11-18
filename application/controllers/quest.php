@@ -49,11 +49,11 @@ class Quest extends REST2_Controller
         if (!$test_id) {
             try {
                 $this->client_model->permissionCheck(
+                    $this->client_data,
                     $client_id,
                     $site_id,
                     "others",
-                    "quest_usage",
-                    $this->client_date
+                    "quest_usage"
                 );
             } catch (Exception $e) {
                 /* we have to suppress LIMIT_EXCEED exception here because this quest processing is just a part of /Engine/rule call */
@@ -310,12 +310,11 @@ class Quest extends REST2_Controller
                     }
                     try {
                         $this->client_model->permissionProcess(
+                            $this->client_data,
                             $client_id,
                             $site_id,
                             "others",
-                            "quest_usage",
-                            1,
-                            $this->client_date
+                            "quest_usage"
                         );
                     } catch (Exception $e) {
                         /* we have to suppress LIMIT_EXCEED exception here because this quest processing is just a part of /Engine/rule call */
@@ -1444,12 +1443,11 @@ class Quest extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
+                $this->client_data,
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "email",
-                1,
-                $this->client_date
+                "email"
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")
@@ -1500,12 +1498,11 @@ class Quest extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
+                $this->client_data,
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "sms",
-                1,
-                $this->client_date
+                "sms"
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")
@@ -1557,12 +1554,11 @@ class Quest extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
+                $this->client_data,
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "push",
-                1,
-                $this->client_date
+                "push"
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")

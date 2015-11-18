@@ -17,7 +17,9 @@ abstract class REST2_Controller extends REST_Controller
 	protected $validToken;
 	protected $client_id;
 	protected $site_id;
+	protected $client_data;
 	protected $client_date;
+	protected $client_usage;
 	protected $client_plan;
 	private $log_id;
 
@@ -79,13 +81,13 @@ abstract class REST2_Controller extends REST_Controller
 
         /* 1.3 Check valid payment */
         $d = time();
-        $clientDate = $this->client_model->getClientStartEndDate($this->client_id);
+		$this->client_date = $this->client_model->getClientStartEndDate($this->client_id);
         $flag = true; // default is assumed to be free, which is allowed to use API
-        if ($clientDate['date_start']) {
-            $flag = $d >= $clientDate['date_start']->sec;
+        if ($this->client_date['date_start']) {
+            $flag = $d >= $this->client_date['date_start']->sec;
         }
-        if ($clientDate['date_expire']) {
-            $date_expire = strtotime("+".GRACE_PERIOD_IN_DAYS." day", $clientDate['date_expire']->sec);
+        if ($this->client_date['date_expire']) {
+            $date_expire = strtotime("+".GRACE_PERIOD_IN_DAYS." day", $this->client_date['date_expire']->sec);
             $flag = $flag && ($d <= $date_expire);
         }
         if (!$flag) $this->response($this->error->setError("ACCESS_DENIED"), 200);
@@ -98,7 +100,15 @@ abstract class REST2_Controller extends REST_Controller
             $url = "/".$url;
         }
         try {
-            list($this->client_date, $this->client_plan) = $this->client_model->permissionProcess(
+	        $this->client_usage = $this->client_model->getClientSiteUsage($this->client_id, $this->site_id);
+	        $this->client_plan = $this->client_model->getPlanById($this->client_usage['plan_id']);
+	        $free_flag = !isset($this->client_plan['price']) || $this->client_plan['price'] <= 0;
+	        if ($free_flag) {
+		        $this->client_date = $this->client_model->adjustCurrentUsageDate($this->client_date['date_start']);
+	        }
+	        $this->client_data = array('date' => $this->client_date, 'usage' => $this->client_usage, 'plan' => $this->client_plan);
+            $this->client_model->permissionProcess(
+	            $this->client_data,
                 $this->client_id,
                 $this->site_id,
                 "requests",

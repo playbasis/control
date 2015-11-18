@@ -26,8 +26,7 @@ class Reward extends REST2_Controller
         // Limit
         $plan_id = $this->client_model->getPlanIdByClientId($this->validToken['client_id']);
         $limit = $this->client_model->getPlanLimitById(
-            $this->validToken['site_id'],
-            $plan_id,
+            $this->client_plan,
             'others',
             'insight'
         );
@@ -67,8 +66,7 @@ class Reward extends REST2_Controller
         // Limit
         $plan_id = $this->client_model->getPlanIdByClientId($this->validToken['client_id']);
         $limit = $this->client_model->getPlanLimitById(
-            $this->validToken['site_id'],
-            $plan_id,
+            $this->client_plan,
             'others',
             'insight'
         );
@@ -108,8 +106,7 @@ class Reward extends REST2_Controller
         // Limit
         $plan_id = $this->client_model->getPlanIdByClientId($this->validToken['client_id']);
         $limit = $this->client_model->getPlanLimitById(
-            $this->validToken['site_id'],
-            $plan_id,
+            $this->client_plan,
             'others',
             'insight'
         );
@@ -164,8 +161,7 @@ class Reward extends REST2_Controller
         // Limit
         $plan_id = $this->client_model->getPlanIdByClientId($this->validToken['client_id']);
         $limit = $this->client_model->getPlanLimitById(
-            $this->validToken['site_id'],
-            $plan_id,
+            $this->client_plan,
             'others',
             'insight'
         );

@@ -766,12 +766,11 @@ class Quiz extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
+                $this->client_data,
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "email",
-                1,
-                $this->client_date
+                "email"
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")
@@ -808,12 +807,11 @@ class Quiz extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
+                $this->client_data,
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "sms",
-                1,
-                $this->client_date
+                "sms"
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")
@@ -851,12 +849,11 @@ class Quiz extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
+                $this->client_data,
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "push",
-                1,
-                $this->client_date
+                "push"
             );
         } catch(Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED")

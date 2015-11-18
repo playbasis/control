@@ -453,12 +453,12 @@ class Redeem extends REST2_Controller
             try {
                 /* check limit of redeem according to their plan */
                 $this->client_model->permissionProcess(
+                    $this->client_data,
                     $this->client_id,
                     $this->site_id,
                     "others",
                     "redeem",
-                    $amount,
-                    $this->client_date
+                    $amount
                 );
 
                 /* give goods reward, if exists */
