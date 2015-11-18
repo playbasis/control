@@ -570,7 +570,7 @@ class Client_model extends MY_Model
         $this->mongo_db->where('client_id', $is_sponsor ? null : $client_id);
         $this->mongo_db->where('site_id', $is_sponsor ? null : $site_id);
         $this->mongo_db->where('goods_id', $goodsId);
-        $this->mongo_db->update('playbasis_goods_to_client');
+        $this->mongo_db->update('playbasis_goods_to_client', array("w" => 0, "j" => false));
 
         //update player badge table
         $this->mongo_db->where(array(
@@ -586,7 +586,7 @@ class Client_model extends MY_Model
             ));
             $this->mongo_db->set('date_modified', $mongoDate);
             $this->mongo_db->inc('value', intval($quantity));
-            $this->mongo_db->update('playbasis_goods_to_player');
+            $this->mongo_db->update('playbasis_goods_to_player', array("w" => 0, "j" => false));
         }
         else
         {
@@ -600,7 +600,7 @@ class Client_model extends MY_Model
                 'value' => intval($quantity),
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate
-            ));
+            ), array("w" => 0, "j" => false));
         }
     }
 
