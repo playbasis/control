@@ -24,7 +24,7 @@ class jigsaw extends MY_Model
 		}
 		return true;
 	}
-	public function reward($config, $input, &$exInfo = array())
+	public function reward($config, $input, &$exInfo = array(), $cache=array())
 	{
 		assert($config != false);
 		assert(is_array($config));
@@ -46,7 +46,7 @@ class jigsaw extends MY_Model
 			case 'badge':
 				return $this->checkBadge($config['item_id'], $input['pb_player_id'], $input['site_id'], $config['quantity']);
 			case 'goods':
-				return $this->checkGoods($config['item_id'], $input['pb_player_id'], $input['site_id'], $config['quantity']);
+				return $this->checkGoodsWithCache($cache, $config['item_id'], $input['pb_player_id'], $input['site_id'], $config['quantity']);
 			default:
 				return false;
 		}
@@ -422,10 +422,11 @@ class jigsaw extends MY_Model
 		$this->set_site_mongodb($input['site_id']);
 		$sum = 0;
 		$acc = array();
+		$cache = array();
 		foreach ($config['group_container'] as $i => $conf) {
 			// invalid goods will be excluded from randomness
 			if (!(array_key_exists('reward_name', $conf) && $conf['reward_name'] == 'goods')
-					|| $this->checkGoods(new MongoId($conf['item_id']), $input['pb_player_id'], $input['site_id'], $conf['quantity'])) {
+					|| $this->checkGoodsWithCache($cache, new MongoId($conf['item_id']), $input['pb_player_id'], $input['site_id'], $conf['quantity'])) {
 				$sum += intval($conf['weight']);
 				$acc[$i] = $sum;
 			}
@@ -442,9 +443,11 @@ class jigsaw extends MY_Model
 					foreach (array('item_id', 'reward_id') as $field) {
 						if (array_key_exists($field, $conf)) $conf[$field] = $conf[$field] ? ($conf[$field] != 'goods' ? new MongoId($conf[$field]) : $conf[$field]) : null;
 					}
-					return $this->reward($conf, $input, $exInfo);
+					$ret = $this->reward($conf, $input, $exInfo, $cache);
+					return $ret;
 				} else if (array_key_exists('feedback_name', $conf)) {
-					return $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
+					$ret = $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
+					return $ret;
 				}
 				return false; // should not reach this line
 			}
@@ -589,6 +592,15 @@ class jigsaw extends MY_Model
 		if($haveBadge)
 			return false;
 		return true;
+	}
+	private function checkGoodsWithCache(&$cache, $goodsId, $pb_player_id, $site_id, $quantity=0)
+	{
+		$key = $goodsId.'-'.$pb_player_id.'-'.$site_id.'-'.$quantity;
+		if (!array_key_exists($key, $cache)) {
+			$value = $this->checkGoods($goodsId, $pb_player_id, $site_id, $quantity);
+			$cache[$key] = $value;
+		}
+		return $cache[$key];
 	}
 	private function checkGoods($goodsId, $pb_player_id, $site_id, $quantity=0)
 	{
