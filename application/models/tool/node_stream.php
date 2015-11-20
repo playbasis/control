@@ -19,7 +19,7 @@ class Node_stream extends MY_Model
 		$chanelName = preg_replace('/\//', '\\',$chanelName);
 		$message = json_encode($this->activityFeedFormatter($data, $site_id));
 		$ch = curl_init();
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($ch, CURLOPT_URL, STREAM_URL . $chanelName);	// set url
 		curl_setopt($ch, CURLOPT_PORT, STREAM_PORT);				// set port
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);					// turn off output
