@@ -150,6 +150,15 @@ class Client_model extends MY_Model
             return null;
         }
 	}
+	public function getJigsawProcessorWithCache(&$cache, $jigsawId, $site_id)
+	{
+		$key = $jigsawId.'';
+		if (!isset($cache[$key])) {
+			$value = $this->getJigsawProcessor($jigsawId, $site_id);
+			$cache[$key] = $value;
+		}
+		return $cache[$key];
+	}
 	public function updatePlayerPointReward($rewardId, $quantity, $pbPlayerId, $clPlayerId, $clientId, $siteId, $overrideOldValue = FALSE,$anonymous=false)
 	{
 		assert(isset($rewardId));

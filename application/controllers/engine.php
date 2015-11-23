@@ -430,6 +430,7 @@ class Engine extends Quest
 			);
 		}
 
+		$cache_jigsaw = array();
 		foreach($ruleSet as $rule) {
 			/* [rule usage] init */
 			$count = 0;
@@ -459,7 +460,7 @@ class Engine extends Quest
 				$jigsawCategory = $jigsaw['category'];
 
 				//get class path to precess jigsaw
-				$processor = ($jigsaw_id ? $this->client_model->getJigsawProcessor($jigsaw_id, $site_id) : $jigsaw['id']);
+				$processor = ($jigsaw_id ? $this->client_model->getJigsawProcessorWithCache($cache_jigsaw, $jigsaw_id, $site_id) : $jigsaw['id']);
 				if ($processor == 'goods') $processor = 'reward';
 
 				if (!$input["test"])
