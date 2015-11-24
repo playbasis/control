@@ -189,6 +189,7 @@ class Player extends REST2_Controller
         $player['player']['level_image'] = $level['level_image'];
 
         $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $this->site_id);
+        $player['player']['goods'] = $this->player_model->getGoods($pb_player_id, $this->site_id);
         $points = $this->player_model->getPlayerPoints($pb_player_id, $this->site_id);
         foreach($points as &$point)
         {
@@ -254,6 +255,7 @@ class Player extends REST2_Controller
         $player['player']['level_image'] = $level['level_image'];
 
         $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $this->site_id);
+        $player['player']['goods'] = $this->player_model->getGoods($pb_player_id, $this->site_id);
         $points = $this->player_model->getPlayerPoints($pb_player_id, $this->site_id);
         foreach($points as &$point)
         {
