@@ -46,6 +46,9 @@ $lang['form_status']							= 'Status';
 $lang['form_icon']								= 'Icon';
 $lang['form_color']								= 'Icon Color';
 $lang['form_sort']								= 'Sort Order';
+$lang['form_text_field']						= 'Parameter';
+$lang['form_param_name']						= 'Parameter Name';
+$lang['form_param_label']						= 'Parameter label';
 $lang['form_client']							= 'Client';
 
 $lang['error_permission']       = 'Warning: You do not have permission to modify action!';

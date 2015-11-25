@@ -107,8 +107,35 @@ Node.prototype.getHTML = function(){
             '<span class="btn btn-info btn-mini" id="pbd_rule_action_edit"><i class="icon-edit icon-white"></i></span>' +
             '<span class="btn btn-info btn-mini" id="pbd_rule_action_save" style="display: none;"><i class="icon-ok icon-white"></i></span>' +
             '<span class="btn btn-info btn-mini" id="pbd_rule_action_cancel" style="display: none;"><i class="icon-remove icon-white"></i></span></span></td></tr></tbody></table>';
-    }else{
-        htmlElement = this.currentDataSet.getHTML();
+    }
+    else if (this.category == "ACTION"){
+        this.jigsawDescription = "You can add condition for rewarding";
+        htmlElement = '<table class="table table-bordered"><tbody>' +
+        '<tr class="pbd_rule_param state_text parent_id_'+this.uid+'">' +
+        '<td class="pbd_rule_label field_type_text sort_0 name_reward_name hide">Name' +
+        '<a rel="tooltip" data-original-title="name of point to award"><i class="icon-question-sign icon-white help"></i></a></td>' +
+        '<td class="pbd_rule_data hide"><span class="pbd_rule_text view_as_text" style="display: inline;"></span>' +
+        '<span class="pbd_rule_field" style="display: none;">' +
+        '<input type="text" class="" placeholder="" value="" maxlength="60"></span>' +
+        '<span class="pbd_rule_action parent_id_'+this.uid+'">' +
+        '<span class="btn btn-info btn-mini" id="pbd_rule_action_edit"><i class="icon-edit icon-white"></i></span>' +
+        '<span class="btn btn-info btn-mini" id="pbd_rule_action_save" style="display: none;">' +
+        '<i class="icon-ok icon-white"></i></span><span class="btn btn-info btn-mini" id="pbd_rule_action_cancel" style="display: none;">' +
+        '<i class="icon-remove icon-white"></i></span></span></td></tr>' +
+
+
+        '<tr class="pbd_rule_param state_text parent_id_'+this.uid+'">' +
+        '<td class="pbd_rule_label field_type_number sort_0 name_quantity hide">Quantity<a rel="tooltip" data-original-title="amount of point to award">' +
+        '<i class="icon-question-sign icon-white help"></i></a></td>' +
+        '<td class="pbd_rule_data hide"><span class="pbd_rule_text view_as_number" style="display: inline;"></span>' +
+        '<span class="pbd_rule_field" style="display: none;"><input type="text" class="input_number number" placeholder="How many ..." value="" maxlength="20"></span>' +
+        '<span class="pbd_rule_action parent_id_'+this.uid+'">' +
+        '<span class="btn btn-info btn-mini" id="pbd_rule_action_edit"><i class="icon-edit icon-white"></i></span>' +
+        '<span class="btn btn-info btn-mini" id="pbd_rule_action_save" style="display: none;"><i class="icon-ok icon-white"></i></span>' +
+        '<span class="btn btn-info btn-mini" id="pbd_rule_action_cancel" style="display: none;"><i class="icon-remove icon-white"></i></span></span></td></tr></tbody></table>';
+    }
+    else{
+            htmlElement = this.currentDataSet.getHTML()
     }
 
     if(DEBUG)console.log('styling to >> '+boxStyle);

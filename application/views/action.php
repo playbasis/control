@@ -3,8 +3,10 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-            <button class="btn btn-info" onclick="location =  baseUrlPath+'action/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
+                <?php if($isAdmin){ ?>
+                <button class="btn btn-info" onclick="location =  baseUrlPath+'action/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
+                <?php }?>
             </div>
         </div><!-- .heading -->
         <div class="content">
@@ -19,7 +21,9 @@
             <table class="list">
                 <thead>
                     <tr>
+                        <?php if($isAdmin){ ?>
                     <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                        <?php }?>
                     <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
                     <?php if(!$client_id){?>
@@ -33,7 +37,9 @@
                 </thead>
                 <tbody>
                     <tr class="filter">
+                        <?php if($isAdmin){ ?>
                         <td></td>
+                        <?php }?>
                         <td></td>
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
                         <?php if(!$client_id){?>
@@ -51,11 +57,15 @@
                         <?php if(isset($actions)){?>
                             <?php foreach($actions as $action){?>
                                 <tr>
-                                    <td style="text-align: center;"><?php if (isset($action['selected'])) { ?>
+                                    <?php if($isAdmin){ ?>
+                                    <td style="text-align: center;">
+
+                                        <?php if (isset($action['selected'])) { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $action['_id']; ?>" checked="checked" />
                                         <?php } else { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $action['_id']; ?>" />
                                         <?php } ?></td>
+                                    <?php }?>
                                     <td class="left"><?php echo "<i style='color:grey' class='".$action['icon']." icon-4x'></i>"; ?></td>
                                     <!-- <td class="right"><?php //echo ucfirst($action['name']); ?></td> -->
                                     <td class="right"><?php echo $action['name']; ?></td>
@@ -66,9 +76,20 @@
                                     <td class="right"><?php echo ($action['status'])? "Enabled" : "Disabled"; ?></td>
                                     <td class="right"><?php echo $action['sort_order'];?></td>
                                     <td class="right">[ <?php if($client_id){
-                                            echo anchor('action/update/'.$action['action_id'], 'Edit');
+                                            if ($isAdmin){
+                                                echo anchor('action/update/'.$action['action_id'], 'Edit');
+                                            }
+                                            else{
+                                                echo anchor('action/update/'.$action['action_id'], 'View');
+                                            }
                                         }else{
-                                            echo anchor('action/update/'.$action['_id'], 'Edit');
+                                            if ($isAdmin){
+                                                echo anchor('action/update/'.$action['_id'], 'Edit');
+                                            }
+                                            else{
+                                                echo anchor('action/update/'.$action['_id'], 'View');
+                                            }
+                                            //echo anchor('action/update/'.$action['_id'], 'Edit');
                                         }
                                         ?> ]
 

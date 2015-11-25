@@ -353,16 +353,7 @@ class Action_model extends MY_Model
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
-        $temp[0] = (object)array(
-            'param_name' => 'url',
-             'label' => 'URL or filter String',
-             'placeholder' => '',
-             'sortOrder' => $data['sort_order'],
-             'field_type' => 'text',
-             'value' => ''
-            );
-
-        $init_dataset = $temp;
+        $init_dataset = $this->processActionDataSet($data['init_dataset']);
 
         $data_insert = array(
                 'name'=>utf8_strtolower($data['name']),
@@ -386,16 +377,7 @@ class Action_model extends MY_Model
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
-        $temp[0] = (object)array(
-            'param_name' => 'url',
-             'label' => 'URL or filter String',
-             'placeholder' => '',
-             'sortOrder' => $data['sort_order'],
-             'field_type' => 'text',
-             'value' => ''
-            );
-
-        $init_dataset = $temp;
+        $init_dataset = $this->processActionDataSet($data['init_dataset']);
 
         $data_insert = array(
                 'action_id'=>new MongoID($data['action_id']),
@@ -460,6 +442,10 @@ class Action_model extends MY_Model
             $this->mongo_db->set('color', $data['color']);
         }
 
+        $temp = $this->processActionDataSet($data['init_dataset']);
+
+        $this->mongo_db->set('init_dataset', $temp);
+
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
         return $this->mongo_db->update('playbasis_action');
@@ -499,9 +485,19 @@ class Action_model extends MY_Model
             $this->mongo_db->set('color', $data['color']);
         }
 
+        $temp = $this->processActionDataSet($data['init_dataset']);
+
+        $this->mongo_db->set('init_dataset', $temp);
+
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
-        $update = $this->mongo_db->update('playbasis_action_to_client');
+        if(isset($data['client_id']) && !is_null($data['client_id'])){
+            $update = $this->mongo_db->update('playbasis_action_to_client');
+        }
+        else{
+            $update = $this->mongo_db->update_all('playbasis_action_to_client');
+        }
+
 
         // update rule engine //
         $this->mongo_db->where(array('jigsaw_set.specific_id' => $action_id));
@@ -663,6 +659,32 @@ class Action_model extends MY_Model
             $this->mongo_db->where('status',  true);
         return $this->mongo_db->get("playbasis_action");
     }
-
+    private function processActionDataSet($init_dataset){
+        if (isset($init_dataset) && !is_null($init_dataset))
+        {
+            foreach($init_dataset as $key => $data_set){
+                $temp[$key] = (object)array(
+                    'param_name' => $data_set['param_name'],
+                    'label' => isset($data_set['label'])?$data_set['label']:'',
+                    'placeholder' => '',
+                    'sortOrder' => $key,
+                    'field_type' => 'text',
+                    'value' => '',
+                    'required' => isset($data_set['required'])?$data_set['required']:false
+                );
+            }
+        }else {
+            $temp[0] = (object)array(
+                'param_name' => 'url',
+                'label' => 'URL or filter String',
+                'placeholder' => '',
+                'sortOrder' => 0,
+                'field_type' => 'text',
+                'value' => '',
+                'required' => false
+            );
+        }
+        return $temp;
+    }
 }
 ?>
