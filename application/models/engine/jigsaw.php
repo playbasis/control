@@ -12,17 +12,47 @@ class jigsaw extends MY_Model
 	{
 		assert($config != false);
 		assert(is_array($config));
-		if($config['url'])
-		{
-			if(!isset($input['url']))
-				return false;
-			//validate url
-			$input['url'] = urldecode($input['url']);
-			$exInfo['input_url'] = $input['url'];
-//			return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
-			return (boolean) $this->matchUrl($input['url'], $config['url']);
+		$data_set = $this->getActionDatasetInfo($config);
+		$required = array();
+		foreach ($data_set as $param){
+			$isRequired = $param['required'];
+            $param_name = $param['param_name'];
+			if (!isset($input[$param_name]) && ($isRequired)){
+				array_push($required,$param_name);
+			}
 		}
+		if (!empty($required)){
+			$requiredParam = implode(", ",$required);
+			try {
+				throw new Exception($requiredParam);
+			} catch(Exception $e) {
+				throw new Exception('PARAMETER_MISSING',0,$e);
+			}
+		}
+
 		return true;
+	}
+	private function getActionDatasetInfo($config){
+		$this->set_site_mongodb($this->session->userdata('site_id'));
+
+		$this->mongo_db->where(array(
+			'name' => $config['action_name']
+		));
+		$results = $this->mongo_db->get("playbasis_action");
+		return $results ? $results[0]['init_dataset']: null;
+	}
+
+	public function customParameter($config, $input, &$exInfo = array()) {
+		assert($config != false);
+		assert(is_array($config));
+		assert(isset($config['param_name']));
+		assert(isset($config['param_value']));
+
+		$param_name = $config['param_name'];
+
+		$result = $this->matchUrl($input[$param_name], $config['param_value']);
+
+		return $result;
 	}
 	public function reward($config, $input, &$exInfo = array(), $cache=array())
 	{
@@ -928,5 +958,6 @@ class jigsaw extends MY_Model
 		$results = $this->mongo_db->get('jigsaw_log_precomp');
 		return $results ? $results[0]['date_added'] : array();
 	}
+
 }
 ?>
