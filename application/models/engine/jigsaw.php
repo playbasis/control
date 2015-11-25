@@ -15,7 +15,7 @@ class jigsaw extends MY_Model
 		$data_set = $this->getActionDatasetInfo($config);
 		$required = array();
 		foreach ($data_set as $param){
-			$isRequired = $param['required'];
+			$isRequired = isset($param['required'])?$param['required']:false;
             $param_name = $param['param_name'];
 			if (!isset($input[$param_name]) && ($isRequired)){
 				array_push($required,$param_name);
