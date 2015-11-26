@@ -194,7 +194,7 @@ class Goods extends REST2_Controller
     }
 
     private function recommend($pb_player_id, $goodsList) {
-        if (!$goodsList) return null;
+        if (!$goodsList) return array();
         /* TODO: integrate machine learning algorithm instead of randomly picking a goods */
         $idx = rand(0, count($goodsList)-1);
         return $this->goods_model->getGoods(array_merge(array('client_id' => null, 'site_id' => null), array(
