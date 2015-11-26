@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-define('LIMIT_PLAYERS_QUERY', 10000);
 require APPPATH . '/libraries/MY_Controller.php';
 class Custompoints extends MY_Controller
 {
