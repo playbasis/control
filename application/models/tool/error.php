@@ -28,16 +28,17 @@ class Error extends CI_Model
             $errorData['error_code'] = '0902';
             break;
         case 'PARAMETER_MISSING':
-            if(!empty($dataArray))
+            if(is_array($dataArray)) // array
             {
                 $errorData['message'] = "Invalid parameter , [ " . implode(' , ', $dataArray) . " ] require , must not be blank or special character";
-                $errorData['error_code'] = '0903';
             }
-            else
+            else if (!empty($dataArray)) { // str
+                $errorData['message'] = "Invalid parameter , [ " .$dataArray. " ] require , must not be blank or special character";
+            } else
             {
                 $errorData['message'] = "Invalid parameter , must not be blank and special character";
-                $errorData['error_code'] = '0903';
             }
+            $errorData['error_code'] = '0903';
             break;
         case 'INTERNAL_ERROR':
             $errorData['message'] = "There is an internal server error: ".print_r($dataArray,true);

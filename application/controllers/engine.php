@@ -243,7 +243,16 @@ class Engine extends Quest
 				'action_name' => $actionName,
 				'action_icon' => $actionIcon
 			));
-			$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+			try {
+				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+			} catch (Exception $e){
+				if ($e->getPrevious()){
+					$prev_e = $e->getPrevious();
+					$this->response($this->error->setError('PARAMETER_MISSING',array($prev_e->getMessage())), 200);
+				}else{
+					$this->response($this->error->setError($e->getMessage()), 200);
+				}
+			}
 		}
 		else if($twData)
 		{
@@ -273,7 +282,16 @@ class Engine extends Quest
 					'action_name' => $actionName,
 					'action_icon' => $actionIcon
 				));
-				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+				try {
+					$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+				} catch (Exception $e){
+					if ($e->getPrevious()){
+						$prev_e = $e->getPrevious();
+						$this->response($this->error->setError('PARAMETER_MISSING',array($prev_e->getMessage())), 200);
+					}else{
+						$this->response($this->error->setError($e->getMessage()), 200);
+					}
+				}
 			}
 		}
 		else
@@ -350,7 +368,17 @@ class Engine extends Quest
 			if (!$test)
 				$input["test"] = false;
 
-			$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+			try {
+				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+			} catch (Exception $e){
+				if ($e->getPrevious()){
+					$prev_e = $e->getPrevious();
+					$this->response($this->error->setError('PARAMETER_MISSING',array($prev_e->getMessage())), 200);
+				}else{
+					$this->response($this->error->setError($e->getMessage()), 200);
+				}
+			}
+
 		}
 		//Quest Process
 		if (!$test){
