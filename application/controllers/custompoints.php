@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+define('LIMIT_PLAYERS_QUERY', 10000);
 require APPPATH . '/libraries/MY_Controller.php';
 class Custompoints extends MY_Controller
 {
@@ -108,8 +109,12 @@ class Custompoints extends MY_Controller
                 }
 
                 $insert = $this->Custompoints_model->insertCustompoints($data);
-                if ($insert) {
-                    redirect('/custompoints', 'refresh');
+
+                if ($insert ) {
+                    if ($this->initPlayerPoint($data))
+                    {
+                        redirect('/custompoints', 'refresh');
+                    }
                 }
             }
         }
@@ -351,6 +356,55 @@ class Custompoints extends MY_Controller
         }
 
         $this->getList(0);
+    }
+    public function initPlayerPoint($data){
+
+        $client_id = $data['client_id'];
+        $site_id = $data['site_id'];
+        $reward_id = $this->Custompoints_model->getRewardId($data);
+        $total = $this->Custompoints_model->findPlayersToInsert($client_id, $site_id, true);
+        $completed_flag = false;
+        if (isset($reward_id)){
+            for ($i = 0; $i <= round($total / LIMIT_PLAYERS_QUERY); $i++) {
+                $offset = LIMIT_PLAYERS_QUERY * $i;
+                $players_without_energy = $this->Custompoints_model->findPlayersToInsert($client_id, $site_id, false,
+                    $offset, LIMIT_PLAYERS_QUERY);
+
+                $batch_data = array();
+                foreach ($players_without_energy as $player) {
+                    // Note: $player here is from player table
+                    if ($data['type'] == 'gain') {
+                        array_push($batch_data, array(
+                            'pb_player_id' => $player['_id'],
+                            'cl_player_id' => $player['cl_player_id'],
+                            'client_id' => $client_id,
+                            'site_id' => $site_id,
+                            'reward_id' => $reward_id,
+                            'value' => $data['maximum'],
+                            'date_cron_modified' => new MongoDate(),
+                            'date_added' => new MongoDate(),
+                            'date_modified' => new MongoDate()
+                        ));
+                    } elseif ($data['type'] == 'loss') {
+                        array_push($batch_data, array(
+                            'pb_player_id' => $player['_id'],
+                            'cl_player_id' => $player['cl_player_id'],
+                            'client_id' => $client_id,
+                            'site_id' => $site_id,
+                            'reward_id' => $reward_id,
+                            'value' => 0,
+                            'date_cron_modified' => new MongoDate(),
+                            'date_added' => new MongoDate(),
+                            'date_modified' => new MongoDate()
+                        ));
+                    }
+                }
+                if (!empty($batch_data)) {
+                    $completed_flag = $this->Custompoints_model->bulkInsertInitialValue($batch_data);
+                }
+            }
+        }
+        return $completed_flag;
     }
 
 }
