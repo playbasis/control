@@ -170,7 +170,70 @@ class Custompoints_model extends MY_Model
         $this->mongo_db->where('reward_id', new MongoID($custompoint_id));
         $this->mongo_db->set('status', false);
         $this->mongo_db->update('playbasis_reward_to_client');
+
+        $this->mongo_db->where('reward_id', new MongoID($custompoint_id));
+        $this->mongo_db->delete_all('playbasis_reward_to_player');
         
     }
 
+    public function findPlayersToInsert(
+        $client_id,
+        $site_id,
+        $return_count_only = false,
+        $offset = 0,
+        $limit = null,
+        $mongo_site_id = 0
+    ) {
+        $this->set_site_mongodb($mongo_site_id);
+
+        $this->mongo_db->select(array('_id', 'cl_player_id'));
+
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id
+        ));
+        $this->mongo_db->order_by(array('_id' => 'ASC'));
+
+        if ($return_count_only == true) {
+            $result = $this->mongo_db->count('playbasis_player');
+            return $result;
+        } else {
+            $this->mongo_db->limit($limit);
+            $this->mongo_db->offset($offset);
+            $result = $this->mongo_db->get('playbasis_player');
+            return !empty($result) ? $result : array();
+        }
+    }
+
+    public function bulkInsertInitialValue($batch_data, $mongo_site_id = 0)
+    {
+        $this->set_site_mongodb($mongo_site_id);
+
+        if (!empty($batch_data) && is_array($batch_data)) {
+            try {
+                return $this->mongo_db->batch_insert('playbasis_reward_to_player', $batch_data,
+                    array("w" => 0, "j" => false));
+
+            } catch (Exception $e) {
+                var_dump($e);
+            }
+
+
+        }
+        return false;
+    }
+
+    public function getRewardId($data)
+    {
+        $this->mongo_db->select(array('reward_id'));
+        $this->mongo_db->where('client_id', $data['client_id']);
+        $this->mongo_db->where('site_id', $data['site_id']);
+        $this->mongo_db->where('is_custom', true);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('name', $data['name']);
+        $this->mongo_db->where('type', $data['type']);
+
+        $result = $this->mongo_db->get("playbasis_reward_to_client");
+        return isset($result) ? $result[0]['reward_id'] : null;
+    }
 }	
