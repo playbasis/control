@@ -181,6 +181,7 @@ class Player extends REST2_Controller
         if(isset($level['max_exp']) && $max_exp != 0){
             $percent_exp = (floatval($now_exp) * floatval (100)) / floatval($max_exp);
             $player['player']['percent_of_level'] = round($percent_exp,2);
+            if ($player['player']['percent_of_level'] >= 100) $player['player']['percent_of_level'] = 99;
         }else{
             $player['player']['percent_of_level'] = 100;
         }
