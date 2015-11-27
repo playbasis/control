@@ -77,3 +77,14 @@ hr {
 	padding: 10px;
 	font-size: 12px;
 }
+
+@media screen and (max-width: 1240px){
+	.rulelist_container .box-content{
+		overflow: scroll;
+	}
+}
+@media screen and (max-width: 767px){
+	body{
+		background: #e7ebee;
+	}
+}
