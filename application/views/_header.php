@@ -76,6 +76,11 @@
     <link href="<?php echo base_url();?>stylesheet/insights/playbasis-dashboard.css" rel="stylesheet">
 
     <link href="<?php echo base_url();?>stylesheet/custom.css" rel="stylesheet">
+    
+
+    <!-- CUSTOMS FOR Kasikorn -->
+    <link href="<?php echo base_url();?>stylesheet/kasikorn/style.css" rel="stylesheet">
+    <!-- CUSTOMS FOR Kasikorn -->
 
     <script type="text/javascript">
         <?php
@@ -168,7 +173,7 @@ if (isset($username)) {
                 <span class="icon-bar btn-not-login"></span>
                 <span class="icon-bar btn-not-login"></span>
             </a>
-            <a class="brand" href="<?php echo base_url(); ?>"> <img src="<?php echo base_url();?>image/playbasis_logo_120_white.png" title="<?php echo $heading_title; ?>" onclick="location = '<?php echo base_url(); ?>'" /> <span class="hidden-phone"></span></a>
+            <a class="brand" href="<?php echo base_url(); ?>"> <img src="<?php echo base_url();?>/stylesheet/kasikorn/images/kbank-logo.png" title="<?php echo $heading_title; ?>" onclick="location = '<?php echo base_url(); ?>'" /> <span class="hidden-phone"></span></a>
 
             <!-- start: Header Menu -->
             <div class="nav-no-collapse header-nav">
