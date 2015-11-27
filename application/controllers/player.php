@@ -17,6 +17,7 @@ class Player extends REST2_Controller
 		$this->load->model('reward_model');
 		$this->load->model('quest_model');
 		$this->load->model('badge_model');
+		$this->load->model('energy_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -464,6 +465,42 @@ class Player extends REST2_Controller
 				'test' => false
 			));
 			$engine->processRule($input, $this->validToken, null, null);
+		}
+
+		/* Automatically energy initialization after creating a new player*/
+		foreach ($this->energy_model->findActiveEnergyRewards() as $energy) {
+
+			$energy_reward_id = $energy['reward_id'];
+			$energy_max = (int)$energy['energy_props']['maximum'];
+			$batch_data = array();
+			if ($energy['type'] == 'gain') {
+				array_push($batch_data, array(
+					'pb_player_id' => $pb_player_id,
+					'cl_player_id' => $player_id,
+					'client_id' => $this->validToken['client_id'],
+					'site_id' => $this->validToken['site_id'],
+					'reward_id' => $energy_reward_id,
+					'value' => $energy_max,
+					'date_cron_modified' => new MongoDate(),
+					'date_added' => new MongoDate(),
+					'date_modified' => new MongoDate()
+				));
+			} elseif ($energy['type'] == 'loss') {
+				array_push($batch_data, array(
+					'pb_player_id' => $pb_player_id,
+					'cl_player_id' => $player_id,
+					'client_id' => $this->validToken['client_id'],
+					'site_id' => $this->validToken['site_id'],
+					'reward_id' => $energy_reward_id,
+					'value' => 0,
+					'date_cron_modified' => new MongoDate(),
+					'date_added' => new MongoDate(),
+					'date_modified' => new MongoDate()
+				));
+			}
+			if (!empty($batch_data)) {
+				$this->energy_model->bulkInsertInitialValue($batch_data);
+			}
 		}
 		if ($pb_player_id) {
 			$this->response($this->resp->setRespond(), 200);
