@@ -234,6 +234,6 @@ class Custompoints_model extends MY_Model
         $this->mongo_db->where('type', $data['type']);
 
         $result = $this->mongo_db->get("playbasis_reward_to_client");
-        return isset($result) ? $result[0]['reward_id'] : null;
+        return isset($result[0]['reward_id']) ? $result[0]['reward_id'] : null;
     }
-}	
+}
