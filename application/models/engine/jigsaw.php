@@ -50,7 +50,13 @@ class jigsaw extends MY_Model
 
 		$param_name = $config['param_name'];
 
-		$result = $this->matchUrl($input[$param_name], $config['param_value']);
+		if (isset($input[$param_name])){
+			$result = $this->matchUrl($input[$param_name], $config['param_value']);
+		}
+		else{
+			$result = false;
+		}
+
 
 		return $result;
 	}
