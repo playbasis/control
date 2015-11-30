@@ -183,135 +183,151 @@ class Quest extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'quest/insert';
 
+        $this->form_validation->set_rules('quest_name', $this->lang->line('form_quest_name'), 'trim|required|xss_clean');
+        $missions_input = $this->input->post('missions');
+        if ($missions_input != false && !empty($missions_input)) {
+            foreach ($missions_input as $i => $mission) {
+                if (!empty($mission['mission_name'])) {
+                    $this->form_validation->set_rules('missions[' . $i . '][mission_name]',
+                        $this->lang->line('form_mission_name'), 'trim|required|xss_clean|check_space');
+                    $this->form_validation->set_rules('missions[' . $i++ . '][mission_number]',
+                        $this->lang->line('form_mission_number'), 'trim|required|xss_clean|check_space');
+                }
+            }
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = $this->input->post();
+            if($this->form_validation->run() && $this->data['message'] == null)
+            {
+                $data = $this->input->post();
 
-            if (!$this->validateModify()) {
-                $this->data['message'][] = $this->lang->line('error_permission');
-            }
+                if (!$this->validateModify()) {
+                    $this->data['message'][] = $this->lang->line('error_permission');
+                }
 
-            if (!$this->data['message']) {
-                foreach($data as $key => $value){
-                    if(in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))){
-                        $i = 0;
-                        foreach($value as $k => $v){
-                            foreach($v as $ke => &$item){
-                                if(in_array($ke, array('condition_id', 'reward_id', 'template_id')) && !empty($item)){
-                                    $item = new MongoId($item);
-                                }
-                            }
-                            if(in_array('DATETIME_START', $v)){
-                                $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 00:00:00")));
-                            }
-                            if(in_array('DATETIME_END', $v)){
-                                $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 23:59:59")));
-                            }
-                            $qdata = array(
-                                'client_id' => $client_id,
-                                'site_id' => $site_id
-                            );
-                            unset($data[$key][$k]);
-                            switch ($key) {
-                            case 'condition':
-                                $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
-                                break;
-                            case 'rewards':
-                                $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
-                                break;
-                            case 'feedbacks':
-                                $v["feedback_data"] = $this->questObjectData($v, "feedback_type", "template_id", $qdata);
-                                break;
-                            default:
-                                break;
-                            }
-                            $data[$key][$i] = $v;
-                            if($key == 'missions'){
-                                $data[$key][$i]['mission_number'] = $i + 1;
-                            }
-
-                            // clean if value is null
-                            if(isset($v['reward_value']) && ($v['reward_value'] == null || $v['reward_value'] == '')){
-                                unset($data[$key][$i]);
-                            }
-                            $i++;
-                        }
-                    }
-                    if($key == 'missions'){
-                        $im = 0;
-                        foreach($value as $kk => $val){
-
-                            if (!$val['mission_name'] || !$val['mission_number']) {
-                                unset($data[$key][$kk-1]);
-                                continue;
-                            }
-
-                            unset($data[$key][$kk]);
-                            $data[$key][$im] = $val;
-                            $data[$key][$im]['mission_id'] = new MongoId();
-                            foreach($val as $k => $v){
-                                if(in_array($k, array('completion', 'rewards', 'feedbacks'))){
-                                    $i = 0;
-                                    foreach($v as $koo => $voo){
-                                        foreach($voo as $kkk => &$vvv){
-                                            if(in_array($kkk, array('completion_id', 'reward_id', 'template_id')) && !empty($vvv)){
-                                                $vvv = new MongoId($vvv);
-                                            }
-                                            if($kkk == 'completion_element_id'){
-                                                if(isset($vvv) && empty($vvv)){
-                                                    $vvv = new MongoId();
-                                                }
-                                            }
-                                        }
-                                        $qdata = array(
-                                            'client_id' => $client_id,
-                                            'site_id' => $site_id
-                                        );
-                                        unset($data[$key][$im][$k][$koo]);
-                                        switch ($k) {
-                                        case 'completion':
-                                            $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
-                                            break;
-                                        case 'rewards':
-                                            $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
-                                            break;
-                                        case 'feedbacks':
-                                            $voo["feedback_data"] = $this->questObjectData($voo, "feedback_type", "template_id", $qdata);
-                                            break;
-                                        default:
-                                            break;
-                                        }
-                                        $data[$key][$im][$k][$i] = $voo;
-
-                                        // clean if value is null
-                                        if(isset($voo['reward_value']) && ($voo['reward_value'] == null || $voo['reward_value'] == '')){
-                                            unset($data[$key][$im][$k][$i]);
-                                        }
-                                        $i++;
+                if (!$this->data['message']) {
+                    foreach($data as $key => $value){
+                        if(in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))){
+                            $i = 0;
+                            foreach($value as $k => $v){
+                                foreach($v as $ke => &$item){
+                                    if(in_array($ke, array('condition_id', 'reward_id', 'template_id')) && !empty($item)){
+                                        $item = new MongoId($item);
                                     }
                                 }
-                            }
-                            $im++;
+                                if(in_array('DATETIME_START', $v)){
+                                    $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 00:00:00")));
+                                }
+                                if(in_array('DATETIME_END', $v)){
+                                    $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 23:59:59")));
+                                }
+                                $qdata = array(
+                                    'client_id' => $client_id,
+                                    'site_id' => $site_id
+                                );
+                                unset($data[$key][$k]);
+                                switch ($key) {
+                                case 'condition':
+                                    $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
+                                    break;
+                                case 'rewards':
+                                    $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
+                                    break;
+                                case 'feedbacks':
+                                    $v["feedback_data"] = $this->questObjectData($v, "feedback_type", "template_id", $qdata);
+                                    break;
+                                default:
+                                    break;
+                                }
+                                $data[$key][$i] = $v;
+                                if($key == 'missions'){
+                                    $data[$key][$i]['mission_number'] = $i + 1;
+                                }
 
+                                // clean if value is null
+                                if(isset($v['reward_value']) && ($v['reward_value'] == null || $v['reward_value'] == '')){
+                                    unset($data[$key][$i]);
+                                }
+                                $i++;
+                            }
+                        }
+                        if($key == 'missions'){
+                            $im = 0;
+                            foreach($value as $kk => $val){
+
+                                if (!$val['mission_name'] || !$val['mission_number']) {
+                                    unset($data[$key][$kk-1]);
+                                    continue;
+                                }
+
+                                unset($data[$key][$kk]);
+                                $data[$key][$im] = $val;
+                                $data[$key][$im]['mission_id'] = new MongoId();
+                                foreach($val as $k => $v){
+                                    if(in_array($k, array('completion', 'rewards', 'feedbacks'))){
+                                        $i = 0;
+                                        foreach($v as $koo => $voo){
+                                            foreach($voo as $kkk => &$vvv){
+                                                if(in_array($kkk, array('completion_id', 'reward_id', 'template_id')) && !empty($vvv)){
+                                                    $vvv = new MongoId($vvv);
+                                                }
+                                                if($kkk == 'completion_element_id'){
+                                                    if(isset($vvv) && empty($vvv)){
+                                                        $vvv = new MongoId();
+                                                    }
+                                                }
+                                            }
+                                            $qdata = array(
+                                                'client_id' => $client_id,
+                                                'site_id' => $site_id
+                                            );
+                                            unset($data[$key][$im][$k][$koo]);
+                                            switch ($k) {
+                                            case 'completion':
+                                                $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
+                                                break;
+                                            case 'rewards':
+                                                $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
+                                                break;
+                                            case 'feedbacks':
+                                                $voo["feedback_data"] = $this->questObjectData($voo, "feedback_type", "template_id", $qdata);
+                                                break;
+                                            default:
+                                                break;
+                                            }
+                                            $data[$key][$im][$k][$i] = $voo;
+
+                                            // clean if value is null
+                                            if(isset($voo['reward_value']) && ($voo['reward_value'] == null || $voo['reward_value'] == '')){
+                                                unset($data[$key][$im][$k][$i]);
+                                            }
+                                            $i++;
+                                        }
+                                    }
+                                }
+                                $im++;
+
+                            }
                         }
                     }
-                }
-                if (!isset($data['missions'])) {
-                    $data['missions'] = array();
-                }
-                $data['status'] = (isset($data['status']))?true:false;
-                $data['mission_order'] = (isset($data['mission_order']))?true:false;
+                    if (!isset($data['missions'])) {
+                        $data['missions'] = array();
+                    }
+                    $data['status'] = (isset($data['status']))?true:false;
+                    $data['mission_order'] = (isset($data['mission_order']))?true:false;
 
-                $data['date_added'] = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+                    $data['date_added'] = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
-                $data['client_id'] = $client_id;
-                $data['site_id'] = $site_id;
+                    $data['client_id'] = $client_id;
+                    $data['site_id'] = $site_id;
 
-                $this->Quest_model->addQuestToClient($data);
-                redirect('/quest', 'refresh');
-            } // end validation and message == null
+                    $this->Quest_model->addQuestToClient($data);
+                    redirect('/quest', 'refresh');
+                } // end validation and message == null
+            }
         }
         $this->getForm();
     }
@@ -1121,141 +1137,167 @@ class Quest extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'quest/edit/'.$quest_id;
 
+        $this->form_validation->set_rules('quest_name', $this->lang->line('form_quest_name'), 'trim|required|xss_clean');
+        $missions_input = $this->input->post('missions');
+        if ($missions_input != false && !empty($missions_input)) {
+            foreach ($missions_input as $i => $mission) {
+                $this->form_validation->set_rules('missions[' . $i . '][mission_name]',
+                    $this->lang->line('form_mission_name'), 'trim|required|xss_clean');
+                $this->form_validation->set_rules('missions[' . $i++ . '][mission_number]',
+                    $this->lang->line('form_mission_number'), 'trim|required|xss_clean');
+            }
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+            if($this->form_validation->run() && $this->data['message'] == null) {
+                $data = $this->input->post();
+                $new_missions = isset($data['missions']) ? sizeof($data['missions']) : 0;
+                $all_missions = ($missions - $this_missions) + $new_missions;
 
-            $data = $this->input->post();
-            $new_missions = isset($data['missions'])?sizeof($data['missions']):0;
-            $all_missions = ($missions - $this_missions) + $new_missions;
-
-            if (isset($lmts['mission'])
-                && isset($data['status'])
-                && $all_missions > $lmts['mission']) {
-                $this->data['message'][] = $this->lang->line('error_mission_limit');
-            }
-
-            if (!$this->validateModify()) {
-                $this->data['message'][] = $this->lang->line('error_permission');
-            }
-
-            if (!$this->data['message']) {
-                foreach($data as $key => $value){
-                    if(in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))){
-                        $i = 0;
-                        foreach($value as $k => $v){
-                            foreach($v as $ke => &$item){
-                                if(in_array($ke, array('condition_id', 'reward_id', 'template_id')) && !empty($item)){
-                                    $item = new MongoId($item);
-                                }
-                            }
-                            $qdata = array(
-                                'client_id' => $client_id,
-                                'site_id' => $site_id
-                            );
-                            unset($data[$key][$k]);
-                            switch ($key) {
-                            case 'condition':
-                                $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
-                                break;
-                            case 'rewards':
-                                $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
-                                break;
-                            case 'feedbacks':
-                                $v["feedback_data"] = $this->questObjectData($v, "feedback_type", "template_id", $qdata);
-                                break;
-                            default:
-                                break;
-                            }
-                            $data[$key][$i] = $v;
-                            if($key == 'missions'){
-                                $data[$key][$i]['mission_number'] = $i + 1;
-                            }
-
-                            // clean if value is null
-                            if(isset($v['reward_value']) && ($v['reward_value'] == null || $v['reward_value'] == '')){
-                                unset($data[$key][$i]);
-                            }
-                            $i++;
-                        }
-                    }
-                    if($key == 'missions'){
-                        $im = 0;
-                        foreach($value as $kk => $val){
-                            if (!$val['mission_name'] || !$val['mission_number']) {
-                                unset($data[$key][$kk-1]);
-                                continue;
-                            }
-
-                            unset($data[$key][$kk]);
-                            $data[$key][$im] = $val;
-                            try {
-                                $data[$key][$im]['mission_id'] = new MongoId($kk);
-                            } catch (MongoException $ex) {
-                                $data[$key][$im]['mission_id'] = new MongoId();
-                            }
-
-                            foreach($val as $k => $v){
-                                if(in_array($k, array('completion', 'rewards', 'feedbacks'))){
-                                    $i = 0;
-                                    foreach($v as $koo => $voo){
-                                        foreach($voo as $kkk => &$vvv){
-                                            if(in_array($kkk, array('completion_id', 'reward_id', 'template_id')) && !empty($vvv)){
-                                                $vvv = new MongoId($vvv);
-                                            }
-                                            if($kkk == 'completion_element_id'){
-                                                if(isset($vvv) && !empty($vvv)){
-                                                    $vvv = new MongoId($vvv);
-                                                }else{
-                                                    $vvv = new MongoId();
-                                                }
-                                            }
-                                        }
-                                        $qdata = array(
-                                            'client_id' => $client_id,
-                                            'site_id' => $site_id
-                                        );
-                                        unset($data[$key][$im][$k][$koo]);
-                                        switch ($k) {
-                                        case 'completion':
-                                            $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
-                                            break;
-                                        case 'rewards':
-                                            $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
-                                            break;
-                                        case 'feedbacks':
-                                            $voo["feedback_data"] = $this->questObjectData($voo, "feedback_type", "template_id", $qdata);
-                                            break;
-                                        default:
-                                            break;
-                                        }
-                                        $data[$key][$im][$k][$i] = $voo;
-
-                                        // clean if value is null
-                                        if(isset($voo['reward_value']) && ($voo['reward_value'] == null || $voo['reward_value'] == '')){
-                                            unset($data[$key][$im][$k][$i]);
-                                        }
-                                        $i++;
-                                    }
-                                }
-                            }
-                            $im++;
-
-                        }
-                    }
+                if (isset($lmts['mission'])
+                    && isset($data['status'])
+                    && $all_missions > $lmts['mission']
+                ) {
+                    $this->data['message'][] = $this->lang->line('error_mission_limit');
                 }
 
-                $data['status'] = (isset($data['status']))?true:false;
-                $data['mission_order'] = (isset($data['mission_order']))?true:false;
-                $data['client_id'] = $client_id;
-                $data['site_id'] = $site_id;
+                if (!$this->validateModify()) {
+                    $this->data['message'][] = $this->lang->line('error_permission');
+                }
 
-                if($this->Quest_model->editQuestToClient($quest_id, $data)){
-                    redirect('/quest', 'refresh');
-                }else{
-                    echo "Did not update";
+                if (!$this->data['message']) {
+                    foreach ($data as $key => $value) {
+                        if (in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))) {
+                            $i = 0;
+                            foreach ($value as $k => $v) {
+                                foreach ($v as $ke => &$item) {
+                                    if (in_array($ke,
+                                            array('condition_id', 'reward_id', 'template_id')) && !empty($item)
+                                    ) {
+                                        $item = new MongoId($item);
+                                    }
+                                }
+                                $qdata = array(
+                                    'client_id' => $client_id,
+                                    'site_id' => $site_id
+                                );
+                                unset($data[$key][$k]);
+                                switch ($key) {
+                                    case 'condition':
+                                        $v["condition_data"] = $this->questObjectData($v, "condition_type",
+                                            "condition_id", $qdata);
+                                        break;
+                                    case 'rewards':
+                                        $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id",
+                                            $qdata);
+                                        break;
+                                    case 'feedbacks':
+                                        $v["feedback_data"] = $this->questObjectData($v, "feedback_type", "template_id",
+                                            $qdata);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                $data[$key][$i] = $v;
+                                if ($key == 'missions') {
+                                    $data[$key][$i]['mission_number'] = $i + 1;
+                                }
+
+                                // clean if value is null
+                                if (isset($v['reward_value']) && ($v['reward_value'] == null || $v['reward_value'] == '')) {
+                                    unset($data[$key][$i]);
+                                }
+                                $i++;
+                            }
+                        }
+                        if ($key == 'missions') {
+                            $im = 0;
+                            foreach ($value as $kk => $val) {
+                                if (!$val['mission_name'] || !$val['mission_number']) {
+                                    unset($data[$key][$kk - 1]);
+                                    continue;
+                                }
+
+                                unset($data[$key][$kk]);
+                                $data[$key][$im] = $val;
+                                try {
+                                    $data[$key][$im]['mission_id'] = new MongoId($kk);
+                                } catch (MongoException $ex) {
+                                    $data[$key][$im]['mission_id'] = new MongoId();
+                                }
+
+                                foreach ($val as $k => $v) {
+                                    if (in_array($k, array('completion', 'rewards', 'feedbacks'))) {
+                                        $i = 0;
+                                        foreach ($v as $koo => $voo) {
+                                            foreach ($voo as $kkk => &$vvv) {
+                                                if (in_array($kkk, array(
+                                                        'completion_id',
+                                                        'reward_id',
+                                                        'template_id'
+                                                    )) && !empty($vvv)
+                                                ) {
+                                                    $vvv = new MongoId($vvv);
+                                                }
+                                                if ($kkk == 'completion_element_id') {
+                                                    if (isset($vvv) && !empty($vvv)) {
+                                                        $vvv = new MongoId($vvv);
+                                                    } else {
+                                                        $vvv = new MongoId();
+                                                    }
+                                                }
+                                            }
+                                            $qdata = array(
+                                                'client_id' => $client_id,
+                                                'site_id' => $site_id
+                                            );
+                                            unset($data[$key][$im][$k][$koo]);
+                                            switch ($k) {
+                                                case 'completion':
+                                                    $voo["completion_data"] = $this->questObjectData($voo,
+                                                        "completion_type", "completion_id", $qdata);
+                                                    break;
+                                                case 'rewards':
+                                                    $voo["reward_data"] = $this->questObjectData($voo, "reward_type",
+                                                        "reward_id", $qdata);
+                                                    break;
+                                                case 'feedbacks':
+                                                    $voo["feedback_data"] = $this->questObjectData($voo,
+                                                        "feedback_type", "template_id", $qdata);
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                            $data[$key][$im][$k][$i] = $voo;
+
+                                            // clean if value is null
+                                            if (isset($voo['reward_value']) && ($voo['reward_value'] == null || $voo['reward_value'] == '')) {
+                                                unset($data[$key][$im][$k][$i]);
+                                            }
+                                            $i++;
+                                        }
+                                    }
+                                }
+                                $im++;
+
+                            }
+                        }
+                    }
+
+                    $data['status'] = (isset($data['status'])) ? true : false;
+                    $data['mission_order'] = (isset($data['mission_order'])) ? true : false;
+                    $data['client_id'] = $client_id;
+                    $data['site_id'] = $site_id;
+
+                    if ($this->Quest_model->editQuestToClient($quest_id, $data)) {
+                        redirect('/quest', 'refresh');
+                    } else {
+                        echo "Did not update";
+                    }
                 }
             }
         }
