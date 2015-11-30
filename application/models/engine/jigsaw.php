@@ -328,7 +328,7 @@ class jigsaw extends MY_Model
 		if(!$result)
 		{
 			$lastDateOfMonth = date('d', strtotime("last day of next month"));
-			$exInfo['next_trigger'] = $config['date_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['date_of_month'] - 1) * 3600 * 24;
+			$exInfo['next_trigger'] = $config['day_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['day_of_month'] - 1) * 3600 * 24;
 			return true;
 		}
 		$logInput = $result['input'];
@@ -336,7 +336,7 @@ class jigsaw extends MY_Model
 		if($timeNow >= $logInput['next_trigger'])
 		{
 			$lastDateOfMonth = date('d', strtotime("last day of next month"));
-			$exInfo['next_trigger'] = $config['date_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['date_of_month'] - 1) * 3600 * 24;
+			$exInfo['next_trigger'] = $config['day_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['day_of_month'] - 1) * 3600 * 24;
 			return true;
 		}
 		$exInfo['next_trigger'] = $logInput['next_trigger'];
