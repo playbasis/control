@@ -50,14 +50,14 @@ class Engine extends Quest
 			if(isset($actionConfig[$actionId]))
 			{
 				$config = array(
-					'url' => $actionInput['url'],
+//					'url' => $actionInput['url'],
 //					'regex' => $actionInput['regex']
 				);
 				$found = false;
 				foreach($actionConfig[$actionId]['config'] as $configElement)
 				{
 //					if($config['url'] != $configElement['url'] || $config['regex'] != $configElement['regex'])
-					if($config['url'] != $configElement['url'])
+					if(isset($config['url']) && isset($configElement['url']) && ($config['url'] != $configElement['url']))
 						continue;
 					$found = true;
 					break;
@@ -76,7 +76,7 @@ class Engine extends Quest
 					'name' => $actionName,
 					'config' => array(
 						array(
-							'url' => $actionInput['url'],
+//							'url' => $actionInput['url'],
 //							'regex' => $actionInput['regex']
 						)
 					)
