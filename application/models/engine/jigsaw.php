@@ -212,8 +212,14 @@ class jigsaw extends MY_Model
 			'date_added'
 		));
 		if (!$result) {
-			$exInfo['remaining_counter'] = (int) $config['counter_value']; // max
+			$exInfo['remaining_counter'] = (int) $config['counter_value']-1; // max-1
 			$exInfo['beginning_time'] = $timeNow;
+			if ($exInfo['remaining_counter'] == 0) {
+				$exInfo['remaining_counter'] = (int) $config['counter_value']; // max
+				$exInfo['beginning_time'] = -1; // unset
+				return true;
+			}
+			return false;
 		}
 		$log = $result['input'];
 		$within = (int)$config['within'];
