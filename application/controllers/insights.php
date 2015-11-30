@@ -42,18 +42,178 @@ class Insights extends MY_Controller {
     // API Calls
 
     public function getAction(){
-        // $action = $this->_api->getAction();
-        $action = $this->_api->getActionUsedOnly();
+//        $action = $this->_api->getAction();
+//        $action = $this->_api->getActionUsedOnly();
+        $json = '{
+   "success":true,
+   "error_code":"0000",
+   "message":"Success",
+   "response":[
+      "register",
+      "transfer",
+      "withdraw",
+      "deposit",
+      "pay",
+      "geofence",
+      "day",
+      "join-friend",
+      "invite-friend",
+      "ra-engage-user",
+      "complete-profile"
+   ],
+   "timestamp":1448891656,
+   "time":"Mon, 30 Nov 2015 20:54:16 +0700 Asia\/Bangkok",
+   "version":"2.1.40"
+}';
+        $action = json_decode($json);
         $this->responseJson($action);
     }
 
-    public function getActionLog(){
-        $startDate      = $this->input->get('startDate', TRUE);
-        $endDate        = $this->input->get('endDate', TRUE);
-        $actionUnitType = $this->input->get('actionUnitType',TRUE);
+    public function getActionLog()
+    {
+        $startDate = $this->input->get('startDate', true);
+        $endDate = $this->input->get('endDate', true);
+        $actionUnitType = $this->input->get('actionUnitType', true);
 
-        $actionLog          = $this->_api->getActionLog($startDate,$endDate);
-        $formattedActionLog = $this->formatUnitType($actionLog,$actionUnitType);
+        $json = '{
+   "success":true,
+   "error_code":"0000",
+   "message":"Success",
+   "response":[
+      {
+         "2015-11-25":{
+            "register":1000,
+            "pay":10143,
+            "transfer":1500,
+            "withdraw":20,
+            "deposit":412,
+            "geofence":20,
+            "day":10,
+            "complete-profile":55,
+            "join-friend":680,
+            "invite-friend":350
+         }
+      },
+      {
+         "2015-11-26":{
+            "register":2000,
+            "pay":6150,
+            "transfer":7949,
+            "withdraw":494,
+            "deposit":1256,
+            "geofence":210,
+            "day":110,
+            "complete-profile":515,
+            "join-friend":180,
+            "invite-friend":56
+         }
+      },
+      {
+         "2015-11-27":{
+            "register":3000,
+            "pay":494,
+            "transfer":1500,
+            "withdraw":7949,
+            "deposit":1256,
+            "geofence":20,
+            "day":10,
+            "complete-profile":1255,
+            "join-friend":568,
+            "invite-friend":223
+         }
+      },
+      {
+         "2015-11-28":{
+            "register":4000,
+            "pay":412,
+            "transfer":200,
+            "withdraw":10143,
+            "deposit":6150,
+            "geofence":20,
+            "day":10,
+            "complete-profile":2,
+            "join-friend":111,
+            "invite-friend":88
+         }
+      },
+      {
+         "2015-11-29":{
+            "register":5000,
+            "withdraw":33541,
+            "transfer":1008,
+            "deposit":6910,
+            "pay":435,
+            "geofence":55,
+            "day":55,
+            "complete-profile":12,
+            "join-friend":557,
+            "invite-friend":123
+         }
+      },
+      {
+         "2015-11-30":{
+            "register":4000,
+            "deposit":677,
+            "transfer":1002,
+            "pay":5720,
+            "withdraw":32191,
+            "geofence":620,
+            "day":310,
+            "complete-profile":755,
+            "join-friend":80,
+            "invite-friend":30
+         }
+      },
+      {
+         "2015-12-01":{
+            "register":3000,
+            "pay":841,
+            "deposit":709,
+            "withdraw":31202,
+            "transfer":2005,
+            "geofence":210,
+            "day":160,
+            "complete-profile":61,
+            "join-friend":60,
+            "invite-friend":450
+         }
+      },
+      {
+         "2015-12-02":{
+            "register":2000,
+            "transfer":14,
+            "pay":600,
+            "withdraw":14143,
+            "deposit":675,
+            "geofence":420,
+            "day":210,
+            "complete-profile":155,
+            "join-friend":623,
+            "invite-friend":345
+         }
+      },
+      {
+         "2015-12-03":{
+            "register":1000,
+            "transfer":600,
+            "pay":14,
+            "withdraw":675,
+            "deposit":14143,
+            "geofence":200,
+            "day":198,
+            "complete-profile":384,
+            "join-friend":899,
+            "invite-friend":532
+         }
+      }
+   ],
+   "timestamp":1448880302,
+   "time":"Mon, 30 Nov 2015 17:45:02 +0700 Asia\\/Bangkok",
+   "version":"2.1.39"
+}';
+        $result = json_decode($json);
+
+        $formattedActionLog = $this->formatUnitType($result, $actionUnitType);
 
         $this->responseJson($formattedActionLog);
     }
@@ -83,9 +243,186 @@ class Insights extends MY_Controller {
         $this->responseJson($formattedRewardLog);
     }
 
-    public function getRewardPointLog(){
-        $formattedRewardLog = $this->getRewardLog('point');
-        $this->responseJson($formattedRewardLog);
+    public function getRewardPointLog()
+    {
+
+        $json = '{
+   "success":true,
+   "error_code":"0000",
+   "message":"Success",
+   "response":[
+      {
+         "2015-11-01":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-02":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-03":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-04":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-05":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-06":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-07":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-08":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-09":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-10":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-11":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-12":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-13":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-14":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-15":{
+            "point":0
+         }
+      },
+      {
+         "2015-11-16":{
+            "point":64
+         }
+      },
+      {
+         "2015-11-17":{
+            "point":38
+         }
+      },
+      {
+         "2015-11-18":{
+            "point":26
+         }
+      },
+      {
+         "2015-11-19":{
+            "point":12
+         }
+      },
+      {
+         "2015-11-20":{
+            "point":2
+         }
+      },
+      {
+         "2015-11-21":{
+            "point":3
+         }
+      },
+      {
+         "2015-11-22":{
+            "point":66
+         }
+      },
+      {
+         "2015-11-23":{
+            "point":20
+         }
+      },
+      {
+         "2015-11-24":{
+            "point":25
+         }
+      },
+      {
+         "2015-11-25":{
+            "point":76
+         }
+      },
+      {
+         "2015-11-26":{
+            "point":34
+         }
+      },
+      {
+         "2015-11-27":{
+            "point":58
+         }
+      },
+      {
+         "2015-11-28":{
+            "point":13
+         }
+      },
+      {
+         "2015-11-29":{
+            "point":6
+         }
+      },
+      {
+         "2015-11-30":{
+            "point":8
+         }
+      },
+      {
+         "2015-12-01":{
+            "point":12
+         }
+      },
+      {
+         "2015-12-02":{
+            "point":10
+         }
+      },
+      {
+         "2015-12-03":{
+            "point":5
+         }
+      }
+   ],
+   "timestamp":1448888993,
+   "time":"Mon, 30 Nov 2015 20:09:53 +0700 Asia\/Bangkok",
+   "version":"2.1.39"
+}';
+        $result = json_decode($json);
+        $this->responseJson($result);
     }
 
     private function getRewardLog($rewardType,$startDate = null,$endDate = null,$rewardUnitType = null){
@@ -156,9 +493,37 @@ class Insights extends MY_Controller {
             }
         }
 
-        $formattedActionLog->response = $comparedResult;
+        $json = '{
+   "success":true,
+   "error_code":"0000",
+   "message":"Success",
+   "response":{
+      "2015-12-02":{
+         "geofence":"2_100%",
+         "register":"5_100%",
+         "complete-profile":"8_100%",
+         "transfer":"12_100%",
+         "withdraw":"48_100%",
+         "deposit":"20_100%",
+         "pay":"5_100%"
+      },
+      "2015-12-03":{
+         "geofence":"5_100%",
+         "register":"10_100%",
+         "complete-profile":"5_100%",
+         "transfer":"30_100%",
+         "withdraw":"20_100%",
+         "deposit":"15_100%",
+         "pay":"15_100%"
+      }
+   },
+   "timestamp":1448889953,
+   "time":"Mon, 30 Nov 2015 20:25:53 +0700 Asia\/Bangkok",
+   "version":"2.1.40"
+}';
+        $result = json_decode($json);
 
-        $this->responseJson($formattedActionLog);
+        $this->responseJson($result);
     }
 
     public function getRewardCompareLog(){
@@ -233,9 +598,26 @@ class Insights extends MY_Controller {
             }
         }
 
-        $formattedRewardLog->response = $comparedResult;
+        $json = '{
+   "success":true,
+   "error_code":"0000",
+   "message":"Success",
+   "response":{
+      "2015-12-02":{
+         "point":"33_100%"
+      },
+      "2015-12-03":{
+         "point":"66_100%"
+      }
+   },
+   "timestamp":1448888994,
+   "time":"Mon, 30 Nov 2015 20:09:54 +0700 Asia\/Bangkok",
+   "version":"2.1.39"
+}';
 
-        $this->responseJson($formattedRewardLog);
+        $result = json_decode($json);
+
+        $this->responseJson($result);
     }
 
     public function getUserRegLog(){
@@ -243,8 +625,183 @@ class Insights extends MY_Controller {
         $endDate        = $this->input->get('endDate', TRUE);
         $userUnitType   = $this->input->get('userUnitType',TRUE);
 
-        $userLog            = $this->_api->getUserRegLog($startDate,$endDate);
-        $formattedUserLog   = $this->formatUnitType($userLog,$userUnitType);
+        $json = '{
+   "success":true,
+   "error_code":"0000",
+   "message":"Success",
+   "response":[
+      {
+         "2015-11-01":{
+            "count":1914
+         }
+      },
+      {
+         "2015-11-02":{
+            "count":1884
+         }
+      },
+      {
+         "2015-11-03":{
+            "count":1937
+         }
+      },
+      {
+         "2015-11-04":{
+            "count":1753
+         }
+      },
+      {
+         "2015-11-05":{
+            "count":1682
+         }
+      },
+      {
+         "2015-11-06":{
+            "count":1607
+         }
+      },
+      {
+         "2015-11-07":{
+            "count":1745
+         }
+      },
+      {
+         "2015-11-08":{
+            "count":1810
+         }
+      },
+      {
+         "2015-11-09":{
+            "count":1637
+         }
+      },
+      {
+         "2015-11-10":{
+            "count":1597
+         }
+      },
+      {
+         "2015-11-11":{
+            "count":1600
+         }
+      },
+      {
+         "2015-11-12":{
+            "count":1532
+         }
+      },
+      {
+         "2015-11-13":{
+            "count":2424
+         }
+      },
+      {
+         "2015-11-14":{
+            "count":3327
+         }
+      },
+      {
+         "2015-11-15":{
+            "count":3197
+         }
+      },
+      {
+         "2015-11-16":{
+            "count":2899
+         }
+      },
+      {
+         "2015-11-17":{
+            "count":2097
+         }
+      },
+      {
+         "2015-11-18":{
+            "count":2390
+         }
+      },
+      {
+         "2015-11-19":{
+            "count":2288
+         }
+      },
+      {
+         "2015-11-20":{
+            "count":2134
+         }
+      },
+      {
+         "2015-11-21":{
+            "count":2390
+         }
+      },
+      {
+         "2015-11-22":{
+            "count":2465
+         }
+      },
+      {
+         "2015-11-23":{
+            "count":1813
+         }
+      },
+      {
+         "2015-11-24":{
+            "count":1760
+         }
+      },
+      {
+         "2015-11-25":{
+            "count":1678
+         }
+      },
+      {
+         "2015-11-26":{
+            "count":2249
+         }
+      },
+      {
+         "2015-11-27":{
+            "count":2649
+         }
+      },
+      {
+         "2015-11-28":{
+            "count":2886
+         }
+      },
+      {
+         "2015-11-29":{
+            "count":2692
+         }
+      },
+      {
+         "2015-11-30":{
+            "count":2692
+         }
+      },
+      {
+         "2015-12-01":{
+            "count":2692
+         }
+      },
+      {
+         "2015-12-02":{
+            "count":2692
+         }
+      },
+      {
+         "2015-12-03":{
+            "count":2692
+         }
+      }
+   ],
+   "timestamp":1448885304,
+   "time":"Mon, 30 Nov 2015 19:08:24 +0700 Asia\\/Bangkok",
+   "version":"2.1.39"
+}';
+        $result = json_decode($json);
+        $formattedUserLog = $this->formatUnitType($result, $userUnitType);
 
         $this->responseJson($formattedUserLog);
     }
