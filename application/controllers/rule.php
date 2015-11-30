@@ -211,23 +211,31 @@ class Rule extends MY_Controller
         $site_id = $this->input->post("site_id");
         $rule = $this->Rule_model->getById($id);
 
-        // process each rule
-        $result = array();
+        // extract the rule parameters
+        $action = null;
+        $params = array();
         foreach ($rule["jigsaw_set"] as $jigsaw) {
             if ($jigsaw["category"] == "ACTION") {
-                foreach ($jigsaw["dataSet"] as $dataSet) {
-                    if ($dataSet["param_name"] == "url")
-                        $result = $this->curl(
-                            API_SERVER."/Engine/rule",
-                            array("rule_id" => strval($rule["_id"]),
-                            "action" => $jigsaw["name"],
-                            "url" => $dataSet["value"],
-                            "client_id" => $client_id,
-                            "site_id" => $site_id,
-                            "test" => true));
+                $action = $jigsaw["name"];
+            } else if ($jigsaw["category"] == "CONDITION") {
+                if ($jigsaw["name"] == "customParameter") {
+                    $params[$jigsaw["config"]["param_name"]] = $jigsaw["config"]["param_value"];
                 }
             }
         }
+
+        $data = array_merge(array(
+            "rule_id" => strval($rule["_id"]),
+            "action" => $action,
+            "client_id" => $client_id,
+            "site_id" => $site_id,
+            "test" => true
+        ), $params);
+
+        $result = $this->curl(
+            API_SERVER."/Engine/rule",
+            $data
+        );
 
         $this->output->set_output($result);
     }
@@ -395,7 +403,7 @@ class Rule extends MY_Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $server_output = curl_exec ($ch);
+        $server_output = curl_exec($ch);
         curl_close ($ch);
         return $server_output;
     }
