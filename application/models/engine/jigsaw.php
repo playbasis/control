@@ -194,6 +194,44 @@ class jigsaw extends MY_Model
 			return false;
 		}
 	}
+	public function counterWithin($config, $input, &$exInfo = array())
+	{
+		assert($config != false);
+		assert(is_array($config));
+		assert(isset($config['counter_value']));
+		assert(isset($config['within']));
+		assert(isset($config['within_unit']));
+		assert($input != false);
+		assert(is_array($input));
+		assert($input['pb_player_id']);
+		assert($input['rule_id']);
+		assert($input['jigsaw_id']);
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
+		$result = $this->getMostRecentJigsaw($input, array(
+			'input',
+			'date_added'
+		));
+		if (!$result) {
+			$exInfo['remaining_counter'] = (int) $config['counter_value']; // max
+			$exInfo['beginning_time'] = $timeNow;
+		}
+		$log = $result['input'];
+		$within = (int)$config['within'];
+		$timeDiff = ($log['within_unit']) == 'second' ? (int) ($timeNow - $within) : (int) ($timeNow - strtotime('-'.$within.' days', $timeNow));
+		if ($timeDiff > $log['beginning_time']) { // time's up!
+			$exInfo['remaining_counter'] = (int) $config['counter_value'] - 1; // max-1
+			$exInfo['beginning_time'] = $timeNow; // reset to "now"
+		} else { // valid
+			$exInfo['remaining_counter'] = (int) $log['remaining_counter'] - 1; // current-1
+			$exInfo['beginning_time'] = $log['beginning_time']; // stays the same;
+		}
+		if ($exInfo['remaining_counter'] == 0) {
+			$exInfo['remaining_counter'] = (int) $config['counter_value']; // max
+			$exInfo['beginning_time'] = -1; // unset
+			return true;
+		}
+		return false;
+	}
 	public function cooldown($config, $input, &$exInfo = array())
 	{
 		assert($config != false);
