@@ -200,7 +200,7 @@ class jigsaw extends MY_Model
 		assert(is_array($config));
 		assert(isset($config['counter_value']));
 		assert(isset($config['within']));
-		assert(isset($config['within_unit']));
+		assert(isset($config['interval_unit']));
 		assert($input != false);
 		assert(is_array($input));
 		assert($input['pb_player_id']);
@@ -217,7 +217,7 @@ class jigsaw extends MY_Model
 		}
 		$log = $result['input'];
 		$within = (int)$config['within'];
-		$timeDiff = ($log['within_unit']) == 'second' ? (int) ($timeNow - $within) : (int) ($timeNow - strtotime('-'.$within.' days', $timeNow));
+		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $within) : (int) ($timeNow - strtotime('-'.$within.' days', $timeNow));
 		if ($timeDiff > $log['beginning_time']) { // time's up!
 			$exInfo['remaining_counter'] = (int) $config['counter_value'] - 1; // max-1
 			$exInfo['beginning_time'] = $timeNow; // reset to "now"
