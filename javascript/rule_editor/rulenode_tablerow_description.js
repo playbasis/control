@@ -194,6 +194,14 @@ toolstip = {
 				reset_timeout:'reset the timeout each time the counter is triggered'
 			}
 		},
+		counterWithin:{
+			description:'Each time a Counter is triggered, its count value will decrease by one. One has to complete all the actions within given period of time.',
+			field_desc:{
+				counter_value:'how many times this counter need to trigger before it allows the rule to continue',
+				within:'if the count does not reach zero before the time ran out, the count resets',
+				interval_unit:'unit of time out, can be second or day'
+			}
+		},
 		cooldown:{ 
 			description:'Cooldown can limit the frequency that a user can trigger rules. Once a Cooldown is triggered, its timer starts. If the same Cooldown is triggered again by the same user before the timer reached zero, the Cooldown with stop the rule and discard the action; otherwise, the rule continues and the timer starts again.',
 			field_desc:{
