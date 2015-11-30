@@ -58,7 +58,7 @@ class Insights extends MY_Controller {
       "day",
       "join-friend",
       "invite-friend",
-      "ra-engage-user",
+      "re-engage-user",
       "complete-profile"
    ],
    "timestamp":1448891656,
