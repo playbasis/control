@@ -81,7 +81,7 @@ abstract class REST2_Controller extends REST_Controller
 
         /* 1.3 Check valid payment */
         $d = time();
-		$this->client_date = $this->client_model->getClientStartEndDate($this->client_id);
+        $this->client_date = $this->client_model->getClientStartEndDate($this->client_id);
         $flag = true; // default is assumed to be free, which is allowed to use API
         if ($this->client_date['date_start']) {
             $flag = $d >= $this->client_date['date_start']->sec;
@@ -100,15 +100,15 @@ abstract class REST2_Controller extends REST_Controller
             $url = "/".$url;
         }
         try {
-	        $this->client_usage = $this->client_model->getClientSiteUsage($this->client_id, $this->site_id);
-	        $this->client_plan = $this->client_model->getPlanById($this->client_usage['plan_id']);
-	        $free_flag = !isset($this->client_plan['price']) || $this->client_plan['price'] <= 0;
-	        if ($free_flag) {
-		        $this->client_date = $this->client_model->adjustCurrentUsageDate($this->client_date['date_start']);
-	        }
-	        $this->client_data = array('date' => $this->client_date, 'usage' => $this->client_usage, 'plan' => $this->client_plan);
+            $this->client_usage = $this->client_model->getClientSiteUsage($this->client_id, $this->site_id);
+            $this->client_plan = $this->client_model->getPlanById($this->client_usage['plan_id']);
+            $free_flag = !isset($this->client_plan['price']) || $this->client_plan['price'] <= 0;
+            if ($free_flag) {
+                $this->client_date = $this->client_model->adjustCurrentUsageDate($this->client_date['date_start']);
+            }
+            $this->client_data = array('date' => $this->client_date, 'usage' => $this->client_usage, 'plan' => $this->client_plan);
             $this->client_model->permissionProcess(
-	            $this->client_data,
+                $this->client_data,
                 $this->client_id,
                 $this->site_id,
                 "requests",
@@ -118,9 +118,9 @@ abstract class REST2_Controller extends REST_Controller
             if ($e->getMessage() == "LIMIT_EXCEED")
                 $this->response($this->error->setError(
                     "LIMIT_EXCEED", array()), 200);
-	        elseif ($e->getMessage() == "CLIENTSITE_NOTFOUND")
-		        $this->response($this->error->setError(
-			        "CLIENTSITE_NOTFOUND", array()), 200);
+            elseif ($e->getMessage() == "CLIENTSITE_NOTFOUND")
+                $this->response($this->error->setError(
+                    "CLIENTSITE_NOTFOUND", array()), 200);
             else {
                 log_message('error', '[REST2::permissionProcess] error = '.$e->getMessage());
                 $this->response($this->error->setError(
