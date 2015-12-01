@@ -745,7 +745,7 @@ class Client_model extends MY_Model
             throw new Exception("WRONG_TYPE");
 
         $result = array();
-	    $res = $client_data['usage'];
+        $res = $client_data['usage'];
         if ($res) {
             $result["plan_id"] = $res["plan_id"];
 

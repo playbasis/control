@@ -16,7 +16,7 @@ class jigsaw extends MY_Model
 		$required = array();
 		foreach ($data_set as $param){
 			$isRequired = isset($param['required'])?$param['required']:false;
-            $param_name = $param['param_name'];
+			$param_name = $param['param_name'];
 			if (!isset($input[$param_name]) && ($isRequired)){
 				array_push($required,$param_name);
 			}
