@@ -14,7 +14,7 @@ class jigsaw extends MY_Model
 		assert(is_array($config));
 		$data_set = $this->getActionDatasetInfo($config);
 		$required = array();
-		foreach ($data_set as $param){
+		if (is_array($data_set)) foreach ($data_set as $param){
 			$isRequired = isset($param['required'])?$param['required']:false;
 			$param_name = $param['param_name'];
 			if (!isset($input[$param_name]) && ($isRequired)){
