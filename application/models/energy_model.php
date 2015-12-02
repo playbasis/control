@@ -24,7 +24,20 @@ class Energy_model extends MY_Model
 
         return !empty($result) ? $result : array();
     }
+    public function findActiveEnergyRewardsById($mongo_site_id = 0, $client_id, $site_id)
+    {
+        $this->set_site_mongodb($mongo_site_id);
 
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where(array('status' => true,
+                                    'client_id' => $client_id,
+                                    'site_id' => $site_id
+        ));
+        $this->mongo_db->where_in('type', array('loss', 'gain'));
+        $result = $this->mongo_db->get('playbasis_reward_to_client');
+
+        return !empty($result) ? $result : array();
+    }
     /**
      * @param $client_id
      * @param $site_id
