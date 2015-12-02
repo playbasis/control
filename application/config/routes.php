@@ -281,6 +281,11 @@ $route['Push/deviceRegistration'] = 'push/deviceRegistration';
 
 $route['Push/'.ANY_STRING.'/send'] = 'push/send/$1';
 $route['Push/send'] = 'push/send';
+$route['Push/goods'] = 'push/send_goods';
+$route['Push/recent'] = 'push/recent';
+$route['Push/template/'.ANY_STRING] = 'push/template/$1';
+$route['Push/template'] = 'push/template';
+
 
 //promo API
 $route['Promo'] = 'promo/list';

@@ -228,6 +228,24 @@ class Push_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_push_to_client');
         return $results ? $results[0] : null;
     }
+    public function getTemplateByTemplateId($site_id, $template_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('name', $template_id);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_push_to_client');
+        return $results ? $results[0] : null;
+    }
+    public function listTemplates($site_id, $includes=null, $excludes=null) {
+        $this->set_site_mongodb($site_id);
+        if ($includes) $this->mongo_db->select($includes);
+        if ($excludes) $this->mongo_db->select(null, $excludes);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->get('playbasis_push_to_client');
+    }
 
     public function listDevice($pb_player_id)
     {
@@ -236,5 +254,37 @@ class Push_model extends MY_Model
             'pb_player_id' => new MongoId($pb_player_id),
         ));
         return $this->mongo_db->get('playbasis_player_device');
+    }
+    public function recent($site_id, $cl_player_id, $since) {
+        if (!$cl_player_id) return array();
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('message', 'date_added'));
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('cl_player_id', $cl_player_id);
+        if ($since) $this->mongo_db->where_gt('date_added', new MongoDate($since));
+        $this->mongo_db->order_by(array('date_added' => -1));
+        return $this->mongo_db->get('playbasis_push_log');
+    }
+    public function log($notificationInfo,$device,$pb_player_id,$cl_player_id){
+        $mongoDate = new MongoDate(time());
+        $client_id = $notificationInfo['data']['client_id'];
+        $site_id = $notificationInfo['data']['site_id'];
+        $this->set_site_mongodb($site_id);
+        $data = array(
+            'type' => $device['os_type'],
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'pb_player_id' => $pb_player_id,
+            'cl_player_id' => $cl_player_id,
+            'device_token' => $notificationInfo['device_token'],
+            'messages' => $notificationInfo['messages'],
+            'badge_number' => $notificationInfo['badge_number']
+        );
+
+        $data['date_added'] = $mongoDate;
+        $data['date_modified'] = $mongoDate;
+
+        return $this->mongo_db->insert('playbasis_push_log', $data);
     }
 }

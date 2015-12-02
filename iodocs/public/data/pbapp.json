@@ -1,98 +1,98 @@
 {
-	"endpoints": [
+    "endpoints": [
       {
-			"name": "Auth API",
-			"methods": [
-				{
-					"MethodName": "Auth",
-					"Synopsis": "Request access token from playbasis server.",
-					"HTTPMethod": "POST",
-					"URI": "/Auth",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "api_key",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "api key issued by Playbasis"
-						},
-						{
-							"Name": "api_secret",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "api secret issued by Playbasis"
-						}
-					]
-				},
-				{
-					"MethodName": "Renew",
-					"Synopsis": "Create a new token and discard the current token",
-					"HTTPMethod": "POST",
-					"URI": "/Auth/renew",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "api_key",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "api key issued by Playbasis"
-						},
-						{
-							"Name": "api_secret",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "api secret issued by Playbasis"
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "Player API",
-			"methods": [
-				{
-					"MethodName": "Player Info (public data only)",
-					"Synopsis": "Get public information about a player.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/:id",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						}
-					]
-				},
-				{
-					"MethodName": "Player Info (include private data)",
-					"Synopsis": "Get public and private information about a player.",
-					"HTTPMethod": "POST",
-					"URI": "/Player/:id",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						}
-					]
-				},
+            "name": "Auth API",
+            "methods": [
+                {
+                    "MethodName": "Auth",
+                    "Synopsis": "Request access token from playbasis server.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Auth",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "api_key",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "api key issued by Playbasis"
+                        },
+                        {
+                            "Name": "api_secret",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "api secret issued by Playbasis"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Renew",
+                    "Synopsis": "Create a new token and discard the current token",
+                    "HTTPMethod": "POST",
+                    "URI": "/Auth/renew",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "api_key",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "api key issued by Playbasis"
+                        },
+                        {
+                            "Name": "api_secret",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "api secret issued by Playbasis"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Player API",
+            "methods": [
+                {
+                    "MethodName": "Player Info (public data only)",
+                    "Synopsis": "Get public information about a player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Player Info (include private data)",
+                    "Synopsis": "Get public and private information about a player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
                 {
                     "MethodName": "List Player (Basic information)",
                     "Synopsis": "Get basic information of players.",
@@ -116,262 +116,140 @@
                         }
                     ]
                 },
-				{
-					"MethodName": "Detailed Player Info (public data only)",
-					"Synopsis": "Get detailed public information about a player, including points and badges.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/:id/data/all",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						}
-					]
-				},
-				{
-					"MethodName": "Detailed Player Info (include private data)",
-					"Synopsis": "Get detailed public and private information about a player, including points and badges",
-					"HTTPMethod": "POST",
-					"URI": "/Player/:id/data/all",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						}
-					]
-				},
-				{
-					"MethodName": "List Custom Fields of Player",
-					"Synopsis": "Get custom fields information about a player",
-					"HTTPMethod": "GET",
-					"URI": "/Player/:id/custom",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						}
-					]
-				},
-				{
-					"MethodName": "Set Custom Field of Player",
-					"Synopsis": "Set custom field of a player",
-					"HTTPMethod": "POST",
-					"URI": "/Player/:id/custom",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						},
-						{
-							"Name": "key",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "custom field keys separated by comma"
-						},
-						{
-							"Name": "value",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "custom field values separated by comma"
-						}
-					]
-				},
-				{
-					"MethodName": "Register",
-					"Synopsis": "Register a user from client's website as a Playbasis player.",
-					"HTTPMethod": "POST",
-					"URI": "/Player/:id/register",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website *** It's available only [A-Za-z0-9_-]"
-						},
-						{
-							"Name": "username",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "username of the player"
-						},
-						{
-							"Name": "email",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "email address of the player"
-						},
-						{
-							"Name": "image",
-							"Required": "Y",
-							"Default": "https://www.pbapp.net/images/default_profile.jpg",
-							"Type": "string",
-							"Description": "url to the player profile image"
-						},
-						{
-							"Name": "phone_number",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "+66xxyyyzzzz"
-						},
-						{
-							"Name": "facebook_id",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "facebook id of the player"
-						},
-						{
-							"Name": "twitter_id",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "twitter id of the player"
-						},
-						{
-							"Name": "password",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "password of the player"
-						},
-						{
-							"Name": "first_name",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "first name of the player"
-						},
-						{
-							"Name": "last_name",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "last name of the player"
-						},
-						{
-							"Name": "gender",
-							"Required": "N",
-							"Default": "",
-							"Type": "enumerated",
-							"Description": "1=Male, 2=Female",
-							"EnumeratedList": [
-								"1",
-								"2"
-							]
-						},
-						{
-							"Name": "birth_date",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
-						},
-						{
-							"Name": "code",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "referral code of another player for invitation system"
-						},
-						{
-						  "Name": "anonymous",
-						  "Required": "N",
-						  "Default": "",
-						  "Type": "enumerated",
-						  "Description": "anonymous flag",
-						  "EnumeratedList": [
-							"0",
-							"1"
-						  ]
-						}
-					]
-				},
-				{
-					"MethodName": "Update",
-					"Synopsis": "Update player information.",
-					"HTTPMethod": "POST",
-					"URI": "/Player/:id/update",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						},
-						{
-							"Name": "username",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "username of the player"
-						},
-						{
-							"Name": "email",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "email address of the player"
-						},
-						{
-							"Name": "image",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "url to the player profile image"
-						},
+                {
+                    "MethodName": "Detailed Player Info (public data only)",
+                    "Synopsis": "Get detailed public information about a player, including points and badges.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/data/all",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Detailed Player Info (include private data)",
+                    "Synopsis": "Get detailed public and private information about a player, including points and badges",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/data/all",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "List Custom Fields of Player",
+                    "Synopsis": "Get custom fields information about a player",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/custom",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Set Custom Field of Player",
+                    "Synopsis": "Set custom field of a player",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/custom",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "key",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "custom field keys separated by comma"
+                        },
+                        {
+                            "Name": "value",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "custom field values separated by comma"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Register",
+                    "Synopsis": "Register a user from client's website as a Playbasis player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/register",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website *** It's available only [A-Za-z0-9_-]"
+                        },
+                        {
+                            "Name": "username",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "username of the player"
+                        },
+                        {
+                            "Name": "email",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "email address of the player"
+                        },
+                        {
+                            "Name": "image",
+                            "Required": "Y",
+                            "Default": "https://www.pbapp.net/images/default_profile.jpg",
+                            "Type": "string",
+                            "Description": "url to the player profile image"
+                        },
                         {
                             "Name": "phone_number",
                             "Required": "N",
@@ -379,296 +257,418 @@
                             "Type": "string",
                             "Description": "+66xxyyyzzzz"
                         },
-						{
-							"Name": "exp",
-							"Required": "N",
-							"Default": "",
-							"Type": "number",
-							"Description": "player's experience points"
-						},
-						{
-							"Name": "level",
-							"Required": "N",
-							"Default": "",
-							"Type": "number",
-							"Description": "player's level"
-						},
-						{
-							"Name": "facebook_id",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "facebook id of the player"
-						},
-						{
-							"Name": "twitter_id",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "twitter id of the player"
-						},
-						{
-							"Name": "password",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "password of the player"
-						},
-						{
-							"Name": "first_name",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "first name of the player"
-						},
-						{
-							"Name": "last_name",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "last name of the player"
-						},
-						{
-							"Name": "gender",
-							"Required": "N",
-							"Default": "",
-							"Type": "enumerated",
-							"Description": "1=Male, 2=Female",
-							"EnumeratedList": [
-								"1",
-								"2"
-							]
-						},
-						{
-							"Name": "birth_date",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
-						}
-					]
-				},
-				{
-					"MethodName": "Reset player password",
-					"Synopsis": "Reset player password that store in Playbasis system.",
-					"HTTPMethod": "POST",
-					"URI": "/Player/password/email",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "email",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "email as used in client's website"
-						}
-					]
-				},
-				{
-					"MethodName": "Delete",
-					"Synopsis": "Permenently delete a player from Playbasis database.",
-					"HTTPMethod": "POST",
-					"URI": "/Player/:id/delete",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						}
-					]
-				},
-				{
-					"MethodName": "Login",
-					"Synopsis": "Tell Playbasis system that a player has logged in.",
-					"HTTPMethod": "POST",
-					"URI": "/Player/:id/login",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						},
-						{
-							"Name": "session_id",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "session id of the player"
-						},
-						{
-							"Name": "session_expires_in",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "session expires in seconds"
-						}
-					]
-				},
-				{
-					"MethodName": "Player Auth",
-					"Synopsis": "Authenticate player with data in Playbasis system then login and also create session.",
-					"HTTPMethod": "POST",
-					"URI": "/Player/auth",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "email",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "email as used in client's website (either email or username is required)"
-						},
-						{
-							"Name": "username",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "username as used in client's website (either email or username is required)"
-						},
-						{
-							"Name": "password",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "password of the player"
-						}
-					]
-				},
-				{
-					"MethodName": "Logout",
-					"Synopsis": "Tell Playbasis system that a player has logged out.",
-					"HTTPMethod": "POST",
-					"URI": "/Player/:id/logout",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						},
-						{
-							"Name": "session_id",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "session id of the player"
-						}
-					]
-				},
-				{
-					"MethodName": "List Active Player Sessions",
-					"Synopsis": "List active sessions of a player in Playbasis system.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/:id/sessions",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						}
-					]
-				},
-				{
-					"MethodName": "Find a Player by Session",
-					"Synopsis": "Find a player given session ID.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/session/:session_id",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "session_id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "session id"
-						}
-					]
-				},
-				{
-					"MethodName": "Points",
-					"Synopsis": "Returns information about all point-based rewards that a player currently have.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/:id/points",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						}
-					]
-				},
-				{
-					"MethodName": "Point",
-					"Synopsis": "Returns how much of specified the point-based reward a player currently have.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/:id/point/:point_name",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						},
-						{
-							"Name": "point_name",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "name of the point-based reward to query"
-						}
-					]
-				},
+                        {
+                            "Name": "facebook_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "facebook id of the player"
+                        },
+                        {
+                            "Name": "twitter_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "twitter id of the player"
+                        },
+                        {
+                            "Name": "password",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "password of the player"
+                        },
+                        {
+                            "Name": "first_name",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "first name of the player"
+                        },
+                        {
+                            "Name": "last_name",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "last name of the player"
+                        },
+                        {
+                            "Name": "gender",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "enumerated",
+                            "Description": "1=Male, 2=Female",
+                            "EnumeratedList": [
+                                "1",
+                                "2"
+                            ]
+                        },
+                        {
+                            "Name": "birth_date",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
+                        },
+                        {
+                            "Name": "code",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "referral code of another player for invitation system"
+                        },
+                        {
+                          "Name": "anonymous",
+                          "Required": "N",
+                          "Default": "",
+                          "Type": "enumerated",
+                          "Description": "anonymous flag",
+                          "EnumeratedList": [
+                            "0",
+                            "1"
+                          ]
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Update",
+                    "Synopsis": "Update player information.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/update",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "username",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "username of the player"
+                        },
+                        {
+                            "Name": "email",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "email address of the player"
+                        },
+                        {
+                            "Name": "image",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "url to the player profile image"
+                        },
+                        {
+                            "Name": "phone_number",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "+66xxyyyzzzz"
+                        },
+                        {
+                            "Name": "exp",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "number",
+                            "Description": "player's experience points"
+                        },
+                        {
+                            "Name": "level",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "number",
+                            "Description": "player's level"
+                        },
+                        {
+                            "Name": "facebook_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "facebook id of the player"
+                        },
+                        {
+                            "Name": "twitter_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "twitter id of the player"
+                        },
+                        {
+                            "Name": "password",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "password of the player"
+                        },
+                        {
+                            "Name": "first_name",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "first name of the player"
+                        },
+                        {
+                            "Name": "last_name",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "last name of the player"
+                        },
+                        {
+                            "Name": "gender",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "enumerated",
+                            "Description": "1=Male, 2=Female",
+                            "EnumeratedList": [
+                                "1",
+                                "2"
+                            ]
+                        },
+                        {
+                            "Name": "birth_date",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Reset player password",
+                    "Synopsis": "Reset player password that store in Playbasis system.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/password/email",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "email",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "email as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Delete",
+                    "Synopsis": "Permenently delete a player from Playbasis database.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/delete",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Login",
+                    "Synopsis": "Tell Playbasis system that a player has logged in.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/login",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "session_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "session id of the player"
+                        },
+                        {
+                            "Name": "session_expires_in",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "session expires in seconds"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Player Auth",
+                    "Synopsis": "Authenticate player with data in Playbasis system then login and also create session.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/auth",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "email",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "email as used in client's website (either email or username is required)"
+                        },
+                        {
+                            "Name": "username",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "username as used in client's website (either email or username is required)"
+                        },
+                        {
+                            "Name": "password",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "password of the player"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Logout",
+                    "Synopsis": "Tell Playbasis system that a player has logged out.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/logout",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "session_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "session id of the player"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "List Active Player Sessions",
+                    "Synopsis": "List active sessions of a player in Playbasis system.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/sessions",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Find a Player by Session",
+                    "Synopsis": "Find a player given session ID.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/session/:session_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "session_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "session id"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Points",
+                    "Synopsis": "Returns information about all point-based rewards that a player currently have.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/points",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Point",
+                    "Synopsis": "Returns how much of specified the point-based reward a player currently have.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/point/:point_name",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "point_name",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of the point-based reward to query"
+                        }
+                    ]
+                },
                 {
                     "MethodName": "Point History",
                     "Synopsis": "Returns history points of player",
@@ -706,68 +706,68 @@
                         }
                     ]
                 },
-				{
-					"MethodName": "Action Time",
-					"Synopsis": "Returns the last time that player performed the specified action.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/:id/action/:action_name/time",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						},
-						{
-							"Name": "action_name",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "name of the action to query"
-						}
-					]
-				},
-				{
-					"MethodName": "Last Action",
-					"Synopsis": "Returns the time and action that a player last performed.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/:id/action/time",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						}
-					]
-				},
-				{
-					"MethodName": "Action Count",
-					"Synopsis": "Returns the number of times that a player has performed the specified action.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/:id/action/:action_name/count",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						},
-						{
-							"Name": "action_name",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "name of the action to query"
-						}
-					]
-				},
+                {
+                    "MethodName": "Action Time",
+                    "Synopsis": "Returns the last time that player performed the specified action.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/action/:action_name/time",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "action_name",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of the action to query"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Last Action",
+                    "Synopsis": "Returns the time and action that a player last performed.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/action/time",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Action Count",
+                    "Synopsis": "Returns the number of times that a player has performed the specified action.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/action/:action_name/count",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "action_name",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of the action to query"
+                        }
+                    ]
+                },
                 {
                     "MethodName": "Level",
                     "Synopsis": "Returns detail of level.",
@@ -826,96 +826,96 @@
                         }
                     ]
                 },
-				{
-					"MethodName": "Claim Badge",
-					"Synopsis": "Claim a badge that a player has earned.",
-					"HTTPMethod": "POST",
-					"URI": "/Player/:id/badge/:badge_id/claim",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						},
-						{
-							"Name": "badge_id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "id for the badge to change the state."
-						}
-					]
-				},
-				{
-					"MethodName": "Redeem Badge",
-					"Synopsis": "Redeem a badge that a player has claimed.",
-					"HTTPMethod": "POST",
-					"URI": "/Player/:id/badge/:badge_id/redeem",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						},
-						{
-							"Name": "badge_id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "id for the badge to change the state."
-						}
-					]
-				},
-				{
-					"MethodName": "Rank",
-					"Synopsis": "Returns list of players sorted by the specified point type.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/rank/:rank_by/:limit",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "rank_by",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "name of point-based reward to rank players by"
-						},
-						{
-							"Name": "limit",
-							"Required": "Y",
-							"Default": "20",
-							"Type": "integer",
-							"Description": "number of results to return"
-						},
-						{
-							"Name": "mode",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "weekly, monthly (default is all-time)"
-						}
-					]
-				},
+                {
+                    "MethodName": "Claim Badge",
+                    "Synopsis": "Claim a badge that a player has earned.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/badge/:badge_id/claim",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "badge_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "id for the badge to change the state."
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Redeem Badge",
+                    "Synopsis": "Redeem a badge that a player has claimed.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/badge/:badge_id/redeem",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "badge_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "id for the badge to change the state."
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Rank",
+                    "Synopsis": "Returns list of players sorted by the specified point type.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/rank/:rank_by/:limit",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "rank_by",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of point-based reward to rank players by"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "Y",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        },
+                        {
+                            "Name": "mode",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "weekly, monthly (default is all-time)"
+                        }
+                    ]
+                },
                 {
                     "MethodName": "DEPRECATED - Level",
                     "Synopsis": "Returns detail of level.",
@@ -955,29 +955,29 @@
                         }
                     ]
                 },
-				{
-					"MethodName": "Ranks",
-					"Synopsis": "Returns list of players sorted by each point type.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/ranks/:limit",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "limit",
-							"Required": "Y",
-							"Default": "20",
-							"Type": "integer",
-							"Description": "number of results to return for each point type"
-						},
-						{
-							"Name": "mode",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "weekly, monthly (default is all-time)"
-						}
-					]
-				},
+                {
+                    "MethodName": "Ranks",
+                    "Synopsis": "Returns list of players sorted by each point type.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/ranks/:limit",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "limit",
+                            "Required": "Y",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return for each point type"
+                        },
+                        {
+                            "Name": "mode",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "weekly, monthly (default is all-time)"
+                        }
+                    ]
+                },
                 {
                     "MethodName": "DEPRECATED - Ranks",
                     "Synopsis": "Returns list of players sorted by each point type.",
@@ -1162,37 +1162,37 @@
                         }
                     ]
                 }
-			]
-		},
-		{
-			"name": "Badge API",
-			"methods": [
-				{
-					"MethodName": "Badges Info",
-					"Synopsis": "Returns information about all available badges for the current site.",
-					"HTTPMethod": "GET",
-					"URI": "/Badges",
-					"RequiresOAuth": "N",
-					"parameters": []
-				},
-				{
-					"MethodName": "Badge Info",
-					"Synopsis": "Returns information about the badge with the specified id.",
-					"HTTPMethod": "GET",
-					"URI": "/Badge/:id",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "integer",
-							"Description": "badge id to query"
-						}
-					]
-				}
-			]
-		},
+            ]
+        },
+        {
+            "name": "Badge API",
+            "methods": [
+                {
+                    "MethodName": "Badges Info",
+                    "Synopsis": "Returns information about all available badges for the current site.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Badges",
+                    "RequiresOAuth": "N",
+                    "parameters": []
+                },
+                {
+                    "MethodName": "Badge Info",
+                    "Synopsis": "Returns information about the badge with the specified id.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Badge/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "badge id to query"
+                        }
+                    ]
+                }
+            ]
+        },
         {
             "name": "Goods API",
             "methods": [
@@ -2315,63 +2315,6 @@
                         }
                     ]
                 },
-			  	{
-					"MethodName": "Device Registration",
-					"Synopsis": "Register for your device ",
-					"HTTPMethod": "POST",
-					"URI": "/Push/deviceRegistration",
-					"RequiresOAuth": "N",
-					"parameters": [
-					  {
-						"Name": "player_id",
-						"Required": "Y",
-						"Default": "",
-						"Type": "string",
-						"Description": "player id"
-					  },
-					  {
-						"Name": "token",
-						"Required": "Y",
-						"Default": "",
-						"Type": "string",
-						"Description": "access token returned from Auth"
-					  },
-					  {
-						"Name": "device_token",
-						"Required": "Y",
-						"Default": "",
-						"Type": "string",
-						"Description": "access token returned from Device"
-					  },
-					  {
-						"Name": "device_description",
-						"Required": "Y",
-						"Default": "",
-						"Type": "string",
-						"Description": "Device model description"
-					  },
-					  {
-						"Name": "device_name",
-						"Required": "Y",
-						"Default": "",
-						"Type": "string",
-						"Description": "Device model name"
-					  },
-					  {
-						"Name": "os_type",
-						"Required": "Y",
-						"Default": "",
-						"Type": "enumerated",
-						"Description": "Choose os type",
-						"EnumeratedList": [
-						  "IOS",
-						  "Android"
-						]
-					  }
-
-
-					]
-				},
                 {
                     "MethodName": "List SMS Template",
                     "Synopsis": "List SMS template.",
@@ -2403,6 +2346,63 @@
                             "Description": "player id as used in client's website"
                         }
                     ]
+                },
+                {
+                  "MethodName": "Device Registration",
+                  "Synopsis": "Register for your device ",
+                  "HTTPMethod": "POST",
+                  "URI": "/Push/deviceRegistration",
+                  "RequiresOAuth": "N",
+                  "parameters": [
+                    {
+                      "Name": "player_id",
+                      "Required": "Y",
+                      "Default": "",
+                      "Type": "string",
+                      "Description": "player id"
+                    },
+                    {
+                      "Name": "token",
+                      "Required": "Y",
+                      "Default": "",
+                      "Type": "string",
+                      "Description": "access token returned from Auth"
+                    },
+                    {
+                      "Name": "device_token",
+                      "Required": "Y",
+                      "Default": "",
+                      "Type": "string",
+                      "Description": "access token returned from Device"
+                    },
+                    {
+                      "Name": "device_description",
+                      "Required": "Y",
+                      "Default": "",
+                      "Type": "string",
+                      "Description": "Device model description"
+                    },
+                    {
+                      "Name": "device_name",
+                      "Required": "Y",
+                      "Default": "",
+                      "Type": "string",
+                      "Description": "Device model name"
+                    },
+                    {
+                      "Name": "os_type",
+                      "Required": "Y",
+                      "Default": "",
+                      "Type": "enumerated",
+                      "Description": "Choose os type",
+                      "EnumeratedList": [
+                        "IOS",
+                        "Android"
+                      ]
+                    }
+  
+  
+                  ]
                 },
                 {
                     "MethodName": "Send Push-Notification",
@@ -2484,7 +2484,63 @@
                             "Description": "template message (either message or template_id is required)"
                         }
                     ]
+                },
+                {
+                  "MethodName": "List Recent Push Notification to a Player",
+                  "Synopsis": "List recent Push Notification to a player.",
+                  "HTTPMethod": "GET",
+                  "URI": "/Push/recent",
+                  "RequiresOAuth": "N",
+                  "parameters": [
+                    {
+                      "Name": "player_id",
+                      "Required": "Y",
+                      "Default": "",
+                      "Type": "string",
+                      "Description": "player id as used in client's website"
+                    },
+                    {
+                      "Name": "since",
+                      "Required": "N",
+                      "Default": "",
+                      "Type": "string",
+                      "Description": "'datetime' format supported by strtotime"
+                    }
+                  ]
+                },
+                {
+                  "MethodName": "List Push Notification Template",
+                  "Synopsis": "List Push template.",
+                  "HTTPMethod": "GET",
+                  "URI": "/Push/template",
+                  "RequiresOAuth": "N",
+                  "parameters": [
+                  ]
+                },
+                {
+                  "MethodName": "Get Processed Push Notification Template",
+                  "Synopsis": "Get processed Push Notification template.",
+                  "HTTPMethod": "GET",
+                  "URI": "/Push/template/:template_id",
+                  "RequiresOAuth": "N",
+                  "parameters": [
+                    {
+                      "Name": "template_id",
+                      "Required": "Y",
+                      "Default": "",
+                      "Type": "string",
+                      "Description": "template message"
+                    },
+                    {
+                      "Name": "player_id",
+                      "Required": "N",
+                      "Default": "",
+                      "Type": "string",
+                      "Description": "player id as used in client's website"
+                    }
+                  ]
                 }
+
             ]
         },
         {
@@ -2677,64 +2733,64 @@
                 }
             ]
         },
-	  	{
-			"name" : "CMS API",
-		  	"methods" :[
-			  	{
-					"MethodName": "Get Articles",
-					"Synopsis": "list articles by category",
-					"HTTPMethod": "GET",
-					"URI": "/CMS/getArticles",
-					"RequiresOAuth": "N",
-					"parameters": [
-					  {
-						"Name": "type",
-						"Required": "Y",
-						"Default": "",
-						"Type": "string",
-						"Description": "Type of contents"
-					  },
-					  {
-						"Name": "category",
-						"Required": "Y",
-						"Default": "",
-						"Type": "string",
-						"Description": "Category of contents"
-					  },
-					  {
-						"Name": "paging",
-						"Required": "N",
-						"Default": "",
-						"Type": "string",
-						"Description": "how many contents per page"
-					  },
-					  {
-						"Name": "page",
-						"Required": "N",
-						"Default": "",
-						"Type": "string",
-						"Description": "number of page"
-					  }
-					]
-				},
-				{
-				  "MethodName": "Get Article",
-				  "Synopsis": "list article by id",
-				  "HTTPMethod": "GET",
-				  "URI": "/CMS/getArticle/:article_id",
-				  "RequiresOAuth": "N",
-				  "parameters": [
-					{
-					  "Name": "article_id",
-					  "Required": "Y",
-					  "Default": "",
-					  "Type": "string",
-					  "Description": "id of content"
-					}
-				  ]
-				}
-			]
-	  	}
+          {
+            "name" : "CMS API",
+              "methods" :[
+                  {
+                    "MethodName": "Get Articles",
+                    "Synopsis": "list articles by category",
+                    "HTTPMethod": "GET",
+                    "URI": "/CMS/getArticles",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                      {
+                        "Name": "type",
+                        "Required": "Y",
+                        "Default": "",
+                        "Type": "string",
+                        "Description": "Type of contents"
+                      },
+                      {
+                        "Name": "category",
+                        "Required": "Y",
+                        "Default": "",
+                        "Type": "string",
+                        "Description": "Category of contents"
+                      },
+                      {
+                        "Name": "paging",
+                        "Required": "N",
+                        "Default": "",
+                        "Type": "string",
+                        "Description": "how many contents per page"
+                      },
+                      {
+                        "Name": "page",
+                        "Required": "N",
+                        "Default": "",
+                        "Type": "string",
+                        "Description": "number of page"
+                      }
+                    ]
+                },
+                {
+                  "MethodName": "Get Article",
+                  "Synopsis": "list article by id",
+                  "HTTPMethod": "GET",
+                  "URI": "/CMS/getArticle/:article_id",
+                  "RequiresOAuth": "N",
+                  "parameters": [
+                    {
+                      "Name": "article_id",
+                      "Required": "Y",
+                      "Default": "",
+                      "Type": "string",
+                      "Description": "id of content"
+                    }
+                  ]
+                }
+            ]
+          }
 
-	]
+    ]
 }

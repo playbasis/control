@@ -280,6 +280,10 @@ class Error extends CI_Model
             $errorData['message'] = "Anonymous cannot use referral code";
             $errorData['error_code'] = '1104';
             break;
+        case 'REFERENCE_ID_INVALID':
+                $errorData['message'] = "Reference id is invalid";
+                $errorData['error_code'] = '2301';
+                break;
         default:
             $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';
