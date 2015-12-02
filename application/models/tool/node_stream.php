@@ -19,7 +19,7 @@ class Node_stream extends MY_Model
 		$chanelName = preg_replace('/\//', '\\',$chanelName);
 		$message = json_encode($this->activityFeedFormatter($data, $site_id));
 		$ch = curl_init();
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($ch, CURLOPT_URL, STREAM_URL . $chanelName);	// set url
 		curl_setopt($ch, CURLOPT_PORT, STREAM_PORT);				// set port
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);					// turn off output
@@ -28,7 +28,7 @@ class Node_stream extends MY_Model
 			'Content-Type: text/plain; charset=utf-8'				// set Content-Type
 		));
 		curl_setopt($ch, CURLOPT_USERAGENT, 'CURL AGENT');			// set agent
-		curl_setopt($ch, CURLOPT_TIMEOUT, 10);						// times for execute
+		curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);					// times for execute
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);				// times for try to connect 
 		curl_setopt($ch, CURLOPT_POST, TRUE);						// use POST 
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $message);				// data

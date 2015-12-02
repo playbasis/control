@@ -49,6 +49,7 @@ class Quest extends REST2_Controller
         if (!$test_id) {
             try {
                 $this->client_model->permissionCheck(
+                    $this->client_data,
                     $client_id,
                     $site_id,
                     "others",
@@ -309,6 +310,7 @@ class Quest extends REST2_Controller
                     }
                     try {
                         $this->client_model->permissionProcess(
+                            $this->client_data,
                             $client_id,
                             $site_id,
                             "others",
@@ -574,14 +576,14 @@ class Quest extends REST2_Controller
                 }
                 if($c["completion_type"] == "QUIZ")
                 {
-                    $complete_quiz = $this->action_model->actionLogByURL($validToken,COMPLETE_QUIZ_ACTION,$c['condition_id'],$pb_player_id);
+                    $complete_quiz = $this->action_model->actionLogByURL($validToken,COMPLETE_QUIZ_ACTION,$c['completion_id'],$pb_player_id);
                     if($complete_quiz == null)
                     {
                         $event = array(
                             'event_type' => 'QUIZ_NOT_ENOUGH',
                             'message' => 'user quiz not enough',
                         );
-                        array_push($questEvent, $event);
+                        array_push($missionEvent, $event);
                     }
                 }
                 if($c["completion_type"] == "BADGE"){
@@ -1441,6 +1443,7 @@ class Quest extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
+                $this->client_data,
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
@@ -1495,6 +1498,7 @@ class Quest extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
+                $this->client_data,
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
@@ -1550,6 +1554,7 @@ class Quest extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
+                $this->client_data,
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",

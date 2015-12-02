@@ -112,21 +112,22 @@ $email = 'pechpras@playbasis.com';
 			$client = $this->client_model->getById($client_id);
 
 			/* get current associated plan of the client */
-			$myplan_id = $this->plan_model->getPlanIdByClientId($client_id); if (!$myplan_id) continue;
-			$myplan = $this->plan_model->getPlanById($myplan_id); if (!$myplan) continue;
-			if (!array_key_exists('price', $myplan)) {
-				$myplan['price'] = DEFAULT_PLAN_PRICE;
+			$client_date = $this->client_model->getClientStartEndDate($client_id);
+			$client_usage = $this->client_model->getClientSiteUsage($client_id, $site_id);
+			$client_plan = $this->client_model->getPlanById($client_usage['plan_id']);
+			$free_flag = !isset($client_plan['price']) || $client_plan['price'] <= 0;
+			if ($free_flag) {
+				$client_date = $this->client_model->adjustCurrentUsageDate($client_date['date_start']);
 			}
-			$free_flag = $myplan['price'] <= 0;
+			$client_data = array('date' => $client_date, 'usage' => $client_usage, 'plan' => $client_plan);
 
 			/* check "limit_requests", "limit_notifications" specified by the plan */
 			foreach (array('requests', 'notifications') as $type) {
-				$limit = $this->client_model->getPlanLimitById($site_id, $myplan_id, $type);
+				$limit = $this->client_model->getPlanLimitById($client_plan, $type);
 				if ($limit) {
-					$clientDate = ($free_flag ? $this->client_model->getFreeClientStartEndDate($client_id) : $this->client_model->getClientStartEndDate($client_id));
 					foreach ($limit as $field => $usage_limit) {
 						/* find current usage for the field */
-						$usage = $this->client_model->getPermissionUsage($client_id, $site_id, $type, $field, $clientDate);
+						$usage = $this->client_model->getPermissionUsage($type, $field, $client_data);
 
 						/* check usage */
 						if ($usage < $usage_limit && $usage >= PERCENTAGE_TO_ALERT_USAGE_NEAR_LIMIT*$usage_limit) { // this will not send if the client has already go over the limit
@@ -568,7 +569,7 @@ $email = 'pechpras@playbasis.com';
 
 		/* email */
 		$from = EMAIL_FROM;
-		$to = array('pechpras@playbasis.com', 'pascal@playbasis.com', 'napada.w@playbasis.com', 'sanit.l@playbasis.com', 'mariya.v@playbasis.com', 'kavita.k@playbasis.com');
+		$to = array('pechpras@playbasis.com', 'pascal@playbasis.com', 'napada.w@playbasis.com', 'sanit.l@playbasis.com', 'mariya.v@playbasis.com');
 		$subject = '[Playbasis] Dashboard User Registration';
 		$message = 'The attachment includes 3 CSV files for (1) list of customers (2) statistics of daily registration and (3) statistics of monthly registration (as of '.date('Y-m-d').').';
 		$html = $this->parser->parse('message.html', array('firstname' => 'Playbasis', 'lastname' => 'Team', 'message' => $message), true);

@@ -40,11 +40,12 @@ class Tracker_model extends MY_Model
         ), array("w" => 0, "j" => false));
         return $action_log_id;
     }
-    public function trackEvent($type, $message, $input)
+    public function trackEvent($type, $message, $input, $async=true)
     {
         $this->set_site_mongodb($input['site_id']);
-        $mongoDate = new MongoDate(time());
-        return $this->mongo_db->insert('playbasis_event_log', array(
+        $mongoDate = new MongoDate();
+        $options = $async ? array("w" => 0, "j" => false) : array();
+        $_id = $this->mongo_db->insert('playbasis_event_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],
             'site_id'		=> $input['site_id'],
@@ -65,13 +66,15 @@ class Tracker_model extends MY_Model
             'quiz_id'       => (isset($input['quiz_id']))	? $input['quiz_id']	: null,
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
-        ));
+        ), $options);
+        return $async ? null : $_id;
     }
-    public function trackSocial($input)
+    public function trackSocial($input, $async=true)
     {
         $this->set_site_mongodb($input['site_id']);
-        $mongoDate = new MongoDate(time());
-        return $this->mongo_db->insert('playbasis_event_log', array(
+        $mongoDate = new MongoDate();
+        $options = $async ? array("w" => 0, "j" => false) : array();
+        $_id = $this->mongo_db->insert('playbasis_event_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],
             'site_id'		=> $input['site_id'],
@@ -82,12 +85,13 @@ class Tracker_model extends MY_Model
             'message'		=> (isset($input['message']))	? $input['message']	: null,
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
-        ));
+        ), $options);
+        return $async ? null : $_id;
     }
-    public function trackGoods($input)
+    public function trackGoods($input, $async=true)
     {
         $this->set_site_mongodb($input['site_id']);
-        $mongoDate = new MongoDate(time());
+        $mongoDate = new MongoDate();
         $goods_log_id = $this->mongo_db->insert('playbasis_goods_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],
@@ -100,14 +104,14 @@ class Tracker_model extends MY_Model
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));
-
-        return $this->trackEvent('REDEEM', $input['message'], array_merge($input, array('goods_log_id' => $goods_log_id)));
+        return $this->trackEvent('REDEEM', $input['message'], array_merge($input, array('goods_log_id' => $goods_log_id)), $async);
     }
-    public function trackBadge($input)
+    public function trackBadge($input, $async=true)
     {
         $this->set_site_mongodb($input['site_id']);
-        $mongoDate = new MongoDate(time());
-        return $this->mongo_db->insert('playbasis_badges_log', array(
+        $mongoDate = new MongoDate();
+        $options = $async ? array("w" => 0, "j" => false) : array();
+        $_id = $this->mongo_db->insert('playbasis_badges_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],
             'site_id'		=> $input['site_id'],
@@ -115,12 +119,14 @@ class Tracker_model extends MY_Model
             'type'	        => $input['type'],
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
-        ));
+        ), $options);
+        return $async ? null : $_id;
     }
-    public function trackQuest($input)
+    public function trackQuest($input, $async=true)
     {
         $this->set_site_mongodb($input['site_id']);
-        $mongoDate = new MongoDate(time());
+        $mongoDate = new MongoDate();
+        $options = $async ? array("w" => 0, "j" => false) : array();
         $this->mongo_db->insert('playbasis_quest_reward_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],
@@ -133,14 +139,14 @@ class Tracker_model extends MY_Model
             'reward_value'	=> $input['amount'],
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
-        ));
+        ), $options);
 
         if ($input['reward_type'] == 'BADGE') {
             $input['reward_name'] = 'badge';
             $input['item_id'] = $input['reward_id'];
             $input['reward_id'] = $this->get_reward_id_by_name(array('client_id' => $input['client_id'], 'site_id' => $input['site_id']), 'badge');
         } // reward_name should be "badge" in playbasis_event_log
-        return $this->trackEvent('REWARD', $input['message'], $input);
+        return $this->trackEvent('REWARD', $input['message'], $input, $async);
     }
 
     /* copied from player_model as model cannot call each other */

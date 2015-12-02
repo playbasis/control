@@ -50,14 +50,14 @@ class Engine extends Quest
 			if(isset($actionConfig[$actionId]))
 			{
 				$config = array(
-					'url' => $actionInput['url'],
+//					'url' => $actionInput['url'],
 //					'regex' => $actionInput['regex']
 				);
 				$found = false;
 				foreach($actionConfig[$actionId]['config'] as $configElement)
 				{
 //					if($config['url'] != $configElement['url'] || $config['regex'] != $configElement['regex'])
-					if($config['url'] != $configElement['url'])
+					if(isset($config['url']) && isset($configElement['url']) && ($config['url'] != $configElement['url']))
 						continue;
 					$found = true;
 					break;
@@ -76,7 +76,7 @@ class Engine extends Quest
 					'name' => $actionName,
 					'config' => array(
 						array(
-							'url' => $actionInput['url'],
+//							'url' => $actionInput['url'],
 //							'regex' => $actionInput['regex']
 						)
 					)
@@ -243,7 +243,16 @@ class Engine extends Quest
 				'action_name' => $actionName,
 				'action_icon' => $actionIcon
 			));
-			$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+			try {
+				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+			} catch (Exception $e){
+				if ($e->getPrevious()){
+					$prev_e = $e->getPrevious();
+					$this->response($this->error->setError('PARAMETER_MISSING',array($prev_e->getMessage())), 200);
+				}else{
+					$this->response($this->error->setError($e->getMessage()), 200);
+				}
+			}
 		}
 		else if($twData)
 		{
@@ -273,7 +282,16 @@ class Engine extends Quest
 					'action_name' => $actionName,
 					'action_icon' => $actionIcon
 				));
-				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+				try {
+					$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+				} catch (Exception $e){
+					if ($e->getPrevious()){
+						$prev_e = $e->getPrevious();
+						$this->response($this->error->setError('PARAMETER_MISSING',array($prev_e->getMessage())), 200);
+					}else{
+						$this->response($this->error->setError($e->getMessage()), 200);
+					}
+				}
 			}
 		}
 		else
@@ -283,17 +301,12 @@ class Engine extends Quest
 
 			//process regular data
 			if (!$test)
-				$required = $this->input->checkParam(array('token'));
-			if($required)
-				$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
-
-			if (!$test)
 				$required = $this->input->checkParam(array('action', 'player_id'));
 			if($required)
 				$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
 			if (!$test)
-				$validToken = $this->auth_model->findToken($this->input->post('token'));
+				$validToken = $this->validToken;
 			else
 				$validToken = array(
 					"client_id" => new MongoId($this->input->post("client_id")),
@@ -355,7 +368,17 @@ class Engine extends Quest
 			if (!$test)
 				$input["test"] = false;
 
-			$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+			try {
+				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+			} catch (Exception $e){
+				if ($e->getPrevious()){
+					$prev_e = $e->getPrevious();
+					$this->response($this->error->setError('PARAMETER_MISSING',array($prev_e->getMessage())), 200);
+				}else{
+					$this->response($this->error->setError($e->getMessage()), 200);
+				}
+			}
+
 		}
 		//Quest Process
 		if (!$test){
@@ -427,6 +450,7 @@ class Engine extends Quest
 		/* [rule usage] check rule usage against the associated plan */
 		if (!$input["test"]) {
 			$this->client_model->permissionCheck(
+				$this->client_data,
 				$client_id,
 				$site_id,
 				"others",
@@ -434,6 +458,7 @@ class Engine extends Quest
 			);
 		}
 
+		$cache_jigsaw = array();
 		foreach($ruleSet as $rule) {
 			/* [rule usage] init */
 			$count = 0;
@@ -463,7 +488,7 @@ class Engine extends Quest
 				$jigsawCategory = $jigsaw['category'];
 
 				//get class path to precess jigsaw
-				$processor = ($jigsaw_id ? $this->client_model->getJigsawProcessor($jigsaw_id, $site_id) : $jigsaw['id']);
+				$processor = ($jigsaw_id ? $this->client_model->getJigsawProcessorWithCache($cache_jigsaw, $jigsaw_id, $site_id) : $jigsaw['id']);
 				if ($processor == 'goods') $processor = 'reward';
 
 				if (!$input["test"])
@@ -809,6 +834,7 @@ class Engine extends Quest
 					$count
 				);
 				$this->client_model->permissionProcess(
+					$this->client_data,
 					$client_id,
 					$site_id,
 					"others",

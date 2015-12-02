@@ -63,7 +63,7 @@ class Report extends CI_Controller
 		    SITE_ID_COMPARE_AND_SHARE => true,
 		    SITE_ID_CHIANGMAI_U => true,
 	    );
-	    $to_pbteam_email = array('devteam@playbasis.com', 'notjiam@gmail.com', 'pascal@playbasis.com', 'sanit.l@playbasis.com', 'mariya.v@playbasis.com', 'kavita.k@playbasis.com');
+	    $to_pbteam_email = array('devteam@playbasis.com', 'notjiam@gmail.com', 'pascal@playbasis.com', 'sanit.l@playbasis.com', 'mariya.v@playbasis.com');
 	    $conf = array(
 		    'static_image_url' => $this->config->item('STATIC_IMG_PATH'),
 		    'dynamic_image_url' => $this->config->item('IMG_PATH'),

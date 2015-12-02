@@ -22,6 +22,7 @@ class Pb_sms extends REST2_Controller
         $access = false;
         try {
             $this->client_model->permissionProcess(
+                $this->client_data,
                 $this->client_id,
                 $this->site_id,
                 "notifications",

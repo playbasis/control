@@ -214,24 +214,23 @@ class Redeem extends REST2_Controller
     public function merchantGoodsGroup_post()
     {
         $required = $this->input->checkParam(array(
-            'player_id',
             'goods_id',
             'pincode'
         ));
         if ($required) {
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         }
+        $goods_id = $this->input->post('goods_id');
+        $validToken = $this->validToken;
+        $player_id = $this->player_model->getPbAndCilentIdByGoodsId($validToken, new MongoId($goods_id));
 
-        $cl_player_id = $this->input->post('player_id');
-        $validToken = array_merge($this->validToken, array(
-            'cl_player_id' => $cl_player_id
-        ));
-        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        $pb_player_id = $player_id['pb_player_id'];
+        $cl_player_id = $player_id['cl_player_id'];
+
         if (!$pb_player_id) {
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
 
-        $goods_id = $this->input->post('goods_id');
         $goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $this->validToken['site_id'],
             new MongoId($goods_id));
 
@@ -242,6 +241,9 @@ class Redeem extends REST2_Controller
             if (empty($merchantRedeem)) {
                 $merchantGoodsGroups = $this->merchant_model->getMerchantGoodsGroups($this->validToken['client_id'],
                     $this->validToken['site_id'], $goods['group']);
+                if(empty($merchantGoodsGroups)){
+                    $this->response($this->error->setError('PIN_CODE_INVALID'), 200);
+                }
                 $branches_allow = array();
                 foreach ($merchantGoodsGroups as $merchantGoodsGroup) {
                     foreach ($merchantGoodsGroup['branches_allow'] as $branch) {
@@ -451,6 +453,7 @@ class Redeem extends REST2_Controller
             try {
                 /* check limit of redeem according to their plan */
                 $this->client_model->permissionProcess(
+                    $this->client_data,
                     $this->client_id,
                     $this->site_id,
                     "others",

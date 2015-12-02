@@ -199,6 +199,24 @@ class Player_model extends MY_Model
 		$id = $this->mongo_db->get('playbasis_player');
 		return ($id) ? $id[0]['_id'] : null;
 	}
+	public function getPbAndCilentIdByGoodsId($clientData, $goods_id)
+	{
+		if(!$clientData || !$goods_id)
+			 return null;
+		$this->set_site_mongodb($clientData['site_id']);
+		$this->mongo_db->select(array(
+			'pb_player_id',
+			'cl_player_id'
+		));
+		$this->mongo_db->where(array(
+			'client_id' => $clientData['client_id'],
+			'site_id'   => $clientData['site_id'],
+			'goods_id'  => $goods_id
+		));
+		$this->mongo_db->limit(1);
+		$id = $this->mongo_db->get('playbasis_goods_to_player');
+		return ($id) ? $id[0] : null;
+	}
 	public function getClientPlayerId($pb_player_id, $site_id)
 	{
 		if(!$pb_player_id)
@@ -1501,6 +1519,7 @@ class Player_model extends MY_Model
                     'image',
                     'name',
                     'description',
+                    'code',
                     'group',
                 ));
                 $this->mongo_db->select(array(),array('_id'));
@@ -1518,6 +1537,7 @@ class Player_model extends MY_Model
                 $goods['image'] = $this->config->item('IMG_PATH') . $result['image'];
                 $goods['name'] = $result['name'];
                 $goods['description'] = $result['description'];
+                $goods['code'] = $result['code'];
                 if (isset($result['group'])) $goods['group'] = $result['group'];
                 $goods['amount'] = $goods['value'];
                 unset($goods['value']);

@@ -12,19 +12,55 @@ class jigsaw extends MY_Model
 	{
 		assert($config != false);
 		assert(is_array($config));
-		if($config['url'])
-		{
-			if(!isset($input['url']))
-				return false;
-			//validate url
-			$input['url'] = urldecode($input['url']);
-			$exInfo['input_url'] = $input['url'];
-//			return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
-			return (boolean) $this->matchUrl($input['url'], $config['url']);
+		$data_set = $this->getActionDatasetInfo($config);
+		$required = array();
+		foreach ($data_set as $param){
+			$isRequired = isset($param['required'])?$param['required']:false;
+			$param_name = $param['param_name'];
+			if (!isset($input[$param_name]) && ($isRequired)){
+				array_push($required,$param_name);
+			}
 		}
+		if (!empty($required)){
+			$requiredParam = implode(", ",$required);
+			try {
+				throw new Exception($requiredParam);
+			} catch(Exception $e) {
+				throw new Exception('PARAMETER_MISSING',0,$e);
+			}
+		}
+
 		return true;
 	}
-	public function reward($config, $input, &$exInfo = array())
+	private function getActionDatasetInfo($config){
+		$this->set_site_mongodb($this->session->userdata('site_id'));
+
+		$this->mongo_db->where(array(
+			'name' => $config['action_name']
+		));
+		$results = $this->mongo_db->get("playbasis_action");
+		return $results ? $results[0]['init_dataset']: null;
+	}
+
+	public function customParameter($config, $input, &$exInfo = array()) {
+		assert($config != false);
+		assert(is_array($config));
+		assert(isset($config['param_name']));
+		assert(isset($config['param_value']));
+
+		$param_name = $config['param_name'];
+
+		if (isset($input[$param_name])){
+			$result = $this->matchUrl($input[$param_name], $config['param_value']);
+		}
+		else{
+			$result = false;
+		}
+
+
+		return $result;
+	}
+	public function reward($config, $input, &$exInfo = array(), $cache=array())
 	{
 		assert($config != false);
 		assert(is_array($config));
@@ -46,7 +82,7 @@ class jigsaw extends MY_Model
 			case 'badge':
 				return $this->checkBadge($config['item_id'], $input['pb_player_id'], $input['site_id'], $config['quantity']);
 			case 'goods':
-				return $this->checkGoods($config['item_id'], $input['pb_player_id'], $input['site_id'], $config['quantity']);
+				return $this->checkGoodsWithCache($cache, $config['item_id'], $input['pb_player_id'], $input['site_id'], $config['quantity']);
 			default:
 				return false;
 		}
@@ -157,6 +193,50 @@ class jigsaw extends MY_Model
 				$exInfo['remaining_time'] = $remainingTime - $timeDiff;
 			return false;
 		}
+	}
+	public function counterWithin($config, $input, &$exInfo = array())
+	{
+		assert($config != false);
+		assert(is_array($config));
+		assert(isset($config['counter_value']));
+		assert(isset($config['within']));
+		assert(isset($config['interval_unit']));
+		assert($input != false);
+		assert(is_array($input));
+		assert($input['pb_player_id']);
+		assert($input['rule_id']);
+		assert($input['jigsaw_id']);
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
+		$result = $this->getMostRecentJigsaw($input, array(
+			'input',
+			'date_added'
+		));
+		if (!$result) {
+			$exInfo['remaining_counter'] = (int) $config['counter_value']-1; // max-1
+			$exInfo['beginning_time'] = $timeNow;
+			if ($exInfo['remaining_counter'] == 0) {
+				$exInfo['remaining_counter'] = (int) $config['counter_value']; // max
+				$exInfo['beginning_time'] = -1; // unset
+				return true;
+			}
+			return false;
+		}
+		$log = $result['input'];
+		$within = (int)$config['within'];
+		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $within) : (int) ($timeNow - strtotime('-'.$within.' days', $timeNow));
+		if ($timeDiff > $log['beginning_time']) { // time's up!
+			$exInfo['remaining_counter'] = (int) $config['counter_value'] - 1; // max-1
+			$exInfo['beginning_time'] = $timeNow; // reset to "now"
+		} else { // valid
+			$exInfo['remaining_counter'] = (int) $log['remaining_counter'] - 1; // current-1
+			$exInfo['beginning_time'] = $log['beginning_time']; // stays the same;
+		}
+		if ($exInfo['remaining_counter'] == 0) {
+			$exInfo['remaining_counter'] = (int) $config['counter_value']; // max
+			$exInfo['beginning_time'] = -1; // unset
+			return true;
+		}
+		return false;
 	}
 	public function cooldown($config, $input, &$exInfo = array())
 	{
@@ -298,7 +378,7 @@ class jigsaw extends MY_Model
 		if(!$result)
 		{
 			$lastDateOfMonth = date('d', strtotime("last day of next month"));
-			$exInfo['next_trigger'] = $config['date_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['date_of_month'] - 1) * 3600 * 24;
+			$exInfo['next_trigger'] = $config['day_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['day_of_month'] - 1) * 3600 * 24;
 			return true;
 		}
 		$logInput = $result['input'];
@@ -306,7 +386,7 @@ class jigsaw extends MY_Model
 		if($timeNow >= $logInput['next_trigger'])
 		{
 			$lastDateOfMonth = date('d', strtotime("last day of next month"));
-			$exInfo['next_trigger'] = $config['date_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['date_of_month'] - 1) * 3600 * 24;
+			$exInfo['next_trigger'] = $config['day_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['day_of_month'] - 1) * 3600 * 24;
 			return true;
 		}
 		$exInfo['next_trigger'] = $logInput['next_trigger'];
@@ -422,10 +502,11 @@ class jigsaw extends MY_Model
 		$this->set_site_mongodb($input['site_id']);
 		$sum = 0;
 		$acc = array();
+		$cache = array();
 		foreach ($config['group_container'] as $i => $conf) {
 			// invalid goods will be excluded from randomness
 			if (!(array_key_exists('reward_name', $conf) && $conf['reward_name'] == 'goods')
-					|| $this->checkGoods(new MongoId($conf['item_id']), $input['pb_player_id'], $input['site_id'], $conf['quantity'])) {
+					|| $this->checkGoodsWithCache($cache, new MongoId($conf['item_id']), $input['pb_player_id'], $input['site_id'], $conf['quantity'])) {
 				$sum += intval($conf['weight']);
 				$acc[$i] = $sum;
 			}
@@ -442,9 +523,11 @@ class jigsaw extends MY_Model
 					foreach (array('item_id', 'reward_id') as $field) {
 						if (array_key_exists($field, $conf)) $conf[$field] = $conf[$field] ? ($conf[$field] != 'goods' ? new MongoId($conf[$field]) : $conf[$field]) : null;
 					}
-					return $this->reward($conf, $input, $exInfo);
+					$ret = $this->reward($conf, $input, $exInfo, $cache);
+					return $ret;
 				} else if (array_key_exists('feedback_name', $conf)) {
-					return $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
+					$ret = $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
+					return $ret;
 				}
 				return false; // should not reach this line
 			}
@@ -589,6 +672,15 @@ class jigsaw extends MY_Model
 		if($haveBadge)
 			return false;
 		return true;
+	}
+	private function checkGoodsWithCache(&$cache, $goodsId, $pb_player_id, $site_id, $quantity=0)
+	{
+		$key = $goodsId.'-'.$pb_player_id.'-'.$site_id.'-'.$quantity;
+		if (!array_key_exists($key, $cache)) {
+			$value = $this->checkGoods($goodsId, $pb_player_id, $site_id, $quantity);
+			$cache[$key] = $value;
+		}
+		return $cache[$key];
 	}
 	private function checkGoods($goodsId, $pb_player_id, $site_id, $quantity=0)
 	{
@@ -916,5 +1008,6 @@ class jigsaw extends MY_Model
 		$results = $this->mongo_db->get('jigsaw_log_precomp');
 		return $results ? $results[0]['date_added'] : array();
 	}
+
 }
 ?>
