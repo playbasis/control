@@ -468,7 +468,7 @@ class Player extends REST2_Controller
 		}
 
 		/* Automatically energy initialization after creating a new player*/
-		foreach ($this->energy_model->findActiveEnergyRewardsById(0, $this->validToken['client_id'],
+		foreach ($this->energy_model->findActiveEnergyRewardsById($this->validToken['client_id'],
 				$this->validToken['site_id']) as $energy) {
 
 			$energy_reward_id = $energy['reward_id'];

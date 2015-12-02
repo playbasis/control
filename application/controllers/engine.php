@@ -346,7 +346,7 @@ class Engine extends Quest
 					'nickname' => $cl_player_id,
 				)));
 				/* Automatically energy initialization after creating a new player*/
-				$energys = $this->energy_model->findActiveEnergyRewardsById(0, $this->validToken['client_id'],
+				$energys = $this->energy_model->findActiveEnergyRewardsById($this->validToken['client_id'],
 						$this->validToken['site_id']);
 				foreach ($energys as $energy) {
 					$energy_reward_id = $energy['reward_id'];

@@ -24,9 +24,9 @@ class Energy_model extends MY_Model
 
         return !empty($result) ? $result : array();
     }
-    public function findActiveEnergyRewardsById($mongo_site_id = 0, $client_id, $site_id)
+    public function findActiveEnergyRewardsById( $client_id, $site_id)
     {
-        $this->set_site_mongodb($mongo_site_id);
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array('status' => true,
