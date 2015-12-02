@@ -60,6 +60,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         case 'email': template = jsonString_Email; break;
                         case 'sms': template = jsonString_Sms; break;
                         case 'push': template = jsonString_Push; break;
+                        case 'level' : template = jsonString_levelCondition;break;
                     }
                     return {
                         'hidden': '<input type="text" class="hide" value="'+v.value+'" />',
@@ -193,6 +194,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         case 'email': template = jsonString_Email; break;
                         case 'sms': template = jsonString_Sms; break;
                         case 'push': template = jsonString_Push; break;
+                        case 'level' : template = jsonString_levelCondition;break;
                     }
                     ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type + '">' + get_selected_option_text(template, v.value) + '</span>');
                 }
@@ -611,9 +613,12 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
 
                     else if($thisrow.find('select').length > 0) {
                         if(DEBUG)console.log('save > select');
-                        rowText.html(rowField.find('select option:selected').text());
+                        var val= rowField.find('select option:selected').text();
+                        rowText.html(val);
                         rowField.find('select').hide();
                         rowText.show();
+                        rowField.find('input')
+                            .val(val)
                     }
 
                     else{
@@ -625,20 +630,32 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                             anotherType = $greatGrandParent.find('.name_only').html();
 
                         if(anotherType.match('WEEKLY')) {
-                            var val = $('#weekday').val();
+                            var fulldate = $('.timepickerx').datetimepicker('getDate');
+                            var val_min = fulldate.getMinutes();
+                            var val_hours = fulldate.getHours();
+                            val_min = val_min < 10 ? '0' + val_min.toString() : val_min.toString();
+                            val_hours = val_hours < 10 ? '0' + val_hours.toString() : val_hours.toString();
+                            var val = val_hours + ':' + val_min;
+
                             rowText.html(val);
                             rowField.find('input')
                                 .val(val)
-                                .html(val);
-                            //console.log('save > WEEKLY');
+                            //console.log('save > WEEKLY' + val);
                         }
                         else if(anotherType.match('MONTHLY')) {
-                            var val = $('#monthday').val();
+
+                            var fulldate = $('.timepickerx').datetimepicker('getDate');
+                            var val_min = fulldate.getMinutes();
+                            var val_hours = fulldate.getHours();
+
+                            val_min = val_min < 10 ? '0' + val_min.toString() : val_min.toString();
+                            val_hours = val_hours < 10 ? '0' + val_hours.toString() : val_hours.toString();
+                            var val = val_hours + ':' + val_min;
+
                             rowText.html(val);
                             rowField.find('input')
                                 .val(val)
-                                .html(val);
-                            //console.log('save > MONTHLY');
+                            //console.log('save > MONTHLY' + val);
                         }
                         else {
                             // default case

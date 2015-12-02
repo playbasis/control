@@ -78,5 +78,6 @@ define('NODE_SERVER', 'https://node.pbapp.net');
 define('WIDGET_SERVER', 'widget.pbapp.net');
 
 define('TEST_PLAYER_ID', 'test');
+define('LIMIT_PLAYERS_QUERY', 10000);
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

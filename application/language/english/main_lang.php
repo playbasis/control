@@ -108,6 +108,7 @@ $lang['button_insert']           = 'Insert';
 $lang['button_delete']           = 'Delete';
 $lang['button_save']             = 'Save';
 $lang['button_cancel']           = 'Cancel';
+$lang['button_back']             = 'Back';
 $lang['button_clear']            = 'Clear Log';
 $lang['button_close']            = 'Close';
 $lang['button_filter']           = 'Filter';

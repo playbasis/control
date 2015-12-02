@@ -17,7 +17,7 @@ class Image {
             $this->info = array(
                 'width'  => $info[0],
                 'height' => $info[1],
-                'bits'   => $info['bits'],
+                'bits'   => isset($info['bits'])?$info['bits']:null,
                 'mime'   => $info['mime']
             );
 

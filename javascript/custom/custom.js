@@ -742,8 +742,15 @@ function widthFunctions( e ) {
 
   if (winHeight) {
 
-    $("#content").css("min-height",winHeight);
-
+      var marginTopbar = 20,
+          menuBottom = 30,
+          menuHeight = $('.main-menu-span').height() + marginTopbar + menuBottom,
+          gapTopbar = 59;
+      
+      if ((winHeight-gapTopbar) < menuHeight)
+          $("#content").css("min-height", menuHeight);
+      else
+          $("#content").css("min-height", winHeight - gapTopbar);
   }
 
   if (winWidth < 980 && winWidth > 767) {

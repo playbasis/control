@@ -520,11 +520,11 @@ class User extends MY_Controller
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             $this->data['message'] = null;
-
             if($this->form_validation->run()){
                 $this->load->model('User_model');
                 $u = $this->input->post('username');
                 $pw = $this->input->post('password');
+
                 $this->User_model->login($u, $pw);
 
 

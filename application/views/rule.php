@@ -444,6 +444,7 @@
     var jsonString_Email     = <?php echo json_encode($emailList); ?>;
     var jsonString_Sms       = <?php echo json_encode($smsList); ?>;
     var jsonString_Push      = <?php echo json_encode($pushList); ?>;
+    var jsonString_levelCondition = <?php echo json_encode($levelConditionList); ?>;
 
     //var jsonString_RulesList= '<?php //print_r($ruleList);?>';
     var requestedSet         = '<?php echo $requestParams; ?>';

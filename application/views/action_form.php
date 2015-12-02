@@ -3,8 +3,12 @@
         <div class="heading">
         	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
+                <?php if($isAdmin){ ?>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'action'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+                 <?php }else{ ?>
+                <button class="btn btn-info" onclick="location = baseUrlPath+'action'" type="button"><?php echo $this->lang->line('button_back'); ?></button>
+                <?php }?>
             </div><!-- .buttons -->
         </div><!-- .heading -->
         <div class="content">
@@ -70,7 +74,9 @@
                             <td><?php echo $this->lang->line('form_sort'); ?>:</td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($action['sort_order']) ? $action['sort_order'] : set_value('sort_order'); ?>" size="1" /></td>
             			</tr>
+            			<?php if($isAdmin){ ?>
             			<tr>
+
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_icon'); ?>: <i style="color: grey" class="<?php echo $action['icon']?> icon-4x"></i> <?php //echo substr($action['icon'], 8);?></td>
             				<td>
             					<div class="scrollbox" style="height: 200px">
@@ -99,13 +105,95 @@
             					</div>
             				</td>
             			</tr>
+                        <?php }?>
+                        <?php if(isset($action['init_dataset']) || ($isAdmin)) {?>
+                        <tr>
+
+                            <td><span class="required">*</span> <?php echo $this->lang->line('form_text_field'); ?>:</td>
+                            <td>
+                            <div class="row-fluid">
+                                <table class="table table-bordered" id="new-branches-table">
+                                    <thead>
+                                        <th>Name</th>
+                                        <th>Label</th>
+                                        <th>Required </th>
+                                    </thead>
+                                    <tbody>
+
+                                    <?php if(isset($action['init_dataset'])){?>
+                                        <?php foreach($action['init_dataset'] as $key => $param){?>
+                                            <tr>
+                                                <td><input type="text" name="<?php echo "init_dataset[".$key."][param_name]" ?>"
+                                                           value="<?php echo isset($param['param_name']) ? $param['param_name']: set_value('parameter'); ?>"
+                                                        <?php if(!($isAdmin)){echo "readonly";}?>>
+                                                </td>
+                                                <td><input type="text" name="<?php echo "init_dataset[".$key."][label]" ?>"
+                                                           value="<?php echo isset($param['label']) ? $param['label']: set_value('parameter'); ?>"
+                                                        <?php if(!($isAdmin)){echo "readonly";}?>>
+                                                </td>
+                                                <td><input type="checkbox" name="<?php echo "init_dataset[".$key."][required]" ?>" data-handle-width="40" value="true"
+                                                           <?php echo isset($param['required']) ? (($param['required'])? 'checked="checked"':''): ''; ?>
+                                                    <?php if(!($isAdmin)){echo "disabled readonly";}?>>
+                                                </td>
+                                            </tr>
+                                        <?php }?>
+                                    <?php }?>
+
+                                    </tbody>
+                                    <tfoot>
+                                    <?php if($isAdmin){ ?>
+                                    <tr>
+                                        <td colspan="3" style="text-align: center">
+                                            <div class="row-fluid">
+                                                <div class="offset3 span3">
+                                                    <a class="btn btn-primary btn-block" id="add" onclick="createParameterRow()"><i class="fa fa-plus"></i>&nbsp;Add</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <?php }?>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            </td>
+                        </tr>
+                        <?php }?>
             		</table>
             	</div>
             <?php echo form_close();?>
         </div><!-- .content -->
     </div><!-- .box -->
 </div><!-- #content .span10 -->
+
+<div id="newParam_emptyElement" class="hide invisible">
+    <table>
+        <tr>
+            <td><input type="text" name="init_dataset[{{id}}][param_name]" value=""></td>
+            <td><input type="text" name="init_dataset[{{id}}][label]" value=""></td>
+            <td><input type="checkbox" name="init_dataset[{{id}}][required]" data-handle-width="40" checked="checked" value="true"</td>
+        </tr>
+    </table>
+</div>
+
 <script type="text/javascript">
+    var globalNewIndex = <?php echo isset($action['init_dataset']) ?count($action['init_dataset']):0; ?>;
+    function createParameterRow(numToCreate){
+        numToCreate = typeof numToCreate !== 'undefined' ? numToCreate : 1;
+
+        if ($.isNumeric(numToCreate) && numToCreate > 0) {
+            for (idx = 0; idx < numToCreate; idx++) {
+                var tableRowHTML = $('#newParam_emptyElement').find('tbody').html();
+                var newIndex = globalNewIndex;
+
+                tableRowHTML = tableRowHTML.replace(new RegExp('{{id}}', 'g'), newIndex);
+
+                $('#new-branches-table').find('tbody').append(tableRowHTML);
+
+                globalNewIndex++;
+            }
+            //$(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']:not([name*='id'])").bootstrapSwitch();
+        }
+    };
 $('input[name=\'name\']').autocomplete({
     delay: 0,
     source: function(request, response) {

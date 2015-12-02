@@ -187,7 +187,7 @@
 <div id="newBranch_emptyElement" class="hide invisible">
     <table>
         <tr>
-            <td>{{id}}</td>
+            <td>{{id_num}}</td>
             <td><input type="text" name="newBranches[{{id}}][branchName]" value=""></td>
             <td><input type="checkbox" name="newBranches[{{id}}][status]" data-handle-width="40" checked="checked"></td>
         </tr>
@@ -396,9 +396,10 @@
             if ($.isNumeric(numToCreate) && numToCreate > 0) {
                 for (idx = 0; idx < numToCreate; idx++) {
                     var tableRowHTML = $('#newBranch_emptyElement').find('tbody').html();
-                    var newIndex = globalNewIndex + 1;
+                    var newIndex = globalNewIndex;
 
                     tableRowHTML = tableRowHTML.replace(new RegExp('{{id}}', 'g'), newIndex);
+                    tableRowHTML = tableRowHTML.replace(new RegExp('{{id_num}}', 'g'), newIndex+1);
 
                     $('#new-branches-table').find('tbody').append(tableRowHTML);
 

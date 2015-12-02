@@ -319,9 +319,10 @@ class Quiz extends MY_Controller
         $this->load->model('Feature_model');
         $this->load->model('Email_model');
         $this->load->model('Sms_model');
+        $this->load->model('Push_model');
         $this->data['emails'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'email') ? $this->Email_model->listTemplatesBySiteId($data['site_id']) : null;
         $this->data['smses'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'sms') ? $this->Sms_model->listTemplatesBySiteId($data['site_id']) : null;
-
+        $this->data['pushes'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'push') ? $this->Push_model->listTemplatesBySiteId($data['site_id']) : null;
         $this->data['client_id'] = $data['client_id'];
         $this->data['site_id'] = $data['site_id'];
 

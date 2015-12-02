@@ -40,6 +40,7 @@ class Rule extends MY_Controller
         $this->load->model('Email_model');
         $this->load->model('Sms_model');
         $this->load->model('Push_model');
+        $this->load->model('Level_model');
 
         $isAdmin = $this->User_model->isAdmin();
         $client_id = $isAdmin ? null : $this->User_model->getClientId();
@@ -53,12 +54,14 @@ class Rule extends MY_Controller
 
         $this->data['actionList'] = array();
         $this->data['conditionList'] = array();
+        $this->data['levelConditionList'] = array();
         $this->data['rewardList'] = array();
         $this->data['feedbackList'] = array();
         $this->data['groupList'] = array();
         $this->data['emailList'] = array();
         $this->data['smsList'] = array();
         $this->data['pushList'] = array();
+
 
         //if($s_clientId){
             $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
@@ -69,15 +72,19 @@ class Rule extends MY_Controller
             $pushList = $this->Push_model->listTemplatesBySiteId($site_id);
             $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList, $pushList);
             $groupList = $this->Rule_model->getGroupJigsawList($site_id, $client_id);
+            $levelConditionList = $this->Level_model->getLevelConditions();
+
 
             $this->data['actionList'] = $actionList;
             $this->data['conditionList'] = $conditionList;
+            $this->data['levelConditionList'] = $levelConditionList;
             $this->data['rewardList'] = $rewardList;
             $this->data['feedbackList'] = array_merge($rewardList, $feedbackList);
             $this->data['groupList'] = $groupList;
             $this->data['emailList'] = $emailList;
             $this->data['smsList'] = $smsList;
             $this->data['pushList'] = $pushList;
+
         //}
 
         $this->data['jsonIcons'] = array();
@@ -204,23 +211,31 @@ class Rule extends MY_Controller
         $site_id = $this->input->post("site_id");
         $rule = $this->Rule_model->getById($id);
 
-        // process each rule
-        $result = array();
+        // extract the rule parameters
+        $action = null;
+        $params = array();
         foreach ($rule["jigsaw_set"] as $jigsaw) {
             if ($jigsaw["category"] == "ACTION") {
-                foreach ($jigsaw["dataSet"] as $dataSet) {
-                    if ($dataSet["param_name"] == "url")
-                        $result = $this->curl(
-                            API_SERVER."/Engine/rule",
-                            array("rule_id" => strval($rule["_id"]),
-                            "action" => $jigsaw["name"],
-                            "url" => $dataSet["value"],
-                            "client_id" => $client_id,
-                            "site_id" => $site_id,
-                            "test" => true));
+                $action = $jigsaw["name"];
+            } else if ($jigsaw["category"] == "CONDITION") {
+                if ($jigsaw["name"] == "customParameter") {
+                    $params[$jigsaw["config"]["param_name"]] = $jigsaw["config"]["param_value"];
                 }
             }
         }
+
+        $data = array_merge(array(
+            "rule_id" => strval($rule["_id"]),
+            "action" => $action,
+            "client_id" => $client_id,
+            "site_id" => $site_id,
+            "test" => true
+        ), $params);
+
+        $result = $this->curl(
+            API_SERVER."/Engine/rule",
+            $data
+        );
 
         $this->output->set_output($result);
     }
@@ -388,7 +403,7 @@ class Rule extends MY_Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $server_output = curl_exec ($ch);
+        $server_output = curl_exec($ch);
         curl_close ($ch);
         return $server_output;
     }

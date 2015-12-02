@@ -32,6 +32,7 @@ $lang['entry_type']				= 'Type';
 $lang['entry_email']				= 'Email';
 $lang['entry_subject']				= 'Subject';
 $lang['entry_sms']				= 'Sms';
+$lang['entry_push']				= 'Push';
 
 $lang['column_date_added']          			= 'Date Added';
 $lang['column_action']							= 'Action';

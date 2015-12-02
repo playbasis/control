@@ -63,6 +63,18 @@ class Action extends MY_Controller
         $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
         $this->form_validation->set_rules('status', "", '');
 
+        $data_set = $this->input->post('init_dataset');
+        if ($data_set != false && !empty($data_set)) {
+            $i = 0;
+            foreach ($data_set as $data) {
+                if (!empty($data['param_name'])) {
+                    $this->form_validation->set_rules('init_dataset[' . $i . '][param_name]',
+                        $this->lang->line('form_param_name'), 'trim|required|xss_clean|check_space');
+                    $this->form_validation->set_rules('init_dataset[' . $i++ . '][label]',
+                        $this->lang->line('form_param_label'), 'trim|required|xss_clean|max_length[100]');
+                }
+            }
+        }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $this->data['message'] = null;
@@ -143,6 +155,18 @@ class Action extends MY_Controller
         $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('status', "", '');
 
+        $data_set = $this->input->post('init_dataset');
+        if ($data_set != false && !empty($data_set)) {
+            $i = 0;
+            foreach ($data_set as $data) {
+                if (!empty($data['param_name'])) {
+                    $this->form_validation->set_rules('init_dataset[' . $i . '][param_name]',
+                        $this->lang->line('form_param_name'), 'trim|required|xss_clean|check_space');
+                    $this->form_validation->set_rules('init_dataset[' . $i++ . '][label]',
+                        $this->lang->line('form_param_label'), 'trim|required|xss_clean|max_length[100]');
+                }
+            }
+        }
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             $this->data['message'] = null;
@@ -279,6 +303,7 @@ class Action extends MY_Controller
         $this->data['pagination_total_rows'] = $config["total_rows"];
 
         $this->data['main'] = 'action';
+        $this->data['isAdmin'] = $this->User_model->isAdmin();
         $this->render_page('template');
     }
 
@@ -405,6 +430,7 @@ class Action extends MY_Controller
         $this->data['main'] = 'action_form';
 
         $this->load->vars($this->data);
+        $this->data['isAdmin'] = $this->User_model->isAdmin();
         $this->render_page('template');
     }
 
@@ -520,7 +546,5 @@ class Action extends MY_Controller
             return true;
         }
     }
-
-    
 }
 ?>

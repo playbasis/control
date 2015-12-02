@@ -248,6 +248,9 @@
                                   <?php if( $smses !== null ){ ?>
                                   <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>
                                     <?php } ?>
+                                  <?php if( $pushes !== null ){ ?>
+                                  <li class="add-push"><a tabindex="-1" href="javascript:void(0)">PUSH</a></li>
+                                  <?php } ?>
                                 </ul>
                                 <span class="break"></span>
                                 <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>
@@ -385,6 +388,29 @@
                                                     <?php echo $sms['feedback_data']['message'];?></div>
                                                 </div>
                                             </div>
+
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                <?php if(isset($editPushRew)){ ?>
+                                    <div class="pushes-wrapper rewards-type well">
+                                        <h3>PUSHes  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-push-btn">+ Add PUSHes</a></h3>
+                                        <div class="item-container">
+                                            <?php foreach($editPushRew as $push){ ?>
+
+                                                <div class="clearfix item-wrapper pushes-item-wrapper" data-id-push="<?php echo $push['template_id'] ?>">
+                                                    <h4 class="span10"><?php echo $push['feedback_data']['name'];?></h4>
+                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                    <div class="clearfix"></div>
+                                                    <div class="clearfix">
+                                                        <div class="span2">Body: </div>
+                                                        <div class="span10">
+                                                            <input type="hidden" name="feedbacks[<?php echo $push['template_id'] ?>][template_id]" value="<?php echo $push['template_id'] ?>"/>
+                                                            <input type="hidden" name="feedbacks[<?php echo $push['template_id'] ?>][feedback_type]" value="PUSH"/>
+                                                            <?php echo $push['feedback_data']['message'];?></div>
+                                                    </div>
+                                                </div>
 
                                             <?php } ?>
                                         </div>
@@ -610,6 +636,7 @@
                                                     <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
                                                     <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
                                                     <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>
+                                                    <li class="add-push"><a tabindex="-1" href="javascript:void(0)">PUSH</a></li>
                                                 </ul>                                            
                                                 <span class="break"></span>                                            
                                                 <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>                                        
@@ -756,7 +783,31 @@
                                                             <?php } ?>
                                                         </div>
                                                     </div>
-                                                <?php } ?> <!-- end of editEmailRew isset -->
+                                                <?php } ?> <!-- end of editSmsRew isset -->
+                                                <?php if(isset($mission['editPushRew'])){ ?>
+                                                    <div class="pushes-wrapper rewards-type well">
+                                                        <h3>PUSHes  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-push-btn">+ Add PUSHes</a></h3>
+                                                        <div class="item-container">
+
+                                                            <?php foreach($mission['editPushRew'] as $push){ ?>
+
+
+                                                                <div class="clearfix item-wrapper pushes-item-wrapper" data-id-push="<?php echo $push['template_id'] ?>">
+                                                                    <h4 class="span10"><?php echo $push['feedback_data']['name'];?></h4>
+                                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                                    <div class="clearfix"></div>
+                                                                    <div class="clearfix">
+                                                                        <div class="span2">Body: </div>
+                                                                        <div class="span10">
+                                                                            <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $push['template_id'] ?>][template_id]" value="<?php echo $push['template_id'] ?>"/>
+                                                                            <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $push['template_id'] ?>][feedback_type]" value="PUSH"/>
+                                                                            <?php echo  $push['feedback_data']['message'] ?></div>
+                                                                    </div>
+                                                                </div>
+                                                            <?php } ?>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?> <!-- end of editPushRew isset -->
 
                                                 <h3 class="no-item">No Item</h3>
                                             </div><!-- .rewards-container -->
@@ -931,6 +982,39 @@
         <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         <button class="btn btn-primary select-sms-btn" data-dismiss="modal">Select</button>
+    </div>
+</div>
+
+<!-- Modal PUSH -->
+<div id="modal-select-push" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Select PUSH</h3>
+    </div>
+    <div class="modal-body">
+        <div class="select-list">
+            <?php
+            foreach ($pushes as $key => $push) {
+                if( empty( $push['status'] ) || $push['status'] == false ){
+                    continue;
+                }
+                ?>
+                <label>
+                    <div class="select-item clearfix" data-id="<?php echo $key; ?>" data-id-push="<?php echo $push['_id'] ?>" >
+                        <div class="span1 text-center">
+                            <input type="checkbox" name="selected[]" value="<?php echo $push['_id']; ?>">
+                        </div>
+                        <div class="span11 title"><?php echo $push['name'];?></div>
+                        <div class="data-push-body" style="display:none"><?php echo $push['body'] ?></div>
+                    </div>
+                </label>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary select-push-btn" data-dismiss="modal">Select</button>
     </div>
 </div>
 
@@ -1129,6 +1213,9 @@
                                             <?php if( $smses !== null ){ ?>
                                                 <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>\
                                             <?php } ?>
+                                            <?php if( $pushes !== null ){ ?>
+                                                <li class="add-push"><a tabindex="-1" href="javascript:void(0)">PUSH</a></li>\
+                                            <?php } ?>
                                             </ul>\
                                             <span class="break"></span>\
                                             <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>\
@@ -1217,6 +1304,7 @@
             addActionObj = menuObj.find('.add-action'),
             addEmailObj = menuObj.find('.add-email'),
             addSmsObj = menuObj.find('.add-sms')
+            addPushObj = menuObj.find('.add-push')
 
             menuBtn.unbind().bind('click',function(data){
                 wrapperObj.find('.box-content').show();
@@ -1369,6 +1457,25 @@
             }
             $('.select-sms-btn').unbind().bind('click',function(data){
                 selectSmsesItem();
+            });
+            //Add Push
+            if(containerObj.has('.pushes-wrapper').length){
+                addPushObj.removeClass('disabled');
+                addPushObj.unbind().bind('click',function(data){
+                    setModalPushesItem(target);
+                });
+                containerObj.find('.pushes-wrapper .add-push-btn').bind('click',function(data){
+                    setModalPushesItem(target);
+                });
+            }else{
+                addPushObj.removeClass('disabled');
+                addPushObj.unbind().bind('click',function(data){
+                    addPushes(target);
+                    setModalPushesItem(target);
+                });
+            }
+            $('.select-push-btn').unbind().bind('click',function(data){
+                selectPushesItem();
             });
           
 
@@ -1690,6 +1797,19 @@ function addSmses(target){
 
     render(target);
 }
+
+function addPushes(target){
+        var type = target.type;
+        var id = target.id || null;
+        var parent = target.parent || 'quest';
+
+        var pushesHead = '<h3>Pushes  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-push-btn">+ Add PUSHes</a></h3>';
+        var pushesHtml = '<div class="pushes-wrapper '+type+'-type well">'+pushesHead+'<div class="item-container"></div></div>';
+
+        target.html = pushesHtml;
+
+        render(target);
+    }
 
 function addActions(target){
     var type = target.type;
@@ -2165,7 +2285,89 @@ function selectSmsesItem(){
         }
     })
 }
+// setModalPushesItem
+function setModalPushesItem(target){
 
+    setModalTarget($('#modal-select-push'),target);
+    var type = target.type;
+
+    if(target.parent == 'missions'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+    }
+
+    $('#modal-select-push input[type=checkbox]').prop('checked', false);
+    wrapperObj.find('.pushes-item-wrapper').each(function(){
+        var idEmailsSelect = $(this).data('id-push');
+        $('#modal-select-push .select-item[data-id-push='+idEmailsSelect+'] input[type=checkbox]').prop('checked', true);
+    })
+
+    $('#modal-select-push').modal('show');
+}
+
+function selectPushesItem(){
+    var modalObj = $('#modal-select-push');
+    var target = {
+        "type":modalObj.attr('data-type'),
+        "id":modalObj.attr('data-mission-id'),
+        "parent":modalObj.attr('data-parent')
+    }
+
+    var type = target.type;
+    var taget_id = target.id || null;
+    var parent = target.parent || 'quest';
+    var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+
+    if(target.parent == 'missions'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+    }
+
+    $('#modal-select-push .select-item').each(function(){
+        if($(this).find('input[type=checkbox]').is(':checked')){
+
+            if(wrapperObj.find('.pushes-item-wrapper[data-id-push='+$(this).data('id-push')+']').length <= 0) {
+
+                var id = $(this).data('id-push');
+                var img = $(this).find('.image img').attr('src');
+                var title = $(this).find('.title').html();
+                var typeElement = 'push';
+
+                var pushBody = $(this).find('.data-push-body').html();
+
+                if(parent == 'missions'){
+                    inputHtml = '<input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][template_id]" value="'+id+'"/>\
+                                <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][feedback_type]" value="PUSH"/>'
+                }else{
+                    inputHtml = '<input type="hidden" name="feedbacks['+id+'][template_id]" value="'+id+'"/>\
+                                <input type="hidden" name="feedbacks['+id+'][feedback_type]" value="PUSH"/>'
+                }
+
+                var pushesItemHtml = '<div class="clearfix item-wrapper pushes-item-wrapper" data-id-push="'+id+'">\
+                                <h4 class="span10">'+title+'</h4>\
+                                <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>\
+                                <div class="clearfix"></div>\
+                                <div class="clearfix">\
+                                    <div class="span2">Body: </div>\
+                                    <div class="span10">'+inputHtml+'\
+                                    '+pushBody+'</div>\
+                                </div>\
+            </div>';
+
+
+                wrapperObj.find('.pushes-wrapper .item-container').append(pushesItemHtml);
+
+                init_additem_event(target);
+            }
+        }else{
+            if(wrapperObj.find('.pushes-item-wrapper[data-id-push='+$(this).data('id-push')+']').length >= 1) {
+                wrapperObj.find('.pushes-item-wrapper[data-id-push='+$(this).data('id-push')+']').remove();
+            }
+        }
+    })
+}
 
 // setModalCustompointsItem
 function setModalCustompointsItem(target){

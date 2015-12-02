@@ -263,7 +263,8 @@ class Badge_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $d = new MongoDate();
         $badges = $this->listBadgesTemplate();
-        if ($badges) foreach ($badges as &$badge) {
+        if (!$badges) return false;
+        foreach ($badges as &$badge) {
             $badge['client_id'] = $client_id;
             $badge['site_id'] = $site_id;
             $badge['badge_id'] = $badge['_id'];
