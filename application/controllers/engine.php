@@ -25,6 +25,7 @@ class Engine extends Quest
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/node_stream', 'node');
+		$this->load->model('energy_model');
 	}
 	public function getActionConfig_get()
 	{
@@ -344,6 +345,42 @@ class Engine extends Quest
 					'first_name' => $cl_player_id,
 					'nickname' => $cl_player_id,
 				)));
+				/* Automatically energy initialization after creating a new player*/
+				$energys = $this->energy_model->findActiveEnergyRewardsById($this->validToken['client_id'],
+						$this->validToken['site_id']);
+				foreach ($energys as $energy) {
+					$energy_reward_id = $energy['reward_id'];
+					$energy_max = (int)$energy['energy_props']['maximum'];
+					$batch_data = array();
+					if ($energy['type'] == 'gain') {
+						array_push($batch_data, array(
+								'pb_player_id' => $pb_player_id,
+								'cl_player_id' => $cl_player_id,
+								'client_id' => $this->validToken['client_id'],
+								'site_id' => $this->validToken['site_id'],
+								'reward_id' => $energy_reward_id,
+								'value' => $energy_max,
+								'date_cron_modified' => new MongoDate(),
+								'date_added' => new MongoDate(),
+								'date_modified' => new MongoDate()
+						));
+					} elseif ($energy['type'] == 'loss') {
+						array_push($batch_data, array(
+								'pb_player_id' => $pb_player_id,
+								'cl_player_id' => $cl_player_id,
+								'client_id' => $this->validToken['client_id'],
+								'site_id' => $this->validToken['site_id'],
+								'reward_id' => $energy_reward_id,
+								'value' => 0,
+								'date_cron_modified' => new MongoDate(),
+								'date_added' => new MongoDate(),
+								'date_modified' => new MongoDate()
+						));
+					}
+					if (!empty($batch_data)) {
+						$this->energy_model->bulkInsertInitialValue($batch_data);
+					}
+				}
 			}
 
 			//get action id by action name
