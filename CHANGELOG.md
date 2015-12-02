@@ -1,7 +1,35 @@
 # Change Log
 
-## [v2.2.26](https://github.com/playbasis/control/tree/v2.2.26) (2015-11-03)
+## [v2.2.27](https://github.com/playbasis/control/tree/v2.2.27) (2015-12-02)
 
+[Full Changelog](https://github.com/playbasis/control/compare/fix_https_in_plan_price...v2.2.27)
+
+**Implemented enhancements:**
+
+- Fix play rule problem [\#52](https://github.com/playbasis/control/pull/52) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Move energy-init from cron and support init at the creation time of e… [\#49](https://github.com/playbasis/control/pull/49) ([narut-playbasis](https://github.com/narut-playbasis))
+- Enhancement standardized action, only admin can edit. User can only view [\#48](https://github.com/playbasis/control/pull/48) ([narut-playbasis](https://github.com/narut-playbasis))
+- Add push on Quest Page [\#43](https://github.com/playbasis/control/pull/43) ([narut-playbasis](https://github.com/narut-playbasis))
+- add push on quiz [\#42](https://github.com/playbasis/control/pull/42) ([narut-playbasis](https://github.com/narut-playbasis))
+
+**Fixed bugs:**
+
+- Set `mongo.native\_long` to `true` to avoid int buffer overflow also a… [\#54](https://github.com/playbasis/control/pull/54) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Bug fix: Engine rule condition did not update to database for weekly … [\#53](https://github.com/playbasis/control/pull/53) ([narut-playbasis](https://github.com/narut-playbasis))
+- Bugfix: check required filed on quest page [\#51](https://github.com/playbasis/control/pull/51) ([narut-playbasis](https://github.com/narut-playbasis))
+- Bug fix picture can't be uploaded due to php error [\#50](https://github.com/playbasis/control/pull/50) ([narut-playbasis](https://github.com/narut-playbasis))
+- Bug fix: Branch name with number error on merchant page [\#47](https://github.com/playbasis/control/pull/47) ([narut-playbasis](https://github.com/narut-playbasis))
+- Bug fix: fix bug that can't add branch on Merchant page [\#45](https://github.com/playbasis/control/pull/45) ([narut-playbasis](https://github.com/narut-playbasis))
+- Bug fix : when remove all rewards but did not save to database [\#44](https://github.com/playbasis/control/pull/44) ([narut-playbasis](https://github.com/narut-playbasis))
+
+**Merged pull requests:**
+
+- add level condition to engine rule [\#46](https://github.com/playbasis/control/pull/46) ([patsita-playbasis](https://github.com/patsita-playbasis))
+
+## [fix_https_in_plan_price](https://github.com/playbasis/control/tree/fix_https_in_plan_price) (2015-11-03)
+[Full Changelog](https://github.com/playbasis/control/compare/v2.2.26...fix_https_in_plan_price)
+
+## [v2.2.26](https://github.com/playbasis/control/tree/v2.2.26) (2015-11-03)
 [Full Changelog](https://github.com/playbasis/control/compare/fix_bug_cannot_update_rule_status...v2.2.26)
 
 **Implemented enhancements:**
