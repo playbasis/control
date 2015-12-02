@@ -1,7 +1,124 @@
 # Change Log
 
+## [2.1.40](https://github.com/playbasis/api/tree/2.1.40) (2015-12-01)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.12...2.1.40)
+
+## [2.1.40-alpha.12](https://github.com/playbasis/api/tree/2.1.40-alpha.12) (2015-12-01)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.11...2.1.40-alpha.12)
+
+**Fixed bugs:**
+
+- Set `mongo.native\_long` to `true` to avoid int buffer overflow. [\#66](https://github.com/playbasis/api/pull/66) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Bug fix php error due to wrong wording on Quest All get method [\#65](https://github.com/playbasis/api/pull/65) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.40-alpha.11](https://github.com/playbasis/api/tree/2.1.40-alpha.11) (2015-11-30)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.10...2.1.40-alpha.11)
+
+## [2.1.40-alpha.10](https://github.com/playbasis/api/tree/2.1.40-alpha.10) (2015-11-30)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.9...2.1.40-alpha.10)
+
+**Implemented enhancements:**
+
+- Impl counterWithin function [\#64](https://github.com/playbasis/api/pull/64) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.1.40-alpha.9](https://github.com/playbasis/api/tree/2.1.40-alpha.9) (2015-11-30)
+[Full Changelog](https://github.com/playbasis/api/compare/remove_goods_ad_from_iodocs...2.1.40-alpha.9)
+
+**Implemented enhancements:**
+
+- Energy insertion enhancement [\#26](https://github.com/playbasis/api/issues/26)
+
+**Fixed bugs:**
+
+- Prevent error from obsolete "url" [\#63](https://github.com/playbasis/api/pull/63) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- BugFix : undefined index of input parameter [\#62](https://github.com/playbasis/api/pull/62) ([narut-playbasis](https://github.com/narut-playbasis))
+- Bug fix : condition monthly got PHP error due to date\_of\_month instea… [\#61](https://github.com/playbasis/api/pull/61) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [remove_goods_ad_from_iodocs](https://github.com/playbasis/api/tree/remove_goods_ad_from_iodocs) (2015-11-26)
+[Full Changelog](https://github.com/playbasis/api/compare/fix_bug_null_on_array_key_exists_for_goods_ad...remove_goods_ad_from_iodocs)
+
+## [fix_bug_null_on_array_key_exists_for_goods_ad](https://github.com/playbasis/api/tree/fix_bug_null_on_array_key_exists_for_goods_ad) (2015-11-26)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.8...fix_bug_null_on_array_key_exists_for_goods_ad)
+
+**Implemented enhancements:**
+
+- Move energy-init from cron and support init at the creation time of n… [\#60](https://github.com/playbasis/api/pull/60) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.40-alpha.8](https://github.com/playbasis/api/tree/2.1.40-alpha.8) (2015-11-26)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.7...2.1.40-alpha.8)
+
+**Implemented enhancements:**
+
+- Enhancement standardized Action, API need to support validation and c… [\#59](https://github.com/playbasis/api/pull/59) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.40-alpha.7](https://github.com/playbasis/api/tree/2.1.40-alpha.7) (2015-11-24)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.6...2.1.40-alpha.7)
+
+**Implemented enhancements:**
+
+- Add "goods" into returned JSON of /Player/:id/data/all [\#58](https://github.com/playbasis/api/pull/58) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.1.40-alpha.6](https://github.com/playbasis/api/tree/2.1.40-alpha.6) (2015-11-23)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.5...2.1.40-alpha.6)
+
+**Implemented enhancements:**
+
+- Impl getJigsawProcessorWithCache [\#57](https://github.com/playbasis/api/pull/57) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.1.40-alpha.5](https://github.com/playbasis/api/tree/2.1.40-alpha.5) (2015-11-19)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.4...2.1.40-alpha.5)
+
+**Implemented enhancements:**
+
+- Feature/add coupon in goods list result [\#56](https://github.com/playbasis/api/pull/56) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.1.40-alpha.4](https://github.com/playbasis/api/tree/2.1.40-alpha.4) (2015-11-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.3...2.1.40-alpha.4)
+
+**Implemented enhancements:**
+
+- Optimize permissionProcess and permissionCheck by pre-computing "date", "usage" and "plan" in REST2 [\#55](https://github.com/playbasis/api/pull/55) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Adjust timeout to 500 ms for improving performance [\#54](https://github.com/playbasis/api/pull/54) ([narut-playbasis](https://github.com/narut-playbasis))
+- Feature/optimize engine [\#53](https://github.com/playbasis/api/pull/53) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.1.40-alpha.3](https://github.com/playbasis/api/tree/2.1.40-alpha.3) (2015-11-16)
+[Full Changelog](https://github.com/playbasis/api/compare/add_pm_team_into_weekly_report...2.1.40-alpha.3)
+
+**Implemented enhancements:**
+
+- Feature/node server docker test [\#52](https://github.com/playbasis/api/pull/52) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [add_pm_team_into_weekly_report](https://github.com/playbasis/api/tree/add_pm_team_into_weekly_report) (2015-11-12)
+[Full Changelog](https://github.com/playbasis/api/compare/add_pm_team_into_weekly_report_recipient...add_pm_team_into_weekly_report)
+
+## [add_pm_team_into_weekly_report_recipient](https://github.com/playbasis/api/tree/add_pm_team_into_weekly_report_recipient) (2015-11-12)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.2...add_pm_team_into_weekly_report_recipient)
+
+## [2.1.40-alpha.2](https://github.com/playbasis/api/tree/2.1.40-alpha.2) (2015-11-10)
+[Full Changelog](https://github.com/playbasis/api/compare/change_api_key_of_geckoboard...2.1.40-alpha.2)
+
+**Implemented enhancements:**
+
+- Remove playerId and use goods\_id to find playbasis instead [\#51](https://github.com/playbasis/api/pull/51) ([narut-playbasis](https://github.com/narut-playbasis))
+
+**Fixed bugs:**
+
+- Bug fix : null value in for loop on Redeem Verification API [\#50](https://github.com/playbasis/api/pull/50) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [change_api_key_of_geckoboard](https://github.com/playbasis/api/tree/change_api_key_of_geckoboard) (2015-11-09)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.1...change_api_key_of_geckoboard)
+
+## [2.1.40-alpha.1](https://github.com/playbasis/api/tree/2.1.40-alpha.1) (2015-11-04)
+[Full Changelog](https://github.com/playbasis/api/compare/fix_bug_isset...2.1.40-alpha.1)
+
+## [fix_bug_isset](https://github.com/playbasis/api/tree/fix_bug_isset) (2015-11-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39-alpha.9...fix_bug_isset)
+
+## [2.1.39-alpha.9](https://github.com/playbasis/api/tree/2.1.39-alpha.9) (2015-11-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39...2.1.39-alpha.9)
+
 ## [2.1.39](https://github.com/playbasis/api/tree/2.1.39) (2015-11-03)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.39...2.1.39-alpha.8)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.39-alpha.8...2.1.39)
 
 ## [2.1.39-alpha.8](https://github.com/playbasis/api/tree/2.1.39-alpha.8) (2015-11-02)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.39-alpha.7...2.1.39-alpha.8)
@@ -142,17 +259,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule...2.1.38-alpha.1)
 
 ## [fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule](https://github.com/playbasis/api/tree/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule) (2015-10-07)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
 
 **Implemented enhancements:**
 
 - Implementimg new feature for PIN code verification [\#32](https://github.com/playbasis/api/pull/32) ([burachit-playbasis](https://github.com/burachit-playbasis))
 
-## [2.1.37-alpha.6](https://github.com/playbasis/api/tree/2.1.37-alpha.6) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...2.1.37-alpha.6)
-
 ## [2.1.37](https://github.com/playbasis/api/tree/2.1.37) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...2.1.37)
+
+## [2.1.37-alpha.6](https://github.com/playbasis/api/tree/2.1.37-alpha.6) (2015-10-02)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37-alpha.6)
 
 **Merged pull requests:**
 
@@ -501,13 +618,13 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.3...2.1.24-alpha.4)
 
 ## [2.1.24-alpha.3](https://github.com/playbasis/api/tree/2.1.24-alpha.3) (2015-04-27)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.3)
-
-## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.3)
 
 ## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.1)
+
+## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.2)
 
 ## [2.1.20-alpha.1](https://github.com/playbasis/api/tree/2.1.20-alpha.1) (2015-03-18)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.19-alpha.1...2.1.20-alpha.1)
