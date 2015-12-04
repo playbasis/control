@@ -149,9 +149,10 @@ class Push_model extends MY_Model
         return true;
     }
 
-    public function getIosSetup($client_id=null) {
+    public function getIosSetup($client_id=null,$site_id=null) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_push_ios");
         return $results ? $results[0] : null;
@@ -161,10 +162,12 @@ class Push_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $client_id = isset($data['client_id']) && !empty($data['client_id']) ? new MongoId($data['client_id']) : null;
+        $site_id = isset($data['site_id']) && !empty($data['site_id']) ? new MongoId($data['site_id']) : null;
         $env = isset($data['env']) && !empty($data['env']) ? $data['env'] : null;
         $d = new MongoDate();
-        if ($this->getIosSetup($client_id)) {
+        if ($this->getIosSetup($client_id,$site_id)) {
             $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('env', $data['push-env']);
             $this->mongo_db->set('certificate', $data['push-certificate']);
             $this->mongo_db->set('password', $data['push-password']);
@@ -174,6 +177,7 @@ class Push_model extends MY_Model
         } else {
             $this->mongo_db->insert('playbasis_push_ios', array(
                 'client_id' => $client_id,
+                'site_id' => $site_id,
                 'env' => $data['push-env'],
                 'certificate' => $data['push-certificate'],
                 'password' => $data['push-password'] ,
