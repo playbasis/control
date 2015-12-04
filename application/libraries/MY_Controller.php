@@ -3,9 +3,6 @@ class  MY_Controller  extends  CI_Controller  {
 
     function MY_Controller ()  {
         parent::__construct();
-
-        @ini_set('mongo.native_long', 1);
-
         if ($this->session->userdata('user_id')) {
             setcookie("client_id", $this->session->userdata('client_id'));
             setcookie("site_id", $this->session->userdata('site_id'));
