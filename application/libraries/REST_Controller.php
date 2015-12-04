@@ -147,8 +147,6 @@ abstract class REST_Controller extends CI_Controller
 	{
 		parent::__construct();
 
-		@ini_set('mongo.native_long', 1);
-
 		$this->_zlib_oc = @ini_get('zlib.output_compression');
 
 		// Lets grab the config and get ready to party
