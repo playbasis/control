@@ -163,7 +163,7 @@ class Push_model extends MY_Model
         $client_id = isset($data['client_id']) && !empty($data['client_id']) ? new MongoId($data['client_id']) : null;
         $env = isset($data['env']) && !empty($data['env']) ? $data['env'] : null;
         $d = new MongoDate();
-        if ($this->getIosSetup($env)) {
+        if ($this->getIosSetup($client_id)) {
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('env', $data['push-env']);
             $this->mongo_db->set('certificate', $data['push-certificate']);
