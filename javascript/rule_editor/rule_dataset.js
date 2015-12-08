@@ -428,8 +428,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                     }
 
                     else if($thisrow.find('.text').length > 0){
-                        // default case
-                        if(DEBUG)console.log('edit > normal case');
+                        if(DEBUG)console.log('edit > text');
                         rowField.find('input').val(rowText.html());
                     }
 
@@ -503,7 +502,11 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                             $('#operation').val(rowText.html());
                             //console.log('CUSTOMPARAMETER');
                         }
-
+                        else{
+                            // default case
+                            if(DEBUG)console.log('edit > normal case');
+                            rowField.find('input').val(rowText.html());
+                        }
                     }
                     $thisrow.find('.pbd_rule_data .pbd_rule_field input[type="text"]').focus();
                     $thisrow.find('.pbd_rule_data .pbd_rule_field input[type="text"]').select();
@@ -644,8 +647,6 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                             .val(val)
                     }
                     else if($thisrow.find('.text').length > 0){
-                        // default case
-                        //console.log('save > hello' );
                         rowText.html(rowField.find('input').val());
                     }
                     else{
@@ -698,6 +699,11 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                             rowField.find('input')
                                 .val(val)
                             //console.log('save > CUSTOMPARAMETER' + val);
+                        }
+                        else{
+                            // default case
+                            //console.log('save > hello' );
+                            rowText.html(rowField.find('input').val());
                         }
 
                     }
