@@ -66,7 +66,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         'hidden': '<input type="text" class="hide" value="'+v.value+'" />',
 
                         'text':
-                            '<input type="text" class="" placeholder="' + v.placeholder + '" value="'+v.value+'" maxlength="60" />',
+                            '<input type="text" class="text" placeholder="' + v.placeholder + '" value="'+v.value+'" maxlength="60" />',
 
                         'number':
                             '<input type="text" class="input_number number" placeholder="' + v.placeholder + '" value="' + v.value + '" maxlength="20" />',
@@ -427,6 +427,12 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         rowField.find('select').show();
                     }
 
+                    else if($thisrow.find('.text').length > 0){
+                        // default case
+                        if(DEBUG)console.log('edit > normal case');
+                        rowField.find('input').val(rowText.html());
+                    }
+
                     else {
                         /*
                          * Special case that never think before
@@ -476,11 +482,28 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                             $('#monthday').val(rowText.html());
                             //console.log('MONTHLY');
                         }
-                        else {
-                            // default case
-                            if(DEBUG)console.log('edit > normal case');
-                            rowField.find('input').val(rowText.html());
+                        else if(anotherType.match('CUSTOMPARAMETER')) {
+                            if($('#operation').length <= 0) {
+                                var operation = {
+                                    'equal'  :  '=',
+                                    'equalOrGreater'  :  '>=',
+                                    'equalOrLess'  :  '<=',
+                                    'greater':  '>',
+                                    'less'   :  '<'
+
+                                }
+                                var operation_option = $('<select id="operation">');
+                                $.each(operation, function(key, value) {
+                                    operation_option.append($('<option>', { value : key })
+                                        .text(value));
+                                });
+                                rowField.children().hide();
+                                rowField.append(operation_option);
+                            }
+                            $('#operation').val(rowText.html());
+                            //console.log('CUSTOMPARAMETER');
                         }
+
                     }
                     $thisrow.find('.pbd_rule_data .pbd_rule_field input[type="text"]').focus();
                     $thisrow.find('.pbd_rule_data .pbd_rule_field input[type="text"]').select();
@@ -620,7 +643,11 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         rowField.find('input')
                             .val(val)
                     }
-
+                    else if($thisrow.find('.text').length > 0){
+                        // default case
+                        //console.log('save > hello' );
+                        rowText.html(rowField.find('input').val());
+                    }
                     else{
                         /*
                          * Special case that never think before
@@ -657,11 +684,22 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 .val(val)
                             //console.log('save > MONTHLY' + val);
                         }
-                        else {
-                            // default case
-                            //console.log('save > hello' );
-                            rowText.html(rowField.find('input').val());
+                        else if(anotherType.match('CUSTOMPARAMETER')) {
+
+                            var fulldate = $('.timepickerx').datetimepicker('getDate');
+                            var val_min = fulldate.getMinutes();
+                            var val_hours = fulldate.getHours();
+
+                            val_min = val_min < 10 ? '0' + val_min.toString() : val_min.toString();
+                            val_hours = val_hours < 10 ? '0' + val_hours.toString() : val_hours.toString();
+                            var val = val_hours + ':' + val_min;
+
+                            rowText.html(val);
+                            rowField.find('input')
+                                .val(val)
+                            //console.log('save > CUSTOMPARAMETER' + val);
                         }
+
                     }
                 }
                 //  Action Cancel !!!!!
