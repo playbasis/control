@@ -54,15 +54,15 @@ class jigsaw extends MY_Model
 
 		if (isset($input[$param_name])){
 			if($config['param_operation']=='='){
-				$result = $input[$param_name] == $config['param_value'] ? true : false;
+				$result = ($input[$param_name] == $config['param_value']);
 			}elseif($config['param_operation']=='>'){
-				$result = $input[$param_name] > $config['param_value'] ? true : false;
+				$result = ($input[$param_name] > $config['param_value']);
 			}elseif($config['param_operation']=='<'){
-				$result = $input[$param_name] < $config['param_value'] ? true : false;
+				$result = ($input[$param_name] < $config['param_value']);
 			}elseif($config['param_operation']=='>='){
-				$result = $input[$param_name] >= $config['param_value'] ? true : false;
+				$result = ($input[$param_name] >= $config['param_value']);
 			}elseif($config['param_operation']=='<='){
-				$result = $input[$param_name] <= $config['param_value'] ? true : false;
+				$result = ($input[$param_name] <= $config['param_value']);
 			}
 		}
 		else{
