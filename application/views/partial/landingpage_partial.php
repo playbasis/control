@@ -202,7 +202,7 @@
                                           var data = $( this ).serializeArray();
                                           $.ajax({
                                             type: "POST",
-                                            url: 'https://www.pbapp.net',
+                                            url: baseUrlPath+'account/survey',
                                             data: data,
                                             success: function(data){
                                                 setTimeout(function(){

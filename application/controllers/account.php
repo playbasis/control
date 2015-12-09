@@ -716,7 +716,6 @@ class Account extends MY_Controller
 		}
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-log_message('error', '[request_code] phone_number = '.$this->input->post('phone_number'));
 			$this->data['message'] = null;
 
 			$this->form_validation->set_rules('phone_number', $this->lang->line('form_phone_number'), 'trim|required');
@@ -727,11 +726,9 @@ log_message('error', '[request_code] phone_number = '.$this->input->post('phone_
 
 			if($this->form_validation->run() && $this->data['message'] == null){
 				$code = get_random_code(5,false,false,true);
-log_message('error', '[request_code] code = '.$code);
 				$this->session->set_userdata('verify-mobile', $mobile);
 				$this->session->set_userdata('verify-code', $code);
 				$ret = $this->sendSMS($mobile, 'Your Playbasis authorization code is: '.$code.'');
-log_message('error', '[request_code] ret = '.$ret);
 				if ($ret) {
 					echo json_encode(array('status' => 'success', 'message' => 'Authorization code has been sent.'));
 				} else {
@@ -741,6 +738,32 @@ log_message('error', '[request_code] ret = '.$ret);
 				$message = 'Mobile phone number is required.';
 				if ($this->data['message']) $message = $this->data['message'];
 				echo json_encode(array('status' => 'failure', 'message' => $message));
+			}
+		} else {
+			echo json_encode(array('status' => 'failure', 'message' => 'Only POST request is supported.'));
+		}
+		exit();
+	}
+
+	public function survey() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+			die();
+		}
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$this->data['message'] = null;
+
+			$this->form_validation->set_rules('business_sector', $this->lang->line('text_business_sector'), 'trim|required');
+			$this->form_validation->set_rules('feature', $this->lang->line('text_feature'), 'required');
+			$this->form_validation->set_rules('objective', $this->lang->line('text_objective'), 'required');
+
+			if($this->form_validation->run() && $this->data['message'] == null){
+				$this->Client_model->setSurveyData($this->User_model->getClientId(), $this->input->post());
+				echo json_encode(array('status' => 'success', 'message' => 'Survey has been saved.'));
+			} else {
+				echo json_encode(array('status' => 'failure', 'message' => $this->data['message']));
 			}
 		} else {
 			echo json_encode(array('status' => 'failure', 'message' => 'Only POST request is supported.'));
