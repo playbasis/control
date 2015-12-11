@@ -1,6 +1,6 @@
 <?php
 // Heading
-$lang['heading_title']          		= 'Data Import';
+$lang['heading_title']          		= 'Data Management';
 
 // Text
 $lang['text_success']           		= 'You have successfully upload a file!';
@@ -10,6 +10,8 @@ $lang['text_image_manager']     		= 'Image Manager';
 $lang['text_browse']            		= 'Browse Files';
 $lang['text_clear']             		= 'Clear Image';
 
+// Tab
+$lang['tab_import']             		= 'Import';
 
 // Entry
 $lang['entry_system_id']             		= 'System Generated ID';

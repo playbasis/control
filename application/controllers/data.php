@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
-class dataimport extends MY_Controller
+class data extends MY_Controller
 {
     public function __construct()
     {
@@ -16,7 +16,7 @@ class dataimport extends MY_Controller
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
-        $this->lang->load("dataimport", $lang['folder']);
+        $this->lang->load("data", $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
     }
 
@@ -30,8 +30,8 @@ class dataimport extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['main'] = 'dataimport';
-        $this->data['form'] = 'dataimport/import';
+        $this->data['main'] = 'data';
+        $this->data['form'] = 'data/import';
         $this->getList();
     }
 
@@ -52,8 +52,8 @@ class dataimport extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->data['main'] = 'dataimport';
-        $this->data['form'] = 'dataimport/import/';
+        $this->data['main'] = 'data';
+        $this->data['form'] = 'data/import/';
         $this->error['warning'] = null;
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|min_length[2]|max_length[255]|xss_clean');
@@ -127,7 +127,7 @@ class dataimport extends MY_Controller
                 if ($result == "Success"){
                     $this->data['success'] = $this->lang->line('text_success') ;
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                    redirect('/dataimport','refresh');
+                    redirect('/data','refresh');
                 }
             }
         }
@@ -138,7 +138,7 @@ class dataimport extends MY_Controller
     private function getList() {
 
 
-        $config['base_url'] = site_url('dataimport');
+        $config['base_url'] = site_url('data');
         if (!isset($this->data['success'])) {
             $this->data['success'] = '';
         }
@@ -150,7 +150,7 @@ class dataimport extends MY_Controller
 
 
     private function validateModify() {
-        if ($this->User_model->hasPermission('modify', 'dataimport')) {
+        if ($this->User_model->hasPermission('modify', 'data')) {
             return true;
         } else {
             return false;
@@ -164,7 +164,7 @@ class dataimport extends MY_Controller
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'dataimport') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'dataimport')) {
+        if ($this->User_model->hasPermission('access', 'data') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'data')) {
             return true;
         } else {
             return false;

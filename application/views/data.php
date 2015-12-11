@@ -5,10 +5,14 @@
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick=fromcheck() type="button"><?php echo $this->lang->line('button_save'); ?></button>
+                <button class="btn btn-info" onclick="location = baseUrlPath+'data'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div>
         </div>
 
         <div class="content">
+            <div id="tabs" class="htabs">
+                <a href="<?php echo site_url('data');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_import'); ?></a>
+            </div>
             <?php if($this->session->flashdata('success')){ ?>
                 <div class="content messages half-width">
                     <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
@@ -44,8 +48,6 @@
                         <td><span class="required">*</span><?php echo $this->lang->line('entry_file'); ?>:</td>
                         <td><input id="file" type="file" name="file" size="100" /></td>
                     </tr>
-
-
                 </table>
                 <?php
                 echo form_close();?>
