@@ -1709,3 +1709,44 @@ input[type=radio]:checked + label {
 .merchant-page input.wg-globel-cssfile {
     width: 50%;
 }
+
+/* ====== [ Firsttime Survey ] ======= */
+
+.step{
+      display: none;     
+}
+.step-1{
+      display: block;     
+}
+.clearfix{
+      clear: both;
+}
+.modal-action{
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+      margin-top: 20px;
+      text-align: center;
+}
+#modal_survey .modal-header{
+      color: #fff;
+      background: #86559c;
+}
+#modal_survey h4{
+      text-align: center;
+      font-size: 24px;
+      font-weight: lighter;
+      margin-bottom: 20px;
+      line-height: 1.4em;
+}
+#modal_survey label{
+      line-height: 24px;
+}
+#modal_survey input[type="checkbox"]{
+      margin-top: 0;
+}
+#modal_survey #business_sector{
+      height: 35px;
+}
+#modal_survey .step-1{
+      text-align: center;
+}

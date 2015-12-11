@@ -551,7 +551,7 @@ class Client_model extends MY_Model
 
     public function insertOrUpdateStripe($client_id, $stripe_id, $subscription_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        $d = new MongoDate(time());
+        $d = new MongoDate();
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->limit(1);
@@ -582,13 +582,30 @@ class Client_model extends MY_Model
     public function getSiteInfo($client_id,$site_id)
     {
         $this->set_site_mongodb($site_id);
-
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('_id', new MongoID($site_id));
         $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_client_site');
         return $result[0] != null ? $result[0] : null;
+    }
+
+    public function setSurveyData($client_id, $data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('_id', $client_id);
+        $this->mongo_db->set('survey', $data);
+        $this->mongo_db->set('date_modified', new MongoDate());
+        $this->mongo_db->update('playbasis_client');
+    }
+
+    public function isSurveyData($client_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('_id', $client_id);
+        $result = $this->mongo_db->get('playbasis_client');
+        if ($result) $result = $result[0];
+        return $result && isset($result['survey']);
     }
 }
 ?>

@@ -33,7 +33,9 @@ $lang['text_stripe']						= 'Stripe';
 $lang['text_yes']						= 'Yes';
 $lang['text_no']						= 'No';
 $lang['text_not_available']						= 'N/A';
-
+$lang['text_business_sector']						= 'Business Sector';
+$lang['text_feature']						= 'Feature';
+$lang['text_objective']						= 'Objective';
 
 // Button
 $lang['button_subscribe']         = 'Subscribe';
