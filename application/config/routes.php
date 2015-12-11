@@ -163,6 +163,10 @@ $route['Player/contact/'.ANY_NUMBER] = 'player/contact/0/$1';
 $route['Player/'.ANY_STRING.'/code'] = 'player/code/$1';
 $route['Player/code'] = 'player/code';
 
+$route['Player/rankParam/'.ANY_STRING.'/'.ANY_STRING] = 'player/rankParam/$1/$2';
+$route['Player/rankParam/'.ANY_STRING] = 'player/rankParam/$1/20';
+$route['Player/rankParam'] = 'player/rankParam/0/0';
+
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';

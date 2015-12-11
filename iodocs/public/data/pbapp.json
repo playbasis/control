@@ -1161,6 +1161,57 @@
                             "Description": "player id as used in client's website"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Rank by Custom parameter",
+                    "Synopsis": "Returns list of players sorted by rising custom parameter",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/rankParam/:action/:parameter",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "action",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "action of parameter to rank players by"
+                        },
+                        {
+                            "Name": "parameter",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of parameter to rank players by"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        },
+                        {
+                            "Name": "month",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "month to rank players by (01, 02, 03,..., 12)"
+                        },
+                        {
+                            "Name": "year",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "year to rank players by (2015, 2016 , ...)"
+                        },
+                        {
+                            "Name": "group_by",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "scope to be grouped by (example: district, area, player_id)"
+                        }
+                    ]
                 }
             ]
         },

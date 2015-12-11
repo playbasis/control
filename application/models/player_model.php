@@ -153,6 +153,10 @@ class Player_model extends MY_Model
 			$this->set_site_mongodb($site_id);
 			$this->mongo_db->where('pb_player_id', $id);
 			$this->mongo_db->delete_all('playbasis_event_log');
+
+			$this->set_site_mongodb($site_id);
+			$this->mongo_db->where('pb_player_id', $id);
+			$this->mongo_db->delete_all('playbasis_transaction_log');
 		}
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('_id', $id);
@@ -2540,6 +2544,72 @@ class Player_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 		));
 		return $this->mongo_db->get('playbasis_player_device');
+	}
+	public function getMonthLeaderboardsByCustomParameter($input, $client_id, $site_id) {
+
+		$rankBy = $input['param'];
+		$limit = $input['limit'];
+		$group_by = $input['group_by'];
+		$param_str = "$".$rankBy;
+		$group_by_str = "$".$group_by;
+
+		// default is present month
+		if (isset($input['year']) && isset($input['month']))
+		{
+			$selected_time = strtotime($input['year']."-".$input['month']);
+		}
+		else{
+			$selected_time = time();
+		}
+
+		// Aggregate the data
+		$first = date('Y-m-01', $selected_time);
+		$from = strtotime($first.' 00:00:00');
+
+		$last = date('Y-m-t', $selected_time);
+		$to   = strtotime($last.' 23:59:59');
+		$raw_result = $this->mongo_db->aggregate('playbasis_transaction_log', array(
+				array(
+						'$match' => array(
+								'action' => $input['action'],
+								'site_id' => $site_id,
+								'client_id' => $client_id,
+								'date_added' => array('$gte' => new MongoDate($from),'$lte' => new MongoDate($to))
+						),
+				),
+				array(
+						'$group' => array(
+								'_id' => array($group_by => $group_by_str),
+								$rankBy => array('$push' => $param_str))
+				),
+				array(
+						'$sort' => array($rankBy => -1),
+				),
+				array(
+						'$limit' => $limit+5,
+				)
+		));
+		// This function will remove the deleted player and also name key to $rankBy
+		//$raw_result = $raw_result ? $this->removeDeletedPlayers($raw_result['result'], $limit, $rankBy) : array();
+
+		// Sort the leader !
+		$result = array();
+		foreach ($raw_result['result'] as $key => $raw){
+			$result[$key][$group_by] = $raw['_id'][$group_by];
+
+			$temp_name[$key] = $raw['_id'][$group_by];
+			if ($input['mode'] == "sum"){
+				$temp_value[$key] =  array_sum($raw[$rankBy]);
+			}
+			else{
+				$temp_value[$key] =  count($raw[$rankBy]);
+			}
+			$result[$key][$rankBy] = $temp_value[$key];
+		}
+
+		array_multisort( $temp_value, SORT_DESC,$temp_name, SORT_ASC, $result);
+
+		return $result;
 	}
 }
 

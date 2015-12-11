@@ -995,5 +995,14 @@ class Client_model extends MY_Model
         if($id) return true;
         else return false;
     }
+    public function logTransaction($input){
+        $this->set_site_mongodb($input['site_id']);
+        $mongoDate = new MongoDate(time());
+
+        $db_array = array_merge($input, array(
+                'date_added' => $mongoDate,
+                'date_modified' => $mongoDate));
+        return $this->mongo_db->insert('playbasis_transaction_log', $db_array, array("w" => 0, "j" => false));
+    }
 }
 ?>

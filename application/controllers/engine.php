@@ -422,6 +422,10 @@ class Engine extends Quest
 			$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
 			$apiResult = array_merge($apiResult, $apiQuestResult);
 		}
+		//Log Transaction
+		if (!$test){
+			$this->client_model->logTransaction($input);
+		}
 
 		$this->benchmark->mark('engine_rule_end');
 		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
