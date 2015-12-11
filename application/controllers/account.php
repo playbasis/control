@@ -771,6 +771,18 @@ class Account extends MY_Controller
 		exit();
 	}
 
+	public function is_survey() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+			die();
+		}
+
+		$result = $this->Client_model->isSurveyData($this->User_model->getClientId());
+		echo json_encode(array('status' => 'success', 'message' => $result));
+		exit();
+	}
+
 	private function sendSMS($to, $message) {
 		$this->config->load("twilio",TRUE);
 		$config = $this->config->item('twilio');

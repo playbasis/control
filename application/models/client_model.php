@@ -598,5 +598,14 @@ class Client_model extends MY_Model
         $this->mongo_db->set('date_modified', new MongoDate());
         $this->mongo_db->update('playbasis_client');
     }
+
+    public function isSurveyData($client_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('_id', $client_id);
+        $result = $this->mongo_db->get('playbasis_client');
+        if ($result) $result = $result[0];
+        return $result && isset($result['survey']);
+    }
 }
 ?>

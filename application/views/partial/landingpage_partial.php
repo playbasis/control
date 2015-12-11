@@ -154,9 +154,18 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 
-                                    $('#modal_survey').modal({
-                                          backdrop: 'static',
-                                          show: true
+                                    $.ajax({
+                                          type: "GET",
+                                          url: baseUrlPath+'account/is_survey',
+                                          dataType:"json",
+                                          success: function(data){
+                                                if( !data.message ){
+                                                      $('#modal_survey').modal({
+                                                            backdrop: 'static',
+                                                            show: true
+                                                      });
+                                                }
+                                          }
                                     });
 
                                     $('.next-btn').click(function(){
@@ -172,7 +181,7 @@
                                                       $('.step').hide();
                                                       $('.step-2').show();      
                                                 }
-                                                
+
 
                                           }else if( $step.hasClass('step-2') ){
 
@@ -182,7 +191,7 @@
                                                       $('.step').hide();
                                                       $('.step-3').show();      
                                                 }
-                                                
+
 
                                           }else if( $step.hasClass('step-3') ){
                                               
@@ -213,13 +222,24 @@
                                           });
                                     });
 
-                                    $('#modal_survey').on('hidden', function () {
+                                    $('#modal_survey .modal-header .close').on('click', function () {
                                           $.ajax({
                                             type: "POST",
-                                            url: 'https://www.pbapp.net',
-                                            data: {
-                                                dosurvey: true
-                                            },
+                                            url: baseUrlPath+'account/survey',
+                                            data: [
+                                                {
+                                                    name:"business_sector",
+                                                    value: null
+                                                },
+                                                {
+                                                    name:"feature",
+                                                    value: null
+                                                },
+                                                {
+                                                    name:"objective",
+                                                    value: null
+                                                }
+                                            ],
                                             success: function(data){
                                                 
                                             }
