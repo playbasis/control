@@ -1,14 +1,12 @@
-<div id="content" class="span10">
-
+<div id="content" class="span10 store_org-page">
     <div class="box">
         <div class="heading">
             <h1><img src="<?php echo base_url(); ?>image/category.png" alt=""/> <?php echo $heading_title; ?></h1>
 
             <div class="buttons">
-                <button class="btn btn-info" onclick="$('#form').submit();"
-                        type="button"><?php echo $this->lang->line('button_save'); ?></button>
-                <button class="btn btn-info" onclick="location = baseUrlPath+'promo_content'"
-                        type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+                <a class="btn btn-info" id="form-submit-btn"><?php echo $this->lang->line('button_save'); ?></a>
+                <a class="btn btn-info"
+                   onclick="location = baseUrlPath+'store_org'"><?php echo $this->lang->line('button_cancel'); ?></a>
             </div>
         </div>
         <div class="content">
@@ -16,10 +14,7 @@
                 <div class="content messages half-width">
                     <div class="warning"><?php echo $this->session->flashdata('limit_reached'); ?></div>
                 </div>
-            <?php } ?>
-            <div id="tabs" class="htabs"><a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
-            </div>
-            <?php
+            <?php }
             if (validation_errors() || isset($message)) {
                 ?>
                 <div class="content messages half-width">
@@ -35,166 +30,205 @@
                 </div>
                 <?php
             }
-            $attributes = array('id' => 'form');
-            echo form_open($form, $attributes);
             ?>
-            <div id="tab-general">
-                <table class="form">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_name'); ?>&nbsp;:
-                        </td>
-                        <td>
-                            <input type="text" name="name" size="100"
-                                   placeholder="<?php echo $this->lang->line('entry_name'); ?>"
-                                   value="<?php echo isset($name) ? $name : set_value('name'); ?>"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><?php echo $this->lang->line('entry_description'); ?>&nbsp;:
-                        </td>
-                        <td>
-                            <textarea name="description" rows="4"
-                                      placeholder="<?php echo $this->lang->line('entry_description'); ?>"><?php echo isset($description) ? $description : set_value('description'); ?></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                                <span
-                                    class="required">*&nbsp;</span><?php echo $this->lang->line('entry_date_range'); ?>&nbsp;:
-                        </td>
-                        <td>
-                            <span>
-                                <input type="text" class="date" name="date_start" id="date_start" size="50"
-                                       placeholder="<?php echo $this->lang->line('entry_date_start'); ?>"
-                                       value="<?php echo isset($date_start) && $date_start ? date('Y-m-d',
-                                           strtotime(datetimeMongotoReadable($date_start))) : ''; ?>"/>
-                            </span>
-                            <span>&nbsp;-&nbsp;</span>
-                            <span>
-                                <input type="text" class="date" name="date_end" id="date_end" size="50"
-                                       placeholder="<?php echo $this->lang->line('entry_date_end'); ?>"
-                                       value="<?php echo isset($date_end) && $date_end ? date('Y-m-d',
-                                           strtotime(datetimeMongotoReadable($date_end))) : ''; ?>"/>
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_image'); ?>&nbsp;:</td>
-                        <td valign="top">
-                            <div class="image">
-                                <img src="<?php echo $thumb; ?>" alt="" id="thumb"
-                                     onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
-                                <input type="hidden" name="image" value="<?php echo $image; ?>" id="image"/>
-                                <br/><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                <a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_status'); ?>&nbsp;:
-                        </td>
-                        <td>
-                            <div class="control-group">
-                                <div class="controls">
-                                    <label class="control-label">
-                                        <input type="radio" name="status" id="radio_status_enable" value="enable"
-                                            <?php echo $status == true ? "checked=\"checked\"" : set_radio('status',
-                                                'enable', true); ?>>
-                                        <?php echo $this->lang->line('entry_status_enable'); ?>
-                                    </label>
+            <div class="tabbable">
+                <ul class="nav nav-tabs" id="mainTab">
+                    <li class="active"><a href="#storeTabContent"
+                                          data-toggle="tab"><?php echo $this->lang->line('tab_store'); ?></a></li>
+                    <li><a href="#storeBrandTabContent"
+                           data-toggle="tab"><?php echo $this->lang->line('tab_brand'); ?>&nbsp;<span class="badge"><?php echo !empty($branches_list) ? count($branches_list) : '0';?></span></a>
+                    </li>
+                    <li><a href="#storeDistrictTabContent"
+                           data-toggle="tab"><?php echo $this->lang->line('tab_district'); ?>&nbsp;<span class="badge"><?php echo !empty($branches_list) ? count($branches_list) : '0';?></span></a>
+                    </li>
+                    <li><a href="#storeAreaTabContent"
+                           data-toggle="tab"><?php echo $this->lang->line('tab_area'); ?>&nbsp;<span class="badge"><?php echo !empty($branches_list) ? count($branches_list) : '0';?></span></a>
+                    </li>
+                    <li><a href="#storeFranchiseTabContent"
+                           data-toggle="tab"><?php echo $this->lang->line('tab_franchise'); ?>&nbsp;<span class="badge"><?php echo !empty($branches_list) ? count($branches_list) : '0';?></span></a>
+                    </li>
+                </ul>
+                <?php $attributes = array('id' => 'form', 'class' => 'form-horizontal');
+                echo form_open($form, $attributes); ?>
+                <div class="tab-content">
+                    <div class="tab-pane fade active in" id="storeTabContent">
+                        <div class="container-fluid">
+                            <div class="row-fluid">
+                                <div class="control-group">
+                                    <label for="store-name"
+                                        class="control-label"><?php echo $this->lang->line('entry_store_name'); ?></label>
+
+                                    <div class="controls">
+                                        <input type="text" name="store-name" id="store-name"
+                                               placeholder="<?php echo $this->lang->line('entry_store_name'); ?>"
+                                               value="<?php echo set_value('store-name', $store_name_default); ?>">
+                                    </div>
                                 </div>
-                                <div class="controls">
-                                    <label class="control-label">
-                                        <input type="radio" name="status" id="radio_status_disabled" value="disable"
-                                            <?php echo $status == false ? "checked=\"checked\"" : set_radio('status',
-                                                'disable'); ?>>
-                                        <?php echo $this->lang->line('entry_status_disable'); ?>
-                                    </label>
+                                <div class="control-group">
+                                    <label for="store-id"
+                                        class="control-label"><?php echo $this->lang->line('entry_store_id'); ?></label>
+
+                                    <div class="controls">
+                                        <input type="text" name="store-id" id="store-id"
+                                               placeholder="<?php echo $this->lang->line('entry_store_id'); ?>"
+                                               value="<?php echo set_value('store-id', $store_id_default); ?>">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label for="store-desc"
+                                        class="control-label"><?php echo $this->lang->line('entry_store_description'); ?></label>
+
+                                    <div class="controls">
+                                    <textarea name="store-desc" rows="4" id="store-desc"
+                                              placeholder="<?php echo $this->lang->line('entry_store_description'); ?>"><?php echo set_value('store-desc',
+                                            $store_desc_default); ?></textarea>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label for="store-brand"
+                                        class="control-label"><?php echo $this->lang->line('entry_store_brand'); ?></label>
+
+                                    <div class="controls">
+                                        <select name="store-brand" id="store-brand" style="width: 50%"></select>
+                                        <a href="#storeAreaTabContent" data-toggle="tab">Add new brand?</a>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label for="store-district"
+                                        class="control-label"><?php echo $this->lang->line('entry_store_district'); ?></label>
+
+                                    <div class="controls">
+                                        <select name="store-district" id="store-district" style="width: 50%"></select>
+                                        <a href="#">Add new district?</a>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label for="store-area"
+                                        class="control-label"><?php echo $this->lang->line('entry_store_area'); ?></label>
+
+                                    <div class="controls">
+                                        <select name="store-area" id="store-area" style="width: 50%"></select>
+                                        <a href="#">Add new area?</a>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label for="store-franchise"
+                                        class="control-label"><?php echo $this->lang->line('entry_store_franchise'); ?></label>
+
+                                    <div class="controls">
+                                        <select name="store-franchise" id="store-franchise" style="width: 50%"></select>
+                                        <a href="#">Add new franchise?</a>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label"
+                                           for="store-status"><?php echo $this->lang->line('entry_store_status'); ?></label>
+
+                                    <div class="controls">
+                                        <input type="checkbox" name="store-status" id="store-status"
+                                               data-handle-width="40" <?php echo isset($store_status_default) && $store_status_default ? ($store_status_default ? "checked='checked'" : '') : set_checkbox('merchant-status',
+                                            '', $store_status_default); ?>>
+                                    </div>
                                 </div>
                             </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade in" id="storeBrandTabContent">
+                        <div class="container-fluid">
+                            <div class="row-fluid">
+                                <div id="storeBrandtoolbar">
+                                    <button id="remove" class="btn btn-danger" disabled>
+                                        <i class="fa fa-remove"></i> Delete
+                                    </button>
+                                    <a href="#addBrandModal" id="add" role="button" class="btn btn-info"
+                                       data-toggle="modal"><i class="fa fa-plus"></i> Add</a>
+                                </div>
+                                <table id="storeBrandTable"
+                                       data-toolbar="#storeBrandtoolbar"
+                                       data-search="true"
+                                       data-show-refresh="true"
+                                       data-show-toggle="true"
+                                       data-show-columns="true"
+                                       data-detail-view="true"
+                                       data-detail-formatter="detailFormatter"
+                                       data-minimum-count-columns="2"
+                                       data-show-pagination-switch="true"
+                                       data-pagination="true"
+                                       data-id-field="id"
+                                       data-page-list="[10, 25, 50, 100, ALL]"
+                                       data-show-footer="false"
+                                       data-side-pagination="server"
+                                       data-url="/examples/bootstrap_table/data"
+                                       data-response-handler="responseHandler">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php
+                echo form_close();
+                ?>
             </div>
-            <?php
-            echo form_close();
-            ?>
         </div>
     </div>
 </div>
-<link id="base-style" rel="stylesheet" type="text/css"
-      href="<?php echo base_url(); ?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css"/>
-<script type="text/javascript"
-        src="<?php echo base_url(); ?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
-<script type="text/javascript">
-    function image_upload(field, thumb) {
-        $('#dialog').remove();
 
-        $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="'+baseUrlPath+'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 200px; height: 100%;" frameborder="no" scrolling="no"></iframe></div>');
+<div id="addBrandModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="addBrandModalLabel">Add new brand</h3>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <form class="form-horizontal store-brand-add">
+                <div class="row-fluid">
+                    <div class="control-group">
+                        <label for="store-brand-name"
+                               class="control-label"><?php echo $this->lang->line('entry_store_brand_name'); ?></label>
 
-        $('#dialog').dialog({
-            title: '<?php echo $this->lang->line('text_image_manager'); ?>',
-            close: function (event, ui) {
-                if ($('#' + field).attr('value')) {
-                    $.ajax({
-                        url: baseUrlPath+'filemanager/image?image=' + encodeURIComponent($('#' + field).val()),
-                        dataType: 'text',
-                        success: function(data) {
-                            $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
-                        }
-                    });
-                }
-            },
-            bgiframe: false,
-            width: 200,
-            height: 100,
-            resizable: false,
-            modal: false
-        });
-    }
+                        <div class="controls">
+                            <input type="text" name="store-brand-name" id="store-brand-name"
+                                   placeholder="<?php echo $this->lang->line('entry_store_brand_name'); ?>">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="store-brand-desc"
+                               class="control-label"><?php echo $this->lang->line('entry_store_brand_desc'); ?></label>
 
-    var startDateTextBox = $('#date_start');
-    var endDateTextBox = $('#date_end');
+                        <div class="controls">
+                            <input type="text" name="store-brand-desc" id="store-brand-desc"
+                                   placeholder="<?php echo $this->lang->line('entry_store_brand_desc'); ?>">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label"
+                               for="store-brand-status"><?php echo $this->lang->line('entry_store_brand_status'); ?></label>
 
-    $(function () {
-        $('#tabs a').tabs();
+                        <div class="controls">
+                            <input type="checkbox" name="store-brand-status" id="store-brand-status"
+                                   data-handle-width="40" checked>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" id="store-brand-modal-submit"><i class="fa fa-plus"></i>&nbsp;Add</button>
+    </div>
+</div>
 
-        startDateTextBox.datepicker({
-            onClose: function (dateText, inst) {
-                if (endDateTextBox.val() != '') {
-                    var testStartDate = startDateTextBox.datepicker('getDate');
-                    var testEndDate = endDateTextBox.datepicker('getDate');
-                    if (testStartDate > testEndDate)
-                        endDateTextBox.datepicker('setDate', testStartDate);
-                }
-                else {
-                    endDateTextBox.val(dateText);
-                }
-            },
-            onSelect: function (selectedDateTime) {
-                endDateTextBox.datepicker('option', 'minDate', startDateTextBox.datepicker('getDate'));
-            }
-        });
-        endDateTextBox.datepicker({
-            onClose: function (dateText, inst) {
-                if (startDateTextBox.val() != '') {
-                    var testStartDate = startDateTextBox.datepicker('getDate');
-                    var testEndDate = endDateTextBox.datepicker('getDate');
-                    if (testStartDate > testEndDate)
-                        startDateTextBox.datepicker('setDate', testEndDate);
-                }
-                else {
-                    startDateTextBox.val(dateText);
-                }
-            },
-            onSelect: function (selectedDateTime) {
-                startDateTextBox.datepicker('option', 'maxDate', endDateTextBox.datepicker('getDate'));
-            }
-        });
-
-    });
-</script>
+<link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
+<link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-table.min.css" rel="stylesheet" type="text/css">
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
+<link href="<?php echo base_url(); ?>javascript/bootstrap/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/custom/bootstrap-switch.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/custom/bootstrap-table.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/bootstrap/bootstrap-editable/js/bootstrap-editable.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/custom/bootstrap-table-editable.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/md5.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/mongoid.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/store_org/app_form.js" type="text/javascript"></script>

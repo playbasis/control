@@ -12,19 +12,26 @@ $lang['button_filter'] = 'Filter';
 $lang['button_clear_filter'] = 'Clear filter';
 
 // Tab
-$lang['tab_general'] = 'General';
+$lang['tab_store'] = 'Store';
+$lang['tab_brand'] = 'Brand';
+$lang['tab_district'] = 'District';
+$lang['tab_area'] = 'Area';
+$lang['tab_franchise'] = 'Franchise';
 
-//// Entry
-//$lang['entry_name'] = 'Promotion name';
-//$lang['entry_description'] = 'Description';
-//$lang['entry_date_range'] = 'Date Range';
-//$lang['entry_date_start'] = 'Date Start';
-//$lang['entry_date_end'] = 'Date End';
-//$lang['entry_image'] = 'Image';
-//$lang['entry_status'] = 'Status';
-//$lang['entry_status_enable'] = 'Enable';
-//$lang['entry_status_disable'] = 'Disable';
-//
+// Entry
+$lang['entry_store_name'] = 'Store name';
+$lang['entry_store_id'] = 'Store Id';
+$lang['entry_store_description'] = 'Description';
+$lang['entry_store_brand'] = 'Brand';
+$lang['entry_store_district'] = 'District';
+$lang['entry_store_area'] = 'Area';
+$lang['entry_store_franchise'] = 'Franchise';
+$lang['entry_store_status'] = 'Status';
+$lang['entry_store_status_enable'] = 'Enable';
+$lang['entry_store_status_disable'] = 'Disable';
+$lang['entry_store_brand_name'] = 'Brand name';
+$lang['entry_store_brand_desc'] = 'Brand description';
+$lang['entry_store_brand_status'] = 'Brand status';
 //// Text
 //$lang['text_success'] = 'You have successfully created!';
 //$lang['text_success_delete'] = 'You have successfully deleted!';
@@ -34,7 +41,8 @@ $lang['tab_general'] = 'General';
 //$lang['text_browse'] = 'Browse Files';
 //$lang['text_clear'] = 'Clear Image';
 //
-//// Error message
-//$lang['error_permission'] = 'Warning: You do not have permission to modify Promotional Content!';
-//$lang['error_access'] = 'Warning: You do not have permission to access this page!';
+//// Error messages
+$lang['error_permission'] = 'Warning: You do not have permission to modify Store Organization!';
+$lang['error_access'] = 'Warning: You do not have permission to access this page!';
 //$lang['error_promo_contents_limit'] = 'You have reached Promotional Content limit.';
+$lang['error_no_contents'] = 'No store contents found.';
