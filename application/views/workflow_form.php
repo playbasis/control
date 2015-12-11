@@ -37,25 +37,21 @@
                 <table class="form">
 
                     <tr>
-                        <td><span class="required">*</span> <?php echo $this->lang->line('form_email'); ?>:</td>
+                        <td></span> <?php echo $this->lang->line('form_email'); ?>:</td>
                         <td><?php echo $requester['email']; ?></td>
                     </tr>
                     <tr>
-                        <td><span class="required">*</span> <?php echo $this->lang->line('form_firstname'); ?>:</td>
+                        <td><?php echo $this->lang->line('form_firstname'); ?>:</td>
                         <td><?php echo $requester['first_name']; ?></td>
                     </tr>
                     <tr>
-                        <td><span class="required">*</span> <?php echo $this->lang->line('form_lastname'); ?>:</td>
+                        <td><?php echo $this->lang->line('form_lastname'); ?>:</td>
                         <td><?php echo $requester['last_name']; ?></td>
                     </tr>
 
 
                 </table>
             </div>
-
-
-            <input type="hidden" name="client_id" value="<?php echo $client_id; ?>" id="client_id" />
-            <input type="hidden" name="site_id" value="<?php echo $site_id; ?>" id="site_id" />
 
             <?php
             echo form_close();

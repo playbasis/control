@@ -34,17 +34,52 @@ class Workflow extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getRequesterList();
+        $this->getPlayerList("approved");
 
     }
 
-    private function getRequesterList() {
-        $this->data['unapproved_list'] = array();
+    public function rejected() {
+
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->getPlayerList("rejected");
+
+    }
+
+    public function pending() {
+
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->getPlayerList("pending");
+
+    }
+
+    private function getPlayerList($status) {
+        $this->data['player_list'] = array();
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        $this->data['unapproved_list'] = $this->Workflow_model->getUnapprovedPlayer($client_id,$site_id);
+        $this->data['tab_status'] =  $status;
+        $this->data['player_list'] = $this->Workflow_model->getPlayerByApprovalStatus($client_id,$site_id,$status);
+
+
 
         if (isset($this->error['warning'])) {
             $this->data['error_warning'] = $this->error['warning'];
@@ -66,12 +101,24 @@ class Workflow extends MY_Controller
         $this->render_page('template');
     }
 
-
-    public function approve($user_id) {
+    public function addaccount() {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title_approve');
-        $this->data['form'] = 'workflow/approve/'.$user_id;
+        $this->data['form'] = 'workflow/addaccount/';
+
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            //$this->Workflow_model->approvePlayer($user_id);
+            redirect('/workflow', 'refresh');
+        }
+        $this->getForm();
+    }
+
+    public function approveconfirm($user_id) {
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title_approve');
+        $this->data['form'] = 'workflow/approveconfirm/'.$user_id;
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $this->Workflow_model->approvePlayer($user_id);
@@ -80,20 +127,20 @@ class Workflow extends MY_Controller
         $this->getForm($user_id);
     }
 
-    public function reject($user_id) {
+    public function rejectconfirm($user_id) {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title_reject');
-        $this->data['form'] = 'workflow/reject/'.$user_id;
+        $this->data['form'] = 'workflow/rejectconfirm/'.$user_id;
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $this->Workflow_model->rejectPlayer($user_id);
-            redirect('/workflow', 'refresh');
+            redirect('/workflow/rejected', 'refresh');
         }
         $this->getForm($user_id);
     }
 
-    public function getForm($user_id = 0){
+    public function getForm($user_id){
 
         $this->data['requester'] = $this->Player_model->getPlayerById($user_id);
 

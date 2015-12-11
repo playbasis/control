@@ -28,10 +28,10 @@ $lang['form_firstname']           = 'First name';
 $lang['form_lastname']            = 'Last name';
 
 // Tab
-$lang['tab_colection']					= 'Collection';
-$lang['tab_assign']					= 'Assign';
-$lang['tab_redeem']					= 'Redeem';
-$lang['tab_sms']					= 'SMS';
+$lang['tab_approved']					= 'Approved';
+$lang['tab_rejected']					= 'Rejected';
+$lang['tab_pending']					= 'Pending';
+
 
 // Column
 $lang['column_image']					= 'Image';
