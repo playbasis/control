@@ -1,18 +1,77 @@
 function init_input_general_tab() {
+    // store page
     $("[name='store-status']").bootstrapSwitch();
-    $("[name='store-brand-status']").bootstrapSwitch();
+    $("#store-parent").select2({
+        placeholder: "Search for a organize parent",
+        allowClear: true,
+        minimumInputLength: 0,
+        id: function(data){
+            return data._id.$id;
+        },
+        ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+            url: "/store_org/organize/",
+            dataType: 'json',
+            quietMillis: 250,
+            data: function (term, page) {
+                return {
+                    search: term, // search term
+                };
+            },
+            results: function (data, page) { // parse the results into the format expected by Select2.
+                // since we are using custom formatting functions we do not need to alter the remote JSON data
+                return { results: data.rows };
+            },
+            cache: true
+        },
+        formatResult: organizeFormatResult, // omitted for brevity, see the source of this page
+        formatSelection: organizeFormatSelection,  // omitted for brevity, see the source of this page
+    });
 
-    $("#store-brand").select2();
-    $("#store-district").select2();
-    $("#store-area").select2();
-    $("#store-franchise").select2();
+    // modal
+    $("[name='store-organize-status']").bootstrapSwitch();
+    $("#store-organize-parent").select2({
+        placeholder: "Search for a organize parent",
+        allowClear: true,
+        minimumInputLength: 0,
+        id: function(data){
+            return data._id.$id;
+        },
+        ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+            url: "/store_org/organize/",
+            dataType: 'json',
+            quietMillis: 250,
+            data: function (term, page) {
+                return {
+                    search: term, // search term
+                };
+            },
+            results: function (data, page) { // parse the results into the format expected by Select2.
+                // since we are using custom formatting functions we do not need to alter the remote JSON data
+                return { results: data.rows };
+            },
+            cache: true
+        },
+        formatResult: organizeFormatResult, // omitted for brevity, see the source of this page
+        formatSelection: organizeFormatSelection,  // omitted for brevity, see the source of this page
+    });
 }
 
-var $storeBrandTable = $('#storeBrandTable'),
-    $storeBrandToolbarRemove = $('#storeBrandToolbar').find('#remove'),
-    storeBrandSelections = [];
-function initStoreBrandTable() {
-    $storeBrandTable.bootstrapTable({
+function organizeFormatResult(organize) {
+    return '<div class="row-fluid">' +
+        '<div>' + organize.name +
+        '<small class="text-muted">&nbsp;(' + organize.description +
+        ')</small></div></div>';
+}
+
+function organizeFormatSelection(organize) {
+    return organize.name;
+}
+
+var $storeOrganizeTable = $('#storeOrganizeTable'),
+    $storeOrganizeToolbarRemove = $('#storeOrganizeToolbar').find('#remove'),
+    storeOrganizeSelections = [];
+function initStoreOrganizeTable() {
+    $storeOrganizeTable.bootstrapTable({
         height: getHeight(),
         columns: [
             {
@@ -21,7 +80,7 @@ function initStoreBrandTable() {
                 align: 'center',
                 valign: 'middle'
             }, {
-                title: 'Brand Name',
+                title: 'Organize Name',
                 field: 'name',
                 align: 'center',
                 valign: 'middle',
@@ -43,48 +102,48 @@ function initStoreBrandTable() {
     });
     // sometimes footer render error.
     setTimeout(function () {
-        $storeBrandTable.bootstrapTable('resetView');
+        $storeOrganizeTable.bootstrapTable('resetView');
     }, 200);
-    $storeBrandTable.on('check.bs.table uncheck.bs.table ' +
+    $storeOrganizeTable.on('check.bs.table uncheck.bs.table ' +
         'check-all.bs.table uncheck-all.bs.table', function () {
-        $storeBrandToolbarRemove.prop('disabled', !$storeBrandTable.bootstrapTable('getSelections').length);
+        $storeOrganizeToolbarRemove.prop('disabled', !$storeOrganizeTable.bootstrapTable('getSelections').length);
         // save your data, here just save the current page
-        storeBrandSelections = getIdSelections();
+        storeOrganizeSelections = getIdSelections();
         // push or splice the selections if you want to save all data selections
     });
-    $storeBrandTable.on('expand-row.bs.table', function (e, index, row, $detail) {
-        if (index % 2 == 1) {
-            $detail.html('Loading from ajax request...');
-            $.get('LICENSE', function (res) {
-                $detail.html(res.replace(/\n/g, '<br>'));
-            });
-        }
-    });
-    $storeBrandTable.on('all.bs.table', function (e, name, args) {
-        console.log(name, args);
-    });
-    $storeBrandToolbarRemove.click(function () {
+    //$storeOrganizeTable.on('expand-row.bs.table', function (e, index, row, $detail) {
+    //    if (index % 2 == 1) {
+    //        $detail.html('Loading from ajax request...');
+    //        $.get('LICENSE', function (res) {
+    //            $detail.html(res.replace(/\n/g, '<br>'));
+    //        });
+    //    }
+    //});
+    //$storeOrganizeTable.on('all.bs.table', function (e, name, args) {
+    //    console.log(name, args);
+    //});
+    $storeOrganizeToolbarRemove.click(function () {
         var ids = getIdSelections();
-        $storeBrandTable.bootstrapTable('remove', {
+        $storeOrganizeTable.bootstrapTable('remove', {
             field: 'id',
             values: ids
         });
-        $storeBrandToolbarRemove.prop('disabled', true);
+        $storeOrganizeToolbarRemove.prop('disabled', true);
     });
     $(window).resize(function () {
-        $storeBrandTable.bootstrapTable('resetView', {
+        $storeOrganizeTable.bootstrapTable('resetView', {
             height: getHeight()
         });
     });
 }
 function getIdSelections() {
-    return $.map($storeBrandTable.bootstrapTable('getSelections'), function (row) {
+    return $.map($storeOrganizeTable.bootstrapTable('getSelections'), function (row) {
         return row.id
     });
 }
 function responseHandler(res) {
     $.each(res.rows, function (i, row) {
-        row.state = $.inArray(row.id, storeBrandSelections) !== -1;
+        row.state = $.inArray(row.id, storeOrganizeSelections) !== -1;
     });
     return res;
 }
@@ -98,10 +157,10 @@ function detailFormatter(index, row) {
 function operateFormatter(value, row, index) {
     return [
         '<a class="like" href="javascript:void(0)" title="Like">',
-        '<i class="glyphicon glyphicon-heart"></i>',
+        '<i class="fa fa-edit fa-2x"></i>',
         '</a>  ',
         '<a class="remove" href="javascript:void(0)" title="Remove">',
-        '<i class="glyphicon glyphicon-remove"></i>',
+        '<i class="fa fa-remove fa-2x"></i>',
         '</a>'
     ].join('');
 }
@@ -110,7 +169,7 @@ window.operateEvents = {
         alert('You click like action, row: ' + JSON.stringify(row));
     },
     'click .remove': function (e, value, row, index) {
-        $storeBrandTable.bootstrapTable('remove', {
+        $storeOrganizeTable.bootstrapTable('remove', {
             field: 'id',
             values: [row.id]
         });
@@ -120,22 +179,34 @@ function getHeight() {
     return $(window).height() - $('h1').outerHeight(true);
 }
 
+var $addOrganizeModal = $('#addOrganizeModal'),
+    $waitDialog = $('#pleaseWaitDialog');
+
 $(function () {
     init_input_general_tab();
-    initStoreBrandTable();
+    initStoreOrganizeTable();
 
-    $('button#store-brand-modal-submit').click(function(){
-        $.ajax({
+});
+
+$('#page-render').on('click', 'button#store-organize-modal-submit', function () {
+    // todo: Add client validation here!
+    $.ajax({
             type: "POST",
-            url: "/store_org/brand/",
-            data: $('form.store-brand-add').serialize(),
-            //success: function(msg){
-            //    $("#thanks").html(msg);
-            //    $("#form-content").modal('hide');
-            //},
-            error: function(){
-                alert("failure");
+            url: "/store_org/organize/",
+            data: $('form.store-organize-add').serialize(),
+            beforeSend: function (xhr) {
+                $addOrganizeModal.modal('hide');
+                $waitDialog.modal();
             }
+        })
+        .done(function () {
+            $storeOrganizeTable.bootstrapTable('refresh');
+        })
+        .fail(function (xhr, textStatus, errorThrown) {
+            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+        })
+        .always(function () {
+            $('form.store-organize-add').trigger("reset");
+            $waitDialog.modal('hide');
         });
-    });
 });

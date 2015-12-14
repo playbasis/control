@@ -150,35 +150,60 @@ class Store_org extends MY_Controller
         $this->getForm();
     }
 
-    public function brand()
+    public function organize()
     {
-        if($this->session->userdata('user_id')) {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                if (!$this->validateModify()) {
+        if ($this->session->userdata('user_id') /*&& $this->input->is_ajax_request()*/) {
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                if (!$this->validateAccess()) {
                     $this->output->set_status_header('401');
-                    echo json_encode(array('status' => 'error','message' => $this->lang->line('error_permission')));
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access')));
+                    die();
+                }
+
+                $query_data = $this->input->get(null, true);
+
+                $result = $this->Store_org_model->retrieveOrganize($client_id, $site_id, $query_data);
+
+                $this->output->set_status_header('200');
+
+                $response = array(
+                    'total' => count($result),
+                    'rows' => $result
+                );
+                echo json_encode($response);
+                die();
+
+            } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
                 }
 
                 //todo: Add validation here
                 $brand_data = $this->input->post();
 
-                $client_id = $this->User_model->getClientId();
-                $site_id = $this->User_model->getSiteId();
-                $name = $brand_data['store-brand-name'];
-                $desc = $brand_data['store-brand-desc'];
-                $status = isset($brand_data['store-brand-status']) && $brand_data['store-brand-status'] == 'on' ? true : false;
+                $name = $brand_data['store-organize-name'];
+                $desc = $brand_data['store-organize-desc'];
+                $parent = !empty($brand_data['store-organize-parent']) ? $brand_data['store-organize-parent'] : null;
+                $status = isset($brand_data['store-organize-status']) && $brand_data['store-organize-status'] == 'on' ? true : false;
 
                 $result = null;
                 if (!empty($brand_data)) {
-                    $result = $this->Store_org_model->createBrands($client_id, $site_id, $name, $desc, $status);
+                    $result = $this->Store_org_model->createOrganize($client_id, $site_id, $name, $desc, $parent, $status);
                 }
 
                 if (!$result) {
-                    $this->output->set_status_header('401');
+                    $this->output->set_status_header('400');
                     echo json_encode(array('status' => 'error'));
+                    die();
                 } else {
                     $this->output->set_status_header('201');
                     echo json_encode(array('status' => 'success'));
+                    die();
                 }
             }
         }
