@@ -51,7 +51,6 @@
                                 <tr>
                                     <?php if($isAdmin){ ?>
                                     <td style="text-align: center;">
-
                                         <?php if (isset($action['selected'])) { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $action['_id']; ?>" checked="checked" />
                                         <?php } else { ?>
@@ -63,39 +62,15 @@
                                     <td class="right"><?php echo $action['name']; ?></td>
                                     <td class="right"><?php echo datetimeMongotoReadable($action['date_added']); ?></td>
                                     <td class="right"><?php echo ($action['status'])? "Enabled" : "Disabled"; ?></td>
-                                    <td class="right">[ <?php if($client_id){
-                                            if ($isAdmin){
-                                                echo anchor('action/update/'.$action['action_id'], 'Edit');
-                                            }
-                                            else{
-                                                echo anchor('action/update/'.$action['action_id'], 'View');
-                                            }
-                                        }else{
-                                            if ($isAdmin){
-                                                echo anchor('action/update/'.$action['_id'], 'Edit');
-                                            }
-                                            else{
-                                                echo anchor('action/update/'.$action['_id'], 'View');
-                                            }
-                                            //echo anchor('action/update/'.$action['_id'], 'Edit');
-                                        }
+                                    <td class="right">[ <?php
+                                        $action_id = $client_id ? $action['action_id'] : $action['_id'];
+                                        echo anchor('action/update/'.$action_id, $client_id ? 'View' : 'Edit');
                                         ?> ]
-
-                                        <?php if($client_id){
-
-                                            echo anchor('action/increase_order/'.$action['action_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$action['action_id'], 'style'=>'text-decoration:none'));
-                                        }else{
-                                            echo anchor('action/increase_order/'.$action['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$action['_id'], 'style'=>'text-decoration:none'));
-                                        }
+                                        <?php
+                                        echo anchor('action/increase_order/'.$action_id, '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$action_id, 'style'=>'text-decoration:none'));
+                                        echo anchor('action/decrease_order/'.$action_id, '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$action_id, 'style'=>'text-decoration:none'));
                                         ?>
-                                        <?php if($client_id){
-                                            echo anchor('action/decrease_order/'.$action['action_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$action['action_id'], 'style'=>'text-decoration:none'));
-                                        }else{
-                                            echo anchor('action/decrease_order/'.$action['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$action['_id'], 'style'=>'text-decoration:none'));
-                                        }
-                                        ?>
-                                        </td>   
-
+                                    </td>
                                 </tr>
                             <?php }?>
                         <?php }?>
