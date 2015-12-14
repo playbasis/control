@@ -310,12 +310,12 @@ class Client_model extends MY_Model
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
         if ($plan_data['reward_to_plan']) {
+            $d = new MongoDate();
+            $insert_data = array();
             foreach ($plan_data['reward_to_plan'] as $reward) {
                 $limit = empty($reward['limit'])? null: (int)$reward['limit'];
-
                 $reward_data = $this->getReward($reward['reward_id']);
-
-                $insert_data = array(
+                $insert_data[] = array(
                     'reward_id' => new MongoID($reward['reward_id']) ,
                     'client_id' => new MongoID($data_filter['client_id']) ,
                     'site_id' => new MongoID($data_filter['site_id']) ,
@@ -326,12 +326,13 @@ class Client_model extends MY_Model
                     'limit' => $limit,
                     'sort_order' => $reward_data['sort_order'],
                     'status' =>  (bool)$reward_data['status'],
-                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                    'date_modified' => $d,
+                    'date_added' => $d,
                     'is_custom' => false,
                 );
-
-                $this->mongo_db->insert('playbasis_reward_to_client', $insert_data);
+            }
+            if ($insert_data) {
+                $this->mongo_db->batch_insert('playbasis_reward_to_client', $insert_data, array("w" => 0, "j" => false));
             }
         }
     }
@@ -346,11 +347,11 @@ class Client_model extends MY_Model
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
         if (isset($plan_data['feature_to_plan'])) {
+            $d = new MongoDate();
+            $insert_data = array();
             foreach ($plan_data['feature_to_plan'] as $feature_id) {
-
                 $feature_data = $this->getFeature($feature_id);
-
-                $insert_data = array(
+                $insert_data[] = array(
                     'feature_id' => new MongoID($feature_id) ,
                     'client_id' => new MongoID($data_filter['client_id']) ,
                     'site_id' => new MongoID($data_filter['site_id']) ,
@@ -358,13 +359,14 @@ class Client_model extends MY_Model
                     'description' => $feature_data['description'] ,
                     'sort_order' => $feature_data['sort_order'],
                     'status' =>  (bool)$feature_data['status'],
-                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                    'date_modified' => $d,
+                    'date_added' => $d,
                     'link' => $feature_data['link'],
                     'icon' => $feature_data['icon']
                 );
-
-                $this->mongo_db->insert('playbasis_feature_to_client', $insert_data);
+            }
+            if ($insert_data) {
+                $this->mongo_db->batch_insert('playbasis_feature_to_client', $insert_data, array("w" => 0, "j" => false));
             }
         }
     }
@@ -380,16 +382,16 @@ class Client_model extends MY_Model
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
         if (isset($plan_data['action_to_plan'])) {
+            $d = new MongoDate();
+            $insert_data = array();
             foreach ($plan_data['action_to_plan'] as $action_id) {
                 $this->mongo_db->where('client_id', $data_filter['client_id']);
                 $this->mongo_db->where('site_id',$data_filter['site_id']);
                 $this->mongo_db->where('action_id', $action_id);
                 $allClients = $this->mongo_db->get('playbasis_action_to_client');
-
                 if(!$allClients){
                     $action_data = $this->getAction($action_id);
-
-                    $insert_data = array(
+                    $insert_data[] = array(
                         'action_id' => new MongoID($action_id) ,
                         'client_id' => new MongoID($data_filter['client_id']) ,
                         'site_id' => new MongoID($data_filter['site_id']) ,
@@ -400,13 +402,14 @@ class Client_model extends MY_Model
                         'init_dataset' => $action_data['init_dataset'],
                         'sort_order' => $action_data['sort_order'],
                         'status' =>  (bool)$action_data['status'],
-                        'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                        'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                        'date_modified' => $d,
+                        'date_added' => $d,
                         'is_custom' => false,
                     );
-
-                    $this->mongo_db->insert('playbasis_action_to_client', $insert_data);    
                 }
+            }
+            if ($insert_data) {
+                $this->mongo_db->batch_insert('playbasis_action_to_client', $insert_data, array("w" => 0, "j" => false));
             }
         }
     }
@@ -421,11 +424,11 @@ class Client_model extends MY_Model
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
         if (isset($plan_data['jigsaw_to_plan'])) {
+            $d = new MongoDate();
+            $insert_data = array();
             foreach ($plan_data['jigsaw_to_plan'] as $jigsaw_id) {
-
                 $jigsaw_data = $this->getJigsaw($jigsaw_id);
-
-                $insert_data = array(
+                $insert_data[] = array(
                     'jigsaw_id' => new MongoID($jigsaw_id) ,
                     'client_id' => new MongoID($data_filter['client_id']) ,
                     'site_id' => new MongoID($data_filter['site_id']) ,
@@ -436,11 +439,12 @@ class Client_model extends MY_Model
                     'init_dataset' => $jigsaw_data['init_dataset'],
                     'sort_order' => $jigsaw_data['sort_order'],
                     'status' =>  (bool)$jigsaw_data['status'],
-                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                    'date_modified' => $d,
+                    'date_added' => $d
                 );
-
-                $this->mongo_db->insert('playbasis_game_jigsaw_to_client', $insert_data);
+            }
+            if ($insert_data) {
+                $this->mongo_db->batch_insert('playbasis_game_jigsaw_to_client', $insert_data, array("w" => 0, "j" => false));
             }
         }
     }
@@ -488,7 +492,7 @@ class Client_model extends MY_Model
             $data_filter = array(
                 'client_id' => $client_id,
                 'site_id' => $data['domain_value']['site_id'],
-                'plan_id' => $plan_id->{'$id'}
+                'plan_id' => $plan_id
             );
 
             if(isset($data['domain_value']['status'])){

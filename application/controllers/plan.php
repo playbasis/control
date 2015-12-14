@@ -138,14 +138,10 @@ class Plan extends MY_Controller
                 //Save into clients too
                 $this->load->model("Client_model");
                 $clients_by_plan = $this->Plan_model->getClientByPlan($plan_id); //returns: client_id, site_id, date_added, date_modified
-
                 foreach($clients_by_plan as $client){
-
-                    $data['domain_value'] = array(
-                        'site_id'=>$client['site_id'],
-                    );
-
-                    $this->Client_model->editClientPlan($client['client_id'], new MongoID($plan_id), $data);
+                    $this->Client_model->editClientPlan($client['client_id'], $plan_id, array(
+                        'domain_value' => array('site_id' => $client['site_id'])
+                    ));
                 }
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('/plan', 'refresh');
