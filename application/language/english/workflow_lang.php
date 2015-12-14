@@ -1,36 +1,30 @@
 <?php
 // Heading
 $lang['heading_title']          		= 'Work Flow';
-$lang['heading_title_approve']          = 'Approve';
+$lang['heading_title_edit']             = 'Edit Account';
 $lang['heading_title_reject']           = 'Reject';
 
 // Text
 $lang['text_no_results']				= 'No approval request';
 $lang['text_success_approve']			= 'The request(s) has been approved';
 $lang['text_success_reject']			= 'The request(s) has been rejected';
-
-
-$lang['text_success']           		= 'You have successfully created a goods!';
-$lang['text_success_delete']           	= 'You have successfully deleted goods(s)!';
-$lang['text_success_update']           	= 'You have successfully updated a goods!';
-$lang['text_default']           		= 'Default';
-$lang['text_file_manager']     		    = 'File Manager';
-$lang['text_image_manager']     		= 'Image Manager';
-$lang['text_browse']            		= 'Browse Files';
-$lang['text_clear']             		= 'Clear Image';
-
-
+$lang['text_success_edit']              = 'The account has been updated';
+$lang['text_success_create']            = 'The account has been created';
 
 // Button
-$lang['button_import']           = 'Import';
-$lang['button_confirm']          = 'Confirm';
+$lang['button_create']           = 'Create';
 $lang['button_approve']          = 'Approve';
 $lang['button_reject']           = 'Reject';
 
 // Form
-$lang['form_email']               = 'Email';
+$lang['form_username']            = 'Username';
+$lang['form_password']            = 'Password';
+$lang['form_confirm_password']    = 'Confirm Password';
+$lang['form_id']                  = 'ID';
 $lang['form_firstname']           = 'First name';
 $lang['form_lastname']            = 'Last name';
+$lang['form_email']               = 'Email';
+$lang['form_approve']             = 'Approve status';
 
 // Tab
 $lang['tab_approved']					= 'Approved';

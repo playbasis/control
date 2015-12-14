@@ -128,45 +128,44 @@ class Workflow extends MY_Controller
         $this->render_page('template');
     }
 
-    public function addaccount() {
+    public function edit_account($user_id) {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title_approve');
-        $this->data['form'] = 'workflow/addaccount/';
+        $this->data['heading_title'] = $this->lang->line('heading_title_edit');
+        $this->data['form'] = 'workflow/edit_account/'.$user_id;
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            //$this->Workflow_model->approvePlayer($user_id);
+            $this->Player_model->editPlayer($user_id,$_POST);
+            $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
             redirect('/workflow', 'refresh');
         }
+        $this->getForm($user_id);
+    }
+
+    public function create_account() {
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title_edit');
+        $this->data['form'] = 'workflow/create_account/';
+
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            //$this->Player_model->createPlayer($_POST);
+            //$this->session->set_flashdata('success', $this->lang->line('text_success_create'));
+            //redirect('/workflow', 'refresh');
+        }
+
         $this->getForm();
     }
 
-    public function approveconfirm() {
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title_approve');
-        //$this->data['form'] = 'workflow/approveconfirm/'.$user_id;
+    public function getForm($user_id=0){
 
-        /*if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            $this->Workflow_model->approvePlayer($user_id);
-            redirect('/workflow', 'refresh');
-        }*/
-
-        if ($this->input->post('selected') && $this->error['warning'] == null) {
-            $selectedUsers = $this->input->post('selected');
-
-            foreach ($selectedUsers as $selectedUser){
-                $this->Workflow_model->approvePlayer($selectedUser);
-            }
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/workflow', 'refresh');
+        $this->data['requester'] = array();
+        if($user_id !=0){
+            $this->data['requester'] = $this->Player_model->getPlayerById($user_id);
+        }else{
+            $this->data['requester'] = array('approved'=>'approved');
         }
-        //$this->getForm($user_id);
-    }
 
-    public function getForm($user_id){
-
-        $this->data['requester'] = $this->Player_model->getPlayerById($user_id);
 
         $this->data['main'] = 'workflow_form';
         $this->render_page('template');

@@ -11,27 +11,21 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <!-- <button class="btn btn-info" onclick="location = baseUrlPath+'workflow/approveconfirm'" type="submit"><?php echo $this->lang->line('button_approve'); ?></button>
-                -->
+                <?php if ($tab_status == "pending") { ?>
                 <button class="btn btn-info" type="button" id="approve"><?php echo $this->lang->line('button_approve'); ?></button>
                 <button class="btn btn-info" type="button" id="reject"><?php echo $this->lang->line('button_reject'); ?></button>
+                <?php } else{ ?>
+                <button class="btn btn-info" onclick="location =  baseUrlPath+'workflow/create_account'" type="button"><?php echo $this->lang->line('button_create'); ?></button>
+                <?php }  ?>
+
+                <button class="btn btn-info" type="button" id="delete"><?php echo $this->lang->line('button_delete'); ?></button>
             </div>
         </div>
         <div class="content">
             <div id="tabs" class="htabs">
-                <?php if ($tab_status == "approved") { ?>
-                <a href="<?php echo site_url('workflow');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_approved'); ?></a>
-                <a href="<?php echo site_url('workflow/rejected');?>" style="display: inline;"><?php echo $this->lang->line('tab_rejected'); ?></a>
-                <a href="<?php echo site_url('workflow/pending');?>" style="display: inline;"><?php echo $this->lang->line('tab_pending'); ?></a>
-                <?php } elseif($tab_status == "rejected"){ ?>
-                <a href="<?php echo site_url('workflow');?>" style="display: inline;"><?php echo $this->lang->line('tab_approved'); ?></a>
-                <a href="<?php echo site_url('workflow/rejected');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_rejected'); ?></a>
-                <a href="<?php echo site_url('workflow/pending');?>" style="display: inline;"><?php echo $this->lang->line('tab_pending'); ?></a>
-                <?php } else{ ?>
-                <a href="<?php echo site_url('workflow');?>" style="display: inline;"><?php echo $this->lang->line('tab_approved'); ?></a>
-                <a href="<?php echo site_url('workflow/rejected');?>" style="display: inline;"><?php echo $this->lang->line('tab_rejected'); ?></a>
-                <a href="<?php echo site_url('workflow/pending');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_pending'); ?></a>
-                <?php }  ?>
+                <a href="<?php echo site_url('workflow');?>"          <?php if ($tab_status == "approved") { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_approved'); ?></a>
+                <a href="<?php echo site_url('workflow/rejected');?>" <?php if ($tab_status == "rejected") { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_rejected'); ?></a>
+                <a href="<?php echo site_url('workflow/pending');?>"  <?php if ($tab_status == "pending")  { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_pending'); ?></a>
             </div>
 
             <?php if($this->session->flashdata('success')){ ?>
@@ -55,7 +49,7 @@
                     <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                     <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_store'); ?></td>
-                    <td class="center" style="width:120px;"><?php echo $this->lang->line('column_action'); ?></td>
+                    <td class="right app-col-action"><?php echo $this->lang->line('column_action'); ?></td>
 
                 </tr>
                 </thead>
@@ -71,7 +65,12 @@
                             <?php } ?></td>
                         <td class="left"><?php echo $player['first_name']."  ".$player['last_name']; ?></td>
                         <td class="left"><?php echo (isset($player['store']) && !is_null($player['store']))?$player['store']:'??'; ?></td>
-                        <td class="center">[ <?php echo anchor('workflow/approveconfirm/'.$player['_id'], 'Approve'); ?> ][ <?php echo anchor('workflow/rejectconfirm/'.$player['_id'], 'Reject'); ?> ]</td>
+                        <td class="right app-col-action">
+                            <a href="<?php echo site_url("workflow/edit_account/".$player['_id']) ?>" title="Edit" class="tooltips" data-placement="top"><i class="fa fa-edit fa-lg"></i></a>
+                        </td>
+                        <!--
+                        <td class="center">[ <?php echo anchor('workflow/edit_account/'.$player['_id'], ' Edit '); ?> ][ <?php echo anchor('workflow/delete/'.$player['_id'], 'Delete'); ?> ]</td>
+                        -->
                     </tr>
                     <?php } ?>
                 <?php } else { ?>

@@ -1649,5 +1649,71 @@ class Player_model extends MY_Model
         $result = $this->mongo_db->update('playbasis_player');
         return $result;
     }
+
+    public function editPlayer($user_id, $data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        //$find_salt = $this->getUserInfo($user_id);
+       //$salt = $find_salt['salt'];
+
+        //$check_email = isset($data['email']) && !is_null($data['email']) && !$this->findEmail($data);
+        $check_update = false;
+        $this->mongo_db->where('_id', new MongoID($user_id));
+
+
+
+        // if(isset($data['username']) && !is_null($data['username'])){
+        //     $this->mongo_db->set('username', $data['username']);
+        //     $check_update = true;
+        // }
+
+        if(isset($data['username']) && !is_null($data['username'])){
+            $this->mongo_db->set('username', $data['username']);
+            $check_update = true;
+        }
+
+        if(isset($data['password']) && !is_null($data['password'])){
+            $this->mongo_db->set('password', $data['password']);
+            $check_update = true;
+        }
+
+        if(isset($data['cl_player_id']) && !is_null($data['cl_player_id'])){
+            $this->mongo_db->set('cl_player_id', $data['cl_player_id']);
+            $check_update = true;
+        }
+
+        if(isset($data['first_name']) && !is_null($data['first_name'])){
+            $this->mongo_db->set('first_name', $data['first_name']);
+            $check_update = true;
+        }
+
+        if(isset($data['last_name']) && !is_null($data['last_name'])){
+            $this->mongo_db->set('last_name', $data['last_name']);
+            $check_update = true;
+        }
+
+        if(isset($data['email']) && !is_null($data['email'])){
+            $this->mongo_db->set('email', $data['email']);
+            $check_update = true;
+        }
+
+        if(isset($data['approved']) && !is_null($data['approved'])){
+            $this->mongo_db->set('approved', $data['approved']);
+            $check_update = true;
+        }
+
+        /*if($data['password'] == $data['confirm_password']){
+            if(trim($data['password']) !="" && trim($data['confirm_password'] !="")){
+                $this->mongo_db->set('password', dohash($data['password'],$salt));
+                $check_update = true;
+            }
+        }*/
+
+        if($check_update){
+            $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+            return $this->mongo_db->update('playbasis_player');
+        }
+        return false;
+    }
 }
 ?>

@@ -3,7 +3,7 @@
         <div class="heading">
             <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_confirm'); ?></button>
+                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'workflow'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div>
         </div>
@@ -37,16 +37,43 @@
                 <table class="form">
 
                     <tr>
-                        <td></span> <?php echo $this->lang->line('form_email'); ?>:</td>
-                        <td><?php echo $requester['email']; ?></td>
+                        <td><?php echo $this->lang->line('form_username'); ?>:</td>
+                        <td><input class="span5" type="text" name="username"  value="<?php echo isset($requester['username']) ? $requester['username'] :  set_value('username'); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo $this->lang->line('form_password'); ?>:</td>
+                        <td><input class="span5" type="password" name="password"  value="<?php echo isset($requester['password']) ? $requester['password'] :  set_value('password'); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo $this->lang->line('form_confirm_password'); ?>:</td>
+                        <td><input class="span5" type="password" name="confirm_password"  value="<?php echo isset($requester['password']) ? $requester['password'] :  set_value('password'); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo $this->lang->line('form_id'); ?>:</td>
+                        <td><input class="span5" type="text" name="cl_player_id"  value="<?php echo isset($requester['cl_player_id']) ? $requester['cl_player_id'] :  set_value('cl_player_id'); ?>" /></td>
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_firstname'); ?>:</td>
-                        <td><?php echo $requester['first_name']; ?></td>
+                        <td><input class="span5" type="text" name="first_name"  value="<?php echo isset($requester['first_name']) ? $requester['first_name'] :  set_value('first_name'); ?>" /></td>
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_lastname'); ?>:</td>
-                        <td><?php echo $requester['last_name']; ?></td>
+                        <td><input class="span5" type="text" name="last_name"  value="<?php echo isset($requester['last_name']) ? $requester['last_name'] :  set_value('last_name'); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo $this->lang->line('form_email'); ?>:</td>
+                        <td><input class="span5" type="email" name="email" size="100" value="<?php echo isset($requester['email']) ? $requester['email'] :  set_value('email'); ?>" class="tooltips" data-placement="right" title="Email address is used to log into the system"/></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo $this->lang->line('form_approve'); ?>:</td>
+
+                        <td>
+                            <select name="approved" class="span5" >
+                                <option value="approved" <?php if ($requester['approved'] == "approved") { ?>selected<?php }?>>Approved</option>
+                                <option value="rejected" <?php if ($requester['approved'] == "rejected") { ?>selected<?php }?>>Rejected</option>
+                                <option value="pending"  <?php if ($requester['approved'] == "pending")  { ?>selected<?php }?>>Pending</option>
+                            </select>
+                        </td>
                     </tr>
 
 
@@ -60,47 +87,3 @@
     </div>
 </div>
 
-<script type="text/javascript" src="<?php echo base_url();?>javascript/ckeditor/ckeditor.js"></script>
-<script type="text/javascript"><!--
-
-    CKEDITOR.replace('description', {
-        filebrowserBrowseUrl: baseUrlPath+'filemanager',
-        filebrowserImageBrowseUrl: baseUrlPath+'filemanager',
-        filebrowserFlashBrowseUrl: baseUrlPath+'filemanager',
-        filebrowserUploadUrl: baseUrlPath+'filemanager',
-        filebrowserImageUploadUrl: baseUrlPath+'filemanager',
-        filebrowserFlashUploadUrl: baseUrlPath+'filemanager'
-    });
-
-    //--></script>
-<script type="text/javascript"><!--
-    function image_upload(field, thumb) {
-        $('#dialog').remove();
-
-        $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="'+baseUrlPath+'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 200px; height: 100%;" frameborder="no" scrolling="no"></iframe></div>');
-
-        $('#dialog').dialog({
-            title: '<?php echo $this->lang->line('text_image_manager'); ?>',
-            close: function (event, ui) {
-                if ($('#' + field).attr('value')) {
-                    $.ajax({
-                        url: baseUrlPath+'filemanager/image?image=' + encodeURIComponent($('#' + field).val()),
-                        dataType: 'text',
-                        success: function(data) {
-                            $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" />');
-                        }
-                    });
-                }
-            },
-            bgiframe: false,
-            width: 200,
-            height: 100,
-            resizable: false,
-            modal: false
-        });
-    };
-    //--></script>
-<script type="text/javascript"><!--
-    $('#tabs a').tabs();
-    $('#languages a').tabs();
-    //--></script>
