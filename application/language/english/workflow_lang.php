@@ -6,21 +6,26 @@ $lang['heading_title_reject']           = 'Reject';
 
 // Text
 $lang['text_no_results']				= 'No approval request';
+$lang['text_success_approve']			= 'The request(s) has been approved';
+$lang['text_success_reject']			= 'The request(s) has been rejected';
+
 
 $lang['text_success']           		= 'You have successfully created a goods!';
-$lang['text_success_delete']           			= 'You have successfully deleted goods(s)!';
+$lang['text_success_delete']           	= 'You have successfully deleted goods(s)!';
 $lang['text_success_update']           	= 'You have successfully updated a goods!';
 $lang['text_default']           		= 'Default';
 $lang['text_file_manager']     		    = 'File Manager';
 $lang['text_image_manager']     		= 'Image Manager';
 $lang['text_browse']            		= 'Browse Files';
 $lang['text_clear']             		= 'Clear Image';
-$lang['text_reach_limit_goods']			= 'You have reached the limit of creating goods, please contact Playbasis';
+
 
 
 // Button
 $lang['button_import']           = 'Import';
 $lang['button_confirm']          = 'Confirm';
+$lang['button_approve']          = 'Approve';
+$lang['button_reject']           = 'Reject';
 
 // Form
 $lang['form_email']               = 'Email';

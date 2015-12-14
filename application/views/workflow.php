@@ -11,7 +11,10 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <button class="btn btn-info" onclick="location = baseUrlPath+'workflow/addaccount'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
+                <!-- <button class="btn btn-info" onclick="location = baseUrlPath+'workflow/approveconfirm'" type="submit"><?php echo $this->lang->line('button_approve'); ?></button>
+                -->
+                <button class="btn btn-info" type="button" id="approve"><?php echo $this->lang->line('button_approve'); ?></button>
+                <button class="btn btn-info" type="button" id="reject"><?php echo $this->lang->line('button_reject'); ?></button>
             </div>
         </div>
         <div class="content">
@@ -31,9 +34,25 @@
                 <?php }  ?>
             </div>
 
+            <?php if($this->session->flashdata('success')){ ?>
+                <div class="content messages half-width">
+                    <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
+                </div>
+            <?php }?>
+            <?php if ($this->session->flashdata("fail")): ?>
+                <div class="content messages half-width">
+                    <div class="warning"><?php echo $this->session->flashdata("fail"); ?></div>
+                </div>
+            <?php endif; ?>
+            <?php
+            $attributes = array('id' => 'form');
+            echo form_open('workflow/pending' ,$attributes);
+            ?>
             <table class="list">
                 <thead>
                 <tr>
+                    <input type="hidden" id="action" name="action" value="" />
+                    <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                     <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_store'); ?></td>
                     <td class="center" style="width:120px;"><?php echo $this->lang->line('column_action'); ?></td>
@@ -45,6 +64,11 @@
                 <?php if (isset($player_list) && $player_list) { ?>
                     <?php foreach ($player_list as $player) { ?>
                     <tr>
+                        <td style="text-align: center;"><?php if (isset($player['selected'])) { ?>
+                                <input type="checkbox" name="selected[]" value="<?php echo $player['_id']; ?>" checked="checked" />
+                            <?php } else { ?>
+                                <input type="checkbox" name="selected[]" value="<?php echo $player['_id']; ?>" />
+                            <?php } ?></td>
                         <td class="left"><?php echo $player['first_name']."  ".$player['last_name']; ?></td>
                         <td class="left"><?php echo (isset($player['store']) && !is_null($player['store']))?$player['store']:'??'; ?></td>
                         <td class="center">[ <?php echo anchor('workflow/approveconfirm/'.$player['_id'], 'Approve'); ?> ][ <?php echo anchor('workflow/rejectconfirm/'.$player['_id'], 'Reject'); ?> ]</td>
@@ -57,54 +81,29 @@
                 <?php } ?>
                 </tbody>
             </table>
-
-
+            <?php
+            echo form_close();
+            ?>
         </div>
     </div>
 </div>
 
-<script type="text/javascript">
-
-$('.push_down').live("click", function(){
-
-    $.ajax({
-        url : baseUrlPath+'goods/increase_order/'+ $(this).attr('alt'),
-        dataType: "json"
-    }).done(function(data) {
-        console.log("Testing");
-        var getListForAjax = 'goods/getListForAjax/';
-        var getNum = '<?php echo $this->uri->segment(3);?>';
-        if(!getNum){
-            getNum = 0;
-        }
-        $('#goods').load(baseUrlPath+getListForAjax+getNum);
-    });
-
-
-  return false;
-
-});
-</script>
-
 
 <script type="text/javascript">
-$('.push_up').live("click", function(){
-    $.ajax({
-        url : baseUrlPath+'goods/decrease_order/'+ $(this).attr('alt'),
-        dataType: "json"
-    }).done(function(data) {
-        console.log("Testing");
-        var getListForAjax = 'goods/getListForAjax/';
-        var getNum = '<?php echo $this->uri->segment(3);?>';
-        if(!getNum){
-            getNum = 0;
-        }
-        $('#goods').load(baseUrlPath+getListForAjax+getNum);
+    $(document).ready(function(){
+        $("#approve").click(function(e){
+            e.preventDefault();
+            $("#action").val("approve");
+            //alert($("#action").val());
+            $("#form").submit();
+        });
+        $("#reject").click(function(e){
+            e.preventDefault();
+            $("#action").val("reject");
+            //alert($("#action").val());
+            $("#form").submit();
+        });
     });
-
-
-  return false;
-});
-
 </script>
+
 

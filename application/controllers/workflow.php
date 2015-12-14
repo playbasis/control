@@ -66,6 +66,33 @@ class Workflow extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
+        $this->error['warning'] = null;
+
+        if(!$this->validateModify()){
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        if ($this->input->post('selected') && $this->error['warning'] == null) {
+            $selectedUsers = $this->input->post('selected');
+
+            if ($this->input->post('action')=="approve"){
+                foreach ($selectedUsers as $selectedUser){
+                    $this->Workflow_model->approvePlayer($selectedUser);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_approve'));
+                redirect('/workflow/pending', 'refresh');
+            }
+            elseif($this->input->post('action')=="reject") {
+                foreach ($selectedUsers as $selectedUser){
+                    $this->Workflow_model->rejectPlayer($selectedUser);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_reject'));
+                redirect('/workflow/pending', 'refresh');
+            }
+        }
+        //$this->session->set_flashdata('palm', 'test');
         $this->getPlayerList("pending");
 
     }
@@ -114,30 +141,27 @@ class Workflow extends MY_Controller
         $this->getForm();
     }
 
-    public function approveconfirm($user_id) {
+    public function approveconfirm() {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title_approve');
-        $this->data['form'] = 'workflow/approveconfirm/'.$user_id;
+        //$this->data['form'] = 'workflow/approveconfirm/'.$user_id;
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        /*if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $this->Workflow_model->approvePlayer($user_id);
             redirect('/workflow', 'refresh');
-        }
-        $this->getForm($user_id);
-    }
+        }*/
 
-    public function rejectconfirm($user_id) {
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title_reject');
-        $this->data['form'] = 'workflow/rejectconfirm/'.$user_id;
+        if ($this->input->post('selected') && $this->error['warning'] == null) {
+            $selectedUsers = $this->input->post('selected');
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            $this->Workflow_model->rejectPlayer($user_id);
-            redirect('/workflow/rejected', 'refresh');
+            foreach ($selectedUsers as $selectedUser){
+                $this->Workflow_model->approvePlayer($selectedUser);
+            }
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            redirect('/workflow', 'refresh');
         }
-        $this->getForm($user_id);
+        //$this->getForm($user_id);
     }
 
     public function getForm($user_id){
@@ -149,7 +173,14 @@ class Workflow extends MY_Controller
 
     }
 
+    private function validateModify() {
 
+        if ($this->User_model->hasPermission('modify', 'user')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     private function validateAccess(){
         if($this->User_model->isAdmin()){
@@ -158,7 +189,7 @@ class Workflow extends MY_Controller
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'goods') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'goods')) {
+        if ($this->User_model->hasPermission('access', 'goods') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'workflow')) {
             return true;
         } else {
             return false;
