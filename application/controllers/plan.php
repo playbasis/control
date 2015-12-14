@@ -200,7 +200,6 @@ class Plan extends MY_Controller
             redirect('/plan', 'refresh');
         }
         
-        
         $this->getList(0);
     }
 
@@ -561,12 +560,10 @@ class Plan extends MY_Controller
 
         if ($actions) {
             foreach ($actions as $action) {
-                $actionIsPublic = $this->checkActionIsPublic($action['_id']);
                 $this->data['plan_actions'][] = array(
                     'action_id' => $action['_id'],
                     'name' => $action['name'],
-                    'description' => $action['description'],
-                    'is_public' => $actionIsPublic
+                    'description' => $action['description']
                 );
             }
         }
@@ -634,23 +631,6 @@ class Plan extends MY_Controller
         }
     }
 
-    public function checkActionIsPublic($action_id){
-        $this->load->model('Action_model');
-        $allActionsFromClients = $this->Action_model->checkActionIsPublic($action_id);
-
-        if(isset($allActionsFromClients[0]['client_id'])){
-            $firstAction = $allActionsFromClients[0]['client_id'];
-            foreach($allActionsFromClients as $action){
-                if($action['client_id'] != $firstAction){
-                    return true;
-                }
-            }
-            return false;            
-        }else{
-            return true;
-        }
-    }
-
     public function getClientsByPlanId($plan_id){
 
         $allClientsInThisPlan = $this->Plan_model->getClientByPlanOnlyClient($plan_id);
@@ -666,7 +646,6 @@ class Plan extends MY_Controller
             }
         }
         return $listOfClients;
-        //return $allClientsInThisPlan;
     }
 
     private function updatePlanInStripe($plan_id, $name, $price, $trial_days) {
