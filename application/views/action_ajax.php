@@ -8,7 +8,6 @@
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_added'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
-                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_order'); ?></td>
                     <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                 </thead>
@@ -17,7 +16,6 @@
                         <td></td>
                         <td></td>
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
-                        <td></td>
                         <td></td>
                         <td></td>
                         <td class="right"><a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a></td>
@@ -36,7 +34,6 @@
                                     <td class="right"><?php echo $action['name']; ?></td>
                                     <td class="right"><?php echo datetimeMongotoReadable($action['date_added']); ?></td>
                                     <td class="right"><?php echo ($action['status'])? "Enabled" : "Disabled"; ?></td>
-                                    <td class="right"><?php echo $action['sort_order'];?></td>
                                     <td class="right">[ <?php if($client_id){
                                             echo anchor('action/update/'.$action['action_id'], 'Edit');
                                         }else{

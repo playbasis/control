@@ -245,7 +245,7 @@ class Action extends MY_Controller
                 'start' => $offset,
                 'client_id'=>$client_id,
                 'site_id'=>$site_id,
-                'sort'=>'sort_order'
+                'sort'=>'name'
             );
         if(isset($_GET['filter_name'])){
             $filter['filter_name'] = $_GET['filter_name'];
