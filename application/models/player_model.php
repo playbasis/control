@@ -501,9 +501,7 @@ class Player_model extends MY_Model
         if(!empty($action_filter) && !empty($action_string)){
             $fields['parameters'.'.'.$action_filter] =  $action_string;
         }
-        $this->mongo_db->select(
-				array('parameters'.'.'.$action_filter)
-        );
+        $this->mongo_db->select( array('parameters'.'.'.$action_filter));
         $datecondition = array();
         if($starttime != ''){
             $datecondition = array_merge($datecondition, array('$gt' => $starttime));
@@ -518,10 +516,10 @@ class Player_model extends MY_Model
             $this->mongo_db->where('date_added', $datecondition);
         }
         $raw_result = $this->mongo_db->get('playbasis_validated_action_log');
-		$sum = 0;
-		foreach ($raw_result as $raw){
-			$sum += $raw['parameters'][$action_filter];
-		}
+        $sum = 0;
+        foreach ($raw_result as $raw){
+            $sum += $raw['parameters'][$action_filter];
+        }
         $this->mongo_db->select(array(
                 'action_id',
                 'action_name'
@@ -541,9 +539,9 @@ class Player_model extends MY_Model
 
         return $result;
     }
-    public function getBadge($pb_player_id, $site_id)
+	public function getBadge($pb_player_id, $site_id)
 	{
-        $this->set_site_mongodb($site_id);
+		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
 			'badge_id',
 			'value',
