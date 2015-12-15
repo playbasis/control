@@ -368,6 +368,10 @@ class Player extends REST2_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
+		$approve_status = $this->input->post('approve_status');
+		if ($approve_status) {
+			$playerInfo['approve_status'] = $approve_status;
+		}
 		$referral_code = $this->input->post('code');
 		$anonymous = $this->input->post('anonymous');
 
