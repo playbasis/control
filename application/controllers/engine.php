@@ -417,15 +417,25 @@ class Engine extends Quest
 			}
 
 		}
+		//Log validated action
+		if (!$test){
+			// populate input parameter of the action
+			$action_dataset = $this->jigsaw_model->getActionDatasetInfo($input['action_name']);
+			$input['parameters'] = array();
+			foreach ($action_dataset as $dataset){
+				if (isset($input[$dataset['param_name']])){
+					$input['parameters'][$dataset['param_name']] = $input[$dataset['param_name']];
+				}
+			}
+			// track validated action in the log
+			$this->tracker_model->trackValidatedAction($input);
+		}
 		//Quest Process
 		if (!$test){
 			$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
 			$apiResult = array_merge($apiResult, $apiQuestResult);
 		}
-		//Log Transaction
-		if (!$test){
-			$this->client_model->logTransaction($input);
-		}
+
 
 		$this->benchmark->mark('engine_rule_end');
 		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');

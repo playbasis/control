@@ -1323,7 +1323,7 @@ class Player extends REST2_Controller
 
         // default group_by is player_id the smallest resolution, it could be distrct/ area as well
         $input['group_by'] = (isset($input['group_by']) && $input['group_by'] !== 'player_id')? $input['group_by']: 'player_id';
-        $input['action'] = $action;
+        $input['action_name'] = $action;
         $input['param'] = $param;
 
         // Let's Rank !!

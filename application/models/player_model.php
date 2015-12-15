@@ -156,7 +156,7 @@ class Player_model extends MY_Model
 
 			$this->set_site_mongodb($site_id);
 			$this->mongo_db->where('pb_player_id', $id);
-			$this->mongo_db->delete_all('playbasis_transaction_log');
+			$this->mongo_db->delete_all('playbasis_validated_action_log');
 		}
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('_id', $id);
@@ -447,13 +447,15 @@ class Player_model extends MY_Model
 		$result['count'] = $count;
 		return $result;
 	}
-    public function getActionCountFromDatetime($pb_player_id, $action_id, $action_filter, $site_id, $starttime="", $endtime="")
+    public function getActionCountFromDatetime($pb_player_id, $action_id, $action_filter,$action_string, $site_id, $starttime="", $endtime="")
     {
         $fields = array(
             'pb_player_id' => $pb_player_id,
             'action_id' => $action_id
         );
-        if(!empty($action_filter)){
+        if(!empty($action_filter) && !empty($action_string)){
+            $fields['parameters'.'.'.$action_filter] =  $action_string;
+        }elseif (!empty($action_filter)){
             $fields['url'] = $action_filter;
         }
         $datecondition = array();
@@ -469,7 +471,7 @@ class Player_model extends MY_Model
         if ($starttime != '' || $endtime != '' ) {
             $this->mongo_db->where('date_added', $datecondition);
         }
-        $count = $this->mongo_db->count('playbasis_action_log');
+        $count = $this->mongo_db->count('playbasis_validated_action_log');
 
         $this->mongo_db->select(array(
             'action_id',
@@ -481,7 +483,7 @@ class Player_model extends MY_Model
             $this->mongo_db->where('date_added', $datecondition);
         }
         $this->mongo_db->limit(1);
-        $result = $this->mongo_db->get('playbasis_action_log');
+        $result = $this->mongo_db->get('playbasis_validated_action_log');
         $result = ($result) ? $result[0] : array();
         if($result){
             $result['action_id'] = $result['action_id']."";
@@ -490,9 +492,58 @@ class Player_model extends MY_Model
 
         return $result;
     }
-	public function getBadge($pb_player_id, $site_id)
+    public function getActionSumFromDatetime($pb_player_id, $action_id, $action_filter, $site_id, $starttime="", $endtime="")
+    {
+        $fields = array(
+                'pb_player_id' => $pb_player_id,
+                'action_id' => $action_id
+        );
+        if(!empty($action_filter) && !empty($action_string)){
+            $fields['parameters'.'.'.$action_filter] =  $action_string;
+        }
+        $this->mongo_db->select(
+				array('parameters'.'.'.$action_filter)
+        );
+        $datecondition = array();
+        if($starttime != ''){
+            $datecondition = array_merge($datecondition, array('$gt' => $starttime));
+        }
+        if($endtime != ''){
+            $datecondition = array_merge($datecondition, array('$lte' => $endtime));
+        }
+
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where($fields);
+        if ($starttime != '' || $endtime != '' ) {
+            $this->mongo_db->where('date_added', $datecondition);
+        }
+        $raw_result = $this->mongo_db->get('playbasis_validated_action_log');
+		$sum = 0;
+		foreach ($raw_result as $raw){
+			$sum += $raw['parameters'][$action_filter];
+		}
+        $this->mongo_db->select(array(
+                'action_id',
+                'action_name'
+        ));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where($fields);
+        if ($starttime != '' || $endtime != '' ) {
+            $this->mongo_db->where('date_added', $datecondition);
+        }
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_validated_action_log');
+        $result = ($result) ? $result[0] : array();
+        if($result){
+            $result['action_id'] = $result['action_id']."";
+        }
+        $result['sum'] = $sum;
+
+        return $result;
+    }
+    public function getBadge($pb_player_id, $site_id)
 	{
-		$this->set_site_mongodb($site_id);
+        $this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
 			'badge_id',
 			'value',
@@ -2550,7 +2601,7 @@ class Player_model extends MY_Model
 		$rankBy = $input['param'];
 		$limit = $input['limit'];
 		$group_by = $input['group_by'];
-		$param_str = "$".$rankBy;
+		$param_str = "$"."parameters".".".$rankBy;
 		$group_by_str = "$".$group_by;
 
 		// default is present month
@@ -2568,10 +2619,10 @@ class Player_model extends MY_Model
 
 		$last = date('Y-m-t', $selected_time);
 		$to   = strtotime($last.' 23:59:59');
-		$raw_result = $this->mongo_db->aggregate('playbasis_transaction_log', array(
+		$raw_result = $this->mongo_db->aggregate('playbasis_validated_action_log', array(
 				array(
 						'$match' => array(
-								'action' => $input['action'],
+								'action_name' => $input['action_name'],
 								'site_id' => $site_id,
 								'client_id' => $client_id,
 								'date_added' => array('$gte' => new MongoDate($from),'$lte' => new MongoDate($to))
@@ -2586,7 +2637,7 @@ class Player_model extends MY_Model
 						'$sort' => array($rankBy => -1),
 				),
 				array(
-						'$limit' => $limit+5,
+						'$limit' => $limit+20,
 				)
 		));
 		// This function will remove the deleted player and also name key to $rankBy
@@ -2606,8 +2657,10 @@ class Player_model extends MY_Model
 			}
 			$result[$key][$rankBy] = $temp_value[$key];
 		}
-
-		array_multisort( $temp_value, SORT_DESC,$temp_name, SORT_ASC, $result);
+		if (isset($temp_value) && isset($temp_name))
+		{
+			array_multisort( $temp_value, SORT_DESC,$temp_name, SORT_ASC, $result);
+		}
 
 		return $result;
 	}
