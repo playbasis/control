@@ -1697,8 +1697,8 @@ class Player_model extends MY_Model
             $check_update = true;
         }
 
-        if(isset($data['approved']) && !is_null($data['approved'])){
-            $this->mongo_db->set('approved', $data['approved']);
+        if(isset($data['approve_status']) && !is_null($data['approve_status'])){
+            $this->mongo_db->set('approve_status', $data['approve_status']);
             $check_update = true;
         }
 

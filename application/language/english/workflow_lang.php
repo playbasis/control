@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          		= 'Work Flow';
+$lang['heading_title_create']           = 'Create Account';
 $lang['heading_title_edit']             = 'Edit Account';
 $lang['heading_title_reject']           = 'Reject';
 
@@ -8,6 +9,8 @@ $lang['heading_title_reject']           = 'Reject';
 $lang['text_no_results']				= 'No approval request';
 $lang['text_success_approve']			= 'The request(s) has been approved';
 $lang['text_success_reject']			= 'The request(s) has been rejected';
+$lang['text_success_delete']			= 'The account(s) has been deleted';
+$lang['text_fail_delete']			    = 'Failed to delete the account';
 $lang['text_success_edit']              = 'The account has been updated';
 $lang['text_success_create']            = 'The account has been created';
 

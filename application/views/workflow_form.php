@@ -8,28 +8,13 @@
             </div>
         </div>
         <div class="content">
-            <?php if($this->session->flashdata('fail')){ ?>
+            <?php if(isset($message) && $message){ ?>
                 <div class="content messages half-width">
-                    <div class="warning"><?php echo $this->session->flashdata('fail'); ?></div>
+                    <div class="warning"><?php echo $message; ?></div>
                 </div>
             <?php }?>
 
             <?php
-            if(validation_errors() || isset($message)) {
-                ?>
-                <div class="content messages half-width">
-                    <?php
-                    echo validation_errors('<div class="warning">','</div>');
-
-                    if (isset($message) && $message) {
-                        ?>
-                        <div class="warning"><?php echo $message; ?></div>
-                        <?php
-                    }
-                    ?>
-                </div>
-                <?php
-            }
             $attributes = array('id' => 'form');
             echo form_open($form ,$attributes);
             ?>
@@ -46,7 +31,7 @@
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_confirm_password'); ?>:</td>
-                        <td><input class="span5" type="password" name="confirm_password"  value="<?php echo isset($requester['password']) ? $requester['password'] :  set_value('password'); ?>" /></td>
+                        <td><input class="span5" type="password" name="confirm_password"  value="<?php echo isset($requester['confirm_password']) ? $requester['confirm_password'] :   $requester['password']; ?>" /></td>
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_id'); ?>:</td>
@@ -68,10 +53,10 @@
                         <td><?php echo $this->lang->line('form_approve'); ?>:</td>
 
                         <td>
-                            <select name="approved" class="span5" >
-                                <option value="approved" <?php if ($requester['approved'] == "approved") { ?>selected<?php }?>>Approved</option>
-                                <option value="rejected" <?php if ($requester['approved'] == "rejected") { ?>selected<?php }?>>Rejected</option>
-                                <option value="pending"  <?php if ($requester['approved'] == "pending")  { ?>selected<?php }?>>Pending</option>
+                            <select name="approve_status" class="span5" >
+                                <option value="approved" <?php if ($requester['approve_status'] == "approved") { ?>selected<?php }?>>Approved</option>
+                                <option value="rejected" <?php if ($requester['approve_status'] == "rejected") { ?>selected<?php }?>>Rejected</option>
+                                <option value="pending"  <?php if ($requester['approve_status'] == "pending")  { ?>selected<?php }?>>Pending</option>
                             </select>
                         </td>
                     </tr>

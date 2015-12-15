@@ -11,6 +11,8 @@ class Workflow extends MY_Controller
         $this->load->model('Player_model');
         $this->load->model('User_model');
         $this->load->model('Permission_model');
+        $this->load->model('App_model');
+
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
@@ -33,6 +35,43 @@ class Workflow extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'workflow/';
+
+        $this->error['warning'] = null;
+
+        if(!$this->validateModify()){
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        // incase: click delete direct player
+        if($this->input->post('user_id')){
+            $result = $this->Workflow_model->deletePlayer($this->input->post('user_id'));
+            if($result){
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            }else{
+                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+            }
+            redirect('/workflow', 'refresh');
+        }
+        // incase: select player(s) to delete
+        elseif ($this->input->post('selected') && $this->error['warning'] == null) {
+            $selectedUsers = $this->input->post('selected');
+
+            if($this->input->post('action')=="delete") {
+                foreach ($selectedUsers as $selectedUser){
+                    $this->Workflow_model->deletePlayer($selectedUser);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/workflow', 'refresh');
+            }
+        }
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
 
         $this->getPlayerList("approved");
 
@@ -49,6 +88,43 @@ class Workflow extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'workflow/rejected/';
+
+        $this->error['warning'] = null;
+
+        if(!$this->validateModify()){
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        // incase: click delete direct player
+        if($this->input->post('user_id')){
+            $result = $this->Workflow_model->deletePlayer($this->input->post('user_id'));
+            if($result){
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            }else{
+                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+            }
+            redirect('/workflow/rejected', 'refresh');
+        }
+        // incase: select player(s) to delete
+        elseif ($this->input->post('selected') && $this->error['warning'] == null) {
+            $selectedUsers = $this->input->post('selected');
+
+            if($this->input->post('action')=="delete") {
+                foreach ($selectedUsers as $selectedUser){
+                    $this->Workflow_model->deletePlayer($selectedUser);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/workflow/rejected', 'refresh');
+            }
+        }
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
 
         $this->getPlayerList("rejected");
 
@@ -65,6 +141,7 @@ class Workflow extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'workflow/pending/';
 
         $this->error['warning'] = null;
 
@@ -72,7 +149,18 @@ class Workflow extends MY_Controller
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
-        if ($this->input->post('selected') && $this->error['warning'] == null) {
+        // incase: click delete direct player
+        if($this->input->post('user_id')){
+            $result = $this->Workflow_model->deletePlayer($this->input->post('user_id'));
+            if($result){
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            }else{
+                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+            }
+            redirect('/workflow/pending', 'refresh');
+        }
+        // incase: select player(s) to delete
+        elseif ($this->input->post('selected') && $this->error['warning'] == null) {
             $selectedUsers = $this->input->post('selected');
 
             if ($this->input->post('action')=="approve"){
@@ -91,8 +179,22 @@ class Workflow extends MY_Controller
                 $this->session->set_flashdata('success', $this->lang->line('text_success_reject'));
                 redirect('/workflow/pending', 'refresh');
             }
+            elseif($this->input->post('action')=="delete") {
+                foreach ($selectedUsers as $selectedUser){
+                    $this->Workflow_model->deletePlayer($selectedUser);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/workflow/pending', 'refresh');
+            }
         }
-        //$this->session->set_flashdata('palm', 'test');
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
+
         $this->getPlayerList("pending");
 
     }
@@ -106,6 +208,8 @@ class Workflow extends MY_Controller
         $this->data['tab_status'] =  $status;
         $this->data['player_list'] = $this->Workflow_model->getPlayerByApprovalStatus($client_id,$site_id,$status);
 
+        $pending_count = count($this->Workflow_model->getPlayerByApprovalStatus($client_id,$site_id,"pending"));
+        $this->data['pending_count'] =$pending_count;
 
 
         if (isset($this->error['warning'])) {
@@ -145,13 +249,38 @@ class Workflow extends MY_Controller
     public function create_account() {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title_edit');
+        $this->data['heading_title'] = $this->lang->line('heading_title_create');
         $this->data['form'] = 'workflow/create_account/';
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            //$this->Player_model->createPlayer($_POST);
-            //$this->session->set_flashdata('success', $this->lang->line('text_success_create'));
-            //redirect('/workflow', 'refresh');
+            $data = $this->input->post();
+            $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(), $this->User_model->getSiteId());
+            $this->_api = $this->playbasisapi;
+
+            $platforms = $this->App_model->getPlatFormByAppId(array(
+                'site_id' => $this->User_model->getSiteId(),
+            ));
+            $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
+            if (!$platform) {
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => 'fail', 'message' => 'Cannot find any active platform'));
+                    exit();
+                }
+            }
+            $this->_api->set_api_key($result['api_key']);
+            $this->_api->set_api_secret($result['api_secret']);
+            $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
+            $this->_api->auth($pkg_name);
+
+            $status = $this->_api->register($data['cl_player_id'], $data['username'], $data['email'], $data);
+
+            if($status->success) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_create'));
+                //redirect($this->session->userdata('previous_page'), 'refresh');
+                redirect('/workflow', 'refresh');
+            }else{
+                $this->data['message'] = $status->message;
+            }
         }
 
         $this->getForm();
@@ -160,12 +289,13 @@ class Workflow extends MY_Controller
     public function getForm($user_id=0){
 
         $this->data['requester'] = array();
-        if($user_id !=0){
+        if (isset($_POST['username'])) {
+            $this->data['requester'] = $_POST;
+        }elseif($user_id !=0){
             $this->data['requester'] = $this->Player_model->getPlayerById($user_id);
         }else{
-            $this->data['requester'] = array('approved'=>'approved');
+            $this->data['requester'] = array('approve_status'=>'approved');
         }
-
 
         $this->data['main'] = 'workflow_form';
         $this->render_page('template');
