@@ -36,7 +36,7 @@
                     <li class="active"><a href="#storeTabContent"
                                           data-toggle="tab"><?php echo $this->lang->line('tab_store'); ?></a></li>
                     <li><a href="#storeOrganizeTabContent"
-                           data-toggle="tab"><?php echo $this->lang->line('tab_organize'); ?>&nbsp;<span class="badge"><?php echo !empty($organize_list) ? count($organize_list) : '0';?></span></a>
+                           data-toggle="tab"><?php echo $this->lang->line('tab_organize'); ?></a>
                     </li>
                 </ul>
                 <?php //$attributes = array('id' => 'form', 'class' => 'form-horizontal');
@@ -80,8 +80,8 @@
                                         class="control-label"><?php echo $this->lang->line('entry_store_parent'); ?></label>
 
                                     <div class="controls">
-                                        <input type='hidden' name="store-parent" id="store-parent" style="width:80%;">
-                                        <a href="#storeOrganizeTabContent" data-toggle="tab">Add new parent?</a>
+                                        <input type='hidden' name="store-parent" id="store-parent" style="width:50%;">
+                                        <a href="#storeOrganizeTabContent" data-toggle="tab" id="addNewParentLink">Add new parent?</a>
                                     </div>
                                 </div>
                                 <div class="control-group">
@@ -104,7 +104,7 @@
                                     <button id="remove" class="btn btn-danger" disabled>
                                         <i class="fa fa-remove"></i> Delete
                                     </button>
-                                    <a href="#addOrganizeModal" id="add" role="button" class="btn btn-info"
+                                    <a href="#formOrganizeModal" id="add" role="button" class="btn btn-info add-organize"
                                        data-toggle="modal"><i class="fa fa-plus"></i> Add</a>
                                 </div>
                                 <table id="storeOrganizeTable"
@@ -115,7 +115,6 @@
                                        data-detail-formatter="detailFormatter"
                                        data-show-columns="true"
                                        data-minimum-count-columns="2"
-                                       data-show-pagination-switch="true"
                                        data-pagination="true"
                                        data-id-field="_id"
                                        data-page-list="[10, 25, 50, 100, ALL]"
@@ -136,14 +135,14 @@
     </div>
 </div>
 
-<div id="addOrganizeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="addOrganizeModalLabel" aria-hidden="true">
+<div id="formOrganizeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formOrganizeModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="addOrganizeModalLabel">Add new Organize</h3>
+        <h3 id="formOrganizeModalLabel">Organize</h3>
     </div>
     <div class="modal-body">
         <div class="container-fluid">
-            <form class="form-horizontal store-organize-add">
+            <form class="form-horizontal store-organize-form">
                 <div class="row-fluid">
                     <div class="control-group">
                         <label for="store-organize-name"
@@ -186,7 +185,7 @@
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" id="store-organize-modal-submit"><i class="fa fa-plus"></i>&nbsp;Add</button>
+        <button class="btn btn-primary" id="store-organize-modal-submit"><i class="fa fa-plus">&nbsp;</i>Save</button>
     </div>
 </div>
 
@@ -203,12 +202,16 @@
 
 <div class="modal hide" id="savedDialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h1>Data Saved</h1>
     </div>
     <div class="modal-body">
-        <div class="offset2">
-            <i class="fa fa-spinner fa-spin"></i>&nbsp;<span></span>
+        <div>
+            <i class="fa fa-save"></i>&nbsp;<span>Data has been saved!</span>
         </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
     </div>
 </div>
 

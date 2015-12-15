@@ -88,11 +88,11 @@ class Store_org_model extends MY_Model
                     '_id' => $parent_result['_id'],
                     'name' => $parent_result['name']
                 );
-                array_push($insert_data, array('parent' => $parent_data));
+                $insert_data['parent'] = $parent_data;
             }
         }
 
-        $insert = $this->mongo_db->insert('playbasis_store_organize_to_client', $insert_data);
+        $insert = $this->mongo_db->insert('playbasis_store_organize', $insert_data);
 
         return $insert;
     }
@@ -105,6 +105,13 @@ class Store_org_model extends MY_Model
         if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['search'])) . "/i");
             $this->mongo_db->where('name', $regex);
+        }
+        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+            //make sure 'id' is valid before passing here
+            if (MongoId::isValid($optionalParams['id'])){
+                $id = new MongoId($optionalParams['id']);
+                $this->mongo_db->where('_id', $id);
+            }
         }
 
         // Sorting
@@ -139,7 +146,7 @@ class Store_org_model extends MY_Model
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('deleted', false);
-        return $this->mongo_db->get("playbasis_store_organize_to_client");
+        return $this->mongo_db->get("playbasis_store_organize");
     }
 
     public function retrieveOrganizeById($id)
@@ -147,12 +154,39 @@ class Store_org_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoId($id));
-        $c = $this->mongo_db->get("playbasis_store_organize_to_client");
+        $c = $this->mongo_db->get("playbasis_store_organize");
 
         if ($c) {
             return $c[0];
         } else {
             return null;
         }
+    }
+
+    public function updateOrganizeById($organizeId,$updateData)
+    {
+        $this->mongo_db->where('_id', new MongoID($organizeId));
+        $this->mongo_db->where('client_id', new MongoID($updateData['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($updateData['site_id']));
+
+        $this->mongo_db->set('name', $updateData['name']);
+        $this->mongo_db->set('description', $updateData['description']);
+
+        $this->mongo_db->set('status', $updateData['status']);
+        $this->mongo_db->set('slug', url_title($updateData['name'], 'dash', true));
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_store_organize');
+
+        return $update;
+    }
+
+    public function deleteOrganizeById($organizeId)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($organizeId));
+        $this->mongo_db->set('deleted', true);
+        return $this->mongo_db->update('playbasis_store_organize');
     }
 }

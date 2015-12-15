@@ -1,11 +1,18 @@
+var $formOrganizeModal = $('#formOrganizeModal'),
+    $waitDialog = $('#pleaseWaitDialog'),
+    $savedDialog = $('#savedDialog'),
+    $storeOrganizeTable = $('#storeOrganizeTable'),
+    $storeOrganizeToolbarRemove = $('#storeOrganizeToolbar').find('#remove'),
+    storeOrganizeSelections = [];
+
 function init_input_general_tab() {
-    // store page
+    // store tab
     $("[name='store-status']").bootstrapSwitch();
     $("#store-parent").select2({
         placeholder: "Search for a organize parent",
         allowClear: true,
         minimumInputLength: 0,
-        id: function(data){
+        id: function (data) {
             return data._id.$id;
         },
         ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
@@ -19,7 +26,7 @@ function init_input_general_tab() {
             },
             results: function (data, page) { // parse the results into the format expected by Select2.
                 // since we are using custom formatting functions we do not need to alter the remote JSON data
-                return { results: data.rows };
+                return {results: data.rows};
             },
             cache: true
         },
@@ -27,13 +34,13 @@ function init_input_general_tab() {
         formatSelection: organizeFormatSelection,  // omitted for brevity, see the source of this page
     });
 
-    // modal
+    // organize tab
     $("[name='store-organize-status']").bootstrapSwitch();
     $("#store-organize-parent").select2({
         placeholder: "Search for a organize parent",
         allowClear: true,
         minimumInputLength: 0,
-        id: function(data){
+        id: function (data) {
             return data._id.$id;
         },
         ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
@@ -47,13 +54,32 @@ function init_input_general_tab() {
             },
             results: function (data, page) { // parse the results into the format expected by Select2.
                 // since we are using custom formatting functions we do not need to alter the remote JSON data
-                return { results: data.rows };
+                return {results: data.rows};
             },
             cache: true
+        },
+        initSelection: function(element, callback) {
+            // the input tag has a value attribute preloaded that points to a preselected repository's id
+            // this function resolves that id attribute to an object that select2 can render
+            // using its formatResult renderer - that way the repository name is shown preselected
+            var id = $(element).val();
+            if (id !== "") {
+                $.ajax("/store_org/organize/" + id, {
+                    dataType: "json"
+                }).done(function(data) {
+                    if(data.length > 0)
+                        callback(data[0]);
+                });
+            }
         },
         formatResult: organizeFormatResult, // omitted for brevity, see the source of this page
         formatSelection: organizeFormatSelection,  // omitted for brevity, see the source of this page
     });
+}
+
+function resetModalForm(){
+    $('form.store-organize-form').trigger("reset");
+    $("#store-organize-parent").select2('val',"");
 }
 
 function organizeFormatResult(organize) {
@@ -67,9 +93,6 @@ function organizeFormatSelection(organize) {
     return organize.name;
 }
 
-var $storeOrganizeTable = $('#storeOrganizeTable'),
-    $storeOrganizeToolbarRemove = $('#storeOrganizeToolbar').find('#remove'),
-    storeOrganizeSelections = [];
 function initStoreOrganizeTable() {
     $storeOrganizeTable.bootstrapTable({
         height: getHeight(),
@@ -156,7 +179,7 @@ function detailFormatter(index, row) {
 }
 function operateFormatter(value, row, index) {
     return [
-        '<a class="like" href="javascript:void(0)" title="Like">',
+        '<a class="edit-organize" title="Edit">',
         '<i class="fa fa-edit fa-2x"></i>',
         '</a>  ',
         '<a class="remove" href="javascript:void(0)" title="Remove">',
@@ -165,8 +188,22 @@ function operateFormatter(value, row, index) {
     ].join('');
 }
 window.operateEvents = {
-    'click .like': function (e, value, row, index) {
-        alert('You click like action, row: ' + JSON.stringify(row));
+    'click .edit-organize': function (e, value, row, index) {
+        console.log('You click edit action, row: ' + JSON.stringify(row));
+        resetModalForm();
+        $('#formOrganizeModalLabel').html("Edit new Organize");
+        $formOrganizeModal.find("#store-organize-name").val(row.name);
+        $formOrganizeModal.find("#store-organize-desc").val(row.description);
+        if(typeof row.parent != "undefined"){
+            $("#store-organize-parent").select2('val',row.parent._id.$id);
+        }
+
+        if(row.status)
+            $formOrganizeModal.find("#store-organize-status").prop('checked', true);
+        else
+            $formOrganizeModal.find("#store-organize-status").prop('checked', false);
+
+        $formOrganizeModal.modal('show');
     },
     'click .remove': function (e, value, row, index) {
         $storeOrganizeTable.bootstrapTable('remove', {
@@ -179,13 +216,9 @@ function getHeight() {
     return $(window).height() - $('h1').outerHeight(true);
 }
 
-var $addOrganizeModal = $('#addOrganizeModal'),
-    $waitDialog = $('#pleaseWaitDialog');
-
 $(function () {
     init_input_general_tab();
     initStoreOrganizeTable();
-
 });
 
 $('#page-render').on('click', 'button#store-organize-modal-submit', function () {
@@ -195,18 +228,33 @@ $('#page-render').on('click', 'button#store-organize-modal-submit', function () 
             url: "/store_org/organize/",
             data: $('form.store-organize-add').serialize(),
             beforeSend: function (xhr) {
-                $addOrganizeModal.modal('hide');
+                $formOrganizeModal.modal('hide');
                 $waitDialog.modal();
             }
         })
         .done(function () {
+            $waitDialog.modal('hide');
             $storeOrganizeTable.bootstrapTable('refresh');
+            $savedDialog.modal();
         })
         .fail(function (xhr, textStatus, errorThrown) {
             alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
         })
         .always(function () {
-            $('form.store-organize-add').trigger("reset");
+            $('form.store-organize-form').trigger("reset");
             $waitDialog.modal('hide');
         });
+});
+
+
+$("[data-toggle]").filter("[href='#formOrganizeModal'],[data-target='#formOrganizeModal']")
+    .on('click', function (e) {
+        //console.log($(this).hasClass('add-organize'));
+        resetModalForm();
+        if($(this).hasClass('add-organize'))
+            $('#formOrganizeModalLabel').html("Add new Organize");
+    });
+
+$('#addNewParentLink').on('click', function () {
+    $('#mainTab').find('a[href="#storeOrganizeTabContent"]').tab('show');
 });
