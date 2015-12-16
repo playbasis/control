@@ -309,11 +309,12 @@ class App extends MY_Controller
                     $this->session->set_userdata('site_id', $site_id);
 
                     $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+                    $plan_id = $plan_subscription['plan_id']."";
 
                     /* bind plan to client in playbasis_permission */
                     $this->Client_model->addPlanToPermission(array(
                         'client_id' => $client_id->{'$id'},
-                        'plan_id' => $plan_subscription['plan_id']->{'$id'},
+                        'plan_id' => $plan_id,
                         'site_id' => $site_id."",
                     ));
 
@@ -321,7 +322,7 @@ class App extends MY_Controller
                         'site_id' => $site_id,
                         'status' => true
                     );
-                    $this->Client_model->editClientPlan($client_id, $plan_subscription['plan_id'], $another_data);
+                    $this->Client_model->editClientPlan($client_id, $plan_id, $another_data);
 
                     /* preset badges */
                     $this->Badge_model->copyBadgesFromTemplate($client_id, $site_id);
