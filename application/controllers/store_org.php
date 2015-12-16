@@ -171,7 +171,6 @@ class Store_org extends MY_Controller
                 }
 
                 echo json_encode($response);
-                die();
 
             } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!$this->validateModify()) {
@@ -187,12 +186,13 @@ class Store_org extends MY_Controller
                 $desc = $node_data['node-desc'];
                 $storeId = !empty($node_data['node-store-id']) ? $node_data['node-store-id'] : null;
                 $organize = !empty($node_data['node-organize']) ? $node_data['node-organize'] : null;
+                $parent = !empty($node_data['node-parent']) ? $node_data['node-parent'] : null;
                 $status = isset($node_data['node-status']) && $node_data['node-status'] == 'on' ? true : false;
 
                 $result = null;
                 if (!empty($node_data) && !isset($nodeId)) {
-                    $result = $this->Store_org_model->createNode($client_id, $site_id, $name, $desc, $storeId, $organize,
-                        $status);
+                    $result = $this->Store_org_model->createNode($client_id, $site_id, $name, $storeId, $desc,
+                        $organize, $parent, $status);
                 }else{
                     if(MongoId::isValid($nodeId)){
                         $result = $this->Store_org_model->updateNodeById($nodeId, array(

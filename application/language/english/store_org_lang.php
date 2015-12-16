@@ -20,6 +20,7 @@ $lang['entry_node_name'] = 'Node name';
 $lang['entry_node_store_id'] = 'Node Id';
 $lang['entry_node_description'] = 'Node Description';
 $lang['entry_node_organize'] = 'Node Organize Level';
+$lang['entry_node_parent'] = 'Node Parent';
 $lang['entry_node_add_organize'] = 'Add new organize?';
 $lang['entry_node_status'] = 'Node status';
 $lang['entry_node_status_enable'] = 'Enable';

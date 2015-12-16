@@ -9,8 +9,7 @@ var $formOrganizeModal = $('#formOrganizeModal'),
     $storeNodeToolbarRemove = $('#storeNodeToolbar').find('#remove'),
     storeNodeSelections = [];
 
-function init_input_general_tab() {
-    // store tab
+function initNodeTabInputs() {
     $("[name='node-status']").bootstrapSwitch();
     $("#node-organize").select2({
         placeholder: "Search for a organize",
@@ -37,8 +36,33 @@ function init_input_general_tab() {
         formatResult: organizeFormatResult, // omitted for brevity, see the source of this page
         formatSelection: organizeFormatSelection,  // omitted for brevity, see the source of this page
     });
-
-    // organize tab
+    $("#node-parent").select2({
+        placeholder: "Search for a parent",
+        allowClear: true,
+        minimumInputLength: 0,
+        id: function (data) {
+            return data._id.$id;
+        },
+        ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+            url: baseUrlPath + "store_org/node/",
+            dataType: 'json',
+            quietMillis: 250,
+            data: function (term, page) {
+                return {
+                    search: term, // search term
+                };
+            },
+            results: function (data, page) { // parse the results into the format expected by Select2.
+                // since we are using custom formatting functions we do not need to alter the remote JSON data
+                return {results: data.rows};
+            },
+            cache: true
+        },
+        formatResult: nodeFormatResult, // omitted for brevity, see the source of this page
+        formatSelection: nodeFormatSelection,  // omitted for brevity, see the source of this page
+    });
+}
+function initOrganizeTabInputs() {
     $("[name='store-organize-status']").bootstrapSwitch();
     $("#store-organize-parent").select2({
         placeholder: "Search for a organize parent",
@@ -62,7 +86,7 @@ function init_input_general_tab() {
             },
             cache: true
         },
-        initSelection: function(element, callback) {
+        initSelection: function (element, callback) {
             // the input tag has a value attribute preloaded that points to a preselected repository's id
             // this function resolves that id attribute to an object that select2 can render
             // using its formatResult renderer - that way the repository name is shown preselected
@@ -70,8 +94,8 @@ function init_input_general_tab() {
             if (id !== "") {
                 $.ajax(baseUrlPath + "store_org/organize/" + id, {
                     dataType: "json"
-                }).done(function(data) {
-                    if(data.length > 0)
+                }).done(function (data) {
+                    if (data.length > 0)
                         callback(data[0]);
                 });
             }
@@ -80,10 +104,25 @@ function init_input_general_tab() {
         formatSelection: organizeFormatSelection,  // omitted for brevity, see the source of this page
     });
 }
+function initPageInputs() {
+    initNodeTabInputs();
+    initOrganizeTabInputs();
+}
 
 function resetOrganizeModalForm(){
     $('form.store-organize-form').trigger("reset");
     $("#store-organize-parent").select2('val',"");
+}
+
+function nodeFormatResult(node) {
+    return '<div class="row-fluid">' +
+        '<div>' + node.name +
+        '<small class="text-muted">&nbsp;(' + node.description +
+        ')</small></div></div>';
+}
+
+function nodeFormatSelection(node) {
+    return node.name;
 }
 
 function organizeFormatResult(organize) {
@@ -292,7 +331,7 @@ function getHeight() {
 
 function submitOrganizeModalForm() {
     // todo: Add client validation here!
-    var organizeId = $formOrganizeModal.find("#store-organize-id").val() || null;
+    var organizeId = $formOrganizeModal.find("#store-organize-id").val() || "";
 
     $.ajax({
             type: "POST",
@@ -317,13 +356,41 @@ function submitOrganizeModalForm() {
         });
 }
 
+function submitNodeModalForm() {
+    // todo: Add client validation here!
+    var nodeId = $formNodeModal.find("#node-id").val() || "";
+
+    $.ajax({
+            type: "POST",
+            url: baseUrlPath + "store_org/node/" + nodeId,
+            data: $('form.node-form').serialize(),
+            beforeSend: function (xhr) {
+                $formNodeModal.modal('hide');
+                $waitDialog.modal();
+            }
+        })
+        .done(function () {
+            $waitDialog.modal('hide');
+            $storeNodeTable.bootstrapTable('refresh');
+            $savedDialog.modal();
+        })
+        .fail(function (xhr, textStatus, errorThrown) {
+            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+        })
+        .always(function () {
+            $('form.node-form').trigger("reset");
+            $waitDialog.modal('hide');
+        });
+}
+
 $(function () {
-    init_input_general_tab();
+    initPageInputs();
     initStoreOrganizeTable();
     initStoreNodeTable();
 });
 
 $('#page-render')
+    .on('click', 'button#node-modal-submit', submitNodeModalForm)
     .on('click', 'button#store-organize-modal-submit', submitOrganizeModalForm)
     .on('click','#addNewParentLink',function () {
         $('#mainTab').find('a[href="#storeOrganizeTabContent"]').tab('show');

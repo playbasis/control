@@ -155,6 +155,14 @@
                         </div>
                     </div>
                     <div class="control-group">
+                        <label for="node-parent"
+                               class="control-label"><?php echo $this->lang->line('entry_node_parent'); ?></label>
+
+                        <div class="controls">
+                            <p><input type='hidden' name="node-parent" id="node-parent" style="width:80%;"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
                         <label class="control-label"
                                for="node-status"><?php echo $this->lang->line('entry_node_status'); ?></label>
 
