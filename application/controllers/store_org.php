@@ -164,7 +164,6 @@ class Store_org extends MY_Controller
                 }
 
                 if(isset($organizeId)){
-                    $query_data = $this->input->get(null, true);
                     if (MongoId::isValid($organizeId)) {
                         $result = $this->Store_org_model->retrieveOrganize($client_id, $site_id, ['id' => $organizeId]);
 
@@ -174,7 +173,6 @@ class Store_org extends MY_Controller
                         $this->output->set_status_header('404');
                         $response = array('status' => 'error', 'message' => $this->lang->line('error_no_contents'));
                     }
-
                 }else{
                     $query_data = $this->input->get(null, true);
 
@@ -207,19 +205,32 @@ class Store_org extends MY_Controller
                 $status = isset($brand_data['store-organize-status']) && $brand_data['store-organize-status'] == 'on' ? true : false;
 
                 $result = null;
-                if (!empty($brand_data)) {
+                if (!empty($brand_data) && !isset($organizeId)) {
                     $result = $this->Store_org_model->createOrganize($client_id, $site_id, $name, $desc, $parent, $status);
+                }else{
+                    if(MongoId::isValid($organizeId)){
+                        $result = $this->Store_org_model->updateOrganizeById($organizeId, array(
+                            'client_id' => $client_id,
+                            'site_id' => $site_id,
+                            'name' => $name,
+                            'description' => $desc,
+                            'parent' => $parent,
+                            'status' => $status
+                        ));
+                    }
                 }
 
                 if (!$result) {
                     $this->output->set_status_header('400');
                     echo json_encode(array('status' => 'error'));
-                    die();
-                } else {
+                } elseif (!isset($organizeId)) {
                     $this->output->set_status_header('201');
                     // todo: should return newly create object
+                    echo json_encode(array('status' => 'success', 'rows' => $result));
+                } else {
+                    $this->output->set_status_header('200');
+                    // todo: should return update object
                     echo json_encode(array('status' => 'success'));
-                    die();
                 }
             }
         }

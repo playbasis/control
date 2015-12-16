@@ -165,9 +165,21 @@ class Store_org_model extends MY_Model
 
     public function updateOrganizeById($organizeId,$updateData)
     {
+        $parent_data = null;
+        if (isset($updateData['parent'])) {
+            $parent_result = $this->retrieveOrganizeById(new MongoId($updateData['parent']));
+            if (isset($parent_result)) {
+                $parent_data = array(
+                    '_id' => $parent_result['_id'],
+                    'name' => $parent_result['name']
+                );
+                $this->mongo_db->set('parent', $parent_data);
+            }
+        }
+
         $this->mongo_db->where('_id', new MongoID($organizeId));
-        $this->mongo_db->where('client_id', new MongoID($updateData['client_id']));
-        $this->mongo_db->where('site_id', new MongoID($updateData['site_id']));
+        $this->mongo_db->where('client_id', $updateData['client_id']);
+        $this->mongo_db->where('site_id', $updateData['site_id']);
 
         $this->mongo_db->set('name', $updateData['name']);
         $this->mongo_db->set('description', $updateData['description']);

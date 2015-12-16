@@ -4,9 +4,8 @@
             <h1><img src="<?php echo base_url(); ?>image/category.png" alt=""/> <?php echo $heading_title; ?></h1>
 
             <div class="buttons">
-                <a class="btn btn-info" id="form-submit-btn"><?php echo $this->lang->line('button_save'); ?></a>
                 <a class="btn btn-info"
-                   onclick="location = baseUrlPath+'store_org'"><?php echo $this->lang->line('button_cancel'); ?></a>
+                   onclick="location = baseUrlPath+'store_org'"><?php echo $this->lang->line('button_close'); ?></a>
             </div>
         </div>
         <div class="content">
@@ -76,12 +75,12 @@
                                     </div>
                                 </div>
                                 <div class="control-group">
-                                    <label for="store-parent"
-                                        class="control-label"><?php echo $this->lang->line('entry_store_parent'); ?></label>
+                                    <label for="store-organize"
+                                        class="control-label"><?php echo $this->lang->line('entry_store_organize'); ?></label>
 
                                     <div class="controls">
-                                        <input type='hidden' name="store-parent" id="store-parent" style="width:50%;">
-                                        <a href="#storeOrganizeTabContent" data-toggle="tab" id="addNewParentLink">Add new parent?</a>
+                                        <input type='hidden' name="store-organize" id="store-organize" style="width:50%;">
+                                        <a href="#storeOrganizeTabContent" data-toggle="tab" id="addNewParentLink"><?php echo $this->lang->line('entry_store_add_organize'); ?></a>
                                     </div>
                                 </div>
                                 <div class="control-group">
@@ -92,6 +91,12 @@
                                         <input type="checkbox" name="store-status" id="store-status"
                                                data-handle-width="40" <?php echo isset($store_status_default) && $store_status_default ? ($store_status_default ? "checked='checked'" : '') : set_checkbox('merchant-status',
                                             '', $store_status_default); ?>>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <button class="btn btn-primary" id="store-submit-btn"><i class="fa fa-plus">
+                                                &nbsp;</i><?php echo $this->lang->line('button_save'); ?></button>
                                     </div>
                                 </div>
                             </div>
@@ -120,7 +125,7 @@
                                        data-page-list="[10, 25, 50, 100, ALL]"
                                        data-show-footer="false"
                                        data-side-pagination="server"
-                                       data-url="<?php echo site_url()?>/store_org/organize/"
+                                       data-url="/store_org/organize/"
                                        data-response-handler="responseHandler">
                                 </table>
                             </div>
@@ -144,6 +149,7 @@
         <div class="container-fluid">
             <form class="form-horizontal store-organize-form">
                 <div class="row-fluid">
+                    <input type="hidden" name="store-organize-id" id="store-organize-id">
                     <div class="control-group">
                         <label for="store-organize-name"
                                class="control-label"><?php echo $this->lang->line('entry_store_organize_name'); ?></label>

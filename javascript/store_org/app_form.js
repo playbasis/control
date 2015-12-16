@@ -8,8 +8,8 @@ var $formOrganizeModal = $('#formOrganizeModal'),
 function init_input_general_tab() {
     // store tab
     $("[name='store-status']").bootstrapSwitch();
-    $("#store-parent").select2({
-        placeholder: "Search for a organize parent",
+    $("#store-organize").select2({
+        placeholder: "Search for a organize",
         allowClear: true,
         minimumInputLength: 0,
         id: function (data) {
@@ -77,7 +77,7 @@ function init_input_general_tab() {
     });
 }
 
-function resetModalForm(){
+function resetOrganizeModalForm(){
     $('form.store-organize-form').trigger("reset");
     $("#store-organize-parent").select2('val',"");
 }
@@ -187,22 +187,25 @@ function operateFormatter(value, row, index) {
         '</a>'
     ].join('');
 }
+function editOrganizeModalForm(data) {
+    $('#formOrganizeModalLabel').html("Edit new Organize");
+    $formOrganizeModal.find("#store-organize-id").val(data._id.$id);
+    $formOrganizeModal.find("#store-organize-name").val(data.name);
+    $formOrganizeModal.find("#store-organize-desc").val(data.description);
+    if (typeof data.parent != "undefined") {
+        $("#store-organize-parent").select2('val', data.parent._id.$id);
+    }
+
+    if (data.status)
+        $formOrganizeModal.find("#store-organize-status").prop('checked', true);
+    else
+        $formOrganizeModal.find("#store-organize-status").prop('checked', false);
+}
 window.operateEvents = {
     'click .edit-organize': function (e, value, row, index) {
-        console.log('You click edit action, row: ' + JSON.stringify(row));
-        resetModalForm();
-        $('#formOrganizeModalLabel').html("Edit new Organize");
-        $formOrganizeModal.find("#store-organize-name").val(row.name);
-        $formOrganizeModal.find("#store-organize-desc").val(row.description);
-        if(typeof row.parent != "undefined"){
-            $("#store-organize-parent").select2('val',row.parent._id.$id);
-        }
-
-        if(row.status)
-            $formOrganizeModal.find("#store-organize-status").prop('checked', true);
-        else
-            $formOrganizeModal.find("#store-organize-status").prop('checked', false);
-
+        //console.log('You click edit action, row: ' + JSON.stringify(row));
+        resetOrganizeModalForm();
+        editOrganizeModalForm(row);
         $formOrganizeModal.modal('show');
     },
     'click .remove': function (e, value, row, index) {
@@ -216,16 +219,13 @@ function getHeight() {
     return $(window).height() - $('h1').outerHeight(true);
 }
 
-$(function () {
-    init_input_general_tab();
-    initStoreOrganizeTable();
-});
-
-$('#page-render').on('click', 'button#store-organize-modal-submit', function () {
+function submitOrganizeModalForm() {
     // todo: Add client validation here!
+    var organizeId = $formOrganizeModal.find("#store-organize-id").val() || null;
+
     $.ajax({
             type: "POST",
-            url: baseUrlPath + "store_org/organize/",
+            url: baseUrlPath + "store_org/organize/" + organizeId,
             data: $('form.store-organize-form').serialize(),
             beforeSend: function (xhr) {
                 $formOrganizeModal.modal('hide');
@@ -244,17 +244,23 @@ $('#page-render').on('click', 'button#store-organize-modal-submit', function () 
             $('form.store-organize-form').trigger("reset");
             $waitDialog.modal('hide');
         });
+}
+
+$(function () {
+    init_input_general_tab();
+    initStoreOrganizeTable();
 });
 
+$('#page-render')
+    .on('click', 'button#store-organize-modal-submit', submitOrganizeModalForm)
+    .on('click','#addNewParentLink',function () {
+        $('#mainTab').find('a[href="#storeOrganizeTabContent"]').tab('show');
+    });
 
 $("[data-toggle]").filter("[href='#formOrganizeModal'],[data-target='#formOrganizeModal']")
     .on('click', function (e) {
         //console.log($(this).hasClass('add-organize'));
-        resetModalForm();
+        resetOrganizeModalForm();
         if($(this).hasClass('add-organize'))
             $('#formOrganizeModalLabel').html("Add new Organize");
     });
-
-$('#addNewParentLink').on('click', function () {
-    $('#mainTab').find('a[href="#storeOrganizeTabContent"]').tab('show');
-});
