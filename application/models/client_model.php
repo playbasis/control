@@ -507,16 +507,21 @@ class Client_model extends MY_Model
     }
 
     /* this method does not change client's plan, playbasis_permission */
-    public function editClientsPlan($l, $plan_id){
+    public function editClientsPlan($_l, $plan_id){
+        if (!$_l) return;
+
+        $l = array();
+        $site_ids = array();
+        foreach ($_l as $each) {
+            // prevent either (1) empty site_id, or (2) duplicate site_id
+            if (empty($each['site_id']) || in_array($each['site_id'], $site_ids)) continue;
+            $l[] = array('client_id' => $each['client_id'], 'site_id' => $each['site_id']);
+            $site_ids[] = $each['site_id'];
+        }
         if (!$l) return;
 
         $d = new MongoDate();
         $plan_data = $this->getPlan($plan_id);
-
-        $site_ids = array();
-        foreach ($l as $each) {
-            $site_ids[] = $each['site_id'];
-        }
 
         /* playbasis_reward_to_client */
         $this->mongo_db->where_in('site_id', $site_ids);
