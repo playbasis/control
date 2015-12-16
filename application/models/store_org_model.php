@@ -184,6 +184,15 @@ class Store_org_model extends MY_Model
         return $update;
     }
 
+    public function deleteNodeById($nodeId)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($nodeId));
+        $this->mongo_db->set('deleted', true);
+        return $this->mongo_db->update('playbasis_store_organize_to_client');
+    }
+
     public function createOrganize($client_id, $site_id, $name, $description = null, $parent = null, $status = true)
     {
         $this->load->helper('url');

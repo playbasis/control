@@ -16,7 +16,7 @@ function initNodeTabInputs() {
         allowClear: true,
         minimumInputLength: 0,
         id: function (data) {
-            return data._id.$id;
+            return data._id;
         },
         ajax: {
             url: baseUrlPath + "store_org/organize/",
@@ -55,7 +55,7 @@ function initNodeTabInputs() {
         allowClear: true,
         minimumInputLength: 0,
         id: function (data) {
-            return data._id.$id;
+            return data._id;
         },
         ajax: {
             url: baseUrlPath + "store_org/node/",
@@ -97,7 +97,7 @@ function initOrganizeTabInputs() {
         allowClear: true,
         minimumInputLength: 0,
         id: function (data) {
-            return data._id.$id;
+            return data._id;
         },
         ajax: {
             url: baseUrlPath + "store_org/organize/",
@@ -210,21 +210,22 @@ function initStoreNodeTable() {
     }, 200);
     $storeNodeTable.on('check.bs.table uncheck.bs.table ' +
         'check-all.bs.table uncheck-all.bs.table', function () {
-        $storeOrganizeToolbarRemove.prop('disabled', !$storeOrganizeTable.bootstrapTable('getSelections').length);
+        $storeNodeToolbarRemove.prop('disabled', !$storeNodeTable.bootstrapTable('getSelections').length);
         // save your data, here just save the current page
-        storeOrganizeSelections = getIdSelections();
+        storeNodeSelections = getNodeIdSelections();
         // push or splice the selections if you want to save all data selections
     });
     $storeNodeToolbarRemove.click(function () {
-        var ids = getIdSelections();
-        $storeOrganizeTable.bootstrapTable('remove', {
-            field: 'id',
+        var ids = getNodeIdSelections();
+        console.log("id selected" , ids);
+        $storeNodeTable.bootstrapTable('remove', {
+            field: '_id',
             values: ids
         });
-        $storeOrganizeToolbarRemove.prop('disabled', true);
+        $storeNodeToolbarRemove.prop('disabled', true);
     });
     $(window).resize(function () {
-        $storeOrganizeTable.bootstrapTable('resetView', {
+        $storeNodeTable.bootstrapTable('resetView', {
             height: getHeight()
         });
     });
@@ -268,13 +269,14 @@ function initStoreOrganizeTable() {
         'check-all.bs.table uncheck-all.bs.table', function () {
         $storeOrganizeToolbarRemove.prop('disabled', !$storeOrganizeTable.bootstrapTable('getSelections').length);
         // save your data, here just save the current page
-        storeOrganizeSelections = getIdSelections();
+        storeOrganizeSelections = getOrganizeIdSelections();
         // push or splice the selections if you want to save all data selections
     });
     $storeOrganizeToolbarRemove.click(function () {
-        var ids = getIdSelections();
+        var ids = getOrganizeIdSelections();
+        console.log("id selected" , ids);
         $storeOrganizeTable.bootstrapTable('remove', {
-            field: 'id',
+            field: '_id',
             values: ids
         });
         $storeOrganizeToolbarRemove.prop('disabled', true);
@@ -285,9 +287,14 @@ function initStoreOrganizeTable() {
         });
     });
 }
-function getIdSelections() {
+function getOrganizeIdSelections() {
     return $.map($storeOrganizeTable.bootstrapTable('getSelections'), function (row) {
-        return row.id
+        return row._id;
+    });
+}
+function getNodeIdSelections() {
+    return $.map($storeNodeTable.bootstrapTable('getSelections'), function (row) {
+        return row._id;
     });
 }
 function organizeResponseHandler(res) {
@@ -314,7 +321,7 @@ function operateOrganizeFormatter(value, row, index) {
         '<a class="edit-organize" title="Edit">',
         '<i class="fa fa-edit fa-2x"></i>',
         '</a>  ',
-        '<a class="remove" href="javascript:void(0)" title="Remove">',
+        '<a class="remove-organize" href="javascript:void(0)" title="Remove">',
         '<i class="fa fa-remove fa-2x"></i>',
         '</a>'
     ].join('');
@@ -324,7 +331,7 @@ function operateNodeFormatter(value, row, index) {
         '<a class="edit-node" title="Edit">',
         '<i class="fa fa-edit fa-2x"></i>',
         '</a>  ',
-        '<a class="remove" href="javascript:void(0)" title="Remove">',
+        '<a class="remove-node" href="javascript:void(0)" title="Remove">',
         '<i class="fa fa-remove fa-2x"></i>',
         '</a>'
     ].join('');
@@ -332,11 +339,11 @@ function operateNodeFormatter(value, row, index) {
 function editOrganizeModalForm(data) {
     resetOrganizeModalForm();
     $('#formOrganizeModalLabel').html("Edit new Organize");
-    $formOrganizeModal.find("#store-organize-id").val(data._id.$id);
+    $formOrganizeModal.find("#store-organize-id").val(data._id);
     $formOrganizeModal.find("#store-organize-name").val(data.name);
     $formOrganizeModal.find("#store-organize-desc").val(data.description);
     if (typeof data.parent != "undefined") {
-        $("#store-organize-parent").select2('val', data.parent._id.$id);
+        $("#store-organize-parent").select2('val', data.parent._id);
     }
 
     if (data.status)
@@ -347,7 +354,7 @@ function editOrganizeModalForm(data) {
 function editNodeModalForm(data) {
     resetNodeModalForm();
     $('#formNodeModalLabel').html("Edit new Node");
-    $formNodeModal.find("#node-id").val(data._id.$id);
+    $formNodeModal.find("#node-id").val(data._id);
     $formNodeModal.find("#node-name").val(data.name);
     $formNodeModal.find("#node-desc").val(data.description);
     if (typeof data.store_id != "undefined") {
@@ -357,10 +364,10 @@ function editNodeModalForm(data) {
         $formNodeModal.find("#node-store-id-control-group").addClass('hide');
     }
     if (typeof data.organize != "undefined") {
-        $("#node-organize").select2('val', data.organize._id.$id);
+        $("#node-organize").select2('val', data.organize._id);
     }
     if (typeof data.parent != "undefined") {
-        $("#node-parent").select2('val', data.parent._id.$id);
+        $("#node-parent").select2('val', data.parent._id);
     }
 
     if (data.status)
@@ -379,11 +386,41 @@ window.operateEvents = {
         editOrganizeModalForm(row);
         $formOrganizeModal.modal('show');
     },
-    'click .remove': function (e, value, row, index) {
-        $storeOrganizeTable.bootstrapTable('remove', {
-            field: 'id',
-            values: [row.id]
-        });
+    'click .remove-node': function (e, value, row, index) {
+        //console.log("REMOVE NODE");
+        $.ajax({
+                type: "POST",
+                url: baseUrlPath + 'store_org/node/' + row._id,
+                data: {'action': "delete"}
+            })
+            .done(function (msg) {
+                //console.log("Entry removed: " + JSON.parse(msg).status);
+                $storeNodeTable.bootstrapTable('remove', {
+                    field: '_id',
+                    values: [row._id]
+                });
+            })
+            .fail(function () {
+                console.log("Error!");
+            });
+    },
+    'click .remove-organize': function (e, value, row, index) {
+        //console.log("REMOVE ORGANIZATION");
+        $.ajax({
+                type: "POST",
+                url: baseUrlPath + 'store_org/organize/' + row._id,
+                data: {'action': "delete"}
+            })
+            .done(function (msg) {
+                //console.log("Entry removed: " + JSON.parse(msg).status);
+                $storeOrganizeTable.bootstrapTable('remove', {
+                    field: '_id',
+                    values: [row._id]
+                });
+            })
+            .fail(function () {
+                console.log("Error!");
+            });
     }
 };
 function getHeight() {
