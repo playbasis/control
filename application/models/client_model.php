@@ -506,6 +506,149 @@ class Client_model extends MY_Model
         }
     }
 
+    /* this method does not change client's plan, playbasis_permission */
+    public function editClientsPlan($l, $plan_id){
+        if (!$l) return;
+
+        $d = new MongoDate();
+        $plan_data = $this->getPlan($plan_id);
+
+        $site_ids = array();
+        foreach ($l as $each) {
+            $site_ids[] = $each['site_id'];
+        }
+
+        /* playbasis_reward_to_client */
+        $this->mongo_db->where_in('site_id', $site_ids);
+        $this->mongo_db->where('is_custom', false);
+        $this->mongo_db->delete_all("playbasis_reward_to_client");
+        if ($plan_data['reward_to_plan']) {
+            $insert_data = array();
+            foreach ($plan_data['reward_to_plan'] as $reward) {
+                $limit = empty($reward['limit']) ? null : (int)$reward['limit'];
+                $reward_data = $this->getReward($reward['reward_id']);
+                $reward_id = new MongoID($reward['reward_id']);
+                foreach ($l as $each) {
+                    $insert_data[] = array(
+                        'reward_id' => $reward_id,
+                        'client_id' => $each['client_id'],
+                        'site_id' => $each['site_id'],
+                        'group' => $reward_data['group'],
+                        'name' => $reward_data['name'],
+                        'description' => $reward_data['description'],
+                        'init_dataset' => $reward_data['init_dataset'],
+                        'limit' => $limit,
+                        'sort_order' => $reward_data['sort_order'],
+                        'status' => (bool)$reward_data['status'],
+                        'date_modified' => $d,
+                        'date_added' => $d,
+                        'is_custom' => false,
+                    );
+                }
+            }
+            if ($insert_data) {
+                $this->mongo_db->batch_insert('playbasis_reward_to_client', $insert_data, array("w" => 0, "j" => false));
+            }
+        }
+
+        /* playbasis_feature_to_client */
+        $this->mongo_db->where_in('site_id', $site_ids);
+        $this->mongo_db->delete_all("playbasis_feature_to_client");
+        if (isset($plan_data['feature_to_plan'])) {
+            $insert_data = array();
+            foreach ($plan_data['feature_to_plan'] as $feature_id) {
+                $feature_data = $this->getFeature($feature_id);
+                $feature_id = new MongoID($feature_id);
+                foreach ($l as $each) {
+                    $insert_data[] = array(
+                        'feature_id' => $feature_id,
+                        'client_id' => $each['client_id'],
+                        'site_id' => $each['site_id'],
+                        'name' => $feature_data['name'],
+                        'description' => $feature_data['description'],
+                        'sort_order' => $feature_data['sort_order'],
+                        'status' => (bool)$feature_data['status'],
+                        'date_modified' => $d,
+                        'date_added' => $d,
+                        'link' => $feature_data['link'],
+                        'icon' => $feature_data['icon']
+                    );
+                }
+            }
+            if ($insert_data) {
+                $this->mongo_db->batch_insert('playbasis_feature_to_client', $insert_data, array("w" => 0, "j" => false));
+            }
+        }
+
+        /* playbasis_action_to_client */
+        $this->mongo_db->where_in('site_id', $site_ids);
+        $this->mongo_db->where('is_custom', false);
+        $this->mongo_db->delete_all("playbasis_action_to_client");
+        if (isset($plan_data['action_to_plan'])) {
+            $insert_data = array();
+            foreach ($plan_data['action_to_plan'] as $action_id) {
+                $action_data = $this->getAction($action_id);
+                $action_id = new MongoID($action_id);
+                foreach ($l as $each) {
+                    $this->mongo_db->where('client_id', $each['client_id']);
+                    $this->mongo_db->where('site_id', $each['site_id']);
+                    $this->mongo_db->where('action_id', $action_id);
+                    $allClients = $this->mongo_db->get('playbasis_action_to_client');
+                    if (!$allClients) {
+                        $insert_data[] = array(
+                            'action_id' => $action_id,
+                            'client_id' => $each['client_id'],
+                            'site_id' => $each['site_id'],
+                            'name' => $action_data['name'],
+                            'description' => $action_data['description'],
+                            'icon' => $action_data['icon'],
+                            'color' => $action_data['color'],
+                            'init_dataset' => $action_data['init_dataset'],
+                            'sort_order' => $action_data['sort_order'],
+                            'status' => (bool)$action_data['status'],
+                            'date_modified' => $d,
+                            'date_added' => $d,
+                            'is_custom' => false,
+                        );
+                    }
+                }
+            }
+            if ($insert_data) {
+                $this->mongo_db->batch_insert('playbasis_action_to_client', $insert_data, array("w" => 0, "j" => false));
+            }
+        }
+
+        /* playbasis_game_jigsaw_to_client */
+        $this->mongo_db->where_in('site_id', $site_ids);
+        $this->mongo_db->delete_all("playbasis_game_jigsaw_to_client");
+        if (isset($plan_data['jigsaw_to_plan'])) {
+            $insert_data = array();
+            foreach ($plan_data['jigsaw_to_plan'] as $jigsaw_id) {
+                $jigsaw_data = $this->getJigsaw($jigsaw_id);
+                $jigsaw_id = new MongoID($jigsaw_id);
+                foreach ($l as $each) {
+                    $insert_data[] = array(
+                        'jigsaw_id' => $jigsaw_id,
+                        'client_id' => $each['client_id'],
+                        'site_id' => $each['site_id'],
+                        'name' => $jigsaw_data['name'],
+                        'description' => $jigsaw_data['description'],
+                        'category' => $jigsaw_data['category'],
+                        'class_path' => $jigsaw_data['class_path'],
+                        'init_dataset' => $jigsaw_data['init_dataset'],
+                        'sort_order' => $jigsaw_data['sort_order'],
+                        'status' => (bool)$jigsaw_data['status'],
+                        'date_modified' => $d,
+                        'date_added' => $d
+                    );
+                }
+            }
+            if ($insert_data) {
+                $this->mongo_db->batch_insert('playbasis_game_jigsaw_to_client', $insert_data, array("w" => 0, "j" => false));
+            }
+        }
+    }
+
     //Once the client is deleted, the permissions are deleted too
     public function deleteClientPersmission($client_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
