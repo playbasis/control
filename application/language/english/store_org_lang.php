@@ -12,22 +12,22 @@ $lang['button_filter'] = 'Filter';
 $lang['button_clear_filter'] = 'Clear filter';
 
 // Tab
-$lang['tab_store'] = 'Store';
+$lang['tab_node'] = 'Node';
 $lang['tab_organize'] = 'Organize';
 
 // Entry
-$lang['entry_store_name'] = 'Store name';
-$lang['entry_store_id'] = 'Store Id';
-$lang['entry_store_description'] = 'Description';
-$lang['entry_store_organize'] = 'Organize';
-$lang['entry_store_add_organize'] = 'Add new organize?';
-$lang['entry_store_status'] = 'Status';
-$lang['entry_store_status_enable'] = 'Enable';
-$lang['entry_store_status_disable'] = 'Disable';
-$lang['entry_store_organize_name'] = 'Organize name';
-$lang['entry_store_organize_desc'] = 'Organize description';
-$lang['entry_store_organize_status'] = 'Organize status';
-$lang['entry_store_organize_parent'] = 'Organize parent';
+$lang['entry_node_name'] = 'Node name';
+$lang['entry_node_store_id'] = 'Node Id';
+$lang['entry_node_description'] = 'Node Description';
+$lang['entry_node_organize'] = 'Node Organize Level';
+$lang['entry_node_add_organize'] = 'Add new organize?';
+$lang['entry_node_status'] = 'Node status';
+$lang['entry_node_status_enable'] = 'Enable';
+$lang['entry_node_status_disable'] = 'Disable';
+$lang['entry_organize_name'] = 'Organize name';
+$lang['entry_organize_desc'] = 'Organize description';
+$lang['entry_organize_status'] = 'Organize status';
+$lang['entry_organize_parent'] = 'Organize parent';
 //// Text
 //$lang['text_success'] = 'You have successfully created!';
 //$lang['text_success_delete'] = 'You have successfully deleted!';

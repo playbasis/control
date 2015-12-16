@@ -1,14 +1,18 @@
 var $formOrganizeModal = $('#formOrganizeModal'),
+    $formNodeModal = $('#formNodeModal'),
     $waitDialog = $('#pleaseWaitDialog'),
     $savedDialog = $('#savedDialog'),
     $storeOrganizeTable = $('#storeOrganizeTable'),
     $storeOrganizeToolbarRemove = $('#storeOrganizeToolbar').find('#remove'),
-    storeOrganizeSelections = [];
+    storeOrganizeSelections = [],
+    $storeNodeTable = $('#storeNodeTable'),
+    $storeNodeToolbarRemove = $('#storeNodeToolbar').find('#remove'),
+    storeNodeSelections = [];
 
 function init_input_general_tab() {
     // store tab
-    $("[name='store-status']").bootstrapSwitch();
-    $("#store-organize").select2({
+    $("[name='node-status']").bootstrapSwitch();
+    $("#node-organize").select2({
         placeholder: "Search for a organize",
         allowClear: true,
         minimumInputLength: 0,
@@ -91,6 +95,73 @@ function organizeFormatResult(organize) {
 
 function organizeFormatSelection(organize) {
     return organize.name;
+}
+
+function initStoreNodeTable() {
+    $storeNodeTable.bootstrapTable({
+        height: getHeight(),
+        columns: [
+            {
+                field: 'state',
+                checkbox: true,
+                align: 'center',
+                valign: 'middle'
+            }, {
+                title: 'Node Name',
+                field: 'name',
+                align: 'center',
+                valign: 'middle',
+                sortable: true
+            }, {
+                title: 'Status',
+                field: 'status',
+                align: 'center',
+                valign: 'middle',
+                sortable: true
+            }, {
+                field: 'operate',
+                title: 'Item Operate',
+                align: 'center',
+                events: operateEvents,
+                formatter: operateFormatter
+            }
+        ]
+    });
+    // sometimes footer render error.
+    setTimeout(function () {
+        $storeNodeTable.bootstrapTable('resetView');
+    }, 200);
+    $storeNodeTable.on('check.bs.table uncheck.bs.table ' +
+        'check-all.bs.table uncheck-all.bs.table', function () {
+        $storeOrganizeToolbarRemove.prop('disabled', !$storeOrganizeTable.bootstrapTable('getSelections').length);
+        // save your data, here just save the current page
+        storeOrganizeSelections = getIdSelections();
+        // push or splice the selections if you want to save all data selections
+    });
+    //$storeOrganizeTable.on('expand-row.bs.table', function (e, index, row, $detail) {
+    //    if (index % 2 == 1) {
+    //        $detail.html('Loading from ajax request...');
+    //        $.get('LICENSE', function (res) {
+    //            $detail.html(res.replace(/\n/g, '<br>'));
+    //        });
+    //    }
+    //});
+    //$storeOrganizeTable.on('all.bs.table', function (e, name, args) {
+    //    console.log(name, args);
+    //});
+    $storeNodeToolbarRemove.click(function () {
+        var ids = getIdSelections();
+        $storeOrganizeTable.bootstrapTable('remove', {
+            field: 'id',
+            values: ids
+        });
+        $storeOrganizeToolbarRemove.prop('disabled', true);
+    });
+    $(window).resize(function () {
+        $storeOrganizeTable.bootstrapTable('resetView', {
+            height: getHeight()
+        });
+    });
 }
 
 function initStoreOrganizeTable() {
@@ -249,12 +320,15 @@ function submitOrganizeModalForm() {
 $(function () {
     init_input_general_tab();
     initStoreOrganizeTable();
+    initStoreNodeTable();
 });
 
 $('#page-render')
     .on('click', 'button#store-organize-modal-submit', submitOrganizeModalForm)
     .on('click','#addNewParentLink',function () {
         $('#mainTab').find('a[href="#storeOrganizeTabContent"]').tab('show');
+        $formNodeModal.modal('hide');
+        $formOrganizeModal.modal('show');
     });
 
 $("[data-toggle]").filter("[href='#formOrganizeModal'],[data-target='#formOrganizeModal']")
