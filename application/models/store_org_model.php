@@ -193,6 +193,20 @@ class Store_org_model extends MY_Model
         return $this->mongo_db->update('playbasis_store_organize_to_client');
     }
 
+    public function deleteNodeByIdArray($id_array)
+    {
+        if (!empty($id_array)) {
+            $this->mongo_db->where_in('_id', $id_array);
+            $this->mongo_db->set('deleted', true);
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update_all('playbasis_store_organize_to_client');
+
+        return $update;
+    }
+
     public function createOrganize($client_id, $site_id, $name, $description = null, $parent = null, $status = true)
     {
         $this->load->helper('url');
@@ -332,5 +346,19 @@ class Store_org_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($organizeId));
         $this->mongo_db->set('deleted', true);
         return $this->mongo_db->update('playbasis_store_organize');
+    }
+
+    public function deleteOrganizeByIdArray($id_array)
+    {
+        if (!empty($id_array)) {
+            $this->mongo_db->where_in('_id', $id_array);
+            $this->mongo_db->set('deleted', true);
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update_all('playbasis_store_organize');
+
+        return $update;
     }
 }

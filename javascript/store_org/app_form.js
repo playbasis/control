@@ -218,10 +218,21 @@ function initStoreNodeTable() {
     $storeNodeToolbarRemove.click(function () {
         var ids = getNodeIdSelections();
         console.log("id selected" , ids);
-        $storeNodeTable.bootstrapTable('remove', {
-            field: '_id',
-            values: ids
-        });
+        $.ajax({
+                type: "POST",
+                url: baseUrlPath + 'store_org/node/',
+                data: {'id': ids, 'action': "delete"}
+            })
+            .done(function (msg) {
+                //console.log("Entry removed: " + JSON.parse(msg).status);
+                $storeNodeTable.bootstrapTable('remove', {
+                    field: '_id',
+                    values: ids
+                });
+            })
+            .fail(function () {
+                console.log("Error!");
+            });
         $storeNodeToolbarRemove.prop('disabled', true);
     });
     $(window).resize(function () {
@@ -275,10 +286,21 @@ function initStoreOrganizeTable() {
     $storeOrganizeToolbarRemove.click(function () {
         var ids = getOrganizeIdSelections();
         console.log("id selected" , ids);
-        $storeOrganizeTable.bootstrapTable('remove', {
-            field: '_id',
-            values: ids
-        });
+        $.ajax({
+                type: "POST",
+                url: baseUrlPath + 'store_org/organize/',
+                data: {'id': ids, 'action': "delete"}
+            })
+            .done(function (msg) {
+                //console.log("Entry removed: " + JSON.parse(msg).status);
+                $storeOrganizeTable.bootstrapTable('remove', {
+                    field: '_id',
+                    values: ids
+                });
+            })
+            .fail(function () {
+                console.log("Error!");
+            });
         $storeOrganizeToolbarRemove.prop('disabled', true);
     });
     $(window).resize(function () {

@@ -117,8 +117,12 @@ class Store_org extends MY_Controller
 
                 $result = null;
                 if (!empty($organize_data) && !isset($organizeId)) {
-                    $result = $this->Store_org_model->createOrganize($client_id, $site_id, $name, $desc, $parent,
-                        $status);
+                    if (isset($organize_data['action']) && $organize_data['action'] == 'delete' && isset($organize_data['id'])) {
+                        $result = $this->Store_org_model->deleteOrganizeByIdArray($organize_data['id']);
+                    } else {
+                        $result = $this->Store_org_model->createOrganize($client_id, $site_id, $name, $desc, $parent,
+                            $status);
+                    }
                 } else {
                     if (MongoId::isValid($organizeId)) {
                         if(isset($organize_data['action']) && $organize_data['action'] == 'delete' ){
@@ -230,8 +234,12 @@ class Store_org extends MY_Controller
 
                 $result = null;
                 if (!empty($node_data) && !isset($nodeId)) {
-                    $result = $this->Store_org_model->createNode($client_id, $site_id, $name, $storeId, $desc,
-                        $organize, $parent, $status);
+                    if (isset($node_data['action']) && $node_data['action'] == 'delete' && isset($node_data['id'])) {
+                        $result = $this->Store_org_model->deleteNodeByIdArray($node_data['id']);
+                    } else {
+                        $result = $this->Store_org_model->createNode($client_id, $site_id, $name, $storeId, $desc,
+                            $organize, $parent, $status);
+                    }
                 } else {
                     if (MongoId::isValid($nodeId)) {
                         if(isset($node_data['action']) && $node_data['action'] == 'delete' ){
