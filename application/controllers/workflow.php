@@ -237,11 +237,19 @@ class Workflow extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title_edit');
         $this->data['form'] = 'workflow/edit_account/'.$user_id;
+        $this->data['action'] = 'edit';
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            $this->Player_model->editPlayer($user_id,$_POST);
-            $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
-            redirect('/workflow', 'refresh');
+            $data = $this->input->post();
+            $status = $this->Workflow_model->editPlayer($data['cl_player_id'],$data);
+
+            if($status->success) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
+                //redirect($this->session->userdata('previous_page'), 'refresh');
+                redirect('/workflow', 'refresh');
+            }else{
+                $this->data['message'] = $status->message;
+            }
         }
         $this->getForm($user_id);
     }
@@ -251,36 +259,24 @@ class Workflow extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title_create');
         $this->data['form'] = 'workflow/create_account/';
+        $this->data['action'] = 'create';
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $data = $this->input->post();
-            $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(), $this->User_model->getSiteId());
-            $this->_api = $this->playbasisapi;
+            if($data['password']!=$data['confirm_password']){
+                $this->data['message'] = $this->lang->line('text_fail_confirm_password');
+            }else{
+                $status = $this->Workflow_model->createPlayer($data);
 
-            $platforms = $this->App_model->getPlatFormByAppId(array(
-                'site_id' => $this->User_model->getSiteId(),
-            ));
-            $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
-            if (!$platform) {
-                if ($this->input->post('format') == 'json') {
-                    echo json_encode(array('status' => 'fail', 'message' => 'Cannot find any active platform'));
-                    exit();
+                if($status->success) {
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_create'));
+                    //redirect($this->session->userdata('previous_page'), 'refresh');
+                    redirect('/workflow', 'refresh');
+                }else{
+                    $this->data['message'] = $status->message;
                 }
             }
-            $this->_api->set_api_key($result['api_key']);
-            $this->_api->set_api_secret($result['api_secret']);
-            $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
-            $this->_api->auth($pkg_name);
 
-            $status = $this->_api->register($data['cl_player_id'], $data['username'], $data['email'], $data);
-
-            if($status->success) {
-                $this->session->set_flashdata('success', $this->lang->line('text_success_create'));
-                //redirect($this->session->userdata('previous_page'), 'refresh');
-                redirect('/workflow', 'refresh');
-            }else{
-                $this->data['message'] = $status->message;
-            }
         }
 
         $this->getForm();
@@ -294,7 +290,7 @@ class Workflow extends MY_Controller
         }elseif($user_id !=0){
             $this->data['requester'] = $this->Player_model->getPlayerById($user_id);
         }else{
-            $this->data['requester'] = array('approve_status'=>'approved');
+            $this->data['requester'] = array('approve_status'=>'approved','gender'=>'male');
         }
 
         $this->data['main'] = 'workflow_form';

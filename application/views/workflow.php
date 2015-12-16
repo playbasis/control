@@ -25,8 +25,9 @@
                 <a href="<?php echo site_url('workflow/rejected');?>" <?php if ($tab_status == "rejected") { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_rejected'); ?></a>
                 <a href="<?php echo site_url('workflow/pending');?>"  <?php if ($tab_status == "pending")  { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_pending'); ?>
                     <?php if ($pending_count) { ?>
-                    <span class="badge badge-important"><?php echo $pending_count; ?></span></a>
+                    <span class="badge badge-important"><?php echo $pending_count; ?></span>
                     <?php } ?>
+                </a>
             </div>
 
             <?php if($this->session->flashdata('success')){ ?>
@@ -78,7 +79,13 @@
                     <?php } ?>
                 <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="9"><?php echo $this->lang->line('text_no_results'); ?></td>
+                        <?php if ($tab_status == "approved") { ?>
+                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_approved_results'); ?></td>
+                        <?php } elseif($tab_status == "rejected"){?>
+                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_rejected_results'); ?></td>
+                        <?php }else{?>
+                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_pending_request'); ?></td>
+                        <?php }?>
                     </tr>
                 <?php } ?>
                 </tbody>
