@@ -49,6 +49,11 @@ class PlaybasisApi{
         return $result;
     }
 
+    public function updatePlayer($player_id, $Params=array()){
+        $result = $this->_post('Player/'.$player_id.'/update/', $Params);
+        return $result;
+    }
+
     public function engine($player_id, $action, $optionalParams=array()){
         $result = $this->_post('Engine/rule', array_merge(array(
             'player_id' => $player_id,
