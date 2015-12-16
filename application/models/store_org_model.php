@@ -12,7 +12,8 @@ class Store_org_model extends MY_Model
         $organize = null,
         $parent = null,
         $status = true
-    ) {
+    )
+    {
         $this->load->helper('url');
 
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -196,6 +197,7 @@ class Store_org_model extends MY_Model
     public function deleteNodeByIdArray($id_array)
     {
         if (!empty($id_array)) {
+            array_walk($id_array, array($this, "makeMongoIdObj"));
             $this->mongo_db->where_in('_id', $id_array);
             $this->mongo_db->set('deleted', true);
         }
@@ -351,6 +353,7 @@ class Store_org_model extends MY_Model
     public function deleteOrganizeByIdArray($id_array)
     {
         if (!empty($id_array)) {
+            array_walk($id_array, array($this, 'makeMongoIdObj'));
             $this->mongo_db->where_in('_id', $id_array);
             $this->mongo_db->set('deleted', true);
         }
@@ -360,5 +363,10 @@ class Store_org_model extends MY_Model
         $update = $this->mongo_db->update_all('playbasis_store_organize');
 
         return $update;
+    }
+
+    function makeMongoIdObj(&$value)
+    {
+        $value = new MongoId($value);
     }
 }

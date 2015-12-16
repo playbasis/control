@@ -110,14 +110,21 @@ class Store_org extends MY_Controller
                 //todo: Add validation here
                 $organize_data = $this->input->post();
 
-                $name = $organize_data['store-organize-name'];
-                $desc = $organize_data['store-organize-desc'];
+                $name = !empty($organize_data['store-organize-name']) ? $organize_data['store-organize-name'] : null;
+                $desc = !empty($organize_data['store-organize-desc']) ? $organize_data['store-organize-desc'] : null;
                 $parent = !empty($organize_data['store-organize-parent']) ? $organize_data['store-organize-parent'] : null;
                 $status = isset($organize_data['store-organize-status']) && $organize_data['store-organize-status'] == 'on' ? true : false;
 
                 $result = null;
                 if (!empty($organize_data) && !isset($organizeId)) {
-                    if (isset($organize_data['action']) && $organize_data['action'] == 'delete' && isset($organize_data['id'])) {
+                    if (isset($organize_data['action']) && $organize_data['action'] == 'delete' && isset($organize_data['id']) && !empty($organize_data['id'])) {
+                        foreach ($organize_data['id'] as &$id_entry) {
+                            if(!MongoId::isValid($id_entry)){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'error'));
+                                die;
+                            }
+                        }
                         $result = $this->Store_org_model->deleteOrganizeByIdArray($organize_data['id']);
                     } else {
                         $result = $this->Store_org_model->createOrganize($client_id, $site_id, $name, $desc, $parent,
@@ -143,7 +150,7 @@ class Store_org extends MY_Controller
                 if (!$result) {
                     $this->output->set_status_header('400');
                     echo json_encode(array('status' => 'error'));
-                } elseif (!isset($organizeId)) {
+                } elseif (!isset($organizeId) && !isset($organize_data['action'])) {
                     $this->output->set_status_header('201');
                     // todo: should return newly create object
                     echo json_encode(array('status' => 'success', 'rows' => $result));
@@ -234,7 +241,14 @@ class Store_org extends MY_Controller
 
                 $result = null;
                 if (!empty($node_data) && !isset($nodeId)) {
-                    if (isset($node_data['action']) && $node_data['action'] == 'delete' && isset($node_data['id'])) {
+                    if (isset($node_data['action']) && $node_data['action'] == 'delete' && isset($node_data['id']) && !empty($node_data['id'])) {
+                        foreach ($node_data['id'] as &$id_entry) {
+                            if(!MongoId::isValid($id_entry)){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'error'));
+                                die;
+                            }
+                        }
                         $result = $this->Store_org_model->deleteNodeByIdArray($node_data['id']);
                     } else {
                         $result = $this->Store_org_model->createNode($client_id, $site_id, $name, $storeId, $desc,
@@ -262,7 +276,7 @@ class Store_org extends MY_Controller
                 if (!$result) {
                     $this->output->set_status_header('400');
                     echo json_encode(array('status' => 'error'));
-                } elseif (!isset($nodeId)) {
+                } elseif (!isset($nodeId) && !isset($node_data['action'])) {
                     $this->output->set_status_header('201');
                     // todo: should return newly create object
                     echo json_encode(array('status' => 'success', 'rows' => $result));
