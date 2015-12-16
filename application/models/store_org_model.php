@@ -3,8 +3,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Store_org_model extends MY_Model
 {
-    public function createNode($client_id, $site_id, $name, $store_id = null, $description = null, $organize = null, $parent = null, $status = true)
-    {
+    public function createNode(
+        $client_id,
+        $site_id,
+        $name,
+        $store_id = null,
+        $description = null,
+        $organize = null,
+        $parent = null,
+        $status = true
+    ) {
         $this->load->helper('url');
 
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -63,7 +71,7 @@ class Store_org_model extends MY_Model
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
-            if (MongoId::isValid($optionalParams['id'])){
+            if (MongoId::isValid($optionalParams['id'])) {
                 $id = new MongoId($optionalParams['id']);
                 $this->mongo_db->where('_id', $id);
             }
@@ -118,6 +126,64 @@ class Store_org_model extends MY_Model
         }
     }
 
+    public function updateNodeById($nodeId, $updateData)
+    {
+        $parent_data = null;
+        if (isset($updateData['parent'])) {
+            $parent_result = $this->retrieveNodeById(new MongoId($updateData['parent']));
+            if (isset($parent_result)) {
+                $parent_data = array(
+                    '_id' => $parent_result['_id'],
+                    'name' => $parent_result['name']
+                );
+            }
+        }
+
+        $organize_data = null;
+        if (isset($updateData['organize'])) {
+            $organize_result = $this->retrieveOrganizeById(new MongoId($updateData['organize']));
+            if (isset($organize_result)) {
+                $organize_data = array(
+                    '_id' => $organize_result['_id'],
+                    'name' => $organize_result['name']
+                );
+            }
+        }
+
+        if (isset($parent_data)) {
+            $this->mongo_db->set('parent', $parent_data);
+        } else {
+            $this->mongo_db->unset_field('parent');
+        }
+
+        if (isset($organize_data)) {
+            $this->mongo_db->set('organize', $organize_data);
+        } else {
+            $this->mongo_db->unset_field('organize');
+        }
+
+        if (isset($updateData['store_id'])) {
+            $this->mongo_db->set('store_id', $updateData['store_id']);
+        } else {
+            $this->mongo_db->unset_field('store_id');
+        }
+
+        $this->mongo_db->where('_id', new MongoID($nodeId));
+        $this->mongo_db->where('client_id', $updateData['client_id']);
+        $this->mongo_db->where('site_id', $updateData['site_id']);
+
+        $this->mongo_db->set('name', $updateData['name']);
+        $this->mongo_db->set('description', $updateData['description']);
+
+        $this->mongo_db->set('status', $updateData['status']);
+        $this->mongo_db->set('slug', url_title($updateData['name'], 'dash', true));
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_store_organize_to_client');
+
+        return $update;
+    }
+
     public function createOrganize($client_id, $site_id, $name, $description = null, $parent = null, $status = true)
     {
         $this->load->helper('url');
@@ -163,7 +229,7 @@ class Store_org_model extends MY_Model
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
-            if (MongoId::isValid($optionalParams['id'])){
+            if (MongoId::isValid($optionalParams['id'])) {
                 $id = new MongoId($optionalParams['id']);
                 $this->mongo_db->where('_id', $id);
             }
@@ -218,7 +284,7 @@ class Store_org_model extends MY_Model
         }
     }
 
-    public function updateOrganizeById($organizeId,$updateData)
+    public function updateOrganizeById($organizeId, $updateData)
     {
         $parent_data = null;
         if (isset($updateData['parent'])) {

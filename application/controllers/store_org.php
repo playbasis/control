@@ -61,17 +61,17 @@ class Store_org extends MY_Controller
                     die();
                 }
 
-                if(isset($organizeId)){
+                if (isset($organizeId)) {
                     if (MongoId::isValid($organizeId)) {
                         $result = $this->Store_org_model->retrieveOrganize($client_id, $site_id, ['id' => $organizeId]);
 
                         $this->output->set_status_header('200');
                         $response = $result;
-                    }else{
+                    } else {
                         $this->output->set_status_header('404');
                         $response = array('status' => 'error', 'message' => $this->lang->line('error_no_contents'));
                     }
-                }else{
+                } else {
                     $query_data = $this->input->get(null, true);
 
                     $result = $this->Store_org_model->retrieveOrganize($client_id, $site_id, $query_data);
@@ -104,9 +104,10 @@ class Store_org extends MY_Controller
 
                 $result = null;
                 if (!empty($organize_data) && !isset($organizeId)) {
-                    $result = $this->Store_org_model->createOrganize($client_id, $site_id, $name, $desc, $parent, $status);
-                }else{
-                    if(MongoId::isValid($organizeId)){
+                    $result = $this->Store_org_model->createOrganize($client_id, $site_id, $name, $desc, $parent,
+                        $status);
+                } else {
+                    if (MongoId::isValid($organizeId)) {
                         $result = $this->Store_org_model->updateOrganizeById($organizeId, array(
                             'client_id' => $client_id,
                             'site_id' => $site_id,
@@ -147,17 +148,17 @@ class Store_org extends MY_Controller
                     die();
                 }
 
-                if(isset($nodeId)){
+                if (isset($nodeId)) {
                     if (MongoId::isValid($nodeId)) {
                         $result = $this->Store_org_model->retrieveNode($client_id, $site_id, ['id' => $nodeId]);
 
                         $this->output->set_status_header('200');
                         $response = $result;
-                    }else{
+                    } else {
                         $this->output->set_status_header('404');
                         $response = array('status' => 'error', 'message' => $this->lang->line('error_no_contents'));
                     }
-                }else{
+                } else {
                     $query_data = $this->input->get(null, true);
 
                     $result = $this->Store_org_model->retrieveNode($client_id, $site_id, $query_data);
@@ -193,8 +194,8 @@ class Store_org extends MY_Controller
                 if (!empty($node_data) && !isset($nodeId)) {
                     $result = $this->Store_org_model->createNode($client_id, $site_id, $name, $storeId, $desc,
                         $organize, $parent, $status);
-                }else{
-                    if(MongoId::isValid($nodeId)){
+                } else {
+                    if (MongoId::isValid($nodeId)) {
                         $result = $this->Store_org_model->updateNodeById($nodeId, array(
                             'client_id' => $client_id,
                             'site_id' => $site_id,
@@ -202,6 +203,7 @@ class Store_org extends MY_Controller
                             'description' => $desc,
                             'storeId' => $storeId,
                             'organize' => $organize,
+                            'parent' => $parent,
                             'status' => $status
                         ));
                     }

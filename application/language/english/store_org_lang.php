@@ -10,7 +10,7 @@ $lang['column_action'] = "Action";
 // Button
 $lang['button_filter'] = 'Filter';
 $lang['button_clear_filter'] = 'Clear filter';
-
+$lang['button_home'] = 'Back to main';
 // Tab
 $lang['tab_node'] = 'Node';
 $lang['tab_organize'] = 'Organize';

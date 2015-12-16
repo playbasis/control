@@ -5,7 +5,8 @@
 
             <div class="buttons">
                 <a class="btn btn-info"
-                   onclick="location = baseUrlPath+'store_org'"><?php echo $this->lang->line('button_close'); ?></a>
+                   onclick="location = baseUrlPath"><i
+                        class="fa fa-home"></i>&nbsp;<?php echo $this->lang->line('button_home'); ?></a>
             </div>
         </div>
         <div class="content">
@@ -64,8 +65,8 @@
                                        data-page-list="[10, 25, 50, 100, ALL]"
                                        data-show-footer="false"
                                        data-side-pagination="server"
-                                       data-url="<?php echo site_url();?>/store_org/node/"
-                                       data-response-handler="responseHandler">
+                                       data-url="<?php echo site_url(); ?>/store_org/node/"
+                                       data-response-handler="nodeResponseHandler">
                                 </table>
                             </div>
                         </div>
@@ -77,8 +78,9 @@
                                     <button id="remove" class="btn btn-danger" disabled>
                                         <i class="fa fa-remove"></i> Delete
                                     </button>
-                                    <a href="#formOrganizeModal" id="add" role="button" class="btn btn-info add-organize"
-                                       data-toggle="modal"><i class="fa fa-plus"></i> Add</a>
+                                    <a href="#formOrganizeModal" id="add" role="button"
+                                       class="btn btn-info add-organize" data-toggle="modal"><i class="fa fa-plus"></i>
+                                        Add</a>
                                 </div>
                                 <table id="storeOrganizeTable"
                                        data-toolbar="#storeOrganizeToolbar"
@@ -93,8 +95,8 @@
                                        data-page-list="[10, 25, 50, 100, ALL]"
                                        data-show-footer="false"
                                        data-side-pagination="server"
-                                       data-url="<?php echo site_url();?>/store_org/organize/"
-                                       data-response-handler="responseHandler">
+                                       data-url="<?php echo site_url(); ?>/store_org/organize/"
+                                       data-response-handler="organizeResponseHandler">
                                 </table>
                             </div>
                         </div>
@@ -108,7 +110,8 @@
     </div>
 </div>
 
-<div id="formNodeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formNodeModalLabel" aria-hidden="true">
+<div id="formNodeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formNodeModalLabel"
+     aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="formNodeModalLabel">Node</h3>
@@ -118,6 +121,7 @@
             <form class="form-horizontal node-form">
                 <div class="row-fluid">
                     <input type="hidden" name="node-id" id="node-id">
+
                     <div class="control-group">
                         <label for="node-name"
                                class="control-label"><?php echo $this->lang->line('entry_node_name'); ?></label>
@@ -127,7 +131,7 @@
                                    placeholder="<?php echo $this->lang->line('entry_node_name'); ?>">
                         </div>
                     </div>
-                    <div class="control-group hide fade">
+                    <div class="control-group hide" id="node-store-id-control-group">
                         <label for="node-store-id"
                                class="control-label"><?php echo $this->lang->line('entry_node_store_id'); ?></label>
 
@@ -151,7 +155,10 @@
 
                         <div class="controls">
                             <p><input type='hidden' name="node-organize" id="node-organize" style="width:80%;"></p>
-                            <p><a href="#storeOrganizeTabContent" data-toggle="tab" data-dismiss="modal" id="addNewParentLink" ><?php echo $this->lang->line('entry_node_add_organize'); ?></a></p>
+
+                            <p><a href="#storeOrganizeTabContent" data-toggle="tab" data-dismiss="modal"
+                                  id="addNewParentLink"><?php echo $this->lang->line('entry_node_add_organize'); ?></a>
+                            </p>
                         </div>
                     </div>
                     <div class="control-group">
@@ -181,7 +188,8 @@
     </div>
 </div>
 
-<div id="formOrganizeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formOrganizeModalLabel" aria-hidden="true">
+<div id="formOrganizeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formOrganizeModalLabel"
+     aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="formOrganizeModalLabel">Organize</h3>
@@ -191,6 +199,7 @@
             <form class="form-horizontal store-organize-form">
                 <div class="row-fluid">
                     <input type="hidden" name="store-organize-id" id="store-organize-id">
+
                     <div class="control-group">
                         <label for="store-organize-name"
                                class="control-label"><?php echo $this->lang->line('entry_organize_name'); ?></label>
@@ -214,7 +223,8 @@
                                class="control-label"><?php echo $this->lang->line('entry_organize_parent'); ?></label>
 
                         <div class="controls">
-                            <input type='hidden' name="store-organize-parent" id="store-organize-parent" style="width:80%;">
+                            <input type='hidden' name="store-organize-parent" id="store-organize-parent"
+                                   style="width:80%;">
                         </div>
                     </div>
                     <div class="control-group">
@@ -272,6 +282,6 @@
 <!--<script src="--><?php //echo base_url(); ?><!--javascript/bootstrap/bootstrap-editable/js/bootstrap-editable.min.js" type="text/javascript"></script>-->
 <!--<script src="--><?php //echo base_url(); ?><!--javascript/custom/bootstrap-table-editable.min.js" type="text/javascript"></script>-->
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>javascript/md5.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>javascript/mongoid.js" type="text/javascript"></script>
+<!--<script src="--><?php //echo base_url(); ?><!--javascript/md5.js" type="text/javascript"></script>-->
+<!--<script src="--><?php //echo base_url(); ?><!--javascript/mongoid.js" type="text/javascript"></script>-->
 <script src="<?php echo base_url(); ?>javascript/store_org/app_form.js" type="text/javascript"></script>

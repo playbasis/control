@@ -18,7 +18,7 @@ function initNodeTabInputs() {
         id: function (data) {
             return data._id.$id;
         },
-        ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+        ajax: {
             url: baseUrlPath + "store_org/organize/",
             dataType: 'json',
             quietMillis: 250,
@@ -27,14 +27,28 @@ function initNodeTabInputs() {
                     search: term, // search term
                 };
             },
-            results: function (data, page) { // parse the results into the format expected by Select2.
-                // since we are using custom formatting functions we do not need to alter the remote JSON data
+            results: function (data, page) {
                 return {results: data.rows};
             },
             cache: true
         },
-        formatResult: organizeFormatResult, // omitted for brevity, see the source of this page
-        formatSelection: organizeFormatSelection,  // omitted for brevity, see the source of this page
+        initSelection: function (element, callback) {
+            var id = $(element).val();
+            if (id !== "") {
+                $.ajax(baseUrlPath + "store_org/organize/" + id, {
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $waitDialog.modal('show');
+                    }
+                }).done(function (data) {
+                    $waitDialog.modal('hide');
+                    if (data.length > 0)
+                        callback(data[0]);
+                });
+            }
+        },
+        formatResult: organizeFormatResult,
+        formatSelection: organizeFormatSelection,
     });
     $("#node-parent").select2({
         placeholder: "Search for a parent",
@@ -43,7 +57,7 @@ function initNodeTabInputs() {
         id: function (data) {
             return data._id.$id;
         },
-        ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+        ajax: {
             url: baseUrlPath + "store_org/node/",
             dataType: 'json',
             quietMillis: 250,
@@ -52,14 +66,28 @@ function initNodeTabInputs() {
                     search: term, // search term
                 };
             },
-            results: function (data, page) { // parse the results into the format expected by Select2.
-                // since we are using custom formatting functions we do not need to alter the remote JSON data
+            results: function (data, page) {
                 return {results: data.rows};
             },
             cache: true
         },
-        formatResult: nodeFormatResult, // omitted for brevity, see the source of this page
-        formatSelection: nodeFormatSelection,  // omitted for brevity, see the source of this page
+        initSelection: function (element, callback) {
+            var id = $(element).val();
+            if (id !== "") {
+                $.ajax(baseUrlPath + "store_org/node/" + id, {
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $waitDialog.modal('show');
+                    }
+                }).done(function (data) {
+                    $waitDialog.modal('hide');
+                    if (data.length > 0)
+                        callback(data[0]);
+                });
+            }
+        },
+        formatResult: nodeFormatResult,
+        formatSelection: nodeFormatSelection,
     });
 }
 function initOrganizeTabInputs() {
@@ -71,7 +99,7 @@ function initOrganizeTabInputs() {
         id: function (data) {
             return data._id.$id;
         },
-        ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+        ajax: {
             url: baseUrlPath + "store_org/organize/",
             dataType: 'json',
             quietMillis: 250,
@@ -80,28 +108,28 @@ function initOrganizeTabInputs() {
                     search: term, // search term
                 };
             },
-            results: function (data, page) { // parse the results into the format expected by Select2.
-                // since we are using custom formatting functions we do not need to alter the remote JSON data
+            results: function (data, page) {
                 return {results: data.rows};
             },
             cache: true
         },
         initSelection: function (element, callback) {
-            // the input tag has a value attribute preloaded that points to a preselected repository's id
-            // this function resolves that id attribute to an object that select2 can render
-            // using its formatResult renderer - that way the repository name is shown preselected
             var id = $(element).val();
             if (id !== "") {
                 $.ajax(baseUrlPath + "store_org/organize/" + id, {
-                    dataType: "json"
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $waitDialog.modal('show');
+                    }
                 }).done(function (data) {
+                    $waitDialog.modal('hide');
                     if (data.length > 0)
                         callback(data[0]);
                 });
             }
         },
-        formatResult: organizeFormatResult, // omitted for brevity, see the source of this page
-        formatSelection: organizeFormatSelection,  // omitted for brevity, see the source of this page
+        formatResult: organizeFormatResult,
+        formatSelection: organizeFormatSelection,
     });
 }
 function initPageInputs() {
@@ -109,9 +137,19 @@ function initPageInputs() {
     initOrganizeTabInputs();
 }
 
-function resetOrganizeModalForm(){
-    $('form.store-organize-form').trigger("reset");
-    $("#store-organize-parent").select2('val',"");
+function resetOrganizeModalForm() {
+    var $storeOrganizeForm = $('form.store-organize-form');
+    $storeOrganizeForm.trigger("reset");
+    $storeOrganizeForm.find('store-organize-id').val('');
+    $("#store-organize-parent").select2('val', "");
+}
+
+function resetNodeModalForm() {
+    var $nodeForm = $('form.node-form');
+    $nodeForm.trigger("reset");
+    $nodeForm.find('node-id').val('');
+    $("#node-organize").select2('val', "");
+    $("#node-parent").select2('val', "");
 }
 
 function nodeFormatResult(node) {
@@ -162,7 +200,7 @@ function initStoreNodeTable() {
                 title: 'Item Operate',
                 align: 'center',
                 events: operateEvents,
-                formatter: operateFormatter
+                formatter: operateNodeFormatter
             }
         ]
     });
@@ -177,17 +215,6 @@ function initStoreNodeTable() {
         storeOrganizeSelections = getIdSelections();
         // push or splice the selections if you want to save all data selections
     });
-    //$storeOrganizeTable.on('expand-row.bs.table', function (e, index, row, $detail) {
-    //    if (index % 2 == 1) {
-    //        $detail.html('Loading from ajax request...');
-    //        $.get('LICENSE', function (res) {
-    //            $detail.html(res.replace(/\n/g, '<br>'));
-    //        });
-    //    }
-    //});
-    //$storeOrganizeTable.on('all.bs.table', function (e, name, args) {
-    //    console.log(name, args);
-    //});
     $storeNodeToolbarRemove.click(function () {
         var ids = getIdSelections();
         $storeOrganizeTable.bootstrapTable('remove', {
@@ -229,7 +256,7 @@ function initStoreOrganizeTable() {
                 title: 'Item Operate',
                 align: 'center',
                 events: operateEvents,
-                formatter: operateFormatter
+                formatter: operateOrganizeFormatter
             }
         ]
     });
@@ -244,17 +271,6 @@ function initStoreOrganizeTable() {
         storeOrganizeSelections = getIdSelections();
         // push or splice the selections if you want to save all data selections
     });
-    //$storeOrganizeTable.on('expand-row.bs.table', function (e, index, row, $detail) {
-    //    if (index % 2 == 1) {
-    //        $detail.html('Loading from ajax request...');
-    //        $.get('LICENSE', function (res) {
-    //            $detail.html(res.replace(/\n/g, '<br>'));
-    //        });
-    //    }
-    //});
-    //$storeOrganizeTable.on('all.bs.table', function (e, name, args) {
-    //    console.log(name, args);
-    //});
     $storeOrganizeToolbarRemove.click(function () {
         var ids = getIdSelections();
         $storeOrganizeTable.bootstrapTable('remove', {
@@ -274,9 +290,15 @@ function getIdSelections() {
         return row.id
     });
 }
-function responseHandler(res) {
+function organizeResponseHandler(res) {
     $.each(res.rows, function (i, row) {
         row.state = $.inArray(row.id, storeOrganizeSelections) !== -1;
+    });
+    return res;
+}
+function nodeResponseHandler(res) {
+    $.each(res.rows, function (i, row) {
+        row.state = $.inArray(row.id, storeNodeSelections) !== -1;
     });
     return res;
 }
@@ -287,7 +309,7 @@ function detailFormatter(index, row) {
     });
     return html.join('');
 }
-function operateFormatter(value, row, index) {
+function operateOrganizeFormatter(value, row, index) {
     return [
         '<a class="edit-organize" title="Edit">',
         '<i class="fa fa-edit fa-2x"></i>',
@@ -297,7 +319,18 @@ function operateFormatter(value, row, index) {
         '</a>'
     ].join('');
 }
+function operateNodeFormatter(value, row, index) {
+    return [
+        '<a class="edit-node" title="Edit">',
+        '<i class="fa fa-edit fa-2x"></i>',
+        '</a>  ',
+        '<a class="remove" href="javascript:void(0)" title="Remove">',
+        '<i class="fa fa-remove fa-2x"></i>',
+        '</a>'
+    ].join('');
+}
 function editOrganizeModalForm(data) {
+    resetOrganizeModalForm();
     $('#formOrganizeModalLabel').html("Edit new Organize");
     $formOrganizeModal.find("#store-organize-id").val(data._id.$id);
     $formOrganizeModal.find("#store-organize-name").val(data.name);
@@ -311,10 +344,38 @@ function editOrganizeModalForm(data) {
     else
         $formOrganizeModal.find("#store-organize-status").prop('checked', false);
 }
+function editNodeModalForm(data) {
+    resetNodeModalForm();
+    $('#formNodeModalLabel').html("Edit new Node");
+    $formNodeModal.find("#node-id").val(data._id.$id);
+    $formNodeModal.find("#node-name").val(data.name);
+    $formNodeModal.find("#node-desc").val(data.description);
+    if (typeof data.store_id != "undefined") {
+        $formNodeModal.find("#node-store-id-control-group").removeClass('hide');
+        $formNodeModal.find("#node-store-id").val(data.store_id);
+    } else {
+        $formNodeModal.find("#node-store-id-control-group").addClass('hide');
+    }
+    if (typeof data.organize != "undefined") {
+        $("#node-organize").select2('val', data.organize._id.$id);
+    }
+    if (typeof data.parent != "undefined") {
+        $("#node-parent").select2('val', data.parent._id.$id);
+    }
+
+    if (data.status)
+        $formOrganizeModal.find("#store-organize-status").prop('checked', true);
+    else
+        $formOrganizeModal.find("#store-organize-status").prop('checked', false);
+}
 window.operateEvents = {
+    'click .edit-node': function (e, value, row, index) {
+        //console.log('You click edit action, row: ' + JSON.stringify(row));
+        editNodeModalForm(row);
+        $formNodeModal.modal('show');
+    },
     'click .edit-organize': function (e, value, row, index) {
         //console.log('You click edit action, row: ' + JSON.stringify(row));
-        resetOrganizeModalForm();
         editOrganizeModalForm(row);
         $formOrganizeModal.modal('show');
     },
@@ -392,16 +453,35 @@ $(function () {
 $('#page-render')
     .on('click', 'button#node-modal-submit', submitNodeModalForm)
     .on('click', 'button#store-organize-modal-submit', submitOrganizeModalForm)
-    .on('click','#addNewParentLink',function () {
+    .on('click', '#addNewParentLink', function () {
         $('#mainTab').find('a[href="#storeOrganizeTabContent"]').tab('show');
         $formNodeModal.modal('hide');
         $formOrganizeModal.modal('show');
     });
+//.on('click', $("[data-toggle]").filter("[href='#formOrganizeModal'],[data-target='#formOrganizeModal']"), function(){
+//    resetOrganizeModalForm();
+//    if($(this).hasClass('add-organize'))
+//        $('#formOrganizeModalLabel').html("Add new Organize");
+//})
+//.on('click', $("[data-toggle]").filter("[href='#formNodeModal'],[data-target='#formNodeModal']"), function(){
+//    resetNodeModalForm();
+//    if($(this).hasClass('add-node'))
+//        $('#formOrganizeModalLabel').html("Add new Node");
+//});
 
-$("[data-toggle]").filter("[href='#formOrganizeModal'],[data-target='#formOrganizeModal']")
+$("[data-toggle]")
+    .filter("[href='#formOrganizeModal'],[data-target='#formOrganizeModal']")
     .on('click', function (e) {
         //console.log($(this).hasClass('add-organize'));
         resetOrganizeModalForm();
-        if($(this).hasClass('add-organize'))
+        if ($(this).hasClass('add-organize'))
             $('#formOrganizeModalLabel').html("Add new Organize");
+    });
+$("[data-toggle]")
+    .filter("[href='#formNodeModal'],[data-target='#formNodeModal']")
+    .on('click', function (e) {
+        //console.log($(this).hasClass('add-organize'));
+        resetNodeModalForm();
+        if ($(this).hasClass('add-node'))
+            $('#formNodeModalLabel').html("Add new Node");
     });
