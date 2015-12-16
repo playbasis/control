@@ -296,6 +296,8 @@ class Store_org_model extends MY_Model
                 );
                 $this->mongo_db->set('parent', $parent_data);
             }
+        } else {
+            $this->mongo_db->unset_field('parent');
         }
 
         $this->mongo_db->where('_id', new MongoID($organizeId));
