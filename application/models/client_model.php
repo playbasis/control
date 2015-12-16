@@ -586,15 +586,22 @@ class Client_model extends MY_Model
         $this->mongo_db->delete_all("playbasis_action_to_client");
         if (isset($plan_data['action_to_plan'])) {
             $insert_data = array();
+            /* build $action_ids */
+            $action_ids = array();
+            foreach ($plan_data['action_to_plan'] as $action_id) {
+                $action_ids[] = $action_id;
+            }
+            /* find customActions as map $m */
+            $m = array();
+            $results = $this->findCustomActions($action_ids, $site_ids);
+            if ($results) foreach ($results as $result) {
+                $m[$result['site_id'].'-'.$result['action_id']] = true;
+            }
             foreach ($plan_data['action_to_plan'] as $action_id) {
                 $action_data = $this->getAction($action_id);
                 $action_id = new MongoID($action_id);
                 foreach ($l as $each) {
-                    $this->mongo_db->where('client_id', $each['client_id']);
-                    $this->mongo_db->where('site_id', $each['site_id']);
-                    $this->mongo_db->where('action_id', $action_id);
-                    $allClients = $this->mongo_db->get('playbasis_action_to_client');
-                    if (!$allClients) {
+                    if (!isset($m[$each['site_id'].'-'.$action_id])) {
                         $insert_data[] = array(
                             'action_id' => $action_id,
                             'client_id' => $each['client_id'],
@@ -647,6 +654,12 @@ class Client_model extends MY_Model
                 $this->mongo_db->batch_insert('playbasis_game_jigsaw_to_client', $insert_data, array("w" => 0, "j" => false));
             }
         }
+    }
+
+    private function findCustomActions($action_ids, $site_ids) {
+        $this->mongo_db->where_in('site_id', $site_ids);
+        $this->mongo_db->where_in('action_id', $action_ids);
+        return $this->mongo_db->get('playbasis_action_to_client');
     }
 
     //Once the client is deleted, the permissions are deleted too
