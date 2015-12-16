@@ -120,7 +120,7 @@
                                        data-page-list="[10, 25, 50, 100, ALL]"
                                        data-show-footer="false"
                                        data-side-pagination="server"
-                                       data-url="/store_org/organize/"
+                                       data-url="<?php echo site_url()?>/store_org/organize/"
                                        data-response-handler="responseHandler">
                                 </table>
                             </div>

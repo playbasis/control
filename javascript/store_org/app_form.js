@@ -16,7 +16,7 @@ function init_input_general_tab() {
             return data._id.$id;
         },
         ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-            url: "/store_org/organize/",
+            url: baseUrlPath + "store_org/organize/",
             dataType: 'json',
             quietMillis: 250,
             data: function (term, page) {
@@ -44,7 +44,7 @@ function init_input_general_tab() {
             return data._id.$id;
         },
         ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-            url: "/store_org/organize/",
+            url: baseUrlPath + "store_org/organize/",
             dataType: 'json',
             quietMillis: 250,
             data: function (term, page) {
@@ -64,7 +64,7 @@ function init_input_general_tab() {
             // using its formatResult renderer - that way the repository name is shown preselected
             var id = $(element).val();
             if (id !== "") {
-                $.ajax("/store_org/organize/" + id, {
+                $.ajax(baseUrlPath + "store_org/organize/" + id, {
                     dataType: "json"
                 }).done(function(data) {
                     if(data.length > 0)
@@ -225,8 +225,8 @@ $('#page-render').on('click', 'button#store-organize-modal-submit', function () 
     // todo: Add client validation here!
     $.ajax({
             type: "POST",
-            url: "/store_org/organize/",
-            data: $('form.store-organize-add').serialize(),
+            url: baseUrlPath + "store_org/organize/",
+            data: $('form.store-organize-form').serialize(),
             beforeSend: function (xhr) {
                 $formOrganizeModal.modal('hide');
                 $waitDialog.modal();
