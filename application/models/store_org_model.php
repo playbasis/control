@@ -77,6 +77,13 @@ class Store_org_model extends MY_Model
                 $this->mongo_db->where('_id', $id);
             }
         }
+        if (isset($optionalParams['organize']) && !is_null($optionalParams['organize'])) {
+            //make sure 'id' is valid before passing here
+            if (MongoId::isValid($optionalParams['organize'])) {
+                $organize = new MongoId($optionalParams['organize']);
+                $this->mongo_db->where('organize._id', $organize);
+            }
+        }
 
         // Sorting
         $sort_data = array('_id', 'name', 'status', 'description');

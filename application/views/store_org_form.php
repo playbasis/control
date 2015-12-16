@@ -214,8 +214,8 @@
                                class="control-label"><?php echo $this->lang->line('entry_organize_desc'); ?></label>
 
                         <div class="controls">
-                            <input type="text" name="store-organize-desc" id="store-organize-desc"
-                                   placeholder="<?php echo $this->lang->line('entry_organize_desc'); ?>">
+                            <textarea name="store-organize-desc" id="store-organize-desc" rows="5"
+                                      placeholder="<?php echo $this->lang->line('entry_organize_desc') ?>"></textarea>
                         </div>
                     </div>
                     <div class="control-group">

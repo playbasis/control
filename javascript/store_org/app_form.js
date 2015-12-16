@@ -64,6 +64,7 @@ function initNodeTabInputs() {
             data: function (term, page) {
                 return {
                     search: term, // search term
+                    organize: $("#node-organize").select2('val')
                 };
             },
             results: function (data, page) {
@@ -88,7 +89,7 @@ function initNodeTabInputs() {
         },
         formatResult: nodeFormatResult,
         formatSelection: nodeFormatSelection,
-    });
+    }).select2('enable',false);
 }
 function initOrganizeTabInputs() {
     $("[name='store-organize-status']").bootstrapSwitch();
@@ -543,4 +544,11 @@ $("[data-toggle]")
         resetNodeModalForm();
         if ($(this).hasClass('add-node'))
             $('#formNodeModalLabel').html("Add new Node");
+    });
+$("#node-organize")
+    .on("change", function (e) {
+        if(e.val === "")
+            $("#node-parent").select2("enable", false);
+        else
+            $("#node-parent").select2("enable", true);
     });
