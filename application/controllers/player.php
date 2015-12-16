@@ -368,6 +368,10 @@ class Player extends REST2_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
+		$approve_status = $this->input->post('approve_status');
+		if ($approve_status) {
+			$playerInfo['approve_status'] = $approve_status;
+		}
 		$referral_code = $this->input->post('code');
 		$anonymous = $this->input->post('anonymous');
 
@@ -564,9 +568,9 @@ class Player extends REST2_Controller
 		$instagramId = $this->input->post('instagram_id');
 		if($instagramId)
 			$playerInfo['instagram_id'] = $instagramId;
-		$password = do_hash($this->input->post('password'));
+		$password = $this->input->post('password');
 		if($password)
-			$playerInfo['password'] = $password;
+			$playerInfo['password'] = do_hash($password);
 		$gender = $this->input->post('gender');
 		if($gender)
 			$playerInfo['gender'] = intval($gender);
@@ -576,6 +580,10 @@ class Player extends REST2_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
+		$approve_status = $this->input->post('approve_status');
+		if ($approve_status)
+			$playerInfo['approve_status'] = $approve_status;
+
 		$this->player_model->updatePlayer($pb_player_id, $this->validToken['site_id'], $playerInfo);
 		$this->response($this->resp->setRespond(), 200);
 	}
