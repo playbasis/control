@@ -257,6 +257,10 @@
     </div>
 </div>
 
+<div id="pleaseWaitSpanDiv" class="hide">
+    <span id="pleaseWaitSpan"><i class="fa fa-spinner fa-spin"></i></span>
+</div>
+
 <div class="modal hide" id="savedDialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>

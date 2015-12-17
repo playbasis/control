@@ -7,7 +7,8 @@ var $formOrganizeModal = $('#formOrganizeModal'),
     storeOrganizeSelections = [],
     $storeNodeTable = $('#storeNodeTable'),
     $storeNodeToolbarRemove = $('#storeNodeToolbar').find('#remove'),
-    storeNodeSelections = [];
+    storeNodeSelections = [],
+    nodeParentSearch = "";
 
 function initNodeTabInputs() {
     $("[name='node-status']").bootstrapSwitch();
@@ -64,7 +65,7 @@ function initNodeTabInputs() {
             data: function (term, page) {
                 return {
                     search: term, // search term
-                    organize: $("#node-organize").select2('val')
+                    organize: nodeParentSearch
                 };
             },
             results: function (data, page) {
@@ -141,14 +142,14 @@ function initPageInputs() {
 function resetOrganizeModalForm() {
     var $storeOrganizeForm = $('form.store-organize-form');
     $storeOrganizeForm.trigger("reset");
-    $storeOrganizeForm.find('store-organize-id').val('');
+    $storeOrganizeForm.find('#store-organize-id').val('');
     $("#store-organize-parent").select2('val', "");
 }
 
 function resetNodeModalForm() {
     var $nodeForm = $('form.node-form');
     $nodeForm.trigger("reset");
-    $nodeForm.find('node-id').val('');
+    $nodeForm.find('#node-id').val('');
     $("#node-organize").select2('val', "");
     $("#node-parent").select2('val', "");
 }
@@ -547,8 +548,28 @@ $("[data-toggle]")
     });
 $("#node-organize")
     .on("change", function (e) {
-        if(e.val === "")
-            $("#node-parent").select2("enable", false);
-        else
-            $("#node-parent").select2("enable", true);
+        var $nodeParent = $("#node-parent"),
+            $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
+        if (e.val === "") {
+            $nodeParent.select2("enable", false);
+        }
+        else {
+            $.ajax(baseUrlPath + "store_org/organize/" + e.val, {
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $nodeParent.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                    }
+                })
+                .done(function (data) {
+                    if (data.hasOwnProperty('parent'))
+                        nodeParentSearch = data.parent._id;
+                    else
+                        $nodeParent.select2("enable", false);
+                })
+                .always(function () {
+                    $nodeParent.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                });
+
+            $nodeParent.select2("enable", true);
+        }
     });
