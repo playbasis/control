@@ -8,11 +8,13 @@ var $formOrganizeModal = $('#formOrganizeModal'),
     $storeNodeTable = $('#storeNodeTable'),
     $storeNodeToolbarRemove = $('#storeNodeToolbar').find('#remove'),
     storeNodeSelections = [],
-    nodeParentSearch = "";
+    nodeParentSearch = "",
+    $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
 
 function initNodeTabInputs() {
+    var $nodeOrganize = $("#node-organize");
     $("[name='node-status']").bootstrapSwitch();
-    $("#node-organize").select2({
+    $nodeOrganize.select2({
         placeholder: "Search for a organize",
         allowClear: true,
         minimumInputLength: 0,
@@ -39,12 +41,13 @@ function initNodeTabInputs() {
                 $.ajax(baseUrlPath + "store_org/organize/" + id, {
                     dataType: "json",
                     beforeSend: function (xhr) {
-                        $waitDialog.modal('show');
+                        $nodeOrganize.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
                     }
                 }).done(function (data) {
-                    $waitDialog.modal('hide');
                     if (data.length > 0)
-                        callback(data[0]);
+                        callback(data);
+                }).always(function(){
+                    $nodeOrganize.parent().parent().parent().find("#pleaseWaitSpan").remove();
                 });
             }
         },
@@ -84,7 +87,7 @@ function initNodeTabInputs() {
                 }).done(function (data) {
                     $waitDialog.modal('hide');
                     if (data.length > 0)
-                        callback(data[0]);
+                        callback(data);
                 });
             }
         },
@@ -126,7 +129,7 @@ function initOrganizeTabInputs() {
                 }).done(function (data) {
                     $waitDialog.modal('hide');
                     if (data.length > 0)
-                        callback(data[0]);
+                        callback(data);
                 });
             }
         },
@@ -191,6 +194,18 @@ function initStoreNodeTable() {
                 align: 'center',
                 valign: 'middle',
                 sortable: true
+            }, {
+                title: 'Organize',
+                field: 'organize',
+                align: 'center',
+                valign: 'middle',
+                formatter: organizeFormatter
+            }, {
+                title: 'Parent',
+                field: 'parent',
+                align: 'center',
+                valign: 'middle',
+                formatter: organizeFormatter
             }, {
                 title: 'Status',
                 field: 'status',
@@ -260,6 +275,12 @@ function initStoreOrganizeTable() {
                 valign: 'middle',
                 sortable: true
             }, {
+                title: 'Parent',
+                field: 'parent',
+                align: 'center',
+                valign: 'middle',
+                formatter: organizeFormatter
+            }, {
                 title: 'Status',
                 field: 'status',
                 align: 'center',
@@ -323,22 +344,30 @@ function getNodeIdSelections() {
 }
 function organizeResponseHandler(res) {
     $.each(res.rows, function (i, row) {
-        row.state = $.inArray(row.id, storeOrganizeSelections) !== -1;
+        row.state = $.inArray(row._id, storeOrganizeSelections) !== -1;
     });
     return res;
 }
 function nodeResponseHandler(res) {
     $.each(res.rows, function (i, row) {
-        row.state = $.inArray(row.id, storeNodeSelections) !== -1;
+        row.state = $.inArray(row._id, storeNodeSelections) !== -1;
     });
     return res;
 }
-function detailFormatter(index, row) {
-    var html = [];
-    $.each(row, function (key, value) {
-        html.push('<p><b>' + key + ':</b> ' + value + '</p>');
-    });
-    return html.join('');
+function organizeSorter(a, b) {
+    console.log("enter sorter");
+    a = +a.charAt(0);
+    b = +b.charAt(0);
+    if (a > b) return 1;
+    if (a < b) return -1;
+    return 0;
+}
+function organizeFormatter(value, row, index) {
+    if(typeof value != "undefined")
+        if(value.hasOwnProperty('name'))
+            return value.name;
+    else
+        return "-";
 }
 function operateOrganizeFormatter(value, row, index) {
     return [
@@ -381,12 +410,6 @@ function editNodeModalForm(data) {
     $formNodeModal.find("#node-id").val(data._id);
     $formNodeModal.find("#node-name").val(data.name);
     $formNodeModal.find("#node-desc").val(data.description);
-    if (typeof data.store_id != "undefined") {
-        $formNodeModal.find("#node-store-id-control-group").removeClass('hide');
-        $formNodeModal.find("#node-store-id").val(data.store_id);
-    } else {
-        $formNodeModal.find("#node-store-id-control-group").addClass('hide');
-    }
     if (typeof data.organize != "undefined") {
         $("#node-organize").select2('val', data.organize._id);
     }
@@ -548,8 +571,7 @@ $("[data-toggle]")
     });
 $("#node-organize")
     .on("change", function (e) {
-        var $nodeParent = $("#node-parent"),
-            $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
+        var $nodeParent = $("#node-parent");
         if (e.val === "") {
             $nodeParent.select2("enable", false);
         }
@@ -557,19 +579,21 @@ $("#node-organize")
             $.ajax(baseUrlPath + "store_org/organize/" + e.val, {
                     dataType: "json",
                     beforeSend: function (xhr) {
+                        $nodeParent.select2("enable", false);
                         $nodeParent.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
                     }
                 })
                 .done(function (data) {
-                    if (data.hasOwnProperty('parent'))
+                    if (data.hasOwnProperty('parent')) {
                         nodeParentSearch = data.parent._id;
-                    else
+                        $nodeParent.select2("enable", true);
+                    }
+                    else {
                         $nodeParent.select2("enable", false);
+                    }
                 })
                 .always(function () {
                     $nodeParent.parent().parent().parent().find("#pleaseWaitSpan").remove();
                 });
-
-            $nodeParent.select2("enable", true);
         }
     });

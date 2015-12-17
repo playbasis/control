@@ -32,22 +32,14 @@ class Store_org_model extends MY_Model
         if (isset($organize)) {
             $parent_result = $this->retrieveOrganizeById(new MongoId($organize));
             if (isset($parent_result)) {
-                $parent_data = array(
-                    '_id' => $parent_result['_id'],
-                    'name' => $parent_result['name']
-                );
-                $insert_data['organize'] = $parent_data;
+                $insert_data['organize'] = $parent_result['_id'];
             }
         }
 
         if (isset($parent)) {
             $parent_result = $this->retrieveNodeById(new MongoId($parent));
             if (isset($parent_result)) {
-                $parent_data = array(
-                    '_id' => $parent_result['_id'],
-                    'name' => $parent_result['name']
-                );
-                $insert_data['parent'] = $parent_data;
+                $insert_data['parent'] = $parent_result['_id'];
             }
         }
 
@@ -76,7 +68,7 @@ class Store_org_model extends MY_Model
             //make sure 'id' is valid before passing here
             if (MongoId::isValid($optionalParams['organize'])) {
                 $organize = new MongoId($optionalParams['organize']);
-                $this->mongo_db->where('organize._id', $organize);
+                $this->mongo_db->where('organize', $organize);
             }
         }
 
@@ -136,10 +128,7 @@ class Store_org_model extends MY_Model
         if (isset($updateData['parent'])) {
             $parent_result = $this->retrieveNodeById(new MongoId($updateData['parent']));
             if (isset($parent_result)) {
-                $parent_data = array(
-                    '_id' => $parent_result['_id'],
-                    'name' => $parent_result['name']
-                );
+                $parent_data = $parent_result['_id'];
             }
         }
 
@@ -147,10 +136,7 @@ class Store_org_model extends MY_Model
         if (isset($updateData['organize'])) {
             $organize_result = $this->retrieveOrganizeById(new MongoId($updateData['organize']));
             if (isset($organize_result)) {
-                $organize_data = array(
-                    '_id' => $organize_result['_id'],
-                    'name' => $organize_result['name']
-                );
+                $organize_data = $organize_result['_id'];
             }
         }
 
@@ -227,10 +213,7 @@ class Store_org_model extends MY_Model
         if (isset($parent)) {
             $parent_result = $this->retrieveOrganizeById(new MongoId($parent));
             if (isset($parent_result)) {
-                $parent_data = array(
-                    '_id' => $parent_result['_id'],
-                    'name' => $parent_result['name']
-                );
+                $parent_data = $parent_result['_id'];
                 $insert_data['parent'] = $parent_data;
             }
         }
@@ -313,10 +296,7 @@ class Store_org_model extends MY_Model
         if (isset($updateData['parent'])) {
             $parent_result = $this->retrieveOrganizeById(new MongoId($updateData['parent']));
             if (isset($parent_result)) {
-                $parent_data = array(
-                    '_id' => $parent_result['_id'],
-                    'name' => $parent_result['name']
-                );
+                $parent_data = $parent_result['_id'];
                 $this->mongo_db->set('parent', $parent_data);
             }
         } else {
