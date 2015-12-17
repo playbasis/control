@@ -125,6 +125,7 @@ class Store_org_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoId($id));
+        $this->mongo_db->where('deleted', false);
         $c = $this->mongo_db->get("playbasis_store_organize_to_client");
 
         if ($c) {
@@ -307,6 +308,7 @@ class Store_org_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoId($id));
+        $this->mongo_db->where('deleted', false);
         $c = $this->mongo_db->get("playbasis_store_organize");
 
         if ($c) {

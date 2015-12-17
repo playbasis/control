@@ -63,7 +63,7 @@ class Store_org extends MY_Controller
 
                 if (isset($organizeId)) {
                     if (MongoId::isValid($organizeId)) {
-                        $result = $this->Store_org_model->retrieveOrganize($client_id, $site_id, ['id' => $organizeId]);
+                        $result = $this->Store_org_model->retrieveOrganizeById($organizeId);
                         if(isset($result['_id'])){
                             $result['_id'] = $result['_id']."";
                         }
@@ -178,7 +178,7 @@ class Store_org extends MY_Controller
 
                 if (isset($nodeId)) {
                     if (MongoId::isValid($nodeId)) {
-                        $result = $this->Store_org_model->retrieveNode($client_id, $site_id, ['id' => $nodeId]);
+                        $result = $this->Store_org_model->retrieveNodeById($nodeId);
                         if(isset($result['_id'])){
                             $result['_id'] = $result['_id']."";
                         }
