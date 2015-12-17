@@ -7,7 +7,6 @@ class Store_org_model extends MY_Model
         $client_id,
         $site_id,
         $name,
-        $store_id = null,
         $description = null,
         $organize = null,
         $parent = null,
@@ -29,10 +28,6 @@ class Store_org_model extends MY_Model
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
         );
-
-        if (isset($store_id)) {
-            $insert_data['store_id'] = $store_id;
-        }
 
         if (isset($organize)) {
             $parent_result = $this->retrieveOrganizeById(new MongoId($organize));
@@ -169,12 +164,6 @@ class Store_org_model extends MY_Model
             $this->mongo_db->set('organize', $organize_data);
         } else {
             $this->mongo_db->unset_field('organize');
-        }
-
-        if (isset($updateData['store_id'])) {
-            $this->mongo_db->set('store_id', $updateData['store_id']);
-        } else {
-            $this->mongo_db->unset_field('store_id');
         }
 
         $this->mongo_db->where('_id', new MongoID($nodeId));

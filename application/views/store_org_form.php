@@ -131,15 +131,6 @@
                                    placeholder="<?php echo $this->lang->line('entry_node_name'); ?>">
                         </div>
                     </div>
-                    <div class="control-group hide" id="node-store-id-control-group">
-                        <label for="node-store-id"
-                               class="control-label"><?php echo $this->lang->line('entry_node_store_id'); ?></label>
-
-                        <div class="controls">
-                            <input type="text" name="node-store-id" id="node-store-id"
-                                   placeholder="<?php echo $this->lang->line('entry_node_store_id'); ?>">
-                        </div>
-                    </div>
                     <div class="control-group">
                         <label for="node-desc"
                                class="control-label"><?php echo $this->lang->line('entry_node_description'); ?></label>

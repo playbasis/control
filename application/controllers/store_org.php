@@ -234,7 +234,6 @@ class Store_org extends MY_Controller
 
                 $name = !empty($node_data['node-name']) ? $node_data['node-name'] : null; //null is use for delete
                 $desc = !empty($node_data['node-desc']) ? $node_data['node-desc'] : null; //null is use for delete
-                $storeId = !empty($node_data['node-store-id']) ? $node_data['node-store-id'] : null;
                 $organize = !empty($node_data['node-organize']) ? $node_data['node-organize'] : null;
                 $parent = !empty($node_data['node-parent']) ? $node_data['node-parent'] : null;
                 $status = isset($node_data['node-status']) && $node_data['node-status'] == 'on' ? true : false;
@@ -251,7 +250,7 @@ class Store_org extends MY_Controller
                         }
                         $result = $this->Store_org_model->deleteNodeByIdArray($node_data['id']);
                     } else {
-                        $result = $this->Store_org_model->createNode($client_id, $site_id, $name, $storeId, $desc,
+                        $result = $this->Store_org_model->createNode($client_id, $site_id, $name, $desc,
                             $organize, $parent, $status);
                     }
                 } else {
@@ -264,7 +263,6 @@ class Store_org extends MY_Controller
                                 'site_id' => $site_id,
                                 'name' => $name,
                                 'description' => $desc,
-                                'storeId' => $storeId,
                                 'organize' => $organize,
                                 'parent' => $parent,
                                 'status' => $status
