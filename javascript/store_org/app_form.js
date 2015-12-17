@@ -12,7 +12,8 @@ var $formOrganizeModal = $('#formOrganizeModal'),
     $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
 
 function initNodeTabInputs() {
-    var $nodeOrganize = $("#node-organize");
+    var $nodeOrganize = $("#node-organize"),
+        $nodeParent = $("#node-parent");
     $("[name='node-status']").bootstrapSwitch();
     $nodeOrganize.select2({
         placeholder: "Search for a organize",
@@ -41,20 +42,24 @@ function initNodeTabInputs() {
                 $.ajax(baseUrlPath + "store_org/organize/" + id, {
                     dataType: "json",
                     beforeSend: function (xhr) {
-                        $nodeOrganize.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                        $nodeOrganize
+                            .select2('enable', false)
+                            .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
                     }
                 }).done(function (data) {
-                    if (data.length > 0)
+                    if (typeof data != "undefined")
                         callback(data);
-                }).always(function(){
-                    $nodeOrganize.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                }).always(function () {
+                    $nodeOrganize
+                        .select2('enable', true)
+                        .parent().parent().parent().find("#pleaseWaitSpan").remove();
                 });
             }
         },
         formatResult: organizeFormatResult,
         formatSelection: organizeFormatSelection,
     });
-    $("#node-parent").select2({
+    $nodeParent.select2({
         placeholder: "Search for a parent",
         allowClear: true,
         minimumInputLength: 0,
@@ -82,22 +87,28 @@ function initNodeTabInputs() {
                 $.ajax(baseUrlPath + "store_org/node/" + id, {
                     dataType: "json",
                     beforeSend: function (xhr) {
-                        $waitDialog.modal('show');
+                        $nodeParent
+                            .select2('enable', false)
+                            .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
                     }
                 }).done(function (data) {
-                    $waitDialog.modal('hide');
-                    if (data.length > 0)
+                    if (typeof data != "undefined")
                         callback(data);
+                }).always(function () {
+                    $nodeParent
+                        .select2('enable', true)
+                        .parent().parent().parent().find("#pleaseWaitSpan").remove();
                 });
             }
         },
         formatResult: nodeFormatResult,
         formatSelection: nodeFormatSelection,
-    }).select2('enable',false);
+    });
 }
 function initOrganizeTabInputs() {
+    var $organizeParent = $("#store-organize-parent");
     $("[name='store-organize-status']").bootstrapSwitch();
-    $("#store-organize-parent").select2({
+    $organizeParent.select2({
         placeholder: "Search for a organize parent",
         allowClear: true,
         minimumInputLength: 0,
@@ -124,12 +135,17 @@ function initOrganizeTabInputs() {
                 $.ajax(baseUrlPath + "store_org/organize/" + id, {
                     dataType: "json",
                     beforeSend: function (xhr) {
-                        $waitDialog.modal('show');
+                        $organizeParent
+                            .select2('enable', false)
+                            .parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
                     }
                 }).done(function (data) {
-                    $waitDialog.modal('hide');
-                    if (data.length > 0)
+                    if (typeof data != "undefined")
                         callback(data);
+                }).always(function () {
+                    $organizeParent
+                        .select2('enable', true)
+                        .parent().parent().find("#pleaseWaitSpan").remove();
                 });
             }
         },
@@ -154,7 +170,7 @@ function resetNodeModalForm() {
     $nodeForm.trigger("reset");
     $nodeForm.find('#node-id').val('');
     $("#node-organize").select2('val', "");
-    $("#node-parent").select2('val', "");
+    $("#node-parent").select2('val', "").select2('enable', false); //disable by default;
 }
 
 function nodeFormatResult(node) {
@@ -234,7 +250,7 @@ function initStoreNodeTable() {
     });
     $storeNodeToolbarRemove.click(function () {
         var ids = getNodeIdSelections();
-        console.log("id selected" , ids);
+        console.log("id selected", ids);
         $.ajax({
                 type: "POST",
                 url: baseUrlPath + 'store_org/node/',
@@ -308,7 +324,7 @@ function initStoreOrganizeTable() {
     });
     $storeOrganizeToolbarRemove.click(function () {
         var ids = getOrganizeIdSelections();
-        console.log("id selected" , ids);
+        console.log("id selected", ids);
         $.ajax({
                 type: "POST",
                 url: baseUrlPath + 'store_org/organize/',
@@ -363,11 +379,11 @@ function organizeSorter(a, b) {
     return 0;
 }
 function organizeFormatter(value, row, index) {
-    if(typeof value != "undefined")
-        if(value.hasOwnProperty('name'))
+    if (typeof value != "undefined")
+        if (value.hasOwnProperty('name'))
             return value.name;
-    else
-        return "-";
+        else
+            return "-";
 }
 function operateOrganizeFormatter(value, row, index) {
     return [
@@ -415,12 +431,14 @@ function editNodeModalForm(data) {
     }
     if (typeof data.parent != "undefined") {
         $("#node-parent").select2('val', data.parent._id);
+    }else{
+        $("#node-parent").select2('enable', false); //disable by default
     }
 
     if (data.status)
-        $formOrganizeModal.find("#store-organize-status").prop('checked', true);
+        $formNodeModal.find("#node-status").prop('checked', true);
     else
-        $formOrganizeModal.find("#store-organize-status").prop('checked', false);
+        $formNodeModal.find("#node-status").prop('checked', false);
 }
 window.operateEvents = {
     'click .edit-node': function (e, value, row, index) {
@@ -573,14 +591,17 @@ $("#node-organize")
     .on("change", function (e) {
         var $nodeParent = $("#node-parent");
         if (e.val === "") {
-            $nodeParent.select2("enable", false);
+            $nodeParent
+                .select2("val", "")
+                .select2("enable", false);
         }
         else {
             $.ajax(baseUrlPath + "store_org/organize/" + e.val, {
                     dataType: "json",
                     beforeSend: function (xhr) {
-                        $nodeParent.select2("enable", false);
-                        $nodeParent.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                        $nodeParent
+                            .select2("enable", false)
+                            .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
                     }
                 })
                 .done(function (data) {
