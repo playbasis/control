@@ -288,6 +288,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Parameter is invalid ";
                 $errorData['error_code'] = '2302';
                 break;
+        case 'STORE_ORG_NODE_NOT_FOUND':
+            $errorData['message'] = "Node value is not found";
+            $errorData['error_code'] = '2401';
+            break;
         default:
             $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';
