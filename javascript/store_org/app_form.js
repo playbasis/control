@@ -558,6 +558,7 @@ $('#page-render')
     .on('click', '#addNewParentLink', function () {
         $('#mainTab').find('a[href="#storeOrganizeTabContent"]').tab('show');
         $formNodeModal.modal('hide');
+        resetOrganizeModalForm();
         $formOrganizeModal.modal('show');
     });
 //.on('click', $("[data-toggle]").filter("[href='#formOrganizeModal'],[data-target='#formOrganizeModal']"), function(){
