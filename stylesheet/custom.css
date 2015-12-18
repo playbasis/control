@@ -485,7 +485,7 @@ input[type=radio]:checked + label {
 .mission-item-wrapper,
 .question-item-wrapper,
 .grade-item-wrapper,
-.mc-goodsgroup-item-wrapper,
+.mc-goodsgroup-item-wrapper
 {
     box-shadow: 0px 2px 10px rgba(0, 0, 0, .15);
     margin-bottom: 10px;
@@ -501,7 +501,7 @@ input[type=radio]:checked + label {
 .mission-item-wrapper > .box-content,
 .question-item-wrapper > .box-content,
 .grade-item-wrapper > .box-content,
-.mc-goodsgroup-item-wrapper > .box-content,
+.mc-goodsgroup-item-wrapper > .box-content
 {
     padding: 0 20px;
 }
@@ -1749,4 +1749,38 @@ input[type=radio]:checked + label {
 }
 #modal_survey .step-1{
       text-align: center;
+}
+
+/* ====== [ Store Organize Page ] ======= */
+.store_org-page .nav {
+	margin-bottom: 0;
+}
+
+.store_org-page .tab-pane:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.store_org-page iframe {
+	border-radius: 5px;
+	border: 1px solid #F5F5F5;
+}
+
+.store_org-page .tab-pane {
+	padding: 30px;
+	background: #FFF;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 20px;
+}
+
+.store_org-page .tab-pane h3 {
+	font-size: 26px;
+	font-weight: normal;
+}
+
+.store_org-page input.wg-globel-cssfile {
+	width: 50%;
 }
