@@ -300,6 +300,14 @@ class Error extends CI_Model
             $errorData['message'] = "Player is not exists with current node";
             $errorData['error_code'] = '2403';
             break;
+        case 'STORE_ORG_PLAYER_ROLE_ALREADY_EXISTS':
+            $errorData['message'] = "Role already exists for this Player";
+            $errorData['error_code'] = '2404';
+            break;
+        case 'STORE_ORG_PLAYER_ROLE_NOT_EXISTS':
+            $errorData['message'] = "Role is not set for this Player";
+            $errorData['error_code'] = '2405';
+            break;
         default:
             $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';
