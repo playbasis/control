@@ -2733,6 +2733,145 @@
                 }
             ]
         },
+        {
+            "name" : "Store Organize API",
+            "methods" :[
+                {
+                    "MethodName": "Add player to Node",
+                    "Synopsis": "Add player to specific Node",
+                    "HTTPMethod": "POST",
+                    "URI": "/StoreOrg/nodes/:node_id/addPlayer/:player_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Node Id to add player"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Player Id to add to Node"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Remove player from Node",
+                    "Synopsis": "Remove Player from specific Node",
+                    "HTTPMethod": "POST",
+                    "URI": "/StoreOrg/nodes/:node_id/removePlayer/:player_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Node Id to add player"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Player Id to add to Node"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Set player role",
+                    "Synopsis": "Set player's organization role to specific Node",
+                    "HTTPMethod": "POST",
+                    "URI": "/StoreOrg/nodes/:node_id/setPlayerRole/:player_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Node Id to set player's role"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Player Id to set player's role"
+                        },
+                        {
+                            "Name": "role",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Role name to set player's role"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Unset player role",
+                    "Synopsis": "Unset player's organization role from specific Node",
+                    "HTTPMethod": "POST",
+                    "URI": "/StoreOrg/nodes/:node_id/unsetPlayerRole/:player_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Node Id to unset player's role"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Player Id to unset player's role"
+                        },
+                        {
+                            "Name": "role",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Role name to unset player's role"
+                        }
+                    ]
+                }
+            ]
+        },
           {
             "name" : "CMS API",
               "methods" :[

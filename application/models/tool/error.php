@@ -288,6 +288,26 @@ class Error extends CI_Model
                 $errorData['message'] = "Parameter is invalid ";
                 $errorData['error_code'] = '2302';
                 break;
+        case 'STORE_ORG_NODE_NOT_FOUND':
+            $errorData['message'] = "Node value is not found";
+            $errorData['error_code'] = '2401';
+            break;
+        case 'STORE_ORG_PLAYER_ALREADY_EXISTS_WITH_NODE':
+            $errorData['message'] = "Player already exists with current node";
+            $errorData['error_code'] = '2402';
+            break;
+        case 'STORE_ORG_PLAYER_NOT_EXISTS_WITH_NODE':
+            $errorData['message'] = "Player is not exists with current node";
+            $errorData['error_code'] = '2403';
+            break;
+        case 'STORE_ORG_PLAYER_ROLE_ALREADY_EXISTS':
+            $errorData['message'] = "This role already exists for this Player";
+            $errorData['error_code'] = '2404';
+            break;
+        case 'STORE_ORG_PLAYER_ROLE_NOT_EXISTS':
+            $errorData['message'] = "This role is not set for this Player";
+            $errorData['error_code'] = '2405';
+            break;
         default:
             $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';
