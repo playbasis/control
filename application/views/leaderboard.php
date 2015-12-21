@@ -69,7 +69,7 @@
                                 <td class="right">
                                     <?php echo (isset($leaderboard['occur_once']) && ($leaderboard['month'])) ? (($leaderboard['occur_once']) ? "Once at" : "Repeat Until") : "Forever" ?>
                                     &nbsp; &nbsp;
-                                    <?php echo  $leaderboard['month'] ?datetimeMongotoReadable($leaderboard['month']):""; ?>
+                                    <?php echo  $leaderboard['month'] ?MonthMongotoReadable($leaderboard['month']):""; ?>
                                 </td>
                                 <td class="right"><?php echo ($leaderboard['status']) ? "Enabled" : "Disabled"; ?></td>
                                 <td class="right">

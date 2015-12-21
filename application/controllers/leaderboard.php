@@ -93,8 +93,7 @@ class Leaderboard extends MY_Controller
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-
-
+                $data['month'] = (isset($data['month']) && $data['month'])?new MongoDate(strtotime($data['month'])):"";
                 $data['status'] = $data['status'] == 'enable' ? true : false;
                 $data['occur_once'] = $data['occur_once'] == 'true' ? true : false;
 
@@ -134,6 +133,7 @@ class Leaderboard extends MY_Controller
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['status'] = $data['status'] == 'enable' ? true : false;
+                $data['month'] = (isset($data['month']) && $data['month'])?new MongoDate(strtotime($data['month'])):"";
                 $data['occur_once'] = $data['occur_once'] == 'true' ? true : false;
 
                 $update = $this->Leaderboard_model->updateLeaderBoard($data);

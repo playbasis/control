@@ -78,12 +78,6 @@
                         </td>
                         <td>
                             <span class="dropdown">
-                            <select id="mode_list" class="span2"  name ="mode">
-                                <option label="Summary of" value="sum" <?php echo mode=="sum"?"selected":""?>>
-                                <option label="Count of" value="mode" <?php echo mode=="mode"?"selected":""?>>
-                            </select>
-                            </span>
-                            <span class="dropdown">
                             <select id="rankby_list" class="span2"  name ="rankBy" onchange="rankby_change(this)">
                                 <option label="Action" value="action" <?php echo $rankBy=="action"?"selected":""?>>
                                 <option label="Reward" value="reward" <?php echo $rankBy=="reward"?"selected":""?>>
@@ -96,6 +90,12 @@
                                 <option label="<?php echo $action['name'] ?> " value="<?php echo $action['name'] ?>" <?php echo $selected_action==$action['name']?"selected":""?>>
                                     <?php } ?>
 
+                            </select>
+                            </span>
+                            <span class="dropdown">
+                            <select id="mode_list" class="span2"  name ="mode" <?php echo (isset($rankBy) && $rankBy=="reward")? "style='display:none;'":"";?>>
+                                <option label="Summary of" value="sum" <?php echo mode=="sum"?"selected":""?>>
+                                <option label="Count of" value="mode" <?php echo mode=="mode"?"selected":""?>>
                             </select>
                             </span>
                             <span class="dropdown">
@@ -146,7 +146,7 @@
                                 <div class="btn-group" data-toggle="buttons-radio" >
                                     <button type="button" class="btn btn-primary <?php echo (isset($occur_once) && $occur_once)?"active":"" ?>" onclick="occurence_change(this)" value="once">Once at</button>
                                     <button type="button" class="btn btn-primary <?php echo (isset($occur_once) && $occur_once)?"":"active" ?>" onclick="occurence_change(this)" value="repeat">Repeat Until</button>
-                                    <input type="hidden" id="occurence_id" name="occur_once" value="false">
+                                    <input type="hidden" id="occurence_id" name="occur_once" value="<?php echo (isset($occur_once) && $occur_once)?"true":"false" ?>">
                                 </div>
                             </div>
                             <span>
@@ -678,12 +678,15 @@
     }
     function rankby_change(elem){
         var act = document.getElementById('action_list');
+        var mode = document.getElementById('mode_list');
         if (elem.value == "action"){
             act.style.display = "";
+            mode.style.display = "";
             buildDropdownDatasetList(act.value, true);
         }
         else{
-            document.getElementById('action_list').style.display = "none";
+            act.style.display = "none";
+            mode.style.display = "none";
             buildDropdownDatasetList(null, false);
         }
     }
@@ -778,7 +781,14 @@
     $(this).toggleClass("active");
     function occurence_change(elem){
         var occur_radio = document.getElementById('occurence_id');
-        occur_radio.value = elem.value;
+        if (elem.value == "once")
+        {
+            occur_radio.value = true;
+        }
+        else{
+            occur_radio.value = false;
+        }
+
     }
     init_additem_event({type:'rewards'});
     $('.rank-item-wrapper').each(function(){
