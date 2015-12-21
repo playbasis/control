@@ -63,29 +63,21 @@ class Store_org extends REST2_Controller
         $this->benchmark->mark('start');
 
         $this->checkParams($node_id, $player_id);
-        $this->checkRoleParams($this->input->post('name'), $this->input->post('value'));
 
-        $role_name = $this->input->post('name');
-        $role_value = $this->input->post('value');
+        $role_name = $this->input->post('role');
+        if (empty($role_name)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('role')), 200);
+            die();
+        }
 
         $node_id = $this->findNodeId($node_id);
         $pb_player_id = $this->findPbPlayerId($player_id);
 
-        if ($role_value) {
-            $role_value = ($role_value === 'true');
-        }
-        $role_data = $this->makeRoleDict($role_name, $role_value);
+        $role_data = $this->makeRoleDict($role_name);
 
         $existed_player_organize = $this->store_org_model->retrievePlayerToNode($this->client_id, $this->site_id,
             $pb_player_id, $node_id);
         if ($existed_player_organize) {
-            if (isset($existed_player_organize['roles']) && is_array($existed_player_organize)) {
-                foreach ($existed_player_organize['roles'] as $role) {
-                    if ($role['name'] === $role_name) {
-                        $this->response($this->error->setError('STORE_ORG_PLAYER_ROLE_ALREADY_EXISTS'), 200);
-                    }
-                }
-            }
             $is_updated = $this->store_org_model->setPlayerRoleToNode($this->client_id, $this->site_id,
                 $pb_player_id, $node_id, $role_data);
         } else {
@@ -103,9 +95,9 @@ class Store_org extends REST2_Controller
 
         $this->checkParams($node_id, $player_id);
 
-        $role_name = $this->input->post('name');
+        $role_name = $this->input->post('role');
         if (empty($role_name)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('name')), 200);
+            $this->response($this->error->setError('PARAMETER_MISSING', array('role')), 200);
             die();
         }
         $node_id = $this->findNodeId($node_id);
@@ -114,10 +106,9 @@ class Store_org extends REST2_Controller
         $existed_player_organize = $this->store_org_model->retrievePlayerToNode($this->client_id, $this->site_id,
             $pb_player_id, $node_id);
         if ($existed_player_organize) {
-            // Use this method to allow us return "ROLE_NOT_EXISTS"
-            if (isset($existed_player_organize['roles']) && is_array($existed_player_organize)) {
-                foreach ($existed_player_organize['roles'] as $role) {
-                    if ($role['name'] === $role_name) {
+            if (isset($existed_player_organize['roles']) && is_array($existed_player_organize['roles'])) {
+                foreach ($existed_player_organize['roles'] as $key => $value) {
+                    if ($key === $role_name) {
                         $is_updated = $this->store_org_model->unsetPlayerRoleToNode($this->client_id, $this->site_id,
                             $pb_player_id, $node_id, $role_name);
 
@@ -130,6 +121,7 @@ class Store_org extends REST2_Controller
                 }
             }
             $this->response($this->error->setError('STORE_ORG_PLAYER_ROLE_NOT_EXISTS'), 200);
+
         } else {
             $this->response($this->error->setError('STORE_ORG_PLAYER_NOT_EXISTS_WITH_NODE'), 200);
         }
@@ -212,23 +204,10 @@ class Store_org extends REST2_Controller
 
     /**
      * @param $name
-     * @param $value
-     */
-    private function checkRoleParams($name, $value)
-    {
-        if (empty($name) || empty($value)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('name', 'value')), 200);
-            die();
-        }
-    }
-
-    /**
-     * @param $name
-     * @param $value
      * @return array
      */
-    private function makeRoleDict($name, $value)
+    private function makeRoleDict($name)
     {
-        return array('name' => $name, 'value' => $value);
+        return array('name' => $name, 'value' => new MongoDate());
     }
 }

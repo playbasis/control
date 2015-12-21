@@ -301,11 +301,11 @@ class Error extends CI_Model
             $errorData['error_code'] = '2403';
             break;
         case 'STORE_ORG_PLAYER_ROLE_ALREADY_EXISTS':
-            $errorData['message'] = "Role already exists for this Player";
+            $errorData['message'] = "This role already exists for this Player";
             $errorData['error_code'] = '2404';
             break;
         case 'STORE_ORG_PLAYER_ROLE_NOT_EXISTS':
-            $errorData['message'] = "Role is not set for this Player";
+            $errorData['message'] = "This role is not set for this Player";
             $errorData['error_code'] = '2405';
             break;
         default:
