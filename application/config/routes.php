@@ -287,7 +287,8 @@ $route['Push/template/'.ANY_STRING] = 'push/template/$1';
 $route['Push/template'] = 'push/template';
 
 //Store Organize API
-$route['StoreOrg/nodes/'.ANY_STRING.'/player/'.ANY_STRING] = 'store_org/playerRegister/$1/$2'; // ANY_STRING = quiz_id/pb_player_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/addPlayer/'.ANY_STRING] = 'store_org/playerRegister/$1/$2'; // ANY_STRING = quiz_id/pb_player_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/removePlayer/'.ANY_STRING] = 'store_org/playerRemove/$1/$2'; // ANY_STRING = quiz_id/pb_player_id
 
 //promo API
 $route['Promo'] = 'promo/list';

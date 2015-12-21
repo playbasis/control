@@ -26,7 +26,7 @@ class Store_org_model extends MY_Model
         }
     }
 
-    public function createPlayerToNode($client_id, $site_id, $pb_player_id, $node_id , $role = null)
+    public function createPlayerToNode($client_id, $site_id, $pb_player_id, $node_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -38,30 +38,44 @@ class Store_org_model extends MY_Model
 
         );
 
-        if(isset($role))
-            $insert_data['role'] = $role;
-
         $insert = $this->mongo_db->insert('playbasis_store_organize_to_player', $insert_data);
 
         return $insert;
     }
 
-    public function createRoleToPlayer($client_id, $site_id, $pb_player_id, $role = null)
+    public function retrievePlayerToNode($client_id, $site_id, $pb_player_id, $node_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('client_id', $client_id);
-        $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('_id', $pb_player_id);
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
 
-        if(isset($role))
-            $this->mongo_db->set('role', $role);
-        else
-            $this->mongo_db->unset_field('role');
-        $this->mongo_db->set('date_modified', new MongoDate());
+        $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
+        $this->mongo_db->where('node_id', new MongoId($node_id));
+        $c = $this->mongo_db->get("playbasis_store_organize_to_player");
 
-        $update = $this->mongo_db->update('playbasis_player');
+        if ($c) {
+            return $c[0];
+        } else {
+            return null;
+        }
+    }
 
-        return $update;
+    public function deletePlayerToNode($client_id, $site_id, $pb_player_id, $node_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
+        $this->mongo_db->where('node_id', new MongoId($node_id));
+        $c = $this->mongo_db->delete("playbasis_store_organize_to_player");
+
+        if ($c) {
+            return $c[0];
+        } else {
+            return null;
+        }
     }
 }
