@@ -524,6 +524,23 @@ class Engine extends Quest
 				$jigsawConfig = $jigsaw['config'];
 				$jigsawCategory = $jigsaw['category'];
 
+				// support formula-based quantity
+				if (isset($jigsawConfig['quantity']) && strpos($jigsawConfig['quantity'], '{') !== false) {
+					require_once APPPATH . '/libraries/ipsum/Parser.class.php';
+					$f = $jigsawConfig['quantity'];
+					foreach ($input as $key => $value) {
+						if (!is_string($value)) continue;
+						$f = str_replace('{'.$key.'}', $value, $f);
+					}
+					$parser = new Parser($f.'\0');
+					try {
+						$jigsawConfig['quantity'] = intval($parser->run());
+					} catch (Exception $e) {
+						log_message('error', 'Error during evaluation (formula = '.$f.'), e = '.$e->getMessage());
+						$jigsawConfig['quantity'] = 0;
+					}
+				}
+
 				//get class path to precess jigsaw
 				$processor = ($jigsaw_id ? $this->client_model->getJigsawProcessorWithCache($cache_jigsaw, $jigsaw_id, $site_id) : $jigsaw['id']);
 				if ($processor == 'goods') $processor = 'reward';
