@@ -2737,6 +2737,122 @@
             "name" : "Store Organize API",
             "methods" :[
                 {
+                    "MethodName": "List organizations",
+                    "Synopsis": "List organizations as set from admin dashboard",
+                    "HTTPMethod": "get",
+                    "URI": "/StoreOrg/organizes",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify Organize Id to retrieve"
+                        },
+                        {
+                            "Name": "search",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify organize name to search"
+                        },
+                        {
+                            "Name": "sort",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify field to be sorted [_id, *name*, status]"
+                        },
+                        {
+                            "Name": "order",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify sorted direction [desc, *asc*]"
+                        },
+                        {
+                            "Name": "offset",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify paging offset [dafault = 0]"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify paging limit [dafault = 20]"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "List nodes",
+                    "Synopsis": "List nodes as set from admin dashboard",
+                    "HTTPMethod": "get",
+                    "URI": "/StoreOrg/organizes",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify Node Id to retrieve"
+                        },
+                        {
+                            "Name": "organize_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify Organize Id to retrieve"
+                        },
+                        {
+                            "Name": "parent_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify Parent Id to retrieve"
+                        },
+                        {
+                            "Name": "search",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify organize name to search"
+                        },
+                        {
+                            "Name": "sort",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify field to be sorted [_id, *name*, status]"
+                        },
+                        {
+                            "Name": "order",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify sorted direction [desc, *asc*]"
+                        },
+                        {
+                            "Name": "offset",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify paging offset [dafault = 0]"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Specify paging limit [dafault = 20]"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Add player to Node",
                     "Synopsis": "Add player to specific Node",
                     "HTTPMethod": "POST",

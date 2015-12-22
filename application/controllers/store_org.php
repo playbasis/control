@@ -136,9 +136,11 @@ class Store_org extends REST2_Controller
 
         $query_data = $this->input->get(null, true);
 
-        if(isset($query_data['id']))
-            if(!MongoId::isValid($query_data['id']))
+        if (isset($query_data['id'])) {
+            if (!MongoId::isValid($query_data['id'])) {
                 $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+            }
+        }
 
         $results = $this->store_org_model->retrieveOrganize($this->client_id, $this->site_id, $query_data);
         $formatted_results = $this->organizesResultFormatter($results);
@@ -153,7 +155,7 @@ class Store_org extends REST2_Controller
             "date_modified",
             "parent"
         );
-        foreach($formatted_results as &$result){
+        foreach ($formatted_results as &$result) {
             $result = array_intersect_key($result, array_flip($key_allowed_output));
         }
 
@@ -168,17 +170,23 @@ class Store_org extends REST2_Controller
 
         $query_data = $this->input->get(null, true);
 
-        if(isset($query_data['id']))
-            if(!MongoId::isValid($query_data['id']))
+        if (isset($query_data['id'])) {
+            if (!MongoId::isValid($query_data['id'])) {
                 $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+            }
+        }
 
-        if(isset($query_data['organize_id']))
-            if(!MongoId::isValid($query_data['organize_id']))
+        if (isset($query_data['organize_id'])) {
+            if (!MongoId::isValid($query_data['organize_id'])) {
                 $this->response($this->error->setError('PARAMETER_INVALID', array('organize_id')), 200);
+            }
+        }
 
-        if(isset($query_data['parent_id']))
-            if(!MongoId::isValid($query_data['parent_id']))
+        if (isset($query_data['parent_id'])) {
+            if (!MongoId::isValid($query_data['parent_id'])) {
                 $this->response($this->error->setError('PARAMETER_INVALID', array('parent_id')), 200);
+            }
+        }
 
         $results = $this->store_org_model->retrieveNode($this->client_id, $this->site_id, $query_data);
         $formatted_results = $this->nodesResultFormatter($results);
@@ -194,7 +202,7 @@ class Store_org extends REST2_Controller
             "organize",
             "parent"
         );
-        foreach($formatted_results as &$result){
+        foreach ($formatted_results as &$result) {
             $result = array_intersect_key($result, array_flip($key_allowed_output));
         }
 
@@ -246,7 +254,7 @@ class Store_org extends REST2_Controller
                     'name' => $org_res['name']
                 );
             }
-        }elseif($key === "organize"){
+        } elseif ($key === "organize") {
             $org_res = $this->_findOrganizeById($value);
             if (isset($org_res)) {
                 $value = array(
@@ -352,9 +360,10 @@ class Store_org extends REST2_Controller
         return $result;
     }
 
-    private function _findOrganizeById($organize_id){
-        foreach ( $this->organizesData as $element ) {
-            if ( $organize_id == $element['_id'] ) {
+    private function _findOrganizeById($organize_id)
+    {
+        foreach ($this->organizesData as $element) {
+            if ($organize_id == $element['_id']) {
                 return $element;
             }
         }
@@ -362,9 +371,10 @@ class Store_org extends REST2_Controller
         return false;
     }
 
-    private function _findNodeById($node_id){
-        foreach ( $this->nodesData as $element ) {
-            if ( $node_id == $element['_id'] ) {
+    private function _findNodeById($node_id)
+    {
+        foreach ($this->nodesData as $element) {
+            if ($node_id == $element['_id']) {
                 return $element;
             }
         }
