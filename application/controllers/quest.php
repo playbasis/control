@@ -507,17 +507,32 @@ class Quest extends REST2_Controller
             foreach($mission["completion"] as $c){
 
                 if($c["completion_type"] == "ACTION"){
+                    // default is count for compatibility
+                    if (!isset($c["completion_op"])) {
+                        $c["completion_op"] = "count";
+                    }
+                    if ( $c["completion_op"] == "count"){
+                        $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"],
+                            isset($c["completion_filter"]) ? $c["completion_filter"] : null,
+                            isset($c["completion_string"]) ? $c["completion_string"] : null,
+                            $validToken['site_id'],
+                            $datetime_check);
+                    }
+                    else{ // sum
+                        $action = $this->player_model->getActionSumFromDatetime($pb_player_id, $c["completion_id"],
+                            isset($c["completion_filter"]) ? $c["completion_filter"] : null,
+                            $validToken['site_id'],
+                            $datetime_check);
+                    }
 
-                    $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check);
-
-                    if((int)$c["completion_value"] > (int)$action["count"]){
+                    if((int)$c["completion_value"] > (int)$action[$c["completion_op"]]){
                         $event = array(
                             'event_type' => 'ACTION_NOT_ENOUGH',
                             'message' => 'Your action not enough',
                             'incomplete' => array(
                                 'incompletion_id' => $c["completion_id"]."",
                                 'incompletion_type' => "ACTION",
-                                'incompletion_value' => ((int)$c["completion_value"] - (int)$action["count"])
+                                'incompletion_value' => ((int)$c["completion_value"] - (int)$action[$c["completion_op"]])
                             )
                         );
                         if(isset($c["completion_element_id"])){

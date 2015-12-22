@@ -32,11 +32,11 @@ class jigsaw extends MY_Model
 
 		return true;
 	}
-	private function getActionDatasetInfo($config){
+	public function getActionDatasetInfo($action_name){
 		$this->set_site_mongodb($this->session->userdata('site_id'));
 
 		$this->mongo_db->where(array(
-			'name' => $config['action_name']
+			'name' => $action_name
 		));
 		$results = $this->mongo_db->get("playbasis_action");
 		return $results ? $results[0]['init_dataset']: null;
