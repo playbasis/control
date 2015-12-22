@@ -4,6 +4,9 @@ require_once APPPATH . '/libraries/REST2_Controller.php';
 
 class Store_org extends REST2_Controller
 {
+    private $organizesData;
+    private $nodesData;
+
     public function __construct()
     {
         parent::__construct();
@@ -127,22 +130,137 @@ class Store_org extends REST2_Controller
         }
     }
 
+    public function listOrganizes_get()
+    {
+        $this->benchmark->mark('start');
+
+        $query_data = $this->input->get(null, true);
+
+        if (isset($query_data['id'])) {
+            if (!MongoId::isValid($query_data['id'])) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+            }
+        }
+
+        $results = $this->store_org_model->retrieveOrganize($this->client_id, $this->site_id, $query_data);
+        $formatted_results = $this->organizesResultFormatter($results);
+
+        $key_allowed_output = array(
+            "_id",
+            "name",
+            "description",
+            "status",
+            "slug",
+            "date_added",
+            "date_modified",
+            "parent"
+        );
+        foreach ($formatted_results as &$result) {
+            $result = array_intersect_key($result, array_flip($key_allowed_output));
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('results' => $formatted_results, 'processing_time' => $t)), 200);
+    }
+
+    public function listNodes_get()
+    {
+        $this->benchmark->mark('start');
+
+        $query_data = $this->input->get(null, true);
+
+        if (isset($query_data['id'])) {
+            if (!MongoId::isValid($query_data['id'])) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+            }
+        }
+
+        if (isset($query_data['organize_id'])) {
+            if (!MongoId::isValid($query_data['organize_id'])) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('organize_id')), 200);
+            }
+        }
+
+        if (isset($query_data['parent_id'])) {
+            if (!MongoId::isValid($query_data['parent_id'])) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('parent_id')), 200);
+            }
+        }
+
+        $results = $this->store_org_model->retrieveNode($this->client_id, $this->site_id, $query_data);
+        $formatted_results = $this->nodesResultFormatter($results);
+
+        $key_allowed_output = array(
+            "_id",
+            "name",
+            "description",
+            "status",
+            "slug",
+            "date_added",
+            "date_modified",
+            "organize",
+            "parent"
+        );
+        foreach ($formatted_results as &$result) {
+            $result = array_intersect_key($result, array_flip($key_allowed_output));
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('results' => $formatted_results, 'processing_time' => $t)), 200);
+    }
+
     /**
      * Use with array_walk and array_walk_recursive.
      * Recursive iterable items to modify array's value
      * from MongoId to string and MongoDate to readable date
-     * @param mixed $item this is reference
+     * @param mixed $value this is reference
      * @param string $key
      */
-    private function convert_mongo_object(&$item, $key)
+    private function convert_mongo_object(&$value, $key)
     {
-        if (is_object($item)) {
-            if (get_class($item) === 'MongoId') {
-                $item = $item->{'$id'};
+        if (is_object($value)) {
+            if (get_class($value) === 'MongoId') {
+                $value = $value->{'$id'};
             } else {
-                if (get_class($item) === 'MongoDate') {
-                    $item = datetimeMongotoReadable($item);
+                if (get_class($value) === 'MongoDate') {
+                    $value = datetimeMongotoReadable($value);
                 }
+            }
+        }
+    }
+
+    private function apply_organize_parent_name(&$value, $key)
+    {
+        if ($key === "parent") {
+            $org_res = $this->_findOrganizeById($value);
+            if (isset($org_res)) {
+                $value = array(
+                    'id' => $org_res['_id']->{'$id'},
+                    'name' => $org_res['name']
+                );
+            }
+        }
+    }
+
+    private function apply_node_and_organize_parent_name(&$value, $key)
+    {
+        if ($key === "parent") {
+            $org_res = $this->_findNodeById($value);
+            if (isset($org_res)) {
+                $value = array(
+                    'id' => $org_res['_id']->{'$id'},
+                    'name' => $org_res['name']
+                );
+            }
+        } elseif ($key === "organize") {
+            $org_res = $this->_findOrganizeById($value);
+            if (isset($org_res)) {
+                $value = array(
+                    'id' => $org_res['_id']->{'$id'},
+                    'name' => $org_res['name']
+                );
             }
         }
     }
@@ -211,230 +329,310 @@ class Store_org extends REST2_Controller
         return array('name' => $name, 'value' => new MongoDate());
     }
 
-
-    private function recurGetChildUnder($client_id,$site_id,$parent_node,&$result,&$layer =0, $num = 0){
+    private function recurGetChildUnder($client_id, $site_id, $parent_node, &$result, &$layer = 0, $num = 0)
+    {
         //array_push($result,$num);
         //array_push($result,$layer);
-        if($num++<=$layer || $layer==0){
-            array_push($result,$parent_node);
+        if ($num++ <= $layer || $layer == 0) {
+            array_push($result, $parent_node);
         }
 
-        $nodes = $this->store_org_model->findAdjacentChildNode($client_id,$site_id,new MongoId($parent_node));
-        if(isset($nodes)){
-            foreach($nodes as $node){
+        $nodes = $this->store_org_model->findAdjacentChildNode($client_id, $site_id, new MongoId($parent_node));
+        if (isset($nodes)) {
+            foreach ($nodes as $node) {
 
-                $this->recurGetChildUnder($client_id,$site_id,$node['_id'],$result,$layer,$num);
+                $this->recurGetChildUnder($client_id, $site_id, $node['_id'], $result, $layer, $num);
             }
-        }else{
+        } else {
             return $result;
         }
     }
 
-    private function recurGetChildByLevel($client_id,$site_id,$parent_node,&$result,&$layer =0, $num = 0){
+    private function recurGetChildByLevel($client_id, $site_id, $parent_node, &$result, &$layer = 0, $num = 0)
+    {
         //array_push($result,$num);
         //array_push($result,$layer);
-        if($num++==$layer || $layer==0){
-            array_push($result,$parent_node);
+        if ($num++ == $layer || $layer == 0) {
+            array_push($result, $parent_node);
         }
 
-        $nodes = $this->store_org_model->findAdjacentChildNode($client_id,$site_id,new MongoId($parent_node));
-        if(isset($nodes)){
-            foreach($nodes as $node){
+        $nodes = $this->store_org_model->findAdjacentChildNode($client_id, $site_id, new MongoId($parent_node));
+        if (isset($nodes)) {
+            foreach ($nodes as $node) {
 
-                $this->recurGetChildByLevel($client_id,$site_id,$node['_id'],$result,$layer,$num);
+                $this->recurGetChildByLevel($client_id, $site_id, $node['_id'], $result, $layer, $num);
             }
-        }else{
+        } else {
             return $result;
         }
     }
 
-    public function getChildNode_get($node_id = '',$layer=0)
+    public function getChildNode_get($node_id = '', $layer = 0)
     {
         $result = array();
 
-        if(!$node_id)
+        if (!$node_id) {
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'node_id'
             )), 200);
+        }
 
-        $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node_id),$result,$layer);
+        $this->recurGetChildUnder($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node_id),
+            $result, $layer);
 
         $this->response($this->resp->setRespond($result), 200);
     }
 
-    public function saleReport_get($node_id = '') {
+    public function saleReport_get($node_id = '')
+    {
         $result = array();
 
-        if(!$node_id)
+        if (!$node_id) {
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'node_id'
             )), 200);
+        }
 
         $month = $this->input->get('month');
-        if(!$month)
-            $month = date("m",time());
+        if (!$month) {
+            $month = date("m", time());
+        }
         $year = $this->input->get('year');
-        if(!$year)
-            $year = date("Y",time());
+        if (!$year) {
+            $year = date("Y", time());
+        }
         $action = $this->input->get('action');
-        if(!$action)
+        if (!$action) {
             $action = "sell";
+        }
         $parameter = $this->input->get('parameter');
-        if(!$parameter)
+        if (!$parameter) {
             $parameter = "amount";
+        }
 
         $list = array();
-        $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node_id),$list);
+        $this->recurGetChildUnder($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node_id),
+            $list);
 
-        $table=$this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],$this->validToken['site_id'],$list,$action,$parameter,$month,$year,2);
+        $table = $this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],
+            $this->validToken['site_id'], $list, $action, $parameter, $month, $year, 2);
 
-        $this_month_time = strtotime($year."-".$month);
+        $this_month_time = strtotime($year . "-" . $month);
         $previous_month_time = strtotime('-1 month', $this_month_time);
 
-        $current_month = date("m",$this_month_time);
-        $current_year = date("Y",$this_month_time);
+        $current_month = date("m", $this_month_time);
+        $current_year = date("Y", $this_month_time);
 
-        $previous_month = date("m",$previous_month_time);
-        $previous_year = date("Y",$previous_month_time);
+        $previous_month = date("m", $previous_month_time);
+        $previous_year = date("Y", $previous_month_time);
 
-        $current_month_sales =  $table[$current_year][$current_month][$parameter];
+        $current_month_sales = $table[$current_year][$current_month][$parameter];
         $previous_month_sales = $table[$previous_year][$previous_month][$parameter];
 
-        $result[$parameter]  = $current_month_sales;
+        $result[$parameter] = $current_month_sales;
         // for debug
         //$result['previous_month_amount'] = $previous_month_sales;
 
-        if($current_month_sales==0&&$previous_month_sales==0){
-            $result['percent_changed']=0;
-        }elseif($previous_month_sales==0){
-            $result['percent_changed']=100;
-        }else{
-            $result['percent_changed']=(($current_month_sales-$previous_month_sales)*100)/$previous_month_sales;
+        if ($current_month_sales == 0 && $previous_month_sales == 0) {
+            $result['percent_changed'] = 0;
+        } elseif ($previous_month_sales == 0) {
+            $result['percent_changed'] = 100;
+        } else {
+            $result['percent_changed'] = (($current_month_sales - $previous_month_sales) * 100) / $previous_month_sales;
         }
 
         $this->response($this->resp->setRespond($result), 200);
     }
 
-    public function saleHistory_get($node_id = '',$count = 6) {
+    public function saleHistory_get($node_id = '', $count = 6)
+    {
         $result = array();
-        if(!$node_id)
+        if (!$node_id) {
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'node_id'
             )), 200);
+        }
 
         $month = $this->input->get('month');
-        if(!$month)
-            $month = date("m",time());
+        if (!$month) {
+            $month = date("m", time());
+        }
         $year = $this->input->get('year');
-        if(!$year)
-            $year = date("Y",time());
+        if (!$year) {
+            $year = date("Y", time());
+        }
         $action = $this->input->get('action');
-        if(!$action)
+        if (!$action) {
             $action = "sell";
+        }
         $parameter = $this->input->get('parameter');
-        if(!$parameter)
+        if (!$parameter) {
             $parameter = "amount";
+        }
 
 
         $node_list = array();
-        $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node_id),$node_list);
+        $this->recurGetChildUnder($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node_id),
+            $node_list);
 
-        $table=$this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],$this->validToken['site_id'],$node_list,$action,$parameter,$month,$year,$count+1);
+        $table = $this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],
+            $this->validToken['site_id'], $node_list, $action, $parameter, $month, $year, $count + 1);
 
-        $this_month_time = strtotime($year."-".$month);
-        for($index = 0; $index < $count; $index++) {
+        $this_month_time = strtotime($year . "-" . $month);
+        for ($index = 0; $index < $count; $index++) {
             $current_month = date("m", strtotime('-' . ($index) . ' month', $this_month_time));
             $current_year = date("Y", strtotime('-' . ($index) . ' month', $this_month_time));
 
-            $previous_month = date("m",strtotime('-'.($index+1).' month', $this_month_time));
-            $previous_year = date("Y",strtotime('-'.($index+1).' month', $this_month_time));
+            $previous_month = date("m", strtotime('-' . ($index + 1) . ' month', $this_month_time));
+            $previous_year = date("Y", strtotime('-' . ($index + 1) . ' month', $this_month_time));
 
-            $current_month_sales =  $table[$current_year][$current_month][$parameter];
+            $current_month_sales = $table[$current_year][$current_month][$parameter];
             $previous_month_sales = $table[$previous_year][$previous_month][$parameter];
 
             $result[$current_year][$current_month][$parameter] = $current_month_sales;
 
-            if($current_month_sales==0&&$previous_month_sales==0){
-                $result[$current_year][$current_month]['percent_changed']=0;
-            }elseif($previous_month_sales==0){
-                $result[$current_year][$current_month]['percent_changed']=100;
-            }else{
-                $result[$current_year][$current_month]['percent_changed']=(($current_month_sales-$previous_month_sales)*100)/$previous_month_sales;
+            if ($current_month_sales == 0 && $previous_month_sales == 0) {
+                $result[$current_year][$current_month]['percent_changed'] = 0;
+            } elseif ($previous_month_sales == 0) {
+                $result[$current_year][$current_month]['percent_changed'] = 100;
+            } else {
+                $result[$current_year][$current_month]['percent_changed'] = (($current_month_sales - $previous_month_sales) * 100) / $previous_month_sales;
             }
         }
 
         $this->response($this->resp->setRespond($result), 200);
     }
 
-    public function saleBoard_get($node_id = '',$level = null) {
+    public function saleBoard_get($node_id = '', $level = null)
+    {
         $result = array();
 
-        if(!$node_id)
+        if (!$node_id) {
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'node_id'
             )), 200);
+        }
 
         $month = $this->input->get('month');
-        if(!$month)
-            $month = date("m",time());
+        if (!$month) {
+            $month = date("m", time());
+        }
         $year = $this->input->get('year');
-        if(!$year)
-            $year = date("Y",time());
+        if (!$year) {
+            $year = date("Y", time());
+        }
         $action = $this->input->get('action');
-        if(!$action)
+        if (!$action) {
             $action = "sell";
+        }
         $parameter = $this->input->get('parameter');
-        if(!$parameter)
+        if (!$parameter) {
             $parameter = "amount";
+        }
         //$this->benchmark->mark('rank_peer_start');
 
         $candidate_node = array();
-        $this->recurGetChildByLevel($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node_id),$candidate_node,$level);
+        $this->recurGetChildByLevel($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node_id),
+            $candidate_node, $level);
 
-        foreach($candidate_node as $node){
+        foreach ($candidate_node as $node) {
             $list = array();
-            $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node),$list);
+            $this->recurGetChildUnder($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node),
+                $list);
 
-            $table=$this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],$this->validToken['site_id'],$list,$action,$parameter,$month,$year,2);
+            $table = $this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],
+                $this->validToken['site_id'], $list, $action, $parameter, $month, $year, 2);
 
-            $this_month_time = strtotime($year."-".$month);
+            $this_month_time = strtotime($year . "-" . $month);
             $previous_month_time = strtotime('-1 month', $this_month_time);
 
-            $current_month = date("m",$this_month_time);
-            $current_year = date("Y",$this_month_time);
+            $current_month = date("m", $this_month_time);
+            $current_year = date("Y", $this_month_time);
 
-            $previous_month = date("m",$previous_month_time);
-            $previous_year = date("Y",$previous_month_time);
+            $previous_month = date("m", $previous_month_time);
+            $previous_year = date("Y", $previous_month_time);
 
-            $current_month_sales =  $table[$current_year][$current_month]['amount'];
+            $current_month_sales = $table[$current_year][$current_month]['amount'];
             $previous_month_sales = $table[$previous_year][$previous_month]['amount'];
 
-            $temp['amount']  = $current_month_sales;
+            $temp['amount'] = $current_month_sales;
             //$temp['previous_month_amount'] = $previous_month_sales;
 
-            if($current_month_sales==0&&$previous_month_sales==0){
-                $temp['percent_changed']=0;
-            }elseif($previous_month_sales==0){
-                $temp['percent_changed']=100;
-            }else{
-                $temp['percent_changed']=(($current_month_sales-$previous_month_sales)*100)/$previous_month_sales;
+            if ($current_month_sales == 0 && $previous_month_sales == 0) {
+                $temp['percent_changed'] = 0;
+            } elseif ($previous_month_sales == 0) {
+                $temp['percent_changed'] = 100;
+            } else {
+                $temp['percent_changed'] = (($current_month_sales - $previous_month_sales) * 100) / $previous_month_sales;
             }
 
-            array_push($result,array_merge(array('node_id' => new MongoId($node)),$temp));
+            array_push($result, array_merge(array('node_id' => new MongoId($node)), $temp));
         }
 
-        foreach ($result as $key => $raw){
+        foreach ($result as $key => $raw) {
             $temp_name[$key] = $raw['node_id'];
-            $temp_value[$key] =  $raw['amount'];
+            $temp_value[$key] = $raw['amount'];
         }
-        if (isset($temp_value) && isset($temp_name))
-        {
-            array_multisort( $temp_value, SORT_DESC,$temp_name, SORT_ASC, $result);
+        if (isset($temp_value) && isset($temp_name)) {
+            array_multisort($temp_value, SORT_DESC, $temp_name, SORT_ASC, $result);
         }
 
         //$this->benchmark->mark('rank_peer_end');
         //$result['processing_time'] = $this->benchmark->elapsed_time('rank_peer_start', 'rank_peer_end');
         $this->response($this->resp->setRespond($result), 200);
 
+    }
+
+    /**
+     * @param $result
+     * @return mixed
+     */
+    private function organizesResultFormatter($result)
+    {
+        array_walk_recursive($result, array($this, "convert_mongo_object"));
+
+        // Apply Name field to each parent
+        $this->organizesData = $this->store_org_model->retrieveOrganize($this->client_id, $this->site_id);
+        array_walk_recursive($result, array($this, "apply_organize_parent_name"));
+
+        return $result;
+    }
+
+    /**
+     * @param $result
+     * @return mixed
+     */
+    private function nodesResultFormatter($result)
+    {
+        array_walk_recursive($result, array($this, "convert_mongo_object"));
+
+        // Apply Name field to each parent
+        $this->nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
+        $this->organizesData = $this->store_org_model->retrieveOrganize($this->client_id, $this->site_id);
+        array_walk_recursive($result, array($this, "apply_node_and_organize_parent_name"));
+
+        return $result;
+    }
+
+    private function _findOrganizeById($organize_id)
+    {
+        foreach ($this->organizesData as $element) {
+            if ($organize_id == $element['_id']) {
+                return $element;
+            }
+        }
+
+        return false;
+    }
+
+    private function _findNodeById($node_id)
+    {
+        foreach ($this->nodesData as $element) {
+            if ($node_id == $element['_id']) {
+                return $element;
+            }
+        }
+
+        return false;
     }
 }
