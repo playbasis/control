@@ -5,6 +5,7 @@ require_once APPPATH . '/libraries/REST2_Controller.php';
 class Store_org extends REST2_Controller
 {
     private $organizesData;
+    private $nodesData;
 
     public function __construct()
     {
@@ -134,8 +135,13 @@ class Store_org extends REST2_Controller
         $this->benchmark->mark('start');
 
         $query_data = $this->input->get(null, true);
+
+        if(isset($query_data['id']))
+            if(!MongoId::isValid($query_data['id']))
+                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+
         $results = $this->store_org_model->retrieveOrganize($this->client_id, $this->site_id, $query_data);
-        $formatted_results = $this->resultFormatter($results);
+        $formatted_results = $this->organizesResultFormatter($results);
 
         $key_allowed_output = array(
             "_id",
@@ -145,6 +151,47 @@ class Store_org extends REST2_Controller
             "slug",
             "date_added",
             "date_modified",
+            "parent"
+        );
+        foreach($formatted_results as &$result){
+            $result = array_intersect_key($result, array_flip($key_allowed_output));
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('results' => $formatted_results, 'processing_time' => $t)), 200);
+    }
+
+    public function listNodes_get()
+    {
+        $this->benchmark->mark('start');
+
+        $query_data = $this->input->get(null, true);
+
+        if(isset($query_data['id']))
+            if(!MongoId::isValid($query_data['id']))
+                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+
+        if(isset($query_data['organize_id']))
+            if(!MongoId::isValid($query_data['organize_id']))
+                $this->response($this->error->setError('PARAMETER_INVALID', array('organize_id')), 200);
+
+        if(isset($query_data['parent_id']))
+            if(!MongoId::isValid($query_data['parent_id']))
+                $this->response($this->error->setError('PARAMETER_INVALID', array('parent_id')), 200);
+
+        $results = $this->store_org_model->retrieveNode($this->client_id, $this->site_id, $query_data);
+        $formatted_results = $this->nodesResultFormatter($results);
+
+        $key_allowed_output = array(
+            "_id",
+            "name",
+            "description",
+            "status",
+            "slug",
+            "date_added",
+            "date_modified",
+            "organize",
             "parent"
         );
         foreach($formatted_results as &$result){
@@ -176,9 +223,30 @@ class Store_org extends REST2_Controller
         }
     }
 
-    private function query_organize_parent_name(&$value, $key)
+    private function apply_organize_parent_name(&$value, $key)
     {
         if ($key === "parent") {
+            $org_res = $this->_findOrganizeById($value);
+            if (isset($org_res)) {
+                $value = array(
+                    'id' => $org_res['_id']->{'$id'},
+                    'name' => $org_res['name']
+                );
+            }
+        }
+    }
+
+    private function apply_node_and_organize_parent_name(&$value, $key)
+    {
+        if ($key === "parent") {
+            $org_res = $this->_findNodeById($value);
+            if (isset($org_res)) {
+                $value = array(
+                    'id' => $org_res['_id']->{'$id'},
+                    'name' => $org_res['name']
+                );
+            }
+        }elseif($key === "organize"){
             $org_res = $this->_findOrganizeById($value);
             if (isset($org_res)) {
                 $value = array(
@@ -257,13 +325,29 @@ class Store_org extends REST2_Controller
      * @param $result
      * @return mixed
      */
-    private function resultFormatter($result)
+    private function organizesResultFormatter($result)
     {
         array_walk_recursive($result, array($this, "convert_mongo_object"));
 
         // Apply Name field to each parent
         $this->organizesData = $this->store_org_model->retrieveOrganize($this->client_id, $this->site_id);
-        array_walk_recursive($result, array($this, "query_organize_parent_name"));
+        array_walk_recursive($result, array($this, "apply_organize_parent_name"));
+
+        return $result;
+    }
+
+    /**
+     * @param $result
+     * @return mixed
+     */
+    private function nodesResultFormatter($result)
+    {
+        array_walk_recursive($result, array($this, "convert_mongo_object"));
+
+        // Apply Name field to each parent
+        $this->nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
+        $this->organizesData = $this->store_org_model->retrieveOrganize($this->client_id, $this->site_id);
+        array_walk_recursive($result, array($this, "apply_node_and_organize_parent_name"));
 
         return $result;
     }
@@ -271,6 +355,16 @@ class Store_org extends REST2_Controller
     private function _findOrganizeById($organize_id){
         foreach ( $this->organizesData as $element ) {
             if ( $organize_id == $element['_id'] ) {
+                return $element;
+            }
+        }
+
+        return false;
+    }
+
+    private function _findNodeById($node_id){
+        foreach ( $this->nodesData as $element ) {
+            if ( $node_id == $element['_id'] ) {
                 return $element;
             }
         }

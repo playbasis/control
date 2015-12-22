@@ -9,6 +9,80 @@ class Store_org_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
+    public function retrieveNode($client_id, $site_id, $optionalParams = array())
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        // Searching
+        if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
+            $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['search'])) . "/i");
+            $this->mongo_db->where('name', $regex);
+        }
+        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+            //make sure 'id' is valid before passing here
+            if (MongoId::isValid($optionalParams['id'])) {
+                $id = new MongoId($optionalParams['id']);
+                $this->mongo_db->where('_id', $id);
+            }
+        }
+        if (isset($optionalParams['organize_id']) && !is_null($optionalParams['organize_id'])) {
+            //make sure 'id' is valid before passing here
+            if (MongoId::isValid($optionalParams['organize_id'])) {
+                $organize = new MongoId($optionalParams['organize_id']);
+                $this->mongo_db->where('organize', $organize);
+            }
+        }
+        if (isset($optionalParams['parent_id']) && !is_null($optionalParams['parent_id'])) {
+            //make sure 'id' is valid before passing here
+            if (MongoId::isValid($optionalParams['parent_id'])) {
+                $parent_node_id = new MongoId($optionalParams['parent_id']);
+                $this->mongo_db->where('parent', $parent_node_id);
+            }
+        }
+
+        // Sorting
+        $sort_data = array('_id', 'name', 'status', 'description');
+
+        if (isset($optionalParams['order']) && (mb_strtolower($optionalParams['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
+        // Paging
+        if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
+            if (isset($optionalParams['offset'])) {
+                if ($optionalParams['offset'] < 0) {
+                    $optionalParams['offset'] = 0;
+                }
+            } else {
+                $optionalParams['offset'] = 0;
+            }
+
+            if (isset($optionalParams['limit'])) {
+                if ($optionalParams['limit'] < 1) {
+                    $optionalParams['limit'] = 20;
+                }
+            } else {
+                $optionalParams['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$optionalParams['limit']);
+            $this->mongo_db->offset((int)$optionalParams['offset']);
+        }
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->get("playbasis_store_organize_to_client");
+    }
+
     public function retrieveOrganize($client_id, $site_id, $optionalParams = array())
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -43,11 +117,19 @@ class Store_org_model extends MY_Model
 
         // Paging
         if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
-            if ($optionalParams['offset'] < 0) {
+            if (isset($optionalParams['offset'])) {
+                if ($optionalParams['offset'] < 0) {
+                    $optionalParams['offset'] = 0;
+                }
+            } else {
                 $optionalParams['offset'] = 0;
             }
 
-            if ($optionalParams['limit'] < 1) {
+            if (isset($optionalParams['limit'])) {
+                if ($optionalParams['limit'] < 1) {
+                    $optionalParams['limit'] = 20;
+                }
+            } else {
                 $optionalParams['limit'] = 20;
             }
 
