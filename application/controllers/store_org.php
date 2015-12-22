@@ -4,6 +4,8 @@ require_once APPPATH . '/libraries/REST2_Controller.php';
 
 class Store_org extends REST2_Controller
 {
+    private $organizesData;
+
     public function __construct()
     {
         parent::__construct();
@@ -127,22 +129,62 @@ class Store_org extends REST2_Controller
         }
     }
 
+    public function listOrganizes_get()
+    {
+        $this->benchmark->mark('start');
+
+        $query_data = $this->input->get(null, true);
+        $results = $this->store_org_model->retrieveOrganize($this->client_id, $this->site_id, $query_data);
+        $formatted_results = $this->resultFormatter($results);
+
+        $key_allowed_output = array(
+            "_id",
+            "name",
+            "description",
+            "status",
+            "slug",
+            "date_added",
+            "date_modified",
+            "parent"
+        );
+        foreach($formatted_results as &$result){
+            $result = array_intersect_key($result, array_flip($key_allowed_output));
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('results' => $formatted_results, 'processing_time' => $t)), 200);
+    }
+
     /**
      * Use with array_walk and array_walk_recursive.
      * Recursive iterable items to modify array's value
      * from MongoId to string and MongoDate to readable date
-     * @param mixed $item this is reference
+     * @param mixed $value this is reference
      * @param string $key
      */
-    private function convert_mongo_object(&$item, $key)
+    private function convert_mongo_object(&$value, $key)
     {
-        if (is_object($item)) {
-            if (get_class($item) === 'MongoId') {
-                $item = $item->{'$id'};
+        if (is_object($value)) {
+            if (get_class($value) === 'MongoId') {
+                $value = $value->{'$id'};
             } else {
-                if (get_class($item) === 'MongoDate') {
-                    $item = datetimeMongotoReadable($item);
+                if (get_class($value) === 'MongoDate') {
+                    $value = datetimeMongotoReadable($value);
                 }
+            }
+        }
+    }
+
+    private function query_organize_parent_name(&$value, $key)
+    {
+        if ($key === "parent") {
+            $org_res = $this->_findOrganizeById($value);
+            if (isset($org_res)) {
+                $value = array(
+                    'id' => $org_res['_id']->{'$id'},
+                    'name' => $org_res['name']
+                );
             }
         }
     }
@@ -209,5 +251,30 @@ class Store_org extends REST2_Controller
     private function makeRoleDict($name)
     {
         return array('name' => $name, 'value' => new MongoDate());
+    }
+
+    /**
+     * @param $result
+     * @return mixed
+     */
+    private function resultFormatter($result)
+    {
+        array_walk_recursive($result, array($this, "convert_mongo_object"));
+
+        // Apply Name field to each parent
+        $this->organizesData = $this->store_org_model->retrieveOrganize($this->client_id, $this->site_id);
+        array_walk_recursive($result, array($this, "query_organize_parent_name"));
+
+        return $result;
+    }
+
+    private function _findOrganizeById($organize_id){
+        foreach ( $this->organizesData as $element ) {
+            if ( $organize_id == $element['_id'] ) {
+                return $element;
+            }
+        }
+
+        return false;
     }
 }
