@@ -292,6 +292,11 @@ $route['StoreOrg/nodes/'.ANY_STRING.'/removePlayer/'.ANY_STRING] = 'store_org/pl
 $route['StoreOrg/nodes/'.ANY_STRING.'/setPlayerRole/'.ANY_STRING] = 'store_org/playerRoleSet/$1/$2'; // ANY_STRING = quiz_id/pb_player_id
 $route['StoreOrg/nodes/'.ANY_STRING.'/unsetPlayerRole/'.ANY_STRING] = 'store_org/playerRoleUnset/$1/$2'; // ANY_STRING = quiz_id/pb_player_id
 
+$route['StoreOrg/nodes/'.ANY_STRING.'/getChildNode/'.ANY_STRING] = 'store_org/getChildNode/$1/$2';     // ANY_STRING = node_id/layer
+$route['StoreOrg/nodes/'.ANY_STRING.'/saleReport'] = 'store_org/saleReport/$1';                        // ANY_STRING = node_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/saleHistory/'.ANY_STRING] = 'store_org/saleHistory/$1/$2';       // ANY_STRING = node_id/month
+$route['StoreOrg/nodes/'.ANY_STRING.'/saleBoard/'.ANY_STRING] = 'store_org/saleBoard/$1/$2';           // ANY_STRING = node_id/layer
+
 //promo API
 $route['Promo'] = 'promo/list';
 $route['Promo/list'] = 'promo/list';

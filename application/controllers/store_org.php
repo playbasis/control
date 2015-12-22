@@ -210,4 +210,231 @@ class Store_org extends REST2_Controller
     {
         return array('name' => $name, 'value' => new MongoDate());
     }
+
+
+    private function recurGetChildUnder($client_id,$site_id,$parent_node,&$result,&$layer =0, $num = 0){
+        //array_push($result,$num);
+        //array_push($result,$layer);
+        if($num++<=$layer || $layer==0){
+            array_push($result,$parent_node);
+        }
+
+        $nodes = $this->store_org_model->findAdjacentChildNode($client_id,$site_id,new MongoId($parent_node));
+        if(isset($nodes)){
+            foreach($nodes as $node){
+
+                $this->recurGetChildUnder($client_id,$site_id,$node['_id'],$result,$layer,$num);
+            }
+        }else{
+            return $result;
+        }
+    }
+
+    private function recurGetChildByLevel($client_id,$site_id,$parent_node,&$result,&$layer =0, $num = 0){
+        //array_push($result,$num);
+        //array_push($result,$layer);
+        if($num++==$layer || $layer==0){
+            array_push($result,$parent_node);
+        }
+
+        $nodes = $this->store_org_model->findAdjacentChildNode($client_id,$site_id,new MongoId($parent_node));
+        if(isset($nodes)){
+            foreach($nodes as $node){
+
+                $this->recurGetChildByLevel($client_id,$site_id,$node['_id'],$result,$layer,$num);
+            }
+        }else{
+            return $result;
+        }
+    }
+
+    public function getChildNode_get($node_id = '',$layer=0)
+    {
+        $result = array();
+
+        if(!$node_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'node_id'
+            )), 200);
+
+        $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node_id),$result,$layer);
+
+        $this->response($this->resp->setRespond($result), 200);
+    }
+
+    public function saleReport_get($node_id = '') {
+        $result = array();
+
+        if(!$node_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'node_id'
+            )), 200);
+
+        $month = $this->input->get('month');
+        if(!$month)
+            $month = date("m",time());
+        $year = $this->input->get('year');
+        if(!$year)
+            $year = date("Y",time());
+        $action = $this->input->get('action');
+        if(!$action)
+            $action = "sell";
+        $parameter = $this->input->get('parameter');
+        if(!$parameter)
+            $parameter = "amount";
+
+        $list = array();
+        $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node_id),$list);
+
+        $table=$this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],$this->validToken['site_id'],$list,$action,$parameter,$month,$year,2);
+
+        $this_month_time = strtotime($year."-".$month);
+        $previous_month_time = strtotime('-1 month', $this_month_time);
+
+        $current_month = date("m",$this_month_time);
+        $current_year = date("Y",$this_month_time);
+
+        $previous_month = date("m",$previous_month_time);
+        $previous_year = date("Y",$previous_month_time);
+
+        $current_month_sales =  $table[$current_year][$current_month][$parameter];
+        $previous_month_sales = $table[$previous_year][$previous_month][$parameter];
+
+        $result[$parameter]  = $current_month_sales;
+        // for debug
+        //$result['previous_month_amount'] = $previous_month_sales;
+
+        if($current_month_sales==0&&$previous_month_sales==0){
+            $result['percent_changed']=0;
+        }elseif($previous_month_sales==0){
+            $result['percent_changed']=100;
+        }else{
+            $result['percent_changed']=(($current_month_sales-$previous_month_sales)*100)/$previous_month_sales;
+        }
+
+        $this->response($this->resp->setRespond($result), 200);
+    }
+
+    public function saleHistory_get($node_id = '',$count = 6) {
+        $result = array();
+        if(!$node_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'node_id'
+            )), 200);
+
+        $month = $this->input->get('month');
+        if(!$month)
+            $month = date("m",time());
+        $year = $this->input->get('year');
+        if(!$year)
+            $year = date("Y",time());
+        $action = $this->input->get('action');
+        if(!$action)
+            $action = "sell";
+        $parameter = $this->input->get('parameter');
+        if(!$parameter)
+            $parameter = "amount";
+
+
+        $node_list = array();
+        $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node_id),$node_list);
+
+        $table=$this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],$this->validToken['site_id'],$node_list,$action,$parameter,$month,$year,$count+1);
+
+        $this_month_time = strtotime($year."-".$month);
+        for($index = 0; $index < $count; $index++) {
+            $current_month = date("m", strtotime('-' . ($index) . ' month', $this_month_time));
+            $current_year = date("Y", strtotime('-' . ($index) . ' month', $this_month_time));
+
+            $previous_month = date("m",strtotime('-'.($index+1).' month', $this_month_time));
+            $previous_year = date("Y",strtotime('-'.($index+1).' month', $this_month_time));
+
+            $current_month_sales =  $table[$current_year][$current_month][$parameter];
+            $previous_month_sales = $table[$previous_year][$previous_month][$parameter];
+
+            $result[$current_year][$current_month][$parameter] = $current_month_sales;
+
+            if($current_month_sales==0&&$previous_month_sales==0){
+                $result[$current_year][$current_month]['percent_changed']=0;
+            }elseif($previous_month_sales==0){
+                $result[$current_year][$current_month]['percent_changed']=100;
+            }else{
+                $result[$current_year][$current_month]['percent_changed']=(($current_month_sales-$previous_month_sales)*100)/$previous_month_sales;
+            }
+        }
+
+        $this->response($this->resp->setRespond($result), 200);
+    }
+
+    public function saleBoard_get($node_id = '',$level = null) {
+        $result = array();
+
+        if(!$node_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'node_id'
+            )), 200);
+
+        $month = $this->input->get('month');
+        if(!$month)
+            $month = date("m",time());
+        $year = $this->input->get('year');
+        if(!$year)
+            $year = date("Y",time());
+        $action = $this->input->get('action');
+        if(!$action)
+            $action = "sell";
+        $parameter = $this->input->get('parameter');
+        if(!$parameter)
+            $parameter = "amount";
+        //$this->benchmark->mark('rank_peer_start');
+
+        $candidate_node = array();
+        $this->recurGetChildByLevel($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node_id),$candidate_node,$level);
+
+        foreach($candidate_node as $node){
+            $list = array();
+            $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node),$list);
+
+            $table=$this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],$this->validToken['site_id'],$list,$action,$parameter,$month,$year,2);
+
+            $this_month_time = strtotime($year."-".$month);
+            $previous_month_time = strtotime('-1 month', $this_month_time);
+
+            $current_month = date("m",$this_month_time);
+            $current_year = date("Y",$this_month_time);
+
+            $previous_month = date("m",$previous_month_time);
+            $previous_year = date("Y",$previous_month_time);
+
+            $current_month_sales =  $table[$current_year][$current_month]['amount'];
+            $previous_month_sales = $table[$previous_year][$previous_month]['amount'];
+
+            $temp['amount']  = $current_month_sales;
+            //$temp['previous_month_amount'] = $previous_month_sales;
+
+            if($current_month_sales==0&&$previous_month_sales==0){
+                $temp['percent_changed']=0;
+            }elseif($previous_month_sales==0){
+                $temp['percent_changed']=100;
+            }else{
+                $temp['percent_changed']=(($current_month_sales-$previous_month_sales)*100)/$previous_month_sales;
+            }
+
+            array_push($result,array_merge(array('node_id' => new MongoId($node)),$temp));
+        }
+
+        foreach ($result as $key => $raw){
+            $temp_name[$key] = $raw['node_id'];
+            $temp_value[$key] =  $raw['amount'];
+        }
+        if (isset($temp_value) && isset($temp_name))
+        {
+            array_multisort( $temp_value, SORT_DESC,$temp_name, SORT_ASC, $result);
+        }
+
+        //$this->benchmark->mark('rank_peer_end');
+        //$result['processing_time'] = $this->benchmark->elapsed_time('rank_peer_start', 'rank_peer_end');
+        $this->response($this->resp->setRespond($result), 200);
+
+    }
 }
