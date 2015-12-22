@@ -525,7 +525,7 @@ class Engine extends Quest
 				$jigsawCategory = $jigsaw['category'];
 
 				// support formula-based quantity
-				if (isset($jigsawConfig['quantity']) && $jigsawConfig['quantity'] !== '') {
+				if (isset($jigsawConfig['quantity']) && strpos($jigsawConfig['quantity'], '{') !== false) {
 					require_once APPPATH . '/libraries/ipsum/Parser.class.php';
 					$f = $jigsawConfig['quantity'];
 					foreach ($input as $key => $value) {
