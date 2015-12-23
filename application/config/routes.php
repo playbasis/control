@@ -163,6 +163,10 @@ $route['Player/contact/'.ANY_NUMBER] = 'player/contact/0/$1';
 $route['Player/'.ANY_STRING.'/code'] = 'player/code/$1';
 $route['Player/code'] = 'player/code';
 
+$route['Player/rankParam/'.ANY_STRING.'/'.ANY_STRING] = 'player/rankParam/$1/$2';
+$route['Player/rankParam/'.ANY_STRING] = 'player/rankParam/$1/20';
+$route['Player/rankParam'] = 'player/rankParam/0/0';
+
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';
@@ -303,10 +307,10 @@ $route['StoreOrg/rankPeer/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeer/$1/
 $route['StoreOrg/rankPeer/'.ANY_STRING] = 'store_org/rankPeer/$1/point';
 $route['StoreOrg/rankPeer'] = 'store_org/rankParam/0/point';
 
-$route['StoreOrg/rankPeerByAction/'.ANY_STRING.'/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeerByAction/$1/$2/$3';
-$route['StoreOrg/rankPeerByAction/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeerByAction/$1/$2/0';
-$route['StoreOrg/rankPeerByAction/'.ANY_STRING] = 'store_org/rankPeerByAction/$1/0/0';
-$route['StoreOrg/rankPeerByAction'] = 'store_org/rankPeerByAction/0/0/0';
+$route['StoreOrg/rankPeerByAccAction/'.ANY_STRING.'/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/$2/$3';
+$route['StoreOrg/rankPeerByAccAction/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/$2/0';
+$route['StoreOrg/rankPeerByAccAction/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/0/0';
+$route['StoreOrg/rankPeerByAccAction'] = 'store_org/rankPeerByAccumulateAction/0/0/0';
 
 //promo API
 $route['Promo'] = 'promo/list';

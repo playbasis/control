@@ -1281,6 +1281,65 @@ class Player extends REST2_Controller
             $this->response($this->resp->setRespond($player), 200);
     	}
     }
+	public function rankParam_get($action,$param)
+	{
+		// Check validity of action and parameter
+		if(!$action)
+			$this->response($this->error->setError('ACTION_NOT_FOUND', array(
+					'action'
+			)), 200);
+		if(!$param)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+					'parameter'
+			)), 200);
+
+		$action_id = $this->action_model->findAction(array_merge($this->validToken, array(
+				'action_name' => urldecode($action)
+		)));
+		$valid = false;
+		if (!$action_id) {
+			$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+		} else {
+			$ruleSet = $this->client_model->getRuleSetByActionId(array(
+					'client_id' => $this->validToken['client_id'],
+					'site_id' => $this->validToken['site_id'],
+					'action_id' => $action_id
+			));
+			foreach ($ruleSet as $rule) {
+				$jigsawSet = (isset($rule['jigsaw_set']) && !empty($rule['jigsaw_set'])) ? $rule['jigsaw_set'] : array();
+				foreach ($jigsawSet as $jigsaw) {
+					if ($jigsaw['category'] == "CONDITION" && $jigsaw['config']['param_name'] == $param) {
+						$valid = true;
+					}
+				}
+			}
+		}
+		if (!$valid) {
+			$this->response($this->error->setError('PARAMETER_INVALID', array(
+					'parameter'
+			)), 200);
+		}
+		// Action and parameter are valid !
+		// Now, getting all input
+		$input = $this->input->get();
+
+		// default mode is sum
+		$input['mode'] = isset($input['mode'])? $input['mode']: "sum";
+
+		// default limit is infinite
+		$input['limit'] = isset($input['limit'])? $input['limit']: -1;
+
+		// default group_by is player_id the smallest resolution, it could be distrct/ area as well
+		$input['group_by'] = (isset($input['group_by']) && $input['group_by'] !== 'cl_player_id')? $input['group_by']: 'cl_player_id';
+		$input['action_name'] = $action;
+		$input['param'] = $param;
+
+		// Let's Rank !!
+		$result = $this->player_model->getMonthLeaderboardsByCustomParameter($input,$this->validToken['client_id'],$this->validToken['site_id']);
+
+		$this->response($this->resp->setRespond($result), 200);
+	}
+
     public function level_get($level='')
     {
         if(!$level)

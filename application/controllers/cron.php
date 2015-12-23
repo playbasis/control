@@ -37,8 +37,17 @@ class Cron extends CI_Controller
 		$this->load->model('plan_model');
 		$this->load->model('service_model');
 		$this->load->model('googles_model');
+		$this->load->model('leaderboard_model');
+		$this->load->model('reward_model');
+		$this->load->model('goods_model');
+		$this->load->model('email_model');
+		$this->load->model('sms_model');
+		$this->load->model('push_model');
+		$this->load->model('tracker_model');
+		$this->load->model('store_org_model');
 		$this->load->model('engine/jigsaw', 'jigsaw_model');
 		$this->load->model('tool/utility', 'utility');
+		$this->load->model('tool/node_stream', 'node');
 		$this->load->library('parser');
 	}
 
@@ -954,6 +963,757 @@ $email = 'pechpras@playbasis.com';
             }
         }
     }
+
+	public function processLeaderBoard()
+	{
+
+		// Step 1. get leaderboard configuration
+		$result = array();
+		$configs = $this->leaderboard_model->listLeaderBoards();
+		foreach ($configs as $config) {
+			// Step 2. get leader
+			$input = array();
+			$ranks = array();
+
+
+			if (isset($config['rewards']) && is_array($config['rewards'])) {
+				$limit = $input['limit'] = count($config['rewards']);
+			} else {
+				continue;
+			}
+			if ($config['month'] != "") { // if not forever
+				$current = time();
+
+				$first = date('Y-m-01', $current);
+				$from = strtotime($first . ' 00:00:00');
+
+				$last = date('Y-m-t', $current);
+				$to = strtotime($last . ' 23:59:59');
+				$config_time = $config['month']->sec;
+				if ($config['occur_once'] && !(($config_time >= $from) && ($config_time <= $to))) {
+					continue;
+				} elseif (($config['occur_once'] == false) && ($config_time < $from)) {
+					continue;
+				}
+			}
+
+			// default mode is sum
+			$input['mode'] = isset($config['mode']) ? $config['mode'] : "sum";
+
+			$client_id = $config['client_id'];
+			$site_id = $config['site_id'];
+			$year = date("Y", time());
+			$month = date("m", time());
+			if (isset($config['selected_org']) && $config['selected_org'] != ""){
+				$role = (isset($config['role']) && $config['role'] != "") ? $config['role'] : null;
+				$node_global_list = $this->store_org_model->getlistByOrgId($client_id,$site_id,new MongoID($config['selected_org']));
+				if ($node_global_list )foreach ($node_global_list as $processing_node){
+					$ranks = array();
+					$node_id = $processing_node['_id'];
+					$list = array();
+					$raws_list = array();
+					if ($config['rankBy'] == "action"){
+						$action = $config['selected_action'];
+						$param = $config['selected_param'];
+
+						$node_list = $this->store_org_model->findAdjacentChildNode($client_id,$site_id,$node_id);
+						// get node list of this node id
+						if ($node_list )foreach ($node_list as $node){
+							if ($node['_id'] == $node_id) continue;
+							$list = array();
+							$this->store_org_model->recurGetChild($client_id,$site_id,$node['_id'], $list);
+
+							if (!empty($list)) {
+								$raw = $this->store_org_model->getSaleHistoryOfNode($client_id, $site_id, $list, $action,
+										$param, $month, $year, 1);
+								$current_value = $raw[$year][$month][$param];
+								if ($current_value > 0){
+									$player_info = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node['_id'],$role);
+									array_push($raws_list,array ( 'name' => $node['name'],
+											'pb_player_id' => $player_info[0]['pb_player_id'],
+											$param => $current_value,
+									));
+								}
+
+							}
+						}
+						$ranks = $this->sortResult($raws_list,$param,'pb_player_id');
+						array_push($result,$this->processRanks($ranks,$config));
+					}else { // reward
+
+						$rank_by = $config['selected_param'];
+
+						$list = array();
+
+						// get node list of this node id
+						if (is_null($role)){
+							$this->store_org_model->recurGetChild($client_id,$site_id,new MongoId ($node_id), $list);
+							// if list is null, node id is the second lowest of organization. we just need to find player
+							if (is_null($list)) $list = array (new MongoId ($node_id));
+							$node_to_match = array();
+							foreach($list as $node){
+								$player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node);
+								foreach ($player_list as $player)
+									array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
+							}
+						}
+						else{
+							$list = $this->store_org_model->findAdjacentChildNode($client_id,$site_id,new MongoId ($node_id));
+							// if list is null, node id is the second lowest of organization. we just need to find player
+							if (is_null($list)) $list = array (array('_id' => new MongoId ($node_id)));
+							$node_to_match = array();
+							foreach($list as $node){
+								if ($node['_id'] == new MongoId ($node_id)) continue; // if role is set, mean input node id is excluded
+								$player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node['_id'],$role);
+								foreach ($player_list as $player)
+									array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
+							}
+						}
+
+
+						$raws = $this->store_org_model->getMonthlyPeerLeaderboard($rank_by, $limit, $client_id,
+								$site_id, $node_to_match, $month, $year);
+
+
+						$return_list = array();
+						foreach ($node_to_match as $node){
+							$current_value = $this->getValueFromLeaderboardList('pb_player_id',$node['pb_player_id'],$rank_by,$raws);
+							if ($current_value > 0){
+								array_push($return_list,array ('player_id' => $this->player_model->getClientPlayerId($node['pb_player_id'],$site_id),
+										$rank_by => $current_value
+								));
+							}
+						}
+						$ranks = $this->sortResult($return_list,$rank_by,'player_id');
+						array_push($result,$this->processRanks($ranks,$config));
+					}
+				}
+			}
+			else{ // selected_org is "" mean global ranking
+				if ($config['rankBy'] == "action") {
+					$input['action_name'] = $config['selected_action'];
+					$input['param'] = $config['selected_param'];
+					$input['group_by'] =  'pb_player_id';
+					$ranks = $this->player_model->getMonthLeaderboardsByCustomParameter($input, $client_id, $site_id);
+				} else { // rewards
+					$input['param'] = $config['selected_param'];
+					$ranks = $this->player_model->getMonthlyLeaderboard($input['param'], $limit, $client_id, $site_id);
+				}
+				array_push($result,$this->processRanks($ranks,$config));
+			}
+
+		}
+		echo "Result of leaderboard = ".json_encode($result).PHP_EOL;
+	}
+	private function processRanks($ranks,$config){
+
+		$client_id = $config['client_id'];
+		$site_id = $config['site_id'];
+		$log_action_name = "MonthlyLeaderBoard";
+		$result = array();
+		$limit = $input['limit'] = count($config['rewards']);
+
+		foreach ($ranks as $key => $rank) {
+			$rank_no = $key + 1;
+			if ($rank_no > $limit) {
+				break;
+			}
+			$reward = $config['rewards'][$rank_no];
+			$feedbacks = isset($reward['feedbacks']) ? $reward['feedbacks'] : null;
+			unset($reward['feedbacks']);
+			if (isset($rank['player_id'])){
+				$cl_player_id = $rank['player_id'];
+				// Step 3. Process rewards + node!
+
+				$pb_player_id = $this->player_model->getPlaybasisId(array(
+						'cl_player_id' => $cl_player_id,
+						'client_id' => $client_id,
+						'site_id' => $site_id
+				));
+			}elseif (isset($rank['pb_player_id'])) {
+				$pb_player_id = $rank['pb_player_id'];
+				$cl_player_id = $this->player_model->getClientPlayerId($pb_player_id,$site_id);
+			}
+
+			$client_info = $this->client_model->findBySiteId($site_id);
+			$event = $this->processRewards($reward, array(
+					'action' => $log_action_name,
+					'pb_player_id' => $pb_player_id,
+					'cl_player_id' => $cl_player_id,
+					'client_id' => $client_id,
+					'site_id' => $site_id,
+					'domain_name' => $client_info['domain_name'],
+					'leaderboard_id' => $config['_id'],
+//						'node_id' => $node_id,
+			));
+			$result = array_merge($result, array ( 'Rank No '.$rank_no => $event));
+			if ($feedbacks) {
+				// process feedbacks
+				$this->processFeedback($feedbacks, array(
+						'client_id' => $client_id,
+						'site_id' => $site_id,
+						'pb_player_id' => $pb_player_id
+				));
+			}
+		}
+		return $result;
+	}
+	private function processRewards($array_reward,$input) {
+
+		$action = $input['action'];
+		$player_id =  $input['pb_player_id'];
+		$cl_player_id =  $input['cl_player_id'];
+		$client_id =  $input['client_id'];
+		$site_id =  $input['site_id'];
+		$domain_name =  $input['domain_name'];
+		$leaderboard_id =  $input['leaderboard_id'];
+		$node_id     = isset($input['node_id'])?$input['node_id']:null;
+		$return_event = array();
+		$update_config = array(
+				"client_id" => $client_id,
+				"site_id" => $site_id,
+				"pb_player_id" => $player_id,
+				"player_id" => $cl_player_id
+		);
+
+		$player = $this->player_model->readPlayer($player_id, $site_id, 'anonymous');
+		$anonymous = $player['anonymous'] != null ? $player['anonymous'] : false;
+		foreach ($array_reward as $type => $r) {
+
+			if ($type == "badges") {
+				foreach ($r as $badge) {
+					$reward_id = new MongoID($badge["reward_id"]);
+					$this->client_model->updateplayerBadge($reward_id, $badge["reward_value"], $player_id,
+							$cl_player_id,
+							$client_id, $site_id);
+					$badgeData = $this->client_model->getBadgeById($reward_id, $site_id);
+
+					if (!$badgeData) {
+						break;
+					}
+					$event = array(
+							'event_type' => 'REWARD_RECEIVED',
+							'reward_type' => 'badge',
+							'reward_data' => $badgeData,
+							'value' => $badge["reward_value"]
+					);
+					array_push($return_event, $event);
+					$eventMessage = $this->utility->getEventMessage('badge', '', '', $event['reward_data']['name']);
+					//log event - reward, badge
+					$data_reward = array(
+							'reward_type' => $badge["reward_type"],
+							'reward_id' => $badge["reward_id"],
+							'reward_name' => $event['reward_data']['name'],
+							'reward_value' => $badge["reward_value"],
+					);
+					$this->tracker_model->trackEvent(
+							'REWARD',
+							$eventMessage,
+							array(
+									'client_id' => $client_id,
+									'site_id' => $site_id,
+									'pb_player_id' => $player_id,
+									'leaderboard_id' => $leaderboard_id,
+									'node_id'  => $node_id,
+									'reward_id' => $reward_id,
+									'reward_name' =>  $event['reward_data']['name'],
+									'amount' => $badge["reward_value"]
+							));
+
+					//publish to node stream
+					$this->node->publish(array_merge($update_config, array(
+							'action_name' => $action,
+							'message' => $eventMessage,
+							'badge' => $event['reward_data'],
+					)), $domain_name, $site_id);
+				}
+			} elseif ($type == "goods") {
+				foreach ($r as $item) {
+					$reward_id = new MongoId($item["reward_id"]);
+					$this->client_model->updateplayerGoods($reward_id, $item["reward_value"],
+							$player_id, $cl_player_id, $client_id, $site_id);
+					$goods = $this->goods_model->getGoods(array(
+							'goods_id' => $reward_id,
+							'client_id' => $client_id,
+							'site_id' => $site_id
+					));
+
+
+					if (!$goods) {
+						break;
+					}
+					$event = array(
+							'event_type' => 'REWARD_RECEIVED',
+							'reward_type' => 'goods',
+							'reward_data' => $goods,
+							'value' => $item["reward_value"]
+					);
+					array_push($return_event, $event);
+
+					$eventMessage = $this->utility->getEventMessage('goods', '', '', $event['reward_data']['name']);
+					//log event - reward, badge
+					$data_reward = array(
+							'reward_type' => $item["reward_type"],
+							'reward_id' => $item["reward_id"],
+							'reward_name' => $event['reward_data']['name'],
+							'reward_value' => $item["reward_value"],
+					);
+					$this->tracker_model->trackEvent(
+							'REWARD',
+							$eventMessage,
+							array(
+									'client_id' => $client_id,
+									'site_id' => $site_id,
+									'pb_player_id' => $player_id,
+									'leaderboard_id' => $leaderboard_id,
+									'node_id'  => $node_id,
+									'reward_id' => $reward_id,
+									'reward_name' =>  $event['reward_data']['name'],
+									'amount' => $item["reward_value"]
+							));
+					//publish to node stream
+					$this->node->publish(array_merge($update_config, array(
+							'action_name' => $action,
+							'message' => $eventMessage,
+							'goods' => $event['reward_data'],
+					)), $domain_name, $site_id);
+				}
+			} elseif ($type == "custompoints") {
+				foreach ($r as $point) {
+					$reward_config = array(
+							"client_id" => $client_id,
+							"site_id" => $site_id
+					);
+					$reward_id = new MongoID($point["reward_id"]);
+					$reward_name = $this->reward_model->getRewardName($reward_config, $reward_id);
+
+					$return_data = array();
+					$reward_update = $this->client_model->updateCustomReward($reward_name, $point["reward_value"],
+							$update_config, $return_data, $anonymous);
+
+					$reward_type_message = 'point';
+					$reward_type_name = $return_data['reward_name'];
+
+					$event = array(
+							'event_type' => 'REWARD_RECEIVED',
+							'reward_type' => $reward_type_name,
+							'value' => $point["reward_value"]
+					);
+					array_push($return_event, $event);
+					$eventMessage = $this->utility->getEventMessage($reward_type_message, $point["reward_value"],
+							$reward_type_name);
+					//log event - reward, non-custom point
+					$data_reward = array(
+							'reward_type' => $point["reward_type"],
+							'reward_id' => $point["reward_id"],
+							'reward_name' => $reward_type_name,
+							'reward_value' => $point["reward_value"],
+					);
+					$this->tracker_model->trackEvent(
+							'REWARD',
+							$eventMessage,
+							array(
+									'client_id' => $client_id,
+									'site_id' => $site_id,
+									'pb_player_id' => $player_id,
+									'leaderboard_id' => $leaderboard_id,
+									'node_id'  => $node_id,
+									'reward_id' => $reward_id,
+									'reward_name' =>  $reward_type_name,
+									'amount' => $point["reward_value"]
+							));
+					//publish to node stream
+					$this->node->publish(array_merge($update_config, array(
+							'action_name' => $action,
+							'message' => $eventMessage,
+							'amount' => $point["reward_value"],
+							'point' => $reward_type_name,
+					)), $domain_name, $site_id);
+				}
+			} else {
+				// for POINT  and EXP
+				$reward_id = new MongoID($r["reward_id"]);
+				if ($type == "exp") {
+					//check if player level up
+					$lv = $this->client_model->updateExpAndLevel($r["reward_value"], $player_id, $cl_player_id, array(
+							'client_id' => $client_id,
+							'site_id' => $site_id
+					));
+					if ($lv > 0) {
+						$eventMessage = $this->levelup($lv, $return_event, $input);
+						//publish to node stream
+						$this->node->publish(array_merge($update_config, array(
+								'action_name' => $action,
+								'message' => $eventMessage,
+								'level' => $lv
+						)), $domain_name, $site_id);
+					}
+
+					$reward_type_message = 'point';
+					$reward_type_name = 'exp';
+				} else {
+					$reward_config = array(
+							"client_id" => $client_id,
+							"site_id" => $site_id
+					);
+					$reward_name = $this->reward_model->getRewardName($reward_config,$reward_id);
+
+					$return_data = array();
+					$reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"],
+							$update_config, $return_data, $anonymous);
+
+					$reward_type_message = 'point';
+					$reward_type_name = $return_data['reward_name'];
+				}
+
+				$event = array(
+						'event_type' => 'REWARD_RECEIVED',
+						'reward_type' => $reward_type_name,
+						'value' => $r["reward_value"]
+				);
+				array_push($return_event, $event);
+				$eventMessage = $this->utility->getEventMessage($reward_type_message, $r["reward_value"],
+						$reward_type_name);
+				//log event - reward, non-custom point
+				$data_reward = array(
+						'reward_type' => $r["reward_type"],
+						'reward_id' => $r["reward_id"],
+						'reward_name' => $reward_type_name,
+						'reward_value' => $r["reward_value"],
+				);
+				$this->tracker_model->trackEvent(
+						'REWARD',
+						$eventMessage,
+						array(
+								'client_id' => $client_id,
+								'site_id' => $site_id,
+								'pb_player_id' => $player_id,
+								'leaderboard_id' => $leaderboard_id,
+								'node_id'  => $node_id,
+								'reward_id' => $reward_id,
+								'reward_name' =>  $reward_type_name,
+								'amount' => $r["reward_value"]
+						));
+				//publish to node stream
+				$this->node->publish(array_merge($update_config, array(
+						'action_name' => $action,
+						'message' => $eventMessage,
+						'amount' => $r["reward_value"],
+						'point' => $reward_type_name,
+				)), $domain_name, $site_id);
+			}
+
+		}
+		return $return_event;
+	}
+
+	private function processFeedback($feedbacks, $input)
+	{
+		foreach ($feedbacks as $type => $feedback) {
+
+			switch (strtolower($type)) {
+				case 'email':
+					$this->processEmail($input, $feedback);
+					break;
+				case 'sms':
+					$this->processSms($input, $feedback);
+					break;
+				case 'push':
+					$this->processPushNotification($input, $feedback);
+					break;
+				default:
+					log_message('error', 'Unknown feedback type: ' . $type);
+					break;
+			}
+		}
+
+	}
+
+	private function processEmail($input, $feedback)
+	{
+		/* check permission according to billing cycle */
+
+		$access = true;
+		try {
+			/* get current associated plan of the client */
+			$client_date = $this->client_model->getClientStartEndDate($input['client_id']);
+			$client_usage = $this->client_model->getClientSiteUsage($input['client_id'], $input['site_id']);
+			$client_plan = $this->client_model->getPlanById($client_usage['plan_id']);
+			$free_flag = !isset($client_plan['price']) || $client_plan['price'] <= 0;
+			if ($free_flag) {
+				$client_date = $this->client_model->adjustCurrentUsageDate($client_date['date_start']);
+			}
+			$client_data = array('date' => $client_date, 'usage' => $client_usage, 'plan' => $client_plan);
+			$this->client_model->permissionProcess(
+					$client_data,
+					$input['client_id'],
+					$input['site_id'],
+					"notifications",
+					"email"
+			);
+		} catch (Exception $e) {
+			if ($e->getMessage() == "LIMIT_EXCEED") {
+				$access = false;
+			}
+		}
+		if (!$access) {
+			return false;
+		}
+
+		foreach ($feedback as $email_template) {
+			/* get email */
+			$player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+			$email = $player && isset($player['email']) ? $player['email'] : null;
+			if (!$email) {
+				return false;
+			}
+
+			/* check blacklist */
+			$res = $this->email_model->isEmailInBlackList($email, $input['site_id']);
+			if ($res) {
+				return false;
+			} // banned
+
+			/* check valid template_id */
+			$template = $this->email_model->getTemplateById($input['site_id'], $email_template['template_id']);
+			if (!$template) {
+				return false;
+			}
+
+			/* player-2 */
+			if (isset($input['player-2'])) {
+				$player2 = $this->player_model->getById($input['site_id'], $input['player-2']);
+				if ($player2) {
+					$player['first_name-2'] = $player2['first_name'];
+					$player['last_name-2'] = $player2['last_name'];
+					$player['cl_player_id-2'] = $player2['cl_player_id'];
+					$player['email-2'] = $player2['email'];
+					$player['phone_number-2'] = $player2['phone_number'];
+					if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) {
+						$player['code-2'] = $this->player_model->generateCode($input['player-2']);
+					}
+				}
+			}
+
+			/* send email */
+			$from = EMAIL_FROM;
+			$to = $email;
+			$subject = $email_template['subject'];
+			if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) {
+				$player['code'] = $this->player_model->generateCode($input['pb_player_id']);
+			}
+			if (isset($input['coupon'])) {
+				$player['coupon'] = $input['coupon'];
+			}
+			$message = $this->utility->replace_template_vars($template['body'], $player);
+			$response = $this->utility->email($from, $to, $subject, $message);
+			$this->email_model->log(EMAIL_TYPE_USER, $input['client_id'], $input['site_id'], $response, $from, $to,
+					$subject, $message);
+		}
+		return $response != false;
+	}
+
+	private function processSms($input, $feedback)
+	{
+
+		/* check permission according to billing cycle */
+		$access = true;
+		try {
+			/* get current associated plan of the client */
+			$client_date = $this->client_model->getClientStartEndDate($input['client_id']);
+			$client_usage = $this->client_model->getClientSiteUsage($input['client_id'], $input['site_id']);
+			$client_plan = $this->client_model->getPlanById($client_usage['plan_id']);
+			$free_flag = !isset($client_plan['price']) || $client_plan['price'] <= 0;
+			if ($free_flag) {
+				$client_date = $this->client_model->adjustCurrentUsageDate($client_date['date_start']);
+			}
+			$client_data = array('date' => $client_date, 'usage' => $client_usage, 'plan' => $client_plan);
+			$this->client_model->permissionProcess(
+					$client_data,
+					$input['client_id'],
+					$input['site_id'],
+					"notifications",
+					"email"
+			);
+		} catch (Exception $e) {
+			if ($e->getMessage() == "LIMIT_EXCEED") {
+				$access = false;
+			}
+		}
+		if (!$access) {
+			return false;
+		}
+
+		foreach ($feedback as $sms_template) {
+			/* get phone number */
+			$player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+			$phone = $player && isset($player['phone_number']) ? $player['phone_number'] : null;
+			if (!$phone) {
+				return false;
+			}
+
+			/* check valid template_id */
+			$template = $this->sms_model->getTemplateById($input['site_id'], $sms_template['template_id']);
+			if (!$template) {
+				return false;
+			}
+
+			/* player-2 */
+			if (isset($input['player-2'])) {
+				$player2 = $this->player_model->getById($input['site_id'], $input['player-2']);
+				if ($player2) {
+					$player['first_name-2'] = $player2['first_name'];
+					$player['last_name-2'] = $player2['last_name'];
+					$player['cl_player_id-2'] = $player2['cl_player_id'];
+					$player['email-2'] = $player2['email'];
+					$player['phone_number-2'] = $player2['phone_number'];
+					if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) {
+						$player['code-2'] = $this->player_model->generateCode($input['player-2']);
+					}
+				}
+			}
+
+			/* send SMS */
+			$this->config->load("twilio", true);
+			$config = $this->sms_model->getSMSClient($input['client_id'], $input['site_id']);
+			$twilio = $this->config->item('twilio');
+			$config['api_version'] = $twilio['api_version'];
+			$this->load->library('twilio/twiliomini', $config);
+			$from = $config['number'];
+			$to = $phone;
+			if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) {
+				$player['code'] = $this->player_model->generateCode($input['pb_player_id']);
+			}
+			if (isset($input['coupon'])) {
+				$player['coupon'] = $input['coupon'];
+			}
+			$message = $this->utility->replace_template_vars($template['body'], $player);
+			$response = $this->twiliomini->sms($from, $to, $message);
+			$this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
+			return $response->IsError;
+		}
+	}
+
+	private function processPushNotification($input, $feedback)
+	{
+		/* check permission according to billing cycle */
+		$access = true;
+		try {
+			/* get current associated plan of the client */
+			$client_date = $this->client_model->getClientStartEndDate($input['client_id']);
+			$client_usage = $this->client_model->getClientSiteUsage($input['client_id'], $input['site_id']);
+			$client_plan = $this->client_model->getPlanById($client_usage['plan_id']);
+			$free_flag = !isset($client_plan['price']) || $client_plan['price'] <= 0;
+			if ($free_flag) {
+				$client_date = $this->client_model->adjustCurrentUsageDate($client_date['date_start']);
+			}
+			$client_data = array('date' => $client_date, 'usage' => $client_usage, 'plan' => $client_plan);
+			$this->client_model->permissionProcess(
+					$client_data,
+					$input['client_id'],
+					$input['site_id'],
+					"notifications",
+					"email"
+			);
+		} catch (Exception $e) {
+			if ($e->getMessage() == "LIMIT_EXCEED") {
+				$access = false;
+			}
+		}
+		if (!$access) {
+			return false;
+		}
+
+
+		/* get devices */
+		$player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+		$devices = $this->player_model->listDevices($input['client_id'], $input['site_id'], $input['pb_player_id'],
+				array('device_token', 'os_type'));
+		if (!$devices) {
+			return false;
+		}
+
+		foreach ($feedback as $sms_template) {
+			/* check valid template_id */
+			$template = $this->push_model->getTemplateById($input['site_id'], $sms_template['template_id']);
+			if (!$template) {
+				return false;
+			}
+
+			/* player-2 */
+			if (isset($input['player-2'])) {
+				$player2 = $this->player_model->getById($input['site_id'], $input['player-2']);
+				if ($player2) {
+					$player['first_name-2'] = $player2['first_name'];
+					$player['last_name-2'] = $player2['last_name'];
+					$player['cl_player_id-2'] = $player2['cl_player_id'];
+					$player['email-2'] = $player2['email'];
+					$player['phone_number-2'] = $player2['phone_number'];
+					if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) {
+						$player['code-2'] = $this->player_model->generateCode($input['player-2']);
+					}
+				}
+			}
+
+			/* send push notification */
+			if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) {
+				$player['code'] = $this->player_model->generateCode($input['pb_player_id']);
+			}
+			if (isset($input['coupon'])) {
+				$player['coupon'] = $input['coupon'];
+			}
+			$message = $this->utility->replace_template_vars($template['body'], $player);
+			foreach ($devices as $device) {
+				$this->push_model->initial(array(
+						'device_token' => $device['device_token'],
+						'messages' => $message,
+						'badge_number' => 1,
+						'data' => null,
+				), $device['os_type']);
+			}
+		}
+		return true;
+	}
+	private function getValueFromLeaderboardList ($key, $name_to_key, $name_of_value, $list){
+		foreach ($list as $player){
+			if (isset($player[$key]) && ($player[$key] ==$name_to_key) ){
+				return ($player[$name_of_value]);
+			}
+		}
+		return 0;
+	}
+	private function sortResult ($list, $sort_by, $name){
+		$result = $list;
+		foreach ($list as $key => $raw){
+
+			$temp_name[$key] = $raw[$name];
+			$temp_value[$key] =  $raw[$sort_by];
+		}
+		if (isset($temp_value) && isset($temp_name))
+		{
+			array_multisort( $temp_value, SORT_DESC,$temp_name, SORT_ASC, $result);
+		}
+		return $result;
+	}
+	private function levelup($lv, &$apiResult, $input)
+	{
+		$event = array(
+				'event_type' => 'LEVEL_UP',
+				'value' => $lv
+		);
+		array_push($apiResult, $event);
+		$eventMessage = $this->utility->getEventMessage('level', '', '', '', $lv);
+		//log event - level
+		$this->tracker_model->trackEvent('LEVEL', $eventMessage, array_merge($input, array(
+				'amount' => $lv
+		)));
+		return $eventMessage;
+	}
+	private function recordResult($result,$config,$rank_no){
+		return (array( 'leaderboard name' => $config['name'],
+						'Rank no '.$rank_no => $result
+				));
+	}
 }
 
 function urlsafe_b64encode($string) {

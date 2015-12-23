@@ -685,12 +685,12 @@ class Store_org extends REST2_Controller
         }
 
 
-        $results = $this->player_model->getMonthlyPeerLeaderboard($rank_by, $limit, $client_id,
+        $results = $this->store_org_model->getMonthlyPeerLeaderboard($rank_by, $limit, $client_id,
             $site_id, $node_to_match, $month, $year);
 
         $prev_month = $month -1 ? $month -1 : 12;
         $prev_year = $month -1 ? $year : $year - 1;
-        $previous_result = $this->player_model->getMonthlyPeerLeaderboard($rank_by, $limit, $client_id,
+        $previous_result = $this->store_org_model->getMonthlyPeerLeaderboard($rank_by, $limit, $client_id,
             $site_id, $node_to_match, $prev_month, $prev_year);
 
         $return_list = array();
@@ -709,7 +709,7 @@ class Store_org extends REST2_Controller
         $this->response($this->resp->setRespond($return_list), 200);
     }
 
-    public function rankPeerByAction_get($node_id, $action, $param)
+    public function rankPeerByAccumulateAction_get($node_id, $action, $param)
     {
         // Check validity of action and parameter
         if (!$node_id) {

@@ -373,20 +373,7 @@ class Store_org_model extends MY_Model
         }
 
     }
-    public function getNodeIdUnderGivenId($client_id, $site_id, $node_id){
-        $this->mongo_db->where(array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
-            'parent' => $node_id,
-        ));
-        $result = $this->mongo_db->get('playbasis_store_organize');
-        if(empty($result)){
-            return null;
-        }else{
-            return $result[0]['_id'];
-        }
 
-    }
     public function getSaleHistoryOfNode($client_id, $site_id, $node_list, $action,$parameter, $month=null, $year=null,$count){
         $result = array();
 
@@ -448,5 +435,123 @@ class Store_org_model extends MY_Model
 
         return $result;
     }
+    public function getMonthlyPeerLeaderboard($ranked_by, $limit, $client_id, $site_id,$node_to_match=null,$month=null,$year=null) {
+        $limit = intval($limit);
+        $this->set_site_mongodb($site_id);
+        /* get reward_id */
+        $reward_id = $this->getRewardIdByName($client_id, $site_id, $ranked_by);
+        /* get latest RESET event for that reward_id (if exists) */
+        $reset = $this->getResetRewardEvent($site_id, $reward_id);
+        $resetTime = null;
+        if ($reset) {
+            $reset_time = array_values($reset);
+            $resetTime = $reset_time[0]->sec;
+        }
+        // default is present month
+        if (is_null($year) || is_null($month))
+        {
+            $selected_time = time();
+        }
+        else{
+            $selected_time = strtotime($year."-".$month);
+        }
 
+
+        // Aggregate the data
+        $first = date('Y-m-01', $selected_time);
+        $from = strtotime($first.' 00:00:00');
+
+        $last = date('Y-m-t', $selected_time);
+        $to   = strtotime($last.' 23:59:59');
+
+        $match = array(
+            'event_type' => 'REWARD',
+            'site_id' => $site_id,
+            'reward_id' => $reward_id,
+            'date_added' => array('$gte' => new MongoDate($from),'$lte' => new MongoDate($to)),
+        );
+        if ($node_to_match){
+            // set match parameter for aggregate
+            $match['$or'] = $node_to_match;
+        }
+
+        if ($resetTime && $resetTime > $from) $from = $resetTime;
+        $results = $this->mongo_db->aggregate('playbasis_event_log', array(
+            array(
+                '$match' => $match,
+            ),
+            array(
+                '$group' => array('_id' => array('pb_player_id' => '$pb_player_id'), 'value' => array('$sum' => '$value'))
+            ),
+            array(
+                '$sort' => array('value' => -1),
+            ),
+            array(
+                '$limit' => $limit+5,
+            ),
+        ));
+        return $results ? $this->removeDeletedPlayers($results['result'], $limit, $ranked_by) : array();
+    }
+    private function removeDeletedPlayers($results, $limit, $rankedBy) {
+        $total = count($results);
+        $c = 0;
+        for ($i = 0; $i < $total; $i++) {
+            if ($c < $limit) {
+                $this->mongo_db->select(array('cl_player_id'));
+                if (isset($results[$i]['_id']['pb_player_id'])) {
+                    $results[$i]['pb_player_id'] = $results[$i]['_id']['pb_player_id'];
+                    unset($results[$i]['_id']);
+                }
+                $this->mongo_db->where(array('_id' => $results[$i]['pb_player_id']));
+                $p = $this->mongo_db->get('playbasis_player');
+                if ($p) {
+                    $p = $p[0];
+                    $results[$i]['player_id'] = $p['cl_player_id'];
+                    $results[$i][$rankedBy] = $results[$i]['value'];
+                    unset($results[$i]['cl_player_id']);
+                    unset($results[$i]['value']);
+                    $c++;
+                } else {
+                    unset($results[$i]);
+                }
+            } else {
+                unset($results[$i]);
+            }
+        }
+        return array_values($results);
+    }
+    private function getRewardIdByName($client_id, $site_id, $name) {
+        $this->mongo_db->select(array('reward_id'));
+        $this->mongo_db->where(array(
+            'name' => $name,
+            'site_id' => $site_id,
+            'client_id' => $client_id
+        ));
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_reward_to_client');
+        return $results ? $results[0]['reward_id'] : null;
+    }
+    public function getResetRewardEvent($site_id, $reward_id=null) {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->select(array('reward_id','date_added'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('event_type', 'RESET');
+        if ($reward_id) {
+            $this->mongo_db->where('reward_id', $reward_id);
+            $this->mongo_db->limit(1);
+        }
+        $this->mongo_db->order_by(array('date_added' => 'DESC')); // use 'date_added' instead of '_id'
+        $results = $this->mongo_db->get('playbasis_event_log');
+        $ret = array();
+        if ($results){
+            foreach ($results as $result) {
+                $reward_id = $result['reward_id']->{'$id'};
+                if (array_key_exists($reward_id, $ret)) continue;
+                $ret[$reward_id] = $result['date_added'];
+            }
+        }
+
+        return $ret;
+    }
 }
