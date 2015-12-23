@@ -565,8 +565,7 @@ class Store_org extends REST2_Controller
             } else {
                 $temp['percent_changed'] = (($current_month_sales - $previous_month_sales) * 100) / $previous_month_sales;
             }
-
-            array_push($result, array_merge(array('node_id' => new MongoId($node)), $temp));
+            array_push($result, array_merge(array('node_id' => $node.""), $temp));
         }
 
         foreach ($result as $key => $raw) {

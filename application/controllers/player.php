@@ -22,6 +22,7 @@ class Player extends REST2_Controller
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/node_stream', 'node');
+        $this->load->model('store_org_model');
 	}
 	public function index_get($player_id = '')
 	{
@@ -1704,6 +1705,139 @@ class Player extends REST2_Controller
             }
         }
     }
+
+	public function getAssociatedNode_get($player_id = '')
+	{
+		if(!$player_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+					'player_id'
+			)), 200);
+		//get playbasis player id
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+				'cl_player_id' => $player_id
+		)));
+		if(!$pb_player_id)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+		$result = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id);
+        foreach($result as $key => $entry){
+            $result[$key]["_id"]=$entry["_id"]."";
+            $result[$key]["node_id"]=$entry["node_id"]."";
+        }
+
+		$this->response($this->resp->setRespond($result), 200);
+	}
+
+    public function getRole_get($player_id = '',$node_id='') {
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        if(!$node_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'node_id'
+            )), 200);
+
+        $result = $this->store_org_model->getRoleOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id,new MongoId($node_id));
+        $result["_id"]=$result["_id"]."";
+
+        $this->response($this->resp->setRespond($result), 200);
+    }
+
+    private function recurGetChildUnder($client_id, $site_id, $parent_node, &$result, &$layer = 0, $num = 0)
+    {
+        //array_push($result,$num);
+        //array_push($result,$layer);
+        if ($num++ <= $layer || $layer == 0) {
+            array_push($result, $parent_node);
+        }
+
+        $nodes = $this->store_org_model->findAdjacentChildNode($client_id, $site_id, new MongoId($parent_node));
+        if (isset($nodes)) {
+            foreach ($nodes as $node) {
+
+                $this->recurGetChildUnder($client_id, $site_id, $node['_id'], $result, $layer, $num);
+            }
+        } else {
+            return $result;
+        }
+    }
+
+    public function saleReport_get($player_id = '') {
+        $result = array();
+
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $month = $this->input->get('month');
+        if(!$month)
+            $month = date("m", time());
+        $year = $this->input->get('year');
+        if(!$year)
+            $year = date("Y", time());
+        $action = $this->input->get('action');
+        if(!$action)
+            $action = "sell";
+        $parameter = $this->input->get('parameter');
+        if (!$parameter) {
+            $parameter = "amount";
+        }
+
+        $parent_node = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id);
+
+        foreach($parent_node as $node){
+            $list = array();
+            $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node['node_id']),$list);
+
+            $table=$this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],$this->validToken['site_id'],$list,$action,$parameter,$month,$year,2);
+
+            $this_month_time = strtotime($year . "-" . $month);
+            $previous_month_time = strtotime('-1 month', $this_month_time);
+
+            $current_month = date("m", $this_month_time);
+            $current_year = date("Y", $this_month_time);
+
+            $previous_month = date("m", $previous_month_time);
+            $previous_year = date("Y", $previous_month_time);
+
+            $current_month_sales =  $table[$current_year][$current_month]['amount'];
+            $previous_month_sales = $table[$previous_year][$previous_month]['amount'];
+
+            $temp[$parameter] = $current_month_sales;
+            // for debug
+            //$result['previous_month_amount'] = $previous_month_sales;
+
+            if ($current_month_sales == 0 && $previous_month_sales == 0) {
+                $temp['percent_changed'] = 0;
+            } elseif ($previous_month_sales == 0) {
+                $temp['percent_changed'] = 100;
+            } else {
+                $temp['percent_changed'] = (($current_month_sales - $previous_month_sales) * 100) / $previous_month_sales;
+            }
+
+            $node["node_id"]=$node["node_id"]."";
+
+            array_push($result,array_merge(array('node_id' => $node['node_id']),$temp));
+        }
+
+        $this->response($this->resp->setRespond($result), 200);
+    }
+
 }
 
 function index_cl_player_id($obj) {
