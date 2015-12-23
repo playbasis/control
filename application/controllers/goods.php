@@ -20,6 +20,8 @@ class Goods extends MY_Controller
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("goods", $lang['folder']);
+
+        $this->load->model('Store_org_model');
     }
 
     public function index() {
@@ -559,6 +561,17 @@ class Goods extends MY_Controller
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
                     'is_public'=>$goodsIsPublic
                 );
+                // put your fucking code here
+                if ($this->User_model->hasPermission('access','store_org') &&
+                    $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+                ){
+                    if (isset($goods['organize_id'])) {
+                        $org = $this->Store_org_model->retrieveOrganizeById($goods['organize_id']);
+                        $this->data['goods_list'][0]['organize_id']=$org["name"];
+                    }
+                }
+
+
             }
         }else{
             $results = $this->Goods_model->getGroupsAggregate($this->session->userdata('site_id'));
@@ -612,6 +625,15 @@ class Goods extends MY_Controller
                     'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null,
                     'is_group' => $is_group,
                 );
+                // put your fucking code here
+                if ($this->User_model->hasPermission('access','store_org') &&
+                    $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+                ){
+                    if (isset($goods['organize_id'])) {
+                        $org = $this->Store_org_model->retrieveOrganizeById($goods['organize_id']);
+                        $this->data['goods_list'][0]['organize_id']=$org["name"];
+                    }
+                }
             }
         }
 
@@ -767,6 +789,14 @@ class Goods extends MY_Controller
             $this->data['status'] = $goods_info['status'];
         } else {
             $this->data['status'] = 1;
+        }
+
+        if ($this->input->post('organize_id')) {
+            $this->data['organize_id'] = $this->input->post('organize_id');
+        } elseif (!empty($goods_info)) {
+            $this->data['organize_id'] = $goods_info['organize_id'];
+        } else {
+            $this->data['organize_id'] = "";
         }
 
         if ($this->input->post('quantity')) {

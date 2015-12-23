@@ -26,6 +26,7 @@ $lang['tab_sms']					= 'SMS';
 // Column
 $lang['column_image']					= 'Image';
 $lang['column_name']            		= 'Name';
+$lang['column_organization']            = 'Organization';
 $lang['column_sort_order']      		= 'Sort Order';
 $lang['column_quantity']          		= 'Quantity';
 $lang['column_peruser']          		= 'Per User';
@@ -43,6 +44,7 @@ $lang['entry_for_client']             	= 'Client';
 $lang['entry_description']				= 'Description';
 $lang['entry_hint']						= 'Hint';
 $lang['entry_sort_order']           	= 'Sort Order';
+$lang['entry_organize_name']           	= 'Organize Name';
 $lang['entry_parent']           		= 'Parent';
 $lang['entry_collection']         		= 'Collection';
 $lang['entry_redeem_with']        	   	= 'Redeem with';

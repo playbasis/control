@@ -8,6 +8,7 @@ echo form_open('goods/delete',$attributes);
             <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
             <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
             <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
+            <td class="left" style="width:50px;"><?php echo $this->lang->line('column_organization'); ?></td>
             <?php if(!$client_id){?>
                 <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
             <?php }?>
@@ -44,11 +45,12 @@ echo form_open('goods/delete',$attributes);
                     </td>
                     <td class="left"><div class="image"><img src="<?php echo $goods['image']; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></div></td>
                     <td class="left"><?php echo $goods['name']; ?></td>
+                    <td class="left"><?php echo (isset($goods['org']) && !is_null($goods['org']))?$goods['org']:'None'; ?></td>
                     <?php if(!$client_id){?>
                         <td class="left"><?php echo ($goods['is_public'])?"Public":"Private"; ?></td>
                     <?php }?>
                     <?php if($client_id){?>
-                        <td class="left"><?php echo ($goods['is_group'])?"Yes":""; ?></td>
+                        <td class="left"><?php echo ($goods['is_group'])?"Yes":"No"; ?></td>
                     <?php }?>
                     <td class="right"><?php echo (isset($goods['per_user']) && !is_null($goods['per_user']))?$goods['per_user']:'Unlimited'; ?></td>
                     <td class="right"><?php echo (isset($goods['quantity']) && !is_null($goods['quantity']))?$goods['quantity']:'Unlimited'; ?></td>

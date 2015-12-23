@@ -408,6 +408,10 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('sponsor', false);
         }
 
+        if (isset($data['organize_id'])) {
+            $this->mongo_db->set('organize_id', $data['organize_id']);
+        }
+
         if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
             $date_start_another = strtotime($data['date_start']);
             $date_expire_another = strtotime($data['date_expire']);
@@ -471,6 +475,10 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
         }
 
+        if (isset($data['organize_id'])) {
+            $this->mongo_db->set('organize_id', $data['organize_id']);
+        }
+
         $this->mongo_db->update('playbasis_goods_to_client');
     }
 
@@ -506,6 +514,10 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
         }
 
+        if (isset($data['organize_id'])) {
+            $this->mongo_db->set('organize_id', $data['organize_id']);
+        }
+
         $this->mongo_db->update_all('playbasis_goods_to_client');
     }
 
@@ -527,6 +539,10 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
         }else{
             $this->mongo_db->set('sponsor', false);
+        }
+
+        if (isset($data['organize_id'])) {
+            $this->mongo_db->set('organize_id', $data['organize_id']);
         }
 
         if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){

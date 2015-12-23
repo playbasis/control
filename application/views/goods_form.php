@@ -172,6 +172,18 @@
                                     <?php } ?>
                                 </select></td>
                         </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_organize_name'); ?>:</td>
+                            <td><div class="control-group">
+                                <label for="organize_id"
+                                       class="control-label"><?php echo $this->lang->line('entry_organize_parent'); ?></label>
+
+                                <div class="controls">
+                                    <input type='hidden' name="organize_id" id="organize_id" style="width:30%;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
+                                </div>
+                            </div>
+                            </td>
+                        </tr>
                     </table>
                 </div>
                 <div id="tab-redeem">
@@ -266,6 +278,9 @@
 </div>
 
 <script type="text/javascript" src="<?php echo base_url();?>javascript/ckeditor/ckeditor.js"></script>
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+
 <script type="text/javascript"><!--
 
 CKEDITOR.replace('description', {
@@ -315,6 +330,19 @@ function image_upload(field, thumb) {
 <script type="text/javascript"><!--
 $('#tabs a').tabs();
 
+    var $organizeParent = $("#organize_id");
+
+    function organizeFormatResult(organize) {
+        return '<div class="row-fluid">' +
+            '<div>' + organize.name /*+
+            '<small class="text-muted">&nbsp;(' + organize.description +
+            ')</small></div></div>'*/;
+    }
+
+    function organizeFormatSelection(organize) {
+        return organize.name;
+    }
+
 $(document).ready(function(){
     $(".point").hide();
     $(".badges").hide();
@@ -322,6 +350,49 @@ $(document).ready(function(){
     $("#point-entry").live('click', function() {$(".point").toggle()});
     $("#badge-entry").live('click', function() {$(".badges").toggle()});
     $("#reward-entry").live('click', function() {$(".rewards").toggle()});
+
+    $organizeParent.select2({
+        placeholder: "Search for an organize name",
+        allowClear: false,
+        minimumInputLength: 0,
+        id: function (data) {
+            return data._id;
+        },
+        ajax: {
+            url: baseUrlPath + "store_org/organize/",
+            dataType: 'json',
+            quietMillis: 250,
+            data: function (term, page) {
+                return {
+                    search: term, // search term
+                };
+            },
+            results: function (data, page) {
+                return {results: data.rows};
+            },
+            cache: true
+        },
+        initSelection: function (element, callback) {
+            var id = $(element).val();
+            if (id !== "") {
+                $.ajax(baseUrlPath + "store_org/organize/" + id, {
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $organizeParent
+                            .select2('enable', false);
+                    }
+                }).done(function (data) {
+                    if (typeof data != "undefined")
+                        callback(data);
+                }).always(function () {
+                    $organizeParent
+                        .select2('enable', true);
+                });
+            }
+        },
+        formatResult: organizeFormatResult,
+        formatSelection: organizeFormatSelection,
+    });
 });
 
 //--></script>
