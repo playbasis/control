@@ -372,6 +372,10 @@ class Player extends REST2_Controller
 		if ($approve_status) {
 			$playerInfo['approve_status'] = $approve_status;
 		}
+		$device_id = $this->input->post('device_id');
+		if ($device_id) {
+			$playerInfo['device_id'] = $device_id;
+		}
 		$referral_code = $this->input->post('code');
 		$anonymous = $this->input->post('anonymous');
 
@@ -568,6 +572,9 @@ class Player extends REST2_Controller
 		$instagramId = $this->input->post('instagram_id');
 		if($instagramId)
 			$playerInfo['instagram_id'] = $instagramId;
+        $deviceId = $this->input->post('device_id');
+        if($deviceId)
+            $playerInfo['device_id'] = $deviceId;
 		$password = $this->input->post('password');
 		if($password)
 			$playerInfo['password'] = do_hash($password);
@@ -824,6 +831,29 @@ class Player extends REST2_Controller
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		}
 
+		$device_id = $this->input->post('device_id');
+		if (!empty($device_id) && isset($player['device_id'])){
+			//Change new device
+			if(($device_id !== $player['device_id']) && !empty($player['phone_number'])){
+				$code = $this->player_model->generateSMSVerificationCode($player['_id']);
+
+				$site_data = $this->client_model->findBySiteId($this->site_id);
+//				$this->sendSMSVerification("PlayerLoginNewDevice", $site_data['site_name'], $player['phone_number'],
+//					$code);
+
+				$this->response($this->error->setError('SMS_VERIFICATION_NEEDED'), 200);
+			// not yet perform sms auth
+			}elseif(empty($player['phone_number'])){
+				$code = $this->player_model->generateSMSVerificationCode($player['_id']);
+
+				$site_data = $this->client_model->findBySiteId($this->site_id);
+//				$this->sendSMSVerification("PlayerRegister", $site_data['site_name'], $player['phone_number'],
+//					$code);
+
+				$this->response($this->error->setError('SMS_VERIFICATION_NEEDED'), 200);
+			}
+		}
+
 		$auth = $this->player_model->authPlayer($this->site_id, $player['_id'], $password);
 		if (!$auth) {
 			$this->response($this->error->setError('PASSWORD_INCORRECT'), 200);
@@ -858,6 +888,30 @@ class Player extends REST2_Controller
 			'session_id' => $session_id
 		)), 200);
 	}
+
+    public function verifySMSCode_post()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'code'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        $code = $this->input->post('code');
+        $player_id = $this->input->post('player_id');
+
+        $pb_player_id = $this->player_model->getPlayerByPlayerId($this->validToken['site_id'],$player_id);
+
+        $result = $this->player_model->verifyPlayerSMSCode($pb_player_id['_id'],$code);
+
+        if (!$result) {
+            $this->response($this->error->setError('SMS_VERIFICATION_CODE_INVALID_OR_EXPIRED'), 200);
+        }
+
+        $this->response($this->resp->setRespond(), 200);
+    }
 
 	public function forgotPasswordEmail_post()
 	{
@@ -1703,6 +1757,44 @@ class Player extends REST2_Controller
                 $item =  datetimeMongotoReadable($item);
             }
         }
+    }
+
+    private function sendSMSVerification($type, $from, $to, $verify_code)
+    {
+        $access = false;
+        $message = "Your verification code is " . $verify_code . " (" . $from . ")";
+
+        try {
+            $this->client_model->permissionProcess(
+                $this->client_data,
+                $this->client_id,
+                $this->site_id,
+                "notifications",
+                "sms"
+            );
+            $access = true;
+        } catch(Exception $e) {
+            log_message('error', 'Error = '.$e->getMessage());
+        }
+
+        if ($access) {
+            $validToken = $this->validToken;
+
+            // send SMS
+            $this->config->load("twilio",TRUE);
+            $config = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
+            $twilio = $this->config->item('twilio');
+            $config['api_version'] = $twilio['api_version'];
+            $this->load->library('twilio/twiliomini', $config);
+
+            $response = $this->twiliomini->sms($from, $to, $message);
+            $this->sms_model->log($validToken['client_id'], $validToken['site_id'], $type, $from, $to, $message, $response);
+            if ($response->IsError) {
+                log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
+                $this->response($this->error->setError('INTERNAL_ERROR', $response), 200);
+            }
+        }
+        $this->response($this->error->setError('LIMIT_EXCEED'), 200);
     }
 }
 

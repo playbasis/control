@@ -107,6 +107,7 @@ $route['Player/sessions'] = 'player/sessions';
 $route['Player/session/'.ANY_STRING] = 'player/session/$1';
 $route['Player/session'] = 'player/session';
 $route['Player/auth'] = 'player/auth';
+$route['Player/auth/smsVerify'] = 'player/verifySMSCode';
 $route['Player/password/email'] = 'player/forgotPasswordEmail';
 
 $route['Player/rank/'.ANY_STRING.'/'.ANY_NUMBER] = 'player/rank/$1/$2';

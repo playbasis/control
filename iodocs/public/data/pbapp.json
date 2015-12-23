@@ -445,6 +445,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
+                        },
+                        {
+                            "Name": "device_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "device id to verify with SMS verification process"
                         }
                     ]
                 },
@@ -565,6 +572,43 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "password of the player"
+                        },
+                        {
+                            "Name": "device_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "device id to verify with SMS verification process"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Player Auth with SMS verification",
+                    "Synopsis": "Perform SMS verification from code that sent to player SMS.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/auth/smsVerify",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as use in client's site"
+                        },
+                        {
+                            "Name": "code",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "verification code as SMS to player"
                         }
                     ]
                 },

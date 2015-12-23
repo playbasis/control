@@ -200,6 +200,14 @@ class Error extends CI_Model
             $errorData['message'] = "Password incorrect";
             $errorData['error_code'] = '0210';
             break;
+        case 'SMS_VERIFICATION_NEEDED':
+            $errorData['message'] = "This player is require SMS verification process to be completed";
+            $errorData['error_code'] = '0211';
+            break;
+        case 'SMS_VERIFICATION_CODE_INVALID_OR_EXPIRED':
+            $errorData['message'] = "SMS Verification code is invalid or expired";
+            $errorData['error_code'] = '0212';
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';
