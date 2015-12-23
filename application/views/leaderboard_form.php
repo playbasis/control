@@ -62,13 +62,23 @@
                     <tr>
                         <td><?php echo $this->lang->line('entry_organization'); ?>&nbsp;:</td>
                         <td>
-                            <select id="org_list" class="span3"  name ="selected_org">
+                            <select id="org_list" class="span3"  name ="selected_org" onchange="org_change(this)">
                                 <option label="None" value="" <?php echo isset($selected_org)?"":"selected"?>>
                                 <?php foreach ($org_lists as $key => $org){?>
-                                    <option label="<?php echo $key ?> " value="<?php echo $org ?>" <?php echo $selected_org==$org?"selected":""?>>
+                                    <option label="<?php echo $org['name'] ?> " value="<?php echo $org['_id'] ?>" <?php echo $selected_org==$org['_id']?"selected":""?>>
                                 <?php } ?>
 
                             </select>
+                        </td>
+                    </tr>
+                    <tr id="role_list" <?php echo (isset($selected_org) && $selected_org!="")? "":"style='display:none;'";?>>
+                        <td>
+                            <?php echo $this->lang->line('entry_role'); ?>&nbsp;:
+                        </td>
+                        <td>
+                            <input type="text" name="role" size="100"
+                                   placeholder="<?php echo $this->lang->line('entry_role'); ?>"
+                                   value="<?php echo isset($role) ? $role : set_value('role'); ?>"/>
                         </td>
                     </tr>
                     <tr>
@@ -94,8 +104,12 @@
                             </span>
                             <span class="dropdown">
                             <select id="mode_list" class="span2"  name ="mode" <?php echo (isset($rankBy) && $rankBy=="reward")? "style='display:none;'":"";?>>
+                                <?php if(isset($selected_org) && $selected_org!="") {?>
+                                <option label="Accumulate of" value="sum" <?php echo mode=="sum"?"selected":""?>>
+                                    <?php }else {?>
                                 <option label="Summary of" value="sum" <?php echo mode=="sum"?"selected":""?>>
                                 <option label="Count of" value="mode" <?php echo mode=="mode"?"selected":""?>>
+                                    <?php }?>
                             </select>
                             </span>
                             <span class="dropdown">
@@ -637,6 +651,33 @@
             }
         });
     });
+    function buildDropdownModeList(isAccumulated){
+        var dropdown_modelist = document.getElementById("mode_list");
+        while (dropdown_modelist.firstChild) {
+            dropdown_modelist.removeChild(dropdown_modelist.firstChild);
+        }
+
+        if (isAccumulated){
+
+            var o = document.createElement("option");
+
+            o.value = "sum";
+            o.text = "Accumulate of";
+            dropdown_modelist.add(o);
+        }
+        else{
+            var o = document.createElement("option");
+            o.value = "sum";
+            o.text = "Summary of";
+            dropdown_modelist.add(o);
+
+            o = document.createElement("option");
+            o.value = "count";
+            o.text = "Count of";
+            dropdown_modelist.add(o);
+        }
+
+    }
     function buildDropdownDatasetList(name, isAction){
         var dropdown_dataset = document.getElementById("dataset");
         while (dropdown_dataset.firstChild) {
@@ -688,6 +729,17 @@
             act.style.display = "none";
             mode.style.display = "none";
             buildDropdownDatasetList(null, false);
+        }
+    }
+    function org_change(elem){
+        var role = document.getElementById('role_list');
+        if (elem.value == ""){
+            role.style.display = "none";
+            buildDropdownModeList(false);
+        }
+        else{
+            role.style.display = "";
+            buildDropdownModeList(true);
         }
     }
 
@@ -806,7 +858,6 @@
         var parent = target.parent || 'quests';
         var id = target.id || null;
 
-        console.log("init_additem");
         var wrapperObj = $('.rank-item-wrapper[dataRankId='+id+']' );
         var containerObj = $('.rewards-container[dataRankId='+id+']');
 

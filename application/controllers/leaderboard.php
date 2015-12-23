@@ -24,6 +24,7 @@ class Leaderboard extends MY_Controller
         $this->load->model('Email_model');
         $this->load->model('Sms_model');
         $this->load->model('Push_model');
+        $this->load->model('Store_org_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -191,6 +192,12 @@ class Leaderboard extends MY_Controller
 
             $leaderboards = $this->Leaderboard_model->retrieveLeaderBoards($filter);
 
+            foreach ($leaderboards as $key => $leaderboard){
+                if (isset($leaderboard['selected_org']) && ($leaderboard['selected_org'] != "")){
+                    $org_info = $this->Store_org_model->retrieveOrganizeById(new MongoID($leaderboard['selected_org']));
+                    $leaderboards[$key]['selected_org'] = $org_info['name'];
+                }
+            }
             $this->data['leaderboards'] = $leaderboards;
             $config['total_rows'] = $this->Leaderboard_model->countLeaderBoards($client_id, $site_id);
         }
@@ -279,9 +286,7 @@ class Leaderboard extends MY_Controller
 
         $this->data['rewards_list'] = $this->Leaderboard_model->getRewards($this->data);
 
-        $this->data['org_lists']  = array("District Manager" => "district",
-                                          "Area Manager"=> "area",
-                                          "Store Manager"=>"store");
+        $this->data['org_lists']  = $this->Store_org_model->retrieveOrganize($this->data['client_id'],$this->data['site_id']);
 
         $this->data['actions'] = $this->Quest_model->getActionsByClientSiteId($this->data);
         $this->data['exp_id'] = $this->Quest_model->getExpId($this->data);
