@@ -635,4 +635,154 @@ class Store_org extends REST2_Controller
 
         return false;
     }
+    public function rankPeer_get($node_id, $rank_by)
+    {
+        // Check validity of action and parameter
+        if (!$node_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'node_id'
+            )), 200);
+        }
+        if (!$rank_by) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'rank_by'
+            )), 200);
+        }
+        // Now, getting all input
+        $this->benchmark->mark('rank_peer_start');
+        $input = $this->input->get();
+        $limit = isset($input['limit']) ? $input['limit'] : 20;
+        $year = isset($input['year']) ? $input['year'] : date("Y", time());
+        $month = isset($input['month']) ? $input['month'] : date("m", time());
+        $client_id = $this->validToken['client_id'];
+        $site_id = $this->validToken['site_id'];
+        $role = isset($input['role']) ? $input['role'] : null;
+        $list = array();
+
+        // get node list of this node id
+        if (is_null($role)){
+            $this->store_org_model->recurGetChild($client_id,$site_id,new MongoId ($node_id), $list);
+            // if list is null, node id is the second lowest of organization. we just need to find player
+            if (is_null($list)) $list = array (new MongoId ($node_id));
+            $node_to_match = array();
+            foreach($list as $node){
+                $player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node);
+                foreach ($player_list as $player)
+                    array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
+            }
+        }
+        else{
+            $list = $this->store_org_model->findAdjacentChildNode($client_id,$site_id,new MongoId ($node_id));
+            // if list is null, node id is the second lowest of organization. we just need to find player
+            if (is_null($list)) $list = array (array('_id' => new MongoId ($node_id)));
+            $node_to_match = array();
+            foreach($list as $node){
+                if ($node['_id'] == new MongoId ($node_id)) continue; // if role is set, mean input node id is excluded
+                $player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node['_id'],$role);
+                foreach ($player_list as $player)
+                    array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
+            }
+        }
+
+
+        $results = $this->player_model->getMonthlyPeerLeaderboard($rank_by, $limit, $client_id,
+            $site_id, $node_to_match, $month, $year);
+
+        $prev_month = $month -1 ? $month -1 : 12;
+        $prev_year = $month -1 ? $year : $year - 1;
+        $previous_result = $this->player_model->getMonthlyPeerLeaderboard($rank_by, $limit, $client_id,
+            $site_id, $node_to_match, $prev_month, $prev_year);
+
+        $return_list = array();
+        foreach ($node_to_match as $node){
+            $current_value = $this->getValueFromLeaderboardList('pb_player_id',$node['pb_player_id'],$rank_by,$results);
+            $prev_value = $this->getValueFromLeaderboardList('pb_player_id',$node['pb_player_id'],$rank_by,$previous_result);
+            array_push($return_list,array ('player_id' => $this->player_model->getClientPlayerId($node['pb_player_id'],$site_id),
+                    $rank_by => $current_value,
+                    'previous_'.$rank_by => $prev_value,
+                    'percent_changed' => $prev_value==0? $current_value > 0? 100:0: (($current_value- $prev_value)*100)/$prev_value)
+            );
+        }
+        $return_list = $this->sortResult($return_list,$rank_by,'player_id');
+        $this->benchmark->mark('rank_peer_end');
+        $result['processing_time'] = $this->benchmark->elapsed_time('rank_peer_start', 'rank_peer_end');
+        $this->response($this->resp->setRespond($return_list), 200);
+    }
+
+    public function rankPeerByAction_get($node_id, $action, $param)
+    {
+        // Check validity of action and parameter
+        if (!$node_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'node_id'
+            )), 200);
+        }
+        // Check validity of action and parameter
+        if(!$action)
+            $this->response($this->error->setError('ACTION_NOT_FOUND', array(
+                'action'
+            )), 200);
+        if(!$param)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'parameter'
+            )), 200);
+
+        // Now, getting all input
+        $this->benchmark->mark('rank_peer_start');
+        $input = $this->input->get();
+        $limit = isset($input['limit']) ? $input['limit'] : 20;
+        $year = isset($input['year']) ? $input['year'] : date("Y", time());
+        $month = isset($input['month']) ? $input['month'] : date("m", time());
+        $client_id = $this->validToken['client_id'];
+        $site_id = $this->validToken['site_id'];
+        $prev_month = $month -1 ? $month -1 : 12;
+        $prev_year = $month -1 ? $year : $year - 1;
+        $list = array();
+        $results = array();
+        $node_list = $this->store_org_model->findAdjacentChildNode($client_id,$site_id,new MongoID($node_id));
+        // get node list of this node id
+        if ($node_list )foreach ($node_list as $node){
+            if ($node['_id'] == $node_id) continue;
+            $list = array();
+            $this->store_org_model->recurGetChild($client_id,$site_id,$node['_id'], $list);
+
+            if (!empty($list)) {
+                $result = $this->store_org_model->getSaleHistoryOfNode($client_id, $site_id, $list, $action,
+                    $param, $month, $year, 2);
+                $current_value = $result[$year][$month][$param];
+                $prev_value = $result[$prev_year][$prev_month][$param];
+                array_push($results,array ( 'name' => $node['name'],
+                    $param => $current_value,
+                    'previous_'.$param => $prev_value,
+                    'percent_changed' => $prev_value==0? $current_value > 0? 100:0: (($current_value- $prev_value)*100)/$prev_value
+                ));
+            }
+        }
+
+        $results = $this->sortResult($results,$param,'name');
+        $this->benchmark->mark('rank_peer_end');
+        $result['processing_time'] = $this->benchmark->elapsed_time('rank_peer_start', 'rank_peer_end');
+        $this->response($this->resp->setRespond($results), 200);
+    }
+    private function getValueFromLeaderboardList ($key, $name_to_key, $name_of_value, $list){
+        foreach ($list as $player){
+            if (isset($player[$key]) && ($player[$key] ==$name_to_key) ){
+                return ($player[$name_of_value]);
+            }
+        }
+        return 0;
+    }
+    private function sortResult ($list, $sort_by, $name){
+        $result = $list;
+        foreach ($list as $key => $raw){
+
+            $temp_name[$key] = $raw[$name];
+            $temp_value[$key] =  $raw[$sort_by];
+        }
+        if (isset($temp_value) && isset($temp_name))
+        {
+            array_multisort( $temp_value, SORT_DESC,$temp_name, SORT_ASC, $result);
+        }
+        return $result;
+    }
 }

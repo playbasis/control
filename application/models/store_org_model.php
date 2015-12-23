@@ -268,6 +268,56 @@ class Store_org_model extends MY_Model
         return $update;
     }
 
+    public function retrieveNodeByPBPlayerID($client_id, $site_id, $pb_player_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
+
+
+        $c = $this->mongo_db->get("playbasis_store_organize_to_player");
+
+        if ($c) {
+            return $c;
+        } else {
+            return null;
+        }
+    }
+    public function getOrgInfoOfNode($client_id, $site_id, $node_id){
+        $this->mongo_db->select(array(
+            'name',
+            'description',
+            'organize',
+            'parent'
+
+        ));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            '_id' => $node_id,
+        ));
+        $result = $this->mongo_db->get('playbasis_store_organize_to_client');
+        return $result;
+    }
+    public function recurGetChild($client_id,$site_id,$parent_node,&$result,&$layer =0, $num = 0){
+
+        if($num++<=$layer || $layer==0){
+            array_push($result,$parent_node);
+        }
+
+        $nodes = $this->findAdjacentChildNode($client_id,$site_id,new MongoId($parent_node));
+        if(isset($nodes)){
+            foreach($nodes as $node){
+                $this->recurGetChild($client_id,$site_id,$node['_id'],$result,$layer,$num);
+            }
+        }else{
+            return $result;
+        }
+    }
+
     public function findAdjacentChildNode($client_id, $site_id, $node_id){
         $this->mongo_db->select(array(
             'name',
@@ -288,7 +338,56 @@ class Store_org_model extends MY_Model
 
     }
 
-    public function getSaleHistoryOfNode($client_id, $site_id, $node_list, $action, $parameter, $month=null, $year=null,$count){
+    public function getPlayersByNodeId($client_id, $site_id, $node_id , $role=null){
+        $this->mongo_db->select(array(
+            'pb_player_id',
+        ));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'node_id' => $node_id,
+        ));
+        if (!is_null($role)){
+            $this->mongo_db->where_exists('roles.'.$role, true);
+        }
+        $result = $this->mongo_db->get('playbasis_store_organize_to_player');
+        if(empty($result)){
+            return null;
+        }else{
+            return $result;
+        }
+
+    }
+    public function getlistByOrgId($client_id, $site_id, $org_id){
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'organize' => $org_id,
+        ));
+
+        $result = $this->mongo_db->get('playbasis_store_organize_to_client');
+        if(empty($result)){
+            return null;
+        }else{
+            return $result;
+        }
+
+    }
+    public function getNodeIdUnderGivenId($client_id, $site_id, $node_id){
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'parent' => $node_id,
+        ));
+        $result = $this->mongo_db->get('playbasis_store_organize');
+        if(empty($result)){
+            return null;
+        }else{
+            return $result[0]['_id'];
+        }
+
+    }
+    public function getSaleHistoryOfNode($client_id, $site_id, $node_list, $action,$parameter, $month=null, $year=null,$count){
         $result = array();
 
         $node_to_match = array();
@@ -349,4 +448,5 @@ class Store_org_model extends MY_Model
 
         return $result;
     }
+
 }

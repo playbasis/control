@@ -299,6 +299,15 @@ $route['StoreOrg/nodes/'.ANY_STRING.'/saleReport'] = 'store_org/saleReport/$1'; 
 $route['StoreOrg/nodes/'.ANY_STRING.'/saleHistory/'.ANY_STRING] = 'store_org/saleHistory/$1/$2';       // ANY_STRING = node_id/month
 $route['StoreOrg/nodes/'.ANY_STRING.'/saleBoard/'.ANY_STRING] = 'store_org/saleBoard/$1/$2';           // ANY_STRING = node_id/layer
 
+$route['StoreOrg/rankPeer/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeer/$1/$2';
+$route['StoreOrg/rankPeer/'.ANY_STRING] = 'store_org/rankPeer/$1/point';
+$route['StoreOrg/rankPeer'] = 'store_org/rankParam/0/point';
+
+$route['StoreOrg/rankPeerByAction/'.ANY_STRING.'/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeerByAction/$1/$2/$3';
+$route['StoreOrg/rankPeerByAction/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeerByAction/$1/$2/0';
+$route['StoreOrg/rankPeerByAction/'.ANY_STRING] = 'store_org/rankPeerByAction/$1/0/0';
+$route['StoreOrg/rankPeerByAction'] = 'store_org/rankPeerByAction/0/0/0';
+
 //promo API
 $route['Promo'] = 'promo/list';
 $route['Promo/list'] = 'promo/list';

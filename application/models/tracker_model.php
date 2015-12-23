@@ -64,6 +64,8 @@ class Tracker_model extends MY_Model
             'quest_id'      => (isset($input['quest_id']))	? $input['quest_id']	: null,
             'mission_id'    => (isset($input['mission_id']))	? $input['mission_id']	: null,
             'quiz_id'       => (isset($input['quiz_id']))	? $input['quiz_id']	: null,
+            'leaderboard_id'=> (isset($input['leaderboard_id']))	? $input['leaderboard_id']	: null,
+            'node_id'       => (isset($input['node_id']))	? $input['node_id']	: null,
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ), $options);
@@ -227,11 +229,12 @@ class Tracker_model extends MY_Model
 
         $this->mongo_db->insert('playbasis_validated_action_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
-            'player_id'     => $input['player_id'],
+            'cl_player_id'     => $input['player_id'],
             'client_id'		=> $input['client_id'],
             'site_id'		=> $input['site_id'],
             'action_id'		=> $input['action_id'],
             'action_name'	=> $input['action_name'],
+            'node_id'       => (isset($input['node_id'])) ? $input['node_id'] : null,
             'url'			=> (isset($input['url'])) ? $input['url'] : null,
             'parameters'    => (isset($input['parameters'])) ? $input['parameters'] : null,
             'date_added'	=> $mongoDate,

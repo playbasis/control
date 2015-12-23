@@ -21,6 +21,7 @@ class Engine extends Quest
 		$this->load->model('social_model');
 		$this->load->model('email_model');
 		$this->load->model('sms_model');
+		$this->load->model('store_org_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -427,8 +428,17 @@ class Engine extends Quest
 					$input['parameters'][$dataset['param_name']] = $input[$dataset['param_name']];
 				}
 			}
+			$headers = $this->input->request_headers();
+			$action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;
+			$time = $action_time;
+
+			if (!isset($input['node_id'])){
+				$node = $this->store_org_model->retrieveNodeByPBPlayerID($validToken['client_id'],$validToken['site_id'],$pb_player_id);
+				$input['node_id'] = $node[0]['node_id'];
+			}
+
 			// track validated action in the log
-			$this->tracker_model->trackValidatedAction($input);
+			$this->tracker_model->trackValidatedAction($input,$time);
 		}
 		//Quest Process
 		if (!$test){
@@ -461,6 +471,10 @@ class Engine extends Quest
 			if (!$input["test"])
 				$input['player_id'] = $this->player_model->getClientPlayerId(
 			$input['pb_player_id'], $validToken['site_id']);
+		}
+		if (!isset($input['node_id'])){
+			$node = $this->store_org_model->retrieveNodeByPBPlayerID($validToken['client_id'],$validToken['site_id'],$input['pb_player_id']);
+			$input['node_id'] = $node[0]['node_id'];
 		}
 		$anonymousUser = $this->player_model->isAnonymous($validToken['client_id'], $validToken['site_id'], null, $input['pb_player_id']);
 		$headers = $this->input->request_headers();

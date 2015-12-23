@@ -2985,6 +2985,108 @@
                             "Description": "Role name to unset player's role"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Peer Leader board",
+                    "Synopsis": "Returns leader board list for organization under given node_id",
+                    "HTTPMethod": "GET",
+                    "URI": "/StoreOrg/rankPeer/:node_id/:rank_by",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "rank_by",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of point-based reward to rank players by"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        },
+                        {
+                            "Name": "role",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "role to be filtered"
+                        },
+                        {
+                            "Name": "month",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "month to rank players by (01, 02, 03,..., 12)"
+                        },
+                        {
+                            "Name": "year",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "year to rank players by (2015, 2016 , ...)"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Peer Leader board By Action",
+                    "Synopsis": "Returns leader board list for organization under given node_id",
+                    "HTTPMethod": "GET",
+                    "URI": "/StoreOrg/rankPeerByAction/:node_id/:action/:parameter",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "action",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of action to rank players by"
+                        },
+                        {
+                            "Name": "parameter",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of parameter of action to rank players by"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        },
+                        {
+                            "Name": "month",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "month to rank players by (01, 02, 03,..., 12)"
+                        },
+                        {
+                            "Name": "year",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "year to rank players by (2015, 2016 , ...)"
+                        }
+                    ]
                 }
             ]
         },
