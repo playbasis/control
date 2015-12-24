@@ -39,12 +39,12 @@
                                 <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
                             <?php }?>
                             <?php if($client_id){?>
-                                <td class="left"><?php echo $this->lang->line('column_is_group'); ?></td>
+                                <td class="left" style="width:50px;"><?php echo $this->lang->line('column_is_group'); ?></td>
                             <?php }?>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
-                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
+                            <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
                             <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>

@@ -604,13 +604,6 @@ class Action_model extends MY_Model
         }
     }
 
-    public function checkActionIsPublic($action_id){
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $this->mongo_db->where('action_id', $action_id);
-        return $this->mongo_db->get('playbasis_action_to_client');
-    }
-
     public function getActionsForDownload($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 

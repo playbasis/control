@@ -142,7 +142,7 @@
                                 <input type="checkbox" name="action_data[]" value="<?php echo $action['action_id']; ?>" />
                                 <?php } ?></td>
                             <td class="left"><?php echo ucfirst($action['name']); ?></td>
-                            <td class="left"><?php echo ($action['is_public'])?"Public":"Private"; ?></td>
+                            <td class="left"><?php echo ucfirst($action['description']); ?></td>
                         </tr>
                             <?php } ?>
                         <?php } else { ?>

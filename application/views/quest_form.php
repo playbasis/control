@@ -505,12 +505,34 @@
                                                                     <div class="span2 text-center">
                                                                         <i class="<?php foreach($actions as $aa){if($aa['action_id'] == $action['completion_id']){echo $aa['icon'];}} ?> icon-4x"></i>                                    
                                                                     </div>                                    
-                                                                    <div class="span5"><?php foreach($actions as $aa){if($aa['action_id'] == $action['completion_id']){echo $aa['name'];}} ?></div>                                    
+                                                                    <div class=<?php echo (isset($action['completion_op']))?(($action['completion_op']=="sum")?"span4":"span2"):"span4"?> id="action_name"><?php foreach($actions as $aa){if($aa['action_id'] == $action['completion_id']){echo $aa['name'];}} ?></div>
                                                                     <div class="span2">
-                                                                        <small>filter</small>
-                                                                    <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_filter]" value = "<?php echo $action['completion_filter'] ?>">
-                                                                    </div>  
-                                                                                                      
+                                                                        <small>parameter</small><class="dropdown"  value = "<?php echo $action['completion_filter'] ?>">
+                                                                        <select id="param_list" style="width:100px;" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_filter]" value = "<?php echo $action['completion_filter'] ?>">
+                                                                            <?php foreach($actions as $aa){
+                                                                                if($aa['action_id'] == $action['completion_id'])
+                                                                                {
+                                                                                    foreach ($aa['init_dataset'] as $data_set){?>
+                                                                                    <option label="<?php echo $data_set['label']?>" value="<?php echo $data_set['param_name']?>" <?php echo ($data_set['param_name']==$action['completion_filter'])? "selected='selected'":"";?>">"
+                                                                                    <?php }
+                                                                                }
+                                                                            }
+
+                                                                            ?>
+                                                                        </select>
+<!--                                                                    <input type="text" name="missions[--><?php //echo $mission['mission_id'] ?><!--][completion][--><?php //echo $action['completion_element_id']; ?><!--][completion_filter]" value = "--><?php //echo $action['completion_filter'] ?><!--">-->
+                                                                    </div>
+                                                                    <div class="span2" id="filterString" <?php echo (isset($action['completion_op']) && $action['completion_op']=="sum")? "style='display:none;'":"";?>>
+                                                                        <small>matched string</small>
+                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_string]" value = "<?php echo $action['completion_string'] ?>">
+                                                                    </div>
+                                                                    <div class="span2">
+                                                                        <small>complete by</small><class="dropdown"/>
+                                                                        <select id="op_list" onchange="showDiv(this)" style="width:100px;" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_op]" value = "<?php echo $action['completion_op']?>">
+                                                                            <option label="Sum" value="sum" <?php echo (isset($action['completion_op']) && $action['completion_op']=="sum")? "selected='selected'":"";?>>
+                                                                            <option label="Count" value="count" <?php echo (isset($action['completion_op']) && $action['completion_op']=="count")? "selected='selected'":"";?>></select>
+                                                                    </div>
+
                                                                     <div class="span1">                                    
                                                                         <small>value</small>                                    
                                                                         <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_value]" placeholder="Value" value="<?php echo $action['completion_value']; ?>">                                    
@@ -518,7 +540,7 @@
                                                                         <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_type]" value="ACTION">
                                                                         <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_element_id]" value="<?php echo $action['completion_element_id']; ?>">
                                                                     </div>                                    
-                                                                    <div class="span2 col-remove">
+                                                                    <div class="span1 col-remove">
                                                                         <a class="item-remove"><i class="icon-remove-sign"></i></a>                                    
                                                                     </div>
                                                                     <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_title]" placeholder="Title" value="<?php echo $action['completion_title']; ?>"></div></div>
@@ -1110,6 +1132,7 @@
 
 
 <script type="text/javascript">
+
     $('#tabs a').tabs();
 
         $(function(){
@@ -2566,8 +2589,6 @@ function selectActionsItem(){
     var parent = target.parent || 'quest';
     var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
 
-
-
     if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
@@ -2586,7 +2607,20 @@ function selectActionsItem(){
                 var title = $(this).find('.title').html();
                 var icon = $(this).find('i').attr('class');
                 var index = $(this).data('id-action');
+                var action_list = <?php echo json_encode($actions); ?>;
 
+                for (var i in action_list ){
+                    if (title == action_list[i]['name']){
+                        break;
+                    }
+                }
+                var data_set = action_list[i]['init_dataset']
+                var parameter_name = [];
+                var parameter_label = [];
+                for (var j in data_set){
+                    parameter_name.push(data_set[j]['param_name']);
+                    parameter_label.push(data_set[j]['label']);
+                }
                 /*
                 if(wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').length > 0) {
                     
@@ -2595,8 +2629,19 @@ function selectActionsItem(){
                 var index = wrapperObj.find('.actions-item-wrapper').length;
 
                 if(parent == 'missions'){
-                    
-                    inputFilterHtml = '<small>filter</small><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_filter]"/>';
+                    inputFilterHtml = '<small>matched string</small><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_string]"/>';
+
+                    dropdownHtml = '<small>parameter</small><class="dropdown" />';
+                    dropdownHtml = dropdownHtml + '<select id="param_list" style="width:100px;" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_filter]">';
+                    for (var j=0 in parameter_label){
+                        dropdownHtml = dropdownHtml + '<option label="'+parameter_label[j]+'" value="'+parameter_name[j]+'">';
+                    }
+                    dropdownHtml = dropdownHtml + '</select>';
+
+                    inputOpHtml =  '<small>complete by</small><class="dropdown" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_op]"/>\
+                                        <select id="op_list" style="width:100px;" onchange="showDiv(this)" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_op]">\
+                                        <option label="Sum" value="sum">\
+                                        <option label="Count" value="count"></select>';
 
                     inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_value]" placeholder="Value" value="1"/>\
                                     <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_id]" value = "'+id+'"/>\
@@ -2615,18 +2660,20 @@ function selectActionsItem(){
                 var actionsItemHtml = '<div class="clearfix item-wrapper actions-item-wrapper" data-id-action="'+id+'">\
                                     <div class="span2 text-center"><i class="'+icon+'"></i>\
                                     </div>\
-                                    <div class="span5">'+title+'</div>\
-                                    <div class="span2">'+inputFilterHtml+'</div>\
+                                    <div class="span4" id="action_name">'+title+'</div>\
+                                    <div class="span2">'+dropdownHtml+'</div>\
+                                    <div class="span2" id="filterString" >'+inputFilterHtml+'</div>\
+                                    <div class="span2">'+inputOpHtml+'</div>\
                                     <div class="span1">\
                                     <small>value</small>\
                                     '+inputHtml+'</div>\
-                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>\
+                                    <div class="span1 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>\
                                     </div>'+inputCompletionHtml+'</div>';
 
                    
                 wrapperObj.find('.actions-wrapper .item-container').append(actionsItemHtml);
 
-
+                document.getElementById('filterString').style.display = "none";
                 init_additem_event(target);
             
         }else{
@@ -2656,7 +2703,17 @@ function checkTypeReward(type){
         return type;
     }
 }
-
+function showDiv(elem){
+    if(elem.value == "sum")
+    {
+        document.getElementById('filterString').style.display = "none";
+        document.getElementById("action_name").className = "span4";
+    }
+    else{
+        document.getElementById('filterString').style.display = "";
+        document.getElementById("action_name").className = "span2";
+    }
+}
 </script>
 
 
