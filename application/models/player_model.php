@@ -2474,7 +2474,7 @@ class Player_model extends MY_Model
         return $results ? $results[0] : array();
     }
 
-    public function getPlayerByUsername($site_id, $username = null)
+    public function getPlayerByUsername($site_id, $username)
     {
         $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number'));
         $this->mongo_db->where('site_id', $site_id);
@@ -2483,7 +2483,7 @@ class Player_model extends MY_Model
         return $results ? $results[0] : array();
     }
 
-    public function getPlayerByEmail($site_id, $email = null)
+    public function getPlayerByEmail($site_id, $email)
     {
         $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number'));
         $this->mongo_db->where('site_id', $site_id);

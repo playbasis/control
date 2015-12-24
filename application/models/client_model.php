@@ -976,7 +976,7 @@ class Client_model extends MY_Model
 
     public function findBySiteId($site_id) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('client_id', 'domain_name','site_name'));
+        $this->mongo_db->select(array('client_id', 'domain_name'));
         $this->mongo_db->where('_id', $site_id);
         $result = $this->mongo_db->get('playbasis_client_site');
         return $result ? $result[0] : array();
