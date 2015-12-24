@@ -64,6 +64,8 @@ class Tracker_model extends MY_Model
             'quest_id'      => (isset($input['quest_id']))	? $input['quest_id']	: null,
             'mission_id'    => (isset($input['mission_id']))	? $input['mission_id']	: null,
             'quiz_id'       => (isset($input['quiz_id']))	? $input['quiz_id']	: null,
+            'leaderboard_id'=> (isset($input['leaderboard_id']))	? $input['leaderboard_id']	: null,
+            'node_id'       => (isset($input['node_id']))	? $input['node_id']	: null,
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ), $options);
@@ -218,6 +220,26 @@ class Tracker_model extends MY_Model
             $cur = strtotime(date('Y-m-d', strtotime('+1 day', $cur)));
         }
         return $this->mongo_db->batch_insert('playbasis_player_mau', $data, array("w" => 0, "j" => false));
+    }
+    public function trackValidatedAction($input, $action_time=null){
+        $this->set_site_mongodb($input['site_id']);
+        $current_time = time();
+        if ($action_time && $action_time > $current_time) $action_time = $current_time; // cannot be something from the future
+        $mongoDate = new MongoDate($action_time ? $action_time : $current_time);
+
+        $this->mongo_db->insert('playbasis_validated_action_log', array(
+            'pb_player_id'	=> $input['pb_player_id'],
+            'cl_player_id'     => $input['player_id'],
+            'client_id'		=> $input['client_id'],
+            'site_id'		=> $input['site_id'],
+            'action_id'		=> $input['action_id'],
+            'action_name'	=> $input['action_name'],
+            'node_id'       => (isset($input['node_id'])) ? $input['node_id'] : null,
+            'url'			=> (isset($input['url'])) ? $input['url'] : null,
+            'parameters'    => (isset($input['parameters'])) ? $input['parameters'] : null,
+            'date_added'	=> $mongoDate,
+            'date_modified' => $mongoDate
+        ));
     }
 }
 ?>

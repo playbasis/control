@@ -32,11 +32,11 @@ class jigsaw extends MY_Model
 
 		return true;
 	}
-	private function getActionDatasetInfo($config){
+	public function getActionDatasetInfo($action_name){
 		$this->set_site_mongodb($this->session->userdata('site_id'));
 
 		$this->mongo_db->where(array(
-			'name' => $config['action_name']
+			'name' => $action_name
 		));
 		$results = $this->mongo_db->get("playbasis_action");
 		return $results ? $results[0]['init_dataset']: null;
@@ -47,17 +47,27 @@ class jigsaw extends MY_Model
 		assert(is_array($config));
 		assert(isset($config['param_name']));
 		assert(isset($config['param_value']));
+		assert(isset($config['param_operation']));
 
+		$result = false;
 		$param_name = $config['param_name'];
 
 		if (isset($input[$param_name])){
-			$result = $this->matchUrl($input[$param_name], $config['param_value']);
+			if($config['param_operation']=='='){
+				$result = ($input[$param_name] == $config['param_value']);
+			}elseif($config['param_operation']=='>'){
+				$result = ($input[$param_name] > $config['param_value']);
+			}elseif($config['param_operation']=='<'){
+				$result = ($input[$param_name] < $config['param_value']);
+			}elseif($config['param_operation']=='>='){
+				$result = ($input[$param_name] >= $config['param_value']);
+			}elseif($config['param_operation']=='<='){
+				$result = ($input[$param_name] <= $config['param_value']);
+			}
 		}
 		else{
 			$result = false;
 		}
-
-
 		return $result;
 	}
 	public function reward($config, $input, &$exInfo = array(), $cache=array())

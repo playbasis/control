@@ -22,6 +22,7 @@ class Player extends REST2_Controller
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/node_stream', 'node');
+        $this->load->model('store_org_model');
 	}
 	public function index_get($player_id = '')
 	{
@@ -368,6 +369,14 @@ class Player extends REST2_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
+		$approve_status = $this->input->post('approve_status');
+		if ($approve_status) {
+			$playerInfo['approve_status'] = $approve_status;
+		}
+		$device_id = $this->input->post('device_id');
+		if ($device_id) {
+			$playerInfo['device_id'] = $device_id;
+		}
 		$referral_code = $this->input->post('code');
 		$anonymous = $this->input->post('anonymous');
 
@@ -564,9 +573,12 @@ class Player extends REST2_Controller
 		$instagramId = $this->input->post('instagram_id');
 		if($instagramId)
 			$playerInfo['instagram_id'] = $instagramId;
-		$password = do_hash($this->input->post('password'));
+		$deviceId = $this->input->post('device_id');
+		if($deviceId)
+			$playerInfo['device_id'] = $deviceId;
+		$password = $this->input->post('password');
 		if($password)
-			$playerInfo['password'] = $password;
+			$playerInfo['password'] = do_hash($password);
 		$gender = $this->input->post('gender');
 		if($gender)
 			$playerInfo['gender'] = intval($gender);
@@ -576,6 +588,10 @@ class Player extends REST2_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
+		$approve_status = $this->input->post('approve_status');
+		if ($approve_status)
+			$playerInfo['approve_status'] = $approve_status;
+
 		$this->player_model->updatePlayer($pb_player_id, $this->validToken['site_id'], $playerInfo);
 		$this->response($this->resp->setRespond(), 200);
 	}
@@ -819,6 +835,16 @@ class Player extends REST2_Controller
 		$auth = $this->player_model->authPlayer($this->site_id, $player['_id'], $password);
 		if (!$auth) {
 			$this->response($this->error->setError('PASSWORD_INCORRECT'), 200);
+		} else {
+			$device_id = $this->input->post('device_id');
+			if (!empty($device_id) && isset($player['device_id'])){
+				//Change new device
+				if(($device_id !== $player['device_id']) && !empty($player['phone_number'])){
+					$this->response($this->error->setError('SMS_VERIFICATION_REQUIRED'), 200);
+				}elseif(empty($player['phone_number'])){
+					$this->response($this->error->setError('SMS_VERIFICATION_PHONE_NUMBER_NOT_FOUND'), 200);
+				}
+			}
 		}
 
 		//trigger and log event
@@ -850,6 +876,38 @@ class Player extends REST2_Controller
 			'session_id' => $session_id
 		)), 200);
 	}
+
+    public function verifyOTPCode_post()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'code'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        $code = $this->input->post('code');
+        $player_id = $this->input->post('player_id');
+
+        $pb_player_id = $this->player_model->getPlayerByPlayerId($this->validToken['site_id'], $player_id);
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $result = $this->player_model->getPlayerOTPCode($pb_player_id['_id'],$code);
+        if (!$result) {
+            $this->response($this->error->setError('SMS_VERIFICATION_CODE_INVALID'), 200);
+        }
+
+        if ($result['date_expire']->sec <= time()){
+            $this->response($this->error->setError('SMS_VERIFICATION_CODE_EXPIRED'), 200);
+        }
+
+        $this->player_model->deleteOTPCode($result['code']);
+
+        $this->response($this->resp->setRespond(), 200);
+    }
 
 	public function forgotPasswordEmail_post()
 	{
@@ -1273,6 +1331,65 @@ class Player extends REST2_Controller
             $this->response($this->resp->setRespond($player), 200);
     	}
     }
+	public function rankParam_get($action,$param)
+	{
+		// Check validity of action and parameter
+		if(!$action)
+			$this->response($this->error->setError('ACTION_NOT_FOUND', array(
+					'action'
+			)), 200);
+		if(!$param)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+					'parameter'
+			)), 200);
+
+		$action_id = $this->action_model->findAction(array_merge($this->validToken, array(
+				'action_name' => urldecode($action)
+		)));
+		$valid = false;
+		if (!$action_id) {
+			$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+		} else {
+			$ruleSet = $this->client_model->getRuleSetByActionId(array(
+					'client_id' => $this->validToken['client_id'],
+					'site_id' => $this->validToken['site_id'],
+					'action_id' => $action_id
+			));
+			foreach ($ruleSet as $rule) {
+				$jigsawSet = (isset($rule['jigsaw_set']) && !empty($rule['jigsaw_set'])) ? $rule['jigsaw_set'] : array();
+				foreach ($jigsawSet as $jigsaw) {
+					if ($jigsaw['category'] == "CONDITION" && $jigsaw['config']['param_name'] == $param) {
+						$valid = true;
+					}
+				}
+			}
+		}
+		if (!$valid) {
+			$this->response($this->error->setError('PARAMETER_INVALID', array(
+					'parameter'
+			)), 200);
+		}
+		// Action and parameter are valid !
+		// Now, getting all input
+		$input = $this->input->get();
+
+		// default mode is sum
+		$input['mode'] = isset($input['mode'])? $input['mode']: "sum";
+
+		// default limit is infinite
+		$input['limit'] = isset($input['limit'])? $input['limit']: -1;
+
+		// default group_by is player_id the smallest resolution, it could be distrct/ area as well
+		$input['group_by'] = (isset($input['group_by']) && $input['group_by'] !== 'cl_player_id')? $input['group_by']: 'cl_player_id';
+		$input['action_name'] = $action;
+		$input['param'] = $param;
+
+		// Let's Rank !!
+		$result = $this->player_model->getMonthLeaderboardsByCustomParameter($input,$this->validToken['client_id'],$this->validToken['site_id']);
+
+		$this->response($this->resp->setRespond($result), 200);
+	}
+
     public function level_get($level='')
     {
         if(!$level)
@@ -1318,6 +1435,25 @@ class Player extends REST2_Controller
         }
         $this->response($this->resp->setRespond(array('code' => $player['code'])), 200);
     }
+
+    public function requestOTPCode_post($player_id = '')
+    {
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        }
+
+        $player = $this->player_model->getPlayerByPlayerId($this->site_id, $player_id);
+        if (!$player) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $code = $this->player_model->generateOTPCode($player['_id']);
+
+        $this->response($this->resp->setRespond(array('code' => $code)), 200);
+    }
+
     public function contact_get($player_id=0, $N=10) {
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
@@ -1696,6 +1832,147 @@ class Player extends REST2_Controller
             }
         }
     }
+
+	public function getAssociatedNode_get($player_id = '')
+	{
+		$result = array();
+		if(!$player_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+					'player_id'
+			)), 200);
+		//get playbasis player id
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+				'cl_player_id' => $player_id
+		)));
+		if(!$pb_player_id)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+		$temp = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id);
+        foreach($temp as $entry){
+            //$result[$key]["_id"]=$entry["_id"]."";
+			$temp2= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],$entry["node_id"]);
+			$temp3['node_id']=$entry["node_id"]."";
+			$temp3['name']=$temp2['name'];
+
+
+			array_push($result, $temp3);
+        }
+
+		$this->response($this->resp->setRespond($result), 200);
+	}
+
+    public function getRole_get($player_id = '',$node_id='') {
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        if(!$node_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'node_id'
+            )), 200);
+
+        $temp = $this->store_org_model->getRoleOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id,new MongoId($node_id));
+        $result=array('role'=>$temp['role']);
+
+
+        $this->response($this->resp->setRespond($result), 200);
+    }
+
+    private function recurGetChildUnder($client_id, $site_id, $parent_node, &$result, &$layer = 0, $num = 0)
+    {
+        //array_push($result,$num);
+        //array_push($result,$layer);
+        if ($num++ <= $layer || $layer == 0) {
+            array_push($result, $parent_node);
+        }
+
+        $nodes = $this->store_org_model->findAdjacentChildNode($client_id, $site_id, new MongoId($parent_node));
+        if (isset($nodes)) {
+            foreach ($nodes as $node) {
+
+                $this->recurGetChildUnder($client_id, $site_id, $node['_id'], $result, $layer, $num);
+            }
+        } else {
+            return $result;
+        }
+    }
+
+    public function saleReport_get($player_id = '') {
+        $result = array();
+
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $month = $this->input->get('month');
+        if(!$month)
+            $month = date("m", time());
+        $year = $this->input->get('year');
+        if(!$year)
+            $year = date("Y", time());
+        $action = $this->input->get('action');
+        if(!$action)
+            $action = "sell";
+        $parameter = $this->input->get('parameter');
+        if (!$parameter) {
+            $parameter = "amount";
+        }
+
+        $parent_node = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id);
+
+        foreach($parent_node as $node){
+            $list = array();
+            $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node['node_id']),$list);
+
+            $table=$this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],$this->validToken['site_id'],$list,$action,$parameter,$month,$year,2);
+
+            $this_month_time = strtotime($year . "-" . $month);
+            $previous_month_time = strtotime('-1 month', $this_month_time);
+
+            $current_month = date("m", $this_month_time);
+            $current_year = date("Y", $this_month_time);
+
+            $previous_month = date("m", $previous_month_time);
+            $previous_year = date("Y", $previous_month_time);
+
+            $current_month_sales =  $table[$current_year][$current_month][$parameter];
+            $previous_month_sales = $table[$previous_year][$previous_month][$parameter];
+
+			$temp2 = $this->store_org_model->retrieveNodeById($this->validToken['site_id'],$node['node_id']);
+			$temp['name'] = $temp2['name'];
+            $temp[$parameter] = $current_month_sales;
+			$temp['previous_'.$parameter] = $previous_month_sales;
+
+            if ($current_month_sales == 0 && $previous_month_sales == 0) {
+                $temp['percent_changed'] = 0;
+            } elseif ($previous_month_sales == 0) {
+                $temp['percent_changed'] = 100;
+            } else {
+                $temp['percent_changed'] = (($current_month_sales - $previous_month_sales) * 100) / $previous_month_sales;
+            }
+
+            $node["node_id"]=$node["node_id"]."";
+
+            array_push($result,array_merge(array('node_id' => $node['node_id']),$temp));
+        }
+
+        $this->response($this->resp->setRespond($result), 200);
+    }
+
 }
 
 function index_cl_player_id($obj) {

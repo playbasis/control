@@ -107,6 +107,10 @@ $route['Player/sessions'] = 'player/sessions';
 $route['Player/session/'.ANY_STRING] = 'player/session/$1';
 $route['Player/session'] = 'player/session';
 $route['Player/auth'] = 'player/auth';
+$route['Player/auth/' . ANY_STRING . '/requestOTPCode'] = 'player/requestOTPCode/$1';
+$route['Player/auth/requestOTPCode'] = 'player/requestOTPCode';
+$route['Player/auth/' . ANY_STRING . '/verifyOTPCode'] = 'player/verifyOTPCode/$1';
+$route['Player/auth/verifyOTPCode'] = 'player/verifyOTPCode';
 $route['Player/password/email'] = 'player/forgotPasswordEmail';
 
 $route['Player/rank/'.ANY_STRING.'/'.ANY_NUMBER] = 'player/rank/$1/$2';
@@ -162,6 +166,14 @@ $route['Player/contact/'.ANY_NUMBER] = 'player/contact/0/$1';
 
 $route['Player/'.ANY_STRING.'/code'] = 'player/code/$1';
 $route['Player/code'] = 'player/code';
+
+$route['Player/rankParam/'.ANY_STRING.'/'.ANY_STRING] = 'player/rankParam/$1/$2';
+$route['Player/rankParam/'.ANY_STRING] = 'player/rankParam/$1/20';
+$route['Player/rankParam'] = 'player/rankParam/0/0';
+
+$route['Player/'.ANY_STRING.'/getAssociatedNode'] = 'player/getAssociatedNode/$1';  // ANY_STRING = player_id
+$route['Player/'.ANY_STRING.'/getRole/'.ANY_STRING] = 'player/getRole/$1/$2';       // ANY_STRING = player_id/node_id
+$route['Player/'.ANY_STRING.'/saleReport'] = 'player/saleReport/$1';                // ANY_STRING = player_id
 
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
@@ -281,6 +293,34 @@ $route['Push/deviceRegistration'] = 'push/deviceRegistration';
 
 $route['Push/'.ANY_STRING.'/send'] = 'push/send/$1';
 $route['Push/send'] = 'push/send';
+$route['Push/goods'] = 'push/send_goods';
+$route['Push/recent'] = 'push/recent';
+$route['Push/template/'.ANY_STRING] = 'push/template/$1';
+$route['Push/template'] = 'push/template';
+
+//Store Organize API
+$route['StoreOrg/nodes/'.ANY_STRING.'/addPlayer/'.ANY_STRING] = 'store_org/playerRegister/$1/$2'; // ANY_STRING = node_id/pb_player_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/removePlayer/'.ANY_STRING] = 'store_org/playerRemove/$1/$2'; // ANY_STRING = node_id/pb_player_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/setPlayerRole/'.ANY_STRING] = 'store_org/playerRoleSet/$1/$2'; // ANY_STRING = node_id/pb_player_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/unsetPlayerRole/'.ANY_STRING] = 'store_org/playerRoleUnset/$1/$2'; // ANY_STRING = node_id/pb_player_id
+$route['StoreOrg/organizes'] = 'store_org/listOrganizes';
+$route['StoreOrg/nodes'] = 'store_org/listNodes';
+
+$route['StoreOrg/players/'.ANY_STRING] = 'store_org/players/$1';
+
+$route['StoreOrg/nodes/'.ANY_STRING.'/getChildNode/'.ANY_STRING] = 'store_org/getChildNode/$1/$2';     // ANY_STRING = node_id/layer
+$route['StoreOrg/nodes/'.ANY_STRING.'/saleReport'] = 'store_org/saleReport/$1';                        // ANY_STRING = node_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/saleHistory/'.ANY_STRING] = 'store_org/saleHistory/$1/$2';       // ANY_STRING = node_id/count
+$route['StoreOrg/nodes/'.ANY_STRING.'/saleBoard/'.ANY_STRING] = 'store_org/saleBoard/$1/$2';           // ANY_STRING = node_id/layer
+
+$route['StoreOrg/rankPeer/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeer/$1/$2';
+$route['StoreOrg/rankPeer/'.ANY_STRING] = 'store_org/rankPeer/$1/point';
+$route['StoreOrg/rankPeer'] = 'store_org/rankParam/0/point';
+
+$route['StoreOrg/rankPeerByAccAction/'.ANY_STRING.'/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/$2/$3';
+$route['StoreOrg/rankPeerByAccAction/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/$2/0';
+$route['StoreOrg/rankPeerByAccAction/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/0/0';
+$route['StoreOrg/rankPeerByAccAction'] = 'store_org/rankPeerByAccumulateAction/0/0/0';
 
 //promo API
 $route['Promo'] = 'promo/list';

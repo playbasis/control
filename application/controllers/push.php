@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
+require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
 class Push extends REST2_Controller
 {
     public function __construct()
@@ -9,6 +10,7 @@ class Push extends REST2_Controller
         $this->load->model('auth_model');
         $this->load->model('player_model');
         $this->load->model('push_model');
+        $this->load->model('redeem_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -43,6 +45,7 @@ class Push extends REST2_Controller
                 'badge_number' => 1
             );
             $this->push_model->initial($notificationInfo,$device['os_type']);
+            $this->push_model->log($notificationInfo,$device,$pb_player_id,$player_id);
         }
         $this->response($this->resp->setRespond(''), 200);
     }
@@ -70,21 +73,45 @@ class Push extends REST2_Controller
         if (!$player)
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
-        if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
+        $not_message = $this->input->checkParam(array('message'));
+        $not_template_id = $this->input->checkParam(array('template_id'));
+        if ($not_message && $not_template_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
-            $ref_id = $this->input->post('ref_id');
-            $redeemData = $this->redeem_model->findByReferenceId('goods', new MongoId($ref_id));
-
-            $message = $this->input->post('message');
-            $message = str_replace('{{code}}', $redeemData['code'], $message);
-
-            $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
-
-            $this->sendEngine('goods', isset($sms_data['name'])?$sms_data['name']:$sms_data['number'], $player['phone_number'], $message);
-
-        }else{
-            $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
+        $ref_id = $this->input->post('ref_id');
+        $redeemData = $this->redeem_model->findByReferenceId('goods', new MongoId($ref_id));
+        if (!$redeemData){
+            $this->response($this->error->setError('REFERENCE_ID_INVALID'), 200);
         }
+
+        /* check valid template_id */
+        $message = null;
+        if (!$not_template_id) {
+            $template = $this->push_model->getTemplateByTemplateId($validToken['site_id'], $this->input->post('template_id'));
+            if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $this->input->post('template_id')), 200);
+            $message = $template['body'];
+        } else {
+            $message = $this->input->post('message');
+        }
+
+        if (!isset($player['code']) && strpos($message, '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($pb_player_id);
+        $message = $this->utility->replace_template_vars($message, array_merge($player, array('coupon' => $redeemData['code'])));
+
+        $devices = $this->player_model->listDevices($this->client_id, $this->site_id, $pb_player_id, array('device_token', 'os_type'));
+        if ($devices) foreach ($devices as $device) {
+            $notificationInfo = array(
+                'device_token' => $device['device_token'],
+                'messages' => $message,
+                'data' => array(
+                    'client_id' => $this->client_id,
+                    'site_id' => $this->site_id
+                ),
+                'badge_number' => 1
+            );
+            $this->push_model->initial($notificationInfo,$device['os_type']);
+            $this->push_model->log($notificationInfo,$device,$pb_player_id,$cl_player_id);
+        }
+        $this->response($this->resp->setRespond(''), 200);
     }
     /*
     public function send_post()
@@ -152,5 +179,62 @@ class Push extends REST2_Controller
         }
         $this->response($this->resp->setRespond(''), 200);
     }*/
+    public function recent_get() {
+        /* process parameters */
+        $required = $this->input->checkParam(array('player_id'));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+
+        $cl_player_id = $this->input->get('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
+        if (!$player)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $since = $this->input->get('since');
+        $results = $this->push_model->recent($validToken['site_id'], $cl_player_id,$since);
+        array_walk_recursive($results, array($this, 'convert_mongo_date'));
+        $this->response($this->resp->setRespond($results), 200);
+    }
+
+    public function template_get($template_id='') {
+        $result = array();
+        if ($template_id) {
+            $template = $this->push_model->getTemplateByTemplateId($this->site_id, $template_id);
+            if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $template_id), 200);
+            $result = $template['body'];
+            $player_id = $this->input->get('player_id');
+            if ($player_id) {
+                $validToken = array_merge($this->validToken, array(
+                    'cl_player_id' => $player_id
+                ));
+                $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+                if(!$pb_player_id)
+                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+                $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
+                if (!$player)
+                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+                if (!isset($player['code']) && strpos($result, '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($pb_player_id);
+                $result = $this->utility->replace_template_vars($result, array_merge($player));
+            }
+        } else {
+            $result = $this->push_model->listTemplates($this->site_id, array('name'), array('_id'));
+        }
+        $this->response($this->resp->setRespond($result), 200);
+    }
+    private function convert_mongo_date(&$item, $key) {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else if (get_class($item) === 'MongoDate') {
+                $item = datetimeMongotoReadable($item);
+            }
+        }
+    }
 }
 ?>

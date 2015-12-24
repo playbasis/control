@@ -21,6 +21,7 @@ class Engine extends Quest
 		$this->load->model('social_model');
 		$this->load->model('email_model');
 		$this->load->model('sms_model');
+		$this->load->model('store_org_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -417,11 +418,34 @@ class Engine extends Quest
 			}
 
 		}
+		//Log validated action
+		if (!$test){
+			// populate input parameter of the action
+			$action_dataset = $this->jigsaw_model->getActionDatasetInfo($input['action_name']);
+			$input['parameters'] = array();
+			foreach ($action_dataset as $dataset){
+				if (isset($input[$dataset['param_name']])){
+					$input['parameters'][$dataset['param_name']] = $input[$dataset['param_name']];
+				}
+			}
+			$headers = $this->input->request_headers();
+			$action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;
+			$time = $action_time;
+
+			if (!isset($input['node_id'])){
+				$node = $this->store_org_model->retrieveNodeByPBPlayerID($validToken['client_id'],$validToken['site_id'],$pb_player_id);
+				$input['node_id'] = $node[0]['node_id'];
+			}
+
+			// track validated action in the log
+			$this->tracker_model->trackValidatedAction($input,$time);
+		}
 		//Quest Process
 		if (!$test){
 			$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
 			$apiResult = array_merge($apiResult, $apiQuestResult);
 		}
+
 
 		$this->benchmark->mark('engine_rule_end');
 		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
@@ -447,6 +471,10 @@ class Engine extends Quest
 			if (!$input["test"])
 				$input['player_id'] = $this->player_model->getClientPlayerId(
 			$input['pb_player_id'], $validToken['site_id']);
+		}
+		if (!isset($input['node_id'])){
+			$node = $this->store_org_model->retrieveNodeByPBPlayerID($validToken['client_id'],$validToken['site_id'],$input['pb_player_id']);
+			$input['node_id'] = $node[0]['node_id'];
 		}
 		$anonymousUser = $this->player_model->isAnonymous($validToken['client_id'], $validToken['site_id'], null, $input['pb_player_id']);
 		$headers = $this->input->request_headers();
@@ -523,6 +551,23 @@ class Engine extends Quest
 				$exInfo = array();
 				$jigsawConfig = $jigsaw['config'];
 				$jigsawCategory = $jigsaw['category'];
+
+				// support formula-based quantity
+				if (isset($jigsawConfig['quantity']) && strpos($jigsawConfig['quantity'], '{') !== false) {
+					require_once APPPATH . '/libraries/ipsum/Parser.class.php';
+					$f = $jigsawConfig['quantity'];
+					foreach ($input as $key => $value) {
+						if (!is_string($value)) continue;
+						$f = str_replace('{'.$key.'}', $value, $f);
+					}
+					$parser = new Parser($f.'\0');
+					try {
+						$jigsawConfig['quantity'] = intval($parser->run());
+					} catch (Exception $e) {
+						log_message('error', 'Error during evaluation (formula = '.$f.'), e = '.$e->getMessage());
+						$jigsawConfig['quantity'] = 0;
+					}
+				}
 
 				//get class path to precess jigsaw
 				$processor = ($jigsaw_id ? $this->client_model->getJigsawProcessorWithCache($cache_jigsaw, $jigsaw_id, $site_id) : $jigsaw['id']);

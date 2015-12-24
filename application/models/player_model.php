@@ -58,9 +58,11 @@ class Player_model extends MY_Model
 			'facebook_id'	=> (isset($data['facebook_id'])) ? $data['facebook_id'] : null,
 			'twitter_id'	=> (isset($data['twitter_id']))	 ? $data['twitter_id']	: null,
 			'instagram_id'	=> (isset($data['instagram_id']))? $data['instagram_id']: null,
+			'device_id'		=> (isset($data['device_id']))	 ? $data['device_id']	: null,
 			'password'		=> (isset($data['password']))	 ? $data['password']	: null,
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
 			'birth_date'	=> (isset($data['birth_date']))  ? new MongoDate(strtotime($data['birth_date'])) : null,
+			'approve_status'=> (isset($data['approve_status']))	 ? $data['approve_status']	: "pending",
 			'date_added'	=> $mongoDate,
 			'date_modified' => $mongoDate,
 			'anonymous' => (isset($data['anonymous']) && $data['anonymous']),
@@ -153,6 +155,10 @@ class Player_model extends MY_Model
 			$this->set_site_mongodb($site_id);
 			$this->mongo_db->where('pb_player_id', $id);
 			$this->mongo_db->delete_all('playbasis_event_log');
+
+			$this->set_site_mongodb($site_id);
+			$this->mongo_db->where('pb_player_id', $id);
+			$this->mongo_db->delete_all('playbasis_validated_action_log');
 		}
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('_id', $id);
@@ -443,13 +449,15 @@ class Player_model extends MY_Model
 		$result['count'] = $count;
 		return $result;
 	}
-    public function getActionCountFromDatetime($pb_player_id, $action_id, $action_filter, $site_id, $starttime="", $endtime="")
+    public function getActionCountFromDatetime($pb_player_id, $action_id, $action_filter,$action_string, $site_id, $starttime="", $endtime="")
     {
         $fields = array(
             'pb_player_id' => $pb_player_id,
             'action_id' => $action_id
         );
-        if(!empty($action_filter)){
+        if(!empty($action_filter) && !empty($action_string)){
+            $fields['parameters'.'.'.$action_filter] =  $action_string;
+        }elseif (!empty($action_filter)){
             $fields['url'] = $action_filter;
         }
         $datecondition = array();
@@ -465,7 +473,7 @@ class Player_model extends MY_Model
         if ($starttime != '' || $endtime != '' ) {
             $this->mongo_db->where('date_added', $datecondition);
         }
-        $count = $this->mongo_db->count('playbasis_action_log');
+        $count = $this->mongo_db->count('playbasis_validated_action_log');
 
         $this->mongo_db->select(array(
             'action_id',
@@ -477,12 +485,59 @@ class Player_model extends MY_Model
             $this->mongo_db->where('date_added', $datecondition);
         }
         $this->mongo_db->limit(1);
-        $result = $this->mongo_db->get('playbasis_action_log');
+        $result = $this->mongo_db->get('playbasis_validated_action_log');
         $result = ($result) ? $result[0] : array();
         if($result){
             $result['action_id'] = $result['action_id']."";
         }
         $result['count'] = $count;
+
+        return $result;
+    }
+    public function getActionSumFromDatetime($pb_player_id, $action_id, $action_filter, $site_id, $starttime="", $endtime="")
+    {
+        $fields = array(
+                'pb_player_id' => $pb_player_id,
+                'action_id' => $action_id
+        );
+        if(!empty($action_filter) && !empty($action_string)){
+            $fields['parameters'.'.'.$action_filter] =  $action_string;
+        }
+        $this->mongo_db->select( array('parameters'.'.'.$action_filter));
+        $datecondition = array();
+        if($starttime != ''){
+            $datecondition = array_merge($datecondition, array('$gt' => $starttime));
+        }
+        if($endtime != ''){
+            $datecondition = array_merge($datecondition, array('$lte' => $endtime));
+        }
+
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where($fields);
+        if ($starttime != '' || $endtime != '' ) {
+            $this->mongo_db->where('date_added', $datecondition);
+        }
+        $raw_result = $this->mongo_db->get('playbasis_validated_action_log');
+        $sum = 0;
+        foreach ($raw_result as $raw){
+            $sum += $raw['parameters'][$action_filter];
+        }
+        $this->mongo_db->select(array(
+                'action_id',
+                'action_name'
+        ));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where($fields);
+        if ($starttime != '' || $endtime != '' ) {
+            $this->mongo_db->where('date_added', $datecondition);
+        }
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_validated_action_log');
+        $result = ($result) ? $result[0] : array();
+        if($result){
+            $result['action_id'] = $result['action_id']."";
+        }
+        $result['sum'] = $sum;
 
         return $result;
     }
@@ -2419,18 +2474,18 @@ class Player_model extends MY_Model
         return $results ? $results[0] : array();
     }
 
-    public function getPlayerByUsername($site_id, $username = null)
+    public function getPlayerByUsername($site_id, $username)
     {
-        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number'));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('username', $username);
         $results = $this->mongo_db->get('playbasis_player');
         return $results ? $results[0] : array();
     }
 
-    public function getPlayerByEmail($site_id, $email = null)
+    public function getPlayerByEmail($site_id, $email)
     {
-        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number'));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('email', $email);
         $results = $this->mongo_db->get('playbasis_player');
@@ -2501,6 +2556,61 @@ class Player_model extends MY_Model
         return $code;
     }
 
+    public function existsOTPCode($code)
+    {
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->count('playbasis_player_otp_to_player') > 0;
+    }
+
+    public function generateOTPCode($pb_player_id)
+    {
+        $code = null;
+        for ($i = 0; $i < 2; $i++) {
+            $code = get_random_code(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
+            if (!$this->existsOTPCode($code)) {
+                break;
+            }
+        }
+        if (!$code) {
+            throw new Exception('Cannot generate unique player code');
+        }
+
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $records = $this->mongo_db->get('playbasis_player_otp_to_player');
+        if (!$records) {
+            $this->mongo_db->insert('playbasis_player_otp_to_player', array(
+                'pb_player_id' => $pb_player_id,
+                'code' => $code,
+                'date_expire' => new MongoDate(time() + SMS_VERIFICATION_TIMEOUT_IN_SECONDS),
+            ));
+        } else {
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+            $this->mongo_db->set('code', $code);
+            $this->mongo_db->set('date_expire', new MongoDate(time() + SMS_VERIFICATION_TIMEOUT_IN_SECONDS));
+            $this->mongo_db->update('playbasis_player_otp_to_player');
+        }
+        return $code;
+    }
+
+    public function getPlayerOTPCode($pb_player_id, $code) {
+        $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
+        $this->mongo_db->where('code', $code);
+//        Move to check on controller code
+//        $this->mongo_db->where('date_expire', array('$gt' => new MongoDate()));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_player_otp_to_player');
+
+        return ($result) ? $result[0] : false;
+    }
+
+    public function deleteOTPCode($code) {
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->delete('playbasis_player_otp_to_player');
+        return $result;
+    }
+
 	public function storeDeviceToken($data)
 	{
 		$mongoDate = new MongoDate(time());
@@ -2541,6 +2651,75 @@ class Player_model extends MY_Model
 		));
 		return $this->mongo_db->get('playbasis_player_device');
 	}
+	public function getMonthLeaderboardsByCustomParameter($input, $client_id, $site_id) {
+
+		$rankBy = $input['param'];
+		$limit = $input['limit'];
+		$group_by = $input['group_by'];
+		$param_str = "$"."parameters".".".$rankBy;
+		$group_by_str = "$".$group_by;
+
+		// default is present month
+		if (isset($input['year']) && isset($input['month']))
+		{
+			$selected_time = strtotime($input['year']."-".$input['month']);
+		}
+		else{
+			$selected_time = time();
+		}
+
+		// Aggregate the data
+		$first = date('Y-m-01', $selected_time);
+		$from = strtotime($first.' 00:00:00');
+
+		$last = date('Y-m-t', $selected_time);
+		$to   = strtotime($last.' 23:59:59');
+		$raw_result = $this->mongo_db->aggregate('playbasis_validated_action_log', array(
+				array(
+						'$match' => array(
+								'action_name' => $input['action_name'],
+								'site_id' => $site_id,
+								'client_id' => $client_id,
+								'date_added' => array('$gte' => new MongoDate($from),'$lte' => new MongoDate($to))
+						),
+				),
+				array(
+						'$group' => array(
+								'_id' => array($group_by => $group_by_str),
+								$rankBy => array('$push' => $param_str))
+				),
+				array(
+						'$sort' => array($rankBy => -1),
+				),
+				array(
+						'$limit' => $limit+20,
+				)
+		));
+		// This function will remove the deleted player and also name key to $rankBy
+		//$raw_result = $raw_result ? $this->removeDeletedPlayers($raw_result['result'], $limit, $rankBy) : array();
+
+		// Sort the leader !
+		$result = array();
+		foreach ($raw_result['result'] as $key => $raw){
+			$result[$key][$group_by] = $raw['_id'][$group_by];
+
+			$temp_name[$key] = $raw['_id'][$group_by];
+			if ($input['mode'] == "sum"){
+				$temp_value[$key] =  array_sum($raw[$rankBy]);
+			}
+			else{
+				$temp_value[$key] =  count($raw[$rankBy]);
+			}
+			$result[$key][$rankBy] = $temp_value[$key];
+		}
+		if (isset($temp_value) && isset($temp_name))
+		{
+			array_multisort( $temp_value, SORT_DESC,$temp_name, SORT_ASC, $result);
+		}
+
+		return $result;
+	}
+
 }
 
 function index_id($obj) {

@@ -200,6 +200,22 @@ class Error extends CI_Model
             $errorData['message'] = "Password incorrect";
             $errorData['error_code'] = '0210';
             break;
+        case 'SMS_VERIFICATION_REQUIRED':
+            $errorData['message'] = "SMS verification is required to proceed further";
+            $errorData['error_code'] = '0211';
+            break;
+        case 'SMS_VERIFICATION_CODE_INVALID':
+            $errorData['message'] = "SMS Verification code is invalid";
+            $errorData['error_code'] = '0212';
+            break;
+        case 'SMS_VERIFICATION_CODE_EXPIRED':
+            $errorData['message'] = "SMS Verification code is expired";
+            $errorData['error_code'] = '0213';
+            break;
+        case 'SMS_VERIFICATION_PHONE_NUMBER_NOT_FOUND':
+            $errorData['message'] = "Phone number is not found.";
+            $errorData['error_code'] = '0214';
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';
@@ -279,6 +295,34 @@ class Error extends CI_Model
         case 'ANONYMOUS_CANNOT_REFERRAL':
             $errorData['message'] = "Anonymous cannot use referral code";
             $errorData['error_code'] = '1104';
+            break;
+        case 'REFERENCE_ID_INVALID':
+                $errorData['message'] = "Reference id is invalid";
+                $errorData['error_code'] = '2301';
+                break;
+        case 'PARAMETER_INVALID':
+                $errorData['message'] = "Parameter is invalid ";
+                $errorData['error_code'] = '2302';
+                break;
+        case 'STORE_ORG_NODE_NOT_FOUND':
+            $errorData['message'] = "Node value is not found";
+            $errorData['error_code'] = '2401';
+            break;
+        case 'STORE_ORG_PLAYER_ALREADY_EXISTS_WITH_NODE':
+            $errorData['message'] = "Player already exists with current node";
+            $errorData['error_code'] = '2402';
+            break;
+        case 'STORE_ORG_PLAYER_NOT_EXISTS_WITH_NODE':
+            $errorData['message'] = "Player is not exists with current node";
+            $errorData['error_code'] = '2403';
+            break;
+        case 'STORE_ORG_PLAYER_ROLE_ALREADY_EXISTS':
+            $errorData['message'] = "This role already exists for this Player";
+            $errorData['error_code'] = '2404';
+            break;
+        case 'STORE_ORG_PLAYER_ROLE_NOT_EXISTS':
+            $errorData['message'] = "This role is not set for this Player";
+            $errorData['error_code'] = '2405';
             break;
         default:
             $errorData['message'] = "Unknown";
