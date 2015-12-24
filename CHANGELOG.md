@@ -1,10 +1,117 @@
 # Change Log
 
-## [2.1.40](https://github.com/playbasis/api/tree/2.1.40) (2015-12-01)
+
+## [2.1.41](https://github.com/playbasis/api/tree/2.1.41) (2015-12-24)
+
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.11...2.1.41)
+
+**Fixed bugs:**
+
+- Bug Fix : my rank return wrong [\#85](https://github.com/playbasis/api/pull/85) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.41-alpha.11](https://github.com/playbasis/api/tree/2.1.41-alpha.11) (2015-12-24)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.10...2.1.41-alpha.11)
+
+**Implemented enhancements:**
+
+- Feature/2-step verification [\#84](https://github.com/playbasis/api/pull/84) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Feature/player to organization [\#83](https://github.com/playbasis/api/pull/83) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Enhancement : Support Get Players From Node Id [\#81](https://github.com/playbasis/api/pull/81) ([narut-playbasis](https://github.com/narut-playbasis))
+- Enhancement : Rank Peer to Support to MyRank [\#80](https://github.com/playbasis/api/pull/80) ([narut-playbasis](https://github.com/narut-playbasis))
+
+**Fixed bugs:**
+
+- Bug Fix : Add Action Validation [\#82](https://github.com/playbasis/api/pull/82) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.41-alpha.10](https://github.com/playbasis/api/tree/2.1.41-alpha.10) (2015-12-23)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.9...2.1.41-alpha.10)
+
+**Implemented enhancements:**
+
+- Enhancement: Cron to support leader board [\#79](https://github.com/playbasis/api/pull/79) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.41-alpha.9](https://github.com/playbasis/api/tree/2.1.41-alpha.9) (2015-12-23)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.8...2.1.41-alpha.9)
+
+**Implemented enhancements:**
+
+- Enhancement : Support Rank Peer [\#78](https://github.com/playbasis/api/pull/78) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.41-alpha.8](https://github.com/playbasis/api/tree/2.1.41-alpha.8) (2015-12-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.7...2.1.41-alpha.8)
+
+**Implemented enhancements:**
+
+- Feature/list orgs nodes [\#77](https://github.com/playbasis/api/pull/77) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Organization [\#76](https://github.com/playbasis/api/pull/76) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.1.41-alpha.7](https://github.com/playbasis/api/tree/2.1.41-alpha.7) (2015-12-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.6...2.1.41-alpha.7)
+
+**Implemented enhancements:**
+
+- Feature/support formula in reward quantity in engine rule [\#75](https://github.com/playbasis/api/pull/75) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.1.41-alpha.6](https://github.com/playbasis/api/tree/2.1.41-alpha.6) (2015-12-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.5...2.1.41-alpha.6)
+
+**Implemented enhancements:**
+
+- Feature/register player to store organization [\#74](https://github.com/playbasis/api/pull/74) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.1.41-alpha.5](https://github.com/playbasis/api/tree/2.1.41-alpha.5) (2015-12-16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.4...2.1.41-alpha.5)
+
+**Merged pull requests:**
+
+- Feature/add approval status in player [\#73](https://github.com/playbasis/api/pull/73) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.1.41-alpha.4](https://github.com/playbasis/api/tree/2.1.41-alpha.4) (2015-12-15)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.3...2.1.41-alpha.4)
+
+**Implemented enhancements:**
+
+- Feature/enhancement support custom param for quest [\#72](https://github.com/playbasis/api/pull/72) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.41-alpha.3](https://github.com/playbasis/api/tree/2.1.41-alpha.3) (2015-12-09)
+[Full Changelog](https://github.com/playbasis/api/compare/revert_mongo_native_long...2.1.41-alpha.3)
+
+**Implemented enhancements:**
+
+- Enhancement : adding custom parameter in condition  [\#71](https://github.com/playbasis/api/pull/71) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [revert_mongo_native_long](https://github.com/playbasis/api/tree/revert_mongo_native_long) (2015-12-04)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.2...revert_mongo_native_long)
+
+## [2.1.41-alpha.2](https://github.com/playbasis/api/tree/2.1.41-alpha.2) (2015-12-02)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.1...2.1.41-alpha.2)
+
+**Implemented enhancements:**
+
+- Enhancement : add template and recent API for push [\#69](https://github.com/playbasis/api/pull/69) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.41-alpha.1](https://github.com/playbasis/api/tree/2.1.41-alpha.1) (2015-12-02)
+[Full Changelog](https://github.com/playbasis/api/compare/FixJigsaw_unavailableDataset...2.1.41-alpha.1)
+
+## [FixJigsaw_unavailableDataset](https://github.com/playbasis/api/tree/FixJigsaw_unavailableDataset) (2015-12-02)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40...FixJigsaw_unavailableDataset)
+
+**Implemented enhancements:**
+
+- Enhancement : add missing code for init energy for new player on Engi… [\#67](https://github.com/playbasis/api/pull/67) ([narut-playbasis](https://github.com/narut-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/fix jigsaw unavailable dataset [\#68](https://github.com/playbasis/api/pull/68) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.40](https://github.com/playbasis/api/tree/2.1.40) (2015-12-02)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.12...2.1.40)
 
 ## [2.1.40-alpha.12](https://github.com/playbasis/api/tree/2.1.40-alpha.12) (2015-12-01)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.11...2.1.40-alpha.12)
+[Full Changelog](https://github.com/playbasis/api/compare/enable_mongo_native_long...2.1.40-alpha.12)
+
+## [enable_mongo_native_long](https://github.com/playbasis/api/tree/enable_mongo_native_long) (2015-12-01)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.40-alpha.11...enable_mongo_native_long)
 
 **Fixed bugs:**
 
@@ -618,13 +725,13 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.3...2.1.24-alpha.4)
 
 ## [2.1.24-alpha.3](https://github.com/playbasis/api/tree/2.1.24-alpha.3) (2015-04-27)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.3)
-
-## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.3)
 
 ## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.2)
+
+## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.1)
 
 ## [2.1.20-alpha.1](https://github.com/playbasis/api/tree/2.1.20-alpha.1) (2015-03-18)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.19-alpha.1...2.1.20-alpha.1)
