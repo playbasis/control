@@ -572,9 +572,9 @@ class Player extends REST2_Controller
 		$instagramId = $this->input->post('instagram_id');
 		if($instagramId)
 			$playerInfo['instagram_id'] = $instagramId;
-        $deviceId = $this->input->post('device_id');
-        if($deviceId)
-            $playerInfo['device_id'] = $deviceId;
+		$deviceId = $this->input->post('device_id');
+		if($deviceId)
+			$playerInfo['device_id'] = $deviceId;
 		$password = $this->input->post('password');
 		if($password)
 			$playerInfo['password'] = do_hash($password);
