@@ -167,6 +167,10 @@ $route['Player/rankParam/'.ANY_STRING.'/'.ANY_STRING] = 'player/rankParam/$1/$2'
 $route['Player/rankParam/'.ANY_STRING] = 'player/rankParam/$1/20';
 $route['Player/rankParam'] = 'player/rankParam/0/0';
 
+$route['Player/'.ANY_STRING.'/getAssociatedNode'] = 'player/getAssociatedNode/$1';  // ANY_STRING = player_id
+$route['Player/'.ANY_STRING.'/getRole/'.ANY_STRING] = 'player/getRole/$1/$2';       // ANY_STRING = player_id/node_id
+$route['Player/'.ANY_STRING.'/saleReport'] = 'player/saleReport/$1';                // ANY_STRING = player_id
+
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';
@@ -302,7 +306,7 @@ $route['StoreOrg/players/'.ANY_STRING] = 'store_org/players/$1';
 
 $route['StoreOrg/nodes/'.ANY_STRING.'/getChildNode/'.ANY_STRING] = 'store_org/getChildNode/$1/$2';     // ANY_STRING = node_id/layer
 $route['StoreOrg/nodes/'.ANY_STRING.'/saleReport'] = 'store_org/saleReport/$1';                        // ANY_STRING = node_id
-$route['StoreOrg/nodes/'.ANY_STRING.'/saleHistory/'.ANY_STRING] = 'store_org/saleHistory/$1/$2';       // ANY_STRING = node_id/month
+$route['StoreOrg/nodes/'.ANY_STRING.'/saleHistory/'.ANY_STRING] = 'store_org/saleHistory/$1/$2';       // ANY_STRING = node_id/count
 $route['StoreOrg/nodes/'.ANY_STRING.'/saleBoard/'.ANY_STRING] = 'store_org/saleBoard/$1/$2';           // ANY_STRING = node_id/layer
 
 $route['StoreOrg/rankPeer/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/rankPeer/$1/$2';

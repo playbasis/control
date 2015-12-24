@@ -430,8 +430,7 @@ class Store_org extends REST2_Controller
         $previous_month_sales = $table[$previous_year][$previous_month][$parameter];
 
         $result[$parameter] = $current_month_sales;
-        // for debug
-        //$result['previous_month_amount'] = $previous_month_sales;
+        $result['previous_'.$parameter] = $previous_month_sales;
 
         if ($current_month_sales == 0 && $previous_month_sales == 0) {
             $result['percent_changed'] = 0;
@@ -444,13 +443,25 @@ class Store_org extends REST2_Controller
         $this->response($this->resp->setRespond($result), 200);
     }
 
-    public function saleHistory_get($node_id = '', $count = 6)
+    public function saleHistory_get($node_id = '', $count = '')
     {
         $result = array();
         if (!$node_id) {
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'node_id'
             )), 200);
+        }
+        if (!$count) {
+            if($count==0){
+                $this->response($this->error->setError('PARAMETER_INVALID', array(
+                    'count'
+                )), 200);
+            }else{
+                $this->response($this->error->setError('PARAMETER_MISSING', array(
+                    'count'
+                )), 200);
+            }
+
         }
 
         $month = $this->input->get('month');
@@ -490,6 +501,7 @@ class Store_org extends REST2_Controller
             $previous_month_sales = $table[$previous_year][$previous_month][$parameter];
 
             $result[$current_year][$current_month][$parameter] = $current_month_sales;
+            $result[$current_year][$current_month]['previous_'.$parameter] = $previous_month_sales;
 
             if ($current_month_sales == 0 && $previous_month_sales == 0) {
                 $result[$current_year][$current_month]['percent_changed'] = 0;
@@ -503,7 +515,7 @@ class Store_org extends REST2_Controller
         $this->response($this->resp->setRespond($result), 200);
     }
 
-    public function saleBoard_get($node_id = '', $level = null)
+    public function saleBoard_get($node_id = '', $layer = '')
     {
         $result = array();
 
@@ -533,7 +545,7 @@ class Store_org extends REST2_Controller
 
         $candidate_node = array();
         $this->recurGetChildByLevel($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node_id),
-            $candidate_node, $level);
+            $candidate_node, $layer);
 
         foreach ($candidate_node as $node) {
             $list = array();
@@ -555,8 +567,8 @@ class Store_org extends REST2_Controller
             $current_month_sales = $table[$current_year][$current_month]['amount'];
             $previous_month_sales = $table[$previous_year][$previous_month]['amount'];
 
-            $temp['amount'] = $current_month_sales;
-            //$temp['previous_month_amount'] = $previous_month_sales;
+            $temp[$parameter] = $current_month_sales;
+            $temp['previous_'.$parameter] = $previous_month_sales;
 
             if ($current_month_sales == 0 && $previous_month_sales == 0) {
                 $temp['percent_changed'] = 0;
@@ -565,13 +577,13 @@ class Store_org extends REST2_Controller
             } else {
                 $temp['percent_changed'] = (($current_month_sales - $previous_month_sales) * 100) / $previous_month_sales;
             }
-
-            array_push($result, array_merge(array('node_id' => new MongoId($node)), $temp));
+            $temp2 = $this->store_org_model->retrieveNodeById($this->validToken['site_id'],$node);
+            array_push($result, array_merge(array('node_id' => $node."",'name'=>$temp2['name']), $temp));
         }
 
         foreach ($result as $key => $raw) {
             $temp_name[$key] = $raw['node_id'];
-            $temp_value[$key] = $raw['amount'];
+            $temp_value[$key] = $raw[$parameter];
         }
         if (isset($temp_value) && isset($temp_name)) {
             array_multisort($temp_value, SORT_DESC, $temp_name, SORT_ASC, $result);

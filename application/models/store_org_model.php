@@ -554,4 +554,40 @@ class Store_org_model extends MY_Model
 
         return $ret;
     }
+
+    public function getAssociatedNodeOfPlayer($client_id, $site_id,$player_id){
+
+        $this->mongo_db->select(array(
+            'node_id',
+            'role',
+
+        ));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'pb_player_id' => $player_id,
+        ));
+        return $this->mongo_db->get('playbasis_store_organize_to_player');
+    }
+
+    public function getRoleOfPlayer($client_id, $site_id, $player_id, $node_id){
+
+        $this->mongo_db->select(array(
+            'role',
+
+        ));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'pb_player_id' => $player_id,
+            'node_id' => $node_id,
+        ));
+        $result = $this->mongo_db->get('playbasis_store_organize_to_player');
+        if(empty($result)){
+            return null;
+        }else{
+            return $result[0];
+        }
+
+    }
 }
