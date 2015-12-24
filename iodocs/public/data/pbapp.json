@@ -327,6 +327,13 @@
                             "0",
                             "1"
                           ]
+                        },
+                        {
+                            "Name": "device_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "device id to verify with SMS verification process"
                         }
                     ]
                 },
@@ -583,10 +590,33 @@
                     ]
                 },
                 {
-                    "MethodName": "Player Auth with SMS verification",
-                    "Synopsis": "Perform SMS verification from code that sent to player SMS.",
+                    "MethodName": "Request OTP",
+                    "Synopsis": "Request One time password.",
                     "HTTPMethod": "POST",
-                    "URI": "/Player/auth/smsVerify",
+                    "URI": "/Player/auth/:id/requestOTPCode",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Perform OTP verification",
+                    "Synopsis": "Perform OTP verification from code that has sent to player SMS.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/auth/:id/verifyOTPCode",
                     "RequiresOAuth": "N",
                     "parameters": [
                         {
@@ -608,7 +638,7 @@
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
-                            "Description": "verification code as SMS to player"
+                            "Description": "OTP code as sent to player"
                         }
                     ]
                 },

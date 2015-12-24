@@ -2556,19 +2556,19 @@ class Player_model extends MY_Model
         return $code;
     }
 
-    public function existsSMSVerificationCode($code)
+    public function existsOTPCode($code)
     {
         $this->mongo_db->where('code', $code);
         $this->mongo_db->limit(1);
-        return $this->mongo_db->count('playbasis_player_sms_verification_to_player') > 0;
+        return $this->mongo_db->count('playbasis_player_otp_to_player') > 0;
     }
 
-    public function generateSMSVerificationCode($pb_player_id)
+    public function generateOTPCode($pb_player_id)
     {
         $code = null;
         for ($i = 0; $i < 2; $i++) {
             $code = get_random_code(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
-            if (!$this->existsSMSVerificationCode($code)) {
+            if (!$this->existsOTPCode($code)) {
                 break;
             }
         }
@@ -2577,9 +2577,9 @@ class Player_model extends MY_Model
         }
 
         $this->mongo_db->where('pb_player_id', $pb_player_id);
-        $records = $this->mongo_db->get('playbasis_player_sms_verification_to_player');
+        $records = $this->mongo_db->get('playbasis_player_otp_to_player');
         if (!$records) {
-            $this->mongo_db->insert('playbasis_player_sms_verification_to_player', array(
+            $this->mongo_db->insert('playbasis_player_otp_to_player', array(
                 'pb_player_id' => $pb_player_id,
                 'code' => $code,
                 'date_expire' => new MongoDate(time() + SMS_VERIFICATION_TIMEOUT_IN_SECONDS),
@@ -2588,28 +2588,26 @@ class Player_model extends MY_Model
             $this->mongo_db->where('pb_player_id', $pb_player_id);
             $this->mongo_db->set('code', $code);
             $this->mongo_db->set('date_expire', new MongoDate(time() + SMS_VERIFICATION_TIMEOUT_IN_SECONDS));
-            $this->mongo_db->update('playbasis_player_sms_verification_to_player');
+            $this->mongo_db->update('playbasis_player_otp_to_player');
         }
         return $code;
     }
 
-    public function verifyPlayerSMSCode($pb_player_id, $code) {
+    public function getPlayerOTPCode($pb_player_id, $code) {
         $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
         $this->mongo_db->where('code', $code);
-        $this->mongo_db->where('date_expire', array('$gt' => new MongoDate()));
+//        Move to check on controller code
+//        $this->mongo_db->where('date_expire', array('$gt' => new MongoDate()));
         $this->mongo_db->limit(1);
-        $results = $this->mongo_db->get('playbasis_player_sms_verification_to_player');
-        if(!empty($results)){
-            $this->deleteSMSVerifyCode($code);
-            return true;
-        }
-        return false;
+        $result = $this->mongo_db->get('playbasis_player_otp_to_player');
+
+        return ($result) ? $result[0] : false;
     }
 
-    private function deleteSMSVerifyCode($code) {
+    public function deleteOTPCode($code) {
         $this->mongo_db->where('code', $code);
         $this->mongo_db->limit(1);
-        $result = $this->mongo_db->delete('playbasis_player_sms_verification_to_player');
+        $result = $this->mongo_db->delete('playbasis_player_otp_to_player');
         return $result;
     }
 

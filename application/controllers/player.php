@@ -831,32 +831,19 @@ class Player extends REST2_Controller
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		}
 
-		$device_id = $this->input->post('device_id');
-		if (!empty($device_id) && isset($player['device_id'])){
-			//Change new device
-			if(($device_id !== $player['device_id']) && !empty($player['phone_number'])){
-				$code = $this->player_model->generateSMSVerificationCode($player['_id']);
-
-				$site_data = $this->client_model->findBySiteId($this->site_id);
-//				$this->sendSMSVerification("PlayerLoginNewDevice", $site_data['site_name'], $player['phone_number'],
-//					$code);
-
-				$this->response($this->error->setError('SMS_VERIFICATION_NEEDED'), 200);
-			// not yet perform sms auth
-			}elseif(empty($player['phone_number'])){
-				$code = $this->player_model->generateSMSVerificationCode($player['_id']);
-
-				$site_data = $this->client_model->findBySiteId($this->site_id);
-//				$this->sendSMSVerification("PlayerRegister", $site_data['site_name'], $player['phone_number'],
-//					$code);
-
-				$this->response($this->error->setError('SMS_VERIFICATION_NEEDED'), 200);
-			}
-		}
-
 		$auth = $this->player_model->authPlayer($this->site_id, $player['_id'], $password);
 		if (!$auth) {
 			$this->response($this->error->setError('PASSWORD_INCORRECT'), 200);
+		} else {
+			$device_id = $this->input->post('device_id');
+			if (!empty($device_id) && isset($player['device_id'])){
+				//Change new device
+				if(($device_id !== $player['device_id']) && !empty($player['phone_number'])){
+					$this->response($this->error->setError('SMS_VERIFICATION_REQUIRED'), 200);
+				}elseif(empty($player['phone_number'])){
+					$this->response($this->error->setError('SMS_VERIFICATION_PHONE_NUMBER_NOT_FOUND'), 200);
+				}
+			}
 		}
 
 		//trigger and log event
@@ -889,7 +876,7 @@ class Player extends REST2_Controller
 		)), 200);
 	}
 
-    public function verifySMSCode_post()
+    public function verifyOTPCode_post()
     {
         $required = $this->input->checkParam(array(
             'player_id',
@@ -902,13 +889,21 @@ class Player extends REST2_Controller
         $code = $this->input->post('code');
         $player_id = $this->input->post('player_id');
 
-        $pb_player_id = $this->player_model->getPlayerByPlayerId($this->validToken['site_id'],$player_id);
-
-        $result = $this->player_model->verifyPlayerSMSCode($pb_player_id['_id'],$code);
-
-        if (!$result) {
-            $this->response($this->error->setError('SMS_VERIFICATION_CODE_INVALID_OR_EXPIRED'), 200);
+        $pb_player_id = $this->player_model->getPlayerByPlayerId($this->validToken['site_id'], $player_id);
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
+
+        $result = $this->player_model->getPlayerOTPCode($pb_player_id['_id'],$code);
+        if (!$result) {
+            $this->response($this->error->setError('SMS_VERIFICATION_CODE_INVALID'), 200);
+        }
+
+        if ($result['date_expire']->sec <= time()){
+            $this->response($this->error->setError('SMS_VERIFICATION_CODE_EXPIRED'), 200);
+        }
+
+        $this->player_model->deleteOTPCode($result['code']);
 
         $this->response($this->resp->setRespond(), 200);
     }
@@ -1380,6 +1375,25 @@ class Player extends REST2_Controller
         }
         $this->response($this->resp->setRespond(array('code' => $player['code'])), 200);
     }
+
+    public function requestOTPCode_post($player_id = '')
+    {
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        }
+
+        $player = $this->player_model->getPlayerByPlayerId($this->site_id, $player_id);
+        if (!$player) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $code = $this->player_model->generateOTPCode($player['_id']);
+
+        $this->response($this->resp->setRespond(array('code' => $code)), 200);
+    }
+
     public function contact_get($player_id=0, $N=10) {
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
@@ -1757,44 +1771,6 @@ class Player extends REST2_Controller
                 $item =  datetimeMongotoReadable($item);
             }
         }
-    }
-
-    private function sendSMSVerification($type, $from, $to, $verify_code)
-    {
-        $access = false;
-        $message = "Your verification code is " . $verify_code . " (" . $from . ")";
-
-        try {
-            $this->client_model->permissionProcess(
-                $this->client_data,
-                $this->client_id,
-                $this->site_id,
-                "notifications",
-                "sms"
-            );
-            $access = true;
-        } catch(Exception $e) {
-            log_message('error', 'Error = '.$e->getMessage());
-        }
-
-        if ($access) {
-            $validToken = $this->validToken;
-
-            // send SMS
-            $this->config->load("twilio",TRUE);
-            $config = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
-            $twilio = $this->config->item('twilio');
-            $config['api_version'] = $twilio['api_version'];
-            $this->load->library('twilio/twiliomini', $config);
-
-            $response = $this->twiliomini->sms($from, $to, $message);
-            $this->sms_model->log($validToken['client_id'], $validToken['site_id'], $type, $from, $to, $message, $response);
-            if ($response->IsError) {
-                log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
-                $this->response($this->error->setError('INTERNAL_ERROR', $response), 200);
-            }
-        }
-        $this->response($this->error->setError('LIMIT_EXCEED'), 200);
     }
 }
 
