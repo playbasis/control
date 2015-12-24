@@ -1,8 +1,44 @@
 # Change Log
 
-## [v2.2.27](https://github.com/playbasis/control/tree/v2.2.27) (2015-12-02)
+## [v2.2.28](https://github.com/playbasis/control/tree/v2.2.28) (2015-12-02)
 
-[Full Changelog](https://github.com/playbasis/control/compare/fix_https_in_plan_price...v2.2.27)
+[Full Changelog](https://github.com/playbasis/control/compare/revert_mongo_native_long...v2.2.28)
+
+**Implemented enhancements:**
+
+- Enhancement : Leader Board Support Organization [\#69](https://github.com/playbasis/control/pull/69) ([narut-playbasis](https://github.com/narut-playbasis))
+- Feature/implement store organization [\#66](https://github.com/playbasis/control/pull/66) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Enhancement : add Leader Board Config Page [\#65](https://github.com/playbasis/control/pull/65) ([narut-playbasis](https://github.com/narut-playbasis))
+- Enchancement:display pending approval player [\#64](https://github.com/playbasis/control/pull/64) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Speed up checking custom actions being used by customers by grouping [\#62](https://github.com/playbasis/control/pull/62) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Feature/optimize plan saving [\#61](https://github.com/playbasis/control/pull/61) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Enhancement: quest page support custom parameter [\#60](https://github.com/playbasis/control/pull/60) ([narut-playbasis](https://github.com/narut-playbasis))
+- Feature/fix bug slow on update plan [\#59](https://github.com/playbasis/control/pull/59) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Feature/enhancement add data import page [\#57](https://github.com/playbasis/control/pull/57) ([narut-playbasis](https://github.com/narut-playbasis))
+- Enhancement : Adding operation \(drop-down\) in custom parameter condition [\#56](https://github.com/playbasis/control/pull/56) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Fixed Bug in Goods tab [\#68](https://github.com/playbasis/control/pull/68) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- BugFix: LeaderboardWronglySetOccurence [\#67](https://github.com/playbasis/control/pull/67) ([narut-playbasis](https://github.com/narut-playbasis))
+- Prevent either \(1\) empty site\_id, or \(2\) duplicate site\_id into the processing [\#63](https://github.com/playbasis/control/pull/63) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+**Merged pull requests:**
+
+- Feature/onboarding survey [\#58](https://github.com/playbasis/control/pull/58) ([notjiam](https://github.com/notjiam))
+
+## [revert_mongo_native_long](https://github.com/playbasis/control/tree/revert_mongo_native_long) (2015-12-04)
+[Full Changelog](https://github.com/playbasis/control/compare/v2.2.27...revert_mongo_native_long)
+
+**Implemented enhancements:**
+
+- Enhancement : Allow Mobile setting for Basic user [\#55](https://github.com/playbasis/control/pull/55) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [v2.2.27](https://github.com/playbasis/control/tree/v2.2.27) (2015-12-02)
+[Full Changelog](https://github.com/playbasis/control/compare/enable_mongo_native_long...v2.2.27)
+
+## [enable_mongo_native_long](https://github.com/playbasis/control/tree/enable_mongo_native_long) (2015-12-01)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_https_in_plan_price...enable_mongo_native_long)
 
 **Implemented enhancements:**
 
