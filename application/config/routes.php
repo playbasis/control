@@ -300,7 +300,7 @@ $route['StoreOrg/nodes'] = 'store_org/listNodes';
 
 $route['StoreOrg/nodes/'.ANY_STRING.'/getChildNode/'.ANY_STRING] = 'store_org/getChildNode/$1/$2';     // ANY_STRING = node_id/layer
 $route['StoreOrg/nodes/'.ANY_STRING.'/saleReport'] = 'store_org/saleReport/$1';                        // ANY_STRING = node_id
-$route['StoreOrg/nodes/'.ANY_STRING.'/saleHistory/'.ANY_STRING] = 'store_org/saleHistory/$1/$2';       // ANY_STRING = node_id/month
+$route['StoreOrg/nodes/'.ANY_STRING.'/saleHistory/'.ANY_STRING] = 'store_org/saleHistory/$1/$2';       // ANY_STRING = node_id/count
 $route['StoreOrg/nodes/'.ANY_STRING.'/saleBoard/'.ANY_STRING] = 'store_org/saleBoard/$1/$2';           // ANY_STRING = node_id/layer
 
 //promo API

@@ -327,6 +327,18 @@
                             "0",
                             "1"
                           ]
+                        },
+                        {
+                            "Name": "approve_status",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "enumerated",
+                            "Description": "approval status",
+                            "EnumeratedList": [
+                                "approved",
+                                "rejected",
+                                "pending"
+                            ]
                         }
                     ]
                 },
@@ -445,6 +457,18 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
+                        },
+                        {
+                            "Name": "approve_status",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "enumerated",
+                            "Description": "approval status",
+                            "EnumeratedList": [
+                                "approved",
+                                "rejected",
+                                "pending"
+                            ]
                         }
                     ]
                 },
@@ -1159,6 +1183,89 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Get Associated Node",
+                    "Synopsis": "Get associated node of player",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/getAssociatedNode",
+                    "RequiresOAuth": "Y",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Get Role",
+                    "Synopsis": "Get role of player in specific node",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/getRole/:node_id",
+                    "RequiresOAuth": "Y",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Node Id to add player"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Sale report",
+                    "Synopsis": "Sale report of any node that associated with the player",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/saleReport",
+                    "RequiresOAuth": "Y",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "month",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select month to get sale report(ex. 1,2,..,12)[dafault = current month]"
+                        },
+                        {
+                            "Name": "year",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select year to get sale report(ex. 2015)[dafault = current year]"
+                        },
+                        {
+                            "Name": "action",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select action name to query from action log [dafault = \"sell\"]"
+                        },
+                        {
+                            "Name": "parameter",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select parameter to report from action log [dafault = \"amount\"]"
                         }
                     ]
                 }
@@ -2983,6 +3090,175 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "Role name to unset player's role"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Find child nodes",
+                    "Synopsis": "Find all child nodes under specific Node",
+                    "HTTPMethod": "GET",
+                    "URI": "/StoreOrg/nodes/:node_id/getChildNode/:layer",
+                    "RequiresOAuth": "Y",
+                    "parameters": [
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Node Id that you want to find the child node"
+                        },
+                        {
+                            "Name": "layer",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "number",
+                            "Description": "Layer of nodes under specific node to find [dafault = 0 (for finding all layer)]"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Sale report",
+                    "Synopsis": "Sale report of specific Node in a month",
+                    "HTTPMethod": "GET",
+                    "URI": "/StoreOrg/nodes/:node_id/saleReport",
+                    "RequiresOAuth": "Y",
+                    "parameters": [
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Node Id that you want to find the child node"
+                        },
+                        {
+                            "Name": "month",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select month to get sale report(ex. 1,2,..,12)[dafault = current month]"
+                        },
+                        {
+                            "Name": "year",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select year to get sale report(ex. 2015)[dafault = current year]"
+                        },
+                        {
+                            "Name": "action",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select action name to query from action log [dafault = \"sell\"]"
+                        },
+                        {
+                            "Name": "parameter",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select parameter to report from action log [dafault = \"amount\"]"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Sale history",
+                    "Synopsis": "Sale history of specific Node",
+                    "HTTPMethod": "GET",
+                    "URI": "/StoreOrg/nodes/:node_id/saleHistory/:count",
+                    "RequiresOAuth": "Y",
+                    "parameters": [
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Node Id that you want to find the child node"
+                        },
+                        {
+                            "Name": "count",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "number",
+                            "Description": "Number of months to get the report"
+                        },
+                        {
+                            "Name": "month",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select month to get sale report(ex. 1,2,..,12)[dafault = current month]"
+                        },
+                        {
+                            "Name": "year",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select year to get sale report(ex. 2015)[dafault = current year]"
+                        },
+                        {
+                            "Name": "action",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select action name to query from action log [dafault = \"sell\"]"
+                        },
+                        {
+                            "Name": "parameter",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select parameter to report from action log [dafault = \"amount\"]"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Sale board",
+                    "Synopsis": "Leader board by sale amount of all nodes under specific node",
+                    "HTTPMethod": "GET",
+                    "URI": "/StoreOrg/nodes/:node_id/saleBoard/:Layer",
+                    "RequiresOAuth": "Y",
+                    "parameters": [
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Node Id that you want to find the child node"
+                        },
+                        {
+                            "Name": "Layer",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "number",
+                            "Description": "Layer of nodes under specific node to find [dafault = 0 (for finding all layer)]"
+                        },
+                        {
+                            "Name": "month",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select month to get sale report(ex. 1,2,..,12)[dafault = current month]"
+                        },
+                        {
+                            "Name": "year",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select year to get sale report(ex. 2015)[dafault = current year]"
+                        },
+                        {
+                            "Name": "action",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select action name to query from action log [dafault = \"sell\"]"
+                        },
+                        {
+                            "Name": "parameter",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Select parameter to report from action log [dafault = \"amount\"]"
                         }
                     ]
                 }

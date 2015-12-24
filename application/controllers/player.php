@@ -1708,6 +1708,7 @@ class Player extends REST2_Controller
 
 	public function getAssociatedNode_get($player_id = '')
 	{
+		$result = array();
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 					'player_id'
@@ -1719,10 +1720,15 @@ class Player extends REST2_Controller
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
-		$result = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id);
-        foreach($result as $key => $entry){
-            $result[$key]["_id"]=$entry["_id"]."";
-            $result[$key]["node_id"]=$entry["node_id"]."";
+		$temp = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id);
+        foreach($temp as $entry){
+            //$result[$key]["_id"]=$entry["_id"]."";
+			$temp2= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],$entry["node_id"]);
+			$temp3['node_id']=$entry["node_id"]."";
+			$temp3['name']=$temp2['name'];
+
+
+			array_push($result, $temp3);
         }
 
 		$this->response($this->resp->setRespond($result), 200);
@@ -1745,8 +1751,9 @@ class Player extends REST2_Controller
                 'node_id'
             )), 200);
 
-        $result = $this->store_org_model->getRoleOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id,new MongoId($node_id));
-        $result["_id"]=$result["_id"]."";
+        $temp = $this->store_org_model->getRoleOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id,new MongoId($node_id));
+        $result=array('role'=>$temp['role']);
+
 
         $this->response($this->resp->setRespond($result), 200);
     }
@@ -1815,12 +1822,13 @@ class Player extends REST2_Controller
             $previous_month = date("m", $previous_month_time);
             $previous_year = date("Y", $previous_month_time);
 
-            $current_month_sales =  $table[$current_year][$current_month]['amount'];
-            $previous_month_sales = $table[$previous_year][$previous_month]['amount'];
+            $current_month_sales =  $table[$current_year][$current_month][$parameter];
+            $previous_month_sales = $table[$previous_year][$previous_month][$parameter];
 
+			$temp2 = $this->store_org_model->retrieveNodeById($this->validToken['site_id'],$node['node_id']);
+			$temp['name'] = $temp2['name'];
             $temp[$parameter] = $current_month_sales;
-            // for debug
-            //$result['previous_month_amount'] = $previous_month_sales;
+			$temp['previous_'.$parameter] = $previous_month_sales;
 
             if ($current_month_sales == 0 && $previous_month_sales == 0) {
                 $temp['percent_changed'] = 0;
