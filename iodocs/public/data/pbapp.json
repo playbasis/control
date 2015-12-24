@@ -3067,6 +3067,13 @@
                             "Description": "role to be filtered"
                         },
                         {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player_id to return his/her own rank"
+                        },
+                        {
                             "Name": "month",
                             "Required": "N",
                             "Default": "",

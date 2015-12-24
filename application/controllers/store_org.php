@@ -656,6 +656,7 @@ class Store_org extends REST2_Controller
         $month = isset($input['month']) ? $input['month'] : date("m", time());
         $client_id = $this->validToken['client_id'];
         $site_id = $this->validToken['site_id'];
+        $backup_limit = $limit;
         $role = isset($input['role']) ? $input['role'] : null;
         $list = array();
 
@@ -683,7 +684,10 @@ class Store_org extends REST2_Controller
                     array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
             }
         }
-
+        if ( isset($input['player_id'])){
+            $given_player_id = $input['player_id'];
+            $limit = count($node_to_match);
+        }
 
         $results = $this->store_org_model->getMonthlyPeerLeaderboard($rank_by, $limit, $client_id,
             $site_id, $node_to_match, $month, $year);
@@ -693,19 +697,40 @@ class Store_org extends REST2_Controller
         $previous_result = $this->store_org_model->getMonthlyPeerLeaderboard($rank_by, $limit, $client_id,
             $site_id, $node_to_match, $prev_month, $prev_year);
 
-        $return_list = array();
-        foreach ($node_to_match as $node){
+        $leaderboard_list = array();
+        foreach ($node_to_match as $key=> $node){
             $current_value = $this->getValueFromLeaderboardList('pb_player_id',$node['pb_player_id'],$rank_by,$results);
             $prev_value = $this->getValueFromLeaderboardList('pb_player_id',$node['pb_player_id'],$rank_by,$previous_result);
-            array_push($return_list,array ('player_id' => $this->player_model->getClientPlayerId($node['pb_player_id'],$site_id),
+            array_push($leaderboard_list,array ('player_id' => $this->player_model->getClientPlayerId($node['pb_player_id'],$site_id),
                     $rank_by => $current_value,
                     'previous_'.$rank_by => $prev_value,
                     'percent_changed' => $prev_value==0? $current_value > 0? 100:0: (($current_value- $prev_value)*100)/$prev_value)
             );
         }
-        $return_list = $this->sortResult($return_list,$rank_by,'player_id');
+        $return_list['leadderboard'] = $this->sortResult($leaderboard_list,$rank_by,'player_id');
+        foreach ($leaderboard_list as $key => $rank){
+            $rank_no = $key +1;
+            if ($rank_no > $backup_limit) unset($return_list['leadderboard'][$key]);
+            if (isset ($given_player_id) && ($rank['player_id'] == $given_player_id)){
+                $myrank = array(
+                    'player_id' => $rank['player_id'],
+                    'rank' => $rank_no,
+                    'ranked_by' => $rank_by,
+                    'ranked_value' => $rank[$rank_by],
+                );
+                $return_list['my_rank'] = $myrank;
+            }
+
+        }
+        if (isset ($given_player_id) && !isset($return_list['my_rank']))
+        {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+
         $this->benchmark->mark('rank_peer_end');
         $result['processing_time'] = $this->benchmark->elapsed_time('rank_peer_start', 'rank_peer_end');
+
         $this->response($this->resp->setRespond($return_list), 200);
     }
 
