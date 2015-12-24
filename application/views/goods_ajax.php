@@ -8,7 +8,9 @@ echo form_open('goods/delete',$attributes);
             <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
             <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
             <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
-            <td class="left" style="width:50px;"><?php echo $this->lang->line('column_organization'); ?></td>
+            <?php if($org_status){?>
+                <td class="left" style="width:50px;"><?php echo $this->lang->line('column_organization'); ?></td>
+            <?php }?>
             <?php if(!$client_id){?>
                 <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
             <?php }?>
@@ -45,7 +47,9 @@ echo form_open('goods/delete',$attributes);
                     </td>
                     <td class="left"><div class="image"><img src="<?php echo $goods['image']; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></div></td>
                     <td class="left"><?php echo $goods['name']; ?></td>
-                    <td class="left"><?php echo (isset($goods['org']) && !is_null($goods['org']))?$goods['org']:'None'; ?></td>
+                    <?php if($org_status){?>
+                        <td class="left"><?php echo (isset($goods['organize_id']) && !is_null($goods['organize_id']))?$goods['organize_id']:'None'; ?></td>
+                    <?php }?>
                     <?php if(!$client_id){?>
                         <td class="left"><?php echo ($goods['is_public'])?"Public":"Private"; ?></td>
                     <?php }?>

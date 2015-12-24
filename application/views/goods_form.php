@@ -161,7 +161,7 @@
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_status'); ?></td>
+                            <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td><select name="status">
                                     <?php if ($status) { ?>
                                         <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
@@ -172,18 +172,23 @@
                                     <?php } ?>
                                 </select></td>
                         </tr>
+                        <?php if($org_status){?>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_organize_name'); ?>:</td>
-                            <td><div class="control-group">
+                            <td><?php echo $this->lang->line('entry_organize_name'); ?>:
+                            </td>
+                            <td>
+                                <input type="checkbox" name="global_goods" id="global_goods" value="" <?php echo isset($organize_id)?"":"checked"?> /> <?php echo $this->lang->line('entry_global_goods'); ?>
+                                <div class="control-group">
                                 <label for="organize_id"
                                        class="control-label"><?php echo $this->lang->line('entry_organize_parent'); ?></label>
 
                                 <div class="controls">
-                                    <input type='hidden' name="organize_id" id="organize_id" style="width:30%;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
+                                    <input type='hidden' name="organize_id" id="organize_id" style="width:220px;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
                                 </div>
                             </div>
                             </td>
                         </tr>
+                        <?php }?>
                     </table>
                 </div>
                 <div id="tab-redeem">
@@ -347,9 +352,9 @@ $(document).ready(function(){
     $(".point").hide();
     $(".badges").hide();
     $(".rewards").hide();
-    $("#point-entry").live('click', function() {$(".point").toggle()});
-    $("#badge-entry").live('click', function() {$(".badges").toggle()});
-    $("#reward-entry").live('click', function() {$(".rewards").toggle()});
+    $("#point-entry").on('click', function() {$(".point").toggle()});
+    $("#badge-entry").on('click', function() {$(".badges").toggle()});
+    $("#reward-entry").on('click', function() {$(".rewards").toggle()});
 
     $organizeParent.select2({
         placeholder: "Search for an organize name",
@@ -392,7 +397,28 @@ $(document).ready(function(){
         },
         formatResult: organizeFormatResult,
         formatSelection: organizeFormatSelection,
+
     });
+
+    //palmm
+    $("#global_goods").change(function(e){
+        e.preventDefault();
+        if (document.getElementById('global_goods').checked) {
+            //alert("checked");
+            $organizeParent.select2('enable', false);
+            $organizeParent.select2('val', null);
+        } else {
+            $organizeParent.select2('enable', true);
+        }
+    });
+
+    if (document.getElementById('global_goods').checked) {
+        //alert("checked");
+        $organizeParent.select2('enable', false);
+        $organizeParent.select2('val', null);
+    } else {
+        $organizeParent.select2('enable', true);
+    }
 });
 
 //--></script>
@@ -423,6 +449,7 @@ $(document).ready(function(){
                 });
             }
         });
+
     });
     
     //--></script>
