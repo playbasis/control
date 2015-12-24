@@ -134,5 +134,8 @@ define('GECKO_URL', 'https://push.geckoboard.com/v1/send/');
 define('DATE_FREE_ACCOUNT_SHOULD_SETUP_MOBILE', '2015-06-01');
 
 define('PLAYER_AUTH_SESSION_TIMEOUT', 1440); //1440 secs
+
+define('SMS_VERIFICATION_TIMEOUT_IN_SECONDS', 300); //1440 secs
+define('SMS_VERIFICATION_CODE_LENGTH', 6);
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

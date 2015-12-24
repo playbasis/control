@@ -318,15 +318,22 @@
                             "Description": "referral code of another player for invitation system"
                         },
                         {
-                            "Name": "anonymous",
+                          "Name": "anonymous",
+                          "Required": "N",
+                          "Default": "",
+                          "Type": "enumerated",
+                          "Description": "anonymous flag",
+                          "EnumeratedList": [
+                            "0",
+                            "1"
+                          ]
+                        },
+                        {
+                            "Name": "device_id",
                             "Required": "N",
                             "Default": "",
-                            "Type": "enumerated",
-                            "Description": "anonymous flag",
-                            "EnumeratedList": [
-                              "0",
-                              "1"
-                            ]
+                            "Type": "string",
+                            "Description": "device id to verify with SMS verification process"
                         },
                         {
                             "Name": "approve_status",
@@ -335,9 +342,9 @@
                             "Type": "enumerated",
                             "Description": "approval status",
                             "EnumeratedList": [
-                                "approved",
-                                "rejected",
-                                "pending"
+                              "approved",
+                              "rejected",
+                              "pending"
                             ]
                         }
                     ]
@@ -459,15 +466,22 @@
                             "Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
                         },
                         {
+                            "Name": "device_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "device id to verify with SMS verification process"
+                        },
+                        {
                             "Name": "approve_status",
                             "Required": "N",
                             "Default": "",
                             "Type": "enumerated",
                             "Description": "approval status",
                             "EnumeratedList": [
-                                "approved",
-                                "rejected",
-                                "pending"
+                              "approved",
+                              "rejected",
+                              "pending"
                             ]
                         }
                     ]
@@ -589,6 +603,66 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "password of the player"
+                        },
+                        {
+                            "Name": "device_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "device id to verify with SMS verification process"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Request OTP",
+                    "Synopsis": "Request One time password.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/auth/:id/requestOTPCode",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Perform OTP verification",
+                    "Synopsis": "Perform OTP verification from code that has sent to player SMS.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/auth/:id/verifyOTPCode",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as use in client's site"
+                        },
+                        {
+                            "Name": "code",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "OTP code as sent to player"
                         }
                     ]
                 },
@@ -2942,7 +3016,7 @@
                     "MethodName": "List nodes",
                     "Synopsis": "List nodes as set from admin dashboard",
                     "HTTPMethod": "get",
-                    "URI": "/StoreOrg/organizes",
+                    "URI": "/StoreOrg/nodes",
                     "RequiresOAuth": "N",
                     "parameters": [
                         {
