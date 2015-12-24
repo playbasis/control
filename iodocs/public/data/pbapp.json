@@ -2910,7 +2910,7 @@
                     "MethodName": "List nodes",
                     "Synopsis": "List nodes as set from admin dashboard",
                     "HTTPMethod": "get",
-                    "URI": "/StoreOrg/organizes",
+                    "URI": "/StoreOrg/nodes",
                     "RequiresOAuth": "N",
                     "parameters": [
                         {
