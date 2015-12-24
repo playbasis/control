@@ -200,6 +200,22 @@ class Error extends CI_Model
             $errorData['message'] = "Password incorrect";
             $errorData['error_code'] = '0210';
             break;
+        case 'SMS_VERIFICATION_REQUIRED':
+            $errorData['message'] = "SMS verification is required to proceed further";
+            $errorData['error_code'] = '0211';
+            break;
+        case 'SMS_VERIFICATION_CODE_INVALID':
+            $errorData['message'] = "SMS Verification code is invalid";
+            $errorData['error_code'] = '0212';
+            break;
+        case 'SMS_VERIFICATION_CODE_EXPIRED':
+            $errorData['message'] = "SMS Verification code is expired";
+            $errorData['error_code'] = '0213';
+            break;
+        case 'SMS_VERIFICATION_PHONE_NUMBER_NOT_FOUND':
+            $errorData['message'] = "Phone number is not found.";
+            $errorData['error_code'] = '0214';
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';

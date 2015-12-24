@@ -372,6 +372,10 @@ class Player extends REST2_Controller
 		if ($approve_status) {
 			$playerInfo['approve_status'] = $approve_status;
 		}
+		$device_id = $this->input->post('device_id');
+		if ($device_id) {
+			$playerInfo['device_id'] = $device_id;
+		}
 		$referral_code = $this->input->post('code');
 		$anonymous = $this->input->post('anonymous');
 
@@ -568,6 +572,9 @@ class Player extends REST2_Controller
 		$instagramId = $this->input->post('instagram_id');
 		if($instagramId)
 			$playerInfo['instagram_id'] = $instagramId;
+		$deviceId = $this->input->post('device_id');
+		if($deviceId)
+			$playerInfo['device_id'] = $deviceId;
 		$password = $this->input->post('password');
 		if($password)
 			$playerInfo['password'] = do_hash($password);
@@ -827,6 +834,16 @@ class Player extends REST2_Controller
 		$auth = $this->player_model->authPlayer($this->site_id, $player['_id'], $password);
 		if (!$auth) {
 			$this->response($this->error->setError('PASSWORD_INCORRECT'), 200);
+		} else {
+			$device_id = $this->input->post('device_id');
+			if (!empty($device_id) && isset($player['device_id'])){
+				//Change new device
+				if(($device_id !== $player['device_id']) && !empty($player['phone_number'])){
+					$this->response($this->error->setError('SMS_VERIFICATION_REQUIRED'), 200);
+				}elseif(empty($player['phone_number'])){
+					$this->response($this->error->setError('SMS_VERIFICATION_PHONE_NUMBER_NOT_FOUND'), 200);
+				}
+			}
 		}
 
 		//trigger and log event
@@ -858,6 +875,38 @@ class Player extends REST2_Controller
 			'session_id' => $session_id
 		)), 200);
 	}
+
+    public function verifyOTPCode_post()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'code'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        $code = $this->input->post('code');
+        $player_id = $this->input->post('player_id');
+
+        $pb_player_id = $this->player_model->getPlayerByPlayerId($this->validToken['site_id'], $player_id);
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $result = $this->player_model->getPlayerOTPCode($pb_player_id['_id'],$code);
+        if (!$result) {
+            $this->response($this->error->setError('SMS_VERIFICATION_CODE_INVALID'), 200);
+        }
+
+        if ($result['date_expire']->sec <= time()){
+            $this->response($this->error->setError('SMS_VERIFICATION_CODE_EXPIRED'), 200);
+        }
+
+        $this->player_model->deleteOTPCode($result['code']);
+
+        $this->response($this->resp->setRespond(), 200);
+    }
 
 	public function forgotPasswordEmail_post()
 	{
@@ -1385,6 +1434,25 @@ class Player extends REST2_Controller
         }
         $this->response($this->resp->setRespond(array('code' => $player['code'])), 200);
     }
+
+    public function requestOTPCode_post($player_id = '')
+    {
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        }
+
+        $player = $this->player_model->getPlayerByPlayerId($this->site_id, $player_id);
+        if (!$player) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $code = $this->player_model->generateOTPCode($player['_id']);
+
+        $this->response($this->resp->setRespond(array('code' => $code)), 200);
+    }
+
     public function contact_get($player_id=0, $N=10) {
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(

@@ -58,6 +58,7 @@ class Player_model extends MY_Model
 			'facebook_id'	=> (isset($data['facebook_id'])) ? $data['facebook_id'] : null,
 			'twitter_id'	=> (isset($data['twitter_id']))	 ? $data['twitter_id']	: null,
 			'instagram_id'	=> (isset($data['instagram_id']))? $data['instagram_id']: null,
+			'device_id'		=> (isset($data['device_id']))	 ? $data['device_id']	: null,
 			'password'		=> (isset($data['password']))	 ? $data['password']	: null,
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
 			'birth_date'	=> (isset($data['birth_date']))  ? new MongoDate(strtotime($data['birth_date'])) : null,
@@ -2473,18 +2474,18 @@ class Player_model extends MY_Model
         return $results ? $results[0] : array();
     }
 
-    public function getPlayerByUsername($site_id, $username = null)
+    public function getPlayerByUsername($site_id, $username)
     {
-        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number'));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('username', $username);
         $results = $this->mongo_db->get('playbasis_player');
         return $results ? $results[0] : array();
     }
 
-    public function getPlayerByEmail($site_id, $email = null)
+    public function getPlayerByEmail($site_id, $email)
     {
-        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number'));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('email', $email);
         $results = $this->mongo_db->get('playbasis_player');
@@ -2553,6 +2554,61 @@ class Player_model extends MY_Model
             $this->mongo_db->update('playbasis_player_password_reset');
         }
         return $code;
+    }
+
+    public function existsOTPCode($code)
+    {
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->count('playbasis_player_otp_to_player') > 0;
+    }
+
+    public function generateOTPCode($pb_player_id)
+    {
+        $code = null;
+        for ($i = 0; $i < 2; $i++) {
+            $code = get_random_code(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
+            if (!$this->existsOTPCode($code)) {
+                break;
+            }
+        }
+        if (!$code) {
+            throw new Exception('Cannot generate unique player code');
+        }
+
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $records = $this->mongo_db->get('playbasis_player_otp_to_player');
+        if (!$records) {
+            $this->mongo_db->insert('playbasis_player_otp_to_player', array(
+                'pb_player_id' => $pb_player_id,
+                'code' => $code,
+                'date_expire' => new MongoDate(time() + SMS_VERIFICATION_TIMEOUT_IN_SECONDS),
+            ));
+        } else {
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+            $this->mongo_db->set('code', $code);
+            $this->mongo_db->set('date_expire', new MongoDate(time() + SMS_VERIFICATION_TIMEOUT_IN_SECONDS));
+            $this->mongo_db->update('playbasis_player_otp_to_player');
+        }
+        return $code;
+    }
+
+    public function getPlayerOTPCode($pb_player_id, $code) {
+        $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
+        $this->mongo_db->where('code', $code);
+//        Move to check on controller code
+//        $this->mongo_db->where('date_expire', array('$gt' => new MongoDate()));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_player_otp_to_player');
+
+        return ($result) ? $result[0] : false;
+    }
+
+    public function deleteOTPCode($code) {
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->delete('playbasis_player_otp_to_player');
+        return $result;
     }
 
 	public function storeDeviceToken($data)

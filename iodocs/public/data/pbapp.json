@@ -327,6 +327,13 @@
                             "0",
                             "1"
                           ]
+                        },
+                        {
+                            "Name": "device_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "device id to verify with SMS verification process"
                         }
                     ]
                 },
@@ -445,6 +452,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
+                        },
+                        {
+                            "Name": "device_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "device id to verify with SMS verification process"
                         }
                     ]
                 },
@@ -565,6 +579,66 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "password of the player"
+                        },
+                        {
+                            "Name": "device_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "device id to verify with SMS verification process"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Request OTP",
+                    "Synopsis": "Request One time password.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/auth/:id/requestOTPCode",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Perform OTP verification",
+                    "Synopsis": "Perform OTP verification from code that has sent to player SMS.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/auth/:id/verifyOTPCode",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as use in client's site"
+                        },
+                        {
+                            "Name": "code",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "OTP code as sent to player"
                         }
                     ]
                 },
