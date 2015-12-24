@@ -791,14 +791,22 @@ class Store_org extends REST2_Controller
                 'parameter'
             )), 200);
 
+        $client_id = $this->validToken['client_id'];
+        $site_id = $this->validToken['site_id'];
+        $action_id = $this->client_model->getAction(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'action_name' => $action
+        ));
+        if(!$action_id) $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+
         // Now, getting all input
         $this->benchmark->mark('rank_peer_start');
         $input = $this->input->get();
         $limit = isset($input['limit']) ? $input['limit'] : 20;
         $year = isset($input['year']) ? $input['year'] : date("Y", time());
         $month = isset($input['month']) ? $input['month'] : date("m", time());
-        $client_id = $this->validToken['client_id'];
-        $site_id = $this->validToken['site_id'];
+
         $prev_month = $month -1 ? $month -1 : 12;
         $prev_year = $month -1 ? $year : $year - 1;
         $list = array();
