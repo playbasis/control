@@ -582,6 +582,45 @@ class Store_org extends REST2_Controller
         $this->response($this->resp->setRespond($result), 200);
 
     }
+    public function players_get($node_id = '')
+    {
+        $result = array();
+
+        if (!$node_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'node_id'
+            )), 200);
+        }
+
+        try {
+            $node_id = new MongoId($node_id);
+        }catch (Exception $e){
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
+        }
+
+        // input are valid, let process
+        $input = $this->input->get();
+        $client_id = $this->validToken['client_id'];
+        $site_id = $this->validToken['site_id'];
+
+
+        $role = isset ($input['role'])? $input['role']:null;
+        $players_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node_id,$role);
+
+        if (is_null($players_list) ){ // not found
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND', array(
+                'node_id'
+            )), 200);
+        }
+
+        $result = array();
+        foreach ($players_list as $player){
+            array_push($result, array (
+                'player_id' => $this->player_model->getClientPlayerId($player['pb_player_id'],$site_id),
+            ));
+        }
+        $this->response($this->resp->setRespond($result), 200);
+    }
 
     /**
      * @param $result

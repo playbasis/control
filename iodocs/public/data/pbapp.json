@@ -3032,6 +3032,29 @@
                     ]
                 },
                 {
+                    "MethodName": "Get Players list from node id",
+                    "Synopsis": "get player's list from specific Node",
+                    "HTTPMethod": "GET",
+                    "URI": "/StoreOrg/players/:node_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "node_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Node Id to unset player's role"
+                        },
+                        {
+                            "Name": "role",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Role name to unset player's role"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Peer Leader board",
                     "Synopsis": "Returns leader board list for organization under given node_id",
                     "HTTPMethod": "GET",
