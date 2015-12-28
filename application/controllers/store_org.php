@@ -62,24 +62,26 @@ class Store_org extends MY_Controller
                 }
 
                 if (isset($organizeId)) {
-                    if (MongoId::isValid($organizeId)) {
+                    try {
                         $result = $this->Store_org_model->retrieveOrganizeById($organizeId);
-                        if(isset($result['_id'])){
-                            $result['_id'] = $result['_id']."";
+                        if (isset($result['_id'])) {
+                            $result['_id'] = $result['_id'] . "";
                         }
-                        if(isset($result['parent'])){
-                            $tmp = $result['parent']."";
+                        if (isset($result['parent'])) {
+                            $tmp = $result['parent'] . "";
                             $result['parent'] = array();
                             $result['parent']['_id'] = $tmp;
 
                             $org_res = $this->Store_org_model->retrieveOrganizeById($result['parent']['_id']);
-                            if(isset($org_res))
+                            if (isset($org_res)) {
                                 $result['parent']['name'] = $org_res['name'];
+                            }
                         }
 
                         $this->output->set_status_header('200');
                         $response = $result;
-                    } else {
+
+                    } catch (Exception $e) {
                         $this->output->set_status_header('404');
                         $response = array('status' => 'error', 'message' => $this->lang->line('error_no_contents'));
                     }
@@ -131,7 +133,9 @@ class Store_org extends MY_Controller
                 if (!empty($organize_data) && !isset($organizeId)) {
                     if (isset($organize_data['action']) && $organize_data['action'] == 'delete' && isset($organize_data['id']) && !empty($organize_data['id'])) {
                         foreach ($organize_data['id'] as &$id_entry) {
-                            if(!MongoId::isValid($id_entry)){
+                            try {
+                                $id_entry = new MongoId($id_entry);
+                            } catch (Exception $e) {
                                 $this->output->set_status_header('400');
                                 echo json_encode(array('status' => 'error'));
                                 die;
@@ -143,10 +147,11 @@ class Store_org extends MY_Controller
                             $status);
                     }
                 } else {
-                    if (MongoId::isValid($organizeId)) {
-                        if(isset($organize_data['action']) && $organize_data['action'] == 'delete' ){
+                    try {
+                        $organizeId = new MongoId($organizeId);
+                        if (isset($organize_data['action']) && $organize_data['action'] == 'delete') {
                             $result = $this->Store_org_model->deleteOrganizeById($organizeId);
-                        }else {
+                        } else {
                             $result = $this->Store_org_model->updateOrganizeById($organizeId, array(
                                 'client_id' => $client_id,
                                 'site_id' => $site_id,
@@ -156,6 +161,10 @@ class Store_org extends MY_Controller
                                 'status' => $status
                             ));
                         }
+                    } catch (Exception $e) {
+                        $this->output->set_status_header('400');
+                        echo json_encode(array('status' => 'error'));
+                        die;
                     }
                 }
 
@@ -189,33 +198,37 @@ class Store_org extends MY_Controller
                 }
 
                 if (isset($nodeId)) {
-                    if (MongoId::isValid($nodeId)) {
+                    try {
+                        $nodeId = new MongoId($nodeId);
+
                         $result = $this->Store_org_model->retrieveNodeById($nodeId);
-                        if(isset($result['_id'])){
-                            $result['_id'] = $result['_id']."";
+                        if (isset($result['_id'])) {
+                            $result['_id'] = $result['_id'] . "";
                         }
-                        if(isset($result['organize'])){
-                            $tmp = $result['organize']."";
+                        if (isset($result['organize'])) {
+                            $tmp = $result['organize'] . "";
                             $result['organize'] = array();
                             $result['organize']['_id'] = $tmp;
 
                             $org_res = $this->Store_org_model->retrieveOrganizeById($result['organize']['_id']);
-                            if(isset($org_res))
+                            if (isset($org_res)) {
                                 $result['organize']['name'] = $org_res['name'];
+                            }
                         }
-                        if(isset($result['parent'])){
-                            $tmp = $result['parent']."";
+                        if (isset($result['parent'])) {
+                            $tmp = $result['parent'] . "";
                             $result['parent'] = array();
                             $result['parent']['_id'] = $tmp;
 
                             $node_res = $this->Store_org_model->retrieveNodeById($result['parent']['_id']);
-                            if(isset($node_res))
+                            if (isset($node_res)) {
                                 $result['parent']['name'] = $node_res['name'];
+                            }
                         }
 
                         $this->output->set_status_header('200');
                         $response = $result;
-                    } else {
+                    } catch (Exception $e) {
                         $this->output->set_status_header('404');
                         $response = array('status' => 'error', 'message' => $this->lang->line('error_no_contents'));
                     }
@@ -278,11 +291,13 @@ class Store_org extends MY_Controller
                 if (!empty($node_data) && !isset($nodeId)) {
                     if (isset($node_data['action']) && $node_data['action'] == 'delete' && isset($node_data['id']) && !empty($node_data['id'])) {
                         foreach ($node_data['id'] as &$id_entry) {
-                            if(!MongoId::isValid($id_entry)){
+                            try {
+                                $id_entry = new MongoId($id_entry);
+                            } catch (Exception $e) {
                                 $this->output->set_status_header('400');
                                 echo json_encode(array('status' => 'error'));
                                 die;
-                            }
+                            };
                         }
                         $result = $this->Store_org_model->deleteNodeByIdArray($node_data['id']);
                     } else {
@@ -290,10 +305,11 @@ class Store_org extends MY_Controller
                             $organize, $parent, $status);
                     }
                 } else {
-                    if (MongoId::isValid($nodeId)) {
-                        if(isset($node_data['action']) && $node_data['action'] == 'delete' ){
+                    try {
+                        $nodeId = new MongoId($nodeId);
+                        if (isset($node_data['action']) && $node_data['action'] == 'delete') {
                             $result = $this->Store_org_model->deleteNodeById($nodeId);
-                        }else{
+                        } else {
                             $result = $this->Store_org_model->updateNodeById($nodeId, array(
                                 'client_id' => $client_id,
                                 'site_id' => $site_id,
@@ -304,7 +320,11 @@ class Store_org extends MY_Controller
                                 'status' => $status
                             ));
                         }
-                    }
+                    } catch (Exception $e) {
+                        $this->output->set_status_header('400');
+                        echo json_encode(array('status' => 'error'));
+                        die;
+                    };
                 }
 
                 if (!$result) {

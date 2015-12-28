@@ -59,17 +59,19 @@ class Store_org_model extends MY_Model
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
-            if (MongoId::isValid($optionalParams['id'])) {
+            try {
                 $id = new MongoId($optionalParams['id']);
                 $this->mongo_db->where('_id', $id);
-            }
+            } catch (Exception $e) {
+            };
         }
         if (isset($optionalParams['organize']) && !is_null($optionalParams['organize'])) {
             //make sure 'id' is valid before passing here
-            if (MongoId::isValid($optionalParams['organize'])) {
+            try {
                 $organize = new MongoId($optionalParams['organize']);
                 $this->mongo_db->where('organize', $organize);
-            }
+            } catch (Exception $e) {
+            };
         }
 
         // Sorting
@@ -234,10 +236,11 @@ class Store_org_model extends MY_Model
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
-            if (MongoId::isValid($optionalParams['id'])) {
+            try {
                 $id = new MongoId($optionalParams['id']);
                 $this->mongo_db->where('_id', $id);
-            }
+            } catch (Exception $e) {
+            };
         }
 
         // Sorting
