@@ -39,8 +39,6 @@
                            data-toggle="tab"><?php echo $this->lang->line('tab_organize'); ?></a>
                     </li>
                 </ul>
-                <?php //$attributes = array('id' => 'form', 'class' => 'form-horizontal');
-                //echo form_open($form, $attributes); ?>
                 <div class="tab-content">
                     <div class="tab-pane fade active in" id="storeTabContent">
                         <div class="container-fluid">
@@ -96,9 +94,6 @@
                         </div>
                     </div>
                 </div>
-                <?php
-                //echo form_close();
-                ?>
             </div>
         </div>
     </div>
@@ -112,7 +107,7 @@
     </div>
     <div class="modal-body">
         <div class="container-fluid">
-            <form class="form-horizontal node-form">
+            <?php echo form_open(null, array('class' => 'form-horizontal node-form')); ?>
                 <div class="row-fluid">
                     <input type="hidden" name="node-id" id="node-id">
 
@@ -164,7 +159,7 @@
                         </div>
                     </div>
                 </div>
-            </form>
+            <?php echo form_close(); ?>
         </div>
     </div>
     <div class="modal-footer">
@@ -181,7 +176,7 @@
     </div>
     <div class="modal-body">
         <div class="container-fluid">
-            <form class="form-horizontal store-organize-form">
+            <?php echo form_open(null, array('class' => 'form-horizontal store-organize-form')); ?>
                 <div class="row-fluid">
                     <input type="hidden" name="store-organize-id" id="store-organize-id">
 
@@ -222,7 +217,7 @@
                         </div>
                     </div>
                 </div>
-            </form>
+            <?php echo form_close(); ?>
         </div>
     </div>
     <div class="modal-footer">
