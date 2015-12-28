@@ -409,6 +409,7 @@ class Goods extends MY_Controller
             {
                 if($this->input->post('global_goods')){
                     $goods_data['organize_id']=null;
+                    $goods_data['organize_role']=null;
                 }
             }
 
