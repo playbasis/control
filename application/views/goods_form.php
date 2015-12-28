@@ -177,7 +177,7 @@
                             <td><?php echo $this->lang->line('entry_organize_name'); ?>:
                             </td>
                             <td>
-                                <input type="checkbox" name="global_goods" id="global_goods" value="" <?php echo isset($organize_id)?"":"checked"?> /> <?php echo $this->lang->line('entry_global_goods'); ?>
+                                <input type="checkbox" name="global_goods" id="global_goods" value=true <?php echo isset($organize_id)?"":"checked"?> /> <?php echo $this->lang->line('entry_global_goods'); ?>
                                 <div class="control-group">
                                 <label for="organize_id"
                                        class="control-label"><?php echo $this->lang->line('entry_organize_parent'); ?></label>
@@ -407,6 +407,7 @@ $(document).ready(function(){
             //alert("checked");
             $organizeParent.select2('enable', false);
             $organizeParent.select2('val', null);
+            $organizeParent.modal('hide');
         } else {
             $organizeParent.select2('enable', true);
         }

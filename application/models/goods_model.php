@@ -477,6 +477,8 @@ class Goods_model extends MY_Model
 
         if (isset($data['organize_id'])) {
             $this->mongo_db->set('organize_id', $data['organize_id']);
+        }else{
+            $this->mongo_db->set('organize_id', null);
         }
 
         $this->mongo_db->update('playbasis_goods_to_client');

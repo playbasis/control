@@ -404,6 +404,15 @@ class Goods extends MY_Controller
             }
             $goods_data['redeem'] = $redeem;
 
+            if ($this->User_model->hasPermission('access','store_org') &&
+                $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org'))
+            {
+                if($this->input->post('global_goods')){
+                    $goods_data['organize_id']=null;
+                }
+            }
+
+
             if($this->form_validation->run() && $this->data['message'] == null){
                 try {
 
