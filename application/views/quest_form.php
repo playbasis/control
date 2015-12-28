@@ -64,6 +64,20 @@
                             <td><?php echo $this->lang->line('form_quest_sort_order'); ?>:</td>
                             <td><input type="number" name="sort_order" value="<?php echo isset($editQuest['sort_order'])?$editQuest['sort_order']:''; ?>"/>    </td>
                         </tr>
+                        <?php if($org_status){?>
+                        <tr>
+                            <td><?php echo $this->lang->line('form_organize_name'); ?>:
+                            </td>
+                            <td>
+                                <input type="checkbox" name="global_quest" id="global_quest" value=true <?php echo isset($organize_id)?"":"checked"?> /> <?php echo $this->lang->line('form_global_quest'); ?>
+
+                                <br><br>Type : <input type='hidden' name="organize_id" id="organize_id" style="width:220px;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
+
+                                <br>Role : <input type="text" name="organize_role" id="organize_role" value="<?php echo isset($organize_role) ? $organize_role : set_value('organize_role'); ?>" size="1" />
+                            </td>
+
+                        </tr>
+                        <?php }?>
                     </table>
                 </div>
                 <div class="span6">
@@ -1130,10 +1144,93 @@
     </div>
 </div>
 
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 
     $('#tabs a').tabs();
+
+    var $organizeParent = $("#organize_id");
+
+    function organizeFormatResult(organize) {
+        return '<div class="row-fluid">' +
+            '<div>' + organize.name /*+
+         '<small class="text-muted">&nbsp;(' + organize.description +
+         ')</small></div></div>'*/;
+    }
+    function organizeFormatSelection(organize) {
+        return organize.name;
+    }
+
+    $(document).ready(function() {
+
+        $organizeParent.select2({
+            placeholder: "Search for an organize name",
+            allowClear: false,
+            minimumInputLength: 0,
+            id: function (data) {
+                return data._id;
+            },
+            ajax: {
+                url: baseUrlPath + "store_org/organize/",
+                dataType: 'json',
+                quietMillis: 250,
+                data: function (term, page) {return {
+                    search: term, // search term
+                };
+                },
+                results: function (data, page) {
+                    return {results: data.rows};
+                },
+                cache: true
+            },
+            initSelection: function (element, callback) {
+                var id = $(element).val();
+                if (id !== "") {
+                    $.ajax(baseUrlPath + "store_org/organize/" + id, {
+                        dataType: "json",
+                        beforeSend: function (xhr) {
+                            $organizeParent
+                                .select2('enable', false);
+                        }
+                    }).done(function (data) {
+                        if (typeof data != "undefined")
+                            callback(data);
+                    }).always(function () {
+                        $organizeParent
+                            .select2('enable', true);
+                    });
+                }
+            },
+            formatResult: organizeFormatResult,
+            formatSelection: organizeFormatSelection,
+
+        });
+
+        //palmm
+        $("#global_quest").change(function(e){
+            e.preventDefault();
+            if (document.getElementById('global_quest').checked) {
+                //alert("checked");
+                $organizeParent.select2('enable', false);
+                $organizeParent.select2('val', null);
+                document.getElementById("organize_role").value = null;
+                document.getElementById("organize_role").disabled = true;
+            } else {
+                $organizeParent.select2('enable', true);
+                document.getElementById("organize_role").disabled = false;
+            }
+        });
+        if (document.getElementById('global_quest').checked) {
+            //alert("checked");
+            $organizeParent.select2('enable', false);
+            document.getElementById("organize_role").disabled = true;
+        } else {
+            $organizeParent.select2('enable', true);
+            document.getElementById("organize_role").disabled = false;
+        }
+    });
 
         $(function(){
             $('.date').datepicker({dateFormat: 'yy-mm-dd'});
@@ -2786,3 +2883,4 @@ response($.map(json, function(item) {
         });
     };
 </script>
+

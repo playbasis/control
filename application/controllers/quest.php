@@ -23,6 +23,8 @@ class Quest extends MY_Controller
         $this->load->model('Rule_model');
         $this->load->model('Goods_model');
         $this->load->model('Permission_model');
+        $this->load->model('Store_org_model');
+        $this->load->model('Feature_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -445,6 +447,29 @@ class Quest extends MY_Controller
             $this->data['date_end'] = $goods_info['date_end'];
         } else {
             $this->data['date_end'] = "";
+        }
+
+        if ($this->User_model->hasPermission('access','store_org') &&
+            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+        ){
+            $this->data['org_status'] = true;
+            if ($this->input->post('organize_id')) {
+                $this->data['organize_id'] = $this->input->post('organize_id');
+            } elseif (!empty($goods_info)&&isset($goods_info['organize_id'])) {
+                $this->data['organize_id'] = $goods_info['organize_id'];
+            } else {
+                $this->data['organize_id'] = null;
+            }
+
+            if ($this->input->post('organize_role')) {
+                $this->data['organize_role'] = $this->input->post('organize_role');
+            } elseif (!empty($goods_info)&&isset($goods_info['organize_role'])) {
+                $this->data['organize_role'] = $goods_info['organize_role'];
+            } else {
+                $this->data['organize_role'] = null;
+            }
+        }else{
+            $this->data['org_status'] = false;
         }
 
         $this->data['levels'] = $this->Level_model->getLevelsSite($data);
