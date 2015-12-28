@@ -178,15 +178,12 @@
                             </td>
                             <td>
                                 <input type="checkbox" name="global_goods" id="global_goods" value=true <?php echo isset($organize_id)?"":"checked"?> /> <?php echo $this->lang->line('entry_global_goods'); ?>
-                                <div class="control-group">
-                                <label for="organize_id"
-                                       class="control-label"><?php echo $this->lang->line('entry_organize_parent'); ?></label>
 
-                                <div class="controls">
-                                    <input type='hidden' name="organize_id" id="organize_id" style="width:220px;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
-                                </div>
-                            </div>
+                                <br><br>Type : <input type='hidden' name="organize_id" id="organize_id" style="width:220px;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
+
+                                <br>Role : <input type="text" name="organize_role" id="organize_role" value="<?php echo isset($organize_role) ? $organize_role : set_value('organize_role'); ?>" size="1" />
                             </td>
+
                         </tr>
                         <?php }?>
                     </table>
@@ -407,18 +404,21 @@ $(document).ready(function(){
             //alert("checked");
             $organizeParent.select2('enable', false);
             $organizeParent.select2('val', null);
-            $organizeParent.modal('hide');
+            document.getElementById("organize_role").value = null;
+            document.getElementById("organize_role").disabled = true;
         } else {
             $organizeParent.select2('enable', true);
+            document.getElementById("organize_role").disabled = false;
         }
     });
 
     if (document.getElementById('global_goods').checked) {
         //alert("checked");
         $organizeParent.select2('enable', false);
-        $organizeParent.select2('val', null);
+        document.getElementById("organize_role").disabled = true;
     } else {
         $organizeParent.select2('enable', true);
+        document.getElementById("organize_role").disabled = false;
     }
 });
 

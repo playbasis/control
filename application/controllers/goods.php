@@ -817,6 +817,14 @@ class Goods extends MY_Controller
             } else {
                 $this->data['organize_id'] = null;
             }
+
+            if ($this->input->post('organize_role')) {
+                $this->data['organize_role'] = $this->input->post('organize_role');
+            } elseif (!empty($goods_info)&&isset($goods_info['organize_role'])) {
+                $this->data['organize_role'] = $goods_info['organize_role'];
+            } else {
+                $this->data['organize_role'] = null;
+            }
         }else{
             $this->data['org_status'] = false;
         }
@@ -1115,6 +1123,14 @@ class Goods extends MY_Controller
                 $template['date_start'] = new MongoDate($date_start_another);
                 $template['date_expire'] = new MongoDate($date_expire_another);
             }
+        }
+
+        if (isset($data['organize_id'])) {
+            $template['organize_id']= new MongoID($data['organize_id']);
+        }
+
+        if (isset($data['organize_role'])) {
+            $template['organize_role']= $data['organize_role'];
         }
 
         /* loop insert into playbasis_goods */
