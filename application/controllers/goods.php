@@ -412,7 +412,6 @@ class Goods extends MY_Controller
                 }
             }
 
-
             if($this->form_validation->run() && $this->data['message'] == null){
                 try {
 
@@ -568,6 +567,14 @@ class Goods extends MY_Controller
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }*/
                 $goodsIsPublic = $this->checkGoodsIsPublic($result['_id']);
+                $org_name = null;
+                if ($this->data['org_status']) {
+                    if (isset($goods['organize_id']) && !empty($goods['organize_id'])) {
+                        $org = $this->Store_org_model->retrieveOrganizeById($goods['organize_id']);
+                        $org_name=$org["name"];
+                    }
+                }
+
                 $this->data['goods_list'][] = array(
                     'goods_id' => $result['_id'],
                     'name' => $result['name'],
@@ -577,17 +584,9 @@ class Goods extends MY_Controller
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'is_public'=>$goodsIsPublic
+                    'is_public'=>$goodsIsPublic,
+                    'organize_id'=>$org_name
                 );
-                // put your fucking code here
-                if ($this->data['org_status']) {
-                    if (isset($goods['organize_id']) && !empty($goods['organize_id'])) {
-                        $org = $this->Store_org_model->retrieveOrganizeById($goods['organize_id']);
-                        $this->data['goods_list'][0]['organize_id']=$org["name"];
-                    }
-                }
-
-
             }
         }else{
             $results = $this->Goods_model->getGroupsAggregate($this->session->userdata('site_id'));
@@ -629,6 +628,14 @@ class Goods extends MY_Controller
 
                 $_id = $goods['_id']->{'$id'};
                 $is_group = array_key_exists($_id, $group_name);
+                $org_name = null;
+                if ($this->data['org_status']) {
+                    if (isset($goods['organize_id']) && !empty($goods['organize_id'])) {
+                        $org = $this->Store_org_model->retrieveOrganizeById($goods['organize_id']);
+                        $org_name=$org["name"];
+                    }
+                }
+
                 $this->data['goods_list'][] = array(
                     'goods_id' => $goods['_id'],
                     'name' => $is_group ? $group_name[$_id]['group'] : $goods['name'],
@@ -640,14 +647,8 @@ class Goods extends MY_Controller
                     'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
                     'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null,
                     'is_group' => $is_group,
+                    'organize_id'=>$org_name
                 );
-                // put your fucking code here
-                if ($this->data['org_status']) {
-                    if (isset($goods['organize_id']) && !empty($goods['organize_id'])) {
-                        $org = $this->Store_org_model->retrieveOrganizeById($goods['organize_id']);
-                        $this->data['goods_list'][0]['organize_id']=$org["name"];
-                    }
-                }
             }
         }
 
