@@ -20,23 +20,26 @@ class Store_org_model extends MY_Model
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
-            if (MongoId::isValid($optionalParams['id'])) {
+            try {
                 $id = new MongoId($optionalParams['id']);
                 $this->mongo_db->where('_id', $id);
+            } catch (Exception $e) {
             }
         }
         if (isset($optionalParams['organize_id']) && !is_null($optionalParams['organize_id'])) {
             //make sure 'id' is valid before passing here
-            if (MongoId::isValid($optionalParams['organize_id'])) {
+            try {
                 $organize = new MongoId($optionalParams['organize_id']);
                 $this->mongo_db->where('organize', $organize);
+            } catch (Exception $e) {
             }
         }
         if (isset($optionalParams['parent_id']) && !is_null($optionalParams['parent_id'])) {
             //make sure 'id' is valid before passing here
-            if (MongoId::isValid($optionalParams['parent_id'])) {
+            try {
                 $parent_node_id = new MongoId($optionalParams['parent_id']);
                 $this->mongo_db->where('parent', $parent_node_id);
+            } catch (Exception $e) {
             }
         }
 
@@ -94,9 +97,10 @@ class Store_org_model extends MY_Model
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
-            if (MongoId::isValid($optionalParams['id'])) {
+            try {
                 $id = new MongoId($optionalParams['id']);
                 $this->mongo_db->where('_id', $id);
+            } catch (Exception $e) {
             }
         }
 
