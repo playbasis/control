@@ -237,7 +237,7 @@ class Goods_model extends MY_Model
 	}
 	public function getGoodsByGroup($client_id, $site_id, $group, $offset=null, $limit=null) {
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select(array('goods_id','name','description','image','date_start','date_expire','quantity','per_user','redeem','code'));
+		$this->mongo_db->select(array('goods_id','name','description','image','date_start','date_expire','quantity','per_user','redeem','code','organize_id','organize_role'));
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id,
