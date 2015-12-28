@@ -161,7 +161,7 @@
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_status'); ?></td>
+                            <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td><select name="status">
                                     <?php if ($status) { ?>
                                         <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
@@ -172,6 +172,20 @@
                                     <?php } ?>
                                 </select></td>
                         </tr>
+                        <?php if($org_status){?>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_organize_name'); ?>:
+                            </td>
+                            <td>
+                                <input type="checkbox" name="global_goods" id="global_goods" value=true <?php echo isset($organize_id)?"":"checked"?> /> <?php echo $this->lang->line('entry_global_goods'); ?>
+
+                                <br><br>Type : <input type='hidden' name="organize_id" id="organize_id" style="width:220px;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
+
+                                <br>Role : <input type="text" name="organize_role" id="organize_role" value="<?php echo isset($organize_role) ? $organize_role : set_value('organize_role'); ?>" size="1" />
+                            </td>
+
+                        </tr>
+                        <?php }?>
                     </table>
                 </div>
                 <div id="tab-redeem">
@@ -266,6 +280,9 @@
 </div>
 
 <script type="text/javascript" src="<?php echo base_url();?>javascript/ckeditor/ckeditor.js"></script>
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+
 <script type="text/javascript"><!--
 
 CKEDITOR.replace('description', {
@@ -315,13 +332,94 @@ function image_upload(field, thumb) {
 <script type="text/javascript"><!--
 $('#tabs a').tabs();
 
+    var $organizeParent = $("#organize_id");
+
+    function organizeFormatResult(organize) {
+        return '<div class="row-fluid">' +
+            '<div>' + organize.name /*+
+            '<small class="text-muted">&nbsp;(' + organize.description +
+            ')</small></div></div>'*/;
+    }
+
+    function organizeFormatSelection(organize) {
+        return organize.name;
+    }
+
 $(document).ready(function(){
     $(".point").hide();
     $(".badges").hide();
     $(".rewards").hide();
-    $("#point-entry").live('click', function() {$(".point").toggle()});
-    $("#badge-entry").live('click', function() {$(".badges").toggle()});
-    $("#reward-entry").live('click', function() {$(".rewards").toggle()});
+    $("#point-entry").on('click', function() {$(".point").toggle()});
+    $("#badge-entry").on('click', function() {$(".badges").toggle()});
+    $("#reward-entry").on('click', function() {$(".rewards").toggle()});
+
+    $organizeParent.select2({
+        placeholder: "Search for an organize name",
+        allowClear: false,
+        minimumInputLength: 0,
+        id: function (data) {
+            return data._id;
+        },
+        ajax: {
+            url: baseUrlPath + "store_org/organize/",
+            dataType: 'json',
+            quietMillis: 250,
+            data: function (term, page) {
+                return {
+                    search: term, // search term
+                };
+            },
+            results: function (data, page) {
+                return {results: data.rows};
+            },
+            cache: true
+        },
+        initSelection: function (element, callback) {
+            var id = $(element).val();
+            if (id !== "") {
+                $.ajax(baseUrlPath + "store_org/organize/" + id, {
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $organizeParent
+                            .select2('enable', false);
+                    }
+                }).done(function (data) {
+                    if (typeof data != "undefined")
+                        callback(data);
+                }).always(function () {
+                    $organizeParent
+                        .select2('enable', true);
+                });
+            }
+        },
+        formatResult: organizeFormatResult,
+        formatSelection: organizeFormatSelection,
+
+    });
+
+    //palmm
+    $("#global_goods").change(function(e){
+        e.preventDefault();
+        if (document.getElementById('global_goods').checked) {
+            //alert("checked");
+            $organizeParent.select2('enable', false);
+            $organizeParent.select2('val', null);
+            document.getElementById("organize_role").value = null;
+            document.getElementById("organize_role").disabled = true;
+        } else {
+            $organizeParent.select2('enable', true);
+            document.getElementById("organize_role").disabled = false;
+        }
+    });
+
+    if (document.getElementById('global_goods').checked) {
+        //alert("checked");
+        $organizeParent.select2('enable', false);
+        document.getElementById("organize_role").disabled = true;
+    } else {
+        $organizeParent.select2('enable', true);
+        document.getElementById("organize_role").disabled = false;
+    }
 });
 
 //--></script>
@@ -352,6 +450,7 @@ $(document).ready(function(){
                 });
             }
         });
+
     });
     
     //--></script>

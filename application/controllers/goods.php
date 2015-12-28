@@ -20,6 +20,9 @@ class Goods extends MY_Controller
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("goods", $lang['folder']);
+
+        $this->load->model('Store_org_model');
+        $this->load->model('Feature_model');
     }
 
     public function index() {
@@ -401,6 +404,15 @@ class Goods extends MY_Controller
             }
             $goods_data['redeem'] = $redeem;
 
+            if ($this->User_model->hasPermission('access','store_org') &&
+                $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org'))
+            {
+                if($this->input->post('global_goods')){
+                    $goods_data['organize_id']=null;
+                    $goods_data['organize_role']=null;
+                }
+            }
+
             if($this->form_validation->run() && $this->data['message'] == null){
                 try {
 
@@ -518,6 +530,14 @@ class Goods extends MY_Controller
         $slot_total = 0;
         $this->data['slots'] = $slot_total;
 
+        if ($this->User_model->hasPermission('access','store_org') &&
+            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+        ) {
+            $this->data['org_status'] = true;
+        }else{
+            $this->data['org_status'] = false;
+        }
+
         if ($this->User_model->getUserGroupId() == $setting_group_id) {
             $data['limit'] = $per_page;
             $data['start'] = $offset;
@@ -548,6 +568,14 @@ class Goods extends MY_Controller
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }*/
                 $goodsIsPublic = $this->checkGoodsIsPublic($result['_id']);
+                $org_name = null;
+                if ($this->data['org_status']) {
+                    if (isset($goods['organize_id']) && !empty($goods['organize_id'])) {
+                        $org = $this->Store_org_model->retrieveOrganizeById($goods['organize_id']);
+                        $org_name=$org["name"];
+                    }
+                }
+
                 $this->data['goods_list'][] = array(
                     'goods_id' => $result['_id'],
                     'name' => $result['name'],
@@ -557,7 +585,8 @@ class Goods extends MY_Controller
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'is_public'=>$goodsIsPublic
+                    'is_public'=>$goodsIsPublic,
+                    'organize_name'=>$org_name
                 );
             }
         }else{
@@ -600,6 +629,14 @@ class Goods extends MY_Controller
 
                 $_id = $goods['_id']->{'$id'};
                 $is_group = array_key_exists($_id, $group_name);
+                $org_name = null;
+                if ($this->data['org_status']) {
+                    if (isset($goods['organize_id']) && !empty($goods['organize_id'])) {
+                        $org = $this->Store_org_model->retrieveOrganizeById($goods['organize_id']);
+                        $org_name=$org["name"];
+                    }
+                }
+
                 $this->data['goods_list'][] = array(
                     'goods_id' => $goods['_id'],
                     'name' => $is_group ? $group_name[$_id]['group'] : $goods['name'],
@@ -611,6 +648,7 @@ class Goods extends MY_Controller
                     'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
                     'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null,
                     'is_group' => $is_group,
+                    'organize_name'=>$org_name
                 );
             }
         }
@@ -768,6 +806,31 @@ class Goods extends MY_Controller
         } else {
             $this->data['status'] = 1;
         }
+
+        if ($this->User_model->hasPermission('access','store_org') &&
+            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+        ) {
+            $this->data['org_status'] = true;
+            if ($this->input->post('organize_id')) {
+                $this->data['organize_id'] = $this->input->post('organize_id');
+            } elseif (!empty($goods_info)&&isset($goods_info['organize_id'])) {
+                $this->data['organize_id'] = $goods_info['organize_id'];
+            } else {
+                $this->data['organize_id'] = null;
+            }
+
+            if ($this->input->post('organize_role')) {
+                $this->data['organize_role'] = $this->input->post('organize_role');
+            } elseif (!empty($goods_info)&&isset($goods_info['organize_role'])) {
+                $this->data['organize_role'] = $goods_info['organize_role'];
+            } else {
+                $this->data['organize_role'] = null;
+            }
+        }else{
+            $this->data['org_status'] = false;
+        }
+
+
 
         if ($this->input->post('quantity')) {
             $this->data['quantity'] = $this->input->post('quantity');
@@ -1061,6 +1124,14 @@ class Goods extends MY_Controller
                 $template['date_start'] = new MongoDate($date_start_another);
                 $template['date_expire'] = new MongoDate($date_expire_another);
             }
+        }
+
+        if (isset($data['organize_id'])) {
+            $template['organize_id']= new MongoID($data['organize_id']);
+        }
+
+        if (isset($data['organize_role'])) {
+            $template['organize_role']= $data['organize_role'];
         }
 
         /* loop insert into playbasis_goods */
