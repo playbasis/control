@@ -585,7 +585,7 @@ class Goods extends MY_Controller
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
                     'is_public'=>$goodsIsPublic,
-                    'organize_id'=>$org_name
+                    'organize_name'=>$org_name
                 );
             }
         }else{
@@ -647,7 +647,7 @@ class Goods extends MY_Controller
                     'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
                     'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null,
                     'is_group' => $is_group,
-                    'organize_id'=>$org_name
+                    'organize_name'=>$org_name
                 );
             }
         }
