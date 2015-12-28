@@ -75,11 +75,11 @@ class Quest_model extends MY_Model
         $this->set_site_mongodb($data["site_id"]);
 
         //log_message('debug', 'MISSION : player = '.$data["pb_player_id"].' quest id = '.$data["quest_id"].' before sort : '.print_r($data["missions"], true));
-        $data["missions"] = vsort($data["missions"], "mission_number");
+        if (is_array($data["missions"])) $data["missions"] = vsort($data["missions"], "mission_number");
         //log_message('debug', 'MISSION : player = '.$data["pb_player_id"].' quest id = '.$data["quest_id"].' after sort : '.print_r($data["missions"], true));
 
         $first = true;
-        foreach($data["missions"] as &$m){
+        if (is_array($data["missions"]))foreach($data["missions"] as &$m){
             if($data["mission_order"]){
                 if($first){
                     $m["status"] = "join";
