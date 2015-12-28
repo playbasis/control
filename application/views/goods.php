@@ -75,13 +75,13 @@
                                 <td class="left"><div class="image"><img src="<?php echo $goods['image']; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></div></td>
                                 <td class="left"><?php echo $goods['name']; ?></td>
                                 <?php if($org_status){?>
-                                <td class="left"><?php echo (isset($goods['organize_name']) && !is_null($goods['organize_name']))?$goods['organize_name']:'None'; ?></td>
+                                <td class="left"><?php echo (isset($goods['organize_name']) && !is_null($goods['organize_name']))?$goods['organize_name']:''; ?></td>
                                 <?php }?>
                                 <?php if(!$client_id){?>
                                     <td class="left"><?php echo ($goods['is_public'])?"Public":"Private"; ?></td>
                                 <?php }?>
                                 <?php if($client_id){?>
-                                    <td class="left"><?php echo ($goods['is_group'])?"Yes":"No"; ?></td>
+                                    <td class="left"><?php echo ($goods['is_group'])?"Yes":""; ?></td>
                                 <?php }?>
                                 <td class="right"><?php echo (isset($goods['per_user']) && !is_null($goods['per_user']))?$goods['per_user']:'Unlimited'; ?></td>
                                 <td class="right"><?php echo (isset($goods['quantity']) && !is_null($goods['quantity']))?$goods['quantity']:'Unlimited'; ?></td>
