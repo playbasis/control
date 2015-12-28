@@ -15,6 +15,7 @@ class Redeem extends REST2_Controller
         $this->load->model('redeem_model');
         $this->load->model('sms_model');
         $this->load->model('merchant_model');
+        $this->load->model('store_org_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -43,11 +44,30 @@ class Redeem extends REST2_Controller
         if(!$pb_player_id)
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
+        $org_list = $this->store_org_model->retrieveNodeByPBPlayerID($this->client_id,$this->site_id,$pb_player_id);
+
+        $org_id_list = array();
+        foreach ($org_list as $node){
+            $org_info = $this->store_org_model->getOrgInfoOfNode($this->client_id,$this->site_id, $node['node_id']);
+            $a = array ((string)$org_info[0]['organize'] => isset($node['roles'])? $node['roles']:array() );
+            $org_id_list = array_merge($org_id_list, $a);
+        }
+
         $goods_id = $this->input->post('goods_id');
         $goods = $this->goods_model->getGoods(array_merge($validToken, array(
             'goods_id' => new MongoId($goods_id)
         )));
 
+        if (isset($goods['organize_id'])){
+            if (!empty($org_id_list)
+                && (!array_key_exists((string)$goods['organize_id'], $org_id_list)
+                    || ((isset($goods['organize_role']) && $goods['organize_role'] != "")
+                        && !array_key_exists($goods['organize_role'],
+                            $org_id_list[(string)$goods['organize_id']])))
+            ) {
+                $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+            }
+        }
         $amount = $this->input->post('amount') ? (int)$this->input->post('amount') : 1;
 
         $redeemResult = null;
@@ -189,8 +209,26 @@ class Redeem extends REST2_Controller
 
         $amount = $this->input->post('amount') ? (int)$this->input->post('amount') : 1;
 
+        $org_list = $this->store_org_model->retrieveNodeByPBPlayerID($this->client_id,$this->site_id,$pb_player_id);
+        $org_id_list = array();
+        foreach ($org_list as $node){
+            $org_info = $this->store_org_model->getOrgInfoOfNode($this->client_id,$this->site_id, $node['node_id']);
+            $a = array ((string)$org_info[0]['organize'] => isset($node['roles'])? $node['roles']:array() );
+            $org_id_list = array_merge($org_id_list, $a);
+        }
+
         $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount);
         if ($goods) {
+            if (isset($goods['organize_id'])){
+                if (!empty($org_id_list)
+                    && (!array_key_exists((string)$goods['organize_id'], $org_id_list)
+                        || ((isset($goods['organize_role']) && $goods['organize_role'] != "")
+                            && !array_key_exists($goods['organize_role'],
+                                $org_id_list[(string)$goods['organize_id']])))
+                ) {
+                    $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+                }
+            }
             for ($i=0; $i < MAX_REDEEM_TRIES; $i++) { // try to redeem for a few times before giving up
                 log_message('debug', 'random = '.$goods['goods_id']);
                 /* actual redemption */
