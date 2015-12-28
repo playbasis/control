@@ -137,7 +137,9 @@ class Store_org extends REST2_Controller
         $query_data = $this->input->get(null, true);
 
         if (isset($query_data['id'])) {
-            if (!MongoId::isValid($query_data['id'])) {
+            try {
+                $query_data['id'] = new MongoId($query_data['id']);
+            } catch (Exception $e) {
                 $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
             }
         }
@@ -171,19 +173,25 @@ class Store_org extends REST2_Controller
         $query_data = $this->input->get(null, true);
 
         if (isset($query_data['id'])) {
-            if (!MongoId::isValid($query_data['id'])) {
+            try{
+                $query_data['id'] = new MongoId($query_data['id']);
+            }catch (Exception $e){
                 $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
             }
         }
 
         if (isset($query_data['organize_id'])) {
-            if (!MongoId::isValid($query_data['organize_id'])) {
+            try {
+                $query_data['organize_id'] = new MongoId($query_data['organize_id']);
+            }catch (Exception $e){
                 $this->response($this->error->setError('PARAMETER_INVALID', array('organize_id')), 200);
             }
         }
 
         if (isset($query_data['parent_id'])) {
-            if (!MongoId::isValid($query_data['parent_id'])) {
+            try {
+                $query_data['parent_id'] = new MongoId($query_data['parent_id']);
+            }catch (Exception $e){
                 $this->response($this->error->setError('PARAMETER_INVALID', array('parent_id')), 200);
             }
         }
@@ -311,7 +319,10 @@ class Store_org extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING', array('node_id', 'player_id')), 200);
         }
 
-        if (!MongoId::isValid($node_id)) {
+        try {
+            $tmp_id = new MongoId($node_id);
+            unset($tmp_id); // just unset variable to avoid unused var.
+        } catch (Exception $e) {
             $this->response($this->error->setError('PARAMETER_INVALID', array('node_id')), 200);
         }
 
