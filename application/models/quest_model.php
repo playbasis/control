@@ -344,7 +344,7 @@ class Quest_model extends MY_Model{
         $this->mongo_db->where('_id', new MongoID($quest_id));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        foreach (array('quest_name', 'description', 'hint', 'image', 'mission_order', 'status', 'sort_order', 'condition', 'rewards', 'feedbacks', 'missions') as $field) {
+        foreach (array('quest_name', 'description', 'hint', 'image', 'mission_order', 'status', 'sort_order', 'condition', 'rewards', 'feedbacks', 'missions', 'organize_id', 'organize_role') as $field) {
             if(isset($data[$field]) && !is_null($data[$field])){
                 $this->mongo_db->set($field, $data[$field]);
             }
