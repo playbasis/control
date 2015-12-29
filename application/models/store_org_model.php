@@ -563,7 +563,7 @@ class Store_org_model extends MY_Model
 
         $this->mongo_db->select(array(
             'node_id',
-            'role',
+            'roles',
 
         ));
         $this->mongo_db->where(array(
@@ -577,7 +577,7 @@ class Store_org_model extends MY_Model
     public function getRoleOfPlayer($client_id, $site_id, $player_id, $node_id){
 
         $this->mongo_db->select(array(
-            'role',
+            'roles',
 
         ));
         $this->mongo_db->where(array(

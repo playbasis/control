@@ -1854,7 +1854,6 @@ class Player extends REST2_Controller
 			$temp3['node_id']=$entry["node_id"]."";
 			$temp3['name']=$temp2['name'];
 
-
 			array_push($result, $temp3);
         }
 
@@ -1879,7 +1878,7 @@ class Player extends REST2_Controller
             )), 200);
 
         $temp = $this->store_org_model->getRoleOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id,new MongoId($node_id));
-        $result=array('role'=>$temp['role']);
+        $result=array('roles'=>$temp['roles']);
 
 
         $this->response($this->resp->setRespond($result), 200);
