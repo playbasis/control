@@ -20,6 +20,7 @@ class Quest extends REST2_Controller
         $this->load->model('email_model');
         $this->load->model('sms_model');
         $this->load->model('push_model');
+        $this->load->model('store_org_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -344,6 +345,29 @@ class Quest extends REST2_Controller
             );
             return $event;
         }
+        // get organize information
+        $org_list = $this->store_org_model->retrieveNodeByPBPlayerID($this->client_id,$this->site_id,$pb_player_id);
+        $org_id_list = array();
+        foreach ($org_list as $node){
+            $org_info = $this->store_org_model->getOrgInfoOfNode($this->client_id,$this->site_id, $node['node_id']);
+            $a = array ((string)$org_info[0]['organize'] => isset($node['roles'])? $node['roles']:array() );
+            $org_id_list = array_merge($org_id_list, $a);
+        }
+        if (isset($quest['organize_id'])){
+            if (!empty($org_id_list)
+                && (!array_key_exists((string)$quest['organize_id'], $org_id_list)
+                    || ((isset($quest['organize_role']) && $quest['organize_role'] != "")
+                        && !array_key_exists($quest['organize_role'],
+                            $org_id_list[(string)$quest['organize_id']])))
+            ) {
+                $event = array(
+                    'event_type' => 'QUEST_NOT_EXIT',
+                    'message' => 'quest not exit'
+                );
+                return $event;
+            }
+        }
+
         //read player information
         $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
             'username',
