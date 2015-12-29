@@ -22,6 +22,8 @@ class Workflow extends MY_Controller
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("workflow", $lang['folder']);
+        $this->load->model('Store_org_model');
+        $this->load->model('Feature_model');
     }
 
     public function index() {
@@ -207,6 +209,41 @@ class Workflow extends MY_Controller
 
         $this->data['tab_status'] =  $status;
         $this->data['player_list'] = $this->Workflow_model->getPlayerByApprovalStatus($client_id,$site_id,$status);
+
+        if ($this->User_model->hasPermission('access','store_org') &&
+            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+        ) {
+            $this->data['org_status'] = true;
+            foreach($this->data['player_list'] as &$player){
+                $org_info = $this->Workflow_model->getOrganizationToPlayer($client_id,$site_id,$player['_id']);
+                foreach($org_info as $org){
+                    $role_string='';
+                    $array = array_keys($org['roles']);
+                    foreach($array as $role){
+                        if($role_string == ''){
+                            $role_string = $role;
+                        }else{
+                            $role_string = $role_string.', '.$role;
+                        }
+                    }
+
+                    $node_info = $this->Store_org_model->retrieveNodeById($org['node_id']);
+
+
+                    if(!isset($player['organization'])){
+                        $player['organization']=$node_info['name'].' ('.$role_string.')';
+                    }else{
+                        $player['organization']=$player['organization'].'<br>'.$node_info['name'].' ('.$role_string.')';
+                    }
+
+                }
+
+
+
+            }
+        }else{
+            $this->data['org_status'] = false;
+        }
 
         $pending_count = count($this->Workflow_model->getPlayerByApprovalStatus($client_id,$site_id,"pending"));
         $this->data['pending_count'] =$pending_count;

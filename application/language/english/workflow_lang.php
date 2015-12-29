@@ -35,6 +35,8 @@ $lang['form_gender']              = 'Gender';
 $lang['form_phone_number']        = 'Phone number';
 $lang['form_email']               = 'Email';
 $lang['form_approve']             = 'Approve status';
+$lang['form_organization']        = 'Organization';
+
 
 // Tab
 $lang['tab_approved']					= 'Approved';
@@ -44,8 +46,10 @@ $lang['tab_pending']					= 'Pending';
 
 // Column
 $lang['column_image']					= 'Image';
+$lang['column_player_id']				= 'Player ID';
 $lang['column_name']            		= 'Name';
-$lang['column_store']      		        = 'Store';
+$lang['column_email']            		= 'Email';
+$lang['column_organization']      		= 'Organization';
 $lang['column_action']          		= 'Action';
 
 ?>

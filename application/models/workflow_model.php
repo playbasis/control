@@ -2,14 +2,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Workflow_model extends MY_Model
 {
-    public function test($goods_id) {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $this->mongo_db->where('_id',  new MongoID($goods_id));
-        $results = $this->mongo_db->get("playbasis_goods");
-
-        return $results ? $results[0] : null;
-    }
 
     public function getPlayerByApprovalStatus($client_id, $site_id, $approval_status) {
         $this->set_site_mongodb($site_id);
@@ -21,6 +13,19 @@ class Workflow_model extends MY_Model
         ));
 
         return $this->mongo_db->get('playbasis_player');
+    }
+
+    public function getOrganizationToPlayer($client_id, $site_id, $player_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where(array(
+            'pb_player_id' => $player_id,
+            'site_id' => $site_id,
+            'client_id' => $client_id
+        ));
+        $results = $this->mongo_db->get("playbasis_store_organize_to_player");
+
+        return $results;
     }
 
     public function createPlayer($data){

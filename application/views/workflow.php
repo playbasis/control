@@ -44,15 +44,20 @@
             $attributes = array('id' => 'form');
             echo form_open($form ,$attributes);
             ?>
+            <input type="hidden" id="action" name="action" value="" />
+            <input type="hidden" id="user_id" name="user_id" value="" />
             <table class="list">
                 <thead>
                 <tr>
-                    <input type="hidden" id="action" name="action" value="" />
-                    <input type="hidden" id="user_id" name="user_id" value="" />
+
                     <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                    <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
-                    <td class="left"><?php echo $this->lang->line('column_store'); ?></td>
-                    <td class="right app-col-action"><?php echo $this->lang->line('column_action'); ?></td>
+                    <td class="left" style="width:80px;"><?php echo $this->lang->line('column_player_id'); ?></td>
+                    <td class="left" style="width:200px;"><?php echo $this->lang->line('column_name'); ?></td>
+                    <td class="left" style="width:200px;"><?php echo $this->lang->line('column_email'); ?></td>
+                    <?php if($org_status){?>
+                    <td class="left" ><?php echo $this->lang->line('column_organization'); ?></td>
+                    <?php }?>
+                    <td class="right app-col-action" "><?php echo $this->lang->line('column_action'); ?></td>
 
                 </tr>
                 </thead>
@@ -66,8 +71,12 @@
                             <?php } else { ?>
                                 <input type="checkbox" name="selected[]" value="<?php echo $player['_id']; ?>" />
                             <?php } ?></td>
+                        <td class="left"><?php echo $player['cl_player_id']; ?></td>
                         <td class="left"><?php echo $player['first_name']."  ".$player['last_name']; ?></td>
-                        <td class="left"><?php echo (isset($player['store']) && !is_null($player['store']))?$player['store']:'??'; ?></td>
+                        <td class="left"><?php echo $player['email']; ?></td>
+                        <?php if($org_status){?>
+                        <td class="left"><?php echo (isset($player['organization']) && !is_null($player['organization']))?$player['organization']:'??'; ?></td>
+                        <?php }?>
                         <td class="right app-col-action">
                             <a href="<?php echo site_url("workflow/edit_account/".$player['_id']) ?>" title="Edit" class="tooltips" data-placement="top"><i class="fa fa-edit fa-lg"></i></a>
                             <a href="javascript:void(0)" onclick="confirmDeletePlayer('<?php echo $player['_id']; ?>')" title="Delete" class="tooltips" data-placement="top"><i class="fa fa-trash fa-lg"></i></a>
