@@ -27,6 +27,7 @@ $lang = array(
 	'column_quest_status'				=> 'Status',
 	'column_action'						=> 'Action',
 	'column_quest_sort_order'			=> 'Sort Order',
+	'column_organization'               => 'Organization',
 	'button_clear_filter'				=> 'Clear Filter',
 	'button_filter'						=> 'Filter',
 	'tab_general'						=> 'General',
@@ -39,6 +40,8 @@ $lang = array(
 	'form_mission_hint'					=> 'Hint',
 	'form_mission_image'				=> 'Mission Image',
 	'form_mission_number'				=> 'Mission Number',
+	'form_organize_name'				=> 'Organize Type',
+	'form_global_quest'					=> 'Global Quest?',
     'error_quest_limit'                 => 'You have reached Quest Limit.',
     'error_mission_limit'               => 'You have reached Mission Limit.'
 );

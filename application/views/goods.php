@@ -35,16 +35,19 @@
                             <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                             <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
                             <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
+                            <?php if($org_status){?>
+                            <td class="left" style="width:50px;"><?php echo $this->lang->line('column_organization'); ?></td>
+                            <?php }?>
                             <?php if(!$client_id){?>
                                 <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
                             <?php }?>
                             <?php if($client_id){?>
-                                <td class="left"><?php echo $this->lang->line('column_is_group'); ?></td>
+                                <td class="left" style="width:50px;"><?php echo $this->lang->line('column_is_group'); ?></td>
                             <?php }?>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
-                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
+                            <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
                             <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>
@@ -71,6 +74,9 @@
                                 </td>
                                 <td class="left"><div class="image"><img src="<?php echo $goods['image']; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></div></td>
                                 <td class="left"><?php echo $goods['name']; ?></td>
+                                <?php if($org_status){?>
+                                <td class="left"><?php echo (isset($goods['organize_name']) && !is_null($goods['organize_name']))?$goods['organize_name']:''; ?></td>
+                                <?php }?>
                                 <?php if(!$client_id){?>
                                     <td class="left"><?php echo ($goods['is_public'])?"Public":"Private"; ?></td>
                                 <?php }?>

@@ -16,7 +16,7 @@
             <?php }?>
 
             <div id="tabs" class="htabs">
-                <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
+                <a href="#tab-general"><?php echo $this->lang->line('tab_template'); ?></a>
             </div>
             <?php
             if(validation_errors() || isset($message)) {

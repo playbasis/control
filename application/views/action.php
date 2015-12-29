@@ -26,12 +26,8 @@
                         <?php }?>
                     <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
-                    <?php if(!$client_id){?>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_owner'); ?></td>
-                    <?php }?>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_added'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
-                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_order'); ?></td>
                     <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                 </thead>
@@ -42,10 +38,6 @@
                         <?php }?>
                         <td></td>
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
-                        <?php if(!$client_id){?>
-                            <td></td>
-                        <?php }?>
-                        <td></td>
                         <td></td>
                         <td></td>
                         <td class="right">
@@ -59,7 +51,6 @@
                                 <tr>
                                     <?php if($isAdmin){ ?>
                                     <td style="text-align: center;">
-
                                         <?php if (isset($action['selected'])) { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $action['_id']; ?>" checked="checked" />
                                         <?php } else { ?>
@@ -69,45 +60,17 @@
                                     <td class="left"><?php echo "<i style='color:grey' class='".$action['icon']." icon-4x'></i>"; ?></td>
                                     <!-- <td class="right"><?php //echo ucfirst($action['name']); ?></td> -->
                                     <td class="right"><?php echo $action['name']; ?></td>
-                                    <?php if(!$client_id){?>
-                                        <td class="right"><?php echo ($action['is_public'])? "Public": "Private"; ?></td>
-                                    <?php }?>    
                                     <td class="right"><?php echo datetimeMongotoReadable($action['date_added']); ?></td>
                                     <td class="right"><?php echo ($action['status'])? "Enabled" : "Disabled"; ?></td>
-                                    <td class="right"><?php echo $action['sort_order'];?></td>
-                                    <td class="right">[ <?php if($client_id){
-                                            if ($isAdmin){
-                                                echo anchor('action/update/'.$action['action_id'], 'Edit');
-                                            }
-                                            else{
-                                                echo anchor('action/update/'.$action['action_id'], 'View');
-                                            }
-                                        }else{
-                                            if ($isAdmin){
-                                                echo anchor('action/update/'.$action['_id'], 'Edit');
-                                            }
-                                            else{
-                                                echo anchor('action/update/'.$action['_id'], 'View');
-                                            }
-                                            //echo anchor('action/update/'.$action['_id'], 'Edit');
-                                        }
+                                    <td class="right">[ <?php
+                                        $action_id = $client_id ? $action['action_id'] : $action['_id'];
+                                        echo anchor('action/update/'.$action_id, $client_id ? 'View' : 'Edit');
                                         ?> ]
-
-                                        <?php if($client_id){
-
-                                            echo anchor('action/increase_order/'.$action['action_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$action['action_id'], 'style'=>'text-decoration:none'));
-                                        }else{
-                                            echo anchor('action/increase_order/'.$action['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$action['_id'], 'style'=>'text-decoration:none'));
-                                        }
+                                        <?php
+                                        echo anchor('action/increase_order/'.$action_id, '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$action_id, 'style'=>'text-decoration:none'));
+                                        echo anchor('action/decrease_order/'.$action_id, '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$action_id, 'style'=>'text-decoration:none'));
                                         ?>
-                                        <?php if($client_id){
-                                            echo anchor('action/decrease_order/'.$action['action_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$action['action_id'], 'style'=>'text-decoration:none'));
-                                        }else{
-                                            echo anchor('action/decrease_order/'.$action['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$action['_id'], 'style'=>'text-decoration:none'));
-                                        }
-                                        ?>
-                                        </td>   
-
+                                    </td>
                                 </tr>
                             <?php }?>
                         <?php }?>

@@ -23,6 +23,8 @@ class Quest extends MY_Controller
         $this->load->model('Rule_model');
         $this->load->model('Goods_model');
         $this->load->model('Permission_model');
+        $this->load->model('Store_org_model');
+        $this->load->model('Feature_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -84,6 +86,14 @@ class Quest extends MY_Controller
 
         $config['total_rows'] = 0;
 
+        if ($this->User_model->hasPermission('access','store_org') &&
+            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org'))
+        {
+            $this->data['org_status'] = true;
+        }else {
+            $this->data['org_status'] = false;
+        }
+
         if($client_id){
             $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($filter);
             /* query required variables for validation of quest & mission */
@@ -109,6 +119,15 @@ class Quest extends MY_Controller
                     'rewardList' => $rewardList,
                     'badgeList' => $badgeList,
                 ));
+
+                $org_name = null;
+                if ($this->data['org_status']) {
+                    if (isset($quest['organize_id']) && !empty($quest['organize_id'])) {
+                            $org = $this->Store_org_model->retrieveOrganizeById($quest['organize_id']);
+                            $org_name=$org["name"];
+                    }
+                }
+                $quest['organize_name'] = $org_name;
             }
 
             $config['total_rows'] = $this->Quest_model->getTotalQuestsClientSite($filter);
@@ -316,6 +335,17 @@ class Quest extends MY_Controller
                     if (!isset($data['missions'])) {
                         $data['missions'] = array();
                     }
+
+                    if ($this->User_model->hasPermission('access','store_org') &&
+                        $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')) {
+                        if ($this->input->post('global_quest')) {
+                            $data['organize_id'] = null;
+                            $data['organize_role'] = null;
+                        }else{
+                            $data['organize_id']= new MongoID($data['organize_id']);
+                        }
+                    }
+
                     $data['status'] = (isset($data['status']))?true:false;
                     $data['mission_order'] = (isset($data['mission_order']))?true:false;
 
@@ -445,6 +475,29 @@ class Quest extends MY_Controller
             $this->data['date_end'] = $goods_info['date_end'];
         } else {
             $this->data['date_end'] = "";
+        }
+
+        if ($this->User_model->hasPermission('access','store_org') &&
+            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+        ){
+            $this->data['org_status'] = true;
+            if ($this->input->post('organize_id')) {
+                $this->data['organize_id'] = $this->input->post('organize_id');
+            } elseif (!empty($editQuest)&&isset($editQuest['organize_id'])) {
+                $this->data['organize_id'] = $editQuest['organize_id'];
+            } else {
+                $this->data['organize_id'] = null;
+            }
+
+            if ($this->input->post('organize_role')) {
+                $this->data['organize_role'] = $this->input->post('organize_role');
+            } elseif (!empty($editQuest)&&isset($editQuest['organize_role'])) {
+                $this->data['organize_role'] = $editQuest['organize_role'];
+            } else {
+                $this->data['organize_role'] = null;
+            }
+        }else{
+            $this->data['org_status'] = false;
         }
 
         $this->data['levels'] = $this->Level_model->getLevelsSite($data);
@@ -746,6 +799,8 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_value'] = $mm['completion_value'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_id'] = $mm['completion_id'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_filter'] = $mm['completion_filter'];
+                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_op'] = $mm['completion_op'];
+                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_string'] = $mm['completion_string'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_title'] = $mm['completion_title'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_element_id'] = $mm['completion_element_id'];
 
@@ -1012,6 +1067,14 @@ class Quest extends MY_Controller
         $config['base_url'] = site_url('action/page');
         $config["uri_segment"] = 3;
 
+        if ($this->User_model->hasPermission('access','store_org') &&
+            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org'))
+        {
+            $this->data['org_status'] = true;
+        }else {
+            $this->data['org_status'] = false;
+        }
+
         if($client_id){
             $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($filter);
 
@@ -1025,6 +1088,15 @@ class Quest extends MY_Controller
                 }else{
                     $quest['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
                 }
+
+                $org_name = null;
+                if ($this->data['org_status']) {
+                    if (isset($quest['organize_id']) && !empty($quest['organize_id'])) {
+                        $org = $this->Store_org_model->retrieveOrganizeById($quest['organize_id']);
+                        $org_name=$org["name"];
+                    }
+                }
+                $quest['organize_name'] = $org_name;
             }
 
             $config['total_rows'] = $this->Quest_model->getTotalQuestsClientSite($filter);
@@ -1292,6 +1364,16 @@ class Quest extends MY_Controller
                     $data['mission_order'] = (isset($data['mission_order'])) ? true : false;
                     $data['client_id'] = $client_id;
                     $data['site_id'] = $site_id;
+
+                    if ($this->User_model->hasPermission('access','store_org') &&
+                        $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')) {
+                        if ($this->input->post('global_quest')) {
+                            $data['organize_id'] = null;
+                            $data['organize_role'] = null;
+                        }else{
+                            $data['organize_id']= new MongoID($data['organize_id']);
+                        }
+                    }
 
                     if ($this->Quest_model->editQuestToClient($quest_id, $data)) {
                         redirect('/quest', 'refresh');

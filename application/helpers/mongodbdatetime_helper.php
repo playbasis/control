@@ -26,3 +26,15 @@ function dateMongotoReadable($dateTimeMongo){
         }
         return $dateTimeMongo;
 }
+function MonthMongotoReadable($dateTimeMongo){
+    if ($dateTimeMongo) {
+        if (isset($dateTimeMongo->sec)) {
+            $dateTimeMongo = date("Y-m", $dateTimeMongo->sec);
+        } else {
+            $dateTimeMongo = $dateTimeMongo;
+        }
+    } else {
+        $dateTimeMongo = "0000-00-00";
+    }
+    return $dateTimeMongo;
+}

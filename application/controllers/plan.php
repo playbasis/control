@@ -137,16 +137,8 @@ class Plan extends MY_Controller
 
                 //Save into clients too
                 $this->load->model("Client_model");
-                $clients_by_plan = $this->Plan_model->getClientByPlan($plan_id); //returns: client_id, site_id, date_added, date_modified
-
-                foreach($clients_by_plan as $client){
-
-                    $data['domain_value'] = array(
-                        'site_id'=>$client['site_id'],
-                    );
-
-                    $this->Client_model->editClientPlan($client['client_id'], new MongoID($plan_id), $data);
-                }
+                $clients_by_plan = $this->Plan_model->getClientByPlan($plan_id); // returns: client_id, site_id, date_added, date_modified
+                $this->Client_model->editClientsPlan($clients_by_plan, $plan_id); // update many clients at once
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('/plan', 'refresh');
             }
@@ -199,7 +191,6 @@ class Plan extends MY_Controller
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             redirect('/plan', 'refresh');
         }
-        
         
         $this->getList(0);
     }
@@ -561,12 +552,10 @@ class Plan extends MY_Controller
 
         if ($actions) {
             foreach ($actions as $action) {
-                $actionIsPublic = $this->checkActionIsPublic($action['_id']);
                 $this->data['plan_actions'][] = array(
                     'action_id' => $action['_id'],
                     'name' => $action['name'],
-                    'description' => $action['description'],
-                    'is_public' => $actionIsPublic
+                    'description' => $action['description']
                 );
             }
         }
@@ -634,23 +623,6 @@ class Plan extends MY_Controller
         }
     }
 
-    public function checkActionIsPublic($action_id){
-        $this->load->model('Action_model');
-        $allActionsFromClients = $this->Action_model->checkActionIsPublic($action_id);
-
-        if(isset($allActionsFromClients[0]['client_id'])){
-            $firstAction = $allActionsFromClients[0]['client_id'];
-            foreach($allActionsFromClients as $action){
-                if($action['client_id'] != $firstAction){
-                    return true;
-                }
-            }
-            return false;            
-        }else{
-            return true;
-        }
-    }
-
     public function getClientsByPlanId($plan_id){
 
         $allClientsInThisPlan = $this->Plan_model->getClientByPlanOnlyClient($plan_id);
@@ -666,7 +638,6 @@ class Plan extends MY_Controller
             }
         }
         return $listOfClients;
-        //return $allClientsInThisPlan;
     }
 
     private function updatePlanInStripe($plan_id, $name, $price, $trial_days) {
