@@ -51,6 +51,52 @@ class Workflow_model extends MY_Model
         return $status;
     }
 
+    public function addPlayerToNode($player_id,$node_id){
+        $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(), $this->User_model->getSiteId());
+        $this->_api = $this->playbasisapi;
+
+        $platforms = $this->App_model->getPlatFormByAppId(array(
+            'site_id' => $this->User_model->getSiteId(),
+        ));
+        $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
+        if (!$platform) {
+            if ($this->input->post('format') == 'json') {
+                echo json_encode(array('status' => 'fail', 'message' => 'Cannot find any active platform'));
+                exit();
+            }
+        }
+        $this->_api->set_api_key($result['api_key']);
+        $this->_api->set_api_secret($result['api_secret']);
+        $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
+        $this->_api->auth($pkg_name);
+
+        $status = $this->_api->addPlayerToNode($player_id, $node_id);
+        return $status;
+    }
+
+    public function setPlayerRole($player_id,$node_id,$role){
+        $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(), $this->User_model->getSiteId());
+        $this->_api = $this->playbasisapi;
+
+        $platforms = $this->App_model->getPlatFormByAppId(array(
+            'site_id' => $this->User_model->getSiteId(),
+        ));
+        $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
+        if (!$platform) {
+            if ($this->input->post('format') == 'json') {
+                echo json_encode(array('status' => 'fail', 'message' => 'Cannot find any active platform'));
+                exit();
+            }
+        }
+        $this->_api->set_api_key($result['api_key']);
+        $this->_api->set_api_secret($result['api_secret']);
+        $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
+        $this->_api->auth($pkg_name);
+
+        $status = $this->_api->setPlayerRole($player_id, $node_id,array('role'=>$role));
+        return $status;
+    }
+
     public function editPlayer($player_id,$data){
         $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(), $this->User_model->getSiteId());
         $this->_api = $this->playbasisapi;

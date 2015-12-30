@@ -15,7 +15,7 @@ $lang['text_success_delete']			= 'The account(s) has been deleted';
 $lang['text_fail_delete']			    = 'Failed to delete the account';
 $lang['text_success_edit']              = 'The account has been updated';
 $lang['text_success_create']            = 'The account has been created';
-$lang['text_fail_confirm_password']	    = 'Your password and confirmation password do not match';
+$lang['text_fail_confirm_password']	    = 'Your password and confirm password do not match';
 
 
 // Button

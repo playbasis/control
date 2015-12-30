@@ -88,16 +88,17 @@
                             </select>
                         </td>
                     </tr>
+                    <?php if($org_status){?>
                     <tr>
                         <td><?php echo $this->lang->line('form_organization'); ?>:</td>
 
                         <td>
-                            <select name="organize_type" id="organize_type" >
-
-                            </select>
+                            <input type='hidden' name="organize_type" id="organize_type" style="width:220px;" value="<?php echo isset($organize_type) ? $organize_type : set_value('organize_type'); ?>">
+                            <input type='hidden' name="organize_id" id="organize_id" style="width:220px;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
+                            <input type="text" name="organize_role" id="organize_role" value="<?php echo isset($organize_role) ? $organize_role :  set_value('organize_role'); ?>" />
                         </td>
                     </tr>
-
+                    <?php }?>
 
                 </table>
             </div>
@@ -109,19 +110,164 @@
     </div>
 </div>
 
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+
 <script type="text/javascript">
+    var $organizeType = $("#organize_type");
+    var $organize_id = $("#organize_id");
+    var nodeParentSearch = "";
+    var $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
+
+    function organizeFormatResult(organize) {
+        return '<div class="row-fluid">' +
+            '<div>' + organize.name /*+
+         '<small class="text-muted">&nbsp;(' + organize.description +
+         ')</small></div></div>'*/;
+    }
+    function organizeFormatSelection(organize) {
+        return organize.name;
+    }
+
+    function nodeFormatResult(node) {
+        return '<div class="row-fluid">' +
+            '<div>' + node.name /*+
+            '<small class="text-muted">&nbsp;(' + node.description +
+            ')</small></div></div>'*/;
+    }
+
+    function nodeFormatSelection(node) {
+        return node.name;
+    }
+
     $(document).ready(function() {
 
-        var select = document.getElementById('organize_type');
-        var opt = document.createElement('option');
-        opt.value = 'sad';
-        opt.innerHTML = 'test';
-        select.appendChild(opt);
+        $organizeType.select2({
+            placeholder: "Select Organization type",
+            allowClear: false,
+            minimumInputLength: 0,
+            id: function (data) {
+                return data._id;
+            },
+            ajax: {
+                url: baseUrlPath + "store_org/organize/",
+                dataType: 'json',
+                quietMillis: 250,
+                data: function (term, page) {return {
+                    search: term, // search term
+                };
+                },
+                results: function (data, page) {
+                    return {results: data.rows};
+                },
+                cache: true
+            },
+            initSelection: function (element, callback) {
+                var id = $(element).val();
+                if (id !== "") {
+                    $.ajax(baseUrlPath + "store_org/organize/" + id, {
+                        dataType: "json",
+                        beforeSend: function (xhr) {
+                            $organizeType
+                                .select2('enable', false);
+                        }
+                    }).done(function (data) {
+                        if (typeof data != "undefined")
+                            callback(data);
+                    }).always(function () {
+                        $organizeType
+                            .select2('enable', true);
+                    });
+                }
+            },
+            formatResult: organizeFormatResult,
+            formatSelection: organizeFormatSelection,
 
+        });
 
-
+        $organize_id.select2({
+            placeholder: "Select Node",
+            //allowClear: true,
+            minimumInputLength: 0,
+            id: function (data) {
+                return data._id;
+            },
+            ajax: {
+                url: baseUrlPath + "store_org/node/",
+                dataType: 'json',
+                quietMillis: 250,
+                data: function (term, page) {
+                    return {
+                        search: term, // search term
+                        organize: nodeParentSearch
+                    };
+                },
+                results: function (data, page) {
+                    return {results: data.rows};
+                },
+                cache: true
+            },
+            initSelection: function (element, callback) {
+                var id = $(element).val();
+                if (id !== "") {
+                    $.ajax(baseUrlPath + "store_org/node/" + id, {
+                        dataType: "json",
+                        beforeSend: function (xhr) {
+                            $organize_id
+                                .select2('enable', false)
+                                .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                        }
+                    }).done(function (data) {
+                        if (typeof data != "undefined")
+                            callback(data);
+                    }).always(function () {
+                        $organize_id
+                            .select2('enable', true)
+                            .parent().parent().parent().find("#pleaseWaitSpan").remove();
+                    });
+                }
+            },
+            formatResult: nodeFormatResult,
+            formatSelection: nodeFormatSelection,
+        });
     });
 
+
+ /*$("#organize_id").change(function(e){
+
+        //var $nodeParent = $("#node");
+        if (e.val === "") {
+            $node
+                .select2("val", "")
+                .select2("enable", false);
+
+        }
+        else {
+
+            $.ajax(baseUrlPath + "store_org/organize/" + e.val, {
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $node
+                            .select2("enable", false)
+                            .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                    }
+                })
+                .done(function (data) {
+                    if (data.hasOwnProperty('parent')) {
+
+                        nodeParentSearch = data.parent._id;
+                        //alert(nodeParentSearch);
+                        $node.select2("enable", true);
+                    }
+                    else {
+                        $node.select2("enable", false);
+                    }
+                })
+                .always(function () {
+                    $node.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                });
+        }
+    });*/
 
 </script>
 
