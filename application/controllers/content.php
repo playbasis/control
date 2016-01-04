@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
 
-class Promo_content extends MY_Controller
+class Content extends MY_Controller
 {
 
     public function __construct()
@@ -16,11 +16,11 @@ class Promo_content extends MY_Controller
             redirect('/login', 'refresh');
         }
 
-        $this->load->model('Promo_content_model');
+        $this->load->model('Content_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
-        $this->lang->load("promo_content", $lang['folder']);
+        $this->lang->load("content", $lang['folder']);
     }
 
     public function index()
@@ -58,29 +58,29 @@ class Promo_content extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'promo_content/insert';
+        $this->data['form'] = 'content/insert';
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-//        $promo_contents = $this->Promo_content_model->countPromoContents($client_id, $site_id);
+        $contents = $this->Content_model->countContents($client_id, $site_id);
 
         $this->load->model('Permission_model');
         $this->load->model('Plan_model');
 
-        // Get Limit
-//        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-//        $limit_promo_content = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'promo_content');
+//        Get Limit
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+        $limit_content = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'content');
 
         $this->data['message'] = null;
 
-//        if ($limit_promo_content && $promo_contents >= $limit_promo_content) {
-//            $this->data['message'] = $this->lang->line('error_promo_contents_limit');
-//        }
+        if ($limit_content && $contents >= $limit_content) {
+            $this->data['message'] = $this->lang->line('error_contents_limit');
+        }
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('description', $this->lang->line('entry_description'),
+        $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[255]|xss_clean');
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
             'trim|required|xss_clean');
@@ -93,43 +93,42 @@ class Promo_content extends MY_Controller
             }
 
             if ($this->form_validation->run()) {
-                $promo_content_data = $this->input->post();
+                $content_data = $this->input->post();
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-                $data['name'] = $promo_content_data['name'];
-                $data['desc'] = $promo_content_data['description'];
-                $data['date_start'] = $promo_content_data['date_start'];
-                $data['date_end'] = $promo_content_data['date_end'];
-                $data['image'] = $promo_content_data['image'];
-                $data['status'] = $promo_content_data['status'] == 'enable' ? true : false;
+                $data['name'] = $content_data['name'];
+                $data['detail'] = $content_data['detail'];
+                $data['date_start'] = $content_data['date_start'];
+                $data['date_end'] = $content_data['date_end'];
+                $data['image'] = $content_data['image'];
+                $data['status'] = $content_data['status'] == 'on' ? true : false;
 
-                $insert = $this->Promo_content_model->createPromoContent($data);
+                $insert = $this->Content_model->createContent($data);
                 if ($insert) {
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                    redirect('/promo_content', 'refresh');
+                    redirect('/content', 'refresh');
                 }
             }
         }
         $this->getForm();
     }
 
-    public function update($promo_content_id)
+    public function update($content_id)
     {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'promo_content/update/' . $promo_content_id;
+        $this->data['form'] = 'content/update/' . $content_id;
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('description', $this->lang->line('entry_description'),
+        $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[255]|xss_clean');
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
             'trim|required|xss_clean');
         $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('status', $this->lang->line('entry_status'), 'trim|required|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -138,27 +137,27 @@ class Promo_content extends MY_Controller
             }
 
             if ($this->form_validation->run()) {
-                $promo_content_data = $this->input->post();
+                $content_data = $this->input->post();
 
-                $data['_id'] = $promo_content_id;
+                $data['_id'] = $content_id;
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-                $data['name'] = $promo_content_data['name'];
-                $data['desc'] = $promo_content_data['description'];
-                $data['date_start'] = $promo_content_data['date_start'];
-                $data['date_end'] = $promo_content_data['date_end'];
-                $data['image'] = $promo_content_data['image'];
-                $data['status'] = $promo_content_data['status'] == 'enable' ? true : false;
+                $data['name'] = $content_data['name'];
+                $data['detail'] = $content_data['detail'];
+                $data['date_start'] = $content_data['date_start'];
+                $data['date_end'] = $content_data['date_end'];
+                $data['image'] = $content_data['image'];
+                $data['status'] = isset($content_data['status']) ? true : false;
 
-                $update = $this->Promo_content_model->updatePromoContent($data);
+                $update = $this->Content_model->updateContent($data);
                 if ($update) {
                     $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                    redirect('/promo_content', 'refresh');
+                    redirect('/content', 'refresh');
                 }
             }
         }
 
-        $this->getForm($promo_content_id);
+        $this->getForm($content_id);
     }
 
     public function page($offset = 0)
@@ -197,17 +196,17 @@ class Promo_content extends MY_Controller
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
-        $config['base_url'] = site_url('promo_content/page');
+        $config['base_url'] = site_url('content/page');
         $config["uri_segment"] = 3;
         $config['total_rows'] = 0;
 
         if ($client_id) {
             $this->data['client_id'] = $client_id;
 
-            $promo_contents = $this->Promo_content_model->retrievePromoContents($filter);
+            $contents = $this->Content_model->retrieveContents($filter);
 
-            $this->data['promo_contents'] = $promo_contents;
-            $config['total_rows'] = $this->Promo_content_model->countPromoContents($client_id, $site_id);
+            $this->data['contents'] = $contents;
+            $config['total_rows'] = $this->Content_model->countContents($client_id, $site_id);
         }
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
@@ -240,56 +239,56 @@ class Promo_content extends MY_Controller
         $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
         $this->data['pagination_total_rows'] = $config["total_rows"];
 
-        $this->data['main'] = 'promo_content';
+        $this->data['main'] = 'content';
         $this->render_page('template');
     }
 
-    public function getForm($promo_content_id = null)
+    public function getForm($content_id = null)
     {
-        $this->data['main'] = 'promo_content_form';
+        $this->data['main'] = 'content_form';
 
-        if (isset($promo_content_id) && ($promo_content_id != 0)) {
+        if (isset($content_id) && ($content_id != 0)) {
             if ($this->User_model->getClientId()) {
-                $promo_content_info = $this->Promo_content_model->retrievePromoContent($promo_content_id);
+                $content_info = $this->Content_model->retrieveContent($content_id);
             }
         }
 
         if ($this->input->post('name')) {
             $this->data['name'] = $this->input->post('name');
-        } elseif (isset($promo_content_info['name'])) {
-            $this->data['name'] = $promo_content_info['name'];
+        } elseif (isset($content_info['name'])) {
+            $this->data['name'] = $content_info['name'];
         } else {
             $this->data['name'] = '';
         }
 
-        if ($this->input->post('description')) {
-            $this->data['description'] = $this->input->post('description');
-        } elseif (isset($promo_content_info['desc'])) {
-            $this->data['description'] = $promo_content_info['desc'];
+        if ($this->input->post('detail')) {
+            $this->data['detail'] = $this->input->post('detail');
+        } elseif (isset($content_info['detail'])) {
+            $this->data['detail'] = $content_info['detail'];
         } else {
-            $this->data['description'] = '';
+            $this->data['detail'] = '';
         }
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-        } elseif (isset($promo_content_info['image'])) {
-            $this->data['image'] = $promo_content_info['image'];
+        } elseif (isset($content_info['image'])) {
+            $this->data['image'] = $content_info['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
         }
 
         if ($this->input->post('date_start')) {
             $this->data['date_start'] = $this->input->post('date_start');
-        } elseif (isset($promo_content_info['date_start'])) {
-            $this->data['date_start'] = $promo_content_info['date_start'];
+        } elseif (isset($content_info['date_start'])) {
+            $this->data['date_start'] = $content_info['date_start'];
         } else {
             $this->data['date_start'] = '';
         }
 
         if ($this->input->post('date_end')) {
             $this->data['date_end'] = $this->input->post('date_end');
-        } elseif (isset($promo_content_info['date_end'])) {
-            $this->data['date_end'] = $promo_content_info['date_end'];
+        } elseif (isset($content_info['date_end'])) {
+            $this->data['date_end'] = $content_info['date_end'];
         } else {
             $this->data['date_end'] = '';
         }
@@ -310,8 +309,8 @@ class Promo_content extends MY_Controller
 
         if ($this->input->post('status')) {
             $this->data['status'] = $this->input->post('status');
-        } elseif (isset($promo_content_info['status'])) {
-            $this->data['status'] = $promo_content_info['status'];
+        } elseif (isset($content_info['status'])) {
+            $this->data['status'] = $content_info['status'];
         } else {
             $this->data['status'] = true;
         }
@@ -331,12 +330,12 @@ class Promo_content extends MY_Controller
         $this->error['message'] = null;
 
         if ($this->input->post('selected') && $this->error['message'] == null) {
-            foreach ($this->input->post('selected') as $promo_content_id) {
-                $this->Promo_content_model->deletePromoContent($promo_content_id);
+            foreach ($this->input->post('selected') as $content_id) {
+                $this->Content_model->deleteContent($content_id);
             }
 
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/promo_content', 'refresh');
+            redirect('/content', 'refresh');
         }
 
         $this->getList(0);
@@ -344,7 +343,7 @@ class Promo_content extends MY_Controller
 
     private function validateModify()
     {
-        if ($this->User_model->hasPermission('modify', 'promo_content')) {
+        if ($this->User_model->hasPermission('modify', 'content')) {
             return true;
         } else {
             return false;
@@ -360,7 +359,7 @@ class Promo_content extends MY_Controller
         $client_id = $this->User_model->getClientId();
 
         if ($this->User_model->hasPermission('access',
-                'promo_content') && $this->Feature_model->getFeatureExistByClientId($client_id, 'promo_content')
+                'content') && $this->Feature_model->getFeatureExistByClientId($client_id, 'content')
         ) {
             return true;
         } else {

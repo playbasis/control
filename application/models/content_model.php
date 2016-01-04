@@ -1,9 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Promo_content_model extends MY_Model
+class Content_model extends MY_Model
 {
-    public function countPromoContents($client_id, $site_id)
+    public function countContents($client_id, $site_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -11,12 +11,12 @@ class Promo_content_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('status', true);
         $this->mongo_db->where('deleted', false);
-        $total = $this->mongo_db->count('playbasis_promo_content_to_client');
+        $total = $this->mongo_db->count('playbasis_content_to_client');
 
         return $total;
     }
 
-    public function retrievePromoContents($data)
+    public function retrieveContents($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -60,15 +60,15 @@ class Promo_content_model extends MY_Model
         $this->mongo_db->where('client_id', $data['client_id']);
         $this->mongo_db->where('site_id', $data['site_id']);
         $this->mongo_db->where('deleted', false);
-        return $this->mongo_db->get("playbasis_promo_content_to_client");
+        return $this->mongo_db->get("playbasis_content_to_client");
     }
 
-    public function retrievePromoContent($promo_content_id)
+    public function retrieveContent($promo_content_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoId($promo_content_id));
-        $c = $this->mongo_db->get('playbasis_promo_content_to_client');
+        $c = $this->mongo_db->get('playbasis_content_to_client');
 
         if ($c) {
             return $c[0];
@@ -77,7 +77,7 @@ class Promo_content_model extends MY_Model
         }
     }
 
-    public function createPromoContent($data)
+    public function createContent($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -85,7 +85,7 @@ class Promo_content_model extends MY_Model
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             'name' => strtolower($data['name']),
-            'desc' => $data['desc'],
+            'detail' => $data['detail'],
             'date_start' => new MongoDate(strtotime($data['date_start'])),
             'date_end' => new MongoDate(strtotime($data['date_end'])),
             'image' => $data['image'],
@@ -94,36 +94,36 @@ class Promo_content_model extends MY_Model
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
         );
-        $insert = $this->mongo_db->insert('playbasis_promo_content_to_client', $insert_data);
+        $insert = $this->mongo_db->insert('playbasis_content_to_client', $insert_data);
 
         return $insert;
     }
 
-    public function updatePromoContent($data)
+    public function updateContent($data)
     {
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->where('_id', new MongoID($data['_id']));
 
         $this->mongo_db->set('name', $data['name']);
-        $this->mongo_db->set('desc', $data['desc']);
+        $this->mongo_db->set('detail', $data['detail']);
         $this->mongo_db->set('image', $data['image']);
         $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
         $this->mongo_db->set('date_end', new MongoDate(strtotime($data['date_end'])));
         $this->mongo_db->set('date_modified', new MongoDate());
         $this->mongo_db->set('status', $data['status']);
 
-        $update = $this->mongo_db->update('playbasis_promo_content_to_client');
+        $update = $this->mongo_db->update('playbasis_content_to_client');
 
         return $update;
     }
 
-    public function deletePromoContent($promo_content_id)
+    public function deleteContent($promo_content_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($promo_content_id));
         $this->mongo_db->set('deleted', true);
-        return $this->mongo_db->update('playbasis_promo_content_to_client');
+        return $this->mongo_db->update('playbasis_content_to_client');
     }
 }

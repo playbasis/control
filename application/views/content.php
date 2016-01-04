@@ -4,7 +4,7 @@
             <h1><img src="image/category.png" alt=""/> <?php echo $heading_title; ?></h1>
 
             <div class="buttons">
-                <button class="btn btn-info" onclick="location =  baseUrlPath+'promo_content/insert'"
+                <button class="btn btn-info" onclick="location =  baseUrlPath+'content/insert'"
                         type="button"><?php echo $this->lang->line('button_insert'); ?></button>
                 <button class="btn btn-info" onclick="$('#form').submit();"
                         type="button"><?php echo $this->lang->line('button_delete'); ?></button>
@@ -17,9 +17,9 @@
                     <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
                 </div>
             <?php } ?>
-            <div id="promo_contents">
+            <div id="contents">
                 <?php $attributes = array('id' => 'form'); ?>
-                <?php echo form_open('promo_content/delete', $attributes); ?>
+                <?php echo form_open('content/delete', $attributes); ?>
                 <table class="list">
                     <thead>
                     <tr>
@@ -47,29 +47,29 @@
                         </td>
                     </tr>
 
-                    <?php if (isset($promo_contents) && $promo_contents) { ?>
-                        <?php foreach ($promo_contents as $promo_content) { ?>
+                    <?php if (isset($contents) && $contents) { ?>
+                        <?php foreach ($contents as $content) { ?>
                             <tr>
-                                <td style="text-align: center;"><?php if (isset($promo_content['selected'])) { ?>
+                                <td style="text-align: center;"><?php if (isset($content['selected'])) { ?>
                                         <input type="checkbox" name="selected[]"
-                                               value="<?php echo $promo_content['_id']; ?>" checked="checked"/>
+                                               value="<?php echo $content['_id']; ?>" checked="checked"/>
                                     <?php } else { ?>
                                         <input type="checkbox" name="selected[]"
-                                               value="<?php echo $promo_content['_id']; ?>"/>
+                                               value="<?php echo $content['_id']; ?>"/>
                                     <?php } ?></td>
-                                <td class="right"><?php echo $promo_content['name']; ?> <?php if (!empty($promo_content['error'])) { ?>
+                                <td class="right"><?php echo $content['name']; ?> <?php if (!empty($content['error'])) { ?>
                                         <span class="red"><a herf="javascript:void(0)" class="error-icon"
-                                                             title="<?php echo $promo_content['error']; ?>"
+                                                             title="<?php echo $content['error']; ?>"
                                                              data-toggle="tooltip"><i class="icon-warning-sign"></i></a>
                                         </span><?php } ?></td>
-                                <td class="right"><?php echo datetimeMongotoReadable($promo_content['date_start']); ?>
-                                    &nbsp;-&nbsp;<?php echo datetimeMongotoReadable($promo_content['date_end']); ?></td>
-                                <td class="right"><?php echo ($promo_content['status']) ? "Enabled" : "Disabled"; ?></td>
+                                <td class="right"><?php echo datetimeMongotoReadable($content['date_start']); ?>
+                                    &nbsp;-&nbsp;<?php echo datetimeMongotoReadable($content['date_end']); ?></td>
+                                <td class="right"><?php echo ($content['status']) ? "Enabled" : "Disabled"; ?></td>
                                 <td class="right">
                                     [ <?php if ($client_id) {
-                                        echo anchor('promo_content/update/' . $promo_content['_id'], 'Edit');
+                                        echo anchor('content/update/' . $content['_id'], 'Edit');
                                     } else {
-                                        echo anchor('promo_content/update/' . $promo_content['_id'], 'Edit');
+                                        echo anchor('content/update/' . $content['_id'], 'Edit');
                                     }
                                     ?> ]
                                 </td>
@@ -79,7 +79,7 @@
                         ?>
                         <tr>
                             <td colspan="5">
-                                No Promotion Content
+                                <?php echo $this->lang->line('text_empty_content'); ?>
                             </td>
                         </tr>
                     <?php } ?>
@@ -102,7 +102,7 @@
 </div>
 <script type="text/javascript"><!--
     function filter() {
-        url = baseUrlPath + 'promo_content';
+        url = baseUrlPath + 'content';
 
         var filter_name = $('input[name=\'filter_name\']').attr('value');
 
@@ -123,6 +123,6 @@
     <?php }?>
 
     function clear_filter() {
-        window.location.replace(baseUrlPath + 'promo_content');
+        window.location.replace(baseUrlPath + 'content');
     }
 </script>

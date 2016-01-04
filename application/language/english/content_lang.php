@@ -1,6 +1,6 @@
 <?php
 // Heading
-$lang['heading_title'] = 'Promotional Content';
+$lang['heading_title'] = 'Content';
 
 // Column
 $lang['column_name'] = "Name";
@@ -11,13 +11,14 @@ $lang['column_action'] = "Action";
 // Button
 $lang['button_filter'] = 'Filter';
 $lang['button_clear_filter'] = 'Clear filter';
+$lang['button_back_to_list'] = 'Back to list';
 
 // Tab
 $lang['tab_general'] = 'General';
 
 // Entry
-$lang['entry_name'] = 'Promotion name';
-$lang['entry_description'] = 'Description';
+$lang['entry_name'] = 'Content name';
+$lang['entry_detail'] = 'Detail';
 $lang['entry_date_range'] = 'Date Range';
 $lang['entry_date_start'] = 'Date Start';
 $lang['entry_date_end'] = 'Date End';
@@ -34,8 +35,9 @@ $lang['text_default'] = 'Default';
 $lang['text_image_manager'] = 'Image Manager';
 $lang['text_browse'] = 'Browse Files';
 $lang['text_clear'] = 'Clear Image';
+$lang['text_empty_content'] = 'No content found';
 
 // Error message
-$lang['error_permission'] = 'Warning: You do not have permission to modify Promotional Content!';
+$lang['error_permission'] = 'Warning: You do not have permission to modify Content!';
 $lang['error_access'] = 'Warning: You do not have permission to access this page!';
-$lang['error_promo_contents_limit'] = 'You have reached Promotional Content limit.';
+$lang['error_contents_limit'] = 'You have reached Content limit.';
