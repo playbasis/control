@@ -1514,7 +1514,7 @@ class Player_model extends MY_Model
 			if($action){
 				$event['action_name'] = $action['action_name'];
 				$event['action_parameters'] = $action['parameters'];
-				$event['action_time'] = $action['date_added'];
+				$event['action_time'] = datetimeMongotoReadable($action['date_added']);
 				$event['string_filter'] = (isset($action['parameters']['url']) ? $action['parameters']['url'] : '')."";
 			}
             if(isset($event['quest_id']) && $event['quest_id']){
