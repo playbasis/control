@@ -104,6 +104,7 @@ class data extends MY_Controller
 
                     $data = array();
                     $params = explode(',',$line);
+                    $date = "now";
                     foreach ($params as $param){
                         $keyAndValue =   explode(':',$param);
                         $key = $keyAndValue[0];
@@ -114,11 +115,14 @@ class data extends MY_Controller
                         elseif (strtolower($key) == "action"){
                             $action = $value;
                         }
+                        elseif (strtolower($key) == "date"){
+                            $date = $value;
+                        }
                         else{
                             $data = array_merge($data, array($key => $value) );
                         }
                     }
-                    $result = $this->postEngineRule($player_id,$action, $data);
+                    $result = $this->postEngineRule($player_id,$action, $data,$date);
                     if ($result !== "Success"){
                         $this->data['message'] = $result;
                         break;
@@ -184,8 +188,11 @@ class data extends MY_Controller
         $result = $this->_api->auth($pkg_name);
         return $result->response->token;
     }
-    private function postEngineRule($player_id, $action, $param) {
+    private function postEngineRule($player_id, $action, $param, $date = "now") {
         $this->getToken();
+        if ($date != "now"){
+            $this->_api->setHeader('Date',$date);
+        }
         $result = $this->_api->engine($player_id,$action, $param);
         return $result->message;
     }
