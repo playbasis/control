@@ -178,6 +178,9 @@ class PlaybasisApi{
         $result = $this->_restClient->post($uri, $sendParam);
         return $result;
     }
+    public function setHeader($header, $content = NULL){
+        $this->_restClient->http_header($header,$content);
+    }
 }
 
 function handleError($errno, $errstr, $errfile, $errline, array $errcontext){
