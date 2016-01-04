@@ -1877,11 +1877,23 @@ class Player extends REST2_Controller
                 'node_id'
             )), 200);
 
-        $temp = $this->store_org_model->getRoleOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id,new MongoId($node_id));
-        $result=array('roles'=>$temp['roles']);
+        $node= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],new MongoId($node_id));
+        if ($node == null) {
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
+        }
 
+        $role_info = $this->store_org_model->getRoleOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id,new MongoId($node_id));
+        if($role_info==null){
+            $this->response($this->error->setError('STORE_ORG_PLAYER_NOT_EXISTS_WITH_NODE'), 200);
+        }else{
 
-        $this->response($this->resp->setRespond($result), 200);
+            $org_info= $this->store_org_model->retrieveOrganizeById($this->validToken['client_id'],$this->validToken['site_id'],$node['organize']);
+            $result=array(
+                'organize_type'=>$org_info['name'],
+                'roles'=>$role_info['roles']
+            );
+            $this->response($this->resp->setRespond($result), 200);
+        }
     }
 
     private function recurGetChildUnder($client_id, $site_id, $parent_node, &$result, &$layer = 0, $num = 0)
