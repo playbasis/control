@@ -237,6 +237,7 @@ class Tracker_model extends MY_Model
             'node_id'       => (isset($input['node_id'])) ? $input['node_id'] : null,
             'url'			=> (isset($input['url'])) ? $input['url'] : null,
             'parameters'    => (isset($input['parameters'])) ? $input['parameters'] : null,
+            'action_log_id' => (isset($input['action_log_id']))    ? $input['action_log_id']: null,
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));
