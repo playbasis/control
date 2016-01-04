@@ -75,7 +75,7 @@
                         <td class="left"><?php echo $player['first_name']."  ".$player['last_name']; ?></td>
                         <td class="left"><?php echo $player['email']; ?></td>
                         <?php if($org_status){?>
-                        <td class="left"><?php echo (isset($player['organization']) && !is_null($player['organization']))?$player['organization']:'??'; ?></td>
+                        <td class="left"><?php echo (isset($player['organization']) && !is_null($player['organization']))?$player['organization']:''; ?></td>
                         <?php }?>
                         <td class="right app-col-action">
                             <a href="<?php echo site_url("workflow/edit_account/".$player['_id']) ?>" title="Edit" class="tooltips" data-placement="top"><i class="fa fa-edit fa-lg"></i></a>

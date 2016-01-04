@@ -93,9 +93,11 @@
                         <td><?php echo $this->lang->line('form_organization'); ?>:</td>
 
                         <td>
-                            <input type='hidden' name="organize_type" id="organize_type" style="width:220px;" value="<?php echo isset($organize_type) ? $organize_type : set_value('organize_type'); ?>">
-                            <input type='hidden' name="organize_id" id="organize_id" style="width:220px;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
-                            <input type="text" name="organize_role" id="organize_role" value="<?php echo isset($organize_role) ? $organize_role :  set_value('organize_role'); ?>" />
+                            <?php for($i = 0;$i<count($organize_id);$i++){?>
+                            <input type='hidden' name="organize_type[]" id="<?php echo "organize_type".$i ?>" style="width:220px;" value="<?php echo isset($organize_type[$i]) ? $organize_type[$i] : set_value('organize_type'); ?>">
+                            <input type='hidden' name="organize_id[]"   id="<?php echo "organize_id".$i ?>"   style="width:220px;" value="<?php echo isset($organize_id[$i]) ? $organize_id[$i] : set_value('organize_id'); ?>">
+                            <input type="text"   name="organize_role[]" id="<?php echo "organize_role".$i ?>" value="<?php echo isset($organize_role[$i]) ? $organize_role[$i] :  set_value('organize_role'); ?>" />
+                            <?php }?>
                         </td>
                     </tr>
                     <?php }?>
@@ -114,9 +116,8 @@
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-    var $organizeType = $("#organize_type");
-    var $organize_id = $("#organize_id");
-    var nodeParentSearch = "";
+
+    var $nodeOrganizeSearch = new Array();
     var $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
 
     function organizeFormatResult(organize) {
@@ -141,8 +142,10 @@
     }
 
     $(document).ready(function() {
+        <?php for($i = 0;$i<count($organize_id);$i++){?>
+        //$organize_Type.select2({
 
-        $organizeType.select2({
+        $("#<?php echo "organize_type".$i ?>").select2({
             placeholder: "Select Organization type",
             allowClear: false,
             minimumInputLength: 0,
@@ -168,15 +171,14 @@
                     $.ajax(baseUrlPath + "store_org/organize/" + id, {
                         dataType: "json",
                         beforeSend: function (xhr) {
-                            $organizeType
-                                .select2('enable', false);
+                            $("<?php echo "organize_type".$i ?>").select2('enable', false);
                         }
                     }).done(function (data) {
                         if (typeof data != "undefined")
                             callback(data);
+                        $nodeOrganizeSearch[<?php echo $i ?>] = id;
                     }).always(function () {
-                        $organizeType
-                            .select2('enable', true);
+                        $("<?php echo "organize_type".$i ?>").select2('enable', true);
                     });
                 }
             },
@@ -185,7 +187,8 @@
 
         });
 
-        $organize_id.select2({
+        //$organize_id.select2({
+        $("#<?php echo "organize_id".$i ?>").select2({
             placeholder: "Select Node",
             //allowClear: true,
             minimumInputLength: 0,
@@ -199,7 +202,7 @@
                 data: function (term, page) {
                     return {
                         search: term, // search term
-                        organize: nodeParentSearch
+                        organize: $nodeOrganizeSearch[<?php echo $i ?>]
                     };
                 },
                 results: function (data, page) {
@@ -213,7 +216,7 @@
                     $.ajax(baseUrlPath + "store_org/node/" + id, {
                         dataType: "json",
                         beforeSend: function (xhr) {
-                            $organize_id
+                            $("<?php echo "organize_id".$i ?>")
                                 .select2('enable', false)
                                 .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
                         }
@@ -221,7 +224,7 @@
                         if (typeof data != "undefined")
                             callback(data);
                     }).always(function () {
-                        $organize_id
+                        $("<?php echo "organize_id".$i ?>")
                             .select2('enable', true)
                             .parent().parent().parent().find("#pleaseWaitSpan").remove();
                     });
@@ -230,44 +233,43 @@
             formatResult: nodeFormatResult,
             formatSelection: nodeFormatSelection,
         });
+
+        if($nodeOrganizeSearch[<?php echo $i ?>]==""){
+            $("<?php echo "organize_id".$i ?>")
+                .select2('enable', false);
+        }
+        <?php }?>
     });
 
-
- /*$("#organize_id").change(function(e){
-
-        //var $nodeParent = $("#node");
-        if (e.val === "") {
-            $node
-                .select2("val", "")
-                .select2("enable", false);
-
-        }
-        else {
-
-            $.ajax(baseUrlPath + "store_org/organize/" + e.val, {
-                    dataType: "json",
-                    beforeSend: function (xhr) {
-                        $node
-                            .select2("enable", false)
-                            .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
-                    }
-                })
-                .done(function (data) {
-                    if (data.hasOwnProperty('parent')) {
-
-                        nodeParentSearch = data.parent._id;
-                        //alert(nodeParentSearch);
-                        $node.select2("enable", true);
-                    }
-                    else {
-                        $node.select2("enable", false);
-                    }
-                })
-                .always(function () {
-                    $node.parent().parent().parent().find("#pleaseWaitSpan").remove();
-                });
-        }
-    });*/
+    <?php for($i = 0;$i<count($organize_id);$i++){?>
+    $("#<?php echo "organize_type".$i ?>")
+        .on("change", function (e) {
+            var $nodeParent = $("#<?php echo "organize_id".$i ?>");
+            if (e.val === "") {
+                $nodeParent
+                    .select2("val", "")
+                    .select2("enable", false);
+            }
+            else {
+                $.ajax(baseUrlPath + "store_org/organize/" + e.val, {
+                        dataType: "json",
+                        beforeSend: function (xhr) {
+                            $nodeParent
+                                .select2("enable", false)
+                                .select2("val", "")
+                                .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                        }
+                    })
+                    .done(function (data) {
+                        $nodeOrganizeSearch[<?php echo $i ?>] = data._id;
+                        $nodeParent.select2("enable", true);
+                    })
+                    .always(function () {
+                        $nodeParent.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                    });
+            }
+        });
+    <?php }?>
 
 </script>
 
