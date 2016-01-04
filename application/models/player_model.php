@@ -1513,7 +1513,9 @@ class Player_model extends MY_Model
             $event['date_added'] = datetimeMongotoReadable($event['date_added']);
 			if($action){
 				$event['action_name'] = $action['action_name'];
-				$event['string_filter'] = $action['url']."";
+				$event['action_parameters'] = $action['parameters'];
+				$event['action_time'] = $action['date_added'];
+				$event['string_filter'] = (isset($action['parameters']['url']) ? $action['parameters']['url'] : '')."";
 			}
             if(isset($event['quest_id']) && $event['quest_id']){
                 if(isset($event['mission_id']) && $event['mission_id']){
@@ -1653,10 +1655,10 @@ class Player_model extends MY_Model
     }
 
     private function getActionLogDetail($action_log_id){
-    	$this->mongo_db->select(array('action_name', 'url'));
+    	$this->mongo_db->select(array('action_name', 'parameters', 'date_added'));
     	$this->mongo_db->select(array(), array('_id'));
-    	$this->mongo_db->where('_id', new MongoID($action_log_id));
-    	$returnThis = $this->mongo_db->get('playbasis_action_log');
+    	$this->mongo_db->where('action_log_id', new MongoID($action_log_id));
+    	$returnThis = $this->mongo_db->get('playbasis_validated_action_log');
     	return ($returnThis)?$returnThis[0]:array();
     }
 
