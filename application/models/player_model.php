@@ -1508,12 +1508,12 @@ class Player_model extends MY_Model
     	$event_log = $this->mongo_db->get('playbasis_event_log');
 
 		foreach($event_log as &$event){
-			$actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
+			$action = $this->getActionLogDetail($event['action_log_id']);
 
             $event['date_added'] = datetimeMongotoReadable($event['date_added']);
-			if($actionAndStringFilter){
-				$event['action_name'] = $actionAndStringFilter['action_name'];
-				$event['string_filter'] = $actionAndStringFilter['url']."";
+			if($action){
+				$event['action_name'] = $action['action_name'];
+				$event['string_filter'] = $action['url']."";
 			}
             if(isset($event['quest_id']) && $event['quest_id']){
                 if(isset($event['mission_id']) && $event['mission_id']){
@@ -1652,7 +1652,7 @@ class Player_model extends MY_Model
         return $goods;
     }
 
-    private function getActionNameAndStringFilter($action_log_id){
+    private function getActionLogDetail($action_log_id){
     	$this->mongo_db->select(array('action_name', 'url'));
     	$this->mongo_db->select(array(), array('_id'));
     	$this->mongo_db->where('_id', new MongoID($action_log_id));
