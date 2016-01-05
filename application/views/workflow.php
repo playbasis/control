@@ -54,6 +54,7 @@
                     <td class="left" style="width:80px;"><?php echo $this->lang->line('column_player_id'); ?></td>
                     <td class="left" style="width:200px;"><?php echo $this->lang->line('column_name'); ?></td>
                     <td class="left" style="width:200px;"><?php echo $this->lang->line('column_email'); ?></td>
+                    <td class="left" style="width:100px;"><?php echo $this->lang->line('column_phone'); ?></td>
                     <?php if($org_status){?>
                     <td class="left" ><?php echo $this->lang->line('column_organization'); ?></td>
                     <?php }?>
@@ -74,6 +75,7 @@
                         <td class="left"><?php echo $player['cl_player_id']; ?></td>
                         <td class="left"><?php echo $player['first_name']."  ".$player['last_name']; ?></td>
                         <td class="left"><?php echo $player['email']; ?></td>
+                        <td class="left"><?php echo $player['phone_number']; ?></td>
                         <?php if($org_status){?>
                         <td class="left"><?php echo (isset($player['organization']) && !is_null($player['organization']))?$player['organization']:''; ?></td>
                         <?php }?>

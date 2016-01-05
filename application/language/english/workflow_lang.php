@@ -52,6 +52,7 @@ $lang['column_image']					= 'Image';
 $lang['column_player_id']				= 'Player ID';
 $lang['column_name']            		= 'Name';
 $lang['column_email']            		= 'Email';
+$lang['column_phone']            		= 'Phone number';
 $lang['column_organization']      		= 'Organization';
 $lang['column_action']          		= 'Action';
 

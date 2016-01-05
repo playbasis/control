@@ -24,12 +24,12 @@
                     <?php if(isset($action) && $action=="edit"){ ?>
                         <tr>
                             <input type="hidden" id="cl_player_id" name="cl_player_id" value="<?php echo isset($requester['cl_player_id']) ? $requester['cl_player_id'] :  set_value('cl_player_id'); ?>" />
-                            <td><?php echo $this->lang->line('form_id'); ?>:</td>
+                            <td><span class="required">*</span><?php echo $this->lang->line('form_id'); ?>:</td>
                             <td><input  type="text" name="temp"  disabled="disabled" value="<?php echo isset($requester['cl_player_id']) ? $requester['cl_player_id'] :  set_value('cl_player_id'); ?>" /></td>
                         </tr>
                     <?php }else{?>
                         <tr>
-                            <td><?php echo $this->lang->line('form_id'); ?>:</td>
+                            <td><span class="required">*</span><?php echo $this->lang->line('form_id'); ?>:</td>
                             <td><input  type="text" name="cl_player_id"  value="<?php echo isset($requester['cl_player_id']) ? $requester['cl_player_id'] :  set_value('cl_player_id'); ?>" /></td>
                         </tr>
                     <?php }?>
@@ -48,11 +48,11 @@
                     </tr>
                     <?php }?>
                     <tr>
-                        <td><?php echo $this->lang->line('form_firstname'); ?>:</td>
+                        <td><span class="required">*</span><?php echo $this->lang->line('form_firstname'); ?>:</td>
                         <td><input type="text" name="first_name"  value="<?php echo isset($requester['first_name']) ? $requester['first_name'] :  set_value('first_name'); ?>" /></td>
                     </tr>
                     <tr>
-                        <td><?php echo $this->lang->line('form_lastname'); ?>:</td>
+                        <td><span class="required">*</span><?php echo $this->lang->line('form_lastname'); ?>:</td>
                         <td><input type="text" name="last_name"  value="<?php echo isset($requester['last_name']) ? $requester['last_name'] :  set_value('last_name'); ?>" /></td>
                     </tr>
                     <tr>
@@ -74,7 +74,7 @@
                         <td><input  type="text" name="phone_number"  value="<?php echo isset($requester['phone_number']) ? $requester['phone_number'] :  set_value('phone_number'); ?>" /></td>
                     </tr>
                     <tr>
-                        <td><?php echo $this->lang->line('form_email'); ?>:</td>
+                        <td><span class="required">*</span><?php echo $this->lang->line('form_email'); ?>:</td>
                         <td><input  type="email" name="email" size="100" value="<?php echo isset($requester['email']) ? $requester['email'] :  set_value('email'); ?>" class="tooltips" data-placement="right" title="Email address is used to log into the system"/></td>
                     </tr>
                     <tr>
@@ -94,12 +94,14 @@
 
                         <td>
                             <?php for($i = 0;$i<count($organize_node);$i++){?>
-                            <?php if(isset($organize_id)){?>
-                            <input type='hidden' name="organize_id[]"   id="<?php echo "organize_id".$i ?>"   style="width:220px;" value="<?php echo isset($organize_id[$i]) ? $organize_id[$i] : set_value('organize_id'); ?>">
+                                <?php if(isset($organize_id)){?>
+                                <input type='hidden' name="organize_id[]"   id="<?php echo "organize_id".$i ?>"   style="width:220px;" value="<?php echo isset($organize_id[$i]) ? $organize_id[$i] : set_value('organize_id'); ?>">
                                 <?php }?>
-                            <input type='hidden' name="organize_type[]" id="<?php echo "organize_type".$i ?>" style="width:220px;" value="<?php echo isset($organize_type[$i]) ? $organize_type[$i] : set_value('organize_type'); ?>">
-                            <input type='hidden' name="organize_node[]"   id="<?php echo "organize_node".$i ?>"   style="width:220px;" value="<?php echo isset($organize_node[$i]) ? $organize_node[$i] : set_value('organize_node'); ?>">
-                            <input type="text"   name="organize_role[]" id="<?php echo "organize_role".$i ?>" value="<?php echo isset($organize_role[$i]) ? $organize_role[$i] :  set_value('organize_role'); ?>" />
+
+                                <input type='hidden' name="organize_type[]" id="<?php echo "organize_type".$i ?>" style="width:220px;" value="<?php echo isset($organize_type[$i]) ? $organize_type[$i] : set_value('organize_type'); ?>">
+                                <input type='hidden' name="organize_node[]" id="<?php echo "organize_node".$i ?>" style="width:220px;" value="<?php echo isset($organize_node[$i]) ? $organize_node[$i] : set_value('organize_node'); ?>">
+                                <input type="text"   name="organize_role[]" id="<?php echo "organize_role".$i ?>" style="margin-top:10px;" placeholder="Role" value="<?php echo isset($organize_role[$i]) ? $organize_role[$i] :  set_value('organize_role'); ?>" />
+                                <br>
                             <?php }?>
                         </td>
                     </tr>
@@ -121,7 +123,7 @@
 <script type="text/javascript">
 
     var $nodeOrganizeSearch = new Array();
-    var $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
+    //var $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
 
     function organizeFormatResult(organize) {
         return '<div class="row-fluid">' +
@@ -172,14 +174,16 @@
                     $.ajax(baseUrlPath + "store_org/organize/" + id, {
                         dataType: "json",
                         beforeSend: function (xhr) {
-                            $("<?php echo "organize_type".$i ?>").select2('enable', false);
+                            $("#<?php echo "organize_type".$i ?>")
+                                .select2('enable', false)
                         }
                     }).done(function (data) {
                         if (typeof data != "undefined")
                             callback(data);
                         $nodeOrganizeSearch[<?php echo $i ?>] = id;
                     }).always(function () {
-                        $("<?php echo "organize_type".$i ?>").select2('enable', true);
+                        $("#<?php echo "organize_type".$i ?>")
+                            .select2('enable', true)
                     });
                 }else{
                     $("#<?php echo "organize_node".$i ?>")
@@ -219,17 +223,15 @@
                     $.ajax(baseUrlPath + "store_org/node/" + id, {
                         dataType: "json",
                         beforeSend: function (xhr) {
-                            $("<?php echo "organize_node".$i ?>")
+                            $("#<?php echo "organize_node".$i ?>")
                                 .select2('enable', false)
-                                .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
                         }
                     }).done(function (data) {
                         if (typeof data != "undefined")
                             callback(data);
                     }).always(function () {
-                        $("<?php echo "organize_node".$i ?>")
+                        $("#<?php echo "organize_node".$i ?>")
                             .select2('enable', true)
-                            .parent().parent().parent().find("#pleaseWaitSpan").remove();
                     });
                 }else{
                     $("#<?php echo "organize_node".$i ?>")
@@ -265,7 +267,6 @@
                             $nodeParent
                                 .select2("enable", false)
                                 .select2("val", "")
-                                .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
                         }
                     })
                     .done(function (data) {
@@ -273,7 +274,7 @@
                         $nodeParent.select2("enable", true);
                     })
                     .always(function () {
-                        $nodeParent.parent().parent().parent().find("#pleaseWaitSpan").remove();
+
                     });
             }
         });
