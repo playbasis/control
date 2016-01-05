@@ -85,6 +85,7 @@ class Content extends MY_Controller
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
             'trim|required|xss_clean');
         $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('category', $this->lang->line('entry_category'), 'trim|required|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -102,6 +103,7 @@ class Content extends MY_Controller
                 $data['date_start'] = $content_data['date_start'];
                 $data['date_end'] = $content_data['date_end'];
                 $data['image'] = $content_data['image'];
+                $data['category'] = $content_data['category'];
                 $data['status'] = $content_data['status'] == 'on' ? true : false;
 
                 $insert = $this->Content_model->createContent($data);
@@ -129,6 +131,7 @@ class Content extends MY_Controller
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
             'trim|required|xss_clean');
         $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('category', $this->lang->line('entry_category'), 'trim|required|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -147,6 +150,7 @@ class Content extends MY_Controller
                 $data['date_start'] = $content_data['date_start'];
                 $data['date_end'] = $content_data['date_end'];
                 $data['image'] = $content_data['image'];
+                $data['category'] = $content_data['category'];
                 $data['status'] = isset($content_data['status']) ? true : false;
 
                 $update = $this->Content_model->updateContent($data);
@@ -277,6 +281,14 @@ class Content extends MY_Controller
             $this->data['image'] = 'no_image.jpg';
         }
 
+        if ($this->input->post('category')) {
+            $this->data['category'] = $this->input->post('category');
+        } elseif (isset($content_info['name'])) {
+            $this->data['category'] = $content_info['category'];
+        } else {
+            $this->data['category'] = '';
+        }
+
         if ($this->input->post('date_start')) {
             $this->data['date_start'] = $this->input->post('date_start');
         } elseif (isset($content_info['date_start'])) {
@@ -339,6 +351,122 @@ class Content extends MY_Controller
         }
 
         $this->getList(0);
+    }
+
+    public function category($categoryId = null)
+    {
+        if ($this->session->userdata('user_id') /*&& $this->input->is_ajax_request()*/) {
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                if (!$this->validateAccess()) {
+                    $this->output->set_status_header('401');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access')));
+                    die();
+                }
+
+                if (isset($categoryId)) {
+                    try {
+                        $result = $this->Content_model->retrieveContentCategoryById($categoryId);
+                        if (isset($result['_id'])) {
+                            $result['_id'] = $result['_id'] . "";
+                        }
+
+                        $this->output->set_status_header('200');
+                        $response = $result;
+
+                    } catch (Exception $e) {
+                        $this->output->set_status_header('404');
+                        $response = array('status' => 'error', 'message' => $this->lang->line('text_empty_content'));
+                    }
+                } else {
+                    $query_data = $this->input->get(null, true);
+
+                    $result = $this->Content_model->retrieveContentCategory($client_id, $site_id, $query_data);
+                    foreach($result as &$document){
+                        if(isset($document['_id'])){
+                            $document['_id'] = $document['_id']."";
+                        }
+                    }
+
+                    $count_category = $this->Content_model->countContentCategory($client_id, $site_id);
+
+                    $this->output->set_status_header('200');
+                    $response = array(
+                        'total' => $count_category,
+                        'rows' => $result
+                    );
+                }
+
+                echo json_encode($response);
+                die();
+
+            } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+
+                //todo: Add validation here
+                $category_data = $this->input->post();
+
+                $name = !empty($category_data['category-name']) ? $category_data['category-name'] : null;
+
+                $result = null;
+                if (!empty($category_data) && !isset($categoryId)) {
+                    if (isset($category_data['action']) && $category_data['action'] == 'delete' && isset($category_data['id']) && !empty($category_data['id'])) {
+                        foreach ($category_data['id'] as &$id_entry) {
+                            try {
+                                $id_entry = new MongoId($id_entry);
+                            } catch (Exception $e) {
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'error'));
+                                die;
+                            }
+                        }
+                        $result = $this->Content_model->deleteContentCategoryByIdArray($category_data['id']);
+                    } else {
+                        $result = $this->Content_model->createContentCategory($client_id, $site_id, $name);
+                    }
+                } else {
+                    try {
+                        $categoryId = new MongoId($categoryId);
+                        if (isset($category_data['action']) && $category_data['action'] == 'delete') {
+                            $result = $this->Content_model->deleteContentCategory($categoryId);
+                        } else {
+                            $result = $this->Content_model->updateContentCategory($categoryId, array(
+                                'client_id' => $client_id,
+                                'site_id' => $site_id,
+                                'name' => $name
+                            ));
+                        }
+                    } catch (Exception $e) {
+                        $this->output->set_status_header('400');
+                        echo json_encode(array('status' => 'error'));
+                        die;
+                    }
+                }
+
+                if (!$result) {
+                    $this->output->set_status_header('400');
+                    echo json_encode(array('status' => 'error'));
+                } elseif (!isset($categoryId) && !isset($category_data['action'])) {
+                    $this->output->set_status_header('201');
+                    // todo: should return newly create object
+                    $category_result = $this->Content_model->retrieveContentCategoryById($result);
+                    if (isset($category_result['_id'])) {
+                        $category_result['_id'] = $category_result['_id'] . "";
+                    }
+                    echo json_encode(array('status' => 'success', 'rows' => $category_result));
+                } else {
+                    $this->output->set_status_header('200');
+                    // todo: should return update object
+                    echo json_encode(array('status' => 'success'));
+                }
+            }
+        }
     }
 
     private function validateModify()

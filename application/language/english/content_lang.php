@@ -15,6 +15,7 @@ $lang['button_back_to_list'] = 'Back to list';
 
 // Tab
 $lang['tab_general'] = 'General';
+$lang['tab_category'] = 'Category';
 
 // Entry
 $lang['entry_name'] = 'Content name';
@@ -22,10 +23,13 @@ $lang['entry_detail'] = 'Detail';
 $lang['entry_date_range'] = 'Date Range';
 $lang['entry_date_start'] = 'Date Start';
 $lang['entry_date_end'] = 'Date End';
+$lang['entry_category'] = 'Category';
 $lang['entry_image'] = 'Image';
 $lang['entry_status'] = 'Status';
 $lang['entry_status_enable'] = 'Enable';
 $lang['entry_status_disable'] = 'Disable';
+$lang['entry_category_name'] = 'Category name';
+$lang['entry_add_category'] = 'Add new category?';
 
 // Text
 $lang['text_success'] = 'You have successfully created!';
