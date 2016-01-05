@@ -93,9 +93,12 @@
                         <td><?php echo $this->lang->line('form_organization'); ?>:</td>
 
                         <td>
-                            <?php for($i = 0;$i<count($organize_id);$i++){?>
-                            <input type='hidden' name="organize_type[]" id="<?php echo "organize_type".$i ?>" style="width:220px;" value="<?php echo isset($organize_type[$i]) ? $organize_type[$i] : set_value('organize_type'); ?>">
+                            <?php for($i = 0;$i<count($organize_node);$i++){?>
+                            <?php if(isset($organize_id)){?>
                             <input type='hidden' name="organize_id[]"   id="<?php echo "organize_id".$i ?>"   style="width:220px;" value="<?php echo isset($organize_id[$i]) ? $organize_id[$i] : set_value('organize_id'); ?>">
+                                <?php }?>
+                            <input type='hidden' name="organize_type[]" id="<?php echo "organize_type".$i ?>" style="width:220px;" value="<?php echo isset($organize_type[$i]) ? $organize_type[$i] : set_value('organize_type'); ?>">
+                            <input type='hidden' name="organize_node[]"   id="<?php echo "organize_node".$i ?>"   style="width:220px;" value="<?php echo isset($organize_node[$i]) ? $organize_node[$i] : set_value('organize_node'); ?>">
                             <input type="text"   name="organize_role[]" id="<?php echo "organize_role".$i ?>" value="<?php echo isset($organize_role[$i]) ? $organize_role[$i] :  set_value('organize_role'); ?>" />
                             <?php }?>
                         </td>
@@ -122,9 +125,8 @@
 
     function organizeFormatResult(organize) {
         return '<div class="row-fluid">' +
-            '<div>' + organize.name /*+
-         '<small class="text-muted">&nbsp;(' + organize.description +
-         ')</small></div></div>'*/;
+            '<div>' + organize.name;
+
     }
     function organizeFormatSelection(organize) {
         return organize.name;
@@ -132,9 +134,7 @@
 
     function nodeFormatResult(node) {
         return '<div class="row-fluid">' +
-            '<div>' + node.name /*+
-            '<small class="text-muted">&nbsp;(' + node.description +
-            ')</small></div></div>'*/;
+            '<div>' + node.name;
     }
 
     function nodeFormatSelection(node) {
@@ -142,8 +142,9 @@
     }
 
     $(document).ready(function() {
-        <?php for($i = 0;$i<count($organize_id);$i++){?>
-        //$organize_Type.select2({
+        <?php for($i = 0;$i<count($organize_node);$i++){?>
+
+        $nodeOrganizeSearch[<?php echo $i ?>] = "";
 
         $("#<?php echo "organize_type".$i ?>").select2({
             placeholder: "Select Organization type",
@@ -180,6 +181,9 @@
                     }).always(function () {
                         $("<?php echo "organize_type".$i ?>").select2('enable', true);
                     });
+                }else{
+                    $("#<?php echo "organize_node".$i ?>")
+                        .select2('enable', false);
                 }
             },
             formatResult: organizeFormatResult,
@@ -187,8 +191,7 @@
 
         });
 
-        //$organize_id.select2({
-        $("#<?php echo "organize_id".$i ?>").select2({
+        $("#<?php echo "organize_node".$i ?>").select2({
             placeholder: "Select Node",
             //allowClear: true,
             minimumInputLength: 0,
@@ -216,7 +219,7 @@
                     $.ajax(baseUrlPath + "store_org/node/" + id, {
                         dataType: "json",
                         beforeSend: function (xhr) {
-                            $("<?php echo "organize_id".$i ?>")
+                            $("<?php echo "organize_node".$i ?>")
                                 .select2('enable', false)
                                 .parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
                         }
@@ -224,27 +227,32 @@
                         if (typeof data != "undefined")
                             callback(data);
                     }).always(function () {
-                        $("<?php echo "organize_id".$i ?>")
+                        $("<?php echo "organize_node".$i ?>")
                             .select2('enable', true)
                             .parent().parent().parent().find("#pleaseWaitSpan").remove();
                     });
+                }else{
+                    $("#<?php echo "organize_node".$i ?>")
+                        .select2('enable', false);
                 }
             },
             formatResult: nodeFormatResult,
             formatSelection: nodeFormatSelection,
         });
 
-        if($nodeOrganizeSearch[<?php echo $i ?>]==""){
-            $("<?php echo "organize_id".$i ?>")
+
+        if(document.getElementById("<?php echo "organize_type".$i ?>").value==""){
+            $("#<?php echo "organize_node".$i ?>")
                 .select2('enable', false);
         }
         <?php }?>
     });
 
-    <?php for($i = 0;$i<count($organize_id);$i++){?>
+    <?php for($i = 0;$i<count($organize_node);$i++){?>
     $("#<?php echo "organize_type".$i ?>")
         .on("change", function (e) {
-            var $nodeParent = $("#<?php echo "organize_id".$i ?>");
+            var $nodeParent = $("#<?php echo "organize_node".$i ?>");
+
             if (e.val === "") {
                 $nodeParent
                     .select2("val", "")
@@ -269,6 +277,7 @@
                     });
             }
         });
+
     <?php }?>
 
 </script>
