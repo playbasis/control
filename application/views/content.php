@@ -28,10 +28,10 @@
                                    onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                         </td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_category'); ?></td>
+                        <td class="right" style="width:80px;"><?php echo $this->lang->line('column_category'); ?></td>
                         <td class="right"
                             style="width:100px;"><?php echo $this->lang->line('column_date_range'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
+                        <td class="right" style="width:60px;"><?php echo $this->lang->line('column_status'); ?></td>
                         <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
@@ -68,12 +68,10 @@
                                 <td class="right"><?php echo dateMongotoReadable($content['date_start']); ?>&nbsp;-&nbsp;<?php echo dateMongotoReadable($content['date_end']); ?></td>
                                 <td class="right"><?php echo isset($content['status']) ? "Enabled" : "Disabled"; ?></td>
                                 <td class="right">
-                                    [ <?php if ($client_id) {
-                                        echo anchor('content/update/' . $content['_id'], 'Edit');
-                                    } else {
-                                        echo anchor('content/update/' . $content['_id'], 'Edit');
-                                    }
-                                    ?> ]
+                                    <?php if($push_feature_existed){ ?>
+                                    <span>[ <?php echo anchor('content/push/' . $content['_id'], 'Push to players'); ?> ]</span>
+                                    <?php } ?>
+                                    <span>[ <?php echo anchor('content/update/' . $content['_id'], 'Edit'); ?> ]</span>
                                 </td>
                             </tr>
                         <?php }

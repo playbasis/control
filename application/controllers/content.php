@@ -207,6 +207,8 @@ class Content extends MY_Controller
         if ($client_id) {
             $this->data['client_id'] = $client_id;
 
+            $this->data['push_feature_existed'] = $this->Feature_model->getFeatureExistByClientId($client_id, 'push');
+
             $contents = $this->Content_model->retrieveContents($client_id, $site_id, $filter);
             foreach ($contents as &$content) {
                 if (array_key_exists('category', $content)) {
@@ -358,6 +360,198 @@ class Content extends MY_Controller
         $this->getList(0);
     }
 
+    public function push($content_id)
+    {
+        if (!$this->validatePushAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->load->model('Push_model');
+
+        if (isset($content_id) && (!empty($content_id))) {
+            if ($this->User_model->getClientId()) {
+                $content_info = $this->Content_model->retrieveContent($content_id);
+            }
+        }
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        // get all devices_tokens from all players
+        $devices = $this->Player_model->listDevices($client_id, $site_id, null, array('device_token', 'os_type'));
+
+        //if player devices data available
+        if (!empty($devices)) {
+            $device_tokens_android = array();
+            $device_tokens_iOS = array();
+
+            // loop each devices
+            foreach ($devices as $device) {
+                switch ($device['os_type']) {
+                    case "ios":
+                        array_push($device_tokens_iOS, $device['device_token']);
+                        break;
+                    case "android":
+                        array_push($device_tokens_android, $device['device_token']);
+                        break;
+                    default:
+                        break;
+                }
+
+                if(count($device_tokens_iOS) === 1000 || count($device_tokens_android) === 1000){
+                    //     prep notification message
+                    $notificationData = array(
+                        'title' => "New content available",
+                        'message' => "message here",
+                        'badge_number' => 1,
+                    );
+                    //     initial push
+                    $this->initiateContentPush($device_tokens_android, $notificationData, 'android');
+                    $this->initiateContentPush($device_tokens_iOS, $notificationData, 'ios');
+
+                    // empty
+                    $device_tokens_android = array();
+                    $device_tokens_iOS = array();
+                }
+            }
+        }
+    }
+
+    private function initiateContentPush($deviceTokens = array(), $notificationData, $type = null)
+    {
+        $type = strtolower($type);
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        switch ($type) {
+            case "ios":
+                $setup = $this->Push_model->getIosSetup($client_id, $site_id);
+                if (!$setup) {
+                    throw new Exception("iOS push service has not been setup yet!: ");
+                    break;
+                } // suppress the error for now
+
+                $f_cert = tmpfile();
+                $f_ca = tmpfile();
+
+                $environment = $setup['env'] == 'prod' ? ApnsPHP_Abstract::ENVIRONMENT_PRODUCTION : ApnsPHP_Abstract::ENVIRONMENT_SANDBOX;
+
+                $meta = stream_get_meta_data($f_cert);
+                $certificate = $meta['uri'];
+                fwrite($f_cert, $setup['certificate']);
+
+                $password = $setup['password'];
+
+                $meta = stream_get_meta_data($f_ca);
+                $ca = $meta['uri'];
+                fwrite($f_ca, $setup['ca']);
+
+                $push = new ApnsPHP_Push($environment, $certificate);
+
+//                $logger = new ApnsPHP_Log_Hidden();
+//                $push->setLogger($logger);
+
+                // Set the Provider Certificate passphrase
+                $push->setProviderCertificatePassphrase($password);
+
+                // Set the Root Certificate Authority to verify the Apple remote peer
+                $push->setRootCertificationAuthority($ca);
+
+                // Connect to the Apple Push Notification Service
+                $push->connect();
+
+                // Instantiate a new Message with a single recipient
+                $message = new ApnsPHP_Message($deviceTokens);
+
+                // Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
+                // over a ApnsPHP_Message object retrieved with the getErrors() message.
+//                $message->setCustomIdentifier("Playbasis-Notification");
+
+                // Set badge icon
+                $message->setBadge($notificationData['badge_number']);
+
+                // Set a message
+                $message->setText($notificationData['message']);
+
+                // Play the default sound
+                $message->setSound();
+
+                // Set a custom property
+//                $message->setCustomProperty('DataInfo', $notificationData['dataInfo']);
+
+                // Set the expiry value to 30 seconds
+                $message->setExpiry(30);
+
+                // Add the message to the message queue
+                $push->add($message);
+
+                // Send all messages in the message queue
+                $push->send();
+
+                // Disconnect from the Apple Push Notification Service
+                $push->disconnect();
+
+                // Examine the error message container
+//                $aErrorQueue = $push->getErrors();
+//                if (!empty($aErrorQueue)) {
+//                    var_dump($aErrorQueue);
+//                }
+
+                fclose($f_cert);
+                fclose($f_ca);
+
+                break;
+
+            case "android":
+                $setup = $this->Push_model->getAndroidSetup($client_id);
+                if (!$setup) {
+                    throw new Exception("Android push service has not been setup yet!: ");
+                    break;
+                } // suppress the error for now
+
+                $api_access_key = $setup['api_key'];
+
+                $registrationIds = $deviceTokens;
+                $msg = array
+                (
+                    'title' => $notificationData['title'],
+                    'body' => $notificationData['message'],
+                    'badge' => $notificationData['badge_number'],
+                    'sound' => 'default',
+                );
+
+                $fields = array
+                (
+                    'registration_ids' => $registrationIds,
+                    'data' => $msg
+                );
+
+                $headers = array
+                (
+                    'Authorization: key=' . $api_access_key,
+                    'Content-Type: application/json'
+                );
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, 'https://android.googleapis.com/gcm/send');
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+                $result = curl_exec($ch);
+                curl_close($ch);
+                //echo $result;
+                break;
+
+            default:
+                throw new Exception("Unsupported device type: " . $type);
+                break;
+        }
+    }
+
     public function category($categoryId = null)
     {
         if ($this->session->userdata('user_id') /*&& $this->input->is_ajax_request()*/) {
@@ -493,6 +687,23 @@ class Content extends MY_Controller
 
         if ($this->User_model->hasPermission('access',
                 'content') && $this->Feature_model->getFeatureExistByClientId($client_id, 'content')
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function validatePushAccess()
+    {
+        if ($this->User_model->isAdmin()) {
+            return true;
+        }
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access',
+                'push') && $this->Feature_model->getFeatureExistByClientId($client_id, 'push')
         ) {
             return true;
         } else {
