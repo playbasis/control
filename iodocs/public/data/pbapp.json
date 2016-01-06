@@ -1386,6 +1386,29 @@
                           "Description": "Select parameter to report from action log [dafault = \"amount\"]"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Unlock",
+                    "Synopsis": "Unlock player for authentication",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/unlock",
+                    "RequiresOAuth": "Y",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
                 }
             ]
         },

@@ -174,6 +174,7 @@ $route['Player/rankParam'] = 'player/rankParam/0/0';
 $route['Player/'.ANY_STRING.'/getAssociatedNode'] = 'player/getAssociatedNode/$1';  // ANY_STRING = player_id
 $route['Player/'.ANY_STRING.'/getRole/'.ANY_STRING] = 'player/getRole/$1/$2';       // ANY_STRING = player_id/node_id
 $route['Player/'.ANY_STRING.'/saleReport'] = 'player/saleReport/$1';                // ANY_STRING = player_id
+$route['Player/'.ANY_STRING.'/unlock'] = 'player/unlock/$1';                        // ANY_STRING = player_id
 
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
