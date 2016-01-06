@@ -324,6 +324,22 @@ class Error extends CI_Model
             $errorData['message'] = "This role is not set for this Player";
             $errorData['error_code'] = '2405';
             break;
+        case 'AUTHENTICATION_FAIL':
+            $errorData['message'] = "Authenication fail";
+            $errorData['error_code'] = '2406';
+            break;
+        case 'FORM_VALIDATION_FAILED':
+            $errorData['message'] = $dataArray;
+            $errorData['error_code'] = '2407';
+            break;
+        case 'ACCOUNT_IS_LOCKED':
+            $errorData['message'] = "Account is locked due to exhausted number of retries";
+            $errorData['error_code'] = '2408';
+            break;
+        case 'SESSION_IS_EXPIRED':
+            $errorData['message'] = "Session is expired";
+            $errorData['error_code'] = '2409';
+            break;
         default:
             $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';

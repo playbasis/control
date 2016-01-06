@@ -2478,7 +2478,7 @@ class Player_model extends MY_Model
 
     public function getPlayerByUsername($site_id, $username)
     {
-        $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number'));
+        $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number','approve_status','login_attempt','locked'));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('username', $username);
         $results = $this->mongo_db->get('playbasis_player');
@@ -2487,7 +2487,7 @@ class Player_model extends MY_Model
 
     public function getPlayerByEmail($site_id, $email)
     {
-        $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number'));
+        $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number','approve_status', 'login_attempt','locked'));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('email', $email);
         $results = $this->mongo_db->get('playbasis_player');
@@ -2720,6 +2720,47 @@ class Player_model extends MY_Model
 		}
 
 		return $result;
+	}
+	public function getSecuritySetting($client_id, $site_id)
+	{
+		$this->mongo_db->where('client_id', $client_id);
+		$this->mongo_db->where('site_id', $site_id);
+
+		$results =  $this->mongo_db->get("playbasis_setting");
+		$results = $results ? $results[0] : null;
+
+		if ($results['password_policy_enable'] == false) unset($results['password_policy']);
+
+		return $results;
+	}
+	public function increaseLoginAttempt( $site_id, $pb_player_id)
+	{
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where('_id',$pb_player_id);
+		$this->mongo_db->inc('login_attempt',1);
+		$this->mongo_db->update("playbasis_player");
+	}
+	public function resetLoginAttempt( $site_id, $pb_player_id)
+	{
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where('_id',$pb_player_id);
+		$this->mongo_db->set('login_attempt',0);
+		$this->mongo_db->update("playbasis_player");
+	}
+	public function lockPlayer( $site_id, $pb_player_id)
+	{
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where('_id',$pb_player_id);
+		$this->mongo_db->set('locked',true);
+		$this->mongo_db->update("playbasis_player");
+	}
+	public function unlockPlayer( $site_id, $pb_player_id)
+	{
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where('_id',$pb_player_id);
+		$this->mongo_db->set('locked',false);
+		$this->mongo_db->set('login_attempt', 0);
+		$this->mongo_db->update("playbasis_player");
 	}
 
 }
