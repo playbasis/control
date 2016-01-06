@@ -92,19 +92,18 @@
                             <a href="javascript:void(0)" onclick="confirmDeletePlayer('<?php echo $player['_id']; ?>')" title="Delete" class="tooltips" data-placement="top"><i class="fa fa-trash fa-lg"></i></a>
                             <?php }?>
                         </td>
-                        <!--
-                        <td class="center">[ <?php echo anchor('workflow/edit_account/'.$player['_id'], ' Edit '); ?> ][ <?php echo anchor('workflow/delete/'.$player['_id'], 'Delete'); ?> ]</td>
-                        -->
                     </tr>
                     <?php } ?>
                 <?php } else { ?>
                     <tr>
                         <?php if ($tab_status == "approved") { ?>
                             <td class="center" colspan="9"><?php echo $this->lang->line('text_no_approved_results'); ?></td>
-                        <?php } elseif($tab_status == "rejected"){?>
+                        <?php }elseif($tab_status == "rejected"){?>
                             <td class="center" colspan="9"><?php echo $this->lang->line('text_no_rejected_results'); ?></td>
-                        <?php }else{?>
+                        <?php }elseif($tab_status == "pending"){?>
                             <td class="center" colspan="9"><?php echo $this->lang->line('text_no_pending_request'); ?></td>
+                        <?php }else{?>
+                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_locked_results'); ?></td>
                         <?php }?>
                     </tr>
                 <?php } ?>

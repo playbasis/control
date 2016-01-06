@@ -9,6 +9,7 @@ $lang['heading_title_reject']           = 'Reject';
 $lang['text_no_approved_results']		= 'No approved account';
 $lang['text_no_rejected_results']		= 'No rejected account';
 $lang['text_no_pending_request']		= 'No approval request';
+$lang['text_no_locked_results']		    = 'No locked account';
 $lang['text_success_approve']			= 'The request(s) has been approved';
 $lang['text_success_reject']			= 'The request(s) has been rejected';
 $lang['text_success_delete']			= 'The account(s) has been deleted';
