@@ -190,14 +190,14 @@ class Content extends MY_Controller
 
         $filter = array(
             'limit' => $config['per_page'],
-            'start' => $offset,
+            'offset' => $offset,
             'client_id' => $client_id,
             'site_id' => $site_id,
             'sort' => 'sort_order'
         );
 
-        if (isset($_GET['filter_name'])) {
-            $filter['filter_name'] = $_GET['filter_name'];
+        if (isset($_GET['name'])) {
+            $filter['name'] = $_GET['name'];
         }
 
         $config['base_url'] = site_url('content/page');
@@ -207,7 +207,12 @@ class Content extends MY_Controller
         if ($client_id) {
             $this->data['client_id'] = $client_id;
 
-            $contents = $this->Content_model->retrieveContents($filter);
+            $contents = $this->Content_model->retrieveContents($client_id, $site_id, $filter);
+            foreach ($contents as &$content) {
+                if (array_key_exists('category', $content)) {
+                    $content['category'] = $this->Content_model->retrieveContentCategoryById($content['category']);
+                }
+            }
 
             $this->data['contents'] = $contents;
             $config['total_rows'] = $this->Content_model->countContents($client_id, $site_id);

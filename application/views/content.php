@@ -28,6 +28,7 @@
                                    onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                         </td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
+                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_category'); ?></td>
                         <td class="right"
                             style="width:100px;"><?php echo $this->lang->line('column_date_range'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
@@ -37,7 +38,8 @@
                     <tbody>
                     <tr class="filter">
                         <td></td>
-                        <td><input type="text" name="filter_name" value="" style="width:50%;"/></td>
+                        <td><input title="name" type="text" name="filter_name" value="" style="width:50%;"/></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td class="right">
@@ -62,9 +64,9 @@
                                                              title="<?php echo $content['error']; ?>"
                                                              data-toggle="tooltip"><i class="icon-warning-sign"></i></a>
                                         </span><?php } ?></td>
-                                <td class="right"><?php echo datetimeMongotoReadable($content['date_start']); ?>
-                                    &nbsp;-&nbsp;<?php echo datetimeMongotoReadable($content['date_end']); ?></td>
-                                <td class="right"><?php echo ($content['status']) ? "Enabled" : "Disabled"; ?></td>
+                                <td class="right"><?php echo isset($content['category']['name']) ? $content['category']['name'] : ""; ?></td>
+                                <td class="right"><?php echo dateMongotoReadable($content['date_start']); ?>&nbsp;-&nbsp;<?php echo dateMongotoReadable($content['date_end']); ?></td>
+                                <td class="right"><?php echo isset($content['status']) ? "Enabled" : "Disabled"; ?></td>
                                 <td class="right">
                                     [ <?php if ($client_id) {
                                         echo anchor('content/update/' . $content['_id'], 'Edit');
@@ -78,7 +80,7 @@
                     } else {
                         ?>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6" class="center">
                                 <?php echo $this->lang->line('text_empty_content'); ?>
                             </td>
                         </tr>
@@ -107,7 +109,7 @@
         var filter_name = $('input[name=\'filter_name\']').attr('value');
 
         if (filter_name) {
-            url += '?filter_name=' + encodeURIComponent(filter_name);
+            url += '?name=' + encodeURIComponent(filter_name);
         }
 
         location = url;
@@ -116,7 +118,7 @@
 </script>
 
 <script type="text/javascript">
-    <?php if (!isset($_GET['filter_name'])){?>
+    <?php if (!isset($_GET['name'])){?>
     $("#clear_filter").hide();
     <?php }else{?>
     $("#clear_filter").show();
