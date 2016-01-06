@@ -848,17 +848,17 @@ class Player extends REST2_Controller
 		if (!$player || $player['approve_status'] != "approved") {
 			$this->response($this->error->setError('AUTHENTICATION_FAIL'), 200);
 		}elseif (isset($player['locked']) && $player['locked']){
-            $this->response($this->error->setError('ACCOUNT_IS_LOCKED'), 200);
-        }
+			$this->response($this->error->setError('ACCOUNT_IS_LOCKED'), 200);
+		}
 
-        $setting = $this->player_model->getSecuritySetting($this->client_id,$this->site_id);
-        if (isset($setting['max_retries']) && ($setting['max_retries'] > 0) && ($player['login_attempt'] >= $setting['max_retries'])){
-            $this->player_model->lockPlayer( $this->site_id, $player['_id']);
-            $this->response($this->error->setError('ACCOUNT_IS_LOCKED'), 200);
-        }
+		$setting = $this->player_model->getSecuritySetting($this->client_id,$this->site_id);
+		if (isset($setting['max_retries']) && ($setting['max_retries'] > 0) && ($player['login_attempt'] >= $setting['max_retries'])){
+			$this->player_model->lockPlayer( $this->site_id, $player['_id']);
+			$this->response($this->error->setError('ACCOUNT_IS_LOCKED'), 200);
+		}
 		$auth = $this->player_model->authPlayer($this->site_id, $player['_id'], $password);
 		if (!$auth) {
-            $this->player_model->increaseLoginAttempt($this->site_id,$player['_id']);
+			$this->player_model->increaseLoginAttempt($this->site_id,$player['_id']);
 			$this->response($this->error->setError('AUTHENTICATION_FAIL'), 200);
 		} else {
 			$device_id = $this->input->post('device_id');
@@ -869,11 +869,11 @@ class Player extends REST2_Controller
 				}elseif(empty($player['phone_number'])){
 					$this->response($this->error->setError('SMS_VERIFICATION_PHONE_NUMBER_NOT_FOUND'), 200);
 				}
-                $this->player_model->increaseLoginAttempt($this->client_id,$this->site_id);
+				$this->player_model->increaseLoginAttempt($this->client_id,$this->site_id);
 			}
 		}
 
-        $this->player_model->resetLoginAttempt($this->site_id,$player['_id']);
+		$this->player_model->resetLoginAttempt($this->site_id,$player['_id']);
 		//trigger and log event
 		$eventMessage = $this->utility->getEventMessage('login');
 		$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
