@@ -446,7 +446,6 @@ class Engine extends Quest
 			$apiResult = array_merge($apiResult, $apiQuestResult);
 		}
 
-
 		$this->benchmark->mark('engine_rule_end');
 		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
 		$this->response($this->resp->setRespond($apiResult), 200);
@@ -472,7 +471,7 @@ class Engine extends Quest
 				$input['player_id'] = $this->player_model->getClientPlayerId(
 			$input['pb_player_id'], $validToken['site_id']);
 		}
-		if (!isset($input['node_id'])){
+		if (!$input["test"] && !isset($input['node_id'])){
 			$node = $this->store_org_model->retrieveNodeByPBPlayerID($validToken['client_id'],$validToken['site_id'],$input['pb_player_id']);
 			$input['node_id'] = $node[0]['node_id'];
 		}
