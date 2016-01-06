@@ -357,15 +357,15 @@ class Player extends REST2_Controller
 		if ($instagramId) {
 			$playerInfo['instagram_id'] = $instagramId;
 		}
-        if ($this->password_validation($this->validToken['client_id'],$this->validToken['site_id'],$playerInfo['username'])) {
-            $this->player_model->unlockPlayer($this->validToken['site_id'],$pb_player_id);
-            $password = $this->input->post('password');
-            if($password)
-                $playerInfo['password'] = do_hash($password);
-        }
-        else{
-            $this->response($this->error->setError('FORM_VALIDATION_FAILED',$this->validation_errors()), 200);
-        }
+		if ($this->password_validation($this->validToken['client_id'],$this->validToken['site_id'],$playerInfo['username'])) {
+			$this->player_model->unlockPlayer($this->validToken['site_id'],$pb_player_id);
+			$password = $this->input->post('password');
+			if($password)
+				$playerInfo['password'] = do_hash($password);
+		}
+		else{
+			$this->response($this->error->setError('FORM_VALIDATION_FAILED',$this->validation_errors()), 200);
+		}
 		$gender = $this->input->post('gender');
 		if ($gender) {
 			$playerInfo['gender'] = $gender;
@@ -893,7 +893,7 @@ class Player extends REST2_Controller
 		/* Optionally, keep track of session */
 		$session_id = get_random_code(40, true, true, true);
 
-        $timeout = (isset($setting['timeout']))? ($setting['timeout'] > 0 ? $setting['timeout']:0): PLAYER_AUTH_SESSION_TIMEOUT;
+		$timeout = (isset($setting['timeout']))? ($setting['timeout'] > 0 ? $setting['timeout']:0): PLAYER_AUTH_SESSION_TIMEOUT;
 		$session_expires_in = $timeout;
 		if ($session_id) {
 			$this->player_model->login($this->client_id, $this->site_id, $player['_id'], $session_id,
