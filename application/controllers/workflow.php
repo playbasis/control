@@ -39,6 +39,9 @@ class Workflow extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'workflow/';
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
         $this->error['warning'] = null;
 
         if(!$this->validateModify()){
@@ -47,7 +50,7 @@ class Workflow extends MY_Controller
 
         // incase: click delete direct player
         if($this->input->post('user_id')){
-            $result = $this->Workflow_model->deletePlayer($this->input->post('user_id'));
+            $result = $this->Workflow_model->deletePlayer($client_id, $site_id, $this->input->post('user_id'));
             if($result){
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             }else{
@@ -61,7 +64,7 @@ class Workflow extends MY_Controller
 
             if($this->input->post('action')=="delete") {
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->deletePlayer($selectedUser);
+                    $this->Workflow_model->deletePlayer($client_id, $site_id, $selectedUser);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
@@ -92,6 +95,9 @@ class Workflow extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'workflow/rejected/';
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
         $this->error['warning'] = null;
 
         if(!$this->validateModify()){
@@ -100,7 +106,7 @@ class Workflow extends MY_Controller
 
         // incase: click delete direct player
         if($this->input->post('user_id')){
-            $result = $this->Workflow_model->deletePlayer($this->input->post('user_id'));
+            $result = $this->Workflow_model->deletePlayer($client_id, $site_id, $this->input->post('user_id'));
             if($result){
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             }else{
@@ -114,7 +120,7 @@ class Workflow extends MY_Controller
 
             if($this->input->post('action')=="delete") {
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->deletePlayer($selectedUser);
+                    $this->Workflow_model->deletePlayer($client_id, $site_id, $selectedUser);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
@@ -145,6 +151,9 @@ class Workflow extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'workflow/pending/';
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
         $this->error['warning'] = null;
 
         if(!$this->validateModify()){
@@ -153,7 +162,7 @@ class Workflow extends MY_Controller
 
         // incase: click delete direct player
         if($this->input->post('user_id')){
-            $result = $this->Workflow_model->deletePlayer($this->input->post('user_id'));
+            $result = $this->Workflow_model->deletePlayer($client_id, $site_id, $this->input->post('user_id'));
             if($result){
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             }else{
@@ -161,13 +170,13 @@ class Workflow extends MY_Controller
             }
             redirect('/workflow/pending', 'refresh');
         }
-        // incase: select player(s) to delete
+        // incase: select player(s) to approve/reject/delete
         elseif ($this->input->post('selected') && $this->error['warning'] == null) {
             $selectedUsers = $this->input->post('selected');
 
             if ($this->input->post('action')=="approve"){
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->approvePlayer($selectedUser);
+                    $this->Workflow_model->approvePlayer($client_id, $site_id, $selectedUser);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_approve'));
@@ -175,7 +184,7 @@ class Workflow extends MY_Controller
             }
             elseif($this->input->post('action')=="reject") {
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->rejectPlayer($selectedUser);
+                    $this->Workflow_model->rejectPlayer($client_id, $site_id, $selectedUser);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_reject'));
@@ -183,7 +192,7 @@ class Workflow extends MY_Controller
             }
             elseif($this->input->post('action')=="delete") {
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->deletePlayer($selectedUser);
+                    $this->Workflow_model->deletePlayer($client_id, $site_id,$selectedUser);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
@@ -213,6 +222,9 @@ class Workflow extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'workflow/locked/';
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
         $this->error['warning'] = null;
 
         if(!$this->validateModify()){
@@ -221,7 +233,7 @@ class Workflow extends MY_Controller
 
         // incase: click delete direct player
         if($this->input->post('user_id')){
-            $result = $this->Workflow_model->deletePlayer($this->input->post('user_id'));
+            $result = $this->Workflow_model->deletePlayer($client_id, $site_id, $this->input->post('user_id'));
             if($result){
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             }else{
@@ -235,7 +247,7 @@ class Workflow extends MY_Controller
 
             if ($this->input->post('action')=="unlock"){
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->unlockPlayer($selectedUser);
+                    $this->Workflow_model->unlockPlayer($client_id, $site_id, $selectedUser);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_approve'));
@@ -243,7 +255,7 @@ class Workflow extends MY_Controller
             }
             elseif($this->input->post('action')=="delete") {
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->deletePlayer($selectedUser);
+                    $this->Workflow_model->deletePlayer($client_id, $site_id, $selectedUser);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
@@ -270,7 +282,8 @@ class Workflow extends MY_Controller
         $this->data['tab_status'] =  $locked? "locked":$status;
         if ($locked){
             $this->data['player_list'] = $this->Workflow_model->getLockedPlayer($client_id,$site_id,$status);
-
+        }elseif($status=='pending') {
+            $this->data['player_list'] = $this->Workflow_model->getPendingPlayer($client_id,$site_id);
         }else{
             $this->data['player_list'] = $this->Workflow_model->getPlayerByApprovalStatus($client_id,$site_id,$status);
         }
@@ -308,7 +321,7 @@ class Workflow extends MY_Controller
             $this->data['org_status'] = false;
         }
 
-        $pending_count = count($this->Workflow_model->getPlayerByApprovalStatus($client_id,$site_id,"pending"));
+        $pending_count = count($this->Workflow_model->getPendingPlayer($client_id,$site_id));
         $this->data['pending_count'] =$pending_count;
         $this->data['locked_count'] = count($this->Workflow_model->getLockedPlayer($client_id,$site_id,$status));
 
@@ -445,6 +458,8 @@ class Workflow extends MY_Controller
             $data = $this->input->post();
             if($data['password']!=$data['confirm_password']){
                 $this->data['message'] = $this->lang->line('text_fail_confirm_password');
+                if(!isset($_POST['organize_node'][0]))
+                    $_POST['organize_node'][0] = "";
             }elseif($this->User_model->hasPermission('access','store_org') &&
                     $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org') &&
                     (isset($data['organize_role'][0]) && !empty($data['organize_role'][0]))&&
