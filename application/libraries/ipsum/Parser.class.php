@@ -170,7 +170,7 @@ class Parser {
      * @param string $error_text 
      */
     function error($func, $error_code, $error_text){
-        echo PHP_EOL , "[" ,  $func , "]: " , "(code: " , $error_code , "), " , $error_text , PHP_EOL;
+        //echo PHP_EOL , "[" ,  $func , "]: " , "(code: " , $error_code , "), " , $error_text , PHP_EOL;
         if($error_code != 0) throw new Exception($error_text, $error_code);
     }
 }
