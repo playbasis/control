@@ -1784,3 +1784,33 @@ input[type=radio]:checked + label {
 .store_org-page input.wg-globel-cssfile {
 	width: 50%;
 }
+
+/* ====== [ Content Page ] ======= */
+.content-page .nav {
+    margin-bottom: 0;
+}
+
+.content-page .tab-pane:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.content-page iframe {
+    border-radius: 5px;
+    border: 1px solid #F5F5F5;
+}
+
+.content-page .tab-pane {
+    padding: 30px;
+    background: #FFF;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.content-page .tab-pane h3 {
+    font-size: 26px;
+    font-weight: normal;
+}
