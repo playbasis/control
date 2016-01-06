@@ -34,7 +34,7 @@
                         </tr>
                     <?php }?>
                     <tr>
-                        <td><?php echo $this->lang->line('form_username'); ?>:</td>
+                        <td><span class="required">*</span><?php echo $this->lang->line('form_username'); ?>:</td>
                         <td><input  type="text" name="username"  value="<?php echo isset($requester['username']) ? $requester['username'] :  set_value('username'); ?>" /></td>
                     </tr>
                     <?php if(isset($action) && $action=="create"){ ?>

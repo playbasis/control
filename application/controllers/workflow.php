@@ -318,10 +318,11 @@ class Workflow extends MY_Controller
                         foreach($data['organize_id'] as $i => $org_id){
                             //Add player to node
                             if (isset($data['organize_node'][$i]) && !empty($data['organize_node'][$i]) && $status->success) {
+
+                                $pb_player_id = $this->findPbPlayerId($data['cl_player_id']);
                                 if($org_id == "") {// this player has never been added to any node
                                     $this->Workflow_model->addPlayerToNode($data['cl_player_id'], $data['organize_node'][$i]);
                                 }else{ //this player has been added to some node
-                                    $pb_player_id = $this->findPbPlayerId($data['cl_player_id']);
                                     $this->Workflow_model->editOrganizationOfPlayer($client_id, $site_id, $data['organize_id'][$i], $pb_player_id, $data['organize_node'][$i]);
                                 }
 
@@ -435,7 +436,8 @@ class Workflow extends MY_Controller
                     }
                 }else{
                     // failed to create player
-                    $_POST['organize_node'][0] = "";
+                    if(!isset($_POST['organize_node'][0]))
+                        $_POST['organize_node'][0] = "";
                     $this->data['message'] = $status->message;
                 }
             }
