@@ -25,6 +25,7 @@ $lang['text_fail_confirm_password']	    = 'Your password and confirm password do
 $lang['button_create']           = 'Create';
 $lang['button_approve']          = 'Approve';
 $lang['button_reject']           = 'Reject';
+$lang['button_unlock']           = 'Unlock';
 
 // Form
 $lang['form_username']            = 'Username';
@@ -45,6 +46,7 @@ $lang['form_organization']        = 'Organization';
 $lang['tab_approved']					= 'Approved';
 $lang['tab_rejected']					= 'Rejected';
 $lang['tab_pending']					= 'Pending';
+$lang['tab_locked']					    = 'Locked';
 
 
 // Column
