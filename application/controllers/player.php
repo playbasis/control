@@ -1380,26 +1380,8 @@ class Player extends REST2_Controller
 		$valid = false;
 		if (!$action_id) {
 			$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-		} else {
-			$ruleSet = $this->client_model->getRuleSetByActionId(array(
-					'client_id' => $this->validToken['client_id'],
-					'site_id' => $this->validToken['site_id'],
-					'action_id' => $action_id
-			));
-			foreach ($ruleSet as $rule) {
-				$jigsawSet = (isset($rule['jigsaw_set']) && !empty($rule['jigsaw_set'])) ? $rule['jigsaw_set'] : array();
-				foreach ($jigsawSet as $jigsaw) {
-					if ($jigsaw['category'] == "CONDITION" && $jigsaw['config']['param_name'] == $param) {
-						$valid = true;
-					}
-				}
-			}
 		}
-		if (!$valid) {
-			$this->response($this->error->setError('PARAMETER_INVALID', array(
-					'parameter'
-			)), 200);
-		}
+
 		// Action and parameter are valid !
 		// Now, getting all input
 		$input = $this->input->get();
