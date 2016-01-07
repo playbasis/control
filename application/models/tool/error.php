@@ -272,8 +272,8 @@ class Error extends CI_Model
             $errorData['message'] = "Rule not available";
             $errorData['error_code'] = '1101';
             break;
-        case 'PROMO_CONTENT_NOT_FOUND':
-            $errorData['message'] = "Promotional Content not found";
+        case 'CONTENT_NOT_FOUND':
+            $errorData['message'] = "Content not found";
             $errorData['error_code'] = '2001';
             break;
         case 'PIN_CODE_INVALID':
