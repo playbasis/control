@@ -362,59 +362,94 @@ class Content extends MY_Controller
 
     public function push($content_id)
     {
-        if (!$this->validatePushAccess()) {
-            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
-            die();
-        }
-
-        $this->load->model('Push_model');
-
-        if (isset($content_id) && (!empty($content_id))) {
-            if ($this->User_model->getClientId()) {
-                $content_info = $this->Content_model->retrieveContent($content_id);
-            }
-        }
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-
-        // get all devices_tokens from all players
-        $devices = $this->Player_model->listDevices($client_id, $site_id, null, array('device_token', 'os_type'));
-
-        //if player devices data available
-        if (!empty($devices)) {
-            $device_tokens_android = array();
-            $device_tokens_iOS = array();
-
-            // loop each devices
-            foreach ($devices as $device) {
-                switch ($device['os_type']) {
-                    case "ios":
-                        array_push($device_tokens_iOS, $device['device_token']);
-                        break;
-                    case "android":
-                        array_push($device_tokens_android, $device['device_token']);
-                        break;
-                    default:
-                        break;
+        if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validatePushAccess()) {
+                    $this->output->set_status_header('401');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access')));
+                    die();
                 }
 
-                if(count($device_tokens_iOS) === 1000 || count($device_tokens_android) === 1000){
-                    //     prep notification message
-                    $notificationData = array(
-                        'title' => "New content available",
-                        'message' => "message here",
-                        'badge_number' => 1,
-                    );
-                    //     initial push
-                    $this->initiateContentPush($device_tokens_android, $notificationData, 'android');
-                    $this->initiateContentPush($device_tokens_iOS, $notificationData, 'ios');
+                $this->load->model('Push_model');
+                $this->load->model('Player_model');
 
-                    // empty
-                    $device_tokens_android = array();
-                    $device_tokens_iOS = array();
+                if (isset($content_id) && (!empty($content_id))) {
+                    // confirm login?
+                    //if ($this->User_model->getClientId()) {
+                    $content_info = $this->Content_model->retrieveContent($content_id);
+
+                    if (!empty($content_info)) {
+                        if (array_key_exists('category', $content_info)) {
+                            $content_info['category'] = $this->Content_model->retrieveContentCategoryById($content_info['category']);
+                        }
+
+                        $client_id = $this->User_model->getClientId();
+                        $site_id = $this->User_model->getSiteId();
+
+                        // get all devices_tokens from all players
+                        $devices = $this->Player_model->listDevices($client_id, $site_id, null,
+                            array('device_token', 'os_type'));
+
+                        // if player devices data available
+                        if (!empty($devices)) {
+                            $device_tokens_android = array();
+                            $device_tokens_iOS = array();
+
+                            // loop each devices
+                            foreach ($devices as $device) {
+                                switch ($device['os_type']) {
+                                    case "ios":
+                                        array_push($device_tokens_iOS, $device['device_token']);
+                                        break;
+                                    case "android":
+                                        array_push($device_tokens_android, $device['device_token']);
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                if (count($device_tokens_iOS) === 1000 || count($device_tokens_android) === 1000) {
+                                    //     prep notification message
+                                    $notificationData = array(
+                                        'title' => "Checkout new " . ucfirst($content_info['category']['name']),
+                                        // android only
+                                        'message' => "Checkout new " . ucfirst($content_info['category']['name']) . ", '" . ucfirst($content_info['name']) . "' is available.",
+                                        // message in iOS, body in android
+                                        'badge_number' => 1,
+                                    );
+                                    //     initial push
+                                    $this->initiateContentPush($device_tokens_android, $notificationData, 'android');
+                                    $this->initiateContentPush($device_tokens_iOS, $notificationData, 'ios');
+
+                                    // empty
+                                    $device_tokens_android = array();
+                                    $device_tokens_iOS = array();
+                                }
+                            }
+                            $this->output->set_status_header('200');
+                            echo json_encode(array(
+                                'status' => 'success',
+                                'devices' => count($devices)
+                            ));
+                        } else {
+                            $this->output->set_status_header('404');
+                            echo json_encode(array(
+                                'status' => 'error',
+                                'message' => $this->lang->line('error_no_device_info')
+                            ));
+                        }
+                    } else {
+                        $this->output->set_status_header('404');
+                        echo json_encode(array(
+                            'status' => 'error',
+                            'message' => $this->lang->line('error_empty_content')
+                        ));
+                    }
                 }
             }
+        } else {
+            $this->output->set_status_header('403');
+            echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access')));
         }
     }
 
@@ -554,7 +589,7 @@ class Content extends MY_Controller
 
     public function category($categoryId = null)
     {
-        if ($this->session->userdata('user_id') /*&& $this->input->is_ajax_request()*/) {
+        if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
 
@@ -583,9 +618,9 @@ class Content extends MY_Controller
                     $query_data = $this->input->get(null, true);
 
                     $result = $this->Content_model->retrieveContentCategory($client_id, $site_id, $query_data);
-                    foreach($result as &$document){
-                        if(isset($document['_id'])){
-                            $document['_id'] = $document['_id']."";
+                    foreach ($result as &$document) {
+                        if (isset($document['_id'])) {
+                            $document['_id'] = $document['_id'] . "";
                         }
                     }
 
