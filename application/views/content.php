@@ -177,6 +177,7 @@
         window.location.replace(baseUrlPath + 'content');
     }
 
+    <?php if ($push_feature_existed) { ?>
     var $waitDialog = $('#pleaseWaitDialog'),
         $confirmModalDialog = $('#confirmModal'),
         $sentDialog = $('#sentDialog');
@@ -215,4 +216,5 @@
                 $waitDialog.modal('hide');
             });
         });
+    <?php } ?>
 </script>
