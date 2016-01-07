@@ -1920,7 +1920,8 @@ class Player extends REST2_Controller
             $roles = array();
             $array_role = array_keys($role_info['roles']);
             foreach($array_role as $role) {
-                $roles[$role]=datetimeMongotoReadable($role_info['roles'][$role]);
+                $roles[]=array('role'=>$role,
+                               'join_date'=>datetimeMongotoReadable($role_info['roles'][$role]));
             }
 
             $result=array(
