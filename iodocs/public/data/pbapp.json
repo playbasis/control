@@ -651,7 +651,7 @@
                             "Description": "access token returned from Auth"
                         },
                         {
-                            "Name": "player_id",
+                            "Name": "id",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",

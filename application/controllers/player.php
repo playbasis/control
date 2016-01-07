@@ -877,25 +877,27 @@ class Player extends REST2_Controller
 		)), 200);
 	}
 
-    public function verifyOTPCode_post()
+    public function verifyOTPCode_post($player_id = '')
     {
         $required = $this->input->checkParam(array(
-            'player_id',
             'code'
         ));
         if ($required) {
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         }
 
-        $code = $this->input->post('code');
-        $player_id = $this->input->post('player_id');
-
-        $pb_player_id = $this->player_model->getPlayerByPlayerId($this->validToken['site_id'], $player_id);
-        if (!$pb_player_id) {
-            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
         }
 
-        $result = $this->player_model->getPlayerOTPCode($pb_player_id['_id'],$code);
+        $player = $this->player_model->getPlayerByPlayerId($this->site_id, $player_id);
+        if (!$player) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+        $code = $this->input->post('code');
+        $result = $this->player_model->getPlayerOTPCode($player['_id'],$code);
         if (!$result) {
             $this->response($this->error->setError('SMS_VERIFICATION_CODE_INVALID'), 200);
         }
