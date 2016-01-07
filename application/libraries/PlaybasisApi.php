@@ -49,6 +49,16 @@ class PlaybasisApi{
         return $result;
     }
 
+    public function addPlayerToNode($player_id, $node_id){
+        $result = $this->_post('StoreOrg/nodes/'.$node_id.'/addPlayer/'.$player_id);
+        return $result;
+    }
+
+    public function setPlayerRole($player_id, $node_id, $role){
+        $result = $this->_post('StoreOrg/nodes/'.$node_id.'/setPlayerRole/'.$player_id,$role);
+        return $result;
+    }
+
     public function updatePlayer($player_id, $Params=array()){
         $result = $this->_post('Player/'.$player_id.'/update/', $Params);
         return $result;
@@ -177,6 +187,9 @@ class PlaybasisApi{
         $sendParam = array_merge($defaultParam, $params);
         $result = $this->_restClient->post($uri, $sendParam);
         return $result;
+    }
+    public function setHeader($header, $content = NULL){
+        $this->_restClient->http_header($header,$content);
     }
 }
 

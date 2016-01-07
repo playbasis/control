@@ -106,28 +106,31 @@ class Merchant extends MY_Controller
             if ($this->form_validation->run()) {
                 $merchant_data = $this->input->post();
 
-                $postArr = array_map('array_filter', $merchant_data['newBranches']);
-                foreach ($postArr as $key => $branch) {
-                    if (!array_key_exists('branchName', $branch)) {
-                        unset($postArr[$key]);
+                $batch_data = array();
+
+                if(isset($merchant_data['newBranches'])&&!empty($merchant_data['newBranches'])){
+                    $postArr = array_map('array_filter', $merchant_data['newBranches']);
+                    foreach ($postArr as $key => $branch) {
+                        if (!array_key_exists('branchName', $branch)) {
+                            unset($postArr[$key]);
+                        }
+                    }
+                    $merchant_data['newBranches'] = array_values($postArr);
+
+
+                    foreach ($merchant_data['newBranches'] as $branch) {
+                        array_push($batch_data, array(
+                            'client_id' => $client_id,
+                            'site_id' => $site_id,
+                            'branch_name' => $branch['branchName'],
+                            'pin_code' => $this->Merchant_model->generatePINCode($client_id, $site_id),
+                            'status' => !empty($branch['status']) ? true : false,
+                            'deleted' => false,
+                            'date_added' => new MongoDate(),
+                            'date_modified' => new MongoDate()
+                        ));
                     }
                 }
-                $merchant_data['newBranches'] = array_values($postArr);
-
-                $batch_data = array();
-                foreach ($merchant_data['newBranches'] as $branch) {
-                    array_push($batch_data, array(
-                        'client_id' => $client_id,
-                        'site_id' => $site_id,
-                        'branch_name' => $branch['branchName'],
-                        'pin_code' => $this->Merchant_model->generatePINCode($client_id, $site_id),
-                        'status' => !empty($branch['status']) ? true : false,
-                        'deleted' => false,
-                        'date_added' => new MongoDate(),
-                        'date_modified' => new MongoDate()
-                    ));
-                }
-
                 $data['branches'] = array();
 
                 if (!empty($batch_data)) {

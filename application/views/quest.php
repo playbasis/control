@@ -23,6 +23,9 @@
                     <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_name'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_status'); ?></td>
+                    <?php if($org_status){?>
+                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_organization'); ?></td>
+                    <?php }?>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_sort_order'); ?></td>
                     <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
@@ -34,6 +37,9 @@
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
                         <td></td>
                         <td></td>
+                        <?php if($org_status){?>
+                        <td></td>
+                        <?php }?>
                         <td class="right">
                             <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
                             <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
@@ -51,6 +57,9 @@
                                     <td class="left"><img src="<?php echo $quest['image']; ?>" alt="" id="quest_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></td>
                                     <td class="right"><?php echo $quest['quest_name']; ?> <?php if (!empty($quest['error'])) { ?><span class="red"><a herf="javascript:void(0)" class="error-icon" title="<?php echo $quest['error']; ?>" data-toggle="tooltip"><i class="icon-warning-sign" ></i></a></span><?php } ?></td>
                                     <td class="right"><?php echo ($quest['status'])?'Active':'Inactive';?></td>
+                                    <?php if($org_status){?>
+                                        <td class="right"><?php echo (isset($quest['organize_name']) && !is_null($quest['organize_name']))?$quest['organize_name']:''; ?></td>
+                                    <?php }?>
                                     <td class="right"><?php echo $quest['sort_order'];?></td>
                                     <td class="right">
                                     [<a class="quest_play" href="#" data-quest_id="<?php echo $quest["_id"]; ?>">Play</a>]

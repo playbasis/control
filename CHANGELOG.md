@@ -1,6 +1,35 @@
 # Change Log
 
-## [v2.2.28](https://github.com/playbasis/control/tree/v2.2.28) (2015-12-02)
+## [v2.2.29](https://github.com/playbasis/control/tree/v2.2.29) (2016-01-07)
+
+[Full Changelog](https://github.com/playbasis/control/compare/use_try-catch_instead_isValid...v2.2.29)
+
+**Implemented enhancements:**
+
+- Add Feature: Add button to send push notification on content [\#81](https://github.com/playbasis/control/pull/81) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- modified workflow page [\#80](https://github.com/playbasis/control/pull/80) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Enhancement : add Tab For Unlock on Workflow Page [\#78](https://github.com/playbasis/control/pull/78) ([narut-playbasis](https://github.com/narut-playbasis))
+- Feature : Add Setting Page For Security Setting [\#77](https://github.com/playbasis/control/pull/77) ([narut-playbasis](https://github.com/narut-playbasis))
+- Feature/work flow set organization of player [\#76](https://github.com/playbasis/control/pull/76) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Feature/improve promo content [\#75](https://github.com/playbasis/control/pull/75) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Enhancement : Data Import Support Date in HTTP HEADER [\#74](https://github.com/playbasis/control/pull/74) ([narut-playbasis](https://github.com/narut-playbasis))
+- Feature/display quests according to organization [\#72](https://github.com/playbasis/control/pull/72) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Feature/display goods according to organization [\#71](https://github.com/playbasis/control/pull/71) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- modified workflow page [\#80](https://github.com/playbasis/control/pull/80) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Bug: error report when insert merchant without branch [\#79](https://github.com/playbasis/control/pull/79) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- BugFix : Second Dropdown Not Show On Rule [\#73](https://github.com/playbasis/control/pull/73) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [use_try-catch_instead_isValid](https://github.com/playbasis/control/tree/use_try-catch_instead_isValid) (2015-12-28)
+[Full Changelog](https://github.com/playbasis/control/compare/v2.2.28...use_try-catch_instead_isValid)
+
+**Merged pull requests:**
+
+- Hotfix/use try catch instead is valid [\#70](https://github.com/playbasis/control/pull/70) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [v2.2.28](https://github.com/playbasis/control/tree/v2.2.28) (2015-12-24)
 
 [Full Changelog](https://github.com/playbasis/control/compare/revert_mongo_native_long...v2.2.28)
 

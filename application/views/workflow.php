@@ -16,6 +16,8 @@
                 <?php if ($tab_status == "pending") { ?>
                 <button class="btn btn-info" type="button" id="approve"><?php echo $this->lang->line('button_approve'); ?></button>
                 <button class="btn btn-info" type="button" id="reject"><?php echo $this->lang->line('button_reject'); ?></button>
+                <?php }elseif ($tab_status == "locked") { ?>
+                <button class="btn btn-info" type="button" id="unlock"><?php echo $this->lang->line('button_unlock'); ?></button>
                 <?php }  ?>
             </div>
         </div>
@@ -26,6 +28,11 @@
                 <a href="<?php echo site_url('workflow/pending');?>"  <?php if ($tab_status == "pending")  { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_pending'); ?>
                     <?php if ($pending_count) { ?>
                     <span class="badge badge-important"><?php echo $pending_count; ?></span>
+                    <?php } ?>
+                </a>
+                <a href="<?php echo site_url('workflow/locked');?>"  <?php if ($tab_status == "locked")  { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_locked'); ?>
+                    <?php if (isset($locked_count) && $locked_count) { ?>
+                        <span class="badge badge-important"><?php echo $locked_count; ?></span>
                     <?php } ?>
                 </a>
             </div>
@@ -44,15 +51,21 @@
             $attributes = array('id' => 'form');
             echo form_open($form ,$attributes);
             ?>
+            <input type="hidden" id="action" name="action" value="" />
+            <input type="hidden" id="user_id" name="user_id" value="" />
             <table class="list">
                 <thead>
                 <tr>
-                    <input type="hidden" id="action" name="action" value="" />
-                    <input type="hidden" id="user_id" name="user_id" value="" />
+
                     <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                    <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
-                    <td class="left"><?php echo $this->lang->line('column_store'); ?></td>
-                    <td class="right app-col-action"><?php echo $this->lang->line('column_action'); ?></td>
+                    <td class="left" style="width:80px;"><?php echo $this->lang->line('column_player_id'); ?></td>
+                    <td class="left" style="width:200px;"><?php echo $this->lang->line('column_name'); ?></td>
+                    <td class="left" style="width:200px;"><?php echo $this->lang->line('column_email'); ?></td>
+                    <td class="left" style="width:100px;"><?php echo $this->lang->line('column_phone'); ?></td>
+                    <?php if($org_status){?>
+                    <td class="left" ><?php echo $this->lang->line('column_organization'); ?></td>
+                    <?php }?>
+                    <td class="right app-col-action" "><?php echo $this->lang->line('column_action'); ?></td>
 
                 </tr>
                 </thead>
@@ -66,25 +79,31 @@
                             <?php } else { ?>
                                 <input type="checkbox" name="selected[]" value="<?php echo $player['_id']; ?>" />
                             <?php } ?></td>
+                        <td class="left"><?php echo $player['cl_player_id']; ?></td>
                         <td class="left"><?php echo $player['first_name']."  ".$player['last_name']; ?></td>
-                        <td class="left"><?php echo (isset($player['store']) && !is_null($player['store']))?$player['store']:'??'; ?></td>
+                        <td class="left"><?php echo $player['email']; ?></td>
+                        <td class="left"><?php echo $player['phone_number']; ?></td>
+                        <?php if($org_status){?>
+                        <td class="left"><?php echo (isset($player['organization']) && !is_null($player['organization']))?$player['organization']:''; ?></td>
+                        <?php }?>
                         <td class="right app-col-action">
+                            <?php if ($tab_status != "locked") { ?>
                             <a href="<?php echo site_url("workflow/edit_account/".$player['_id']) ?>" title="Edit" class="tooltips" data-placement="top"><i class="fa fa-edit fa-lg"></i></a>
                             <a href="javascript:void(0)" onclick="confirmDeletePlayer('<?php echo $player['_id']; ?>')" title="Delete" class="tooltips" data-placement="top"><i class="fa fa-trash fa-lg"></i></a>
+                            <?php }?>
                         </td>
-                        <!--
-                        <td class="center">[ <?php echo anchor('workflow/edit_account/'.$player['_id'], ' Edit '); ?> ][ <?php echo anchor('workflow/delete/'.$player['_id'], 'Delete'); ?> ]</td>
-                        -->
                     </tr>
                     <?php } ?>
                 <?php } else { ?>
                     <tr>
                         <?php if ($tab_status == "approved") { ?>
                             <td class="center" colspan="9"><?php echo $this->lang->line('text_no_approved_results'); ?></td>
-                        <?php } elseif($tab_status == "rejected"){?>
+                        <?php }elseif($tab_status == "rejected"){?>
                             <td class="center" colspan="9"><?php echo $this->lang->line('text_no_rejected_results'); ?></td>
-                        <?php }else{?>
+                        <?php }elseif($tab_status == "pending"){?>
                             <td class="center" colspan="9"><?php echo $this->lang->line('text_no_pending_request'); ?></td>
+                        <?php }else{?>
+                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_locked_results'); ?></td>
                         <?php }?>
                     </tr>
                 <?php } ?>
@@ -167,6 +186,23 @@
                 }
             }else{
                 alert("Please select account to delete");
+            }
+        });
+        $("#unlock").click(function(e){
+            e.preventDefault();
+
+            var checkboxes = document.querySelectorAll('input[name="selected[]"]:checked'), values = [];
+            Array.prototype.forEach.call(checkboxes, function(el) {
+                values.push(el.value);
+            });
+            if(values != '') {
+                if(confirm("Are you sure to unlock this account?")){
+                    $("#action").val("unlock");
+                    //alert($("#action").val());
+                    $("#form").submit();
+                }
+            }else{
+                alert("Please select account to unlock");
             }
         });
 
