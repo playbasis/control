@@ -9,6 +9,7 @@ class Goods extends REST2_Controller
         $this->load->model('auth_model');
         $this->load->model('goods_model');
         $this->load->model('player_model');
+        $this->load->model('store_org_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -19,6 +20,7 @@ class Goods extends REST2_Controller
         $results = $this->goods_model->getGroupsAggregate($this->validToken['site_id']);
         $ids = array();
         $group_name = array();
+        $org_id_list = array();
         foreach ($results as $i => $result) {
             $group = $result['_id']['group'];
             $quantity = $result['quantity'];
@@ -38,6 +40,15 @@ class Goods extends REST2_Controller
             if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
             $myGoods = $this->player_model->getGoods($pb_player_id, $this->site_id);
             $m = $this->mapByGoodsId($myGoods);
+
+            $org_list = $this->store_org_model->retrieveNodeByPBPlayerID($this->client_id,$this->site_id,$pb_player_id);
+
+            foreach ($org_list as $node){
+                $org_info = $this->store_org_model->getOrgInfoOfNode($this->client_id,$this->site_id, $node['node_id']);
+                $a = array ((string)$org_info[0]['organize'] => isset($node['roles'])? $node['roles']:array() );
+                $org_id_list = array_merge($org_id_list, $a);
+            }
+
         }
         /* main */
         if($goodsId) // given specified goods_id
@@ -45,6 +56,24 @@ class Goods extends REST2_Controller
             $goods['goods'] = $this->goods_model->getGoods(array_merge($this->validToken, array(
                 'goods_id' => new MongoId($goodsId)
             )));
+
+            // return an error if
+            // 1. good id is set organize and player_id is not in that organize
+            // Or 2. organize role is set and player role is not matched
+            if (isset($goods['goods']['organize_id'])){
+                if (!empty($org_id_list)
+                    && (!array_key_exists((string)$goods['goods']['organize_id'], $org_id_list)
+                        || ((isset($goods['goods']['organize_role']) && $goods['goods']['organize_role'] != "")
+                            && !array_key_exists($goods['goods']['organize_role'],
+                                $org_id_list[(string)$goods['goods']['organize_id']])))
+                ) {
+                    $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+                }
+                $org = $this->store_org_model->retrieveOrganizeById($this->client_id, $this->site_id, $goods['goods']['organize_id']);
+                $goods['goods']['organize'] = $org['name'];
+                unset($goods['goods']['organize_id']);
+            }
+
             $goods['goods']['is_group'] = array_key_exists('group', $goods['goods']);
             if ($goods['goods']['is_group']) {
                 $group = $goods['goods']['group'];
@@ -63,7 +92,7 @@ class Goods extends REST2_Controller
         else // list all
         {
             $goodsList['goods_list'] = $this->goods_model->getAllGoods($this->validToken, $ids);
-            if (is_array($goodsList['goods_list'])) foreach ($goodsList['goods_list'] as &$goods) {
+            if (is_array($goodsList['goods_list'])) foreach ($goodsList['goods_list'] as $key=> &$goods) {
                 $goods_id = $goods['_id'];
                 $is_group = array_key_exists('group', $goods);
                 if ($is_group) {
@@ -76,7 +105,27 @@ class Goods extends REST2_Controller
                 }
                 unset($goods['_id']);
                 $goods['code'] = null;
+                // unset the result if
+                // 1. good id is set organize and player_id is not in that organize
+                // Or 2. organize role is set and player role is not matched
+                if (isset($goods['organize_id'])) {
+                    if (!empty($org_id_list) &&
+                        (!array_key_exists((string)$goods['organize_id'], $org_id_list)
+                            || ((isset($goods['organize_role']) && $goods['organize_role'] != "")
+                                && !array_key_exists($goods['organize_role'],
+                                    $org_id_list[(string)$goods['organize_id']]))
+                        )
+                    ) {
+                        unset($goodsList['goods_list'][$key]);
+                    } else {
+                        $org = $this->store_org_model->retrieveOrganizeById($this->client_id, $this->site_id,
+                            $goods['organize_id']);
+                        $goods['organize'] = $org['name'];
+                        unset($goods['organize_id']);
+                    }
+                }
             }
+            $goodsList['goods_list'] = array_values($goodsList['goods_list']); // sort array just in case there were unset
             $this->response($this->resp->setRespond($goodsList), 200);
         }
     }

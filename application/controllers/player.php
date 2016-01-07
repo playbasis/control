@@ -23,6 +23,7 @@ class Player extends REST2_Controller
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/node_stream', 'node');
         $this->load->model('store_org_model');
+		$this->load->library('form_validation');
 	}
 	public function index_get($player_id = '')
 	{
@@ -356,9 +357,14 @@ class Player extends REST2_Controller
 		if ($instagramId) {
 			$playerInfo['instagram_id'] = $instagramId;
 		}
-		$password = do_hash($this->input->post('password'));
-		if ($password) {
-			$playerInfo['password'] = $password;
+		if ($this->password_validation($this->validToken['client_id'],$this->validToken['site_id'],$playerInfo['username'])) {
+			$this->player_model->unlockPlayer($this->validToken['site_id'],$pb_player_id);
+			$password = $this->input->post('password');
+			if($password)
+				$playerInfo['password'] = do_hash($password);
+		}
+		else{
+			$this->response($this->error->setError('FORM_VALIDATION_FAILED',$this->validation_errors()), 200);
 		}
 		$gender = $this->input->post('gender');
 		if ($gender) {
@@ -577,8 +583,19 @@ class Player extends REST2_Controller
 		if($deviceId)
 			$playerInfo['device_id'] = $deviceId;
 		$password = $this->input->post('password');
-		if($password)
-			$playerInfo['password'] = do_hash($password);
+		if ($password){
+			if (!isset($username) ||  $username == ''){
+				$username = $this->player_model->readPlayer($pb_player_id, $this->site_id, array('username' ))['username'];
+			}
+			if ($this->password_validation($this->validToken['client_id'],$this->validToken['site_id'],$username)) {
+				$this->player_model->unlockPlayer($this->validToken['site_id'],$pb_player_id);
+				$playerInfo['password'] = do_hash($password);
+			}
+			else{
+				$this->response($this->error->setError('FORM_VALIDATION_FAILED',$this->validation_errors()), 200);
+			}
+		}
+
 		$gender = $this->input->post('gender');
 		if($gender)
 			$playerInfo['gender'] = intval($gender);
@@ -828,13 +845,21 @@ class Player extends REST2_Controller
 		} else {
 			$player = null;
 		}
-		if (!$player) {
-			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		if (!$player || $player['approve_status'] != "approved") {
+			$this->response($this->error->setError('AUTHENTICATION_FAIL'), 200);
+		}elseif (isset($player['locked']) && $player['locked']){
+			$this->response($this->error->setError('ACCOUNT_IS_LOCKED'), 200);
 		}
 
+		$setting = $this->player_model->getSecuritySetting($this->client_id,$this->site_id);
+		if (isset($setting['max_retries']) && ($setting['max_retries'] > 0) && ($player['login_attempt'] >= $setting['max_retries'])){
+			$this->player_model->lockPlayer( $this->site_id, $player['_id']);
+			$this->response($this->error->setError('ACCOUNT_IS_LOCKED'), 200);
+		}
 		$auth = $this->player_model->authPlayer($this->site_id, $player['_id'], $password);
 		if (!$auth) {
-			$this->response($this->error->setError('PASSWORD_INCORRECT'), 200);
+			$this->player_model->increaseLoginAttempt($this->site_id,$player['_id']);
+			$this->response($this->error->setError('AUTHENTICATION_FAIL'), 200);
 		} else {
 			$device_id = $this->input->post('device_id');
 			if (!empty($device_id) && isset($player['device_id'])){
@@ -844,9 +869,11 @@ class Player extends REST2_Controller
 				}elseif(empty($player['phone_number'])){
 					$this->response($this->error->setError('SMS_VERIFICATION_PHONE_NUMBER_NOT_FOUND'), 200);
 				}
+				$this->player_model->increaseLoginAttempt($this->client_id,$this->site_id);
 			}
 		}
 
+		$this->player_model->resetLoginAttempt($this->site_id,$player['_id']);
 		//trigger and log event
 		$eventMessage = $this->utility->getEventMessage('login');
 		$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
@@ -865,7 +892,9 @@ class Player extends REST2_Controller
 
 		/* Optionally, keep track of session */
 		$session_id = get_random_code(40, true, true, true);
-		$session_expires_in = PLAYER_AUTH_SESSION_TIMEOUT;
+
+		$timeout = (isset($setting['timeout']))? ($setting['timeout'] > 0 ? $setting['timeout']:0): PLAYER_AUTH_SESSION_TIMEOUT;
+		$session_expires_in = $timeout;
 		if ($session_id) {
 			$this->player_model->login($this->client_id, $this->site_id, $player['_id'], $session_id,
 				$session_expires_in);
@@ -1351,26 +1380,8 @@ class Player extends REST2_Controller
 		$valid = false;
 		if (!$action_id) {
 			$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-		} else {
-			$ruleSet = $this->client_model->getRuleSetByActionId(array(
-					'client_id' => $this->validToken['client_id'],
-					'site_id' => $this->validToken['site_id'],
-					'action_id' => $action_id
-			));
-			foreach ($ruleSet as $rule) {
-				$jigsawSet = (isset($rule['jigsaw_set']) && !empty($rule['jigsaw_set'])) ? $rule['jigsaw_set'] : array();
-				foreach ($jigsawSet as $jigsaw) {
-					if ($jigsaw['category'] == "CONDITION" && $jigsaw['config']['param_name'] == $param) {
-						$valid = true;
-					}
-				}
-			}
 		}
-		if (!$valid) {
-			$this->response($this->error->setError('PARAMETER_INVALID', array(
-					'parameter'
-			)), 200);
-		}
+
 		// Action and parameter are valid !
 		// Now, getting all input
 		$input = $this->input->get();
@@ -1856,7 +1867,6 @@ class Player extends REST2_Controller
 			$temp3['node_id']=$entry["node_id"]."";
 			$temp3['name']=$temp2['name'];
 
-
 			array_push($result, $temp3);
         }
 
@@ -1880,11 +1890,41 @@ class Player extends REST2_Controller
                 'node_id'
             )), 200);
 
-        $temp = $this->store_org_model->getRoleOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id,new MongoId($node_id));
-        $result=array('role'=>$temp['role']);
+        $node= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],new MongoId($node_id));
+        if ($node == null) {
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
+        }
 
+        $role_info = $this->store_org_model->getRoleOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id,new MongoId($node_id));
+        if($role_info==null){
+            $this->response($this->error->setError('STORE_ORG_PLAYER_NOT_EXISTS_WITH_NODE'), 200);
+        }else{
 
-        $this->response($this->resp->setRespond($result), 200);
+            $org_info= $this->store_org_model->retrieveOrganizeById($this->validToken['client_id'],$this->validToken['site_id'],$node['organize']);
+            $roles = array();
+            $array_role = array_keys($role_info['roles']);
+            foreach($array_role as $role) {
+                $roles[]=array('role'=>$role,
+                               'join_date'=>datetimeMongotoReadable($role_info['roles'][$role]));
+            }
+
+            $result=array(
+                'organize_type'=>$org_info['name'],
+                'roles'=>$roles
+            );
+            $this->response($this->resp->setRespond($result), 200);
+        }
+    }
+    public function unlock_post($player_id = '') {
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        $this->player_model->unlockPlayer($this->validToken['site_id'],$pb_player_id);
+        $this->response($this->resp->setRespond(), 200);
     }
 
     private function recurGetChildUnder($client_id, $site_id, $parent_node, &$result, &$layer = 0, $num = 0)
@@ -1973,6 +2013,78 @@ class Player extends REST2_Controller
         }
 
         $this->response($this->resp->setRespond($result), 200);
+    }
+    private function password_validation($client_id,$site_id,$inhibited_str=''){
+        $return_status = false;
+        $setting = $this->player_model->getSecuritySetting($client_id,$site_id);
+        if (isset($setting['password_policy'])){
+            $password_policy = $setting['password_policy'];
+            $rule = 'trim|xss_clean';
+            if ($password_policy['min_char'] && $password_policy['min_char'] > 0){
+                $rule = $rule.'|'.'min_length['.$password_policy['min_char'].']';
+            }
+            if ($password_policy['alphabet'] && $password_policy['numeric']){
+                $rule = $rule.'|callback_require_at_least_number_and_alphabet';
+            }
+            elseif ($password_policy['alphabet']){
+                $rule = $rule.'|callback_require_at_least_alphabet';
+            }elseif($password_policy['numeric']){
+                $rule = $rule.'|callback_require_at_least_number';
+            }
+
+            if ($password_policy['user_in_password'] && ($inhibited_str != '')){
+                $rule = $rule.'|callback_word_in_password['.$inhibited_str.']';
+            }
+            $this->form_validation->set_rules('password', 'password', $rule);
+            if ($this->form_validation->run()) {
+                $return_status = true;
+            } else {
+                $return_status = false;
+            }
+        } else {
+            $return_status =  true;
+        }
+        return $return_status;
+
+    }
+
+    public function require_at_least_number_and_alphabet($str)
+    {
+        if (preg_match('#[0-9]#', $str) && preg_match('#[a-zA-Z]#', $str)) {
+            return true;
+        }
+        $this->form_validation->set_message('require_at_least_number_and_alphabet',
+            'The %s field require at least one numeric character and one alphabet');
+        return false;
+    }
+
+    public function require_at_least_number($str)
+    {
+        if (preg_match('#[0-9]#', $str)) {
+            return true;
+        }
+        $this->form_validation->set_message('require_at_least_number',
+            'The %s field require at least one number');
+        return false;
+    }
+
+    public function require_at_least_alphabet($str)
+    {
+        if (preg_match('#[a-zA-Z]#', $str)) {
+            return true;
+        }
+        $this->form_validation->set_message('require_at_least_alphabet',
+            'The %s field require at least one alphabet');
+        return false;
+    }
+    public function word_in_password($str, $val)
+    {
+        if (strpos($str,$val) !== false) {
+            $this->form_validation->set_message('word_in_password',
+                'The %s field disallow to contain logon IDs');
+            return false;
+        }
+        return true;
     }
 
 }

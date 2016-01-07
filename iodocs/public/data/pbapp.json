@@ -1386,6 +1386,29 @@
                           "Description": "Select parameter to report from action log [dafault = \"amount\"]"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Unlock",
+                    "Synopsis": "Unlock player for authentication",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/unlock",
+                    "RequiresOAuth": "Y",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
                 }
             ]
         },
@@ -3510,6 +3533,76 @@
                           "Type": "string",
                           "Description": "Select parameter to report from action log [dafault = \"amount\"]"
                         }
+                    ]
+                }
+            ]
+          },
+          {
+            "name" : "Content API",
+              "methods" :[
+                  {
+                    "MethodName": "Retrieve Content",
+                    "Synopsis": "Retrieve content(s) by specified filter fields",
+                    "HTTPMethod": "GET",
+                    "URI": "/Content",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                      {
+                        "Name": "id",
+                        "Required": "N",
+                        "Default": "",
+                        "Type": "string",
+                        "Description": "Specific id of content"
+                      },
+                      {
+                        "Name": "name",
+                        "Required": "N",
+                        "Default": "",
+                        "Type": "string",
+                        "Description": "Specific name of content"
+                      },
+                      {
+                        "Name": "category",
+                        "Required": "N",
+                        "Default": "",
+                        "Type": "string",
+                        "Description": "Specific category of content"
+                      },
+                      {
+                        "Name": "date_check",
+                        "Required": "N",
+                        "Default": "false",
+                        "Type": "string",
+                        "Description": "Return content that available in this date range"
+                      },
+                      {
+                        "Name": "sort",
+                        "Required": "N",
+                        "Default": "name",
+                        "Type": "string",
+                        "Description": "Specific field to sort ('name', 'date_start', 'date_end', 'date_added', 'date_modified')"
+                      },
+                      {
+                        "Name": "order",
+                        "Required": "N",
+                        "Default": "asc",
+                        "Type": "string",
+                        "Description": "Direction to order ('desc', 'asc')"
+                      },
+                      {
+                        "Name": "offset",
+                        "Required": "N",
+                        "Default": "0",
+                        "Type": "integer",
+                        "Description": "number of records starting"
+                      },
+                      {
+                        "Name": "limit",
+                        "Required": "N",
+                        "Default": "20",
+                        "Type": "integer",
+                        "Description": "number of results to return"
+                      }
                     ]
                 }
             ]

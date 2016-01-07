@@ -149,13 +149,13 @@ class Service_model extends MY_Model
                 continue;
             }
 
-            $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
+            $action = $this->getActionLogDetail($event['action_log_id']);
 
             $event['date_added'] = datetimeMongotoReadable($event['date_added']);
-            if($actionAndStringFilter){
-                $event['action_name'] = $actionAndStringFilter['action_name'];
-                $event['string_filter'] = $actionAndStringFilter['url']."";
-                $event['action_icon'] = $actionAndStringFilter['icon'];
+            if($action){
+                $event['action_name'] = $action['action_name'];
+                $event['string_filter'] = $action['url'];
+                $event['action_icon'] = $action['icon'];
             }
             if(isset($event['quest_id']) && $event['quest_id']){
                 if(isset($event['mission_id']) && $event['mission_id']){
@@ -362,10 +362,10 @@ class Service_model extends MY_Model
         }
 
         if (isset($event['action_log_id'])) {
-            $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
+            $actionAndStringFilter = $this->getActionLogDetail($event['action_log_id']);
             if($actionAndStringFilter){
                 $event['action_name'] = $actionAndStringFilter['action_name'];
-                $event['string_filter'] = $actionAndStringFilter['url']."";
+                $event['string_filter'] = $actionAndStringFilter['url'];
                 $event['action_icon'] = $actionAndStringFilter['icon'];
             }
             unset($event['action_log_id']);
@@ -468,11 +468,11 @@ class Service_model extends MY_Model
         return $resp;
     }
 
-    private function getActionNameAndStringFilter($action_log_id){
-        $this->mongo_db->select(array('action_name', 'url', 'client_id', 'site_id'));
+    private function getActionLogDetail($action_log_id){
+        $this->mongo_db->select(array('action_name', 'parameters', 'client_id', 'site_id'));
         $this->mongo_db->select(array(), array('_id'));
-        $this->mongo_db->where('_id', new MongoID($action_log_id));
-        $returnThis = $this->mongo_db->get('playbasis_action_log');
+        $this->mongo_db->where('action_log_id', new MongoID($action_log_id));
+        $returnThis = $this->mongo_db->get('playbasis_validated_action_log');
 
         if($returnThis){
             $returnThis = $returnThis[0];
@@ -487,6 +487,7 @@ class Service_model extends MY_Model
             $action = $this->mongo_db->get('playbasis_action_to_client');
 
             if($action){
+                $returnThis['url'] = (isset($returnThis[0]['parameters']['url']) ? $returnThis[0]['parameters']['url'] : '')."";
                 $returnThis['icon'] = $action[0]['icon'];
             }
         }else{

@@ -272,8 +272,8 @@ class Error extends CI_Model
             $errorData['message'] = "Rule not available";
             $errorData['error_code'] = '1101';
             break;
-        case 'PROMO_CONTENT_NOT_FOUND':
-            $errorData['message'] = "Promotional Content not found";
+        case 'CONTENT_NOT_FOUND':
+            $errorData['message'] = "Content not found";
             $errorData['error_code'] = '2001';
             break;
         case 'PIN_CODE_INVALID':
@@ -323,6 +323,22 @@ class Error extends CI_Model
         case 'STORE_ORG_PLAYER_ROLE_NOT_EXISTS':
             $errorData['message'] = "This role is not set for this Player";
             $errorData['error_code'] = '2405';
+            break;
+        case 'AUTHENTICATION_FAIL':
+            $errorData['message'] = "Authenication fail";
+            $errorData['error_code'] = '2406';
+            break;
+        case 'FORM_VALIDATION_FAILED':
+            $errorData['message'] = $dataArray;
+            $errorData['error_code'] = '2407';
+            break;
+        case 'ACCOUNT_IS_LOCKED':
+            $errorData['message'] = "Account is locked due to exhausted number of retries";
+            $errorData['error_code'] = '2408';
+            break;
+        case 'SESSION_IS_EXPIRED':
+            $errorData['message'] = "Session is expired";
+            $errorData['error_code'] = '2409';
             break;
         default:
             $errorData['message'] = "Unknown";

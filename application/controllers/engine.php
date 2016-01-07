@@ -446,7 +446,6 @@ class Engine extends Quest
 			$apiResult = array_merge($apiResult, $apiQuestResult);
 		}
 
-
 		$this->benchmark->mark('engine_rule_end');
 		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
 		$this->response($this->resp->setRespond($apiResult), 200);
@@ -472,7 +471,7 @@ class Engine extends Quest
 				$input['player_id'] = $this->player_model->getClientPlayerId(
 			$input['pb_player_id'], $validToken['site_id']);
 		}
-		if (!isset($input['node_id'])){
+		if (!$input["test"] && !isset($input['node_id'])){
 			$node = $this->store_org_model->retrieveNodeByPBPlayerID($validToken['client_id'],$validToken['site_id'],$input['pb_player_id']);
 			$input['node_id'] = $node[0]['node_id'];
 		}
@@ -490,6 +489,18 @@ class Engine extends Quest
 		$site_id = $validToken['site_id'];
 		$domain_name = $validToken['domain_name'];
 
+		if (!$input["test"] && isset($input['session_id'])){
+			$setting = $this->player_model->getSecuritySetting($validToken['client_id'],$validToken['site_id']);
+			$session = $this->player_model->findBySessionId($client_id,$site_id,$input['session_id']);
+			if (!$session){
+				throw new Exception('SESSION_IS_EXPIRED');
+			}
+			elseif (isset($setting['timeout']) && $setting['timeout'] > 0){
+				$session_expires_in = $setting['timeout'];
+				$this->player_model->login($client_id,$site_id, $input['pb_player_id'], $input['session_id'],
+						$session_expires_in);
+			}
+		}
 		if(!isset($input['site_id']) || !$input['site_id'])
 			$input['site_id'] = $site_id;
 

@@ -174,6 +174,7 @@ $route['Player/rankParam'] = 'player/rankParam/0/0';
 $route['Player/'.ANY_STRING.'/getAssociatedNode'] = 'player/getAssociatedNode/$1';  // ANY_STRING = player_id
 $route['Player/'.ANY_STRING.'/getRole/'.ANY_STRING] = 'player/getRole/$1/$2';       // ANY_STRING = player_id/node_id
 $route['Player/'.ANY_STRING.'/saleReport'] = 'player/saleReport/$1';                // ANY_STRING = player_id
+$route['Player/'.ANY_STRING.'/unlock'] = 'player/unlock/$1';                        // ANY_STRING = player_id
 
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
@@ -322,11 +323,8 @@ $route['StoreOrg/rankPeerByAccAction/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/r
 $route['StoreOrg/rankPeerByAccAction/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/0/0';
 $route['StoreOrg/rankPeerByAccAction'] = 'store_org/rankPeerByAccumulateAction/0/0/0';
 
-//promo API
-$route['Promo'] = 'promo/list';
-$route['Promo/list'] = 'promo/list';
-$route['Promo/name'] = 'promo/detailByName';
-$route['Promo/name/' . ANY_STRING] = 'promo/detailByName/$1';
+//content API
+$route['Content'] = 'content/list';
 
 //CMS API
 $route['CMS/getArticles'] = 'cms/getArticles';

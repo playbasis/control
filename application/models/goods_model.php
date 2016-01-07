@@ -10,7 +10,22 @@ class Goods_model extends MY_Model
     public function getAllGoods($data, $nin=array())
     {
         $this->set_site_mongodb($data['site_id']);
-        $this->mongo_db->select(array('goods_id','image','name','code','description','quantity','redeem','group','date_start','date_expire','sponsor','sort_order'));
+        $this->mongo_db->select(array(
+                'goods_id',
+                'image',
+                'name',
+                'code',
+                'description',
+                'quantity',
+                'redeem',
+                'group',
+                'date_start',
+                'date_expire',
+                'sponsor',
+                'sort_order',
+                'organize_id',
+                'organize_role'
+        ));
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
@@ -73,7 +88,7 @@ class Goods_model extends MY_Model
         $this->set_site_mongodb($data['site_id']);
         // $this->mongo_db->select(array('goods_id','image','name','description','quantity','redeem','date_start','date_expire','sponsor'));
         $this->mongo_db->select(array('goods_id','image','name','description',
-            'quantity','per_user','redeem','date_start','date_expire','sponsor','sort_order', 'group', 'code'
+            'quantity','per_user','redeem','date_start','date_expire','sponsor','sort_order', 'group', 'code', 'organize_id','organize_role'
         ));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where(array(
@@ -222,7 +237,7 @@ class Goods_model extends MY_Model
 	}
 	public function getGoodsByGroup($client_id, $site_id, $group, $offset=null, $limit=null) {
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select(array('goods_id','name','description','image','date_start','date_expire','quantity','per_user','redeem','code'));
+		$this->mongo_db->select(array('goods_id','name','description','image','date_start','date_expire','quantity','per_user','redeem','code','organize_id','organize_role'));
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id,
