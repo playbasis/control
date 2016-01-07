@@ -1917,9 +1917,15 @@ class Player extends REST2_Controller
         }else{
 
             $org_info= $this->store_org_model->retrieveOrganizeById($this->validToken['client_id'],$this->validToken['site_id'],$node['organize']);
+            $roles = array();
+            $array_role = array_keys($role_info['roles']);
+            foreach($array_role as $role) {
+                $roles[$role]=datetimeMongotoReadable($role_info['roles'][$role]);
+            }
+
             $result=array(
                 'organize_type'=>$org_info['name'],
-                'roles'=>$role_info['roles']
+                'roles'=>$roles
             );
             $this->response($this->resp->setRespond($result), 200);
         }
