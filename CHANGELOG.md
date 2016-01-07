@@ -1,5 +1,110 @@
 # Change Log
 
+## [2.1.42](https://github.com/playbasis/api/tree/2.1.42) (2016-01-07)
+
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.11...2.1.42)
+
+**Implemented enhancements:**
+
+- Reimplement `promo` endpoint to `content` endpoint [\#102](https://github.com/playbasis/api/pull/102) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.1.42-alpha.11](https://github.com/playbasis/api/tree/2.1.42-alpha.11) (2016-01-07)
+[Full Changelog](https://github.com/playbasis/api/compare/OTP_query_param_missing...2.1.42-alpha.11)
+
+**Fixed bugs:**
+
+- BugFix : parameter Invalid When Rule Is Removed [\#101](https://github.com/playbasis/api/pull/101) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [OTP_query_param_missing](https://github.com/playbasis/api/tree/OTP_query_param_missing) (2016-01-07)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.10...OTP_query_param_missing)
+
+**Implemented enhancements:**
+
+- Response role of player as array [\#100](https://github.com/playbasis/api/pull/100) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.1.42-alpha.10](https://github.com/playbasis/api/tree/2.1.42-alpha.10) (2016-01-07)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.9...2.1.42-alpha.10)
+
+**Fixed bugs:**
+
+- Feature/bug get role return date tobe readable [\#99](https://github.com/playbasis/api/pull/99) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.1.42-alpha.9](https://github.com/playbasis/api/tree/2.1.42-alpha.9) (2016-01-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.8...2.1.42-alpha.9)
+
+**Implemented enhancements:**
+
+- Feature : Support Password Policy [\#98](https://github.com/playbasis/api/pull/98) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.42-alpha.8](https://github.com/playbasis/api/tree/2.1.42-alpha.8) (2016-01-06)
+[Full Changelog](https://github.com/playbasis/api/compare/fix_echo_in_included_lib...2.1.42-alpha.8)
+
+## [fix_echo_in_included_lib](https://github.com/playbasis/api/tree/fix_echo_in_included_lib) (2016-01-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.7...fix_echo_in_included_lib)
+
+**Fixed bugs:**
+
+- "test" mode should not try to find node\_id [\#97](https://github.com/playbasis/api/pull/97) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Hotfix/otp query param missing [\#96](https://github.com/playbasis/api/pull/96) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.1.42-alpha.7](https://github.com/playbasis/api/tree/2.1.42-alpha.7) (2016-01-04)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.6...2.1.42-alpha.7)
+
+**Implemented enhancements:**
+
+- Modified getRole function to also return organization type with role. [\#95](https://github.com/playbasis/api/pull/95) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Feature/point history from validated action log [\#94](https://github.com/playbasis/api/pull/94) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.1.42-alpha.6](https://github.com/playbasis/api/tree/2.1.42-alpha.6) (2016-01-04)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_AddActionLogID...2.1.42-alpha.6)
+
+## [HotFix_AddActionLogID](https://github.com/playbasis/api/tree/HotFix_AddActionLogID) (2016-01-04)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.5...HotFix_AddActionLogID)
+
+**Fixed bugs:**
+
+- Hotfix/hot fix add action log [\#93](https://github.com/playbasis/api/pull/93) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.42-alpha.5](https://github.com/playbasis/api/tree/2.1.42-alpha.5) (2015-12-29)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.4...2.1.42-alpha.5)
+
+**Fixed bugs:**
+
+- bug: key parameter "roles" mismatch [\#91](https://github.com/playbasis/api/pull/91) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.1.42-alpha.4](https://github.com/playbasis/api/tree/2.1.42-alpha.4) (2015-12-29)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.3...2.1.42-alpha.4)
+
+**Implemented enhancements:**
+
+- Enhancement : Quest Support Organization [\#90](https://github.com/playbasis/api/pull/90) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.42-alpha.3](https://github.com/playbasis/api/tree/2.1.42-alpha.3) (2015-12-28)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.2...2.1.42-alpha.3)
+
+**Fixed bugs:**
+
+- BugFix : PHP Error When No Mission [\#89](https://github.com/playbasis/api/pull/89) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.42-alpha.2](https://github.com/playbasis/api/tree/2.1.42-alpha.2) (2015-12-28)
+[Full Changelog](https://github.com/playbasis/api/compare/use_try_instead_of_mongoid_isValid...2.1.42-alpha.2)
+
+## [use_try_instead_of_mongoid_isValid](https://github.com/playbasis/api/tree/use_try_instead_of_mongoid_isValid) (2015-12-28)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.1...use_try_instead_of_mongoid_isValid)
+
+**Implemented enhancements:**
+
+- Enhancement Goods API support Organization [\#88](https://github.com/playbasis/api/pull/88) ([narut-playbasis](https://github.com/narut-playbasis))
+
+**Fixed bugs:**
+
+- Use try/catch instead of `MongoId::isValid` since it is not available… [\#87](https://github.com/playbasis/api/pull/87) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.1.42-alpha.1](https://github.com/playbasis/api/tree/2.1.42-alpha.1) (2015-12-24)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.12...2.1.42-alpha.1)
+
+## [2.1.41-alpha.12](https://github.com/playbasis/api/tree/2.1.41-alpha.12) (2015-12-24)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.41...2.1.41-alpha.12)
 
 ## [2.1.41](https://github.com/playbasis/api/tree/2.1.41) (2015-12-24)
 
@@ -366,17 +471,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule...2.1.38-alpha.1)
 
 ## [fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule](https://github.com/playbasis/api/tree/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule) (2015-10-07)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
 
 **Implemented enhancements:**
 
 - Implementimg new feature for PIN code verification [\#32](https://github.com/playbasis/api/pull/32) ([burachit-playbasis](https://github.com/burachit-playbasis))
 
-## [2.1.37](https://github.com/playbasis/api/tree/2.1.37) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...2.1.37)
-
 ## [2.1.37-alpha.6](https://github.com/playbasis/api/tree/2.1.37-alpha.6) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37-alpha.6)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...2.1.37-alpha.6)
+
+## [2.1.37](https://github.com/playbasis/api/tree/2.1.37) (2015-10-02)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37)
 
 **Merged pull requests:**
 
@@ -725,13 +830,13 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.3...2.1.24-alpha.4)
 
 ## [2.1.24-alpha.3](https://github.com/playbasis/api/tree/2.1.24-alpha.3) (2015-04-27)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.3)
-
-## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.3)
 
 ## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.1)
+
+## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.2)
 
 ## [2.1.20-alpha.1](https://github.com/playbasis/api/tree/2.1.20-alpha.1) (2015-03-18)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.19-alpha.1...2.1.20-alpha.1)
