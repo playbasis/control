@@ -221,4 +221,3 @@ class Push_model extends MY_Model
         }
     }
 }
-?>

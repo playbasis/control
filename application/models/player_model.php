@@ -1665,5 +1665,21 @@ class Player_model extends MY_Model
         $result = $this->mongo_db->update('playbasis_player');
         return $result;
     }
+
+    public function listDevices($client_id, $site_id, $pb_player_id = null, $fields = null)
+    {
+        if ($fields) {
+            $this->mongo_db->select($fields);
+        }
+
+        if ($pb_player_id) {
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+        }
+
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+        ));
+        return $this->mongo_db->get('playbasis_player_device');
+    }
 }
-?>
