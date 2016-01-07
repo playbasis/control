@@ -323,11 +323,8 @@ $route['StoreOrg/rankPeerByAccAction/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/r
 $route['StoreOrg/rankPeerByAccAction/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/0/0';
 $route['StoreOrg/rankPeerByAccAction'] = 'store_org/rankPeerByAccumulateAction/0/0/0';
 
-//promo API
-$route['Promo'] = 'promo/list';
-$route['Promo/list'] = 'promo/list';
-$route['Promo/name'] = 'promo/detailByName';
-$route['Promo/name/' . ANY_STRING] = 'promo/detailByName/$1';
+//content API
+$route['Content'] = 'content/list';
 
 //CMS API
 $route['CMS/getArticles'] = 'cms/getArticles';
