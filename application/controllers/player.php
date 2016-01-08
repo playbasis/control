@@ -364,7 +364,7 @@ class Player extends REST2_Controller
 				$playerInfo['password'] = do_hash($password);
 		}
 		else{
-			$this->response($this->error->setError('FORM_VALIDATION_FAILED',$this->validation_errors()), 200);
+			$this->response($this->error->setError('FORM_VALIDATION_FAILED',$this->validation_errors()[0]), 200);
 		}
 		$gender = $this->input->post('gender');
 		if ($gender) {
