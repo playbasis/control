@@ -1,3 +1,7 @@
+<link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
+<script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
+        src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
+<div class="cover"></div>
 <div id="content" class="span10 store_org-page">
     <div class="box">
         <div class="heading">
@@ -269,3 +273,9 @@
 <!--<script src="--><?php //echo base_url(); ?><!--javascript/md5.js" type="text/javascript"></script>-->
 <!--<script src="--><?php //echo base_url(); ?><!--javascript/mongoid.js" type="text/javascript"></script>-->
 <script src="<?php echo base_url(); ?>javascript/store_org/app_form.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    Pace.on("done", function(){
+        $(".cover").fadeOut(1000);
+    });
+</script>
