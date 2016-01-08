@@ -43,7 +43,7 @@ class Goods extends REST2_Controller
 
             $org_list = $this->store_org_model->retrieveNodeByPBPlayerID($this->client_id,$this->site_id,$pb_player_id);
 
-            foreach ($org_list as $node){
+            if (is_array($org_list)) foreach ($org_list as $node){
                 $org_info = $this->store_org_model->getOrgInfoOfNode($this->client_id,$this->site_id, $node['node_id']);
                 $a = array ((string)$org_info[0]['organize'] => isset($node['roles'])? $node['roles']:array() );
                 $org_id_list = array_merge($org_id_list, $a);
