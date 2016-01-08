@@ -845,7 +845,7 @@ class Player extends REST2_Controller
 		} else {
 			$player = null;
 		}
-		if (!$player || $player['approve_status'] != "approved") {
+		if (!$player || !isset($player['approve_status']) || $player['approve_status'] != "approved") {
 			$this->response($this->error->setError('AUTHENTICATION_FAIL'), 200);
 		}elseif (isset($player['locked']) && $player['locked']){
 			$this->response($this->error->setError('ACCOUNT_IS_LOCKED'), 200);
