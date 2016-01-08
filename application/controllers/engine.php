@@ -434,7 +434,7 @@ class Engine extends Quest
 
 			if (!isset($input['node_id'])){
 				$node = $this->store_org_model->retrieveNodeByPBPlayerID($validToken['client_id'],$validToken['site_id'],$pb_player_id);
-				$input['node_id'] = $node[0]['node_id'];
+				$input['node_id'] = isset($node[0]['node_id']) ?$node[0]['node_id']:null;
 			}
 
 			// track validated action in the log
@@ -473,7 +473,7 @@ class Engine extends Quest
 		}
 		if (!$input["test"] && !isset($input['node_id'])){
 			$node = $this->store_org_model->retrieveNodeByPBPlayerID($validToken['client_id'],$validToken['site_id'],$input['pb_player_id']);
-			$input['node_id'] = $node[0]['node_id'];
+			$input['node_id'] = isset($node[0]['node_id']) ?$node[0]['node_id']:null;
 		}
 		$anonymousUser = $this->player_model->isAnonymous($validToken['client_id'], $validToken['site_id'], null, $input['pb_player_id']);
 		$headers = $this->input->request_headers();
