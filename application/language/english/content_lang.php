@@ -46,3 +46,5 @@ $lang['text_empty_content'] = 'No content found';
 $lang['error_permission'] = 'Warning: You do not have permission to modify Content!';
 $lang['error_access'] = 'Warning: You do not have permission to access this page!';
 $lang['error_contents_limit'] = 'You have reached Content limit.';
+$lang['error_no_device_info'] = 'Warning: No device information found!';
+$lang['error_empty_content'] = 'Warning: No content found!';

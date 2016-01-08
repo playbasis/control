@@ -15,6 +15,22 @@ class Workflow_model extends MY_Model
         return $this->mongo_db->get('playbasis_player');
     }
 
+    public function getPendingPlayer($client_id, $site_id) {
+        $this->set_site_mongodb($site_id);
+        //$this->mongo_db->select(array('email','first_name','last_name','username','image','exp','level','date_added','date_modified'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        $or_where = array(
+            array('approve_status' => 'pending'),
+            array('approve_status' => null),
+            array('approve_status' => ""),
+        );
+        $this->mongo_db->where(array('$or' => $or_where));
+
+        return $this->mongo_db->get('playbasis_player');
+    }
+
     public function getOrganizationToPlayer($client_id, $site_id, $player_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -161,8 +177,10 @@ class Workflow_model extends MY_Model
         return $update;
     }
 
-    public function approvePlayer($user_id){
+    public function approvePlayer($client_id, $site_id, $user_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('_id', new MongoID($user_id));
 
         $this->mongo_db->set('approve_status', "approved");
@@ -170,8 +188,10 @@ class Workflow_model extends MY_Model
         return $this->mongo_db->update('playbasis_player');
     }
 
-    public function rejectPlayer($user_id){
+    public function rejectPlayer($client_id, $site_id, $user_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('_id', new MongoID($user_id));
 
         $this->mongo_db->set('approve_status', "rejected");
@@ -179,10 +199,33 @@ class Workflow_model extends MY_Model
         return $this->mongo_db->update('playbasis_player');
     }
 
-    public function deletePlayer($user_id){
+    public function deletePlayer($client_id, $site_id, $user_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('_id', new MongoID($user_id));
 
         return $this->mongo_db->delete('playbasis_player');
+    }
+    public function unlockPlayer($client_id, $site_id, $user_id){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('_id', new MongoID($user_id));
+
+        $this->mongo_db->set('locked', false);
+        $this->mongo_db->set('login_attempt', 0);
+        return $this->mongo_db->update('playbasis_player');
+    }
+    public function getLockedPlayer($client_id,$site_id){
+        $this->set_site_mongodb($site_id);
+        //$this->mongo_db->select(array('email','first_name','last_name','username','image','exp','level','date_added','date_modified'));
+        $this->mongo_db->where(array(
+            'locked' => true,
+            'site_id' => $site_id,
+            'client_id' => $client_id
+        ));
+
+        return $this->mongo_db->get('playbasis_player');
     }
 }

@@ -72,7 +72,11 @@ class Content_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('_id', new MongoId($content_id));
+        try {
+            $this->mongo_db->where('_id', new MongoId($content_id));
+        } catch (Exception $e) {
+            return null;
+        }
         $c = $this->mongo_db->get('playbasis_content_to_client');
 
         if ($c) {
