@@ -66,7 +66,7 @@
                                         </span><?php } ?></td>
                                 <td class="right"><?php echo isset($content['category']['name']) ? $content['category']['name'] : ""; ?></td>
                                 <td class="right"><?php echo dateMongotoReadable($content['date_start']); ?>&nbsp;-&nbsp;<?php echo dateMongotoReadable($content['date_end']); ?></td>
-                                <td class="right"><?php echo isset($content['status']) ? "Enabled" : "Disabled"; ?></td>
+                                <td class="right"><?php echo isset($content['status']) ? ( $content['status'] ? "Enable" : "Disabled") : "N/A"; ?></td>
                                 <td class="right">
                                     <?php if ($push_feature_existed) { ?>
                                         <span>[ <?php echo anchor('#confirmModal', 'Send push',
