@@ -9,7 +9,6 @@ class Content_model extends MY_Model
 
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
-        $this->mongo_db->where('status', true);
         $this->mongo_db->where('deleted', false);
         $total = $this->mongo_db->count('playbasis_content_to_client');
 
