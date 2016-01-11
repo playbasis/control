@@ -792,7 +792,7 @@ class Store_org extends REST2_Controller
                     'percent_changed' => $prev_value==0? $current_value > 0? 100:0: (($current_value- $prev_value)*100)/$prev_value)
             );
         }
-        $return_list['leadderboard'] = $leaderboard_list = $this->sortResult($leaderboard_list,$rank_by,'player_id');
+        $return_list['leaderboard'] = $leaderboard_list = $this->sortResult($leaderboard_list,$rank_by,'player_id');
         foreach ($leaderboard_list as $key => $rank){
             $rank_no = $key +1;
             if ($rank_no > $backup_limit) unset($return_list['leadderboard'][$key]);
