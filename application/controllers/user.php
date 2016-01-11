@@ -22,6 +22,7 @@ class User extends MY_Controller
         $this->load->model('Merchant_model');
         $this->load->model('Goods_model');
         $this->load->model('User_group_model');
+        $this->load->model('Setting_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -1177,7 +1178,35 @@ class User extends MY_Controller
 
         if($this->session->userdata('player')) {
 
-            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[8]|max_length[40]|xss_clean|check_space');
+
+            $player_info = $this->Player_model->getPlayerById($player['pb_player_id']);
+            $inhibited_str = $player_info['username'];
+            $setting = $this->Setting_model->retrieveSetting($player_info);
+            if (isset($setting['password_policy'])){
+                $password_policy = $setting['password_policy'];
+                $rule = 'trim|required|xss_clean|check_space|max_length[40]';
+                if ($password_policy['min_char'] && $password_policy['min_char'] > 0){
+                    $rule = $rule.'|'.'min_length['.$password_policy['min_char'].']';
+                    $this->data['min_length'] = $password_policy['min_char'];
+                }
+                if ($password_policy['alphabet'] && $password_policy['numeric']){
+                    $rule = $rule.'|callback_require_at_least_number_and_alphabet';
+                }
+                elseif ($password_policy['alphabet']){
+                    $rule = $rule.'|callback_require_at_least_alphabet';
+                }elseif($password_policy['numeric']){
+                    $rule = $rule.'|callback_require_at_least_number';
+                }
+
+                if ($password_policy['user_in_password'] && ($inhibited_str != '')){
+                    $rule = $rule.'|callback_word_in_password['.$inhibited_str.']';
+                }
+                $this->form_validation->set_rules('password', $this->lang->line('form_password'), $rule);
+
+            } else {
+                $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[8]|max_length[40]|xss_clean|check_space');
+            }
+
             $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -1494,6 +1523,44 @@ class User extends MY_Controller
             $dateTimeMongo = "0000-00-00 00:00:00";
         }
         return $dateTimeMongo;
+    }
+    public function require_at_least_number_and_alphabet($str)
+    {
+        if (preg_match('#[0-9]#', $str) && preg_match('#[a-zA-Z]#', $str)) {
+            return true;
+        }
+        $this->form_validation->set_message('require_at_least_number_and_alphabet',
+            'The %s field require at least one numeric character and one alphabet');
+        return false;
+    }
+
+    public function require_at_least_number($str)
+    {
+        if (preg_match('#[0-9]#', $str)) {
+            return true;
+        }
+        $this->form_validation->set_message('require_at_least_number',
+            'The %s field require at least one number');
+        return false;
+    }
+
+    public function require_at_least_alphabet($str)
+    {
+        if (preg_match('#[a-zA-Z]#', $str)) {
+            return true;
+        }
+        $this->form_validation->set_message('require_at_least_alphabet',
+            'The %s field require at least one alphabet');
+        return false;
+    }
+    public function word_in_password($str, $val)
+    {
+        if (strpos($str,$val) !== false) {
+            $this->form_validation->set_message('word_in_password',
+                'The %s field disallow to contain logon IDs');
+            return false;
+        }
+        return true;
     }
 }
 
