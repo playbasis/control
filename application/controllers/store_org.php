@@ -381,6 +381,7 @@ class Store_org extends REST2_Controller
     public function getChildNode_get($node_id = '', $layer = 0)
     {
         $result = array();
+        $candidate_nodes = array();
 
         if (!$node_id) {
             $this->response($this->error->setError('PARAMETER_MISSING', array(
@@ -388,8 +389,30 @@ class Store_org extends REST2_Controller
             )), 200);
         }
 
+        $check_node= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],new MongoId($node_id));
+        if ($check_node == null) {
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
+        }
+
         $this->recurGetChildUnder($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node_id),
-            $result, $layer);
+            $candidate_nodes, $layer);
+
+        foreach ($candidate_nodes as $node) {
+            $node_info = $this->store_org_model->retrieveNodeById($this->validToken['site_id'], $node);
+            if($node_id!=$node_info['_id']) {
+                array_push($result, array(
+                    '_id' => $node_info['_id'],
+                    'name' => $node_info['name'],
+                    'description' => $node_info['description'],
+                    'status' => $node_info['status'],
+                    'slug' => $node_info['slug'],
+                    'deleted' => $node_info['deleted'],
+                    'organize' => $node_info['organize'],
+                    'parent' => $node_info['parent'],
+                ));
+            }
+        }
+
 
         $this->response($this->resp->setRespond($result), 200);
     }
