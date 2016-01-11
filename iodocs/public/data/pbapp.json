@@ -1658,6 +1658,20 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "if needed, you can also specify a rule id so that rule engine will only process against that rule"
+                        },
+                        {
+                            "Name": "node_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "if needed, you can also specify a node id so that rule engine will process with that rule"
+                        },
+                        {
+                            "Name": "session_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "you can specify a session id to extend expire session time for that player"
                         }
                     ]
                 }
