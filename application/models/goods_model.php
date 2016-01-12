@@ -82,6 +82,20 @@ class Goods_model extends MY_Model
         }
         return $goods;
     }
+
+	public function getGoodsByGroupAndCode($client_id, $site_id, $group, $code, $fields=array()) {
+		$this->set_site_mongodb($this->session->userdata('site_id'));
+		if ($fields) $this->mongo_db->select($fields);
+
+		$this->mongo_db->where('client_id', $client_id);
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where('group', $group);
+		$this->mongo_db->where('code', $code);
+
+		$result = $this->mongo_db->get('playbasis_goods_to_client');
+		return $result ? $result[0] : null;
+	}
+
     public function getGoods($data, $is_sponsor=false)
     {
         //get goods id
