@@ -50,8 +50,9 @@ class Workflow extends MY_Controller
 
         // incase: click delete direct player
         if($this->input->post('user_id')){
-            $result = $this->Workflow_model->deletePlayer($client_id, $site_id, $this->input->post('user_id'));
-            if($result){
+            $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
+            $result = $this->Workflow_model->deletePlayer($player['cl_player_id'] );
+            if($result->success){
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             }else{
                 $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
@@ -64,7 +65,12 @@ class Workflow extends MY_Controller
 
             if($this->input->post('action')=="delete") {
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->deletePlayer($client_id, $site_id, $selectedUser);
+                    $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+                    $result = $this->Workflow_model->deletePlayer( $player['cl_player_id']);
+                    if(!$result->success){
+                        $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                        redirect('/workflow', 'refresh');
+                    }
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
@@ -106,8 +112,9 @@ class Workflow extends MY_Controller
 
         // incase: click delete direct player
         if($this->input->post('user_id')){
-            $result = $this->Workflow_model->deletePlayer($client_id, $site_id, $this->input->post('user_id'));
-            if($result){
+            $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
+            $result = $this->Workflow_model->deletePlayer($player['cl_player_id'] );
+            if($result->success){
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             }else{
                 $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
@@ -120,7 +127,12 @@ class Workflow extends MY_Controller
 
             if($this->input->post('action')=="delete") {
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->deletePlayer($client_id, $site_id, $selectedUser);
+                    $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+                    $result = $this->Workflow_model->deletePlayer( $player['cl_player_id']);
+                    if(!$result->success){
+                        $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                        redirect('/workflow', 'refresh');
+                    }
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
@@ -162,8 +174,9 @@ class Workflow extends MY_Controller
 
         // incase: click delete direct player
         if($this->input->post('user_id')){
-            $result = $this->Workflow_model->deletePlayer($client_id, $site_id, $this->input->post('user_id'));
-            if($result){
+            $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
+            $result = $this->Workflow_model->deletePlayer($player['cl_player_id'] );
+            if($result->success){
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             }else{
                 $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
@@ -192,7 +205,12 @@ class Workflow extends MY_Controller
             }
             elseif($this->input->post('action')=="delete") {
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->deletePlayer($client_id, $site_id,$selectedUser);
+                    $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+                    $result = $this->Workflow_model->deletePlayer( $player['cl_player_id']);
+                    if(!$result->success){
+                        $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                        redirect('/workflow', 'refresh');
+                    }
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
@@ -233,8 +251,9 @@ class Workflow extends MY_Controller
 
         // incase: click delete direct player
         if($this->input->post('user_id')){
-            $result = $this->Workflow_model->deletePlayer($client_id, $site_id, $this->input->post('user_id'));
-            if($result){
+            $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
+            $result = $this->Workflow_model->deletePlayer($player['cl_player_id'] );
+            if($result->success){
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             }else{
                 $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
@@ -255,7 +274,12 @@ class Workflow extends MY_Controller
             }
             elseif($this->input->post('action')=="delete") {
                 foreach ($selectedUsers as $selectedUser){
-                    $this->Workflow_model->deletePlayer($client_id, $site_id, $selectedUser);
+                    $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+                    $result = $this->Workflow_model->deletePlayer( $player['cl_player_id']);
+                    if(!$result->success){
+                        $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                        redirect('/workflow', 'refresh');
+                    }
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
