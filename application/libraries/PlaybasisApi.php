@@ -64,6 +64,11 @@ class PlaybasisApi{
         return $result;
     }
 
+    public function deletePlayer($player_id){
+        $result = $this->_post('Player/'.$player_id.'/delete/');
+        return $result;
+    }
+
     public function engine($player_id, $action, $optionalParams=array()){
         $result = $this->_post('Engine/rule', array_merge(array(
             'player_id' => $player_id,
