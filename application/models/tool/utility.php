@@ -171,5 +171,18 @@ class Utility extends CI_Model
 		fwrite($f, $var);
 		return $uri;
 	}
+	public function pagination($page, $limit_per_page, $input = array()){
+		if (!$limit_per_page || $limit_per_page <= 0) return $input;
+		$return_array = array();
+		$page = $page < 1 ? 1 : $page; // page is based 1
+		$start_page_element = ($page-1)*$limit_per_page;
+		$end_page_element = $start_page_element+ $limit_per_page;
+		if (is_array($input))foreach ($input as $key => $value){
+			if ($key <  $end_page_element && $key >= $start_page_element ){
+				array_push($return_array,$value);
+			}
+		}
+		return $return_array;
+	}
 }
 ?>

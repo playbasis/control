@@ -1362,28 +1362,28 @@
                           "Required": "N",
                           "Default": "",
                           "Type": "string",
-                          "Description": "Select month to get sale report(ex. 1,2,..,12)[dafault = current month]"
+                          "Description": "Select month to get sale report(ex. 1,2,..,12)[default = current month]"
                         },
                         {
                           "Name": "year",
                           "Required": "N",
                           "Default": "",
                           "Type": "string",
-                          "Description": "Select year to get sale report(ex. 2015)[dafault = current year]"
+                          "Description": "Select year to get sale report(ex. 2015)[default = current year]"
                         },
                         {
                           "Name": "action",
                           "Required": "N",
                           "Default": "",
                           "Type": "string",
-                          "Description": "Select action name to query from action log [dafault = \"sell\"]"
+                          "Description": "Select action name to query from action log [default = \"sell\"]"
                         },
                         {
                           "Name": "parameter",
                           "Required": "N",
                           "Default": "",
                           "Type": "string",
-                          "Description": "Select parameter to report from action log [dafault = \"amount\"]"
+                          "Description": "Select parameter to report from action log [default = \"amount\"]"
                         }
                     ]
                 },
@@ -2229,14 +2229,21 @@
                             "Description": "access token returned from Auth"
                         },
                         {
-                            "Name": "goods_id",
+                            "Name": "goods_group",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
-                            "Description": "goods id to verify"
+                            "Description": "goods group"
                         },
                         {
-                            "Name": "pincode",
+                            "Name": "coupon_code",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "coupon code of goods to verify"
+                        },
+                        {
+                            "Name": "pin_code",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
@@ -3038,14 +3045,14 @@
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Specify paging offset [dafault = 0]"
+                            "Description": "Specify paging offset [default = 0]"
                         },
                         {
                             "Name": "limit",
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Specify paging limit [dafault = 20]"
+                            "Description": "Specify paging limit [default = 20]"
                         }
                     ]
                 },
@@ -3094,23 +3101,23 @@
                         {
                             "Name": "order",
                             "Required": "N",
-                            "Default": "",
+                            "Default": "asc",
                             "Type": "string",
                             "Description": "Specify sorted direction [desc, *asc*]"
                         },
                         {
                             "Name": "offset",
                             "Required": "N",
-                            "Default": "",
+                            "Default": "0",
                             "Type": "string",
-                            "Description": "Specify paging offset [dafault = 0]"
+                            "Description": "Specify paging offset [default = 0]"
                         },
                         {
                             "Name": "limit",
                             "Required": "N",
-                            "Default": "",
+                            "Default": "20",
                             "Type": "string",
-                            "Description": "Specify paging limit [dafault = 20]"
+                            "Description": "Specify paging limit [default = 20]"
                         }
                     ]
                 },
@@ -3293,11 +3300,18 @@
                             "Description": "name of point-based reward to rank players by"
                         },
                         {
+                            "Name": "page",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "number",
+                            "Description": "Select page to be reported, page 1 is the first page [default = first page]"
+                        },
+                        {
                             "Name": "limit",
                             "Required": "N",
                             "Default": "20",
                             "Type": "integer",
-                            "Description": "number of results to return"
+                            "Description": "number of results to return [default = 20]"
                         },
                         {
                             "Name": "role",
@@ -3358,11 +3372,18 @@
                             "Description": "name of parameter of action to rank players by"
                         },
                         {
+                            "Name": "page",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "number",
+                            "Description": "Select page to be reported, page 1 is the first page [default = first page]"
+                        },
+                        {
                             "Name": "limit",
                             "Required": "N",
                             "Default": "20",
                             "Type": "integer",
-                            "Description": "number of results to return"
+                            "Description": "number of results to return [default = 20]"
                         },
                         {
                             "Name": "player_id",
@@ -3406,7 +3427,7 @@
                             "Required": "N",
                             "Default": "",
                             "Type": "number",
-                            "Description": "Layer of nodes under specific node to find [dafault = 0 (for finding all layer)]"
+                            "Description": "Layer of nodes under specific node to find [default = 0 (for finding all layer)]"
                         }
                     ]
                 },
@@ -3429,28 +3450,28 @@
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Select month to get sale report(ex. 1,2,..,12)[dafault = current month]"
+                            "Description": "Select month to get sale report(ex. 1,2,..,12)[default = current month]"
                         },
                         {
                             "Name": "year",
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Select year to get sale report(ex. 2015)[dafault = current year]"
+                            "Description": "Select year to get sale report(ex. 2015)[default = current year]"
                         },
                         {
                             "Name": "action",
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Select action name to query from action log [dafault = \"sell\"]"
+                            "Description": "Select action name to query from action log [default = \"sell\"]"
                         },
                         {
                             "Name": "parameter",
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Select parameter to report from action log [dafault = \"amount\"]"
+                            "Description": "Select parameter to report from action log [default = \"amount\"]"
                         }
                     ]
                 },
@@ -3480,28 +3501,28 @@
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Select month to get sale report(ex. 1,2,..,12)[dafault = current month]"
+                            "Description": "Select month to get sale report(ex. 1,2,..,12)[default = current month]"
                         },
                         {
                             "Name": "year",
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Select year to get sale report(ex. 2015)[dafault = current year]"
+                            "Description": "Select year to get sale report(ex. 2015)[default = current year]"
                         },
                         {
                             "Name": "action",
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Select action name to query from action log [dafault = \"sell\"]"
+                            "Description": "Select action name to query from action log [default = \"sell\"]"
                         },
                         {
                             "Name": "parameter",
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Select parameter to report from action log [dafault = \"amount\"]"
+                            "Description": "Select parameter to report from action log [default = \"amount\"]"
                         }
                     ]
                 },
@@ -3509,7 +3530,7 @@
                     "MethodName": "Sale board",
                     "Synopsis": "Leader board by sale amount of all nodes under specific node",
                     "HTTPMethod": "GET",
-                    "URI": "/StoreOrg/nodes/:node_id/saleBoard/:Layer",
+                    "URI": "/StoreOrg/nodes/:node_id/saleBoard/:layer",
                     "RequiresOAuth": "Y",
                     "parameters": [
                         {
@@ -3520,39 +3541,53 @@
                           "Description": "Node Id that you want to find the child node"
                         },
                         {
-                          "Name": "Layer",
+                          "Name": "layer",
                           "Required": "Y",
                           "Default": "",
                           "Type": "number",
-                          "Description": "Layer of nodes under specific node to find [dafault = 0 (for finding all layer)]"
+                          "Description": "Layer of nodes under specific node to find [default = 0 (for finding all layer)]"
                         },
                         {
                           "Name": "month",
                           "Required": "N",
                           "Default": "",
                           "Type": "string",
-                          "Description": "Select month to get sale report(ex. 1,2,..,12)[dafault = current month]"
+                          "Description": "Select month to get sale report(ex. 1,2,..,12)[default = current month]"
                         },
                         {
                           "Name": "year",
                           "Required": "N",
                           "Default": "",
                           "Type": "string",
-                          "Description": "Select year to get sale report(ex. 2015)[dafault = current year]"
+                          "Description": "Select year to get sale report(ex. 2015)[default = current year]"
                         },
                         {
                           "Name": "action",
                           "Required": "N",
                           "Default": "",
                           "Type": "string",
-                          "Description": "Select action name to query from action log [dafault = \"sell\"]"
+                          "Description": "Select action name to query from action log [default = \"sell\"]"
                         },
                         {
                           "Name": "parameter",
                           "Required": "N",
                           "Default": "",
                           "Type": "string",
-                          "Description": "Select parameter to report from action log [dafault = \"amount\"]"
+                          "Description": "Select parameter to report from action log [default = \"amount\"]"
+                        },
+                        {
+                            "Name": "page",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "number",
+                            "Description": "Select page to be reported, page 1 is the first page [default = first page]"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "number",
+                            "Description": "limit per page to be reported [default = \"20\"]"
                         }
                     ]
                 }
