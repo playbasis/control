@@ -15,6 +15,7 @@ class Store_org extends REST2_Controller
         $this->load->model('store_org_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
+        $this->load->model('tool/utility', 'utility');
     }
 
     public function playerRegister_post($node_id, $player_id)
@@ -585,6 +586,12 @@ class Store_org extends REST2_Controller
         if (!$parameter) {
             $parameter = "amount";
         }
+
+        $limit = $this->input->get('limit');
+        $page = $this->input->get('page');
+        if (!$page) {
+            $page = 0;
+        }
         //$this->benchmark->mark('rank_peer_start');
 
         $candidate_node = array();
@@ -633,6 +640,7 @@ class Store_org extends REST2_Controller
             array_multisort($temp_value, SORT_DESC, $temp_name, SORT_ASC, $result);
         }
 
+        $result = $this->utility->pagination($page,$limit,$result);
         //$this->benchmark->mark('rank_peer_end');
         //$result['processing_time'] = $this->benchmark->elapsed_time('rank_peer_start', 'rank_peer_end');
         $this->response($this->resp->setRespond($result), 200);
@@ -746,13 +754,14 @@ class Store_org extends REST2_Controller
         // Now, getting all input
         $this->benchmark->mark('rank_peer_start');
         $input = $this->input->get();
-        $limit = isset($input['limit']) ? $input['limit'] : 20;
+        $limit = isset($input['limit']) ? $input['limit'] : 0;
         $year = isset($input['year']) ? $input['year'] : date("Y", time());
         $month = isset($input['month']) ? $input['month'] : date("m", time());
         $client_id = $this->validToken['client_id'];
         $site_id = $this->validToken['site_id'];
         $backup_limit = $limit;
         $role = isset($input['role']) ? $input['role'] : null;
+        $page = isset($input['page']) ? $input['page']:1; // default is first page
         $list = array();
 
         // get node list of this node id
@@ -779,9 +788,9 @@ class Store_org extends REST2_Controller
                     array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
             }
         }
+        $limit = count($node_to_match);
         if ( isset($input['player_id'])){
             $given_player_id = $input['player_id'];
-            $limit = count($node_to_match);
         }
 
         $results = $this->store_org_model->getMonthlyPeerLeaderboard($rank_by, $limit, $client_id,
@@ -805,7 +814,7 @@ class Store_org extends REST2_Controller
         $return_list['leaderboard'] = $leaderboard_list = $this->sortResult($leaderboard_list,$rank_by,'player_id');
         foreach ($leaderboard_list as $key => $rank){
             $rank_no = $key +1;
-            if ($rank_no > $backup_limit) unset($return_list['leaderboard'][$key]);
+
             if (isset ($given_player_id) && ($rank['player_id'] == $given_player_id)){
                 $myrank = array(
                     'player_id' => $rank['player_id'],
@@ -822,6 +831,8 @@ class Store_org extends REST2_Controller
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
 
+
+        $return_list['leaderboard'] = $this->utility->pagination($page,$backup_limit,$return_list['leaderboard']);
 
         $this->benchmark->mark('rank_peer_end');
         $result['processing_time'] = $this->benchmark->elapsed_time('rank_peer_start', 'rank_peer_end');
@@ -866,10 +877,10 @@ class Store_org extends REST2_Controller
                 'site_id' => $site_id,
                 'cl_player_id' => $input['player_id']));
         }
-        $limit = isset($input['limit']) ? $input['limit'] : 20;
+        $limit = isset($input['limit']) ? $input['limit'] : 0;
         $year = isset($input['year']) ? $input['year'] : date("Y", time());
         $month = isset($input['month']) ? $input['month'] : date("m", time());
-
+        $page = isset($input['page']) ? $input['page'] : 1; // default is first page
         $prev_month = $month -1 ? $month -1 : 12;
         $prev_year = $month -1 ? $year : $year - 1;
 
@@ -900,9 +911,7 @@ class Store_org extends REST2_Controller
         foreach ($leaderboard_list as $key => $rank){
             $rank_no = $key +1;
             unset($results['leaderboard'][$key]['node_id']);
-            if ($rank_no > $limit){
-                unset($results['leaderboard'][$key]);
-            }
+
             $players_in_node = $this->store_org_model->getPlayersByNodeId($client_id, $site_id,$rank['node_id']);
 
             if (isset ($given_player_id) && in_array(array('pb_player_id' => $given_player_id),$players_in_node)){
@@ -920,6 +929,8 @@ class Store_org extends REST2_Controller
         {
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
+
+        $results['leaderboard'] = $this->utility->pagination($page,$limit,$results['leaderboard']);
         $this->benchmark->mark('rank_peer_end');
         $result['processing_time'] = $this->benchmark->elapsed_time('rank_peer_start', 'rank_peer_end');
         $this->response($this->resp->setRespond($results), 200);
