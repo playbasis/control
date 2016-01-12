@@ -32,7 +32,7 @@
 
                         <div class="pbf-field-group">
                             <label for="password">Password <span>*</span></label>
-                            <input type="password" name="password" placeholder="Password must be more than 8 character"
+                            <input type="password" name="password" placeholder="Password must be more than <?php echo isset($min_length)?$min_length:8 ?> character"
                                    id="reset-password" required>
                         </div>
 
