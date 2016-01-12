@@ -12,7 +12,7 @@ class jigsaw extends MY_Model
 	{
 		assert($config != false);
 		assert(is_array($config));
-		$data_set = $this->getActionDatasetInfo($config);
+		$data_set = $this->getActionDatasetInfo($config['action_name']);
 		$required = array();
 		if (is_array($data_set)) foreach ($data_set as $param){
 			$isRequired = isset($param['required'])?$param['required']:false;
