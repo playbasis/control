@@ -314,7 +314,7 @@ class Redeem extends REST2_Controller
                         $pb_player_id, $branch_log_data);
 
                     $result = $this->merchant_model->getMerchantRedeemLogByLogId($this->validToken['client_id'],$this->validToken['site_id'], new MongoId($log_result));
-                    if(!$result) {
+                    if($result) {
                         $this->player_model->deleteGoodsFromPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id, new MongoId($goods_id));
                     }
 
