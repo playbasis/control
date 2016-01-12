@@ -588,6 +588,9 @@ class Store_org extends REST2_Controller
         }
 
         $limit = $this->input->get('limit');
+        if (!$limit){
+            $limit = RETURN_LIMIT_FOR_RANK;
+        }
         $page = $this->input->get('page');
         if (!$page) {
             $page = 0;
@@ -754,7 +757,8 @@ class Store_org extends REST2_Controller
         // Now, getting all input
         $this->benchmark->mark('rank_peer_start');
         $input = $this->input->get();
-        $limit = isset($input['limit']) ? $input['limit'] : 0;
+
+        $limit = isset($input['limit']) ? $input['limit'] : RETURN_LIMIT_FOR_RANK;
         $year = isset($input['year']) ? $input['year'] : date("Y", time());
         $month = isset($input['month']) ? $input['month'] : date("m", time());
         $client_id = $this->validToken['client_id'];
@@ -877,7 +881,7 @@ class Store_org extends REST2_Controller
                 'site_id' => $site_id,
                 'cl_player_id' => $input['player_id']));
         }
-        $limit = isset($input['limit']) ? $input['limit'] : 0;
+        $limit = isset($input['limit']) ? $input['limit'] : RETURN_LIMIT_FOR_RANK;
         $year = isset($input['year']) ? $input['year'] : date("Y", time());
         $month = isset($input['month']) ? $input['month'] : date("m", time());
         $page = isset($input['page']) ? $input['page'] : 1; // default is first page
