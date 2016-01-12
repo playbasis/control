@@ -343,9 +343,9 @@ class Store_org_model extends MY_Model
     }
 
     public function getPlayersByNodeId($client_id, $site_id, $node_id , $role=null){
-        $this->mongo_db->select(array(
-            'pb_player_id',
-        ));
+        $this->mongo_db->select(array('pb_player_id'));
+        $this->mongo_db->select(array(),
+            array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $client_id,
             'site_id' => $site_id,
