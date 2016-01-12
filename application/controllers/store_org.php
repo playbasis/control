@@ -795,7 +795,7 @@ class Store_org extends REST2_Controller
         $return_list['leaderboard'] = $leaderboard_list = $this->sortResult($leaderboard_list,$rank_by,'player_id');
         foreach ($leaderboard_list as $key => $rank){
             $rank_no = $key +1;
-            if ($rank_no > $backup_limit) unset($return_list['leadderboard'][$key]);
+            if ($rank_no > $backup_limit) unset($return_list['leaderboard'][$key]);
             if (isset ($given_player_id) && ($rank['player_id'] == $given_player_id)){
                 $myrank = array(
                     'player_id' => $rank['player_id'],
@@ -821,6 +821,7 @@ class Store_org extends REST2_Controller
 
     public function rankPeerByAccumulateAction_get($node_id, $action, $param)
     {
+        $this->benchmark->mark('rank_peer_start');
         // Check validity of action and parameter
         if (!$node_id) {
             $this->response($this->error->setError('PARAMETER_MISSING', array(
@@ -847,16 +848,23 @@ class Store_org extends REST2_Controller
         if(!$action_id) $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
 
         // Now, getting all input
-        $this->benchmark->mark('rank_peer_start');
+
         $input = $this->input->get();
+        if ( isset($input['player_id'])){
+            $given_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'cl_player_id' => $input['player_id']));
+        }
         $limit = isset($input['limit']) ? $input['limit'] : 20;
         $year = isset($input['year']) ? $input['year'] : date("Y", time());
         $month = isset($input['month']) ? $input['month'] : date("m", time());
 
         $prev_month = $month -1 ? $month -1 : 12;
         $prev_year = $month -1 ? $year : $year - 1;
-        $list = array();
+
         $results = array();
+        $leaderboard_list = array();
         $node_list = $this->store_org_model->findAdjacentChildNode($client_id,$site_id,new MongoID($node_id));
         // get node list of this node id
         if ($node_list )foreach ($node_list as $node){
@@ -869,15 +877,39 @@ class Store_org extends REST2_Controller
                     $param, $month, $year, 2);
                 $current_value = $result[$year][$month][$param];
                 $prev_value = $result[$prev_year][$prev_month][$param];
-                array_push($results,array ( 'name' => $node['name'],
+                array_push($leaderboard_list,array ( 'name' => $node['name'],
                     $param => $current_value,
                     'previous_'.$param => $prev_value,
-                    'percent_changed' => $prev_value==0? $current_value > 0? 100:0: (($current_value- $prev_value)*100)/$prev_value
+                    'percent_changed' => $prev_value==0? $current_value > 0? 100:0: (($current_value- $prev_value)*100)/$prev_value,
+                    'node_id' => $node['_id']
                 ));
             }
         }
 
-        $results = $this->sortResult($results,$param,'name');
+        $results['leaderboard'] = $leaderboard_list = $this->sortResult($leaderboard_list,$param,'name');
+        foreach ($leaderboard_list as $key => $rank){
+            $rank_no = $key +1;
+            unset($results['leaderboard'][$key]['node_id']);
+            if ($rank_no > $limit){
+                unset($results['leaderboard'][$key]);
+            }
+            $players_in_node = $this->store_org_model->getPlayersByNodeId($client_id, $site_id,$rank['node_id']);
+
+            if (isset ($given_player_id) && in_array(array('pb_player_id' => $given_player_id),$players_in_node)){
+                $myrank = array(
+                    'player_id' => $input['player_id'],
+                    'node_name' => $rank['name'],
+                    'rank' => $rank_no,
+                    'ranked_by' => $param,
+                    'ranked_value' => $rank[$param],
+                );
+                $results['my_rank'] = $myrank;
+            }
+        }
+        if (isset ($given_player_id) && !isset($results['my_rank']))
+        {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
         $this->benchmark->mark('rank_peer_end');
         $result['processing_time'] = $this->benchmark->elapsed_time('rank_peer_start', 'rank_peer_end');
         $this->response($this->resp->setRespond($results), 200);
