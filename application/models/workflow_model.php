@@ -199,13 +199,27 @@ class Workflow_model extends MY_Model
         return $this->mongo_db->update('playbasis_player');
     }
 
-    public function deletePlayer($client_id, $site_id, $user_id){
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
-        $this->mongo_db->where('_id', new MongoID($user_id));
+    public function deletePlayer( $player_id){
+        $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(), $this->User_model->getSiteId());
+        $this->_api = $this->playbasisapi;
 
-        return $this->mongo_db->delete('playbasis_player');
+        $platforms = $this->App_model->getPlatFormByAppId(array(
+            'site_id' => $this->User_model->getSiteId(),
+        ));
+        $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
+        if (!$platform) {
+            if ($this->input->post('format') == 'json') {
+                echo json_encode(array('status' => 'fail', 'message' => 'Cannot find any active platform'));
+                exit();
+            }
+        }
+        $this->_api->set_api_key($result['api_key']);
+        $this->_api->set_api_secret($result['api_secret']);
+        $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
+        $this->_api->auth($pkg_name);
+
+        $status = $this->_api->deletePlayer($player_id);
+        return $status;
     }
     public function unlockPlayer($client_id, $site_id, $user_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
