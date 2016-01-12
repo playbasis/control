@@ -264,7 +264,7 @@ class Redeem extends REST2_Controller
         $code = $this->input->post('coupon_code');
         $goods_info = $this->goods_model->getGoodsByGroupAndCode($this->client_id, $this->site_id, $group, $code);
 
-        if(is_null($goods_info)){
+        if(!$goods_info){
             $this->response($this->error->setError('REDEEM_INVALID_COUPON_CODE'), 200);
         }
         $goods_id = $goods_info['goods_id'];
@@ -314,7 +314,7 @@ class Redeem extends REST2_Controller
                         $pb_player_id, $branch_log_data);
 
                     $result = $this->merchant_model->getMerchantRedeemLogByLogId($this->validToken['client_id'],$this->validToken['site_id'], new MongoId($log_result));
-                    if(!is_null($result)) {
+                    if(!$result) {
                         $this->player_model->deleteGoodsFromPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id, new MongoId($goods_id));
                     }
 
