@@ -188,6 +188,10 @@ class Player_model extends MY_Model
         $this->mongo_db->where('pb_player_id', $id);
         $this->mongo_db->delete_all('playbasis_quiz_to_player');
 
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where('pb_player_id', $id);
+		$this->mongo_db->delete_all('playbasis_store_organize_to_player');
+
         return true;
 	}
 	public function getPlaybasisId($clientData)
