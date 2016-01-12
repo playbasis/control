@@ -2229,14 +2229,21 @@
                             "Description": "access token returned from Auth"
                         },
                         {
-                            "Name": "goods_id",
+                            "Name": "goods_group",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
-                            "Description": "goods id to verify"
+                            "Description": "goods group"
                         },
                         {
-                            "Name": "pincode",
+                            "Name": "coupon_code",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "coupon code of goods to verify"
+                        },
+                        {
+                            "Name": "pin_code",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
@@ -3094,21 +3101,21 @@
                         {
                             "Name": "order",
                             "Required": "N",
-                            "Default": "",
+                            "Default": "asc",
                             "Type": "string",
                             "Description": "Specify sorted direction [desc, *asc*]"
                         },
                         {
                             "Name": "offset",
                             "Required": "N",
-                            "Default": "",
+                            "Default": "0",
                             "Type": "string",
                             "Description": "Specify paging offset [default = 0]"
                         },
                         {
                             "Name": "limit",
                             "Required": "N",
-                            "Default": "",
+                            "Default": "20",
                             "Type": "string",
                             "Description": "Specify paging limit [default = 20]"
                         }
@@ -3523,7 +3530,7 @@
                     "MethodName": "Sale board",
                     "Synopsis": "Leader board by sale amount of all nodes under specific node",
                     "HTTPMethod": "GET",
-                    "URI": "/StoreOrg/nodes/:node_id/saleBoard/:Layer",
+                    "URI": "/StoreOrg/nodes/:node_id/saleBoard/:layer",
                     "RequiresOAuth": "Y",
                     "parameters": [
                         {
@@ -3534,7 +3541,7 @@
                           "Description": "Node Id that you want to find the child node"
                         },
                         {
-                          "Name": "Layer",
+                          "Name": "layer",
                           "Required": "Y",
                           "Default": "",
                           "Type": "number",
