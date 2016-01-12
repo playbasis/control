@@ -380,7 +380,9 @@ class Store_org extends REST2_Controller
 
     public function getChildNode_get($node_id = '', $layer = 0)
     {
-        $result = array();
+        $this->benchmark->mark('start');
+
+        $results = array();
         $candidate_nodes = array();
 
         if (!$node_id) {
@@ -399,22 +401,30 @@ class Store_org extends REST2_Controller
 
         foreach ($candidate_nodes as $node) {
             $node_info = $this->store_org_model->retrieveNodeById($this->validToken['site_id'], $node);
-            if($node_id!=$node_info['_id']) {
-                array_push($result, array(
-                    '_id' => $node_info['_id'],
-                    'name' => $node_info['name'],
-                    'description' => $node_info['description'],
-                    'status' => $node_info['status'],
-                    'slug' => $node_info['slug'],
-                    'deleted' => $node_info['deleted'],
-                    'organize' => $node_info['organize'],
-                    'parent' => $node_info['parent'],
-                ));
+            if($node_id!=$node_info['_id'] && !is_null($node_info) ) {
+                array_push($results, $node_info);
             }
         }
 
+        $formatted_results = $this->nodesResultFormatter($results);
+        $key_allowed_output = array(
+            "_id",
+            "name",
+            "description",
+            "status",
+            "slug",
+            "date_added",
+            "date_modified",
+            "organize",
+            "parent"
+        );
+        foreach ($formatted_results as &$result) {
+            $result = array_intersect_key($result, array_flip($key_allowed_output));
+        }
 
-        $this->response($this->resp->setRespond($result), 200);
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('results' => $formatted_results, 'processing_time' => $t)), 200);
     }
 
     public function saleReport_get($node_id = '')
