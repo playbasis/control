@@ -3365,6 +3365,13 @@
                             "Description": "number of results to return"
                         },
                         {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id to return his/her own rank"
+                        },
+                        {
                             "Name": "month",
                             "Required": "N",
                             "Default": "",
