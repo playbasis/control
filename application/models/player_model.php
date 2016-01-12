@@ -1654,6 +1654,22 @@ class Player_model extends MY_Model
         return $goods;
     }
 
+	public function deleteGoodsFromPlayer($client_id, $site_id, $pb_player_id, $goods_id)
+	{
+		$this->set_site_mongodb($site_id);
+
+		$this->mongo_db->where(array(
+				'client_id' => $client_id,
+				'site_id' => $site_id,
+				'pb_player_id' => $pb_player_id,
+				'goods_id' => $goods_id
+		));
+
+		$result = $this->mongo_db->delete('playbasis_goods_to_player');
+
+		return $result;
+	}
+
     private function getActionLogDetail($action_log_id){
     	$this->mongo_db->select(array('action_name', 'parameters', 'date_added'));
     	$this->mongo_db->select(array(), array('_id'));

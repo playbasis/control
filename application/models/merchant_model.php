@@ -79,4 +79,19 @@ class Merchant_model extends MY_Model
 
         return (!empty($result) && $result) ? $result[0] : null;
     }
+
+    public function getMerchantRedeemLogByLogId($client_id, $site_id, $log_id)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            '_id' => $log_id,
+        ));
+
+        $result = $this->mongo_db->get('playbasis_merchant_goodsgroup_redeem_log');
+
+        return (!empty($result) && $result) ? $result[0] : null;
+    }
 }
