@@ -3300,11 +3300,18 @@
                             "Description": "name of point-based reward to rank players by"
                         },
                         {
+                            "Name": "page",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "number",
+                            "Description": "Select page to be reported, page 1 is the first page [default = first page]"
+                        },
+                        {
                             "Name": "limit",
                             "Required": "N",
                             "Default": "20",
                             "Type": "integer",
-                            "Description": "number of results to return"
+                            "Description": "number of results to return [default = 20]"
                         },
                         {
                             "Name": "role",
@@ -3365,11 +3372,18 @@
                             "Description": "name of parameter of action to rank players by"
                         },
                         {
+                            "Name": "page",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "number",
+                            "Description": "Select page to be reported, page 1 is the first page [default = first page]"
+                        },
+                        {
                             "Name": "limit",
                             "Required": "N",
                             "Default": "20",
                             "Type": "integer",
-                            "Description": "number of results to return"
+                            "Description": "number of results to return [default = 20]"
                         },
                         {
                             "Name": "player_id",
@@ -3560,6 +3574,20 @@
                           "Default": "",
                           "Type": "string",
                           "Description": "Select parameter to report from action log [default = \"amount\"]"
+                        },
+                        {
+                            "Name": "page",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "number",
+                            "Description": "Select page to be reported, page 1 is the first page [default = first page]"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "number",
+                            "Description": "limit per page to be reported [default = \"20\"]"
                         }
                     ]
                 }

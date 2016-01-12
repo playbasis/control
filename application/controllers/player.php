@@ -1104,7 +1104,7 @@ class Player extends REST2_Controller
 
 
 		$offset = ($this->input->get('offset'))?$this->input->get('offset'):0;			
-		$limit = ($this->input->get('limit'))?$this->input->get('limit'):20;
+		$limit = ($this->input->get('limit'))?$this->input->get('limit'):RETURN_LIMIT_FOR_RANK;
         if($limit > 500){
             $limit = 500;
         }
@@ -1144,7 +1144,7 @@ class Player extends REST2_Controller
 		}
 
 		$offset = ($this->input->get('offset'))?$this->input->get('offset'):0;
-		$limit = ($this->input->get('limit'))?$this->input->get('limit'):20;
+		$limit = ($this->input->get('limit'))?$this->input->get('limit'):RETURN_LIMIT_FOR_RANK;
 		if($limit > 500){
 			$limit = 500;
 		}
@@ -1269,7 +1269,7 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
         }
 	}
-    public function rank_get($ranked_by, $limit = 20)
+    public function rank_get($ranked_by, $limit = RETURN_LIMIT_FOR_RANK)
     {
         if(!$ranked_by)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
@@ -1293,7 +1293,7 @@ class Player extends REST2_Controller
         }
         $this->response($this->resp->setRespond($leaderboard), 200);
     }
-    public function ranks_get($limit = 20)
+    public function ranks_get($limit = RETURN_LIMIT_FOR_RANK)
     {
         $mode = $this->input->get('mode');
         switch ($mode) {
@@ -1813,10 +1813,10 @@ class Player extends REST2_Controller
 		print_r($result);
 		echo '<br>';
 		echo '<br>getLeaderboard<br>';
-		$result = $this->player_model->getLeaderboard('exp', 20, $token['client_id'], $token['site_id']);
+		$result = $this->player_model->getLeaderboard('exp', RETURN_LIMIT_FOR_RANK, $token['client_id'], $token['site_id']);
 		print_r($result);
 		echo '<br>getLeaderboards<br>';
-		$result = $this->player_model->getLeaderboards(20, $token['client_id'], $token['site_id']);
+		$result = $this->player_model->getLeaderboards(RETURN_LIMIT_FOR_RANK, $token['client_id'], $token['site_id']);
 		print_r($result);
 		echo '</pre>';
 	}
