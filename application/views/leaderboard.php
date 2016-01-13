@@ -85,7 +85,7 @@
                     } else {
                         ?>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6" align="center">
                                 No Leader Board Content
                             </td>
                         </tr>
