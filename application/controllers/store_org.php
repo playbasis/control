@@ -809,19 +809,27 @@ class Store_org extends REST2_Controller
         foreach ($node_to_match as $key=> $node){
             $current_value = $this->getValueFromLeaderboardList('pb_player_id',$node['pb_player_id'],$rank_by,$results);
             $prev_value = $this->getValueFromLeaderboardList('pb_player_id',$node['pb_player_id'],$rank_by,$previous_result);
-            array_push($leaderboard_list,array ('player_id' => $this->player_model->getClientPlayerId($node['pb_player_id'],$site_id),
+            array_push($leaderboard_list,array_merge(
+                $this->player_model->readPlayer($node['pb_player_id'],$site_id,array(
+                    'cl_player_id',
+                    'first_name',
+                    'last_name',
+                    'username',
+                    'image'
+                )),
+                array (
                     $rank_by => $current_value,
                     'previous_'.$rank_by => $prev_value,
                     'percent_changed' => $prev_value==0? $current_value > 0? 100:0: (($current_value- $prev_value)*100)/$prev_value)
-            );
+            ));
         }
-        $return_list['leaderboard'] = $leaderboard_list = $this->sortResult($leaderboard_list,$rank_by,'player_id');
+        $return_list['leaderboard'] = $leaderboard_list = $this->sortResult($leaderboard_list,$rank_by,'cl_player_id');
         foreach ($leaderboard_list as $key => $rank){
             $rank_no = $key +1;
 
-            if (isset ($given_player_id) && ($rank['player_id'] == $given_player_id)){
+            if (isset ($given_player_id) && ($rank['cl_player_id'] == $given_player_id)){
                 $myrank = array(
-                    'player_id' => $rank['player_id'],
+                    'player_id' => $rank['cl_player_id'],
                     'rank' => $rank_no,
                     'ranked_by' => $rank_by,
                     'ranked_value' => $rank[$rank_by],
@@ -885,6 +893,7 @@ class Store_org extends REST2_Controller
         $year = isset($input['year']) ? $input['year'] : date("Y", time());
         $month = isset($input['month']) ? $input['month'] : date("m", time());
         $page = isset($input['page']) ? $input['page'] : 1; // default is first page
+        $role = isset($input['role']) ? $input['role'] : null;
         $prev_month = $month -1 ? $month -1 : 12;
         $prev_year = $month -1 ? $year : $year - 1;
 
@@ -916,18 +925,30 @@ class Store_org extends REST2_Controller
             $rank_no = $key +1;
             unset($results['leaderboard'][$key]['node_id']);
 
-            $players_in_node = $this->store_org_model->getPlayersByNodeId($client_id, $site_id,$rank['node_id']);
-
-            if (isset ($given_player_id) && in_array(array('pb_player_id' => $given_player_id),$players_in_node)){
-                $myrank = array(
-                    'player_id' => $input['player_id'],
-                    'node_name' => $rank['name'],
-                    'rank' => $rank_no,
-                    'ranked_by' => $param,
-                    'ranked_value' => $rank[$param],
-                );
-                $results['my_rank'] = $myrank;
+            $players_in_node = $this->store_org_model->getPlayersByNodeId($client_id, $site_id,$rank['node_id'],$role);
+            $playersInfo = array();
+            foreach ($players_in_node as $player){
+                array_push($playersInfo, $this->player_model->readPlayer($player['pb_player_id'],$site_id,array(
+                    'cl_player_id',
+                    'first_name',
+                    'last_name',
+                    'username',
+                    'image'
+                )));
+                if (isset ($given_player_id) && ($player['pb_player_id'] == $given_player_id)){
+                    $myrank = array(
+                        'player_id' => $input['player_id'],
+                        'node_name' => $rank['name'],
+                        'rank' => $rank_no,
+                        'ranked_by' => $param,
+                        'ranked_value' => $rank[$param],
+                    );
+                    $results['my_rank'] = $myrank;
+                }
             }
+            $results['leaderboard'][$key]['players'] = $playersInfo;
+
+
         }
         if (isset ($given_player_id) && !isset($results['my_rank']))
         {
