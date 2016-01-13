@@ -552,14 +552,26 @@ class Player extends REST2_Controller
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);		
 		$playerInfo = array();
 		$email = $this->input->post('email');
-		if($email)
+		if($email) {
+			//check if new email is already exist in this site
+			$player = $this->player_model->getPlayerByEmailButNotID($this->site_id, $email,$pb_player_id);
+			if ($player) {
+				$this->response($this->error->setError('EMAIL_ALREADY_EXIST'), 200);
+			}
 			$playerInfo['email'] = $email;
+		}
 		$image = $this->input->post('image');
 		if($image)
 			$playerInfo['image'] = $image;
 		$username = $this->input->post('username');
-		if($username)
+		if($username) {
+			//check if new username is already exist in this site
+			$player = $this->player_model->getPlayerByUsernameButNotID($this->site_id, $username,$pb_player_id);
+			if ($player) {
+				$this->response($this->error->setError('USERNAME_ALREADY_EXIST'), 200);
+			}
 			$playerInfo['username'] = $username;
+		}
 		$exp = $this->input->post('exp');
 		if(is_numeric($exp))
 			$playerInfo['exp'] = intval($exp);

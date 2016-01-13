@@ -2514,6 +2514,26 @@ class Player_model extends MY_Model
         return $results ? $results[0] : array();
     }
 
+    public function getPlayerByUsernameButNotID($site_id, $username, $pb_player_id)
+    {
+        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_ne('_id', $pb_player_id);
+        $this->mongo_db->where('username', $username);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
+    public function getPlayerByEmailButNotID($site_id, $email, $pb_player_id)
+    {
+        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_ne('_id', $pb_player_id);
+        $this->mongo_db->where('email', $email);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
     public function authPlayer($site_id, $player_id, $password)
     {
         $this->mongo_db->where('site_id', $site_id);
