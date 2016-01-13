@@ -216,6 +216,14 @@ class Error extends CI_Model
             $errorData['message'] = "Phone number is not found.";
             $errorData['error_code'] = '0214';
             break;
+        case 'USERNAME_ALREADY_EXIST':
+            $errorData['message'] = "Username already exist.";
+            $errorData['error_code'] = '0215';
+            break;
+        case 'EMAIL_ALREADY_EXIST':
+            $errorData['message'] = "Email already exist.";
+            $errorData['error_code'] = '0216';
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';
