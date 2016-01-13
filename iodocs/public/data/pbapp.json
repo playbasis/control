@@ -3372,6 +3372,13 @@
                             "Description": "name of parameter of action to rank players by"
                         },
                         {
+                            "Name": "role",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "role in organization to be filtered"
+                        },
+                        {
                             "Name": "page",
                             "Required": "N",
                             "Default": "0",
