@@ -1082,11 +1082,20 @@ class User extends MY_Controller
             $goods_list_ok = array_diff($goods_list_redeemed, $goods_list_verified); // coupon is redeemed but not yet exercised (found record in "playbasis_goods_to_player", not "playbasis_merchant_goodsgroup_redeem_log")
             if ($goods_list_ok) {
                 if ($mark) {
-                    $result = $this->Goods_model->markAsVerifiedGoods($group,$coupon,$pin);
-                    if($result->success != true){
-                        echo json_encode(array('status' => 'fail', 'message' => $result->message));
-                        exit();
-                    }
+                    $goods_id = $goods_list_ok[0];
+                    $gp = $this->findGoodsToPlayerByGoodsId($goods_id, $redeemed_goods_list);
+                    $this->Goods_model->markAsVerifiedGoods(array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'goods_id' => $goods_id,
+                        'goods_group' => $group,
+                        'cl_player_id' => $gp['cl_player_id'],
+                        'pb_player_id' => $gp['pb_player_id'],
+                        'branch' => array(
+                            'b_id' => $branch_id,
+                            'b_name' => $branch['branch_name'],
+                        ),
+                    ));
                 }
                 if ($this->input->post('format') == 'json') {
                     /* valid, redeemed, NOT used = SUCCESS */

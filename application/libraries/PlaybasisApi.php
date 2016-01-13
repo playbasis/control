@@ -180,15 +180,6 @@ class PlaybasisApi{
         return $result;
     }
 
-    public function verifyGoods($goods_group, $coupon_code, $pin_code, $optionalParams=array()){
-        $result = $this->_post('Redeem/goodsGroup/verify/', array_merge(array(
-            'goods_group' => $goods_group,
-            'coupon_code' => $coupon_code,
-            'pin_code' => $pin_code,
-        ), $optionalParams));
-        return $result;
-    }
-
     private function _get($uri,$params = array()){
         $defaultParam = array('api_key' => $this->api_key);
         $sendParam = array_merge($defaultParam, $params);
