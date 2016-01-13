@@ -1417,7 +1417,7 @@ class Quest extends REST2_Controller
         foreach ($quests as &$quest) {
             if ($pb_player_id) {
                 $quest_player = $this->quest_model->getPlayerQuest(array('site_id' => $this->site_id, 'pb_player_id' => $pb_player_id, 'quest_id' => new MongoId($quest['_id'])));
-                array_walk_recursive($quests, array($this, "convert_mongo_object"));
+                array_walk_recursive($quest_player, array($this, "convert_mongo_object"));
                 if ($quest_player) {
                     $quest['player_status'] = $quest_player['status'];
                     foreach($quest_player["missions"] as $k=>$m){
