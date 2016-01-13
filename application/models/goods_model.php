@@ -281,6 +281,71 @@ class Goods_model extends MY_Model
         return $total;
     }
 
+    public function getAllRedeemedGoods($data = array()) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('name', 'code', 'goods_id'));
+
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $this->mongo_db->where('name', $regex);
+        }
+
+        $sort_data = array(
+            '_id',
+            'name',
+            'code'
+        );
+
+        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', $data['site_id']);
+
+        $results = $this->mongo_db->get("playbasis_goods_to_client");
+
+        return $results;
+    }
+
+    public function getTotalRedeemedGoods($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $this->mongo_db->where('name', $regex);
+        }
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', $data['site_id']);
+
+        $total = $this->mongo_db->count("playbasis_goods_to_client");
+
+        return $total;
+    }
+
     public function getCommonGoods(){
 
         $results = $this->mongo_db->get("playbasis_goods");
@@ -766,5 +831,15 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('cl_player_id', $data['cl_player_id']);
         $this->mongo_db->where('goods_id', $data['goods_id']);
         $this->mongo_db->delete('playbasis_goods_to_player');
+    }
+
+    public function listGoods($goods_id_list, $fields = array())
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        if ($fields) {
+            $this->mongo_db->select($fields);
+        }
+        $this->mongo_db->where_in('goods_id', $goods_id_list);
+        return $this->mongo_db->get('playbasis_goods_to_client');
     }
 }

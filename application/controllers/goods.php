@@ -504,6 +504,83 @@ class Goods extends MY_Controller
 
     private function getList($offset) {
         $this->_getList($offset);
+
+        $_goods_list = array_values(array_unique(array_map(array($this, 'extract_goods_id'),
+            $this->Goods_model->getAllRedeemedGoods(array('site_id' => $this->User_model->getSiteId())))));
+        $redeemed_goods_list = $this->Goods_model->listRedeemedGoods($_goods_list,
+            array('goods_id', 'cl_player_id', 'pb_player_id'));
+
+//        $_redeemed_goods_id_list = array_map(array($this, 'extract_goods_id'), $redeemed_goods_list);
+//        $redeemed_goods_node_detail_list = $this->Goods_model->listGoods($_redeemed_goods_id_list,
+//            array('organize_id', 'organize_role','goods_id'));
+//        $redeemed_goods_node_id_list = array_map(array($this, 'extract_organize_id'), $redeemed_goods_node_detail_list);
+
+        $this->load->model('Player_model');
+        $_pb_player_id_list = array_values(array_unique(array_map(array($this, 'extract_pb_player_id'),
+            $redeemed_goods_list)));
+        $players_detail_list = $this->Player_model->listPlayers($_pb_player_id_list,
+            array('first_name', 'last_name', 'cl_player_id'));
+
+        $players_with_node_detail_list = $this->Player_model->listPlayersOrganize($_pb_player_id_list,
+            array('node_id', 'pb_player_id'));
+        $_node_list = array_values(array_unique(array_map(array($this, 'extract_node_id'),
+            $players_with_node_detail_list)));
+        $node_detail_list = $this->Store_org_model->listNodes($_node_list,
+            array('name', 'description', 'organize'));
+
+        $_organization_list = array_values(array_unique(array_map(array($this, 'extract_organize_id'),
+            $node_detail_list)));
+        $organization_detail_list = $this->Store_org_model->listOrganizations($_organization_list,
+            array('name', 'description'));
+
+//        $node_detail_list = $this->Store_org_model->listNodes($redeemed_goods_node_id_list,
+//            array('name', 'description', 'organize', 'parent'));
+
+        foreach ($redeemed_goods_list as &$redeemed_goods) {
+            if (isset($redeemed_goods['pb_player_id'])) {
+                // set player info
+                $player_index = $this->searchForId(new MongoId($redeemed_goods['pb_player_id']),
+                    $players_detail_list);
+                if (isset($player_index)) {
+                    $redeemed_goods['player_info'] = $players_detail_list[$player_index];
+                }
+
+                // set player node info
+                $player_node_info_index = $this->searchForPBPlayerId(new MongoId($redeemed_goods['pb_player_id']),
+                    $players_with_node_detail_list);
+                if (isset($player_node_info_index)) {
+                    $node_info_index = $this->searchForId(new MongoId($players_with_node_detail_list[$player_node_info_index]['node_id']),
+                        $node_detail_list);
+                    if (isset($node_info_index)) {
+                        $redeemed_goods['player_node_info'] = $node_detail_list[$node_info_index];
+
+                        $organize_info_index = $this->searchForId(new MongoId($node_detail_list[$node_info_index]['organize']),
+                            $organization_detail_list);
+                        if(isset($organize_info_index)){
+                            $redeemed_goods['player_organize_info'] = $organization_detail_list[$organize_info_index];
+                        }
+                    }
+                }
+
+//                $player_node_index = $this->searchForPBPlayerId(new MongoId($redeemed_goods['pb_player_id']),
+//                    $players_node_list);
+//                $redeemed_goods['player_node_info'] = $players_node_list[$player_node_index];
+            }
+
+//            if(isset($redeemed_goods['goods_id'])){
+//                $redeemed_goods_node_detail_index = $this->searchForGoodsId(new MongoId($redeemed_goods['goods_id']),
+//                    $redeemed_goods_node_detail_list);
+//                if(isset($redeemed_goods_node_detail_list[$redeemed_goods_node_detail_index]['organize_id'])){
+//                    $node_index = $this->searchForId(new MongoId($redeemed_goods_node_detail_list[$redeemed_goods_node_detail_index]['organize_id']),
+//                        $node_detail_list);
+//                    $redeemed_goods['node_info'] = $node_detail_list[$node_index];
+//                }
+//            }
+        }
+
+
+        $this->data['redeemed_goods_list'] = $redeemed_goods_list;
+
         $this->load->vars($this->data);
         $this->render_page('template');
     }
@@ -1268,5 +1345,55 @@ class Goods extends MY_Controller
         // return the array of links
         return $links;
 
+    }
+
+    private function extract_goods_id($obj)
+    {
+        return $obj['goods_id'];
+    }
+
+    private function extract_pb_player_id($obj)
+    {
+        return $obj['pb_player_id'];
+    }
+
+    private function extract_node_id($obj)
+    {
+        return $obj['node_id'];
+    }
+
+    private function extract_organize_id($obj)
+    {
+        return $obj['organize'];
+    }
+
+    private function searchForId($id, $array)
+    {
+        foreach ($array as $key => $val) {
+            if ($val['_id'] == $id) {
+                return $key;
+            }
+        }
+        return null;
+    }
+
+    private function searchForGoodsId($id, $array)
+    {
+        foreach ($array as $key => $val) {
+            if ($val['goods_id'] == $id) {
+                return $key;
+            }
+        }
+        return null;
+    }
+
+    private function searchForPBPlayerId($id, $array)
+    {
+        foreach ($array as $key => $val) {
+            if ($val['pb_player_id'] == $id) {
+                return $key;
+            }
+        }
+        return null;
     }
 }
