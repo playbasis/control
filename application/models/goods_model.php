@@ -759,5 +759,12 @@ class Goods_model extends MY_Model
             'date_added' => $d,
             'date_modified' => $d,
         )));
+
+        //remove goods from player's inventory after verify
+        $this->mongo_db->where('client_id', $data['client_id']);
+        $this->mongo_db->where('site_id', $data['site_id']);
+        $this->mongo_db->where('cl_player_id', $data['cl_player_id']);
+        $this->mongo_db->where('goods_id', $data['goods_id']);
+        $this->mongo_db->delete('playbasis_goods_to_player');
     }
 }

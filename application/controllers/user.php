@@ -1103,7 +1103,7 @@ class User extends MY_Controller
                     exit();
                 }
             } else {
-                if ($goods_list_redeemed) {
+                if ($goods_list_verified) {
                     if ($this->input->post('format') == 'json') {
                         /* valid, redeemed, used = FAIL */
                         $verified_goods_list = $verified_goods_list[0];
