@@ -24,19 +24,18 @@
                     <?php if(isset($action) && $action=="edit"){ ?>
                         <tr>
                             <input type="hidden" id="cl_player_id" name="cl_player_id" value="<?php echo isset($requester['cl_player_id']) ? $requester['cl_player_id'] :  set_value('cl_player_id'); ?>" />
-                            <td><span class="required">*</span><?php echo $this->lang->line('form_id'); ?>:</td>
+                            <td><span class="required">*</span><?php echo $this->lang->line('form_username'); ?>:</td>
                             <td><input  type="text" name="temp"  disabled="disabled" value="<?php echo isset($requester['cl_player_id']) ? $requester['cl_player_id'] :  set_value('cl_player_id'); ?>" /></td>
                         </tr>
                     <?php }else{?>
                         <tr>
-                            <td><span class="required">*</span><?php echo $this->lang->line('form_id'); ?>:</td>
+                            <td><span class="required">*</span><?php echo $this->lang->line('form_username'); ?>:</td>
                             <td><input  type="text" name="cl_player_id"  value="<?php echo isset($requester['cl_player_id']) ? $requester['cl_player_id'] :  set_value('cl_player_id'); ?>" /></td>
                         </tr>
                     <?php }?>
-                    <tr>
-                        <td><span class="required">*</span><?php echo $this->lang->line('form_username'); ?>:</td>
-                        <td><input  type="text" name="username"  value="<?php echo isset($requester['username']) ? $requester['username'] :  set_value('username'); ?>" /></td>
-                    </tr>
+                    
+                        <input  type="hidden" name="username"  value="<?php echo isset($requester['username']) ? $requester['username'] :  set_value('username'); ?>" />
+
                     <?php if(isset($action) && $action=="create"){ ?>
                     <tr>
                         <td><?php echo $this->lang->line('form_password'); ?>:</td>

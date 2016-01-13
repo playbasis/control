@@ -480,6 +480,9 @@ class Workflow extends MY_Controller
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $data = $this->input->post();
+            //set value of username to equal to cl_player_id
+            $data['username'] = $data['cl_player_id'];
+
             if($data['password']!=$data['confirm_password']){
                 $this->data['message'] = $this->lang->line('text_fail_confirm_password');
                 if(!isset($_POST['organize_node'][0]))
