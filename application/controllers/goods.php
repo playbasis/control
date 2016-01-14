@@ -61,8 +61,7 @@ class Goods extends REST2_Controller
             // 1. good id is set organize and player_id is not in that organize
             // Or 2. organize role is set and player role is not matched
             if (isset($goods['goods']['organize_id'])){
-                if (!empty($org_id_list)
-                    && (!array_key_exists((string)$goods['goods']['organize_id'], $org_id_list)
+                if ((!array_key_exists((string)$goods['goods']['organize_id'], $org_id_list)
                         || ((isset($goods['goods']['organize_role']) && $goods['goods']['organize_role'] != "")
                             && !array_key_exists($goods['goods']['organize_role'],
                                 $org_id_list[(string)$goods['goods']['organize_id']])))
@@ -109,8 +108,7 @@ class Goods extends REST2_Controller
                 // 1. good id is set organize and player_id is not in that organize
                 // Or 2. organize role is set and player role is not matched
                 if (isset($goods['organize_id'])) {
-                    if (!empty($org_id_list) &&
-                        (!array_key_exists((string)$goods['organize_id'], $org_id_list)
+                    if ((!array_key_exists((string)$goods['organize_id'], $org_id_list)
                             || ((isset($goods['organize_role']) && $goods['organize_role'] != "")
                                 && !array_key_exists($goods['organize_role'],
                                     $org_id_list[(string)$goods['organize_id']]))
