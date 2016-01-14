@@ -562,6 +562,7 @@ class Store_org extends REST2_Controller
 
     public function saleBoard_get($node_id = '', $layer = '')
     {
+        $this->benchmark->mark('start');
         $result = array();
 
         if (!$node_id) {
@@ -595,16 +596,14 @@ class Store_org extends REST2_Controller
         if (!$page) {
             $page = 0;
         }
-        //$this->benchmark->mark('rank_peer_start');
 
+        $nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
         $candidate_node = array();
-        $this->recurGetChildByLevel($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node_id),
-            $candidate_node, $layer);
+        $this->utility->recurGetChildByLevel($nodesData, new MongoId($node_id), $candidate_node, $layer);
 
         foreach ($candidate_node as $node) {
             $list = array();
-            $this->recurGetChildUnder($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node),
-                $list);
+            $this->utility->recurGetChildUnder($nodesData, new MongoId($node), $list);
 
             $table = $this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],
                 $this->validToken['site_id'], $list, $action, $parameter, $month, $year, 2);
@@ -644,8 +643,9 @@ class Store_org extends REST2_Controller
         }
 
         $result = $this->utility->pagination($page,$limit,$result);
-        //$this->benchmark->mark('rank_peer_end');
-        //$result['processing_time'] = $this->benchmark->elapsed_time('rank_peer_start', 'rank_peer_end');
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $result['processing_time'] = $t;
         $this->response($this->resp->setRespond($result), 200);
 
     }

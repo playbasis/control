@@ -184,5 +184,68 @@ class Utility extends CI_Model
 		}
 		return $return_array;
 	}
+
+	private function findAdjacentChildNode($org_list , $parent_node){
+		$result =array();
+		foreach($org_list as $org){
+			if(array_key_exists('parent',$org)&&$org['parent']==$parent_node){
+				array_push($result, $org['_id']);
+			}
+		}
+
+		if(empty($result)){
+			return null;
+		}else{
+			return $result;
+		}
+	}
+
+	public function recurGetChildUnder($nodesData, $parent_node, &$result, &$layer = 0, $num = 0)
+	{
+		if($layer == 0){
+			array_push($result, $parent_node);
+		}
+		elseif ($num++ <= $layer ) {
+			array_push($result, $parent_node);
+			if($num>$layer){
+				return $result;
+			}
+		}
+
+		$nodes = $this->findAdjacentChildNode($nodesData, new MongoId($parent_node));
+		if (isset($nodes)) {
+			foreach ($nodes as $node) {
+
+				$this->recurGetChildUnder($nodesData, $node, $result, $layer, $num);
+			}
+		} else {
+			return $result;
+		}
+	}
+
+	public function recurGetChildByLevel($nodesData, $parent_node, &$result, &$layer = 0, $num = 0)
+	{
+		if($layer == 0){
+			array_push($result, $parent_node);
+		}
+		elseif ($num++ == $layer ) {
+			array_push($result, $parent_node);
+			return $result;
+		}
+
+		$nodes = $this->findAdjacentChildNode($nodesData, new MongoId($parent_node));
+		if (isset($nodes)) {
+			foreach ($nodes as $node) {
+
+				$this->recurGetChildByLevel($nodesData, $node, $result, $layer, $num);
+			}
+		} else {
+			return $result;
+		}
+	}
+
+
+
+
 }
 ?>
