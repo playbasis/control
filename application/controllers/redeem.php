@@ -59,8 +59,7 @@ class Redeem extends REST2_Controller
         )));
 
         if (isset($goods['organize_id'])){
-            if (!empty($org_id_list)
-                && (!array_key_exists((string)$goods['organize_id'], $org_id_list)
+            if ((!array_key_exists((string)$goods['organize_id'], $org_id_list)
                     || ((isset($goods['organize_role']) && $goods['organize_role'] != "")
                         && !array_key_exists($goods['organize_role'],
                             $org_id_list[(string)$goods['organize_id']])))
@@ -220,8 +219,7 @@ class Redeem extends REST2_Controller
         $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount);
         if ($goods) {
             if (isset($goods['organize_id'])){
-                if (!empty($org_id_list)
-                    && (!array_key_exists((string)$goods['organize_id'], $org_id_list)
+                if ( (!array_key_exists((string)$goods['organize_id'], $org_id_list)
                         || ((isset($goods['organize_role']) && $goods['organize_role'] != "")
                             && !array_key_exists($goods['organize_role'],
                                 $org_id_list[(string)$goods['organize_id']])))

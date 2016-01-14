@@ -354,8 +354,7 @@ class Quest extends REST2_Controller
             $org_id_list = array_merge($org_id_list, $a);
         }
         if (isset($quest['organize_id'])){
-            if (!empty($org_id_list)
-                && (!array_key_exists((string)$quest['organize_id'], $org_id_list)
+            if ((!array_key_exists((string)$quest['organize_id'], $org_id_list)
                     || ((isset($quest['organize_role']) && $quest['organize_role'] != "")
                         && !array_key_exists($quest['organize_role'],
                             $org_id_list[(string)$quest['organize_id']])))
