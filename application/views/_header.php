@@ -161,7 +161,6 @@ if (isset($username)) {
 <div id="top-header" class="navbar">
 
     <div class="navbar-inner">
-        <div class="top-notify">Thanks for using Playbasis; to access version 3.0 (beta), contact us at <a href="mailto:info@playbasis.com">info@playbasis.com</a></div>
         <div class="container-fluid">
             <a class="btn btn-navbar btn-not-login" data-toggle="collapse" data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
                 <span class="icon-bar btn-not-login"></span>
