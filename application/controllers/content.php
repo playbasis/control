@@ -78,7 +78,7 @@ class Content extends MY_Controller
             $this->data['message'] = $this->lang->line('error_contents_limit');
         }
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+        $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[4096000]|xss_clean');
@@ -98,7 +98,7 @@ class Content extends MY_Controller
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-                $data['name'] = $content_data['name'];
+                $data['title'] = $content_data['title'];
                 $data['detail'] = $content_data['detail'];
                 $data['date_start'] = $content_data['date_start'];
                 $data['date_end'] = $content_data['date_end'];
@@ -126,7 +126,7 @@ class Content extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'content/update/' . $content_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+        $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[4096000]|xss_clean');
@@ -147,7 +147,7 @@ class Content extends MY_Controller
                 $data['_id'] = $content_id;
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-                $data['name'] = $content_data['name'];
+                $data['title'] = $content_data['title'];
                 $data['detail'] = $content_data['detail'];
                 $data['date_start'] = $content_data['date_start'];
                 $data['date_end'] = $content_data['date_end'];
@@ -198,8 +198,8 @@ class Content extends MY_Controller
             'sort' => 'sort_order'
         );
 
-        if (isset($_GET['name'])) {
-            $filter['name'] = $_GET['name'];
+        if (isset($_GET['title'])) {
+            $filter['title'] = $_GET['title'];
         }
 
         $config['base_url'] = site_url('content/page');
@@ -266,12 +266,12 @@ class Content extends MY_Controller
             }
         }
 
-        if ($this->input->post('name')) {
-            $this->data['name'] = $this->input->post('name');
-        } elseif (isset($content_info['name'])) {
-            $this->data['name'] = $content_info['name'];
+        if ($this->input->post('title')) {
+            $this->data['title'] = $this->input->post('title');
+        } elseif (isset($content_info['title'])) {
+            $this->data['title'] = $content_info['title'];
         } else {
-            $this->data['name'] = '';
+            $this->data['title'] = '';
         }
 
         if ($this->input->post('detail')) {
@@ -415,7 +415,7 @@ class Content extends MY_Controller
                                     $notificationData = array(
                                         'title' => "Checkout new " . ucfirst($content_info['category']['name']),
                                         // android only
-                                        'message' => "Checkout new " . ucfirst($content_info['category']['name']) . ", '" . ucfirst($content_info['name']) . "' is available.",
+                                        'message' => "Checkout new " . ucfirst($content_info['category']['name']) . ", '" . ucfirst($content_info['title']) . "' is available.",
                                         // message in iOS, body in android
                                         'badge_number' => 1,
                                     );

@@ -52,12 +52,12 @@
                             <div class="row-fluid">
                                 <div class="control-group">
                                     <label class="control-label"
-                                           for="inputName"><?php echo $this->lang->line('entry_name'); ?><span
+                                           for="inputTitle"><?php echo $this->lang->line('entry_title'); ?><span
                                             class="required">&nbsp;*</span></label>
                                     <div class="controls">
-                                        <input type="text" name="name" size="100" id="inputName"
-                                               placeholder="<?php echo $this->lang->line('entry_name'); ?>"
-                                               value="<?php echo isset($name) ? $name : set_value('name'); ?>"/>
+                                        <input type="text" name="title" size="100" id="inputTitle"
+                                               placeholder="<?php echo $this->lang->line('entry_title'); ?>"
+                                               value="<?php echo isset($title) ? $title : set_value('$title'); ?>"/>
                                     </div>
                                 </div>
 

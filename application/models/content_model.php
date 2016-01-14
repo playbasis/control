@@ -19,9 +19,9 @@ class Content_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        if (isset($optionalParams['name']) && !is_null($optionalParams['name'])) {
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['name'])) . "/i");
-            $this->mongo_db->where('name', $regex);
+        if (isset($optionalParams['title']) && !is_null($optionalParams['title'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['title'])) . "/i");
+            $this->mongo_db->where('title', $regex);
         }
 
         if (isset($optionalParams['status']) && !is_null($optionalParams['status'])) {
@@ -31,7 +31,7 @@ class Content_model extends MY_Model
 
         $sort_data = array(
             '_id',
-            'name',
+            'title',
             'status',
             'sort_order'
         );
@@ -45,7 +45,7 @@ class Content_model extends MY_Model
         if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
             $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
         } else {
-            $this->mongo_db->order_by(array('name' => $order));
+            $this->mongo_db->order_by(array('title' => $order));
         }
 
         if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
@@ -92,7 +92,7 @@ class Content_model extends MY_Model
         $insert_data = array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
-            'name' => strtolower($data['name']),
+            'title' => strtolower($data['title']),
             'detail' => $data['detail'],
             'date_start' => new MongoDate(strtotime($data['date_start'])),
             'date_end' => new MongoDate(strtotime($data['date_end'])),
@@ -116,7 +116,7 @@ class Content_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->where('_id', new MongoID($data['_id']));
 
-        $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('title', $data['title']);
         $this->mongo_db->set('detail', $data['detail']);
         if (isset($data['category'])) {
             if (empty($data['category'])) {

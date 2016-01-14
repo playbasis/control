@@ -3,7 +3,7 @@
 $lang['heading_title'] = 'Content';
 
 // Column
-$lang['column_name'] = "Name";
+$lang['column_name'] = "Title";
 $lang['column_date_range'] = "Date Range";
 $lang['column_status'] = "Status";
 $lang['column_category'] = "Category";
@@ -19,7 +19,7 @@ $lang['tab_general'] = 'General';
 $lang['tab_category'] = 'Category';
 
 // Entry
-$lang['entry_name'] = 'Content name';
+$lang['entry_title'] = 'Title';
 $lang['entry_detail'] = 'Detail';
 $lang['entry_date_range'] = 'Date Range';
 $lang['entry_date_start'] = 'Date Start';
