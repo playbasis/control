@@ -105,8 +105,10 @@ class Store_org extends MY_Controller
                     }
 
                     $this->output->set_status_header('200');
+                    $count_organizes = $this->Store_org_model->countOrganizes($client_id, $site_id);
+
                     $response = array(
-                        'total' => count($result),
+                        'total' => $count_organizes,
                         'rows' => $result
                     );
                 }
@@ -260,11 +262,11 @@ class Store_org extends MY_Controller
                         }
                     }
 
-
                     $this->output->set_status_header('200');
+                    $count_nodes = $this->Store_org_model->countNodes($client_id, $site_id);
 
                     $response = array(
-                        'total' => count($result),
+                        'total' => $count_nodes,
                         'rows' => $result
                     );
                 }

@@ -48,6 +48,18 @@ class Store_org_model extends MY_Model
         return $insert;
     }
 
+    public function countNodes($client_id, $site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+        $total = $this->mongo_db->count('playbasis_store_organize_to_client');
+
+        return $total;
+    }
+
     public function retrieveNode($client_id, $site_id, $optionalParams = array())
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -223,6 +235,18 @@ class Store_org_model extends MY_Model
         $insert = $this->mongo_db->insert('playbasis_store_organize', $insert_data);
 
         return $insert;
+    }
+
+    public function countOrganizes($client_id, $site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+        $total = $this->mongo_db->count('playbasis_store_organize');
+
+        return $total;
     }
 
     public function retrieveOrganize($client_id, $site_id, $optionalParams = array())
