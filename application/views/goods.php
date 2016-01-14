@@ -170,7 +170,8 @@
                     </div>
                 </div>
                 <div class="tab-pane fade in" id="MarkAsUsedTab">
-                    <table data-toggle="table"
+                    <table id="MarkAsUsedTable"
+                           data-toggle="table"
                            data-search="true"
                            data-pagination="true">
                         <thead>
@@ -184,9 +185,9 @@
                                 <th rowspan="2" data-align="center" data-valign="middle"><?php echo $this->lang->line('entry_operate'); ?></th>
                             </tr>
                             <tr>
-                                <th data-align="center"><?php echo $this->lang->line('entry_node_name'); ?></th>
                                 <th data-align="center"><?php echo $this->lang->line('entry_node_type'); ?></th>
-                                <th data-align="center"><?php echo $this->lang->line('entry_store_id'); ?></th>
+                                <th data-align="center"><?php echo $this->lang->line('entry_node_name'); ?></th>
+                                <th data-align="center"><?php echo $this->lang->line('entry_description'); ?></th>
                             </tr>
                         <?php } else { ?>
                             <tr>
@@ -204,16 +205,16 @@
                                     <tr data-id="<?php echo $redeemed_goods['_id'] ?>">
                                         <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
                                         <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
-                                        <td><?php echo $redeemed_goods['player_node_info']['name'] ?></td>
-                                        <td><?php echo $redeemed_goods['player_organize_info']['name'] ?></td>
-                                        <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
-                                        <td><a href="#" role="button" class="btn btn-primary">Used</a></td>
+                                        <td><?php echo isset($redeemed_goods['player_organize_info']['name']) ? $redeemed_goods['player_organize_info']['name'] : "n/a" ?></td>
+                                        <td><?php echo isset($redeemed_goods['player_node_info']['name']) ? $redeemed_goods['player_node_info']['name'] : "n/a" ?></td>
+                                        <td><?php echo isset($redeemed_goods['player_node_info']['description']) ? $redeemed_goods['player_node_info']['description'] : "n/a" ?></td>
+                                        <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a></td>
                                     </tr>
                                 <?php } else { ?>
                                     <tr data-id="<?php echo $redeemed_goods['_id'] ?>">
                                         <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
                                         <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
-                                        <td><a href="#" role="button" class="btn btn-primary">Used</a></td>
+                                        <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a></td>
                                     </tr>
                                 <?php } ?>
                             <?php }
@@ -223,6 +224,48 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="modal hide fade" id="confirmModal" tabindex="-1" role="dialog" aria-hidden="true"
+     aria-labelledby="confirmModalLabel">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 id="confirmModalLabel">Confirm to mark as used?</h3>
+    </div>
+    <div class="modal-body">
+        <p>Are you sure you want mark this goods as used?</p>
+        <input type="hidden" name="contentId" id="contentId" value=""/>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</a>
+        <a href="#" class="btn btn-primary" id="confirmPush">Confirm</a>
+    </div>
+</div>
+
+<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <h1>Please Wait</h1>
+    </div>
+    <div class="modal-body">
+        <div class="offset5 ">
+            <i class="fa fa-spinner fa-spin fa-5x"></i>
+        </div>
+    </div>
+</div>
+
+<div class="modal hide" id="sentDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>Marked as used</h3>
+    </div>
+    <div class="modal-body">
+        <div>
+            <span><i class="fa fa-check-circle"></i>&nbsp;Marked as used!</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
     </div>
 </div>
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-table.min.css" rel="stylesheet" type="text/css">
@@ -261,6 +304,12 @@
                 }
                 $('#goods').load(baseUrlPath + getListForAjax + getNum);
             });
+        });
+
+    $('#MarkAsUsedTable')
+        .on("click",".mark-as-used-btn",function (e){
+            var id = $(this).closest("tr").data('id');
+            console.log("clicked:",id);
         });
 
     Pace.on("done", function () {
