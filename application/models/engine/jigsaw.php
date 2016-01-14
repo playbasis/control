@@ -484,6 +484,30 @@ class jigsaw extends MY_Model
 		);
 		return true;
 	}
+	public function distinct($config, $input, &$exInfo = array())
+	{
+		$params = array();
+		$data_set = $this->getActionDatasetInfo($input['action_name']);
+		if (is_array($data_set)) foreach ($data_set as $param){
+			$param_name = $param['param_name'];
+			if (isset($input[$param_name])) {
+				$params[$param_name] = $input[$param_name];
+			}
+		}
+		$c = $this->countActionWithParams($input['client_id'], $input['site_id'], $input['pb_player_id'], $input['action_id'], $params);
+		return $c == 0;
+	}
+	private function countActionWithParams($client_id, $site_id, $pb_player_id, $action_id, $parameters) {
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'pb_player_id' => $pb_player_id,
+			'action_id' => $action_id,
+			'parameters' => $parameters,
+		));
+		return $this->mongo_db->count('playbasis_validated_action_log');
+	}
 	public function email($config, $input, &$exInfo = array())
 	{
 		return $this->feedback('email', $config, $input, $exInfo);
