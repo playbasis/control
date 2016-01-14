@@ -1959,8 +1959,8 @@ class Player extends REST2_Controller
 
         foreach($parent_node as $node){
             $list = array();
-			$nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
-			$this->utility->recurGetChildUnder($nodesData, new MongoId($node['node_id']),$list);
+            $nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
+            $this->utility->recurGetChildUnder($nodesData, new MongoId($node['node_id']),$list);
 
             $table=$this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],$this->validToken['site_id'],$list,$action,$parameter,$month,$year,2);
 
