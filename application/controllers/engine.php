@@ -423,7 +423,7 @@ class Engine extends Quest
 			// populate input parameter of the action
 			$action_dataset = $this->jigsaw_model->getActionDatasetInfo($input['action_name']);
 			$input['parameters'] = array();
-			foreach ($action_dataset as $dataset){
+			if (is_array($action_dataset))foreach ($action_dataset as $dataset){
 				if (isset($input[$dataset['param_name']])){
 					$input['parameters'][$dataset['param_name']] = $input[$dataset['param_name']];
 				}
