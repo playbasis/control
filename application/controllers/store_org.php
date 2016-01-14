@@ -341,43 +341,6 @@ class Store_org extends REST2_Controller
         return array('name' => $name, 'value' => new MongoDate());
     }
 
-    private function recurGetChildUnder($client_id, $site_id, $parent_node, &$result, &$layer = 0, $num = 0)
-    {
-        //array_push($result,$num);
-        //array_push($result,$layer);
-        if ($num++ <= $layer || $layer == 0) {
-            array_push($result, $parent_node);
-        }
-
-        $nodes = $this->store_org_model->findAdjacentChildNode($client_id, $site_id, new MongoId($parent_node));
-        if (isset($nodes)) {
-            foreach ($nodes as $node) {
-
-                $this->recurGetChildUnder($client_id, $site_id, $node['_id'], $result, $layer, $num);
-            }
-        } else {
-            return $result;
-        }
-    }
-
-    private function recurGetChildByLevel($client_id, $site_id, $parent_node, &$result, &$layer = 0, $num = 0)
-    {
-        //array_push($result,$num);
-        //array_push($result,$layer);
-        if ($num++ == $layer || $layer == 0) {
-            array_push($result, $parent_node);
-        }
-
-        $nodes = $this->store_org_model->findAdjacentChildNode($client_id, $site_id, new MongoId($parent_node));
-        if (isset($nodes)) {
-            foreach ($nodes as $node) {
-
-                $this->recurGetChildByLevel($client_id, $site_id, $node['_id'], $result, $layer, $num);
-            }
-        } else {
-            return $result;
-        }
-    }
 
     public function getChildNode_get($node_id = '', $layer = 0)
     {
@@ -393,12 +356,12 @@ class Store_org extends REST2_Controller
         }
 
         $check_node= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],new MongoId($node_id));
-        if ($check_node == null) {
+        if (!$check_node) {
             $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
         }
 
-        $this->recurGetChildUnder($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node_id),
-            $candidate_nodes, $layer);
+        $nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
+        $this->utility->recurGetChildUnder($nodesData, new MongoId($node_id), $candidate_nodes, $layer);
 
         foreach ($candidate_nodes as $node) {
             $node_info = $this->store_org_model->retrieveNodeById($this->validToken['site_id'], $node);
@@ -455,9 +418,9 @@ class Store_org extends REST2_Controller
             $parameter = "amount";
         }
 
+        $nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
         $list = array();
-        $this->recurGetChildUnder($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node_id),
-            $list);
+        $this->utility->recurGetChildUnder($nodesData, new MongoId($node_id), $list);
 
         $table = $this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],
             $this->validToken['site_id'], $list, $action, $parameter, $month, $year, 2);
@@ -526,10 +489,9 @@ class Store_org extends REST2_Controller
             $parameter = "amount";
         }
 
-
         $node_list = array();
-        $this->recurGetChildUnder($this->validToken['client_id'], $this->validToken['site_id'], new MongoId($node_id),
-            $node_list);
+        $nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
+        $this->utility->recurGetChildUnder($nodesData, new MongoId($node_id), $node_list);
 
         $table = $this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],
             $this->validToken['site_id'], $node_list, $action, $parameter, $month, $year, $count + 1);
@@ -562,7 +524,7 @@ class Store_org extends REST2_Controller
 
     public function saleBoard_get($node_id = '', $layer = '')
     {
-        $this->benchmark->mark('start');
+        //$this->benchmark->mark('start');
         $result = array();
 
         if (!$node_id) {
@@ -643,9 +605,9 @@ class Store_org extends REST2_Controller
         }
 
         $result = $this->utility->pagination($page,$limit,$result);
-        $this->benchmark->mark('end');
+        /*$this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $result['processing_time'] = $t;
+        $result['processing_time'] = $t;*/
         $this->response($this->resp->setRespond($result), 200);
 
     }
@@ -770,13 +732,14 @@ class Store_org extends REST2_Controller
 
         // get node list of this node id
         if (is_null($role)){
-            $this->store_org_model->recurGetChild($client_id,$site_id,new MongoId ($node_id), $list);
+            $nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
+            $this->utility->recurGetChildUnder($nodesData,new MongoId ($node_id), $list);
             // if list is null, node id is the second lowest of organization. we just need to find player
             if (is_null($list)) $list = array (new MongoId ($node_id));
             $node_to_match = array();
             foreach($list as $node){
                 $player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node);
-                foreach ($player_list as $player)
+                if (is_array($player_list))foreach ($player_list as $player)
                     array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
             }
         }
@@ -788,7 +751,7 @@ class Store_org extends REST2_Controller
             foreach($list as $node){
                 if ($node['_id'] == new MongoId ($node_id)) continue; // if role is set, mean input node id is excluded
                 $player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node['_id'],$role);
-                foreach ($player_list as $player)
+                if (is_array($player_list))foreach ($player_list as $player)
                     array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
             }
         }
@@ -904,7 +867,8 @@ class Store_org extends REST2_Controller
         if ($node_list )foreach ($node_list as $node){
             if ($node['_id'] == $node_id) continue;
             $list = array();
-            $this->store_org_model->recurGetChild($client_id,$site_id,$node['_id'], $list);
+            $nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
+            $this->utility->recurGetChildUnder($nodesData,$node['_id'], $list);
 
             if (!empty($list)) {
                 $result = $this->store_org_model->getSaleHistoryOfNode($client_id, $site_id, $list, $action,
@@ -927,7 +891,7 @@ class Store_org extends REST2_Controller
 
             $players_in_node = $this->store_org_model->getPlayersByNodeId($client_id, $site_id,$rank['node_id'],$role);
             $playersInfo = array();
-            foreach ($players_in_node as $player){
+            if (is_array($players_in_node))foreach ($players_in_node as $player){
                 array_push($playersInfo, $this->player_model->readPlayer($player['pb_player_id'],$site_id,array(
                     'cl_player_id',
                     'first_name',
