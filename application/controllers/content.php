@@ -85,7 +85,7 @@ class Content extends MY_Controller
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
             'trim|required|xss_clean');
         $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('category', $this->lang->line('entry_category'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('category', $this->lang->line('entry_category'), 'trim|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -103,7 +103,9 @@ class Content extends MY_Controller
                 $data['date_start'] = $content_data['date_start'];
                 $data['date_end'] = $content_data['date_end'];
                 $data['image'] = $content_data['image'];
-                $data['category'] = $content_data['category'];
+                if (isset($content_data['category']) && !empty($content_data['category'])) {
+                    $data['category'] = $content_data['category'];
+                }
                 $data['status'] = $content_data['status'] == 'on' ? true : false;
 
                 $insert = $this->Content_model->createContent($data);
@@ -131,7 +133,7 @@ class Content extends MY_Controller
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
             'trim|required|xss_clean');
         $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('category', $this->lang->line('entry_category'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('category', $this->lang->line('entry_category'), 'trim|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -290,7 +292,7 @@ class Content extends MY_Controller
 
         if ($this->input->post('category')) {
             $this->data['category'] = $this->input->post('category');
-        } elseif (isset($content_info['name'])) {
+        } elseif (isset($content_info['category'])) {
             $this->data['category'] = $content_info['category'];
         } else {
             $this->data['category'] = '';

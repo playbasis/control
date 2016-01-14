@@ -97,12 +97,14 @@ class Content_model extends MY_Model
             'date_start' => new MongoDate(strtotime($data['date_start'])),
             'date_end' => new MongoDate(strtotime($data['date_end'])),
             'image' => $data['image'],
-            'category' => new MongoId($data['category']),
             'status' => $data['status'],
             'deleted' => false,
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
         );
+        if (isset($data['category'])) {
+            $insert_data['category'] = new MongoId($data['category']);
+        }
         $insert = $this->mongo_db->insert('playbasis_content_to_client', $insert_data);
 
         return $insert;
@@ -116,7 +118,13 @@ class Content_model extends MY_Model
 
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('detail', $data['detail']);
-        $this->mongo_db->set('category', new MongoId($data['category']));
+        if (isset($data['category'])) {
+            if (empty($data['category'])) {
+                $this->mongo_db->unset_field('category');
+            } else {
+                $this->mongo_db->set('category', new MongoId($data['category']));
+            }
+        }
         $this->mongo_db->set('image', $data['image']);
         $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
         $this->mongo_db->set('date_end', new MongoDate(strtotime($data['date_end'])));

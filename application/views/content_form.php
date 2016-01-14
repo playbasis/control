@@ -112,8 +112,7 @@
 
                                 <div class="control-group">
                                     <label class="control-label"
-                                           for="inputCategory"><?php echo $this->lang->line('entry_category'); ?><span
-                                            class="required">&nbsp;*</span></label>
+                                           for="inputCategory"><?php echo $this->lang->line('entry_category'); ?></label>
                                     <div class="controls">
                                         <span><input type='hidden' name="category" id="inputCategory" style="width:50%;"
                                                      value="<?php echo isset($category) ? $category : set_value('category'); ?>"></span>
@@ -340,6 +339,7 @@
         CKEDITOR.replace('inputDetail');
 
         $inputCategory.select2({
+            allowClear: true,
             placeholder: "Select category",
             minimumInputLength: 0,
             id: function (data) {
