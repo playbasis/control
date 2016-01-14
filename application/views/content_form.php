@@ -62,15 +62,24 @@
                                 </div>
 
                                 <div class="control-group">
+                                    <label class="control-label" for="inputSummary">
+                                        <?php echo $this->lang->line('entry_summary'); ?><span
+                                            class="required">&nbsp;*</span>
+                                    </label>
+                                    <div class="controls">
+                                        <textarea name="summary" id="inputSummary" cols="80" rows="5" style="width: 70%;"
+                                                  placeholder="<?php echo $this->lang->line('entry_summary'); ?>"><?php echo isset($summary) ? $summary : set_value('summary'); ?></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
                                     <label class="control-label" for="inputDetail">
                                         <?php echo $this->lang->line('entry_detail'); ?><span
                                             class="required">&nbsp;*</span>
                                     </label>
                                     <div class="controls">
                                         <textarea name="detail" id="inputDetail" cols="80" rows="20"
-                                                  placeholder="<?php echo $this->lang->line('entry_detail'); ?>">
-                                            <?php echo isset($detail) ? $detail : set_value('detail'); ?>
-                                        </textarea>
+                                                  placeholder="<?php echo $this->lang->line('entry_detail'); ?>"><?php echo isset($detail) ? $detail : set_value('detail'); ?></textarea>
                                     </div>
                                 </div>
 

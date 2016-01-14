@@ -20,6 +20,7 @@ $lang['tab_category'] = 'Category';
 
 // Entry
 $lang['entry_title'] = 'Title';
+$lang['entry_summary'] = 'Summary';
 $lang['entry_detail'] = 'Detail';
 $lang['entry_date_range'] = 'Date Range';
 $lang['entry_date_start'] = 'Date Start';

@@ -80,6 +80,8 @@ class Content extends MY_Controller
 
         $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('summary', $this->lang->line('entry_summary'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[4096000]|xss_clean');
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
@@ -99,6 +101,7 @@ class Content extends MY_Controller
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['title'] = $content_data['title'];
+                $data['summary'] = $content_data['summary'];
                 $data['detail'] = $content_data['detail'];
                 $data['date_start'] = $content_data['date_start'];
                 $data['date_end'] = $content_data['date_end'];
@@ -128,6 +131,8 @@ class Content extends MY_Controller
 
         $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('summary', $this->lang->line('entry_summary'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[4096000]|xss_clean');
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
@@ -148,6 +153,7 @@ class Content extends MY_Controller
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['title'] = $content_data['title'];
+                $data['summary'] = $content_data['summary'];
                 $data['detail'] = $content_data['detail'];
                 $data['date_start'] = $content_data['date_start'];
                 $data['date_end'] = $content_data['date_end'];
@@ -272,6 +278,14 @@ class Content extends MY_Controller
             $this->data['title'] = $content_info['title'];
         } else {
             $this->data['title'] = '';
+        }
+
+        if ($this->input->post('summary')) {
+            $this->data['summary'] = $this->input->post('summary');
+        } elseif (isset($content_info['detail'])) {
+            $this->data['summary'] = $content_info['summary'];
+        } else {
+            $this->data['summary'] = '';
         }
 
         if ($this->input->post('detail')) {

@@ -92,7 +92,8 @@ class Content_model extends MY_Model
         $insert_data = array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
-            'title' => strtolower($data['title']),
+            'title' => $data['title'],
+            'summary' => $data['summary'],
             'detail' => $data['detail'],
             'date_start' => new MongoDate(strtotime($data['date_start'])),
             'date_end' => new MongoDate(strtotime($data['date_end'])),
@@ -117,6 +118,7 @@ class Content_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($data['_id']));
 
         $this->mongo_db->set('title', $data['title']);
+        $this->mongo_db->set('summary', $data['summary']);
         $this->mongo_db->set('detail', $data['detail']);
         if (isset($data['category'])) {
             if (empty($data['category'])) {
