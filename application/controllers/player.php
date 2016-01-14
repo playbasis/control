@@ -1927,25 +1927,6 @@ class Player extends REST2_Controller
         $this->response($this->resp->setRespond(), 200);
     }
 
-    private function recurGetChildUnder($client_id, $site_id, $parent_node, &$result, &$layer = 0, $num = 0)
-    {
-        //array_push($result,$num);
-        //array_push($result,$layer);
-        if ($num++ <= $layer || $layer == 0) {
-            array_push($result, $parent_node);
-        }
-
-        $nodes = $this->store_org_model->findAdjacentChildNode($client_id, $site_id, new MongoId($parent_node));
-        if (isset($nodes)) {
-            foreach ($nodes as $node) {
-
-                $this->recurGetChildUnder($client_id, $site_id, $node['_id'], $result, $layer, $num);
-            }
-        } else {
-            return $result;
-        }
-    }
-
     public function saleReport_get($player_id = '') {
         $result = array();
 
@@ -1978,7 +1959,8 @@ class Player extends REST2_Controller
 
         foreach($parent_node as $node){
             $list = array();
-            $this->recurGetChildUnder($this->validToken['client_id'],$this->validToken['site_id'],new MongoId($node['node_id']),$list);
+            $nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
+            $this->utility->recurGetChildUnder($nodesData, new MongoId($node['node_id']),$list);
 
             $table=$this->store_org_model->getSaleHistoryOfNode($this->validToken['client_id'],$this->validToken['site_id'],$list,$action,$parameter,$month,$year,2);
 

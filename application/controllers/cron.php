@@ -1021,7 +1021,8 @@ $email = 'pechpras@playbasis.com';
 						if ($node_list )foreach ($node_list as $node){
 							if ($node['_id'] == $node_id) continue;
 							$list = array();
-							$this->store_org_model->recurGetChild($client_id,$site_id,$node['_id'], $list);
+							$nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
+							$this->utility->recurGetChildUnder($nodesData,$node['_id'], $list);
 
 							if (!empty($list)) {
 								$raw = $this->store_org_model->getSaleHistoryOfNode($client_id, $site_id, $list, $action,
@@ -1047,13 +1048,14 @@ $email = 'pechpras@playbasis.com';
 
 						// get node list of this node id
 						if (is_null($role)){
-							$this->store_org_model->recurGetChild($client_id,$site_id,new MongoId ($node_id), $list);
+							$nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
+							$this->utility->recurGetChildUnder($nodesData,new MongoId ($node_id), $list);
 							// if list is null, node id is the second lowest of organization. we just need to find player
 							if (is_null($list)) $list = array (new MongoId ($node_id));
 							$node_to_match = array();
 							foreach($list as $node){
 								$player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node);
-								foreach ($player_list as $player)
+								if (is_array($player_list))foreach ($player_list as $player)
 									array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
 							}
 						}
@@ -1065,7 +1067,7 @@ $email = 'pechpras@playbasis.com';
 							foreach($list as $node){
 								if ($node['_id'] == new MongoId ($node_id)) continue; // if role is set, mean input node id is excluded
 								$player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node['_id'],$role);
-								foreach ($player_list as $player)
+								if (is_array($player_list))foreach ($player_list as $player)
 									array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
 							}
 						}
