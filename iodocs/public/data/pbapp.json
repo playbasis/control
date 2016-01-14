@@ -3618,18 +3618,18 @@
                         "Description": "Specific id of content"
                       },
                       {
-                        "Name": "name",
+                        "Name": "title",
                         "Required": "N",
                         "Default": "",
                         "Type": "string",
-                        "Description": "Specific name of content"
+                        "Description": "Specific title of content"
                       },
                       {
                         "Name": "category",
                         "Required": "N",
                         "Default": "",
                         "Type": "string",
-                        "Description": "Specific category of content"
+                        "Description": "Specific category name of content"
                       },
                       {
                         "Name": "date_check",
@@ -3641,9 +3641,9 @@
                       {
                         "Name": "sort",
                         "Required": "N",
-                        "Default": "name",
+                        "Default": "title",
                         "Type": "string",
-                        "Description": "Specific field to sort ('name', 'date_start', 'date_end', 'date_added', 'date_modified')"
+                        "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified')"
                       },
                       {
                         "Name": "order",

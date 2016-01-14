@@ -14,9 +14,9 @@ class Content_model extends MY_Model
         $this->set_site_mongodb($site_id);
 
         // Searching
-        if (isset($optionalParams['name']) && !is_null($optionalParams['name'])) {
-            $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['name'])) . "/i");
-            $this->mongo_db->where('name', $regex);
+        if (isset($optionalParams['title']) && !is_null($optionalParams['title'])) {
+            $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['title'])) . "/i");
+            $this->mongo_db->where('title', $regex);
         }
         if (isset($optionalParams['category']) && !is_null($optionalParams['category'])) {
             $category_result = $this->retrieveContentCategory($client_id, $site_id, array('name' => $optionalParams['category']));
@@ -32,7 +32,7 @@ class Content_model extends MY_Model
         }
 
         // Sorting
-        $sort_data = array('_id', 'name', 'date_start', 'date_end', 'date_added', 'date_modified');
+        $sort_data = array('_id', 'title', 'date_start', 'date_end', 'date_added', 'date_modified');
 
         if (isset($optionalParams['order']) && (mb_strtolower($optionalParams['order']) == 'desc')) {
             $order = -1;
@@ -43,7 +43,7 @@ class Content_model extends MY_Model
         if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
             $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
         } else {
-            $this->mongo_db->order_by(array('name' => $order));
+            $this->mongo_db->order_by(array('title' => $order));
         }
 
         // Paging
@@ -76,7 +76,7 @@ class Content_model extends MY_Model
             }
         }
 
-        $this->mongo_db->select(array('name', 'detail', 'image', 'category', 'date_start', 'date_end'));
+        $this->mongo_db->select(array('title', 'summary', 'detail', 'image', 'category', 'date_start', 'date_end'));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $client_id,
