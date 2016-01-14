@@ -181,21 +181,21 @@
                         <tr>
                             <th rowspan="2" data-visible="false"
                                 data-field="id"><?php echo $this->lang->line('entry_system_id'); ?></th>
-                        <?php if ($org_status) { ?>
-                                <th rowspan="2" data-align="center"
-                                    data-valign="middle"><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname[+node_name+node_type+store_id]?></th>
-                                <th rowspan="2" data-align="center"
-                                    data-valign="middle"><?php echo $this->lang->line('entry_player_name'); ?></th>
-                                <th colspan="3"
-                                    data-align="center"><?php echo $this->lang->line('entry_node_detail'); ?></th>
-                                <th rowspan="2" data-align="center"
-                                    data-valign="middle"><?php echo $this->lang->line('entry_operate'); ?></th>
-                            </tr>
-                            <tr>
-                                <th data-align="center"><?php echo $this->lang->line('entry_node_type'); ?></th>
-                                <th data-align="center"><?php echo $this->lang->line('entry_node_name'); ?></th>
-                                <th data-align="center"><?php echo $this->lang->line('entry_description'); ?></th>
-                            </tr>
+                            <?php if ($org_status) { ?>
+                            <th rowspan="2" data-align="center"
+                                data-valign="middle"><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname[+node_name+node_type+store_id]?></th>
+                            <th rowspan="2" data-align="center"
+                                data-valign="middle"><?php echo $this->lang->line('entry_player_name'); ?></th>
+                            <th colspan="3"
+                                data-align="center"><?php echo $this->lang->line('entry_node_detail'); ?></th>
+                            <th rowspan="2" data-align="center"
+                                data-valign="middle"><?php echo $this->lang->line('entry_operate'); ?></th>
+                        </tr>
+                        <tr>
+                            <th data-align="center"><?php echo $this->lang->line('entry_node_type'); ?></th>
+                            <th data-align="center"><?php echo $this->lang->line('entry_node_name'); ?></th>
+                            <th data-align="center"><?php echo $this->lang->line('entry_description'); ?></th>
+                        </tr>
                         <?php } else { ?>
                                 <th><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname?></th>
                                 <th><?php echo $this->lang->line('entry_player_name'); //cl_id+name+lastname?></th>
@@ -212,9 +212,45 @@
                                         <td><?php echo $redeemed_goods['_id'] ?></td>
                                         <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
                                         <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
-                                        <td><?php echo isset($redeemed_goods['player_organize_info']['name']) ? $redeemed_goods['player_organize_info']['name'] : "n/a" ?></td>
-                                        <td><?php echo isset($redeemed_goods['player_node_info']['name']) ? $redeemed_goods['player_node_info']['name'] : "n/a" ?></td>
-                                        <td><?php echo isset($redeemed_goods['player_node_info']['description']) ? $redeemed_goods['player_node_info']['description'] : "n/a" ?></td>
+                                        <td><?php
+                                            if (isset($redeemed_goods['player_organize_info'])) {
+                                                $prefix = '';
+                                                $orgList = '';
+                                                foreach ($redeemed_goods['player_organize_info'] as $org) {
+                                                    $orgList .= $prefix . '"' . $org['name'] . '"';
+                                                    $prefix = ', ';
+                                                }
+                                                echo isset($orgList) ? $orgList : "n/a";
+                                            } else {
+                                                echo "n/a";
+                                            }
+                                            ?></td>
+                                        <td><?php
+                                            if (isset($redeemed_goods['player_node_info'])) {
+                                                $prefix = '';
+                                                $nodeList = '';
+                                                foreach ($redeemed_goods['player_node_info'] as $node) {
+                                                    $nodeList .= $prefix . '"' . $node['name'] . '"';
+                                                    $prefix = ', ';
+                                                }
+                                                echo isset($nodeList) ? $nodeList : "n/a";
+                                            } else {
+                                                echo "n/a";
+                                            }
+                                            ?></td>
+                                        <td><?php
+                                            if (isset($redeemed_goods['player_node_info'])) {
+                                                $prefix = '';
+                                                $nodeList = '';
+                                                foreach ($redeemed_goods['player_node_info'] as $node) {
+                                                    $nodeList .= $prefix . '"' . $node['description'] . '"';
+                                                    $prefix = ', ';
+                                                }
+                                                echo isset($nodeList) ? $nodeList : "n/a";
+                                            } else {
+                                                echo "n/a";
+                                            }
+                                            ?></td>
                                         <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a>
                                         </td>
                                     </tr>
