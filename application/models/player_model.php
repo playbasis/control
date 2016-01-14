@@ -1682,4 +1682,23 @@ class Player_model extends MY_Model
         ));
         return $this->mongo_db->get('playbasis_player_device');
     }
+
+    public function listPlayers($pb_player_id_list, $fields = array())
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        if ($fields) {
+            $this->mongo_db->select($fields);
+        }
+        $this->mongo_db->where_in('_id', $pb_player_id_list);
+        return $this->mongo_db->get('playbasis_player');
+    }
+
+    public function listPlayersOrganize($pb_player_id_list, $fields = array()) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        if ($fields) {
+            $this->mongo_db->select($fields);
+        }
+        $this->mongo_db->where_in('pb_player_id', $pb_player_id_list);
+        return $this->mongo_db->get("playbasis_store_organize_to_player");
+    }
 }

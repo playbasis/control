@@ -48,6 +48,18 @@ class Store_org_model extends MY_Model
         return $insert;
     }
 
+    public function countNodes($client_id, $site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+        $total = $this->mongo_db->count('playbasis_store_organize_to_client');
+
+        return $total;
+    }
+
     public function retrieveNode($client_id, $site_id, $optionalParams = array())
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -225,6 +237,18 @@ class Store_org_model extends MY_Model
         return $insert;
     }
 
+    public function countOrganizes($client_id, $site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+        $total = $this->mongo_db->count('playbasis_store_organize');
+
+        return $total;
+    }
+
     public function retrieveOrganize($client_id, $site_id, $optionalParams = array())
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -344,6 +368,24 @@ class Store_org_model extends MY_Model
         $update = $this->mongo_db->update_all('playbasis_store_organize');
 
         return $update;
+    }
+
+    public function listNodes($node_id_list, $fields = array()) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        if ($fields) {
+            $this->mongo_db->select($fields);
+        }
+        $this->mongo_db->where_in('_id', $node_id_list);
+        return $this->mongo_db->get("playbasis_store_organize_to_client");
+    }
+
+    public function listOrganizations($organization_id_list, $fields = array()) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        if ($fields) {
+            $this->mongo_db->select($fields);
+        }
+        $this->mongo_db->where_in('_id', $organization_id_list);
+        return $this->mongo_db->get("playbasis_store_organize");
     }
 
     function makeMongoIdObj(&$value)

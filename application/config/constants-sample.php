@@ -79,5 +79,7 @@ define('WIDGET_SERVER', 'widget.pbapp.net');
 
 define('TEST_PLAYER_ID', 'test');
 define('LIMIT_PLAYERS_QUERY', 10000);
+
+define('ALLOW_SIGN_UP', false);
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

@@ -50,7 +50,9 @@
 
                 <div class="pbf-field-group pbf-half pbf-link-2-line">
                   <a href="#forgotpassword" role="tab" data-toggle="tab">Forgot Password?</a><br>
+                    <?php if(ALLOW_SIGN_UP){ ?>
                   Don't have an account? <a href="#register" role="tab" data-toggle="tab">Sign Up</a>
+                    <?php } ?>
                 </div>
 
               </fieldset>

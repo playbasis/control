@@ -1,6 +1,8 @@
 <?php
 // Heading
-$lang['heading_title']          		= 'Goods List';
+$lang['heading_title']          		= 'Goods';
+$lang['heading_title_goods_list']          		= 'Goods List';
+$lang['heading_title_mark_as_used']          		= 'Mark as Used';
 
 // Text
 $lang['text_success']           		= 'You have successfully created a goods!';
@@ -13,6 +15,7 @@ $lang['text_browse']            		= 'Browse Files';
 $lang['text_clear']             		= 'Clear Image';
 $lang['text_reach_limit_goods']			= 'You have reached the limit of creating goods, please contact Playbasis';
 $lang['text_no_results']				= 'You do not have any goods created';
+$lang['text_no_redeemed_goods']				= 'You do not have any goods redeemed';
 
 // Button
 $lang['button_import']           = 'Import';
@@ -22,6 +25,7 @@ $lang['tab_colection']					= 'Collection';
 $lang['tab_assign']					= 'Assign';
 $lang['tab_redeem']					= 'Redeem';
 $lang['tab_sms']					= 'SMS';
+$lang['tab_modify_status']					= 'Modify Status';
 
 // Column
 $lang['column_image']					= 'Image';
@@ -61,6 +65,13 @@ $lang['entry_start_date']				= 'Start Date';
 $lang['entry_expire_date']				= 'Expire Date';
 $lang['entry_per_user']                    = 'Per User';
 $lang['entry_code']                    = 'Code';
+$lang['entry_player_id']               = 'Player Id';
+$lang['entry_player_name']             = 'Player Name';
+$lang['entry_node_detail']             = 'Node Detail';
+$lang['entry_node_name']               = 'Node Name';
+$lang['entry_node_type']               = 'Node Type';
+$lang['entry_store_id']                = 'Store Id';
+$lang['entry_operate']                 = 'Operate';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';
