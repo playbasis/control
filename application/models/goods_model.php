@@ -20,6 +20,15 @@ class Goods_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getGoodsToPlayer($_id){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id',  new MongoID($_id));
+        $results = $this->mongo_db->get("playbasis_goods_to_player");
+
+        return $results ? $results[0] : null;
+    }
+
     public function getGoodsOfClientPrivate($goods_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 

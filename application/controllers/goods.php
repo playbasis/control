@@ -1079,6 +1079,47 @@ class Goods extends MY_Controller
         }
     }
 
+    public function markUsed($goods_to_player_id) {
+        if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+
+                try{
+                    $goods_to_player = $this->Goods_model->getGoodsToPlayer($goods_to_player_id);
+                } catch (Exception $e){
+                    $this->output->set_status_header('404');
+                    echo json_encode(array('status' => 'error'));
+                    die();
+                }
+
+                if(isset($goods_to_player) ){
+                    $goods_info = $this->Goods_model->getGoodsOfClientPrivate($goods_to_player['goods_id']);
+                    $this->Goods_model->markAsVerifiedGoods(array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'goods_id' => $goods_to_player['goods_id'],
+                        'goods_group' => $goods_info['group'],
+                        'cl_player_id' => $goods_to_player['cl_player_id'],
+                        'pb_player_id' => $goods_to_player['pb_player_id'],
+                    ));
+
+                    $this->output->set_status_header('200');
+                    echo json_encode(array('status' => 'success'));
+                }else{
+                    $this->output->set_status_header('404');
+                    echo json_encode(array('status' => 'error'));
+                    die();
+                }
+            }
+        }
+    }
+
     private function validateModify() {
 
         if ($this->User_model->hasPermission('modify', 'goods')) {

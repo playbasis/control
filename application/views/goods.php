@@ -28,8 +28,11 @@
         <div class="content">
             <div class="tabbable">
                 <ul class="nav nav-tabs" id="mainTab">
-                    <li class="active"><a href="#goodsListTab" data-toggle="tab"><?php echo $this->lang->line('heading_title_goods_list'); ?></a></li>
-                    <li><a href="#MarkAsUsedTab" data-toggle="tab"><?php echo $this->lang->line('heading_title_mark_as_used'); ?></a>
+                    <li class="active"><a href="#goodsListTab"
+                                          data-toggle="tab"><?php echo $this->lang->line('heading_title_goods_list'); ?></a>
+                    </li>
+                    <li><a href="#MarkAsUsedTab"
+                           data-toggle="tab"><?php echo $this->lang->line('heading_title_mark_as_used'); ?></a>
                     </li>
                 </ul>
             </div>
@@ -175,14 +178,18 @@
                            data-search="true"
                            data-pagination="true">
                         <thead>
-                        <!--                            <th>-->
-                        <?php //echo $this->lang->line('entry_system_id'); //hide ?><!--</th>-->
+                        <tr>
+                            <th rowspan="2" data-visible="false"
+                                data-field="id"><?php echo $this->lang->line('entry_system_id'); ?></th>
                         <?php if ($org_status) { ?>
-                            <tr>
-                                <th rowspan="2" data-align="center" data-valign="middle"><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname[+node_name+node_type+store_id]?></th>
-                                <th rowspan="2" data-align="center" data-valign="middle"><?php echo $this->lang->line('entry_player_name'); ?></th>
-                                <th colspan="3" data-align="center"><?php echo $this->lang->line('entry_node_detail'); ?></th>
-                                <th rowspan="2" data-align="center" data-valign="middle"><?php echo $this->lang->line('entry_operate'); ?></th>
+                                <th rowspan="2" data-align="center"
+                                    data-valign="middle"><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname[+node_name+node_type+store_id]?></th>
+                                <th rowspan="2" data-align="center"
+                                    data-valign="middle"><?php echo $this->lang->line('entry_player_name'); ?></th>
+                                <th colspan="3"
+                                    data-align="center"><?php echo $this->lang->line('entry_node_detail'); ?></th>
+                                <th rowspan="2" data-align="center"
+                                    data-valign="middle"><?php echo $this->lang->line('entry_operate'); ?></th>
                             </tr>
                             <tr>
                                 <th data-align="center"><?php echo $this->lang->line('entry_node_type'); ?></th>
@@ -190,7 +197,6 @@
                                 <th data-align="center"><?php echo $this->lang->line('entry_description'); ?></th>
                             </tr>
                         <?php } else { ?>
-                            <tr>
                                 <th><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname?></th>
                                 <th><?php echo $this->lang->line('entry_player_name'); //cl_id+name+lastname?></th>
                                 <th><?php echo $this->lang->line('entry_operate'); ?></th>
@@ -203,22 +209,26 @@
                             foreach ($redeemed_goods_list as $redeemed_goods) { ?>
                                 <?php if ($org_status) { ?>
                                     <tr data-id="<?php echo $redeemed_goods['_id'] ?>">
+                                        <td><?php echo $redeemed_goods['_id'] ?></td>
                                         <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
                                         <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
                                         <td><?php echo isset($redeemed_goods['player_organize_info']['name']) ? $redeemed_goods['player_organize_info']['name'] : "n/a" ?></td>
                                         <td><?php echo isset($redeemed_goods['player_node_info']['name']) ? $redeemed_goods['player_node_info']['name'] : "n/a" ?></td>
                                         <td><?php echo isset($redeemed_goods['player_node_info']['description']) ? $redeemed_goods['player_node_info']['description'] : "n/a" ?></td>
-                                        <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a></td>
+                                        <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a>
+                                        </td>
                                     </tr>
                                 <?php } else { ?>
                                     <tr data-id="<?php echo $redeemed_goods['_id'] ?>">
+                                        <td><?php echo $redeemed_goods['_id'] ?></td>
                                         <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
                                         <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
-                                        <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a></td>
+                                        <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a>
+                                        </td>
                                     </tr>
                                 <?php } ?>
                             <?php }
-                        }?>
+                        } ?>
                         </tbody>
                     </table>
                 </div>
@@ -227,11 +237,11 @@
     </div>
 </div>
 
-<div class="modal hide fade" id="confirmModal" tabindex="-1" role="dialog" aria-hidden="true"
-     aria-labelledby="confirmModalLabel">
+<div class="modal hide fade" id="confirmDialog" tabindex="-1" role="dialog" aria-hidden="true"
+     aria-labelledby="confirmDialogLabel">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3 id="confirmModalLabel">Confirm to mark as used?</h3>
+        <h3 id="confirmDialogLabel">Confirm to mark as used?</h3>
     </div>
     <div class="modal-body">
         <p>Are you sure you want mark this goods as used?</p>
@@ -239,7 +249,7 @@
     </div>
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</a>
-        <a href="#" class="btn btn-primary" id="confirmPush">Confirm</a>
+        <a href="#" class="btn btn-primary" id="confirm">Confirm</a>
     </div>
 </div>
 
@@ -271,6 +281,11 @@
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-table.min.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/custom/bootstrap-table.min.js" type="text/javascript"></script>
 <script type="text/javascript">
+    var $confirmDialog = $('#confirmDialog'),
+        $pleaseWaitDialog = $('#pleaseWaitDialog'),
+        $sentDialog = $('#sentDialog'),
+        $markAsUsedTable = $('#MarkAsUsedTable'),
+        marked_goods_id;
 
     $('#goods')
         .on("click", ".push_down", function (e) {
@@ -306,10 +321,39 @@
             });
         });
 
-    $('#MarkAsUsedTable')
-        .on("click",".mark-as-used-btn",function (e){
-            var id = $(this).closest("tr").data('id');
-            console.log("clicked:",id);
+    $markAsUsedTable
+        .on("click", ".mark-as-used-btn", function (e) {
+            marked_goods_id = $(this).closest("tr").data('id');
+//            console.log("clicked:",id);
+            $confirmDialog.modal();
+        });
+
+    $confirmDialog
+        .on("click", "#confirm", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                    type: "POST",
+                    url: baseUrlPath + "goods/markUsed/" + marked_goods_id,
+                    beforeSend: function (xhr) {
+                        $confirmDialog.modal('hide');
+                        $pleaseWaitDialog.modal();
+                    }
+                })
+                .done(function () {
+                    $pleaseWaitDialog.modal('hide');
+                    $markAsUsedTable.bootstrapTable('remove', {
+                        field: 'id',
+                        values: [marked_goods_id]
+                    });
+                    $sentDialog.modal();
+                })
+                .fail(function (xhr, textStatus, errorThrown) {
+                    alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+                })
+                .always(function () {
+                    $waitDialog.modal('hide');
+                });
         });
 
     Pace.on("done", function () {
