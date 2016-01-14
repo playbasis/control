@@ -197,7 +197,6 @@ function organizeFormatSelection(organize) {
 
 function initStoreNodeTable() {
     $storeNodeTable.bootstrapTable({
-        height: getHeight(),
         columns: [
             {
                 field: 'state',
@@ -227,7 +226,8 @@ function initStoreNodeTable() {
                 field: 'status',
                 align: 'center',
                 valign: 'middle',
-                sortable: true
+                sortable: true,
+                formatter: statusFormatter
             }, {
                 field: 'operate',
                 title: 'Item Operate',
@@ -268,16 +268,10 @@ function initStoreNodeTable() {
             });
         $storeNodeToolbarRemove.prop('disabled', true);
     });
-    $(window).resize(function () {
-        $storeNodeTable.bootstrapTable('resetView', {
-            height: getHeight()
-        });
-    });
 }
 
 function initStoreOrganizeTable() {
     $storeOrganizeTable.bootstrapTable({
-        height: getHeight(),
         columns: [
             {
                 field: 'state',
@@ -301,7 +295,8 @@ function initStoreOrganizeTable() {
                 field: 'status',
                 align: 'center',
                 valign: 'middle',
-                sortable: true
+                sortable: true,
+                formatter: statusFormatter
             }, {
                 field: 'operate',
                 title: 'Item Operate',
@@ -342,11 +337,6 @@ function initStoreOrganizeTable() {
             });
         $storeOrganizeToolbarRemove.prop('disabled', true);
     });
-    $(window).resize(function () {
-        $storeOrganizeTable.bootstrapTable('resetView', {
-            height: getHeight()
-        });
-    });
 }
 function getOrganizeIdSelections() {
     return $.map($storeOrganizeTable.bootstrapTable('getSelections'), function (row) {
@@ -370,20 +360,19 @@ function nodeResponseHandler(res) {
     });
     return res;
 }
-function organizeSorter(a, b) {
-    console.log("enter sorter");
-    a = +a.charAt(0);
-    b = +b.charAt(0);
-    if (a > b) return 1;
-    if (a < b) return -1;
-    return 0;
-}
 function organizeFormatter(value, row, index) {
     if (typeof value != "undefined")
         if (value.hasOwnProperty('name'))
             return value.name;
         else
             return "-";
+}
+function statusFormatter(value, row, index) {
+    if (value) {
+        return "Enable";
+    } else {
+        return "Disable"
+    }
 }
 function operateOrganizeFormatter(value, row, index) {
     return [
@@ -488,9 +477,6 @@ window.operateEvents = {
             });
     }
 };
-function getHeight() {
-    return $(window).height() - $('h1').outerHeight(true);
-}
 
 function submitOrganizeModalForm() {
     // todo: Add client validation here!
