@@ -722,7 +722,7 @@ class User extends MY_Controller
     /* new register flow (without captcha, plan and domain) */
     public function regis()
     {
-        if (!DISABLE_SIGN_UP) {
+        if (ALLOW_SIGN_UP) {
             $success = false;
 
             //Set rules for form registration
