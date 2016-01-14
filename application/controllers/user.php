@@ -720,59 +720,69 @@ class User extends MY_Controller
     }
 
     /* new register flow (without captcha, plan and domain) */
-    public function regis(){
+    public function regis()
+    {
+        if (!DISABLE_SIGN_UP) {
+            $success = false;
 
-        $success = false;
+            //Set rules for form registration
+            $this->form_validation->set_rules('email', $this->lang->line('form_email'),
+                'trim|valid_email|xss_clean|required|cehck_space');
+            $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'),
+                'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'),
+                'trim|required|min_length[3]|max_length[40]|xss_clean');
 
-        //Set rules for form registration
-        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
-        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                $_POST['password'] = DEFAULT_PASSWORD;
+                $_POST['password_confirm'] = DEFAULT_PASSWORD;
+                $plan_id = $this->input->get('plan');
+                if (empty($plan_id)) {
+                    $plan_id = FREE_PLAN;
+                } // default is free plan
+                $plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
 
-            $_POST['password'] = DEFAULT_PASSWORD;
-            $_POST['password_confirm'] = DEFAULT_PASSWORD;
-            $plan_id = $this->input->get('plan');
-            if (empty($plan_id)) $plan_id = FREE_PLAN; // default is free plan
-            $plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
+                if ($this->form_validation->run()) {
 
-            if($this->form_validation->run()){
+                    if ($user_id = $this->User_model->insertUser()) { // [1] firstly insert a user into "user"
+                        $user_info = $this->User_model->getUserInfo($user_id);
 
-                if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
-                    $user_info = $this->User_model->getUserInfo($user_id);
+                        $client_id = $this->Client_model->insertClient($this->input->post(),
+                            $plan); // [2] then insert a new client into "playbasis_client"
 
-                    $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"
+                        $data = $this->input->post();
+                        $data['client_id'] = $client_id;
+                        $data['user_id'] = $user_info['_id'];
+                        $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
 
-                    $data = $this->input->post();
-                    $data['client_id'] = $client_id;
-                    $data['user_id'] =  $user_info['_id'];
-                    $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
+                        $this->Client_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
+                            'client_id' => $client_id->{'$id'},
+                            'plan_id' => $plan['_id']->{'$id'},
+                            'site_id' => null,
+                        ));
 
-                    $this->Client_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
-                        'client_id' => $client_id->{'$id'},
-                        'plan_id' => $plan['_id']->{'$id'},
-                        'site_id' => null,
-                    ));
-
-                    $success = true;
-                    $message = $this->lang->line('text_email_sent');
-                }else{
-                    $message = $this->lang->line('text_fail');
+                        $success = true;
+                        $message = $this->lang->line('text_email_sent');
+                    } else {
+                        $message = $this->lang->line('text_fail');
+                    }
+                } else {
+                    $message = strip_tags(validation_errors());
                 }
-            }else{
-                $message = strip_tags(validation_errors());
+            } else {
+                $message = "Unsupported HTTP method";
             }
-        } else {
-            $message = "Unsupported HTTP method";
-        }
 
-        $res = array("response" => $success ? "success" : "fail", "message" => $message);
-        if($success){
-            $res = array_merge($res, array("data" => $user_id.""));
+            $res = array("response" => $success ? "success" : "fail", "message" => $message);
+            if ($success) {
+                $res = array_merge($res, array("data" => $user_id . ""));
+            }
+            echo json_encode($res);
+            exit();
         }
+        $res = array("response" => "fail", "message" => "Registration is closed!");
         echo json_encode($res);
-        exit();
     }
 
     public function signup_finish(){
