@@ -306,21 +306,6 @@ class Store_org_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_store_organize_to_client');
         return $result;
     }
-    public function recurGetChild($client_id,$site_id,$parent_node,&$result,&$layer =0, $num = 0){
-
-        if($num++<=$layer || $layer==0){
-            array_push($result,$parent_node);
-        }
-
-        $nodes = $this->findAdjacentChildNode($client_id,$site_id,new MongoId($parent_node));
-        if(isset($nodes)){
-            foreach($nodes as $node){
-                $this->recurGetChild($client_id,$site_id,$node['_id'],$result,$layer,$num);
-            }
-        }else{
-            return $result;
-        }
-    }
 
     public function findAdjacentChildNode($client_id, $site_id, $node_id){
         $this->mongo_db->select(array(
