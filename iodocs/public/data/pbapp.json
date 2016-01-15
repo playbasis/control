@@ -3669,65 +3669,6 @@
                     ]
                 }
             ]
-          },
-          {
-            "name" : "CMS API",
-              "methods" :[
-                  {
-                    "MethodName": "Get Articles",
-                    "Synopsis": "list articles by category",
-                    "HTTPMethod": "GET",
-                    "URI": "/CMS/getArticles",
-                    "RequiresOAuth": "N",
-                    "parameters": [
-                      {
-                        "Name": "type",
-                        "Required": "Y",
-                        "Default": "",
-                        "Type": "string",
-                        "Description": "Type of contents"
-                      },
-                      {
-                        "Name": "category",
-                        "Required": "Y",
-                        "Default": "",
-                        "Type": "string",
-                        "Description": "Category of contents"
-                      },
-                      {
-                        "Name": "paging",
-                        "Required": "N",
-                        "Default": "",
-                        "Type": "string",
-                        "Description": "how many contents per page"
-                      },
-                      {
-                        "Name": "page",
-                        "Required": "N",
-                        "Default": "",
-                        "Type": "string",
-                        "Description": "number of page"
-                      }
-                    ]
-                },
-                {
-                  "MethodName": "Get Article",
-                  "Synopsis": "list article by id",
-                  "HTTPMethod": "GET",
-                  "URI": "/CMS/getArticle/:article_id",
-                  "RequiresOAuth": "N",
-                  "parameters": [
-                    {
-                      "Name": "article_id",
-                      "Required": "Y",
-                      "Default": "",
-                      "Type": "string",
-                      "Description": "id of content"
-                    }
-                  ]
-                }
-            ]
           }
-
     ]
 }
