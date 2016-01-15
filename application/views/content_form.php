@@ -52,12 +52,23 @@
                             <div class="row-fluid">
                                 <div class="control-group">
                                     <label class="control-label"
-                                           for="inputName"><?php echo $this->lang->line('entry_name'); ?><span
+                                           for="inputTitle"><?php echo $this->lang->line('entry_title'); ?><span
                                             class="required">&nbsp;*</span></label>
                                     <div class="controls">
-                                        <input type="text" name="name" size="100" id="inputName"
-                                               placeholder="<?php echo $this->lang->line('entry_name'); ?>"
-                                               value="<?php echo isset($name) ? $name : set_value('name'); ?>"/>
+                                        <input type="text" name="title" size="100" id="inputTitle"
+                                               placeholder="<?php echo $this->lang->line('entry_title'); ?>"
+                                               value="<?php echo isset($title) ? $title : set_value('$title'); ?>"/>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label" for="inputSummary">
+                                        <?php echo $this->lang->line('entry_summary'); ?><span
+                                            class="required">&nbsp;*</span>
+                                    </label>
+                                    <div class="controls">
+                                        <textarea name="summary" id="inputSummary" cols="80" rows="5" style="width: 70%;"
+                                                  placeholder="<?php echo $this->lang->line('entry_summary'); ?>"><?php echo isset($summary) ? $summary : set_value('summary'); ?></textarea>
                                     </div>
                                 </div>
 
@@ -68,9 +79,7 @@
                                     </label>
                                     <div class="controls">
                                         <textarea name="detail" id="inputDetail" cols="80" rows="20"
-                                                  placeholder="<?php echo $this->lang->line('entry_detail'); ?>">
-                                            <?php echo isset($detail) ? $detail : set_value('detail'); ?>
-                                        </textarea>
+                                                  placeholder="<?php echo $this->lang->line('entry_detail'); ?>"><?php echo isset($detail) ? $detail : set_value('detail'); ?></textarea>
                                     </div>
                                 </div>
 
@@ -112,8 +121,7 @@
 
                                 <div class="control-group">
                                     <label class="control-label"
-                                           for="inputCategory"><?php echo $this->lang->line('entry_category'); ?><span
-                                            class="required">&nbsp;*</span></label>
+                                           for="inputCategory"><?php echo $this->lang->line('entry_category'); ?></label>
                                     <div class="controls">
                                         <span><input type='hidden' name="category" id="inputCategory" style="width:50%;"
                                                      value="<?php echo isset($category) ? $category : set_value('category'); ?>"></span>
@@ -340,6 +348,7 @@
         CKEDITOR.replace('inputDetail');
 
         $inputCategory.select2({
+            allowClear: true,
             placeholder: "Select category",
             minimumInputLength: 0,
             id: function (data) {

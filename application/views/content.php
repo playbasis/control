@@ -38,7 +38,7 @@
                     <tbody>
                     <tr class="filter">
                         <td></td>
-                        <td><input title="name" type="text" name="filter_name" value="" style="width:50%;"/></td>
+                        <td><input title="name" type="text" name="filter_title" value="<?php echo isset($_GET['title']) ? $_GET['title'] : "" ?>" style="width:50%;"/></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -59,7 +59,7 @@
                                         <input type="checkbox" name="selected[]"
                                                value="<?php echo $content['_id']; ?>"/>
                                     <?php } ?></td>
-                                <td class="right"><?php echo $content['name']; ?> <?php if (!empty($content['error'])) { ?>
+                                <td class="right"><?php echo $content['title']; ?> <?php if (!empty($content['error'])) { ?>
                                         <span class="red"><a herf="javascript:void(0)" class="error-icon"
                                                              title="<?php echo $content['error']; ?>"
                                                              data-toggle="tooltip"><i class="icon-warning-sign"></i></a>
@@ -155,10 +155,10 @@
     function filter() {
         url = baseUrlPath + 'content';
 
-        var filter_name = $('input[name=\'filter_name\']').attr('value');
+        var filter_title = $('input[name=\'filter_title\']').attr('value');
 
-        if (filter_name) {
-            url += '?name=' + encodeURIComponent(filter_name);
+        if (filter_title) {
+            url += '?title=' + encodeURIComponent(filter_title);
         }
 
         location = url;
@@ -167,7 +167,7 @@
 </script>
 
 <script type="text/javascript">
-    <?php if (!isset($_GET['name'])){?>
+    <?php if (!isset($_GET['title'])){?>
     $("#clear_filter").hide();
     <?php }else{?>
     $("#clear_filter").show();
