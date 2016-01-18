@@ -185,6 +185,7 @@ class Report extends MY_Controller
                 // 'level'             => $player['level'],
                 'action_name'       => $result['action_name'],
                 'url'               => $result['url'],
+                'parameters'         => ($filter_action_id != '')?$result['parameters']:null,
                 'date_added'        => $this->datetimeMongotoReadable($result['date_added'])
             );
         }
@@ -297,32 +298,38 @@ class Report extends MY_Controller
 
         $exporter->initialize(); // starts streaming data to web browser
 
-        $exporter->addRow(array(
-                $this->lang->line('column_player_id'),
-                $this->lang->line('column_username'),
-                $this->lang->line('column_email'),
-                $this->lang->line('column_level'),
-                $this->lang->line('column_exp'),
-                $this->lang->line('column_action_name'),
-                $this->lang->line('column_url'),
-                $this->lang->line('column_date_added')
-            )
+        $row_to_add = array(
+            $this->lang->line('column_player_id'),
+            $this->lang->line('column_username'),
+            $this->lang->line('column_email'),
+            $this->lang->line('column_level'),
+            $this->lang->line('column_exp'),
+            $this->lang->line('column_action_name'),
         );
+
+        if($filter_action_id != 0 &&  is_array($results[0]['parameters']))foreach ($results[0]['parameters'] as $key => $param){
+            array_push($row_to_add, $key);
+        }
+
+        array_push($row_to_add, $this->lang->line('column_date_added'));
+        $exporter->addRow($row_to_add );
 
         foreach($results as $row)
         {
             $player = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
-            $exporter->addRow(array(
-                    $player['cl_player_id'],
-                    $player['username'],
-                    $player['email'],
-                    $player['level'],
-                    $player['exp'],
-                    $row['action_name'],
-                    $row['url'],
-                    $this->datetimeMongotoReadable($row['date_added'])
-                )
+            $row_to_add = array(
+                $player['cl_player_id'],
+                $player['username'],
+                $player['email'],
+                $player['level'],
+                $player['exp'],
+                $row['action_name']
             );
+            if ($filter_action_id != 0 && is_array($row['parameters']))foreach ($row['parameters'] as $param){
+                array_push($row_to_add, $param);
+            }
+            array_push($row_to_add, $this->datetimeMongotoReadable($row['date_added']));
+            $exporter->addRow($row_to_add);
         }
         $exporter->finalize();
     }

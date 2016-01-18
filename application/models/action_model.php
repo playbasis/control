@@ -98,7 +98,7 @@ class Action_model extends MY_Model
             $this->mongo_db->where('action_id',  new MongoID($data['action_id']));
         }
 
-        $results = $this->mongo_db->count("playbasis_action_log");
+        $results = $this->mongo_db->count("playbasis_validated_action_log");
 
         return $results;
 
@@ -320,7 +320,7 @@ class Action_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
 
-        $results = $this->mongo_db->get("playbasis_action_log");
+        $results = $this->mongo_db->get("playbasis_validated_action_log");
 
         return $results;
 
