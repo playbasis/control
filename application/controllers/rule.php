@@ -73,7 +73,13 @@ class Rule extends MY_Controller
             $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList, $pushList);
             $groupList = $this->Rule_model->getGroupJigsawList($site_id, $client_id);
             $levelConditionList = $this->Level_model->getLevelConditions();
-
+            if (is_array($rewardList)) foreach ($rewardList as &$reward) {
+                if (is_array($reward['dataSet'])) foreach ($reward['dataSet'] as &$dataset){
+                    if (strtolower($dataset['param_name']) == "quantity"){
+                        $dataset['field_type'] = 'text';
+                    }
+                }
+            }
 
             $this->data['actionList'] = $actionList;
             $this->data['conditionList'] = $conditionList;
