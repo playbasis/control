@@ -1658,6 +1658,22 @@ class Player_model extends MY_Model
         return $goods;
     }
 
+	public function deleteGoodsFromPlayer($client_id, $site_id, $pb_player_id, $goods_id)
+	{
+		$this->set_site_mongodb($site_id);
+
+		$this->mongo_db->where(array(
+				'client_id' => $client_id,
+				'site_id' => $site_id,
+				'pb_player_id' => $pb_player_id,
+				'goods_id' => $goods_id
+		));
+
+		$result = $this->mongo_db->delete('playbasis_goods_to_player');
+
+		return $result;
+	}
+
     private function getActionLogDetail($action_log_id){
     	$this->mongo_db->select(array('action_name', 'parameters', 'date_added'));
     	$this->mongo_db->select(array(), array('_id'));
@@ -2493,6 +2509,26 @@ class Player_model extends MY_Model
     {
         $this->mongo_db->select(array('_id', 'cl_player_id', 'device_id', 'phone_number','approve_status', 'login_attempt','locked'));
         $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('email', $email);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
+    public function getPlayerByUsernameButNotID($site_id, $username, $pb_player_id)
+    {
+        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_ne('_id', $pb_player_id);
+        $this->mongo_db->where('username', $username);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
+    public function getPlayerByEmailButNotID($site_id, $email, $pb_player_id)
+    {
+        $this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_ne('_id', $pb_player_id);
         $this->mongo_db->where('email', $email);
         $results = $this->mongo_db->get('playbasis_player');
         return $results ? $results[0] : array();

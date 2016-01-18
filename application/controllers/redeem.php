@@ -250,35 +250,46 @@ class Redeem extends REST2_Controller
     public function merchantGoodsGroup_post()
     {
         $required = $this->input->checkParam(array(
-            'goods_id',
-            'pincode'
+            'goods_group',
+            'coupon_code',
+            'pin_code'
         ));
         if ($required) {
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         }
-        $goods_id = $this->input->post('goods_id');
-        $validToken = $this->validToken;
-        $player_id = $this->player_model->getPbAndCilentIdByGoodsId($validToken, new MongoId($goods_id));
+        
+        $group = $this->input->post('goods_group');
+        $code = $this->input->post('coupon_code');
+        $goods_info = $this->goods_model->getGoodsByGroupAndCode($this->client_id, $this->site_id, $group, $code);
 
-        $pb_player_id = $player_id['pb_player_id'];
-        $cl_player_id = $player_id['cl_player_id'];
-
-        if (!$pb_player_id) {
-            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        if(!$goods_info){
+            $this->response($this->error->setError('REDEEM_INVALID_COUPON_CODE'), 200);
         }
+        $goods_id = $goods_info['goods_id'];
 
-        $goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $this->validToken['site_id'],
-            new MongoId($goods_id));
+        $merchantRedeem = $this->merchant_model->getMerchantRedeemLogByGoodsId($this->validToken['client_id'],
+            $this->validToken['site_id'], new MongoId($goods_id));
 
-        if (!empty($goods)) {
-            $merchantRedeem = $this->merchant_model->getMerchantRedeemLogByGoodsId($this->validToken['client_id'],
-                $this->validToken['site_id'], new MongoId($goods_id));
+        if (empty($merchantRedeem)) {
 
-            if (empty($merchantRedeem)) {
+            $validToken = $this->validToken;
+            $player_id = $this->player_model->getPbAndCilentIdByGoodsId($validToken, new MongoId($goods_id));
+
+            $pb_player_id = $player_id['pb_player_id'];
+            $cl_player_id = $player_id['cl_player_id'];
+
+            if (!$pb_player_id) {
+                // Goods is not yet redeemed
+                $this->response($this->error->setError('GOODS_IS_NOT_REDEEMED'), 200);
+            }
+
+            $goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $this->validToken['site_id'], new MongoId($goods_id));
+            if (!empty($goods)) {
+                // Get all branches that are allowed to verify the goods group
                 $merchantGoodsGroups = $this->merchant_model->getMerchantGoodsGroups($this->validToken['client_id'],
                     $this->validToken['site_id'], $goods['group']);
                 if(empty($merchantGoodsGroups)){
-                    $this->response($this->error->setError('PIN_CODE_INVALID'), 200);
+                    $this->response($this->error->setError('BRANCH_IS_NOT_ALLOW_TO_VERIFY_GOODS'), 200);
                 }
                 $branches_allow = array();
                 foreach ($merchantGoodsGroups as $merchantGoodsGroup) {
@@ -286,7 +297,9 @@ class Redeem extends REST2_Controller
                         array_push($branches_allow, $branch['b_id']);
                     }
                 }
-                $pin_code = $this->input->post('pincode');
+                $pin_code = $this->input->post('pin_code');
+                // Check whether the input pin_code is match to any branches in $branches_allow
+                // if not found mean that the branch's pin_code cannot verify this goods.
                 $branch = $this->merchant_model->getMerchantBranchByBranchesAndPinCode($this->validToken['client_id'],
                     $this->validToken['site_id'], $branches_allow, $pin_code);
 
@@ -297,22 +310,28 @@ class Redeem extends REST2_Controller
                     $log_result = $this->merchant_model->logMerchantRedeem($this->validToken['client_id'],
                         $this->validToken['site_id'], new MongoId($goods_id), $goods['group'], $cl_player_id,
                         $pb_player_id, $branch_log_data);
+
+                    $result = $this->merchant_model->getMerchantRedeemLogByLogId($this->validToken['client_id'],$this->validToken['site_id'], new MongoId($log_result));
+                    if($result) {
+                        $this->player_model->deleteGoodsFromPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id, new MongoId($goods_id));
+                    }
+
                     $this->response($this->resp->setRespond(array("success" => true)), 200);
                 } else {
-                    $this->response($this->error->setError('PIN_CODE_INVALID'), 200);
+                    $this->response($this->error->setError('BRANCH_IS_NOT_ALLOW_TO_VERIFY_GOODS'), 200);
                 }
             } else {
-                $resp['success'] = false;
-
-                $details['verified_at'] = $merchantRedeem['branch']['b_name'];
-                $details['verified_date'] = date('r e', $merchantRedeem['date_added']->sec);
-                $resp['details'] = $details;
-
-                $this->response($this->resp->setRespond($resp), 200);
+                $this->response($this->error->setError('GOODS_IS_NOT_REDEEMED'), 200);
             }
         } else {
-            $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+            $resp['success'] = false;
+
+            $details['verified_at'] = $merchantRedeem['branch']['b_name'];
+            $details['verified_date'] = date('r e', $merchantRedeem['date_added']->sec);
+            $resp['details'] = $details;
+            $this->response($this->resp->setRespond($resp), 200);
         }
+
     }
 
     public function sponsorGroup_post()

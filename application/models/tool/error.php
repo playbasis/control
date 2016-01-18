@@ -216,6 +216,14 @@ class Error extends CI_Model
             $errorData['message'] = "Phone number is not found.";
             $errorData['error_code'] = '0214';
             break;
+        case 'USERNAME_ALREADY_EXIST':
+            $errorData['message'] = "Username already exist.";
+            $errorData['error_code'] = '0215';
+            break;
+        case 'EMAIL_ALREADY_EXIST':
+            $errorData['message'] = "Email already exist.";
+            $errorData['error_code'] = '0216';
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';
@@ -228,9 +236,21 @@ class Error extends CI_Model
             $errorData['message'] = "Goods not available";
             $errorData['error_code'] = '0501';
             break;
+        case 'GOODS_IS_NOT_REDEEMED':
+            $errorData['message'] = "Goods is not yet redeemed";
+            $errorData['error_code'] = '0502';
+            break;
         case 'OVER_LIMIT_REDEEM':
             $errorData['message'] = "User has exceeded redeem limit";
             $errorData['error_code'] = '0601';
+            break;
+        case 'REDEEM_INVALID_COUPON_CODE':
+            $errorData['message'] = "Coupon code is invalid for this goods";
+            $errorData['error_code'] = '0602';
+            break;
+        case 'BRANCH_IS_NOT_ALLOW_TO_VERIFY_GOODS':
+            $errorData['message'] = "This branch(pincode) is not allowed to verify the goods";
+            $errorData['error_code'] = '0603';
             break;
         case "QUEST_JOINED":
             $errorData["message"] = "User has already join this quest";
