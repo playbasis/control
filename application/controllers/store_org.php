@@ -755,6 +755,7 @@ class Store_org extends REST2_Controller
                     array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
             }
         }
+        $node_to_match = $this->array_unique_mongoId($node_to_match);
         $limit = count($node_to_match);
         if ( isset($input['player_id'])){
             $given_player_id = $input['player_id'];
@@ -780,6 +781,7 @@ class Store_org extends REST2_Controller
                     'username',
                     'image'
                 )),
+                array( 'nodes_info' => $this->getNodesForPlayerInNodesList($list,$node['pb_player_id'],$client_id,$site_id)),
                 array (
                     $rank_by => $current_value,
                     'previous_'.$rank_by => $prev_value,
@@ -945,4 +947,35 @@ class Store_org extends REST2_Controller
         }
         return $result;
     }
+    private function array_unique_mongoId($array)
+    {
+        $key_name = key($array[0]);
+        $return_array = array();
+        $array_str = array();
+        foreach ($array as $key => $mongoId){
+            $array_str[$key] = $mongoId[$key_name]->{'$id'};
+        }
+        $array_str = array_unique($array_str);
+        if (is_array($array_str))foreach ($array_str as $key => $str){
+            $return_array[$key][$key_name] = new MongoId($str);
+        }
+        return $return_array;
+    }
+    private function getNodesForPlayerInNodesList ($nodes_list, $pb_player_id, $client_id,$site_id){
+        $return_nodeArray = array();
+        $nodes_for_player = $this->store_org_model->retrieveNodeByPBPlayerID($client_id,$site_id,$pb_player_id);
+
+        if(is_array($nodes_for_player))foreach ($nodes_for_player as $node){
+            if (in_array($node['node_id'],$nodes_list)){
+                $node_info = $this->store_org_model->retrieveNodeById($site_id,$node['node_id']);
+                array_walk_recursive($node_info, array($this, "convert_mongo_object"));
+                array_push($return_nodeArray, array(
+                   '_id' =>  $node_info['_id'],
+                    'name' => $node_info['name']
+                ));
+            }
+        }
+        return $return_nodeArray;
+    }
+
 }
