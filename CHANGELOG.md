@@ -1,7 +1,214 @@
 # Change Log
 
-## [2.1.42](https://github.com/playbasis/api/tree/2.1.42) (2016-01-07)
+## [2.1.43](https://github.com/playbasis/api/tree/2.1.43) (2016-01-18)
+[Full Changelog](https://github.com/playbasis/api/compare/remove_cms_endpoint_from_iodocs...2.1.43)
 
+## [remove_cms_endpoint_from_iodocs](https://github.com/playbasis/api/tree/remove_cms_endpoint_from_iodocs) (2016-01-15)
+[Full Changelog](https://github.com/playbasis/api/compare/fix_content_summary_and_title...remove_cms_endpoint_from_iodocs)
+
+**Implemented enhancements:**
+
+- remove `cms` endpoint in iodocs to avoid confusion with `content`. [\#128](https://github.com/playbasis/api/pull/128) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [fix_content_summary_and_title](https://github.com/playbasis/api/tree/fix_content_summary_and_title) (2016-01-15)
+[Full Changelog](https://github.com/playbasis/api/compare/Optimize_functions_in_storeOrg_to_cal_child_nodes_faster...fix_content_summary_and_title)
+
+**Implemented enhancements:**
+
+- Add summary field to content [\#127](https://github.com/playbasis/api/pull/127) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [Optimize_functions_in_storeOrg_to_cal_child_nodes_faster](https://github.com/playbasis/api/tree/Optimize_functions_in_storeOrg_to_cal_child_nodes_faster) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.13...Optimize_functions_in_storeOrg_to_cal_child_nodes_faster)
+
+**Implemented enhancements:**
+
+- Optimize function to find child nodes [\#126](https://github.com/playbasis/api/pull/126) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.1.43-alpha.13](https://github.com/playbasis/api/tree/2.1.43-alpha.13) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/hotfix_phpErrorInEngine...2.1.43-alpha.13)
+
+## [hotfix_phpErrorInEngine](https://github.com/playbasis/api/tree/hotfix_phpErrorInEngine) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/Optimize_saleBoard_to_calculate_faster...hotfix_phpErrorInEngine)
+
+**Fixed bugs:**
+
+- Hotfix/hotfix php error in engine [\#125](https://github.com/playbasis/api/pull/125) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [Optimize_saleBoard_to_calculate_faster](https://github.com/playbasis/api/tree/Optimize_saleBoard_to_calculate_faster) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...Optimize_saleBoard_to_calculate_faster)
+
+**Implemented enhancements:**
+
+- Hotfix/optimize sale board to calculate faster [\#124](https://github.com/playbasis/api/pull/124) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.1.43-alpha.12](https://github.com/playbasis/api/tree/2.1.43-alpha.12) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...2.1.43-alpha.12)
+
+## [2.1.43-alpha.11](https://github.com/playbasis/api/tree/2.1.43-alpha.11) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.11)
+
+**Implemented enhancements:**
+
+- Implement distinct condition [\#123](https://github.com/playbasis/api/pull/123) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.1.43-alpha.10](https://github.com/playbasis/api/tree/2.1.43-alpha.10) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/Bugfix_goodRedeemForNonOrgUser...2.1.43-alpha.10)
+
+## [Bugfix_goodRedeemForNonOrgUser](https://github.com/playbasis/api/tree/Bugfix_goodRedeemForNonOrgUser) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_addPlayerInfoForRankPeer...Bugfix_goodRedeemForNonOrgUser)
+
+**Fixed bugs:**
+
+- Hotfix/bugfix good redeem for non org user [\#122](https://github.com/playbasis/api/pull/122) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [HotFix_addPlayerInfoForRankPeer](https://github.com/playbasis/api/tree/HotFix_addPlayerInfoForRankPeer) (2016-01-13)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.9...HotFix_addPlayerInfoForRankPeer)
+
+**Implemented enhancements:**
+
+- Hotfix/hot fix add player info for rank peer [\#121](https://github.com/playbasis/api/pull/121) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.43-alpha.9](https://github.com/playbasis/api/tree/2.1.43-alpha.9) (2016-01-13)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.8...2.1.43-alpha.9)
+
+**Implemented enhancements:**
+
+- Player API to check if new username/email is already exist before editing [\#120](https://github.com/playbasis/api/pull/120) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Player registration - check if username/email is already exist [\#119](https://github.com/playbasis/api/pull/119) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.1.43-alpha.8](https://github.com/playbasis/api/tree/2.1.43-alpha.8) (2016-01-13)
+[Full Changelog](https://github.com/playbasis/api/compare/WrongMerge...2.1.43-alpha.8)
+
+## [WrongMerge](https://github.com/playbasis/api/tree/WrongMerge) (2016-01-13)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_MissionDateReturnNonreadable...WrongMerge)
+
+**Fixed bugs:**
+
+- Hotfix/wrong merge [\#118](https://github.com/playbasis/api/pull/118) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [HotFix_MissionDateReturnNonreadable](https://github.com/playbasis/api/tree/HotFix_MissionDateReturnNonreadable) (2016-01-13)
+[Full Changelog](https://github.com/playbasis/api/compare/Player_api_to_remove_store_organize_to_player_when_delete_player...HotFix_MissionDateReturnNonreadable)
+
+**Fixed bugs:**
+
+- Hotfix/hot fix mission date return nonreadable [\#117](https://github.com/playbasis/api/pull/117) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [Player_api_to_remove_store_organize_to_player_when_delete_player](https://github.com/playbasis/api/tree/Player_api_to_remove_store_organize_to_player_when_delete_player) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.7...Player_api_to_remove_store_organize_to_player_when_delete_player)
+
+**Fixed bugs:**
+
+- Remove data of player in "playbasis\_store\_organize\_to\_player" when player is removed [\#116](https://github.com/playbasis/api/pull/116) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.1.43-alpha.7](https://github.com/playbasis/api/tree/2.1.43-alpha.7) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_Pagination...2.1.43-alpha.7)
+
+## [HotFix_Pagination](https://github.com/playbasis/api/tree/HotFix_Pagination) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/api/compare/Hotfix_PaginationStoreOrg...HotFix_Pagination)
+
+**Implemented enhancements:**
+
+- Hotfix/hot fix pagination [\#115](https://github.com/playbasis/api/pull/115) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [Hotfix_PaginationStoreOrg](https://github.com/playbasis/api/tree/Hotfix_PaginationStoreOrg) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.6...Hotfix_PaginationStoreOrg)
+
+## [2.1.43-alpha.6](https://github.com/playbasis/api/tree/2.1.43-alpha.6) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/api/compare/Modify_method_getChildNode_to_response_only_active_node...2.1.43-alpha.6)
+
+**Implemented enhancements:**
+
+- Modify goods verification method [\#113](https://github.com/playbasis/api/pull/113) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [Modify_method_getChildNode_to_response_only_active_node](https://github.com/playbasis/api/tree/Modify_method_getChildNode_to_response_only_active_node) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_customParamNotCheckProperly...Modify_method_getChildNode_to_response_only_active_node)
+
+**Fixed bugs:**
+
+- Hotfix/modify method get child node to response only active node [\#112](https://github.com/playbasis/api/pull/112) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [HotFix_customParamNotCheckProperly](https://github.com/playbasis/api/tree/HotFix_customParamNotCheckProperly) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.5...HotFix_customParamNotCheckProperly)
+
+**Fixed bugs:**
+
+- Hotfix/hot fix custom param not check properly [\#111](https://github.com/playbasis/api/pull/111) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.43-alpha.5](https://github.com/playbasis/api/tree/2.1.43-alpha.5) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_updateIodoc...2.1.43-alpha.5)
+
+## [HotFix_updateIodoc](https://github.com/playbasis/api/tree/HotFix_updateIodoc) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_SupportMyRankOnRankPeerAccAction...HotFix_updateIodoc)
+
+**Fixed bugs:**
+
+- Hotfix/hot fix update iodoc [\#110](https://github.com/playbasis/api/pull/110) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [HotFix_SupportMyRankOnRankPeerAccAction](https://github.com/playbasis/api/tree/HotFix_SupportMyRankOnRankPeerAccAction) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_miswordingOnRankPeer...HotFix_SupportMyRankOnRankPeerAccAction)
+
+**Implemented enhancements:**
+
+- Hotfix/hot fix support my rank on rank peer acc action [\#109](https://github.com/playbasis/api/pull/109) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [HotFix_miswordingOnRankPeer](https://github.com/playbasis/api/tree/HotFix_miswordingOnRankPeer) (2016-01-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.4...HotFix_miswordingOnRankPeer)
+
+**Fixed bugs:**
+
+- Hotfix/hot fix miswording on rank peer [\#108](https://github.com/playbasis/api/pull/108) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.43-alpha.4](https://github.com/playbasis/api/tree/2.1.43-alpha.4) (2016-01-11)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_UpdateIodocForEngineRule...2.1.43-alpha.4)
+
+## [HotFix_UpdateIodocForEngineRule](https://github.com/playbasis/api/tree/HotFix_UpdateIodocForEngineRule) (2016-01-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.3...HotFix_UpdateIodocForEngineRule)
+
+**Fixed bugs:**
+
+- Hotfix/hot fix update iodoc for engine rule [\#107](https://github.com/playbasis/api/pull/107) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.43-alpha.3](https://github.com/playbasis/api/tree/2.1.43-alpha.3) (2016-01-11)
+[Full Changelog](https://github.com/playbasis/api/compare/feature/enhance_getChildNode_to_include_detail_of_node...2.1.43-alpha.3)
+
+## [feature/enhance_getChildNode_to_include_detail_of_node](https://github.com/playbasis/api/tree/feature/enhance_getChildNode_to_include_detail_of_node) (2016-01-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.2...feature/enhance_getChildNode_to_include_detail_of_node)
+
+**Implemented enhancements:**
+
+- Hotfix/feature/enhance get child node to include detail of node [\#106](https://github.com/playbasis/api/pull/106) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.1.43-alpha.2](https://github.com/playbasis/api/tree/2.1.43-alpha.2) (2016-01-08)
+[Full Changelog](https://github.com/playbasis/api/compare/remove_comparenshare_from_weekly_report...2.1.43-alpha.2)
+
+## [remove_comparenshare_from_weekly_report](https://github.com/playbasis/api/tree/remove_comparenshare_from_weekly_report) (2016-01-08)
+[Full Changelog](https://github.com/playbasis/api/compare/Bug_require_password_return_invalid_type...remove_comparenshare_from_weekly_report)
+
+## [Bug_require_password_return_invalid_type](https://github.com/playbasis/api/tree/Bug_require_password_return_invalid_type) (2016-01-08)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_PHPErrorWhenNoOrgForPlayer...Bug_require_password_return_invalid_type)
+
+**Fixed bugs:**
+
+- Hotfix/bug require password return invalid type [\#105](https://github.com/playbasis/api/pull/105) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [HotFix_PHPErrorWhenNoOrgForPlayer](https://github.com/playbasis/api/tree/HotFix_PHPErrorWhenNoOrgForPlayer) (2016-01-08)
+[Full Changelog](https://github.com/playbasis/api/compare/HotFix_PHPErrorWhenAuthExistingPlayer...HotFix_PHPErrorWhenNoOrgForPlayer)
+
+**Fixed bugs:**
+
+- Hotfix/hot fix php error when no org for player [\#104](https://github.com/playbasis/api/pull/104) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [HotFix_PHPErrorWhenAuthExistingPlayer](https://github.com/playbasis/api/tree/HotFix_PHPErrorWhenAuthExistingPlayer) (2016-01-08)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.1...HotFix_PHPErrorWhenAuthExistingPlayer)
+
+**Fixed bugs:**
+
+- Hotfix/hot fix php error when auth existing player [\#103](https://github.com/playbasis/api/pull/103) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.43-alpha.1](https://github.com/playbasis/api/tree/2.1.43-alpha.1) (2016-01-07)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.42...2.1.43-alpha.1)
+
+## [2.1.42](https://github.com/playbasis/api/tree/2.1.42) (2016-01-07)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.42-alpha.11...2.1.42)
 
 **Implemented enhancements:**
@@ -107,7 +314,6 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.41...2.1.41-alpha.12)
 
 ## [2.1.41](https://github.com/playbasis/api/tree/2.1.41) (2015-12-24)
-
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.41-alpha.11...2.1.41)
 
 **Fixed bugs:**
@@ -471,17 +677,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule...2.1.38-alpha.1)
 
 ## [fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule](https://github.com/playbasis/api/tree/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule) (2015-10-07)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
 
 **Implemented enhancements:**
 
 - Implementimg new feature for PIN code verification [\#32](https://github.com/playbasis/api/pull/32) ([burachit-playbasis](https://github.com/burachit-playbasis))
 
-## [2.1.37-alpha.6](https://github.com/playbasis/api/tree/2.1.37-alpha.6) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...2.1.37-alpha.6)
-
 ## [2.1.37](https://github.com/playbasis/api/tree/2.1.37) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...2.1.37)
+
+## [2.1.37-alpha.6](https://github.com/playbasis/api/tree/2.1.37-alpha.6) (2015-10-02)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37-alpha.6)
 
 **Merged pull requests:**
 
