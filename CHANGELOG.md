@@ -1,7 +1,71 @@
 # Change Log
 
-## [v2.2.29](https://github.com/playbasis/control/tree/v2.2.29) (2016-01-07)
+## [v2.2.30](https://github.com/playbasis/control/tree/v2.2.30) (2016-01-18)
+[Full Changelog](https://github.com/playbasis/control/compare/make_category_optional_and_add_subtitle...v2.2.30)
 
+## [make_category_optional_and_add_subtitle](https://github.com/playbasis/control/tree/make_category_optional_and_add_subtitle) (2016-01-15)
+[Full Changelog](https://github.com/playbasis/control/compare/remove_sign_up...make_category_optional_and_add_subtitle)
+
+**Implemented enhancements:**
+
+- Hotfix/make category optional and add summary field [\#95](https://github.com/playbasis/control/pull/95) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [remove_sign_up](https://github.com/playbasis/control/tree/remove_sign_up) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_store_org_paging_error...remove_sign_up)
+
+**Fixed bugs:**
+
+- Disable sign up flow [\#94](https://github.com/playbasis/control/pull/94) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [fix_store_org_paging_error](https://github.com/playbasis/control/tree/fix_store_org_paging_error) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/control/compare/remove_top_notify_bar...fix_store_org_paging_error)
+
+**Fixed bugs:**
+
+- Fix pagination not working on bootstrap table. [\#93](https://github.com/playbasis/control/pull/93) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [remove_top_notify_bar](https://github.com/playbasis/control/tree/remove_top_notify_bar) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/control/compare/Workflow_to_call_api_for_delete_player...remove_top_notify_bar)
+
+**Implemented enhancements:**
+
+- Remove top bar [\#92](https://github.com/playbasis/control/pull/92) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Feature/manually mark goods as used [\#91](https://github.com/playbasis/control/pull/91) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Modified workflow form to use only username box to create player [\#90](https://github.com/playbasis/control/pull/90) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Remove goods from player's inventory after verify [\#88](https://github.com/playbasis/control/pull/88) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Revert "- Modify good verification function to call API instead" [\#87](https://github.com/playbasis/control/pull/87) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- BugFix : Align Text In LeaderBoard [\#89](https://github.com/playbasis/control/pull/89) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [Workflow_to_call_api_for_delete_player](https://github.com/playbasis/control/tree/Workflow_to_call_api_for_delete_player) (2016-01-12)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_total_rows_not_count_disable_contents...Workflow_to_call_api_for_delete_player)
+
+**Implemented enhancements:**
+
+- Merchant verify to call API instead [\#85](https://github.com/playbasis/control/pull/85) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Enhancement : Forgot Password Support Password Policy [\#84](https://github.com/playbasis/control/pull/84) ([narut-playbasis](https://github.com/narut-playbasis))
+
+**Fixed bugs:**
+
+- Workflow to call api for delete player [\#86](https://github.com/playbasis/control/pull/86) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [fix_total_rows_not_count_disable_contents](https://github.com/playbasis/control/tree/fix_total_rows_not_count_disable_contents) (2016-01-08)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_display_status_and_max_detail_length...fix_total_rows_not_count_disable_contents)
+
+**Implemented enhancements:**
+
+- Add loading bar and cover element to tell user that page still loading. [\#82](https://github.com/playbasis/control/pull/82) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+**Fixed bugs:**
+
+- Fix total rows count that doesn't count disable contents. [\#83](https://github.com/playbasis/control/pull/83) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [fix_display_status_and_max_detail_length](https://github.com/playbasis/control/tree/fix_display_status_and_max_detail_length) (2016-01-08)
+[Full Changelog](https://github.com/playbasis/control/compare/v2.2.29...fix_display_status_and_max_detail_length)
+
+## [v2.2.29](https://github.com/playbasis/control/tree/v2.2.29) (2016-01-07)
 [Full Changelog](https://github.com/playbasis/control/compare/use_try-catch_instead_isValid...v2.2.29)
 
 **Implemented enhancements:**
@@ -30,7 +94,6 @@
 - Hotfix/use try catch instead is valid [\#70](https://github.com/playbasis/control/pull/70) ([burachit-playbasis](https://github.com/burachit-playbasis))
 
 ## [v2.2.28](https://github.com/playbasis/control/tree/v2.2.28) (2015-12-24)
-
 [Full Changelog](https://github.com/playbasis/control/compare/revert_mongo_native_long...v2.2.28)
 
 **Implemented enhancements:**

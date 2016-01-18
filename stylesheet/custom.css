@@ -1814,3 +1814,33 @@ input[type=radio]:checked + label {
     font-size: 26px;
     font-weight: normal;
 }
+
+/* ====== [ Goods Page ] ======= */
+.goods-page .nav {
+    margin-bottom: 0;
+}
+
+.goods-page .tab-pane:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.goods-page iframe {
+    border-radius: 5px;
+    border: 1px solid #F5F5F5;
+}
+
+.goods-page .tab-pane {
+    padding: 30px;
+    background: #FFF;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.goods-page .tab-pane h3 {
+    font-size: 26px;
+    font-weight: normal;
+}

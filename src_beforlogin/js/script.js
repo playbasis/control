@@ -205,9 +205,6 @@ jQuery(document).ready( function($) {
     //==== Validate Reset Player Password form=======//
     $('#playerresetpassword_form').validate({
         rules: {
-            password: {
-                minlength: 8
-            },
             confirm_password: {
                 equalTo: "#reset-password"
             }
