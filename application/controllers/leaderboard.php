@@ -280,6 +280,19 @@ class Leaderboard extends MY_Controller
                             $this->getFeedbackData($this->data['rewards'][$rank][$type][$id]);
                             break;
                     }
+                    if (isset($this->data['rewards'][$rank][$type][$id]['reward_data']['image'])){
+                        $info = pathinfo($this->data['rewards'][$rank][$type][$id]['reward_data']['image']);
+                        if(isset($info['extension'])){
+                            $extension = $info['extension'];
+                            $new_image = 'cache/' . utf8_substr($this->data['rewards'][$rank][$type][$id]['reward_data']['image'], 0,
+                                    utf8_strrpos($this->data['rewards'][$rank][$type][$id]['reward_data']['image'], '.')).'-100x100.'.$extension;
+                            $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE.$new_image;
+                        }else{
+                            $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                        }
+                    }else{
+                        $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                    }
                 }
             }
         }
