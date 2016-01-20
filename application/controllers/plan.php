@@ -444,7 +444,8 @@ class Plan extends MY_Controller
             "quiz" => null,
             "custompoint" => null,
             "trial" => null,
-            "user" => null);
+            "user" => null,
+            "image" => null);
         if ($this->input->post('limit_others')) {
             $this->data['limit_others'] = $this->input->post('limit_others');
         } elseif (!empty($plan_info) && isset($plan_info['limit_others'])){
