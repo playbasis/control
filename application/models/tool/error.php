@@ -360,6 +360,46 @@ class Error extends CI_Model
             $errorData['message'] = "Session is expired";
             $errorData['error_code'] = '2409';
             break;
+        case 'FILE_NAME_IS_INVALID':
+            $errorData['message'] = "File name is too large or too less";
+            $errorData['error_code'] = '2410';
+            break;
+        case 'DIRECTORY_IS_INVALID':
+            $errorData['message'] = "Directory is invalid";
+            $errorData['error_code'] = '2411';
+            break;
+        case 'UPLOAD_FILE_TOO_LARGE':
+            $errorData['message'] = "Upload file is too large";
+            $errorData['error_code'] = '2412';
+            break;
+        case 'IMAGE_WIDTH_IS_INVALID':
+            $errorData['message'] = "The width of the image is too big";
+            $errorData['error_code'] = '2413';
+            break;
+        case 'IMAGE_HEIGHT_IS_INVALID':
+            $errorData['message'] = "The height of the image is too big";
+            $errorData['error_code'] = '2414';
+            break;
+        case 'FILE_TYPE_NOT_ALLOWED':
+            $errorData['message'] = "File type is not allowed to upload";
+            $errorData['error_code'] = '2415';
+            break;
+        case 'UPLOAD_FILE_ERROR':
+            $errorData['message'] = "Error occur during file uploading process, ".$dataArray;
+            $errorData['error_code'] = '2416';
+            break;
+        case 'FILE_NOT_FOUND':
+            $errorData['message'] = "File is not found";
+            $errorData['error_code'] = '2417';
+            break;
+        case 'UPLOAD_EXCEED_LIMIT':
+            $errorData['message'] = "Limit of uploading file is exceeded";
+            $errorData['error_code'] = '2418';
+            break;
+        case 'DELETE_FILE_FAILED':
+            $errorData['message'] = "File deletion is failed";
+            $errorData['error_code'] = '2419';
+            break;
         default:
             $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';

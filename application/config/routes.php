@@ -331,6 +331,9 @@ $route['CMS/getArticles'] = 'cms/getArticles';
 $route['CMS/getArticle'] = 'cms/getArticle';
 $route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 
+//File API
+$route['File/upload'] = 'file/upload';
+$route['File/delete'] = 'file/delete';
 //misc
 //$route['test']	= 'playbasis/test';
 $route['test']	= 'notification/index';
