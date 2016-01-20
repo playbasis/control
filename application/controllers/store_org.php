@@ -723,39 +723,31 @@ class Store_org extends REST2_Controller
         $limit = isset($input['limit']) ? $input['limit'] : RETURN_LIMIT_FOR_RANK;
         $year = isset($input['year']) ? $input['year'] : date("Y", time());
         $month = isset($input['month']) ? $input['month'] : date("m", time());
+        $under_org = isset($input['under_org']) ? ($input['under_org'] == "true"?true:false) : false;
         $client_id = $this->validToken['client_id'];
         $site_id = $this->validToken['site_id'];
         $backup_limit = $limit;
         $role = isset($input['role']) ? $input['role'] : null;
         $page = isset($input['page']) ? $input['page']:1; // default is first page
         $list = array();
-
+        $node_to_match = array();
         // get node list of this node id
-        if (is_null($role)){
-            $nodesData = $this->store_org_model->retrieveNode($this->client_id, $this->site_id);
-            $this->utility->recurGetChildUnder($nodesData,new MongoId ($node_id), $list);
-            // if list is null, node id is the second lowest of organization. we just need to find player
-            if (is_null($list)) $list = array (new MongoId ($node_id));
-            $node_to_match = array();
-            foreach($list as $node){
-                $player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node);
-                if (is_array($player_list))foreach ($player_list as $player)
-                    array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
-            }
+        if($under_org == false){
+            $list = array (new MongoId ($node_id));
         }
         else{
             $list = $this->store_org_model->findAdjacentChildNode($client_id,$site_id,new MongoId ($node_id));
-            // if list is null, node id is the second lowest of organization. we just need to find player
-            if (is_null($list)) $list = array (array('_id' => new MongoId ($node_id)));
-            $node_to_match = array();
-            foreach($list as $node){
-                if ($node['_id'] == new MongoId ($node_id)) continue; // if role is set, mean input node id is excluded
-                $player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node['_id'],$role);
-                if (is_array($player_list))foreach ($player_list as $player)
-                    array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
+            if (is_array($list))foreach($list as &$p_node){
+                $p_node =  $p_node['_id'];
             }
         }
-        $node_to_match = $this->array_unique_mongoId($node_to_match);
+        if (is_array($list))foreach($list as $node){
+            $player_list = $this->store_org_model->getPlayersByNodeId($client_id,$site_id,$node,$role);
+            if (is_array($player_list))foreach ($player_list as $player)
+                array_push($node_to_match, array('pb_player_id'=>new MongoId($player['pb_player_id'])));
+        }
+
+        if($node_to_match) $node_to_match =  $this->array_unique_mongoId($node_to_match);
         $limit = count($node_to_match);
         if ( isset($input['player_id'])){
             $given_player_id = $input['player_id'];
