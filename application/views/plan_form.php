@@ -501,7 +501,7 @@ function resetToken(site_id) {
     $.ajax({
         url: 'index.php?route=client/client/reset&token=<?php echo $token; ?>',
         type: 'post',
-        data: 'site_id=' + site_id,
+        data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','site_id': site_id},
         dataType: 'json',
         success: function(json) {
             $('#domains').load('index.php?route=client/client/domain&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');

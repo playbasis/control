@@ -250,11 +250,13 @@ function initStoreNodeTable() {
     });
     $storeNodeToolbarRemove.click(function () {
         var ids = getNodeIdSelections();
+        var _data = {'id': ids, 'action': "delete"};
+        _data[csrf_token_name] = csrf_token_hash;
         console.log("id selected", ids);
         $.ajax({
                 type: "POST",
                 url: baseUrlPath + 'store_org/node/',
-                data: {'id': ids, 'action': "delete"}
+                data: _data
             })
             .done(function (msg) {
                 //console.log("Entry removed: " + JSON.parse(msg).status);
@@ -320,10 +322,12 @@ function initStoreOrganizeTable() {
     $storeOrganizeToolbarRemove.click(function () {
         var ids = getOrganizeIdSelections();
         console.log("id selected", ids);
+        var _data = {'id': ids, 'action': "delete"};
+        _data[csrf_token_name] = csrf_token_hash;
         $.ajax({
                 type: "POST",
                 url: baseUrlPath + 'store_org/organize/',
-                data: {'id': ids, 'action': "delete"}
+                data: _data
             })
             .done(function (msg) {
                 //console.log("Entry removed: " + JSON.parse(msg).status);
@@ -442,10 +446,12 @@ window.operateEvents = {
     },
     'click .remove-node': function (e, value, row, index) {
         //console.log("REMOVE NODE");
+        var _data = {'action': "delete"};
+        _data[csrf_token_name] = csrf_token_hash;
         $.ajax({
                 type: "POST",
                 url: baseUrlPath + 'store_org/node/' + row._id,
-                data: {'action': "delete"}
+                data: _data
             })
             .done(function (msg) {
                 //console.log("Entry removed: " + JSON.parse(msg).status);
@@ -460,10 +466,12 @@ window.operateEvents = {
     },
     'click .remove-organize': function (e, value, row, index) {
         //console.log("REMOVE ORGANIZATION");
+        var _data = {'action': "delete"};
+        _data[csrf_token_name] = csrf_token_hash;
         $.ajax({
                 type: "POST",
                 url: baseUrlPath + 'store_org/organize/' + row._id,
-                data: {'action': "delete"}
+                data: _data
             })
             .done(function (msg) {
                 //console.log("Entry removed: " + JSON.parse(msg).status);

@@ -106,11 +106,12 @@ function saveSocial(){
     });
 
     var sCallback = $("#social-callback").val();
-
+    var _data = {'socials' : data, 'socials_callback' : sCallback};
+    _data[csrf_token_name] = csrf_token_hash;
     $.ajax({
         url: baseUrlPath+"widget/social_manage",
         type: "POST",
-        data: {'socials' : data, 'socials_callback' : sCallback},
+        data: _data,
         dataType: 'json',
         cache: false,
         beforeSend: function() {

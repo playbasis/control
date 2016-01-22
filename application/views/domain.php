@@ -94,7 +94,7 @@ function resetSecret(site_id) {
     $.ajax({
         url: baseUrlPath+'domain/reset',
         type: 'POST',
-        data: 'site_id=' + site_id,
+        data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','site_id':site_id},
         dataType: 'json',
         success: function(json) {
             if(json.success){

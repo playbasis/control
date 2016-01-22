@@ -29,7 +29,9 @@
     <div  class="registration-page registration-register">
       <div class="registration-form-bg"></div>
       <div class="registration-form">
-        <form id="register_form" class="pbf-form">
+        <?php
+        $attributes = array('class' => 'pbf-form', 'id' => 'register_form');
+        echo form_open('', $attributes);?>
           <fieldset>
 
             <legend>Basic User Information</legend>
@@ -71,8 +73,7 @@
             </div>
 
           </fieldset>
-
-        </form>
+        <?php echo form_close();?>
 
       </div><!-- /form -->
 

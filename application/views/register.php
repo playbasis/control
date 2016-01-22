@@ -16,7 +16,10 @@
 					<h3><strong><?php echo $plan['name']; ?> : ( <?php echo $plan['price'] <= 0 ? 'FREE' : '$'.$plan['price'].' /'; ?> )</strong> You can cancel or upgrade at any time.</h3>
 					<a href="<?php echo PLAYBASIS; ?>/plans.html" class="btn btn-primary pull-right">Change Plan</a>
 				</div>
-			        <form class="validate" role="form" action="" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="" novalidate>
+					  <?php
+					  $attributes = array('class' => 'validate', 'role' => 'form', 'action' => '', 'method' => 'post', 'id' => 'mc-embedded-subscribe-form', 'name' => 'mc-embedded-subscribe-form',
+							  'target' => '', 'novalidate');
+					  echo form_open('', $attributes);?>
 			      	<div id="message"></div>
 
 			          <div class="form-group offset2 span8">
@@ -118,7 +121,7 @@
 						<button type="submit" class="btn btn-primary offset4 span4 btn-not-login">Sign Up</button>
 					</div>
 
-			      </form>
+				<?php echo form_close();?>
 		      </div>
 		</div>
 	</div><!-- signup-page -->

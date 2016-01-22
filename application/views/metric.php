@@ -22,26 +22,36 @@
 				        <div class="row-fluid control-row">
 					        <div class="span2 side-columm">Client Selection</div>
 					        <div class="span10">
-						        <form class="form-inline span6">
+								<?php
+								$attributes = array('class' => 'form-inline span6');
+								echo form_open('', $attributes);?>
+<!--						        <form class="form-inline span6">-->
 							        <label for="reward-start">From</label>
 							        <input type="text" class="input span3 datepicker" id="reward-start" value="">
 							        <label for="reward-end">To</label>
 							        <input type="text" class="input span3 datepicker" id="reward-end" value="">
 							        <input type="button" class="btn" id="submitRewardDate" value="GO">
-						        </form>
-						        <form class="form-inline span5 has-border">
+								<?php echo form_close();?>
+<!--						        </form>-->
+								<?php
+								$attributes = array('class' => 'form-inline span5 has-border');
+								echo form_open('', $attributes);?>
+<!--						        <form class="form-inline span5 has-border">-->
 							        <label for="reward-unit-type">Unit Type</label>
 							        <select id="reward-unit-type" class="span6">
 								        <option value="day" selected>Daily</option>
 								        <option value="month">Monthly</option>
 							        </select>
 							        <input type="button" class="btn" id="submitRewardUnit" value="GO">
-						        </form>
+<!--						        </form>-->
+								<?php echo form_close();?>
 					        </div>
 				        </div>
 				        <div class="row-fluid result-row">
 					        <div class="span2 side-column">
-						        <form>
+<!--						        <form>-->
+								<?php
+								echo form_open();?>
 							        <!--div class="row-fluid control-row">
 								        <div class="span12">
 									        <select id="reward-type" class="span11">
@@ -56,7 +66,8 @@
 							        <div id="reward-badge-action" class="action-container">
 								        <input type="checkbox" checked="checked" id="allBadges">All Clients
 							        </div>
-						        </form>
+<!--						        </form>-->
+								<?php echo form_close();?>
 					        </div>
 					        <div class="span7">
 						        <div id="playbasis-reward-stack-chart" class="api-result-container"></div>
@@ -69,13 +80,17 @@
 						        </div>
 						        <div class="row-fluid control-row line-up">
 							        <div class="span12">
-								        <form class="form-inline">
+										<?php
+										$attributes = array('class' => 'form-inline');
+										echo form_open('', $attributes);?>
+<!--								        <form class="form-inline">-->
 									        <select id="reward-compare-type" class="span8">
 										        <option value="percentage" selected>Percentage</option>
 										        <option value="gross">Value</option>
 									        </select>
 									        <input type="button" class="btn" id="submitRewardCompareType" value="GO">
-								        </form>
+<!--								        </form>-->
+										<?php echo form_close();?>
 							        </div>
 						        </div>
 					        </div>

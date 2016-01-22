@@ -23,7 +23,9 @@
     <div  class="registration-page registration-login">
       <div class="registration-form-bg"></div>
       <div class="registration-form">
-        <form id="coupon_form" class="pbf-form">
+        <?php
+        $attributes = array('class' => 'pbf-form', 'id' => 'coupon_form');
+        echo form_open('', $attributes);?>
           <fieldset>
 
             <legend>Coupon Validation</legend>
@@ -69,8 +71,7 @@
             </div>
 
           </fieldset>
-
-        </form>
+        <?php echo form_close();?>
 
       </div><!-- /form -->
 

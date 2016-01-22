@@ -76,7 +76,7 @@
                 url: baseUrlPath+'user/delete_ajax',
                 type: 'POST',
                 dataType: 'json',
-                data: ({'user_id' : user_id, 'client_id' : '<?php echo $list_client_id; ?>'}),
+                data: ({'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','user_id' : user_id, 'client_id' : '<?php echo $list_client_id; ?>'}),
                 success: function(json) {
                     var notification = $('#notification');
 
