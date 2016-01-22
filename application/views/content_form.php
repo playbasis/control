@@ -332,7 +332,7 @@
             $.ajax({
                     type: "POST",
                     url: baseUrlPath + 'content/category/',
-                    data: {'id': ids, 'action': "delete"}
+                    data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','id': ids, 'action': "delete"}
                 })
                 .done(function (msg) {
                     //console.log("Entry removed: " + JSON.parse(msg).status);
@@ -517,7 +517,7 @@
             $.ajax({
                     type: "POST",
                     url: baseUrlPath + 'content/category/' + row._id,
-                    data: {'action': "delete"}
+                    data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','action': "delete"}
                 })
                 .done(function (msg) {
 //                    console.log("Entry removed: " + JSON.parse(msg).status);

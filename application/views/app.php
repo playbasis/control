@@ -138,7 +138,7 @@
         $.ajax({
             url: baseUrlPath+'app/reset',
             type: 'POST',
-            data: 'platform_id=' + platform_id,
+            data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','platform_id': platform_id},
             dataType: 'json',
             success: function(json) {
                 if(json.success){
@@ -156,7 +156,7 @@
         $.ajax({
             url: baseUrlPath+'app/delete',
             type: 'POST',
-            data: {platform_selected: platform},
+            data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',platform_selected: platform},
             success: function() {
                 location.href = baseUrlPath+'app';
             }

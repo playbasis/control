@@ -449,6 +449,9 @@
     //var jsonString_RulesList= '<?php //print_r($ruleList);?>';
     var requestedSet         = '<?php echo $requestParams; ?>';
     var jsonConfig_icons     = <?php echo json_encode($jsonIcons); ?>;
+
+    var csrf_token_name = '<?php echo $this->security->get_csrf_token_name(); ?>';
+    var csrf_token_hash = '<?php echo $this->security->get_csrf_hash(); ?>';
     //########### End : Global variable for rule_e.js ##################/
 </script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/msgpack.js"></script>

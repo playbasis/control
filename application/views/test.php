@@ -33,7 +33,9 @@
 
 
         <div id="content-main">
-            <form action="/admin/" method="post" id="login-form">
+            <?php
+            $attributes = array('action' => '/admin/', 'id' => 'login-form', 'method' => 'post');
+            echo form_open('', $attributes);?>
                 <div style="display:none"><input type="hidden" name="csrfmiddlewaretoken" value="CgWwBnA2R9sGx84JTuLt6BilLwCmVdaW"></div>
                 <div class="form-row">
 
@@ -50,7 +52,7 @@
                 <div class="submit-row">
                     <label>&nbsp;</label><input type="submit" value="Log in">
                 </div>
-            </form>
+            <?php echo form_close();?>
 
             <script type="text/javascript">
                 document.getElementById('id_username').focus()

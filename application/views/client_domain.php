@@ -60,7 +60,7 @@
             url: baseUrlPath+'domain/deleteAjax',
             type: 'POST',
             dataType: 'json',
-            data: ({'client_id' : client_id, 'site_id' : site_id}),
+            data: ({'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','client_id' : client_id, 'site_id' : site_id}),
             success: function(json) {
                 var notification = $('#notification');
 
@@ -85,7 +85,7 @@
         $.ajax({
             url: baseUrlPath+'domain/reset',
             type: 'post',
-            data: 'site_id=' + site_id,
+            data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','site_id':site_id},
             dataType: 'json',
             success: function(json) {
                 location.reload(true);
