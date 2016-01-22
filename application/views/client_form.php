@@ -233,7 +233,7 @@ function addNewDomain() {
         url: baseUrlPath+'domain/insert_ajax',
         type: 'POST',
         dataType: 'json',
-        data: ({'domain_name' : domain_name, 'site_name' : site_name, 'status' : status, 'client_id' : '<?php echo $list_client_id; ?>'}),
+        data: ({'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','domain_name' : domain_name, 'site_name' : site_name, 'status' : status, 'client_id' : '<?php echo $list_client_id; ?>'}),
         success: function(json) {
             var notification = $('#notification');
 
@@ -277,7 +277,7 @@ function addNewUser() {
         url: baseUrlPath+'user/insert_ajax',
         type: 'POST',
         dataType: 'json',
-        data: ({'firstname' : first_name, 'lastname' : last_name, 'email' : email, 'username' : username, 'password' : password, 'password_confirm' : password_confirm, 'user_group' : user_group_id, 'status' : status, client_id : '<?php echo $list_client_id; ?>'}),
+        data: ({'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','firstname' : first_name, 'lastname' : last_name, 'email' : email, 'username' : username, 'password' : password, 'password_confirm' : password_confirm, 'user_group' : user_group_id, 'status' : status, client_id : '<?php echo $list_client_id; ?>'}),
         success: function(json) {
             var notification = $('#notification');
 
@@ -335,7 +335,7 @@ function resetToken(site_id) {
     $.ajax({
         url: baseUrlPath+'domain/reset',
         type: 'post',
-        data: 'site_id=' + site_id,
+        data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','site_id':site_id},
         dataType: 'json',
         success: function(json) {
             $/*('iframe').each(function() {

@@ -113,6 +113,7 @@
             url: baseUrlPath+'CMS/createCMS',
             type: 'POST',
             dataType: 'json',
+            data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'}
             success: function(json) {
                 var notification = $('#notification');
 
@@ -140,6 +141,7 @@
             type: 'POST',
             dataType: 'json',
             data :{
+                '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
                 username : "jk_ae@hotmail.com",
                 password : "12345",
                 site_slug : 'demomobile'
@@ -167,6 +169,7 @@
             type: 'POST',
             dataType: 'json',
             data :{
+                '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
                 username : "jk_ae@hotmail.com",
                 password : "12345"
             },

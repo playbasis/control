@@ -118,7 +118,9 @@
 			
 			<div class="row">
 		        	<div class="span5">
-				<form class="form-horizontal">
+				<?php
+				$attributes = array('class' => 'form-horizontal');
+				echo form_open('', $attributes);?>
 					<div class="control-group">
 						<label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
 						<div class="controls">
@@ -159,8 +161,7 @@
 							<a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-leaderboard" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
 						</div>
 					</div>
-					
-				</form>
+				<?php echo form_close();?>
 
 		        	</div>
                 <div class="span7">
@@ -180,7 +181,9 @@
 			
 			<div class="row">
 		        	<div class="span5">
-				<form class="form-horizontal">
+				<?php
+				$attributes = array('class' => 'form-horizontal');
+				echo form_open('', $attributes);?>
 					<div class="control-group">
 						<label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
 						<div class="controls">
@@ -210,8 +213,8 @@
 							<a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-livefeed" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
 						</div>
 					</div>
-					
-				</form>
+
+				<?php echo form_close();?>
 
                 </div>
                 <div class="span7">
@@ -231,7 +234,9 @@
 			
 			<div class="row">
                 <div class="span6 offset3">
-                    <form class="form-horizontal">
+                    <?php
+                    $attributes = array('class' => 'form-horizontal');
+                    echo form_open('', $attributes);?>
                         <div class="control-group">
                             <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
                             <div class="controls">
@@ -278,8 +283,7 @@
                                 <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-profile" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                             </div>
                         </div>
-
-                    </form>
+                    <?php echo form_close();?>
 
                 </div>
                 <div class="span11">
@@ -299,7 +303,9 @@
 			
 			<div class="row">
                 <div class="span6 offset3">
-                    <form class="form-horizontal">
+                    <?php
+                    $attributes = array('class' => 'form-horizontal');
+                    echo form_open('', $attributes);?>
 
                         <div class="control-group">
                             <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
@@ -340,8 +346,7 @@
                                 <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-userbar" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                             </div>
                         </div>
-
-                    </form>
+                    <?php echo form_close();?>
 
                 </div>
                 <div class="span11">
@@ -361,7 +366,9 @@
 
             <div class="row">
                 <div class="span5">
-                    <form class="form-horizontal">
+                    <?php
+                    $attributes = array('class' => 'form-horizontal');
+                    echo form_open('', $attributes);?>
                         <div class="control-group">
                             <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
                             <div class="controls">
@@ -397,8 +404,7 @@
                                 <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-achievement" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                             </div>
                         </div>
-
-                    </form>
+                    <?php echo form_close();?>
 
                 </div>
                 <div class="span7">
@@ -418,7 +424,9 @@
 
                 <div class="row">
                     <div class="span5">
-                        <form class="form-horizontal">
+                        <?php
+                        $attributes = array('class' => 'form-horizontal');
+                        echo form_open('', $attributes);?>
                             <div class="control-group">
                                 <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
                                 <div class="controls">
@@ -454,8 +462,7 @@
                                     <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-quiz" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                                 </div>
                             </div>
-
-                        </form>
+                        <?php echo form_close();?>
 
                     </div>
                     <div class="span7">

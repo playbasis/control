@@ -24,7 +24,9 @@
     <div class="registration-page registration-resetpassword">
       <div class="registration-form-bg"></div>
       <div class="registration-form">
-        <form id="resetpassword_form" class="pbf-form">
+        <?php
+        $attributes = array('class' => 'pbf-form', 'id' => 'resetpassword_form');
+        echo form_open('', $attributes);?>
           <fieldset>
 
             <legend>Reset Password</legend>
@@ -51,8 +53,7 @@
             </div>
 
           </fieldset>
-
-        </form>
+        <?php echo form_close();?>
 
       </div><!-- /form -->
 

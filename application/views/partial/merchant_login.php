@@ -22,7 +22,9 @@
         <div class="registration-page registration-login">
           <div class="registration-form-bg"></div>
           <div class="registration-form">
-            <form id="merchant_form" class="pbf-form">
+              <?php
+              $attributes = array('class' => 'pbf-form', 'id' => 'merchant_form');
+              echo form_open('', $attributes);?>
               <fieldset>
 
                 <legend>Merchant Login</legend>
@@ -43,8 +45,7 @@
                 </div>
 
               </fieldset>
-
-            </form>
+              <?php echo form_close();?>
 
           </div><!-- /form -->
 

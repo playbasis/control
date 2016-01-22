@@ -72,7 +72,9 @@
       <h3>Give us a sec…</h3>
   </div>
   <div class="modal-body">
-      <form id="survey_form">
+      <?php
+      $attributes = array('id' => 'survey_form');
+      echo form_open('', $attributes);?>
             <div class="step step-1">
                   <div class="form-group">
                         <h4>What is your business sector?</h4>
@@ -146,7 +148,7 @@
                         <a href="javascript:void(0)" class="btn btn-primary next-btn" >Finish</a>
                   </div>
             </div>
-    </form>
+      <?php echo form_close();?>
     
   </div>
 </div>
@@ -227,6 +229,10 @@
                                             type: "POST",
                                             url: baseUrlPath+'account/survey',
                                             data: [
+                                                {
+                                                    name:'<?php echo $this->security->get_csrf_token_name(); ?>',
+                                                    value:'<?php echo $this->security->get_csrf_hash(); ?>'
+                                                },
                                                 {
                                                     name:"business_sector",
                                                     value: null

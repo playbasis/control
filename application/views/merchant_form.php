@@ -515,7 +515,7 @@
             $.ajax({
                 type: "POST",
                 url: baseUrlPath + 'merchant/removeBranch/',
-                data: {'id': ids}
+                data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','id': ids}
             })
                 .done(function (msg) {
                     console.log("Entry removed: " + msg);
@@ -596,7 +596,7 @@
             $.ajax({
                 type: "POST",
                 url: baseUrlPath + 'merchant/removeBranch/',
-                data: {'id': row._id}
+                data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','id': row._id}
             })
                 .done(function (msg) {
                     console.log("Entry removed: " + msg);

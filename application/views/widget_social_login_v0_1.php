@@ -119,7 +119,9 @@
         </div>
 
         <div class="span11">
-            <form class="form-horizontal">
+            <?php
+            $attributes = array('class' => 'form-horizontal');
+            echo form_open('', $attributes);?>
                 <div id="social-panel">
                 <?php
                 $social_system = array(
@@ -267,8 +269,7 @@
                         <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                     </div>
                 </div>
-
-            </form>
+            <?php echo form_close();?>
 
         </div>
         <div class="span11">

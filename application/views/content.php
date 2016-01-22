@@ -196,6 +196,7 @@
             var request = $.ajax({
                 url: baseUrlPath + "content/push/" + contentId,
                 type: "POST",
+                data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'},
                 dataType: "json",
                 beforeSend: function (xhr) {
                     $confirmModalDialog.modal('hide');

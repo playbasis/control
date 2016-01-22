@@ -275,6 +275,8 @@
 <script src="<?php echo base_url(); ?>javascript/store_org/app_form.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+    var csrf_token_name = '<?php echo $this->security->get_csrf_token_name(); ?>';
+    var csrf_token_hash = '<?php echo $this->security->get_csrf_hash(); ?>';
     Pace.on("done", function(){
         $(".cover").fadeOut(1000);
     });

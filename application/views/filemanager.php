@@ -247,7 +247,10 @@ $(document).ready(function() {
                 $.ajax({
                     url: baseUrlPath+'filemanager',
                     type: 'post',
-                    data: 'directory=' + encodeURIComponent($(NODE).attr('directory')),
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
+                        'directory': encodeURIComponent($(NODE).attr('directory'))
+                    },
                     dataType: 'json',
                     success: function(json) {
                         html = '<div>';
@@ -316,7 +319,10 @@ $(document).ready(function() {
                 $.ajax({
                     url: baseUrlPath+'filemanager/create',
                     type: 'post',
-                    data: 'directory=' + encodeURIComponent($(tree.selected).attr('directory')) + '&name=' + encodeURIComponent($('#dialog input[name=\'name\']').val()),
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
+                        'directory': encodeURIComponent($(tree.selected).attr('directory')),
+                        'name': encodeURIComponent($('#dialog input[name=\'name\']').val())},
                     dataType: 'json',
                     success: function(json) {
                         if (json.success) {
@@ -346,7 +352,7 @@ $(document).ready(function() {
             $.ajax({
                 url: baseUrlPath+'filemanager/delete',
                 type: 'post',
-                data: 'path=' + encodeURIComponent(path),
+                data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','path':encodeURIComponent(path)},
                 dataType: 'json',
                 success: function(json) {
                     if (json.success) {
@@ -372,7 +378,9 @@ $(document).ready(function() {
                 $.ajax({
                     url: baseUrlPath+'filemanager/delete',
                     type: 'post',
-                    data: 'path=' + encodeURIComponent($(tree.selected).attr('directory')),
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
+                        'path': encodeURIComponent($(tree.selected).attr('directory'))},
                     dataType: 'json',
                     success: function(json) {
                         if (json.success) {
@@ -420,7 +428,10 @@ $(document).ready(function() {
                 $.ajax({
                     url: baseUrlPath+'filemanager/move',
                     type: 'post',
-                    data: 'from=' + encodeURIComponent(path) + '&to=' + encodeURIComponent($('#dialog select[name=\'to\']').val()),
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
+                        'from': encodeURIComponent(path),
+                        'to': encodeURIComponent($('#dialog select[name=\'to\']').val())},
                     dataType: 'json',
                     success: function(json) {
                         if (json.success) {
@@ -447,7 +458,10 @@ $(document).ready(function() {
                 $.ajax({
                     url: baseUrlPath+'filemanager/move',
                     type: 'post',
-                    data: 'from=' + encodeURIComponent($(tree.selected).attr('directory')) + '&to=' + encodeURIComponent($('#dialog select[name=\'to\']').val()),
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
+                        'from': encodeURIComponent($(tree.selected).attr('directory')),
+                        'to': encodeURIComponent($('#dialog select[name=\'to\']').val())},
                     dataType: 'json',
                     success: function(json) {
                         if (json.success) {
@@ -495,7 +509,11 @@ $(document).ready(function() {
                 $.ajax({
                     url: baseUrlPath+'filemanager/copy',
                     type: 'post',
-                    data: 'path=' + encodeURIComponent(path) + '&name=' + encodeURIComponent($('#dialog input[name=\'name\']').val()),
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
+                        'path': encodeURIComponent(path),
+                        'name': encodeURIComponent($('#dialog input[name=\'name\']').val())
+                    },
                     dataType: 'json',
                     success: function(json) {
                         if (json.success) {
@@ -522,7 +540,11 @@ $(document).ready(function() {
                 $.ajax({
                     url: baseUrlPath+'filemanager/copy',
                     type: 'post',
-                    data: 'path=' + encodeURIComponent($(tree.selected).attr('directory')) + '&name=' + encodeURIComponent($('#dialog input[name=\'name\']').val()),
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
+                        'path' : encodeURIComponent($(tree.selected).attr('directory')),
+                        'name=': encodeURIComponent($('#dialog input[name=\'name\']').val())
+                    },
                     dataType: 'json',
                     success: function(json) {
                         if (json.success) {
@@ -568,7 +590,11 @@ $(document).ready(function() {
                 $.ajax({
                     url: baseUrlPath+'filemanager/rename',
                     type: 'post',
-                    data: 'path=' + encodeURIComponent(path) + '&name=' + encodeURIComponent($('#dialog input[name=\'name\']').val()),
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
+                        'path': encodeURIComponent(path),
+                        'name': encodeURIComponent($('#dialog input[name=\'name\']').val())
+                    },
                     dataType: 'json',
                     success: function(json) {
                         if (json.success) {
@@ -595,7 +621,11 @@ $(document).ready(function() {
                 $.ajax({
                     url: baseUrlPath+'filemanager/rename',
                     type: 'post',
-                    data: 'path=' + encodeURIComponent($(tree.selected).attr('directory')) + '&name=' + encodeURIComponent($('#dialog input[name=\'name\']').val()),
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
+                        'path':encodeURIComponent($(tree.selected).attr('directory')),
+                        'name=' : encodeURIComponent($('#dialog input[name=\'name\']').val())
+                    },
                     dataType: 'json',
                     success: function(json) {
                         if (json.success) {
@@ -626,6 +656,7 @@ $(document).ready(function() {
         name: 'image',
         autoSubmit: false,
         responseType: 'json',
+        data:  {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'},
         onChange: function(file, extension) {
             var tree = $.tree.focused();
 
@@ -634,6 +665,7 @@ $(document).ready(function() {
             } else {
                 this.setData({'directory': ''});
             }
+            this.setData({'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'});
 
             this.submit();
         },
@@ -671,7 +703,8 @@ $(document).ready(function() {
                     alert(json.error);
                 }
             }else{
-                alert('<?php echo $this->lang->line('error_file_size'); ?>');
+//                alert('<?php //echo $this->lang->line('error_file_size'); ?>//');
+                alert("htest");
             }
 
             $('.loading').remove();
