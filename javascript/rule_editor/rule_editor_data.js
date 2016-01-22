@@ -140,13 +140,15 @@ dataMan = {
 
   cloneRule:function(rule_id){
         var save_status = false;
+        var _data = {
+            'id': rule_id,
+            'site_id': jsonConfig_siteId,
+            'client_id' : jsonConfig_clientId
+        };
+        _data[csrf_token_name] = csrf_token_hash;
         $.ajax({
           url: urlConfig.URL_cloneRule(),
-          data: {
-              'id': rule_id,
-              'site_id': jsonConfig_siteId,
-              'client_id' : jsonConfig_clientId
-          },
+          data:_data ,
           type:'POST',
           // dataType:'json',
           beforeSend:function(){
@@ -198,13 +200,15 @@ dataMan = {
   },
 
   playRule:function(rule_id){
+        var _data = {
+          'id': rule_id,
+          'site_id': jsonConfig_siteId,
+          'client_id' : jsonConfig_clientId
+        };
+        _data[csrf_token_name] = csrf_token_hash;
         $.ajax({
           url: urlConfig.URL_playRule(),
-          data: {
-              'id': rule_id,
-              'site_id': jsonConfig_siteId,
-              'client_id' : jsonConfig_clientId
-          },
+          data: _data,
           type:'POST',
           beforeSend:function(){
             progressDialog.show('Playing rule ...');
@@ -253,9 +257,15 @@ dataMan = {
 
   saveRule:function(rule_JSONString){
         var save_status = false;
+        var _data = {
+            'json': rule_JSONString ,
+            'siteId': jsonConfig_siteId,
+            'clientId' : jsonConfig_clientId
+        };
+        _data[csrf_token_name] = csrf_token_hash;
         $.ajax({
           url: urlConfig.URL_saveRule(),
-          data: 'json='+rule_JSONString +'&siteId='+jsonConfig_siteId+'&clientId='+jsonConfig_clientId,
+          data: _data,
           type:'POST',
           // dataType:'json',
           beforeSend:function(){
@@ -318,9 +328,15 @@ dataMan = {
 
   deleteRule:function(){
     // console.log('deleting : '+'ruleId='+dataMan.currentRuleIdToDelete +'&siteId='+jsonConfig_siteId+'&clientId='+jsonConfig_clientId);
+        var _data = {
+            'ruleId': dataMan.currentRuleIdToDelete ,
+            'siteId': jsonConfig_siteId,
+            'clientId' : jsonConfig_clientId
+        };
+        _data[csrf_token_name] = csrf_token_hash;
         $.ajax({
           url: urlConfig.URL_deleteRule(),
-          data: 'ruleId='+dataMan.currentRuleIdToDelete +'&siteId='+jsonConfig_siteId+'&clientId='+jsonConfig_clientId,
+          data: _data,
           type:'POST',
           // dataType:'json',
           beforeSend:function(){
@@ -351,14 +367,16 @@ dataMan = {
 
 
   setRuleStatus:function(toState, targetObj){
+      var _data = {
+          ruleId:   dataMan.currentRuleIdToChangeState,
+          state:    toState,
+          siteId:   jsonConfig_siteId,
+          clientId: jsonConfig_clientId
+      };
+      _data[csrf_token_name] = csrf_token_hash;
      $.ajax({
       url: urlConfig.URL_changeRuleState()+'?ts='+(new Date()).getMilliseconds(),//Add time stamp to avoid the cash data in any cases
-      data: {
-        ruleId:   dataMan.currentRuleIdToChangeState,
-        state:    toState,
-        siteId:   jsonConfig_siteId,
-        clientId: jsonConfig_clientId
-      },
+      data: _data,
       type:'POST',
       beforeSend:function(){
         progressDialog.show('Apply change ...');
