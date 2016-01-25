@@ -432,6 +432,21 @@ class Quest extends MY_Controller
         if(isset($quest_id) && !empty($quest_id)){
             $data['quest_id'] = $quest_id;
             $editQuest = $this->Quest_model->getQuestByClientSiteId($data);
+        } else {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') { // preserve user input even validation fails
+                $editQuest = array(
+                    'quest_name' => $this->input->post('quest_name'),
+                    'description' => $this->input->post('description'),
+                    'hint' => $this->input->post('hint'),
+                    'mission_order' => $this->input->post('mission_order'),
+                    'sort_order' => $this->input->post('sort_order'),
+                    'status' => $this->input->post('status'),
+                    'condition' => $this->input->post('condition'),
+                    'rewards' => $this->input->post('rewards'),
+                    'feedbacks' => $this->input->post('feedbacks'),
+                    'missions' => $this->input->post('missions'),
+                );
+            }
         }
 
         $this->load->model('Email_model');
@@ -526,9 +541,7 @@ class Quest extends MY_Controller
 
         $this->data['pushes'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'push') ? $this->Push_model->listTemplatesBySiteId($data['site_id']) : null;
 
-        if($quest_id != null && isset($editQuest) && !empty($editQuest)){
-            // $data['quest_id'] = $quest_id;
-            // $editQuest = $this->Quest_model->getQuestByClientSiteId($data);
+        if(/*$quest_id != null &&*/ isset($editQuest) && !empty($editQuest)){
 
             $this->data['editQuest']['quest_name'] = isset($editQuest['quest_name'])?$editQuest['quest_name']:null;
             $this->data['editQuest']['description'] = isset($editQuest['description'])?$editQuest['description']:null;
@@ -543,7 +556,7 @@ class Quest extends MY_Controller
             $countQuizs=0;
 
             if(isset($editQuest['condition'])){
-                foreach($editQuest['condition'] as $condition){
+                if (is_array($editQuest['condition'])) foreach($editQuest['condition'] as $condition){
                     if($condition['condition_type'] == 'DATETIME_START'){
                         $this->data['editDateStartCon']['condition_type'] = $condition['condition_type'];
                         $this->data['editDateStartCon']['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
@@ -661,7 +674,7 @@ class Quest extends MY_Controller
                 $countCustomPoints = 0;
                 $countBadges = 0;
                 $countGoods = 0;
-                foreach($editQuest['rewards'] as $reward){
+                if (is_array($editQuest['rewards'])) foreach($editQuest['rewards'] as $reward){
                     if($reward['reward_type'] == 'POINT'){
                         $this->data['editPointsRew']['reward_type'] = $reward['reward_type'];
                         $this->data['editPointsRew']['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
@@ -733,7 +746,7 @@ class Quest extends MY_Controller
                 $countEmails = 0;
                 $countSmses = 0;
                 $countPushes = 0;
-                foreach($editQuest['feedbacks'] as $feedback){
+                if (is_array($editQuest['feedbacks'])) foreach($editQuest['feedbacks'] as $feedback){
                     if($feedback['feedback_type'] == 'EMAIL'){
                         $this->data['editEmailRew'][$countEmails]['feedback_type'] = $feedback['feedback_type'];
                         $this->data['editEmailRew'][$countEmails]['template_id'] = isset($feedback['template_id'])?$feedback['template_id']:null;
@@ -759,8 +772,8 @@ class Quest extends MY_Controller
             if(isset($editQuest['missions'])){
 
                 $missionCount = 0;
-                foreach($editQuest['missions'] as $mission){
-                    $this->data['editMission'][$missionCount]['mission_id'] = $mission['mission_id'];
+                if (is_array($editQuest['missions'])) foreach($editQuest['missions'] as $mission){
+                    $this->data['editMission'][$missionCount]['mission_id'] = isset($mission['mission_id']) ? $mission['mission_id'] : $missionCount+1;
                     $this->data['editMission'][$missionCount]['mission_name'] = $mission['mission_name'];
                     $this->data['editMission'][$missionCount]['mission_number'] = $mission['mission_number'];
                     $this->data['editMission'][$missionCount]['description'] = $mission['description'];
