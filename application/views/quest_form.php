@@ -35,7 +35,7 @@
                     <table class="form ">
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('form_quest_name'); ?>:</td>
-                            <td><input type="text" name="quest_name" size="100" value="<?php echo isset($editQuest['quest_name']) ? $editQuest['quest_name'] :  set_value('name'); ?>" /></td>
+                            <td><input type="text" name="quest_name" size="100" value="<?php echo isset($editQuest['quest_name']) ? $editQuest['quest_name'] :  set_value('quest_name'); ?>" /></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_description'); ?>:</td>
