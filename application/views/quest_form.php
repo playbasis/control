@@ -119,20 +119,22 @@
                                     <div class="level-wrapper condition-type well">
                                         <h3>Level <a class="remove"><i class="icon-remove-sign"></i></a></h3>
                                         <label class="span4">Level Start:</label>
-                                        <select name="condition[levelstart][condition_value]">
-                                            <?php 
-                                            foreach($levels as $level){
-                                                if($editLevelStartCon['condition_value'] == $level['level']){
-                                                    echo "<option selected value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";
+                                        <div class="select-wrapper">
+                                            <select name="condition[levelstart][condition_value]">
+                                                <?php 
+                                                foreach($levels as $level){
+                                                    if($editLevelStartCon['condition_value'] == $level['level']){
+                                                        echo "<option selected value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";
+                                                    }
+                                                    echo "<option value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";
                                                 }
-                                                echo "<option value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";
-                                            }
-                                            ?>
-                                        </select>                    
+                                                ?>
+                                            </select>
+                                        </div>            
                                         <input type="hidden" name="condition[levelstart][condition_type]" value="LEVEL_START">                    
                                         <input type="hidden" name="condition[levelstart][condition_id]" value="">
-                                        <br>
                                         <label class="span4">Level End:</label> 
+                                        <div class="select-wrapper">
                                         <select name="condition[levelend][condition_value]">
                                             <?php 
                                             foreach($levels as $level){
@@ -142,7 +144,8 @@
                                                 echo "<option value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";
                                             }
                                             ?>
-                                        </select>                    
+                                        </select>
+                                        </div>             
                                         <input type="hidden" name="condition[levelend][condition_type]" value="LEVEL_END">                    
                                         <input type="hidden" name="condition[levelend][condition_id]" value="">
                                     </div>
@@ -549,7 +552,6 @@
 
                                                                             ?>
                                                                         </select>
-<!--                                                                    <input type="text" name="missions[--><?php //echo $mission['mission_id'] ?><!--][completion][--><?php //echo $action['completion_element_id']; ?><!--][completion_filter]" value = "--><?php //echo $action['completion_filter'] ?><!--">-->
                                                                     </div>
                                                                     <div class="span2" id="filterString" <?php echo ((isset($action['completion_op']) && $action['completion_op']=="sum") || (isset($action['completion_filter']) && $action['completion_filter']==""))? "style='display:none;'":"";?>>
                                                                         <small>matched string</small>
@@ -570,7 +572,7 @@
                                                                         <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_element_id]" value="<?php echo $action['completion_element_id']; ?>">
                                                                     </div>                                    
                                                                     <div class="span1 col-remove">
-                                                                        <a class="item-remove"><i class="icon-remove-sign"></i></a>                                    
+                                                                        <a class="item-remove"><i class="icon-remove-sign"></i></a>         
                                                                     </div>
                                                                     <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_title]" placeholder="Title" value="<?php echo $action['completion_title']; ?>"></div></div>
                                                                 </div>
@@ -1768,17 +1770,17 @@ function addLevel(target){
 
 
 
-    var levelstart = '<label class="span4">Level Start:</label>\<select name="'+type+'[levelstart][condition_value]">\<?php foreach($levels as $level){echo "<option value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";}?></select>\
+    var levelstart = '<label class="span4">Level Start:</label>\<div class="select-wrapper"><select name="'+type+'[levelstart][condition_value]">\<?php foreach($levels as $level){echo "<option value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";}?></select></div>\
                     <input type="hidden" name = "'+type+'[levelstart][condition_type]" value = "LEVEL_START"/>\
                     <input type="hidden" name = "'+type+'[levelstart][condition_id]" value = ""/>';
 
-    var levelend = "<label class='span4'>Level End:</label> <select name='"+type+"[levelend][condition_value]'><?php foreach($levels as $level){echo '<option value = '.$level['level'].'>'.$level['level'].' '.$level['level_title'].'</option>';}?></select>\
+    var levelend = "<label class='span4'>Level End:</label> <div class='select-wrapper'><select name='"+type+"[levelend][condition_value]'><?php foreach($levels as $level){echo '<option value = '.$level['level'].'>'.$level['level'].' '.$level['level_title'].'</option>';}?></select></div>\
                     <input type='hidden' name = '"+type+"[levelend][condition_type]' value = 'LEVEL_END'/>\
                     <input type='hidden' name = '"+type+"[levelend][condition_id]' value = ''/>";
     
 
 
-    var levelHtml = '<div class="level-wrapper '+type+'-type well">'+levelHead+levelstart+'<br>'+levelend+'</div>';
+    var levelHtml = '<div class="level-wrapper '+type+'-type well">'+levelHead+levelstart+levelend+'</div>';
 
     target.html = levelHtml;
 
