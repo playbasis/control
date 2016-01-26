@@ -1034,12 +1034,22 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
 
 // }
 
-$("input").on('keyup', function(){
-    if($(this).hasClass('url')){
+$("input").keypress( function(evt){
+    var theEvent = evt || window.event;
+    var key = theEvent.keyCode || theEvent.which;
+    key = String.fromCharCode( key );
 
+    if($(this).hasClass('url')){    
+        var regex = null;
     }else if($(this).hasClass('number')){
-        this.value = this.value.replace(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/g,'');
+        var regex = /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/g;
     }else{
-        this.value = this.value.replace(/[^0-9a-zA-Z\,\_\.\- ]/g,'');
+        var regex = /[^0-9a-zA-Z\,\_\.\- ]/g;
     }
+    
+    if ( regex != null && regex.test(key) ) {
+        theEvent.returnValue = false;
+        if(theEvent.preventDefault) theEvent.preventDefault();
+    }
+
 });
