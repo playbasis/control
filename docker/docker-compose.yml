@@ -1,0 +1,31 @@
+server:
+    build: ./server
+    ports:
+        - "80:80"
+        - "443:443"
+    volumes_from:
+        - app
+    links:
+        - app
+    # restart: always
+
+app:
+    build: ./app
+    # links:
+        # - mongo_ambassador:mongo
+    environment:
+        - MONGO_HOSTBASE=192.168.99.101:27017
+        - MONGO_USERNAME=admin
+        - MONGO_PASSWORD=mongodbpasswordplaybasis
+        - NODE_STREAM_URL=qav2node.pbapp.net
+    volumes:
+        - ~/sandbox/api_test/:/var/www/api/
+        - /tmp:/var/www/api/application/cache
+    # restart: always
+
+# mongo_ambassador:
+#     image: svendowideit/ambassador
+#     ports:
+#         - "27017"
+#     environment:
+#         - MONGO_PORT_27017_TCP=tcp://54.169.196.240:27017
