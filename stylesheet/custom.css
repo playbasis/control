@@ -533,6 +533,30 @@ input[type=radio]:checked + label {
 .select-wrapper{
 	height: 35px;
 }
+
+/* Actions */
+.actions-wrapper{
+	
+}
+.actions-wrapper .completeBy select{
+	width: 100%;
+	margin-top: 5px;
+}
+.actions-wrapper .actionValue input{
+	width: 100%;
+}
+
+.actions-wrapper .actionParameter select{
+	width: 100%;
+	margin-top: 5px;
+}
+.actions-wrapper .filterString input{
+	width: 90%;
+}
+
+@media screen and (max-width: 960px) {
+
+}
 @media screen and (max-width: 767px){
 	.box-add-item .box-content label{
 		    text-align: left;
