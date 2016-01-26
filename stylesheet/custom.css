@@ -530,6 +530,39 @@ input[type=radio]:checked + label {
     color: #333;
 }
 
+.select-wrapper{
+	height: 35px;
+}
+
+/* Actions */
+.actions-wrapper{
+	
+}
+.actions-wrapper .completeBy select{
+	width: 100%;
+	margin-top: 5px;
+}
+.actions-wrapper .actionValue input{
+	width: 100%;
+}
+
+.actions-wrapper .actionParameter select{
+	width: 100%;
+	margin-top: 5px;
+}
+.actions-wrapper .filterString input{
+	width: 90%;
+}
+
+@media screen and (max-width: 960px) {
+
+}
+@media screen and (max-width: 767px){
+	.box-add-item .box-content label{
+		    text-align: left;
+	}
+}
+
 .title-row{
 	clear: both;
 	margin: 0 20px 0 0;
@@ -1675,6 +1708,7 @@ input[type=radio]:checked + label {
 		left: 0;
 	}
 }
+
 
 /* ====== [ Merchant Page ] ======= */
 .merchant-page .nav {
