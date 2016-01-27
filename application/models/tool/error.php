@@ -296,6 +296,14 @@ class Error extends CI_Model
             $errorData['message'] = "Question has already been completed by the player";
             $errorData['error_code'] = '1004';
             break;
+        case 'QUIZ_QUESTION_NOT_ALLOW_RANDOM':
+            $errorData['message'] = "Question has been set to be in order, random is not allowed";
+            $errorData['error_code'] = '1005';
+            break;
+        case 'QUIZ_QUESTION_OUT_OF_SEQUENCE':
+            $errorData['message'] = "Question is out of sequence ";
+            $errorData['error_code'] = '1006';
+            break;
         case 'RULE_NOT_FOUND':
             $errorData['message'] = "Rule not available";
             $errorData['error_code'] = '1101';
