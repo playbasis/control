@@ -240,7 +240,7 @@ class Tracker_model extends MY_Model
             'action_log_id' => (isset($input['action_log_id']))    ? $input['action_log_id']: null,
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
-        ));
+        ), array("w" => 0, "j" => false));
     }
     public function trackQuiz($input, $action_time=null){
         $this->set_site_mongodb($input['site_id']);
@@ -260,7 +260,7 @@ class Tracker_model extends MY_Model
             'quiz_completed'   => (isset($input['quiz_completed']))? $input['quiz_completed']: false,
             'date_added'       => $mongoDate,
             'date_modified'    => $mongoDate
-        ));
+        ), array("w" => 0, "j" => false));
     }
 }
 ?>
