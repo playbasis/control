@@ -293,7 +293,7 @@ class Quiz extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
                 $quiz['client_id'] = $this->User_model->getClientId();
                 $quiz['site_id'] = $this->User_model->getSiteId();
-
+                $quiz['question_order'] = (isset($data['question_order']) && ($data['question_order'] == 'on'))?true:false;
                 if($quiz_info){
                     $this->Quiz_model->editQuizToClient($quiz_id, $quiz);
                 }else{

@@ -109,6 +109,12 @@ function find_template($data, $type, $template_id) {
                             </td>
                         </tr>
                         <tr>
+                            <td><?php echo $this->lang->line('entry_question_order'); ?>:</td>
+                            <td>
+                            <input type="checkbox" name="question_order" <?php echo (isset($quiz['question_order']) && $quiz['question_order'])?'checked':'unchecked'; ?> size="1" />
+                            </td>
+                        </tr>
+                        <tr>
                             <td><?php echo $this->lang->line('entry_type'); ?>:</td>
                             <td>
                                 <input type="radio" name="type" value="quiz" <?php echo isset($quiz['type']) && $quiz['type'] == 'quiz' ? 'checked' : ''; ?> /> Quiz
@@ -196,7 +202,7 @@ function find_template($data, $type, $template_id) {
                                             Question : 
                                         </td>
                                         <td>
-                                            <input type="text" class="question-input" name="quiz[questions][<?php echo $questions['question_id']; ?>][question]" value="<?php echo $questions['question']; ?>" ></input>
+                                            <input type="text" class="question-input" name="quiz[questions][<?php echo $questions['question_id']; ?>][question]" value="<?php echo $questions['question']; ?>" >
                                         </td>
                                     </tr>
                                     <tr>
@@ -209,6 +215,14 @@ function find_template($data, $type, $template_id) {
                                             <br />
                                             <a onclick="image_upload('quiz_questions_<?php echo $questions['question_id']; ?>_image', 'quiz_questions_<?php echo $questions['question_id']; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
                                             <a onclick="$('#quiz_questions_<?php echo $questions['question_id']; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $questions['question_id']; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Sort Order :
+                                        </td>
+                                        <td>
+                                            <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][question_number]" value="<?php echo isset($questions['question_number'])?$questions['question_number']:""; ?>" >
                                         </td>
                                     </tr>
                                     </tbody>
@@ -1097,6 +1111,14 @@ function find_template($data, $type, $template_id) {
         <a onclick="$(\'#quiz_questions_'+countQuestions+'_thumb\').attr(\'src\', \'<?php echo $this->lang->line('no_image'); ?>\'); $(\'#quiz_questions_'+countQuestions+'_image\').attr(\'value\', \'\');"><?php echo $this->lang->line('text_clear'); ?></a>\
         </td>\
         </tr>\
+        <tr>\
+            <td>\
+            Sort Order :\
+            </td>\
+        <td>\
+        <input type="text" name="quiz[questions]['+countQuestions+'][question_number]" value="" >\
+            </td>\
+            </tr>\
         </tbody>\
         </table>\
         </div>\
