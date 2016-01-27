@@ -137,9 +137,12 @@ class Player extends REST2_Controller
 			'level',
 			'date_added',
 			'birth_date'));
-			
-			$player['player'][$i]['last_login']= $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
-			$player['player'][$i]['last_logout']= $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
+			if($player['player'][$i]) {
+				$player['player'][$i]['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
+				$player['player'][$i]['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
+			}else{
+				$player['player'][$i]['message']="User '".$list_player_id[$i]."' doesn't exist";
+			}
 		}     
 
         $this->response($this->resp->setRespond($player), 200);
@@ -1916,12 +1919,12 @@ class Player extends REST2_Controller
             )), 200);
 
         $node= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],new MongoId($node_id));
-        if ($node == null) {
+        if (!$node) {
             $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
         }
 
         $role_info = $this->store_org_model->getRoleOfPlayer($this->validToken['client_id'],$this->validToken['site_id'],$pb_player_id,new MongoId($node_id));
-        if($role_info==null){
+        if(!$role_info){
             $this->response($this->error->setError('STORE_ORG_PLAYER_NOT_EXISTS_WITH_NODE'), 200);
         }else{
 
@@ -1948,6 +1951,10 @@ class Player extends REST2_Controller
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
         )));
+
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
         $this->player_model->unlockPlayer($this->validToken['site_id'],$pb_player_id);
         $this->response($this->resp->setRespond(), 200);
     }
