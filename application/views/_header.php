@@ -37,7 +37,7 @@
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.flot.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.flot.pie.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.flot.stack.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.sparkline-2.1.2.min.js"></script>
+    <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.sparkline.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.flot.resize.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.knob.js"></script>
 
