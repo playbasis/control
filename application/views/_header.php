@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/stylesheet.css" />
 
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-1.7.2.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-ui-1.8.21.custom.min.js"></script>
     <!-- touch events for jquery ui -->
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.ui.touch-punch.min.js"></script>
