@@ -30,6 +30,12 @@ $lang['column_date_registered']					= 'Date Registered';
 $lang['column_quest_name']					    = 'Quest';
 $lang['column_mission_name']					= 'Mission Name';
 $lang['column_mission_number']					= 'Mission Number';
+$lang['column_quiz_name']						= 'Quiz';
+$lang['column_question_name']					= 'Question';
+$lang['column_option']							= 'Option';
+$lang['column_score']							= 'Score';
+$lang['column_max_score']						= 'Max Score';
+
 // Button
 $lang['button_filter']							= 'Filter';
 $lang['button_download']						= 'Download';
