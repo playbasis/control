@@ -1065,7 +1065,7 @@ class Quest extends REST2_Controller
                 $resp['quest']['quest_id'] = $quest['_id'];
                 unset($resp['quest']['_id']);
             }else{
-                $resp['quest'] = array();
+                $this->response($this->error->setError("QUEST_JOIN_OR_CANCEL_NOTFOUND"), 200);
             }
         } else {
             // get all questss related to clients
@@ -1285,10 +1285,15 @@ class Quest extends REST2_Controller
             try {
                 $mission_id = new MongoId($mission_id);
             } catch(MongoException $ex) {
-                $mission_id = null;
+                $this->response($this->error->setError("MISSION_NOT_FOUND"), 200);
             }
 
             $data['quest_id'] = $quest_id;
+            $quest = $this->quest_model->getQuest($data);
+            if(!$quest){
+                $this->response($this->error->setError("QUEST_JOIN_OR_CANCEL_NOTFOUND"), 200);
+            }
+
             $data['mission_id'] = $mission_id;
             $quest = $this->quest_model->getMission($data);
             if($quest){
@@ -1297,7 +1302,7 @@ class Quest extends REST2_Controller
                 $resp['quest_id'] = $quest['_id'];
                 unset($resp['quest']['_id']);
             }else{
-                $resp = array();
+                $this->response($this->error->setError("MISSION_NOT_FOUND"), 200);
             }
         }
         $this->response($this->resp->setRespond($resp), 200);

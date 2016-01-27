@@ -16,6 +16,8 @@ class Store_org extends REST2_Controller
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
         $this->load->model('tool/utility', 'utility');
+        $this->load->model('point_model');
+        $this->load->model('client_model');
     }
 
     public function playerRegister_post($node_id, $player_id)
@@ -401,6 +403,10 @@ class Store_org extends REST2_Controller
             )), 200);
         }
 
+        $node_chk= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],new MongoId($node_id));
+        if(!$node_chk)
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
+
         $month = $this->input->get('month');
         if (!$month) {
             $month = date("m", time());
@@ -459,7 +465,12 @@ class Store_org extends REST2_Controller
                 'node_id'
             )), 200);
         }
-        if (!$count) {
+
+        $node_chk= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],new MongoId($node_id));
+        if(!$node_chk)
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
+
+        if (!(int)$count) {
             if($count==0){
                 $this->response($this->error->setError('PARAMETER_INVALID', array(
                     'count'
@@ -531,6 +542,15 @@ class Store_org extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'node_id'
             )), 200);
+        }
+        $node_chk= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],new MongoId($node_id));
+        if(!$node_chk)
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
+
+        if (!(int)$layer && $layer != "0") {
+                $this->response($this->error->setError('PARAMETER_INVALID', array(
+                    'count'
+                )), 200);
         }
 
         $month = $this->input->get('month');
@@ -716,6 +736,15 @@ class Store_org extends REST2_Controller
                 'rank_by'
             )), 200);
         }
+
+        $node_chk= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],new MongoId($node_id));
+        if (!$node_chk)
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
+
+        $reward_chk = $this->point_model->findPoint(array_merge($this->validToken, array('reward_name' => $rank_by )));
+        if(!$reward_chk)
+            $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
+
         // Now, getting all input
         $this->benchmark->mark('rank_peer_start');
         $input = $this->input->get();
@@ -820,13 +849,21 @@ class Store_org extends REST2_Controller
         }
         // Check validity of action and parameter
         if(!$action)
-            $this->response($this->error->setError('ACTION_NOT_FOUND', array(
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'action'
             )), 200);
         if(!$param)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'parameter'
             )), 200);
+
+        $node_chk= $this->store_org_model->retrieveNodeById($this->validToken['site_id'],new MongoId($node_id));
+        if(!$node_chk)
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
+
+        $action_chk = $this->client_model->getAction(array( 'client_id' => $this->validToken['client_id'], 'site_id' => $this->validToken['site_id'], 'action_name' => $action ));
+        if(!$action_chk)
+            $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
 
         $client_id = $this->validToken['client_id'];
         $site_id = $this->validToken['site_id'];

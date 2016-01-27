@@ -318,6 +318,18 @@ class Engine extends Quest
 			if(!$validToken)
 				$this->response($this->error->setError('INVALID_TOKEN'), 200);
 
+			//get action id by action name
+			$actionName = $this->input->post('action');
+			$action = $this->client_model->getAction(array(
+					'client_id' => $validToken['client_id'],
+					'site_id' => $validToken['site_id'],
+					'action_name' => $actionName
+			));
+			if(!$action)
+				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+			$actionId = $action['action_id'];
+			$actionIcon = $action['icon'];
+
 			//get playbasis player id from client player id
 			$pb_player_id = array();
 			if (!$test) {
@@ -383,18 +395,6 @@ class Engine extends Quest
 					}
 				}
 			}
-
-			//get action id by action name
-			$actionName = $this->input->post('action');
-			$action = $this->client_model->getAction(array(
-				'client_id' => $validToken['client_id'],
-				'site_id' => $validToken['site_id'],
-				'action_name' => $actionName
-			));
-			if(!$action)
-				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-			$actionId = $action['action_id'];
-			$actionIcon = $action['icon'];
 
 			$postData = $this->input->post();
 			$input = array_merge($postData, $validToken, array(

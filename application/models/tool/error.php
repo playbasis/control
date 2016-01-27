@@ -224,6 +224,10 @@ class Error extends CI_Model
             $errorData['message'] = "Email already exist.";
             $errorData['error_code'] = '0216';
             break;
+        case 'BADGE_NOT_FOUND':
+            $errorData['message'] = "Badge not available.";
+            $errorData['error_code'] = '0217';
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';
@@ -271,6 +275,10 @@ class Error extends CI_Model
         case "QUEST_JOIN_OR_CANCEL_NOTFOUND":
             $errorData["message"] = "Quest not found";
             $errorData["error_code"] = "0705";
+            break;
+        case "MISSION_NOT_FOUND":
+            $errorData["message"] = "Mission not found";
+            $errorData["error_code"] = "0706";
             break;
         case 'QUIZ_NOT_FOUND':
             $errorData['message'] = "Quiz not found";
@@ -325,7 +333,7 @@ class Error extends CI_Model
                 $errorData['error_code'] = '2302';
                 break;
         case 'STORE_ORG_NODE_NOT_FOUND':
-            $errorData['message'] = "Node value is not found";
+            $errorData['message'] = "Node ID is not found";
             $errorData['error_code'] = '2401';
             break;
         case 'STORE_ORG_PLAYER_ALREADY_EXISTS_WITH_NODE':
