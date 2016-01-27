@@ -240,7 +240,27 @@ class Tracker_model extends MY_Model
             'action_log_id' => (isset($input['action_log_id']))    ? $input['action_log_id']: null,
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
-        ));
+        ), array("w" => 0, "j" => false));
+    }
+    public function trackQuiz($input, $action_time=null){
+        $this->set_site_mongodb($input['site_id']);
+        $current_time = time();
+        if ($action_time && $action_time > $current_time) $action_time = $current_time; // cannot be something from the future
+        $mongoDate = new MongoDate($action_time ? $action_time : $current_time);
+
+        $this->mongo_db->insert('playbasis_quiz_log', array(
+            'pb_player_id'     => $input['pb_player_id'],
+            'client_id'        => $input['client_id'],
+            'site_id'          => $input['site_id'],
+            'quiz_id'          => $input['quiz_id'],
+            'quiz_name'        => $input['quiz_name'],
+            'question'         => (isset($input['question'])) ? $input['question'] : null,
+            'option'           => (isset($input['option']))? $input['option']: null,
+            'grade'            => (isset($input['grade']))? $input['grade']: null,
+            'quiz_completed'   => (isset($input['quiz_completed']))? $input['quiz_completed']: false,
+            'date_added'       => $mongoDate,
+            'date_modified'    => $mongoDate
+        ), array("w" => 0, "j" => false));
     }
 }
 ?>

@@ -367,6 +367,28 @@ class Quiz extends REST2_Controller
         /* update player's score */
         $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $option_id, $score, $grade);
 
+        $this->tracker_model->trackQuiz(array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'pb_player_id' => $pb_player_id,
+            'quiz_id' => $quiz_id,
+            'quiz_name' => $quiz['name'],
+            'question' => $question,
+            'option' => $option,
+            'grade' => $grade,
+            'quiz_completed' => false,
+        ));
+        if (isset($completeQuizActionId) && $completeQuizActionId) {
+            $this->tracker_model->trackQuiz(array(
+                'client_id' => $this->client_id,
+                'site_id' => $this->site_id,
+                'pb_player_id' => $pb_player_id,
+                'quiz_id' => $quiz_id,
+                'quiz_name' => $quiz['name'],
+                'grade' => $grade,
+                'quiz_completed' => true,
+            ));
+        }
         /* publish the reward (if any) */
         if (is_array($rewards)) foreach ($rewards as $reward) $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $quiz, $this->validToken['domain_name'], $reward);
 
