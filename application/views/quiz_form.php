@@ -293,14 +293,6 @@ function find_template($data, $type, $template_id) {
                                                 $count_option = $count_option."";
                                             ?>
                                                 <div class="option-container">
-                                                    option  <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][option]" value = ""><br>
-                                                    image  <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                                    <input type="hidden" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][option_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_image" />
-                                                    <br />
-                                                    <a onclick="image_upload('quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_image', 'quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                                    <a onclick="$('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a><br>
-                                                    explanation  <textarea name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][explanation]"></textarea><br>
-                                                    score  <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][score]" value = "">
                                                 </div>
                                             <?php
                                             }
