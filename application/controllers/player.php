@@ -1952,8 +1952,8 @@ class Player extends REST2_Controller
             'cl_player_id' => $player_id
         )));
 
-		if(!$pb_player_id)
-			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
         $this->player_model->unlockPlayer($this->validToken['site_id'],$pb_player_id);
         $this->response($this->resp->setRespond(), 200);
