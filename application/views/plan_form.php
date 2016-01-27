@@ -465,61 +465,8 @@
 </div>
 
 <script type="text/javascript"><!--
-$('#users .pagination a').live('click', function() {
-    $('#users').fadeIn('slow');
-
-    $('#users').load(this.href);
-
-    $('#users').fadeOut('slow');
-
-    return false;
-});
-
-$('#users').load('index.php?route=client/client/users&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');
-
-//--></script>
-
-<script type="text/javascript"><!--
-$('#domains .pagination a').live('click', function() {
-    $('#domains').fadeIn('slow');
-
-    $('#domains').load(this.href);
-
-    $('#domains').fadeOut('slow');
-
-    return false;
-});
-
-$('#domains').load('index.php?route=client/client/domain&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');
-
-//--></script>
-
-<script type="text/javascript"><!--
-
-function resetToken(site_id) {
-
-    $.ajax({
-        url: 'index.php?route=client/client/reset&token=<?php echo $token; ?>',
-        type: 'post',
-        data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','site_id': site_id},
-        dataType: 'json',
-        success: function(json) {
-            $('#domains').load('index.php?route=client/client/domain&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');
-        }
-    });
-
-    return false;
-
-}
-
-//--></script>
-
-<script type="text/javascript"><!--
 $('#tabs a').tabs();
-$('#languages a').tabs();
-//--></script>
 
-<script type="text/javascript"><!--
     $('table').on('focus', '.form_req:last', function() {
         var index = parseInt($("input:last", this).data("index")) + 1;
         $(this).after(
