@@ -55,6 +55,7 @@ $route['report/rewards_badges'] = 'report_reward';
 $route['report/goods'] = 'report_goods';
 $route['report/registration'] = 'report_registration';
 $route['report/quest'] = 'report_quest';
+$route['report/quiz'] = 'report_quiz';
 $route['first_app'] = 'account/first_app';
 $route['domain'] = 'app';
 $route['referral/'.ANY_STRING] = 'user/referral/$1';

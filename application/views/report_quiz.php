@@ -9,8 +9,8 @@
                 <a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Rewards</a>
                 <a href="<?php echo site_url('report/goods');?>" style="display:inline;">Goods</a>
                 <a href="<?php echo site_url('report/registration');?>" style="display:inline;">Registration</a>
-                <a href="<?php echo site_url('report/quest');?>" style="display:inline;" class="selected">Quest</a>
-                <a href="<?php echo site_url('report/quiz');?>" style="display:inline;">Quiz</a>
+                <a href="<?php echo site_url('report/quest');?>" style="display:inline;">Quest</a>
+                <a href="<?php echo site_url('report/quiz');?>" style="display:inline;" class="selected">quiz</a>
             </div>
             <div class="report-filter">
                 <span>
@@ -26,14 +26,14 @@
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>
-                        <?php echo $this->lang->line('filter_quest_id'); ?>
+                        <?php echo $this->lang->line('filter_quiz_id'); ?>
                     <select name="filter_action_id">
                         <option value="0"><?php echo "All"; ?></option>
-                        <?php if(is_array($quest_list))foreach ($quest_list as $quest){?>
-                            <?php if ($quest['_id'] == $filter_action_id) { ?>
-                                <option selected="selected" value="<?php echo $quest['_id']?>"><?php echo $quest['quest_name'];?></option>
+                        <?php if(is_array($quiz_list))foreach ($quiz_list as $quiz){?>
+                            <?php if ($quiz['_id'] == $filter_action_id) { ?>
+                                <option selected="selected" value="<?php echo $quiz['_id']?>"><?php echo $quiz['name'];?></option>
                             <?php }else{?>
-                                <option value="<?php echo $quest['_id']?>"><?php echo $quest['quest_name'];?></option>
+                                <option value="<?php echo $quiz['_id']?>"><?php echo $quiz['name'];?></option>
                             <?php }?>
                         <?php }?>
                     </select>
@@ -54,9 +54,11 @@
                     <td class="left"><?php echo $this->lang->line('column_username'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
 
-                    <td class="right"><?php echo $this->lang->line('column_quest_name'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_mission_name'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_mission_number'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_quiz_name'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_question_name'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_option'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_score'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_max_score'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
                 </tr>
                 </thead>
@@ -68,25 +70,38 @@
                             <td class="left"><?php echo $report['cl_player_id']; ?></td>
                             <td class="left"><?php echo $report['username']; ?></td>
                             <td class="left"><?php echo $report['email']; ?></td>
-                            <!-- <td class="left"><?php //echo $report['level']; ?></td>
-                        <td class="left"><?php //echo $report['exp']; ?></td> -->
+
                             <td class="right">
                                 <?php
-                                if(isset($report['quest_name'])&&$report['quest_name']!=null){
-                                    echo $report['quest_name'];
+                                if(isset($report['quiz_name'])&&$report['quiz_name']!=null){
+                                    echo $report['quiz_name'];
                                 }
                                 ?>
                             </td>
                             <td class="right"><?php
-                                if(isset($report['mission_name'])&&$report['mission_name']!=null){
-                                    echo $report['mission_name'];
+                                if(isset($report['question_name'])&&$report['question_name']!=null){
+                                    echo $report['question_name'];
                                 }
                                 ?>
                             </td>
                             <td class="right">
                                 <?php
-                                if(isset($report['mission_number'])&&$report['mission_number']!=null){
-                                    echo $report['mission_number'];
+                                if(isset($report['option'])&&$report['option']!=null){
+                                    echo $report['option'];
+                                }
+                                ?>
+                            </td>
+                            <td class="right">
+                                <?php
+                                if(isset($report['score'])&&$report['score']!=null){
+                                    echo $report['score'];
+                                }
+                                ?>
+                            </td>
+                            <td class="right">
+                                <?php
+                                if(isset($report['max_score'])&&$report['max_score']!=null){
+                                    echo $report['max_score'];
                                 }
                                 ?>
                             </td>
@@ -113,7 +128,7 @@
 <script type="text/javascript"><!--
     function filter() {
         var d = new Date().getTime();
-        url = baseUrlPath+'report_quest/quest?t='+d;
+        url = baseUrlPath+'report_quiz/quiz?t='+d;
 
         var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 
@@ -144,7 +159,7 @@
 
     function downloadFile() {
         var d = new Date().getTime();
-        url = baseUrlPath+'report_quest/actionDownload?t='+d;
+        url = baseUrlPath+'report_quiz/actionDownload?t='+d;
 
         var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 
