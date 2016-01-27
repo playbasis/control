@@ -151,7 +151,7 @@ $(document).ready(function() {
         $(".fixMenu").activeFixMenu();
     });
 
-    $('.gen_rule_edit_btn').live('click',function(event){
+    $(document).on("click", '.gen_rule_edit_btn', function (event) {
         $(".fixMenu").activeFixMenu();
     });
 

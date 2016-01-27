@@ -126,77 +126,68 @@ function filter() {
 //--></script>
 
 <script type="text/javascript">
-    $('input[name=\'filter_name\']').live("focus", function (event) {
-        $(this).autocomplete({
-            delay: 0,
-            source: function(request, response) {
-                $.ajax({
-                    url: baseUrlPath+'quest/autocomplete?filter_name=' +  encodeURIComponent(request.term),
-                    dataType: 'json',
-                    success: function(json) {
-                        response($.map(json, function(item) {
-                            return {
-                                label: item.name,
-                                name: item.name
-                            }
-                        }));
-                    }
-                });
-            },
-            select: function(event, ui) {
-                $('input[name=\'filter_name\']').val(ui.item.name);
+    $(document)
+        .on("focus", 'input[name=\'filter_name\']', function (event) {
+            $(this).autocomplete({
+                delay: 0,
+                source: function (request, response) {
+                    $.ajax({
+                        url: baseUrlPath + 'quest/autocomplete?filter_name=' + encodeURIComponent(request.term),
+                        dataType: 'json',
+                        success: function (json) {
+                            response($.map(json, function (item) {
+                                return {
+                                    label: item.name,
+                                    name: item.name
+                                }
+                            }));
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    $('input[name=\'filter_name\']').val(ui.item.name);
 
-                return false;
-            },
-            focus: function(event, ui) {
-                return false;
-            }
+                    return false;
+                },
+                focus: function (event, ui) {
+                    return false;
+                }
+            });
+        })
+        .on("click", '.push_down', function (e) {
+
+            $.ajax({
+                url: baseUrlPath + 'quest/increase_order/' + $(this).attr('alt'),
+                dataType: "json"
+            }).done(function (data) {
+                var getListForAjax = 'quest/getListForAjax/';
+                var getNum = '<?php echo $this->uri->segment(3);?>';
+                if (!getNum) {
+                    getNum = 0;
+                }
+                $('#actions').load(baseUrlPath + getListForAjax + getNum);
+            });
+
+            e.preventDefault();
+            return false;
+        })
+        .on("click", '.push_up', function (e) {
+
+            $.ajax({
+                url: baseUrlPath + 'quest/decrease_order/' + $(this).attr('alt'),
+                dataType: "json"
+            }).done(function (data) {
+                var getListForAjax = 'quest/getListForAjax/';
+                var getNum = '<?php echo $this->uri->segment(3);?>';
+                if (!getNum) {
+                    getNum = 0;
+                }
+                $('#actions').load(baseUrlPath + getListForAjax + getNum);
+            });
+
+            e.preventDefault();
+            return false;
         });
-    });
-</script>
-
-
-<script type = "text/javascript">
-
-$( ".push_down" ).live( "click", function() {
-  
-    $.ajax({
-        url: baseUrlPath+'quest/increase_order/'+$(this).attr('alt'),
-        dataType: "json"
-    }).done(function(data) {
-        var getListForAjax = 'quest/getListForAjax/';
-        var getNum = '<?php echo $this->uri->segment(3);?>';
-        if(!getNum){
-            getNum = 0;
-        }
-        $('#actions').load(baseUrlPath+getListForAjax+getNum);
-    });
-
-
-  return false;
-});
-
-</script>
-
-<script type = "text/javascript">
-
-$( ".push_up" ).live( "click", function() {
-  
-    $.ajax({
-        url: baseUrlPath+'quest/decrease_order/'+$(this).attr('alt'),
-        dataType: "json"
-    }).done(function(data) {
-        var getListForAjax = 'quest/getListForAjax/';
-        var getNum = '<?php echo $this->uri->segment(3);?>';
-        if(!getNum){
-            getNum = 0;
-        }
-        $('#actions').load(baseUrlPath+getListForAjax+getNum);
-    });
-
-
-  return false;
-});
 
 // play quest
 $(".quest_play").click(function() {

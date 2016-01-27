@@ -75,47 +75,35 @@
 </div>
 
 <script type="text/javascript">
-
-$('.push_down').live("click", function(){
-
-    $.ajax({
-        url : baseUrlPath+'badge/increase_order/'+ $(this).attr('alt'),
-        dataType: "json"
-    }).done(function(data) {
-        console.log("Testing");
-        var getListForAjax = 'badge/getListForAjax/';
-        var getNum = '<?php echo $this->uri->segment(3);?>';
-        if(!getNum){
-            getNum = 0;
-        }
-        $('#actions').load(baseUrlPath+getListForAjax+getNum);
-    });
-
-
-  return false;
-
-});
+    $(document)
+        .on("click", '.push_down', function () {
+            $.ajax({
+                url: baseUrlPath + 'badge/increase_order/' + $(this).attr('alt'),
+                dataType: "json"
+            }).done(function (data) {
+//            console.log("Testing");
+                var getListForAjax = 'badge/getListForAjax/';
+                var getNum = '<?php echo $this->uri->segment(3);?>';
+                if (!getNum) {
+                    getNum = 0;
+                }
+                $('#actions').load(baseUrlPath + getListForAjax + getNum);
+            });
+            return false;
+        })
+        .on("click", '.push_up', function () {
+            $.ajax({
+                url: baseUrlPath + 'badge/decrease_order/' + $(this).attr('alt'),
+                dataType: "json"
+            }).done(function (data) {
+                console.log("Testing");
+                var getListForAjax = 'badge/getListForAjax/';
+                var getNum = '<?php echo $this->uri->segment(3);?>';
+                if (!getNum) {
+                    getNum = 0;
+                }
+                $('#actions').load(baseUrlPath + getListForAjax + getNum);
+            });
+            return false;
+        });
 </script>
-
-
-<script type="text/javascript">
-$('.push_up').live("click", function(){
-    $.ajax({
-        url : baseUrlPath+'badge/decrease_order/'+ $(this).attr('alt'),
-        dataType: "json"
-    }).done(function(data) {
-        console.log("Testing");
-        var getListForAjax = 'badge/getListForAjax/';
-        var getNum = '<?php echo $this->uri->segment(3);?>';
-        if(!getNum){
-            getNum = 0;
-        }
-        $('#actions').load(baseUrlPath+getListForAjax+getNum);
-    });
-
-
-  return false;
-});
-
-</script>
-

@@ -39,7 +39,7 @@ $(document).ready(function() {
         $().slidePanel({main_show:47.5});
     });
 
-    $('.gen_rule_edit_btn').live('click',function(event){
+    $(document).on("click", '.gen_rule_edit_btn', function (event) {
         $().slidePanel({main_show:47.5});
     });
 

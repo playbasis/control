@@ -5,93 +5,86 @@ $(function() {
 	widthFunctions();
     //circle_progress();
 
-	//pervent all #click
-	$('a[href="#"]').live('click', function(event){
-		event.preventDefault();
-	});
+	//prevent all #click
+    $(document)
+        .on('click', 'a[href="#"]', function (event) {
+            event.preventDefault();
+        })
+        .on('click', "#submitdate_filter", function () {
+            var startDate = new Date($('#start_date').val()).getTime();
+            var endDate = new Date($('#end_date').val()).getTime();
 
-    $("#submitdate_filter").live('click' ,function(){
+            if (startDate > endDate) {
 
-        var startDate = new Date( $('#start_date').val() ).getTime();
-        var endDate = new Date($('#end_date').val()).getTime();
-
-
-
-        if( startDate > endDate ){
-
-            $('.message-dialog .modal-body p').html('Invalid parameter! ,Start-date range shouldn\'t less than End-date')
-            $('.message-dialog').modal('show');
-            return ;
-        }
-
-
-        var data_filter = "";
-
-        var startStamp = $("#start_date").val().split("/");
-        var yearStart = '';
-        if(startStamp[2].length = 2){
-            yearStart = '20'+startStamp[2];
-        }
-        var startDate = new Date(yearStart,parseInt(startStamp[0])-1,startStamp[1]);
-        var start_date = startDate.toString("dd-MM-yyyy");
-
-        var endStamp = $("#end_date").val().split("/");
-        var yearEnd = '';
-        if(endStamp[2].length = 2){
-            yearEnd = '20'+endStamp[2];
-        }
-        var endDate = new Date(yearEnd,parseInt(endStamp[0])-1,endStamp[1]);
-        var end_date = endDate.toString("dd-MM-yyyy");
-        $.ajax({
-            url: baseUrlPath+'statistic/getStatisticData?date_start='+start_date+'&date_expire='+end_date,
-            dataType: 'json',
-            success: function(json) {
-                data_filter = [
-                    { data: json.points, label: "Points"},
-                    { data: json.levelup, label: "Level Up"},
-                    { data: json.register, label: "Register"},
-                    { data: json.badges, label: "Badges" }
-                ];
-//                console.log(data_filter);
-                plot.setData(data_filter);
-                plot.setupGrid();
-                plot.draw();
+                $('.message-dialog .modal-body p').html('Invalid parameter! ,Start-date range shouldn\'t less than End-date');
+                $('.message-dialog').modal('show');
+                return;
             }
-        });
-    });
 
+            var data_filter = "";
+
+            var startStamp = $("#start_date").val().split("/");
+            var yearStart = '';
+            if (startStamp[2].length = 2) {
+                yearStart = '20' + startStamp[2];
+            }
+            var startDate = new Date(yearStart, parseInt(startStamp[0]) - 1, startStamp[1]);
+            var start_date = startDate.toString("dd-MM-yyyy");
+
+            var endStamp = $("#end_date").val().split("/");
+            var yearEnd = '';
+            if (endStamp[2].length = 2) {
+                yearEnd = '20' + endStamp[2];
+            }
+            var endDate = new Date(yearEnd, parseInt(endStamp[0]) - 1, endStamp[1]);
+            var end_date = endDate.toString("dd-MM-yyyy");
+            $.ajax({
+                url: baseUrlPath + 'statistic/getStatisticData?date_start=' + start_date + '&date_expire=' + end_date,
+                dataType: 'json',
+                success: function (json) {
+                    data_filter = [
+                        {data: json.points, label: "Points"},
+                        {data: json.levelup, label: "Level Up"},
+                        {data: json.register, label: "Register"},
+                        {data: json.badges, label: "Badges"}
+                    ];
+//                console.log(data_filter);
+                    plot.setData(data_filter);
+                    plot.setupGrid();
+                    plot.draw();
+                }
+            });
+        });
 });
 
 /* ---------- Datable ---------- */
 function template_functions() {
-	$('.btn-close').click(function(e){
-		e.preventDefault();
-		$(this).parent().parent().parent().fadeOut();
-	});
-	// rokios -> change click to live 17:28 3/1/2556
-	$('.btn-minimize').live('click',function(e){
-		e.preventDefault();
-		var $target = $(this).parent().parent().next('.box-content');
-		if($target.is(':visible')){
-            $('i',$(this)).removeClass('icon-chevron-up').addClass('icon-chevron-down');
-            if($.isFunction($.fn.getRuleText)){
-                $(this).getRuleText();
+    $(document)
+        .on('click', '.btn-close', function (e) {
+            e.preventDefault();
+            $(this).parent().parent().parent().fadeOut();
+        })
+        .on('click', '.btn-minimize', function (e) {
+            e.preventDefault();
+            var $target = $(this).parent().parent().next('.box-content');
+            if ($target.is(':visible')) {
+                $('i', $(this)).removeClass('icon-chevron-up').addClass('icon-chevron-down');
+                if ($.isFunction($.fn.getRuleText)) {
+                    $(this).getRuleText();
+                }
+            } else {
+                $('i', $(this)).removeClass('icon-chevron-down').addClass('icon-chevron-up');
+                if ($.isFunction($.fn.getRuleText)) {
+                    $(this).getRuleText({state: "hide"});
+                }
             }
-        }else{
-            $('i',$(this)).removeClass('icon-chevron-down').addClass('icon-chevron-up');
-            if($.isFunction($.fn.getRuleText)){
-                $(this).getRuleText({state:"hide"});
-            }
-        }
-		$target.slideToggle();
-	});
-	// rokios -> change click to live 17:28 3/1/2556
-	$('.btn-setting').live('click',function(e){
-		e.preventDefault();
-		$('#myModal').modal('show');
-	});
+            $target.slideToggle();
+        })
+        .on('click', '.btn-setting', function (e) {
+            e.preventDefault();
+            $('#myModal').modal('show');
+        });
 }
-
 
 /* ---------- Sparkline Charts ---------- */
 

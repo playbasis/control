@@ -306,7 +306,7 @@ $(function(){
 //====================
 $(document).ready(function(){
 
-    $('.tab_indicator_fit li').live('click',function(){
+    $(document).on('click', '.tab_indicator_fit li', function () {
 
         // console.log('>> click');
 
@@ -322,7 +322,7 @@ $(document).ready(function(){
             $('.pbd_leader-list').html($('#pbd_global_modal_mock').clone());
         }
 
-    })
+    });
 
     // first time load
     // $('.tab_indicator_fit li#buddy').trigger('click');

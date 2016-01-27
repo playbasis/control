@@ -8,7 +8,7 @@ $(function(){
   $(".panel-carousel").hide();
   $(".panel-carousel").first().show();
 
-  $('#stats-sort button').live('click', function(){
+  $(document).on("click", '#stats-sort button', function (evt) {
       var e = $(this).attr('rel');
       $(".panel-carousel").hide();
       var s = '#panel-carousel-'+e;

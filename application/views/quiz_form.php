@@ -196,7 +196,7 @@ function find_template($data, $type, $template_id) {
                                             Question : 
                                         </td>
                                         <td>
-                                            <input type="text" class="question-input" name="quiz[questions][<?php echo $questions['question_id']; ?>][question]" value="<?php echo $questions['question']; ?>" ></input>
+                                            <input type="text" class="question-input" name="quiz[questions][<?php echo $questions['question_id']; ?>][question]" value="<?php echo $questions['question']; ?>" />
                                         </td>
                                     </tr>
                                     <tr>
@@ -706,13 +706,28 @@ function find_template($data, $type, $template_id) {
         $(".emails").hide();
         $(".smses").hide();
         $(".pushes").hide();
-        $("#exp-entry").live('click', function() {$(this).parent().find(".exp").toggle()});
-        $("#point-entry").live('click', function() {$(this).parent().find(".point").toggle()});
-        $("#badge-entry").live('click', function() {$(this).parent().find(".badges").toggle()});
-        $("#reward-entry").live('click', function() {$(this).parent().find(".rewards").toggle()});
-        $("#email-entry").live('click', function() {$(this).parent().find(".emails").toggle()});
-        $("#sms-entry").live('click', function() {$(this).parent().find(".smses").toggle()});
-        $("#push-entry").live('click', function() {$(this).parent().find(".pushes").toggle()});
+        $(document)
+            .on('click', "#exp-entry", function () {
+                $(this).parent().find(".exp").toggle()
+            })
+            .on('click', "#point-entry", function () {
+                $(this).parent().find(".point").toggle()
+            })
+            .on('click', "#badge-entry", function () {
+                $(this).parent().find(".badges").toggle()
+            })
+            .on('click', "#reward-entry", function () {
+                $(this).parent().find(".rewards").toggle()
+            })
+            .on('click', "#email-entry", function () {
+                $(this).parent().find(".emails").toggle()
+            })
+            .on('click', "#sms-entry", function () {
+                $(this).parent().find(".smses").toggle()
+            })
+            .on('click', "#push-entry", function () {
+                $(this).parent().find(".pushes").toggle()
+            });
 
         $('#tabs a').tabs();
 
@@ -724,17 +739,17 @@ function find_template($data, $type, $template_id) {
 
         $('.open-question-btn').click(function(){
             $('.question-item-wrapper>.box-content').show();
-        })
+        });
         $('.close-question-btn').click(function(){
             $('.question-item-wrapper>.box-content').hide();
-        })
+        });
 
         $('.open-grade-btn').click(function(){
             $('.grade-item-wrapper>.box-content').show();
-        })
+        });
         $('.close-grade-btn').click(function(){
             $('.grade-item-wrapper>.box-content').hide();
-        })
+        });
 
     });
 
@@ -1126,7 +1141,7 @@ function find_template($data, $type, $template_id) {
         init_sub_remove_event('.remove-option-btn', 2);
 
         init_question_event();
-    })
+    });
     
     function init_question_event(){
        
@@ -1170,10 +1185,6 @@ function find_template($data, $type, $template_id) {
         });
     }
 
-    
-
-</script>
-<script type="text/javascript">
     $(function(){
 
         $('.date').datepicker({dateFormat: 'yy-mm-dd'});

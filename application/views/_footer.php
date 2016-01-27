@@ -132,8 +132,8 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function(){
-        
-        $( "a, button, li, span, input").live("click", function(e) {
+
+        $(document).on("click", "a, button, li, span, input", function (e) {
             
             var $registerPage = $('div.signup-page-wrapper');
             if($registerPage.length > 0){

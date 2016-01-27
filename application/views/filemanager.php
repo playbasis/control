@@ -275,28 +275,28 @@ $(document).ready(function() {
         }
     });
 
-    $('#column-right a').live('click', function() {
-        if ($(this).attr('class') == 'selected') {
-            $(this).removeAttr('class');
-        } else {
-            $('#column-right a').removeAttr('class');
+    $(document)
+        .on('click', '#column-right a', function () {
+            if ($(this).attr('class') == 'selected') {
+                $(this).removeAttr('class');
+            } else {
+                $('#column-right a').removeAttr('class');
 
-            $(this).attr('class', 'selected');
-        }
-    });
+                $(this).attr('class', 'selected');
+            }
+        })
+        .on('dbclick', '#column-right a', function () {
+            <?php if ($fckeditor) { ?>
+            window.opener.CKEDITOR.tools.callFunction(<?php echo $fckeditor; ?>, '<?php echo $directory; ?>' + $(this).find('input[name=\'image\']').attr('value'));
 
-    $('#column-right a').live('dblclick', function() {
-    <?php if ($fckeditor) { ?>
-        window.opener.CKEDITOR.tools.callFunction(<?php echo $fckeditor; ?>, '<?php echo $directory; ?>' + $(this).find('input[name=\'image\']').attr('value'));
+            self.close();
+            <?php } else { ?>
+            parent.$('#<?php echo $field; ?>').attr('value', 'data/' + $(this).find('input[name=\'image\']').attr('value'));
+            parent.$('#dialog').dialog('close');
 
-        self.close();
-        <?php } else { ?>
-        parent.$('#<?php echo $field; ?>').attr('value', 'data/' + $(this).find('input[name=\'image\']').attr('value'));
-        parent.$('#dialog').dialog('close');
-
-        parent.$('#dialog').remove();
-        <?php } ?>
-    });
+            parent.$('#dialog').remove();
+            <?php } ?>
+        });
 
     $('#create').bind('click', function() {
         var tree = $.tree.focused();

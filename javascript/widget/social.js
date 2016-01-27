@@ -87,7 +87,7 @@ function initSocialIsotopes($container) {
 
     });
 
-    $(".social-sort_order input").live('keyup', function(){
+    $(document).on("keyup", ".social-sort_order input", function (event) {
         $(this).val($(this).val().replace(/[^0-9]/g,''));
     });
 }

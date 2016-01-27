@@ -14,8 +14,8 @@
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/stylesheet.css" />
 
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-1.7.2.min.js"></script>
-    <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
-    <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-ui-1.8.21.custom.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.js"></script>
+    <script type="text/javascript" src="<?php echo base_url();?>javascript/jquery/jquery-ui-1.11.4/jquery-ui.min.js"></script>
     <!-- touch events for jquery ui -->
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.ui.touch-punch.min.js"></script>
 
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="<?php echo base_url();?>javascript/jquery/superfish/js/superfish.js"></script>
 
     <!-- CUSTOM -->
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/custom/jquery-ui-1.8.21.custom.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>javascript/jquery/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/custom/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/custom/style.css" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/custom/spinner.css" />
@@ -37,7 +37,7 @@
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.flot.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.flot.pie.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.flot.stack.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.sparkline.min.js"></script>
+    <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.sparkline-2.1.2.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.flot.resize.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.knob.js"></script>
 
@@ -115,7 +115,10 @@
             });
 
             // Fix click link # cross opencart unautherize
-            $('a[href="#"],a[href^="#"]').live('click',function(event){event.preventDefault();console.log('prevent redirected');});
+            $(document).on('click', 'a[href="#"],a[href^="#"]', function (event) {
+                event.preventDefault();
+                console.log('prevent redirected');
+            });
 
             // Add class .active to current link
             $('ul.main-menu li a').each(function(){

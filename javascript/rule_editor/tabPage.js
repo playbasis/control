@@ -80,14 +80,14 @@
 
         }
 
-        $(".nav-tabs li").live('click', function(){
+        $(document).on("click", ".nav-tabs li", function (event) {
             var c = $(this).attr('id');
             var cursor = c.split('-');
             $(".tab-page").hide();
             $("#page-"+cursor[1]).show();
         });
 
-        $(".badge-reward").live('click', function(){
+        $(document).on("click", ".badge-reward", function (event) {
             $(".badge-reward").removeClass('tab-item-hightlight');
             $(this).addClass('tab-item-hightlight');
         });
@@ -143,38 +143,38 @@
 })( jQuery );
 
 $(document).ready(function() {
-    $('.edit_reward_type').live('click',function(){
-        if($.isFunction($.fn.tabPage)){
-            $().tabPage({
-                url: urlConfig.URL_getBadges(),
-                targetId: $(this).closest('.pbd_ul_child').attr('id'),
-                collection_id: 1,
-                main_panel: "#reward_collection",
-                panel_badge: "#rule-reward-modal",
-                output_data: ".reward_type",
-                html_load: '<center><img src="./image/white_loading.gif" height="100" width="100" /></center>',
-                type: 'badge'
-            });
-        }
-        $('#reward_collection').modal('show');
-    })
+    $(document)
+        .on("click", '.edit_reward_type', function (event) {
+            if ($.isFunction($.fn.tabPage)) {
+                $().tabPage({
+                    url: urlConfig.URL_getBadges(),
+                    targetId: $(this).closest('.pbd_ul_child').attr('id'),
+                    collection_id: 1,
+                    main_panel: "#reward_collection",
+                    panel_badge: "#rule-reward-modal",
+                    output_data: ".reward_type",
+                    html_load: '<center><img src="./image/white_loading.gif" height="100" width="100" /></center>',
+                    type: 'badge'
+                });
+            }
+            $('#reward_collection').modal('show');
+        })
+        .on("click", '.edit_goods_type', function (event) {
 
-    $('.edit_goods_type').live('click',function(){
-
-        if($.isFunction($.fn.tabPage)){
-            $().tabPage({
-                url: urlConfig.URL_getGoods(),
-                targetId: $(this).closest('.pbd_ul_child').attr('id'),
-                collection_id: 1,
-                main_panel: "#goods_collection",
-                panel_badge: "#rule-goods-modal",
-                output_data: ".goods_type",
-                html_load: '<center><img src="./image/white_loading.gif" height="100" width="100" /></center>',
-                type: 'goods'
-            });
-        }
-        $('#goods_collection').modal('show');
-    })
+            if ($.isFunction($.fn.tabPage)) {
+                $().tabPage({
+                    url: urlConfig.URL_getGoods(),
+                    targetId: $(this).closest('.pbd_ul_child').attr('id'),
+                    collection_id: 1,
+                    main_panel: "#goods_collection",
+                    panel_badge: "#rule-goods-modal",
+                    output_data: ".goods_type",
+                    html_load: '<center><img src="./image/white_loading.gif" height="100" width="100" /></center>',
+                    type: 'goods'
+                });
+            }
+            $('#goods_collection').modal('show');
+        });
 
     //Fetch badge collection item
     $.ajax({

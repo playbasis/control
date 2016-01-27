@@ -220,180 +220,175 @@
     </div>
 </div>
 
-<script type="text/javascript"><!--
-
-function addNewDomain() {
-    var domain_name = $('input[name=domain_name]').val();
-    var site_name = $('input[name=domain_site_name]').val();
-    var status = $('select[name=domain_status]').val();
-
-    $('#notification').html("").removeClass('warning').hide();
-
-    $.ajax({
-        url: baseUrlPath+'domain/insert_ajax',
-        type: 'POST',
-        dataType: 'json',
-        data: ({'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','domain_name' : domain_name, 'site_name' : site_name, 'status' : status, 'client_id' : '<?php echo $list_client_id; ?>'}),
-        success: function(json) {
-            var notification = $('#notification');
-
-            if (json['error']) {
-                $('#notification').html(json['error']).addClass('warning').show();
-            } else {
-
-                $('#notification').html(json['success']).addClass('success').show();
-
-                /*$('iframe').each(function() {
-                    this.contentWindow.location.reload(true);
-                });*/
-
-                $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
-            }
-        }
-
-    });
-
-    return false;
-}
-
-//--></script>
-
-<script type="text/javascript"><!--
-
-function addNewUser() {
-    var first_name = $('input[name=user_firstname]').val();
-    var last_name = $('input[name=user_lastname]').val();
-    var email = $('input[name=user_email]').val();
-    // var username = $('input[name=user_username]').val();
-    var username = email;
-    var password = $('input[name=user_password]').val();
-    var password_confirm = $('input[name=user_password_confirm]').val();
-    var user_group_id = $('select[name=user_group]').val();
-    var status = $('select[name=user_status]').val();
-
-    $('#notification').html("").removeClass('warning').hide().removeClass('success');
-
-    $.ajax({
-        url: baseUrlPath+'user/insert_ajax',
-        type: 'POST',
-        dataType: 'json',
-        data: ({'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','firstname' : first_name, 'lastname' : last_name, 'email' : email, 'username' : username, 'password' : password, 'password_confirm' : password_confirm, 'user_group' : user_group_id, 'status' : status, client_id : '<?php echo $list_client_id; ?>'}),
-        success: function(json) {
-            var notification = $('#notification');
-
-            if (json['error']) {
-                $('#notification').html(json['error']).addClass('warning').show();
-            } else {
-
-                $('#notification').html(json['success']).addClass('success').show().removeClass('warning');
-
-                /*$('iframe').each(function() {
-                    this.contentWindow.location.reload(true);
-                });*/
-
-                $('#users').load(baseUrlPath+'client/users?client_id=<?php echo $list_client_id; ?>');
-            }
-        }
-
-    });
-
-    return false;
-}
-
-//--></script>
-
-<script type="text/javascript"><!--
-    $( document ).ready(function() {
-        $('#users .pagination a').live('click', function() {
-
-            $('#users').load(this.href);
-
-            return false;
-        });
-
-        $('#users').load(baseUrlPath+'client/users?client_id=<?php echo $list_client_id; ?>');
-    });
-//--></script>
-
-<script type="text/javascript"><!--
-    $( document ).ready(function() {
-        $('#domains .pagination a').live('click', function() {
-
-            $('#domains').load(this.href);
-
-            return false;
-        });
-
-        $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
-    });
-//--></script>
-
-<script type="text/javascript"><!--
-
-function resetToken(site_id) {
-
-    $.ajax({
-        url: baseUrlPath+'domain/reset',
-        type: 'post',
-        data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','site_id':site_id},
-        dataType: 'json',
-        success: function(json) {
-            $/*('iframe').each(function() {
-                this.contentWindow.location.reload(true);
-            });*/
-
-            $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
-
-        }
-    });
-
-    return false;
-}
-
-//--></script>
-
-<script type="text/javascript"><!--
-function image_upload(field, thumb) {
-    $('#dialog').remove();
-
-    $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="'+baseUrlPath+'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="no"></iframe></div>');
-
-    $('#dialog').dialog({
-        title: '<?php echo $this->lang->line('text_image_manager'); ?>',
-        close: function (event, ui) {
-            if ($('#' + field).attr('value')) {
-                $.ajax({
-                    url: baseUrlPath+'filemanager/image?image=' + encodeURIComponent($('#' + field).val()),
-                    dataType: 'text',
-                    success: function(data) {
-                        $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
-                    }
-                });
-            }
-        },
-        bgiframe: false,
-        width: 200,
-        height: 100,
-        resizable: false,
-        modal: false
-    });
-};
-//--></script>
-<script type="text/javascript"><!--
-$('#tabs a').tabs();
-$('#languages a').tabs();
-//--></script>
 <script type="text/javascript">
-    $(function(){
+
+    function addNewDomain() {
+        var domain_name = $('input[name=domain_name]').val();
+        var site_name = $('input[name=domain_site_name]').val();
+        var status = $('select[name=domain_status]').val();
+
+        $('#notification').html("").removeClass('warning').hide();
+
+        $.ajax({
+            url: baseUrlPath + 'domain/insert_ajax',
+            type: 'POST',
+            dataType: 'json',
+            data: ({
+                '<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>',
+                'domain_name': domain_name,
+                'site_name': site_name,
+                'status': status,
+                'client_id': '<?php echo $list_client_id; ?>'
+            }),
+            success: function (json) {
+                var notification = $('#notification');
+
+                if (json['error']) {
+                    $('#notification').html(json['error']).addClass('warning').show();
+                } else {
+
+                    $('#notification').html(json['success']).addClass('success').show();
+
+                    /*$('iframe').each(function() {
+                     this.contentWindow.location.reload(true);
+                     });*/
+
+                    $('#domains').load(baseUrlPath + 'client/domain?client_id=<?php echo $list_client_id; ?>');
+                }
+            }
+
+        });
+
+        return false;
+    }
+
+    function addNewUser() {
+        var first_name = $('input[name=user_firstname]').val();
+        var last_name = $('input[name=user_lastname]').val();
+        var email = $('input[name=user_email]').val();
+        // var username = $('input[name=user_username]').val();
+        var username = email;
+        var password = $('input[name=user_password]').val();
+        var password_confirm = $('input[name=user_password_confirm]').val();
+        var user_group_id = $('select[name=user_group]').val();
+        var status = $('select[name=user_status]').val();
+
+        $('#notification').html("").removeClass('warning').hide().removeClass('success');
+
+        $.ajax({
+            url: baseUrlPath + 'user/insert_ajax',
+            type: 'POST',
+            dataType: 'json',
+            data: ({
+                '<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>',
+                'firstname': first_name,
+                'lastname': last_name,
+                'email': email,
+                'username': username,
+                'password': password,
+                'password_confirm': password_confirm,
+                'user_group': user_group_id,
+                'status': status,
+                client_id: '<?php echo $list_client_id; ?>'
+            }),
+            success: function (json) {
+                var notification = $('#notification');
+
+                if (json['error']) {
+                    $('#notification').html(json['error']).addClass('warning').show();
+                } else {
+
+                    $('#notification').html(json['success']).addClass('success').show().removeClass('warning');
+
+                    /*$('iframe').each(function() {
+                     this.contentWindow.location.reload(true);
+                     });*/
+
+                    $('#users').load(baseUrlPath + 'client/users?client_id=<?php echo $list_client_id; ?>');
+                }
+            }
+
+        });
+
+        return false;
+    }
+
+    $(document).ready(function () {
+        $(document)
+            .on('click', '#users .pagination a', function (e) {
+                e.preventDefault();
+                $('#users').load(this.href);
+
+                return false;
+            })
+            .on('click', '#domains .pagination a', function (e) {
+                e.preventDefault();
+                $('#domains').load(this.href);
+
+                return false;
+            });
+
+        $('#users').load(baseUrlPath + 'client/users?client_id=<?php echo $list_client_id; ?>');
+        $('#domains').load(baseUrlPath + 'client/domain?client_id=<?php echo $list_client_id; ?>');
+    });
+
+    function resetToken(site_id) {
+
+        $.ajax({
+            url: baseUrlPath + 'domain/reset',
+            type: 'post',
+            data: {
+                '<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>',
+                'site_id': site_id
+            },
+            dataType: 'json',
+            success: function (json) {
+                /*$('iframe').each(function() {
+                 this.contentWindow.location.reload(true);
+                 });*/
+
+                $('#domains').load(baseUrlPath + 'client/domain?client_id=<?php echo $list_client_id; ?>');
+
+            }
+        });
+
+        return false;
+    }
+
+    function image_upload(field, thumb) {
+        $('#dialog').remove();
+
+        $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="' + baseUrlPath + 'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="no"></iframe></div>');
+
+        $('#dialog').dialog({
+            title: '<?php echo $this->lang->line('text_image_manager'); ?>',
+            close: function (event, ui) {
+                if ($('#' + field).attr('value')) {
+                    $.ajax({
+                        url: baseUrlPath + 'filemanager/image?image=' + encodeURIComponent($('#' + field).val()),
+                        dataType: 'text',
+                        success: function (data) {
+                            $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
+                        }
+                    });
+                }
+            },
+            bgiframe: false,
+            width: 200,
+            height: 100,
+            resizable: false,
+            modal: false
+        });
+    }
+    $('#tabs a').tabs();
+    $('#languages a').tabs();
+    $(function () {
 
         $('.date').datepicker({dateFormat: 'yy-mm-dd'});
 
-    })
-</script>
-
-<script>
-function removeNotifications(){
-    $('#notification').removeClass().html(""); 
-    $('#notification2').removeClass().html("");
-}
+    });
+    function removeNotifications() {
+        $('#notification').removeClass().html("");
+        $('#notification2').removeClass().html("");
+    }
 </script>

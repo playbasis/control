@@ -20,7 +20,7 @@
 //Main
 $(document).ready(function(){
 	//Prevent all #_link from crashing opencart token
-	$('a[href="#"],a[href*=#]"').live('click',function(event){
+	$(document).on("click", 'a[href="#"],a[href*=#]"', function (event) {
 		event.preventDefault();
 	});
 	//Initial Table of Rules

@@ -300,7 +300,7 @@ $(document).ready(function(){
 
 
     function pb_nodeDataRowSave(){
-        $('.pbd_rule_action span').live('click',function(){
+        $(document).on("click", '.pbd_rule_action span', function (event) {
             var id = $(this).attr('id');
             if(id == 'pbd_rule_action_edit'){
 

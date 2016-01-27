@@ -241,7 +241,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                 jigsaw.append($row);
 
                  //Event : Insert new Reward
-                $('.pbd_group_container[id='+group_id+'] .new_group_item_btn').live('click',function(event){
+                $(document).on("click", '.pbd_group_container[id='+group_id+'] .new_group_item_btn', function (event) {
                     event.preventDefault();
                     var theModal = $('#newrule_reward_modal');
 

@@ -105,7 +105,7 @@ function filter() {
 //--></script>
 
 <script type="text/javascript">
-    $('input[name=\'filter_name\']').live("focus", function (event) {
+    $(document).on("focus", 'input[name=\'filter_name\']', function (event) {
         $(this).autocomplete({
             delay: 0,
             source: function(request, response) {
@@ -139,48 +139,46 @@ function filter() {
 
 <script type = "text/javascript">
 
-$( ".push_down" ).live( "click", function() {
-  
-    $.ajax({
-        url: baseUrlPath+'action/increase_order/'+$(this).attr('alt'),
-        dataType: "json"
-    }).done(function(data) {
-        var getListForAjax = 'action/getListForAjax/';
-        var getNum = '<?php echo $this->uri->segment(3);?>';
-        if(!getNum){
-            getNum = 0;
-        }
-        $('#actions').load(baseUrlPath+getListForAjax+getNum);
-        console.log(baseUrlPath+getListForAjax+getNum);
-        // $('#actions').load(baseUrlPath+'action/getListForAjax/0');
+    $(document).on("click", ".push_down", function () {
+
+        $.ajax({
+            url: baseUrlPath + 'action/increase_order/' + $(this).attr('alt'),
+            dataType: "json"
+        }).done(function (data) {
+            var getListForAjax = 'action/getListForAjax/';
+            var getNum = '<?php echo $this->uri->segment(3);?>';
+            if (!getNum) {
+                getNum = 0;
+            }
+            $('#actions').load(baseUrlPath + getListForAjax + getNum);
+            console.log(baseUrlPath + getListForAjax + getNum);
+            // $('#actions').load(baseUrlPath+'action/getListForAjax/0');
+        });
+
+
+        return false;
     });
-
-
-  return false;
-});
 
 </script>
 
 <script type = "text/javascript">
 
-$( ".push_up" ).live( "click", function() {
-  
-    $.ajax({
-        url: baseUrlPath+'action/decrease_order/'+$(this).attr('alt'),
-        dataType: "json"
-    }).done(function(data) {
-        var getListForAjax = 'action/getListForAjax/';
-        var getNum = '<?php echo $this->uri->segment(3);?>';
-        if(!getNum){
-            getNum = 0;
-        }
-        $('#actions').load(baseUrlPath+getListForAjax+getNum);
-        // $('#actions').load(baseUrlPath+'action/getListForAjax/0');
+    $(document).on("click", ".push_up", function () {
+        $.ajax({
+            url: baseUrlPath + 'action/decrease_order/' + $(this).attr('alt'),
+            dataType: "json"
+        }).done(function (data) {
+            var getListForAjax = 'action/getListForAjax/';
+            var getNum = '<?php echo $this->uri->segment(3);?>';
+            if (!getNum) {
+                getNum = 0;
+            }
+            $('#actions').load(baseUrlPath + getListForAjax + getNum);
+            // $('#actions').load(baseUrlPath+'action/getListForAjax/0');
+        });
+
+        return false;
     });
-
-
-  return false;
-});
 
 </script>
 

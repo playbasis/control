@@ -668,369 +668,350 @@ $(".template_sel").click(function(){
 });
 
 //Event : prevent user
-$('.one_rule_save_btn').live('click',function(){
-    var valid = true;
-    if(chainMan.getLen()<1){
-        valid = false;
-        //Event : prevent user : save : saving Rule from Rule Editor
-        preventUnusual.message('you should add some rule jigsaw!');
-        // else if(){//Event : prevent user : save with out edit rule header
-    }
-    if (valid && !oneRuleMan.validateAtLeastOneReward()) {
-        valid = false;
-        preventUnusual.message('rule should be set to have at least one reward');
-    }
-    if (valid) {
-        dataMan.saveRule(oneRuleMan.saveRule());
-    }
-    return true;
-})
+$(document)
+    .on("click", '.one_rule_save_btn', function (event) {
+        var valid = true;
+        if (chainMan.getLen() < 1) {
+            valid = false;
+            //Event : prevent user : save : saving Rule from Rule Editor
+            preventUnusual.message('you should add some rule jigsaw!');
+            // else if(){//Event : prevent user : save with out edit rule header
+        }
+        if (valid && !oneRuleMan.validateAtLeastOneReward()) {
+            valid = false;
+            preventUnusual.message('rule should be set to have at least one reward');
+        }
+        if (valid) {
+            dataMan.saveRule(oneRuleMan.saveRule());
+        }
+        return true;
+    })
+    .on("click", '.one_rule_new_btn', function (event) {
+        //Event : Click on [+New Rule] button
+        if (chainMan.chain.children().length > 0) {
+            //if node exist : alert('rule editor contain something')
+            perventDialogMan.confirmDialog('Confirm', 'Do you really want to discard unsaved game rules ?', 'DIRECTION_clearNodeList');
 
-//Event : Click on [+New Rule] button
-$('.one_rule_new_btn').live('click',function(){
+        } else {
+            //if node not exist : alert('rule editor NOT contain something')
+            oneRuleMan.clearOneRuleHeader();
+            oneRuleMan.openRuleEditor();
+        }
 
-    if(  chainMan.chain.children().length > 0 ){
-        //if node exist : alert('rule editor contain something')
-        perventDialogMan.confirmDialog('Confirm','Do you really want to discard unsaved game rules ?','DIRECTION_clearNodeList');
+        oneRuleMan.ruleActionPanelControl('editing')
+    })
+    .on("click", '.one_rule_discard_btn', function (event) {
+        //Event : Click on [Discard] button
+        perventDialogMan.confirmDialog('Confirm', 'Do you really want to discard unsaved game rules ?', 'DIRECTION_discardRule');
+    })
+    .on("click", '.pbd_btn_close', function (event) {
+        //Event : On disable Each node
+        perventDialogMan.confirmDialog('Confirm', 'Are you sure to delete this node ?', 'DIRECTION_removeNode', $(this));
+    })
+    .on("click", '.gen_rule_delete_btn', function (event) {
+        //Event : delete Rule From Table -> move this to table file
+        event.preventDefault();
+        var tableRow = $(this).parent().parent().parent().parent().parent();
+        dataMan.currentRuleIdToDelete = tableRow.attr('id');
+        // P'a was remove all gen_rule_classes -> so get its name using ->
+        var gameRuleName = tableRow.find('td span:eq(0)').html();
 
-    }else{
-        //if node not exist : alert('rule editor NOT contain something')
-        oneRuleMan.clearOneRuleHeader();
-        oneRuleMan.openRuleEditor();
-    }
+        perventDialogMan.confirmDialog('Deletion Confirm', 'You are going to permanently delete <b style="color:orange"> ' + gameRuleName + ' </b> game rule <br/>, Do you comfirm ? <span style="font-size:.85em;color:orange"> or you can just set rule state to "Disable" without deletion</span>', 'DIRECTION_deleteRule');
+    })
+    .on("click", '.gen_rule_edit_btn', function (event) {
+        //Event : load rule From table -> To edit in rule editor
+        event.preventDefault();
+        var id = $(this).parent().parent().parent().parent().parent().attr('id');
+        if (DEBUG) console.log('Attempt to load rule id : ' + id);
+        dataMan.currentRuleIdToLoad = id;
+        dataMan.loadForEdit();
 
-    oneRuleMan.ruleActionPanelControl('editing')
-})
+        oneRuleMan.ruleActionPanelControl('editing');
+    })
+    .on("click", ".gen_rule_play_btn", function (event) {
+        //Event : Play rule
+        event.preventDefault();
+        var id = $(this).parents("tr").attr("id");
+        dataMan.playRule(id);
+    })
+    .on("click", '.init_action_btn', function (event) {
+        //Event : Insert new Action
+        event.preventDefault();
+        var theModal = $('#newrule_modal');
 
-//Event : Click on [Discard] button
-$('.one_rule_discard_btn').live('click',function(){
-    perventDialogMan.confirmDialog('Confirm','Do you really want to discard unsaved game rules ?','DIRECTION_discardRule');
-})
+        oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'), jsonString_Action, 'action');
+        theModal.modal('show');
+        oneRuleMan.openNodeSelectionDialogType = 'ACTION';
+        oneRuleMan.nodeInsertAfterPosition = 0;
+    })
+    .on("click", '#new_condition_btn', function (event) {
+        //Event : Insert new Condition
+        event.preventDefault();
+        var theModal = $('#newrule_condition_modal');
 
-//Event : On disable Each node 
-$('.pbd_btn_close').live('click',function(){
-    perventDialogMan.confirmDialog('Confirm','Are you sure to delete this node ?','DIRECTION_removeNode',$(this));
-})
+        oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'), jsonString_Condition, 'condition');
+        theModal.modal('show');
+        oneRuleMan.openNodeSelectionDialogType = 'CONDITION';
+    })
+    .on("click", '#new_reward_btn', function (event) {
+        //Event : Insert new Reward
+        event.preventDefault();
+        var theModal = $('#newrule_reward_modal');
 
-//Event : delete Rule From Table -> move this to table file 
-$('.gen_rule_delete_btn').live('click',function(event){
-    event.preventDefault();
-    var tableRow = $(this).parent().parent().parent().parent().parent();
-    dataMan.currentRuleIdToDelete =  tableRow.attr('id');
-    // P'a was remove all gen_rule_classes -> so get its name using ->
-    var gameRuleName = tableRow.find('td span:eq(0)').html();
+        //oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Reward,'reward');
+        oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'), jsonString_Feedback, 'feedback');
+        theModal.modal('show');
+        //oneRuleMan.openNodeSelectionDialogType = 'REWARD';
+        oneRuleMan.openNodeSelectionDialogType = 'FEEDBACK';
+    })
+    .on("click", '#new_group_btn', function (event) {
+        event.preventDefault();
+        var theModal = $('#newrule_group_modal');
 
-    perventDialogMan.confirmDialog('Deletion Confirm','You are going to permanently delete <b style="color:orange"> '+gameRuleName+' </b> game rule <br/>, Do you comfirm ? <span style="font-size:.85em;color:orange"> or you can just set rule state to "Disable" without deletion</span>','DIRECTION_deleteRule');
-})
+        //oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Reward,'reward');
+        oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'), jsonString_Group, 'group');
+        theModal.modal('show');
+        //oneRuleMan.openNodeSelectionDialogType = 'REWARD';
+        oneRuleMan.openNodeSelectionDialogType = 'GROUP';
+    })
+    .on("click", '.dropdown-toggle', function (event) {
+        //Event : Select option between 'Create Condition Node' and 'Create Reward Node'
+        oneRuleMan.nodeInsertAfterPosition = $(this).attr('id');
+    })
+    .on("click", '.pbd_list_selection li', function (event) {
+        //Event : On select node item -> need to be confirm later
+        $('.pbd_list_selection li').removeClass('pbd_selected_item');
+        $(this).addClass('pbd_selected_item');
 
-//Event : load rule From table -> To edit in rule editor
-$('.gen_rule_edit_btn').live('click',function(event){
-    event.preventDefault();
-    var id = $(this).parent().parent().parent().parent().parent().attr('id');
-    if(DEBUG)console.log('Attempt to load rule id : '+id)
-    dataMan.currentRuleIdToLoad = id;
-    dataMan.loadForEdit();
+        oneRuleMan.modalOptionSelectedItem = $(this).attr('id');
+    })
 
-    oneRuleMan.ruleActionPanelControl('editing');
-})
+    .on("click", '.pbd_rule_editor_modal .pbd_modal_confirm_btn', function (event) {
+        //Event : On confirm to Create Dialog
+        /*on submit to create node form dialog*/
+        event.preventDefault();
+        var id = oneRuleMan.modalOptionSelectedItem;
+        var type = oneRuleMan.openNodeSelectionDialogType;
+        var targetId = oneRuleMan.openNodeSelectionDialogTargetId;
+        var targetType = oneRuleMan.openNodeSelectionDialogTargetType;
 
-//Event : Play rule
-$(".gen_rule_play_btn").live("click", function(event){
-    event.preventDefault();
-    var id = $(this).parents("tr").attr("id");
-    dataMan.playRule(id);
-});
+        if (id != undefined && id != '' && id != ' ') {
 
-//Event : Insert new Action
-$('.init_action_btn').live('click',function(event){
-    event.preventDefault();
-    var theModal = $('#newrule_modal');
+            //Prepare render set of item to render
+            var jsonItemSet = undefined;
+            if (type === 'ACTION')
+                jsonItemSet = jsonString_Action;
+            else if (type === 'CONDITION')
+                jsonItemSet = jsonString_Condition;
+            else if (type === 'REWARD')
+                jsonItemSet = jsonString_Reward;
+            else if (type === 'FEEDBACK')
+                jsonItemSet = jsonString_Feedback;
+            else if (type === 'GROUP')
+                jsonItemSet = jsonString_Group;
+            else if (type === 'GROUP_ITEM')
+                jsonItemSet = jsonString_Feedback;
 
-    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Action,'action');
-    theModal.modal('show');
-    oneRuleMan.openNodeSelectionDialogType = 'ACTION';
-    oneRuleMan.nodeInsertAfterPosition = 0;
-})
-
-//Event : Insert new Condition
-$('#new_condition_btn').live('click',function(event){
-    event.preventDefault();
-    var theModal = $('#newrule_condition_modal');
-
-    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Condition,'condition');
-    theModal.modal('show');
-    oneRuleMan.openNodeSelectionDialogType = 'CONDITION';
-})
-
-//Event : Insert new Reward
-$('#new_reward_btn').live('click',function(event){
-    event.preventDefault();
-    var theModal = $('#newrule_reward_modal');
-
-    //oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Reward,'reward');
-    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Feedback,'feedback');
-    theModal.modal('show');
-    //oneRuleMan.openNodeSelectionDialogType = 'REWARD';
-    oneRuleMan.openNodeSelectionDialogType = 'FEEDBACK';
-})
-
-//Event : Insert new Group
-$('#new_group_btn').live('click',function(event){
-    event.preventDefault();
-    var theModal = $('#newrule_group_modal');
-
-    //oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Reward,'reward');
-    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Group,'group');
-    theModal.modal('show');
-    //oneRuleMan.openNodeSelectionDialogType = 'REWARD';
-    oneRuleMan.openNodeSelectionDialogType = 'GROUP';
-})
-
-//Event : Select option between 'Create Condition Node' and 'Create Reward Node'
-$('.dropdown-toggle').live('click',function(){
-    oneRuleMan.nodeInsertAfterPosition = $(this).attr('id');
-})
-
-//Event : On select node item -> need to be confirm later 
-$('.pbd_list_selection li').live('click',function(event){
-
-    $('.pbd_list_selection li').removeClass('pbd_selected_item');
-    $(this).addClass('pbd_selected_item');
-
-    oneRuleMan.modalOptionSelectedItem = $(this).attr('id');
-})
-
-//Event : On confirm to Create Dialog 
-/*on submit to create node form dialog*/
-$('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
-
-    event.preventDefault();
-    var id = oneRuleMan.modalOptionSelectedItem;
-    var type = oneRuleMan.openNodeSelectionDialogType;
-    var targetId = oneRuleMan.openNodeSelectionDialogTargetId;
-    var targetType = oneRuleMan.openNodeSelectionDialogTargetType;
-
-    if(id!=undefined &&  id!='' && id!=' '){
-
-        //Prepare render set of item to render
-        var jsonItemSet = undefined;
-        if(type === 'ACTION')
-            jsonItemSet = jsonString_Action;
-        else if(type === 'CONDITION')
-            jsonItemSet = jsonString_Condition;
-        else if(type === 'REWARD')
-            jsonItemSet = jsonString_Reward;
-        else if(type === 'FEEDBACK')
-            jsonItemSet = jsonString_Feedback;
-        else if(type === 'GROUP')
-            jsonItemSet = jsonString_Group;
-        else if(type === 'GROUP_ITEM')
-            jsonItemSet = jsonString_Feedback;
-
-        for(var index in jsonItemSet){
-            var item = jsonItemSet[index];
-            if((id+'') == (item.specific_id+'')){
-                selected_jsonstring = JSON.stringify(item);
+            for (var index in jsonItemSet) {
+                var item = jsonItemSet[index];
+                if ((id + '') == (item.specific_id + '')) {
+                    selected_jsonstring = JSON.stringify(item);
+                }
             }
+
+            /* Append new node  */
+            if (type == 'ACTION') {
+                // Force add item to sort_index 0
+                chainMan.addNode(selected_jsonstring, oneRuleMan.nodeInsertAfterPosition);
+                oneRuleMan.nodeInsertAfterPosition = undefined;
+
+                chainMan.hideAddActionButton()
+            } else if (type == 'GROUP_ITEM') {
+
+                groupMan.addItem(selected_jsonstring, targetId, targetType);
+                oneRuleMan.nodeInsertAfterPosition = undefined;
+                oneRuleMan.openNodeSelectionDialogType = undefined;
+                oneRuleMan.openNodeSelectionDialogTargetId = undefined;
+                oneRuleMan.openNodeSelectionDialogTargetType = undefined;
+
+            } else if (selected_jsonstring != '') {
+                // pbnode.appendNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition);
+                chainMan.addNode(selected_jsonstring, oneRuleMan.nodeInsertAfterPosition);
+                oneRuleMan.nodeInsertAfterPosition = undefined;
+            }
+
+
+            $('.close').trigger('click');
+            //clear current selected options in modal dialog
+            oneRuleMan.clearSelectedItem();
         }
+    })
+    .on("click", '.pbd_one_rule_holder .slider-frame', function (event) {
+        //Event : onclick slide button in rule_header
+        //Force slider frame : to be disable
+        if (dataMan.isObjClassExist($(this), 'value_enable')) {
+            $(this).removeClass('value_enable');
+            $(this).addClass('value_disable');
 
-        /* Append new node  */
-        if(type=='ACTION'){
-            // Force add item to sort_index 0
-            chainMan.addNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition)
-            oneRuleMan.nodeInsertAfterPosition = undefined;
+            var objx = $(this).find('.slider-button');
+            objx.removeClass('on').html('Disable');
+            $(this).css('background', '#BF0016');
 
-            chainMan.hideAddActionButton()
-        }else if(type=='GROUP_ITEM'){
+            //Force slider frame : to be enable
+        } else if (dataMan.isObjClassExist($(this), 'value_disable')) {
 
-            groupMan.addItem(selected_jsonstring, targetId, targetType)
-            oneRuleMan.nodeInsertAfterPosition = undefined;
-            oneRuleMan.openNodeSelectionDialogType = undefined;
-            oneRuleMan.openNodeSelectionDialogTargetId = undefined;
-            oneRuleMan.openNodeSelectionDialogTargetType = undefined;
+            $(this).addClass('value_enable');
+            $(this).removeClass('value_disable');
 
-        }else if( selected_jsonstring!='' ){
-              // pbnode.appendNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition);
-            chainMan.addNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition)
-            oneRuleMan.nodeInsertAfterPosition = undefined;
+            var objx = $(this).find('.slider-button');
+            objx.addClass('on').html('Enable');
+            $(this).css('background', '#3B9900');
+
         }
-
-
-        $('.close').trigger('click');
-        //clear current selected options in modal dialog
-        oneRuleMan.clearSelectedItem();
-    }
-})
-
-//Event : onclick slide button in rule_header
-$('.pbd_one_rule_holder .slider-frame').live('click',function(){
-
-    //Force slider frame : to be disable
-    if(dataMan.isObjClassExist($(this),'value_enable')){
-        $(this).removeClass('value_enable')
-        $(this).addClass('value_disable');
-
-        var objx = $(this).find('.slider-button');
-        objx.removeClass('on').html('Disable');
-        $(this).css('background','#BF0016');
-
-        //Force slider frame : to be enable
-    }else if(dataMan.isObjClassExist($(this),'value_disable')){
-
-        $(this).addClass('value_enable')
-        $(this).removeClass('value_disable');
-
-        var objx = $(this).find('.slider-button');
-        objx.addClass('on').html('Enable');
-        $(this).css('background','#3B9900');
-
-    }
-})
-
+    })
+    .on("click", '.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn', function (event) {
 //Event : rule_header_edit -> Only for rule_header
-$('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('click',function(){
+        if ($(this).attr('id') == 'pbd_rule_action_edit') {
+            //On state save to edit
+            var tableRow = $(this).parent().parent().parent();
+            var rowText = tableRow.find('.pbd_rule_text');
+            var rowField = tableRow.find('.pbd_rule_field');
+            var button = $(this);
 
-    if( $(this).attr('id')=='pbd_rule_action_edit' ){
-        //On state save to edit
-        var tableRow = $(this).parent().parent().parent();
-        var rowText  = tableRow.find('.pbd_rule_text');
-        var rowField = tableRow.find('.pbd_rule_field');
-        var button = $(this);
+            tableRow.removeClass('state_text');
+            tableRow.addClass('state_field');
 
-        tableRow.removeClass('state_text');
-        tableRow.addClass('state_field');
+            tableRow.find('.pbd_rule_action span#pbd_rule_action_edit').hide();
+            tableRow.find('.pbd_rule_action span#pbd_rule_action_save').show();
+            tableRow.find('.pbd_rule_action span#pbd_rule_action_cancel').show();
+            tableRow.find('.pbd_rule_data .pbd_rule_text').hide();
+            tableRow.find('.pbd_rule_data .pbd_rule_field').show();
 
-        tableRow.find('.pbd_rule_action span#pbd_rule_action_edit').hide();
-        tableRow.find('.pbd_rule_action span#pbd_rule_action_save').show();
-        tableRow.find('.pbd_rule_action span#pbd_rule_action_cancel').show();
-        tableRow.find('.pbd_rule_data .pbd_rule_text').hide();
-        tableRow.find('.pbd_rule_data .pbd_rule_field').show();
+            //Load data to field
+            if (dataMan.isObjClassExist(button, 'status_btn')) {
+                //In case that field is slide button
+                var slideframe = tableRow.find('.slider-frame');
 
-        //Load data to field
-        if(dataMan.isObjClassExist(button,'status_btn')){
-            //In case that field is slide button
-            var slideframe = tableRow.find('.slider-frame');
+                slideframe.removeClass('value_enable');
+                slideframe.removeClass('value_disable');
 
-            slideframe.removeClass('value_enable');
-            slideframe.removeClass('value_disable');
+                if (rowText.html() == 'Enable' || rowText.html() == '1') {
+                    rowText.html('Enable');
+                    slideframe.addClass('value_enable');
 
-            if(rowText.html()=='Enable' || rowText.html()=='1'){
-                rowText.html('Enable');
-                slideframe.addClass('value_enable');
+                    var objx = slideframe.find('.slider-button');
+                    objx.addClass('on').html('Enable');
+                    slideframe.css('background', '#3B9900');
+                } else if (rowText.html() == 'Disable' || rowText.html() == '0') {
+                    rowText.html('Disable');
+                    slideframe.addClass('value_disable');
 
-                var objx = slideframe.find('.slider-button');
-                objx.addClass('on').html('Enable');
-                slideframe.css('background','#3B9900');
-            }else if(rowText.html()=='Disable' || rowText.html()=='0'){
-                rowText.html('Disable');
-                slideframe.addClass('value_disable');
-
-                var objx = slideframe.find('.slider-button');
-                objx.removeClass('on').html('Disable');
-                slideframe.css('background','#BF0016');
+                    var objx = slideframe.find('.slider-button');
+                    objx.removeClass('on').html('Disable');
+                    slideframe.css('background', '#BF0016');
+                }
+            } else {
+                //In case that field is just Text
+                rowField.find('input').val(rowText.html());
             }
-        }else{
-            //In case that field is just Text
-            rowField.find('input').val(rowText.html());
-        }
 
-        //Auto Select
-        tableRow.find('.pbd_rule_data .pbd_rule_field input').focus();
-        tableRow.find('.pbd_rule_data .pbd_rule_field input').select();
-    }else if( $(this).attr('id')=='pbd_rule_action_save' ){
+            //Auto Select
+            tableRow.find('.pbd_rule_data .pbd_rule_field input').focus();
+            tableRow.find('.pbd_rule_data .pbd_rule_field input').select();
+        } else if ($(this).attr('id') == 'pbd_rule_action_save') {
 
-        //On state edit to save
-        var tableRow = $(this).parent().parent().parent();
-        var rowText  = tableRow.find('.pbd_rule_text');
-        var rowField = tableRow.find('.pbd_rule_field');
-        var button = $(this);
+            //On state edit to save
+            var tableRow = $(this).parent().parent().parent();
+            var rowText = tableRow.find('.pbd_rule_text');
+            var rowField = tableRow.find('.pbd_rule_field');
+            var button = $(this);
 
-        tableRow.removeClass('state_field');
-        tableRow.addClass('state_text');
+            tableRow.removeClass('state_field');
+            tableRow.addClass('state_text');
 
-        //Prevent user input escape char and symbolic
-        var regex = /['"]/g;
-        var inputText = rowField.find('input[type="text"]').val();
-        if(regex.test(inputText) ){
-            preventUnusual.message('rule attribute can not contain these character \' " : ');
-            return ;
-        }else{
-            //Continue
-        }
-
-        tableRow.find('.pbd_rule_action span#pbd_rule_action_edit').show();
-        tableRow.find('.pbd_rule_action span#pbd_rule_action_save').hide();
-        tableRow.find('.pbd_rule_action span#pbd_rule_action_cancel').hide();
-        tableRow.find('.pbd_rule_data .pbd_rule_text').show();
-        tableRow.find('.pbd_rule_data .pbd_rule_field').hide();
-
-        //Load field to data
-        if(dataMan.isObjClassExist(button,'status_btn')){
-            //In case that field is slide button
-            var slideframe = rowField.find('.slider-frame');
-            if(dataMan.isObjClassExist(tableRow.find('.slider-frame'),'value_enable')){
-                rowText.html('Enable');
-
-            }else if(dataMan.isObjClassExist(tableRow.find('.slider-frame'),'value_disable')){
-                rowText.html('Disable');
+            //Prevent user input escape char and symbolic
+            var regex = /['"]/g;
+            var inputText = rowField.find('input[type="text"]').val();
+            if (regex.test(inputText)) {
+                preventUnusual.message('rule attribute can not contain these character \' " : ');
+                return;
+            } else {
+                //Continue
             }
-        }else{
-            //In case that field is just Text
-            rowText.html(rowField.find('input').val());
-        }
 
-        //Update Rule box title
-        oneRuleMan.name = $('.pbd_box_content_head .content_head_title .pbd_rule_text').html();
-        oneRuleMan.description = $('.pbd_box_content_head .content_head_description .pbd_rule_text').html();
-        oneRuleMan.active_status = $('.pbd_box_content_head .content_head_status .pbd_rule_text').html();
-        oneRuleMan.rule_tags = $('.pbd_box_content_head .content_head_tags .pbd_rule_text').html();
-        $('.pbd_one_rule_holder #rule_box_name').html(oneRuleMan.name);
+            tableRow.find('.pbd_rule_action span#pbd_rule_action_edit').show();
+            tableRow.find('.pbd_rule_action span#pbd_rule_action_save').hide();
+            tableRow.find('.pbd_rule_action span#pbd_rule_action_cancel').hide();
+            tableRow.find('.pbd_rule_data .pbd_rule_text').show();
+            tableRow.find('.pbd_rule_data .pbd_rule_field').hide();
 
-        //Update Rule Object Attribute
-    }else if( $(this).attr('id')=='pbd_rule_action_cancel' ){
+            //Load field to data
+            if (dataMan.isObjClassExist(button, 'status_btn')) {
+                //In case that field is slide button
+                var slideframe = rowField.find('.slider-frame');
+                if (dataMan.isObjClassExist(tableRow.find('.slider-frame'), 'value_enable')) {
+                    rowText.html('Enable');
 
-        //On state edit to save
-        var tableRow = $(this).parent().parent().parent();
-        var rowText  = tableRow.find('.pbd_rule_text');
-        var rowField = tableRow.find('.pbd_rule_field');
-        var button = $(this);
-
-        tableRow.removeClass('state_field');
-        tableRow.addClass('state_text');
-
-        //Prevent user input escape char and symbolic
-        var regex = /['"]/g;
-        var inputText = rowField.find('input[type="text"]').val();
-        if(regex.test(inputText) ){
-            preventUnusual.message('rule attribute can not contain these character \' " : ');
-            return ;
-        }else{
-            //Continue
-        }
-
-        tableRow.find('.pbd_rule_action span#pbd_rule_action_edit').show();
-        tableRow.find('.pbd_rule_action span#pbd_rule_action_save').hide();
-        tableRow.find('.pbd_rule_action span#pbd_rule_action_cancel').hide();
-        tableRow.find('.pbd_rule_data .pbd_rule_text').show();
-        tableRow.find('.pbd_rule_data .pbd_rule_field').hide();
-
-        //Load field to data
-        if(dataMan.isObjClassExist(button,'status_btn')){
-            //In case that field is slide button
-            var slideframe = rowField.find('.slider-frame');
-            if(rowText.html() == 'Enable'){
-                tableRow.find('.slider-frame').addClass('value_enable').removeClass('value_disable');
-
-            }else if(rowText.html() == 'Disable'){
-                tableRow.find('.slider-frame').addClass('value_disable').removeClass('value_enable');
-                tableRow.find('.slider-frame .slider-button').removeClass('on');
+                } else if (dataMan.isObjClassExist(tableRow.find('.slider-frame'), 'value_disable')) {
+                    rowText.html('Disable');
+                }
+            } else {
+                //In case that field is just Text
+                rowText.html(rowField.find('input').val());
             }
-        }else{
-            //In case that field is just Text
-            rowField.html(rowText.find('input').val());
+
+            //Update Rule box title
+            oneRuleMan.name = $('.pbd_box_content_head .content_head_title .pbd_rule_text').html();
+            oneRuleMan.description = $('.pbd_box_content_head .content_head_description .pbd_rule_text').html();
+            oneRuleMan.active_status = $('.pbd_box_content_head .content_head_status .pbd_rule_text').html();
+            oneRuleMan.rule_tags = $('.pbd_box_content_head .content_head_tags .pbd_rule_text').html();
+            $('.pbd_one_rule_holder #rule_box_name').html(oneRuleMan.name);
+
+            //Update Rule Object Attribute
+        } else if ($(this).attr('id') == 'pbd_rule_action_cancel') {
+
+            //On state edit to save
+            var tableRow = $(this).parent().parent().parent();
+            var rowText = tableRow.find('.pbd_rule_text');
+            var rowField = tableRow.find('.pbd_rule_field');
+            var button = $(this);
+
+            tableRow.removeClass('state_field');
+            tableRow.addClass('state_text');
+
+            //Prevent user input escape char and symbolic
+            var regex = /['"]/g;
+            var inputText = rowField.find('input[type="text"]').val();
+            if (regex.test(inputText)) {
+                preventUnusual.message('rule attribute can not contain these character \' " : ');
+                return;
+            } else {
+                //Continue
+            }
+
+            tableRow.find('.pbd_rule_action span#pbd_rule_action_edit').show();
+            tableRow.find('.pbd_rule_action span#pbd_rule_action_save').hide();
+            tableRow.find('.pbd_rule_action span#pbd_rule_action_cancel').hide();
+            tableRow.find('.pbd_rule_data .pbd_rule_text').show();
+            tableRow.find('.pbd_rule_data .pbd_rule_field').hide();
+
+            //Load field to data
+            if (dataMan.isObjClassExist(button, 'status_btn')) {
+                //In case that field is slide button
+                var slideframe = rowField.find('.slider-frame');
+                if (rowText.html() == 'Enable') {
+                    tableRow.find('.slider-frame').addClass('value_enable').removeClass('value_disable');
+
+                } else if (rowText.html() == 'Disable') {
+                    tableRow.find('.slider-frame').addClass('value_disable').removeClass('value_enable');
+                    tableRow.find('.slider-frame .slider-button').removeClass('on');
+                }
+            } else {
+                //In case that field is just Text
+                rowField.html(rowText.find('input').val());
+            }
         }
-    }
-})
+    });
 
 // }
 
