@@ -33,7 +33,9 @@
             <h1><img src="<?php echo base_url(); ?>image/category.png" alt=""/> <?php echo $heading_title; ?></h1>
 
             <div class="buttons">
-                <a class="btn btn-info" onclick="location = baseUrlPath"><i class="fa fa-home"></i></a>
+                <a class="btn btn-primary"
+                   onclick="image_upload('image', 'thumb');"><i class="fa fa-upload"></i>&nbsp;<?php echo $this->lang->line('text_upload'); ?></a>
+                <a class="btn btn-success" onclick="location = baseUrlPath"><i class="fa fa-home"></i></a>
             </div>
         </div>
         <div class="content">
@@ -66,14 +68,6 @@
                 </div>
                 <div class="span3">
                     <div class="row-fluid">
-                        <div class="well">
-                            <div class="control-group">
-                                <a class="btn btn-block btn-primary"
-                                   onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_upload'); ?></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row-fluid">
                         <ul class="thumbnails">
                             <li class="span12 hide" id="thumb_preview"></li>
                         </ul>
@@ -96,19 +90,25 @@
 </div>
 
 <ul id="hiddenThumbs" class="hide">
-    <li class="thumbfix span3" data-id="{{img_id}}" data-file_name="{{file_name}}" data-file_size="{{file_size}}" data-url="{{img_url}}">
+    <li class="thumbfix span3" data-id="{{img_id}}" data-file_name="{{file_name}}" data-file_size="{{file_size}}"
+        data-url="{{img_url}}" data-sm_url="{{img_sm_url}}" data-lg_url="{{img_lg_url}}">
         <a href="#" class="thumbnail">
-            <img src="{{img_url}}" style="width: 200px; height: 180px;">
+            <img src="" style="width: 200px; height: 180px;">
         </a>
     </li>
 </ul>
 
 <div id="hiddenPreview" class="hide">
     <div class="thumbnail">
-        <img src="{{img_url}}" style="width: 300px; height: 200px; border: black solid 1px">
+        <img src="" style="width: 300px; height: 200px; border: black solid 1px">
         <div class="caption">
             <h3 style="word-wrap: break-word">{{file_name}}</h3>
-            <p><textarea type="text" rows="4" readonly style="width: 80%">{{img_url}}</textarea></p>
+            <label for="img_url">Image URL:</label>
+            <textarea id="img_url" rows="3" class="input-block-level" readonly>{{img_url}}</textarea>
+            <label for="sm_thumb_url">Small thumbnail URL:</label>
+            <textarea id="sm_thumb_url" rows="3" class="input-block-level" readonly>{{img_sm_url}}</textarea>
+            <label for="lg_thumb_url">Large thumbnail URL:</label>
+            <textarea id="lg_thumb_url" rows="3" class="input-block-level" readonly>{{img_lg_url}}</textarea>
             <p>File Size: {{file_size}} bytes</p>
         </div>
     </div>
@@ -182,25 +182,33 @@
         if (imageDataJSONObject != null) {
             imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{img_id}}', 'g'), imageDataJSONObject._id);
             imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{img_url}}', 'g'), imageDataJSONObject.url);
+            imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('src=""', 'g'), 'src="' + imageDataJSONObject.url + '"');
             imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{file_name}}', 'g'), imageDataJSONObject.file_name);
             imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{file_size}}', 'g'), imageDataJSONObject.file_size);
+            imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{img_sm_url}}', 'g'), imageDataJSONObject.sm_thumb);
+            imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{img_lg_url}}', 'g'), imageDataJSONObject.lg_thumb);
         }
 
         $thumbnails_grids.append(imageThumbnailGrid);
     }
 
-    function displayThumbnailPreview(filename,url,filesize) {
+    function displayThumbnailPreview(filename,url,filesize,sm_thumb,lg_thumb) {
         filename = typeof filename !== 'undefined' ? filename : null;
         url = typeof url !== 'undefined' ? url : null;
         filesize = typeof filesize !== 'undefined' ? filesize : null;
+        sm_thumb = typeof sm_thumb !== 'undefined' ? sm_thumb : null;
+        lg_thumb = typeof lg_thumb !== 'undefined' ? lg_thumb : null;
 
         var thumbPreview = $('#thumb_preview'),
             hiddenPreviewHTML = $('#hiddenPreview').html();
 
         if (filename || url || filesize) {
             hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{img_url}}', 'g'), url);
+            hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('src=""', 'g'), 'src="' + url + '"');
             hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{file_name}}', 'g'), filename);
             hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{file_size}}', 'g'), filesize);
+            hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{img_sm_url}}', 'g'), sm_thumb);
+            hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{img_lg_url}}', 'g'), lg_thumb);
         }
 
         thumbPreview.empty().append(hiddenPreviewHTML).show();
@@ -227,6 +235,6 @@
 
     $($thumbnails_grids).on("click",".thumbfix", function(){
 //       console.log($(this).data('id'));
-        displayThumbnailPreview($(this).data('file_name'),$(this).data('url'),$(this).data('file_size'));
+        displayThumbnailPreview($(this).data('file_name'), $(this).data('url'), $(this).data('file_size'), $(this).data('sm_url'), $(this).data('lg_url'));
     });
 </script>
