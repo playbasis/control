@@ -39,6 +39,28 @@ class MediaManager extends MY_Controller
 
         $this->data['main'] = 'mediamanager';
 
+        if ($this->input->post('image')) {
+            $this->data['image'] = $this->input->post('image');
+        } elseif (isset($content_info['image'])) {
+            $this->data['image'] = $content_info['image'];
+        } else {
+            $this->data['image'] = 'no_image.jpg';
+        }
+
+        if ($this->data['image']) {
+            $info = pathinfo($this->data['image']);
+            if (isset($info['extension'])) {
+                $extension = $info['extension'];
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0,
+                        utf8_strrpos($this->data['image'], '.')) . '-100x100.' . $extension;
+                $this->data['thumb'] = S3_IMAGE . $new_image;
+            } else {
+                $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+            }
+        } else {
+            $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+        }
+
         $this->load->vars($this->data);
         $this->render_page('template');
     }

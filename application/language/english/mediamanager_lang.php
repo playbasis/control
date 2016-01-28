@@ -11,6 +11,8 @@ $lang['heading_title'] = 'Media Manager';
 // Entry
 
 // Text
+$lang['text_image_manager'] = 'Image Manager';
+$lang['text_upload'] = 'Upload';
 
 // Error messages
 $lang['error_permission'] = 'Warning: You do not have permission to modify Media Manager!';
