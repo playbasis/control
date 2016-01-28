@@ -143,5 +143,83 @@ class Image_model extends MY_Model
         return $result? $result[0]['url']:null;
 
     }
+
+    public function countImages($client_id, $site_id = null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        if ($site_id) {
+            $this->mongo_db->where('site_id', new MongoId($site_id));
+        }
+        $total = $this->mongo_db->count('playbasis_file');
+
+        return $total;
+    }
+
+    public function retrieveImages($client_id, $site_id, $optionalParams = array())
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $sort_data = array(
+            '_id',
+            'sort_order'
+        );
+
+        if (isset($optionalParams['order']) && (utf8_strtolower($optionalParams['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('_id' => $order));
+        }
+
+        if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
+            if ($optionalParams['offset'] < 0) {
+                $optionalParams['offset'] = 0;
+            }
+
+            if ($optionalParams['limit'] < 1) {
+                $optionalParams['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$optionalParams['limit']);
+            $this->mongo_db->offset((int)$optionalParams['offset']);
+        }
+
+        $this->mongo_db->select(array(
+            "_id",
+            "date_added",
+            "date_modified",
+            "directory",
+            "file_name",
+            "file_size",
+            "url"
+        ));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        return $this->mongo_db->get("playbasis_file");
+    }
+
+    public function retrieveImage($image_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        try {
+            $this->mongo_db->where('_id', new MongoId($image_id));
+        } catch (Exception $e) {
+            return null;
+        }
+        $c = $this->mongo_db->get('playbasis_file');
+
+        if ($c) {
+            return $c[0];
+        } else {
+            return null;
+        }
+    }
 }
-?>

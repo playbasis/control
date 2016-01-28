@@ -16,7 +16,7 @@ class MediaManager extends MY_Controller
             redirect('/login', 'refresh');
         }
 
-        $this->load->model('MediaManager_model');
+        $this->load->model('Image_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -65,143 +65,68 @@ class MediaManager extends MY_Controller
         $this->render_page('template');
     }
 
-//    public function organize($organizeId = null)
-//    {
-//        if ($this->session->userdata('user_id') /*&& $this->input->is_ajax_request()*/) {
-//            $client_id = $this->User_model->getClientId();
-//            $site_id = $this->User_model->getSiteId();
-//
-//            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-//                if (!$this->validateAccess()) {
-//                    $this->output->set_status_header('401');
-//                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access')));
-//                    die();
-//                }
-//
-//                if (isset($organizeId)) {
-//                    try {
-//                        $result = $this->Store_org_model->retrieveOrganizeById($organizeId);
-//                        if (isset($result['_id'])) {
-//                            $result['_id'] = $result['_id'] . "";
-//                        }
-//                        if (isset($result['parent'])) {
-//                            $tmp = $result['parent'] . "";
-//                            $result['parent'] = array();
-//                            $result['parent']['_id'] = $tmp;
-//
-//                            $org_res = $this->Store_org_model->retrieveOrganizeById($result['parent']['_id']);
-//                            if (isset($org_res)) {
-//                                $result['parent']['name'] = $org_res['name'];
-//                            }
-//                        }
-//
-//                        $this->output->set_status_header('200');
-//                        $response = $result;
-//
-//                    } catch (Exception $e) {
-//                        $this->output->set_status_header('404');
-//                        $response = array('status' => 'error', 'message' => $this->lang->line('error_no_contents'));
-//                    }
-//                } else {
-//                    $query_data = $this->input->get(null, true);
-//
-//                    $result = $this->Store_org_model->retrieveOrganize($client_id, $site_id, $query_data);
-//                    foreach($result as &$document){
-//                        if(isset($document['_id'])){
-//                            $document['_id'] = $document['_id']."";
-//                        }
-//                        if(isset($document['parent'])){
-//                            $tmp = $document['parent']."";
-//                            $document['parent'] = array();
-//                            $document['parent']['_id'] = $tmp;
-//
-//                            $org_res = $this->Store_org_model->retrieveOrganizeById($document['parent']['_id']);
-//                            if(isset($org_res))
-//                                $document['parent']['name'] = $org_res['name'];
-//                        }
-//                    }
-//
-//                    $this->output->set_status_header('200');
-//                    $count_organizes = $this->Store_org_model->countOrganizes($client_id, $site_id);
-//
-//                    $response = array(
-//                        'total' => $count_organizes,
-//                        'rows' => $result
-//                    );
-//                }
-//
-//                echo json_encode($response);
-//                die();
-//
-//            } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//                if (!$this->validateModify()) {
-//                    $this->output->set_status_header('403');
-//                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
-//                    die();
-//                }
-//
-//                //todo: Add validation here
-//                $organize_data = $this->input->post();
-//
-//                $name = !empty($organize_data['store-organize-name']) ? $organize_data['store-organize-name'] : null;
-//                $desc = !empty($organize_data['store-organize-desc']) ? $organize_data['store-organize-desc'] : null;
-//                $parent = !empty($organize_data['store-organize-parent']) ? $organize_data['store-organize-parent'] : null;
-//                $status = isset($organize_data['store-organize-status']) && $organize_data['store-organize-status'] == 'on' ? true : false;
-//
-//                $result = null;
-//                if (!empty($organize_data) && !isset($organizeId)) {
-//                    if (isset($organize_data['action']) && $organize_data['action'] == 'delete' && isset($organize_data['id']) && !empty($organize_data['id'])) {
-//                        foreach ($organize_data['id'] as &$id_entry) {
-//                            try {
-//                                $id_entry = new MongoId($id_entry);
-//                            } catch (Exception $e) {
-//                                $this->output->set_status_header('400');
-//                                echo json_encode(array('status' => 'error'));
-//                                die;
-//                            }
-//                        }
-//                        $result = $this->Store_org_model->deleteOrganizeByIdArray($organize_data['id']);
-//                    } else {
-//                        $result = $this->Store_org_model->createOrganize($client_id, $site_id, $name, $desc, $parent,
-//                            $status);
-//                    }
-//                } else {
-//                    try {
-//                        $organizeId = new MongoId($organizeId);
-//                        if (isset($organize_data['action']) && $organize_data['action'] == 'delete') {
-//                            $result = $this->Store_org_model->deleteOrganizeById($organizeId);
-//                        } else {
-//                            $result = $this->Store_org_model->updateOrganizeById($organizeId, array(
-//                                'client_id' => $client_id,
-//                                'site_id' => $site_id,
-//                                'name' => $name,
-//                                'description' => $desc,
-//                                'parent' => $parent,
-//                                'status' => $status
-//                            ));
-//                        }
-//                    } catch (Exception $e) {
-//                        $this->output->set_status_header('400');
-//                        echo json_encode(array('status' => 'error'));
-//                        die;
-//                    }
-//                }
-//
-//                if (!$result) {
-//                    $this->output->set_status_header('400');
-//                    echo json_encode(array('status' => 'error'));
-//                } elseif (!isset($organizeId) && !isset($organize_data['action'])) {
-//                    $this->output->set_status_header('201');
-//                    // todo: should return newly create object
-//                    echo json_encode(array('status' => 'success', 'rows' => $result));
-//                } else {
-//                    $this->output->set_status_header('200');
-//                    // todo: should return update object
-//                    echo json_encode(array('status' => 'success'));
-//                }
-//            }
-//        }
-//    }
+    public function media($fileId = null)
+    {
+        if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                if (!$this->validateAccess()) {
+                    $this->output->set_status_header('401');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access')));
+                    die();
+                }
+
+                if (isset($fileId)) {
+                    try {
+                        $result = $this->Image_model->retrieveImage($fileId);
+                        if (isset($result['_id'])) {
+                            $result['_id'] = $result['_id'] . "";
+                        }
+                        if (isset($result['date_added'])) {
+                            $result['date_added'] = datetimeMongotoReadable($result['date_added']);
+                        }
+                        if (isset($result['date_modified'])) {
+                            $result['date_modified'] = datetimeMongotoReadable($result['date_modified']);
+                        }
+
+                        $this->output->set_status_header('200');
+                        $response = $result;
+                    } catch (Exception $e) {
+                        $this->output->set_status_header('404');
+                        $response = array('status' => 'error', 'message' => $this->lang->line('error_no_contents'));
+                    }
+                } else {
+                    $query_data = $this->input->get(null, true);
+
+                    $result = $this->Image_model->retrieveImages($client_id, $site_id, $query_data);
+                    foreach($result as &$document){
+                        if(isset($document['_id'])){
+                            $document['_id'] = $document['_id']."";
+                        }
+                        if (isset($document['date_added'])) {
+                            $document['date_added'] = datetimeMongotoReadable($document['date_added']);
+                        }
+                        if (isset($document['date_modified'])) {
+                            $document['date_modified'] = datetimeMongotoReadable($document['date_modified']);
+                        }
+                    }
+
+                    $this->output->set_status_header('200');
+                    $count_images = $this->Image_model->countImages($client_id, $site_id);
+
+                    $response = array(
+                        'total' => $count_images,
+                        'rows' => $result
+                    );
+                }
+
+                echo json_encode($response);
+                die();
+            }
+        }
+    }
 //
 //    public function node($nodeId = null)
 //    {
