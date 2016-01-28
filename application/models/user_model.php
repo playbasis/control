@@ -408,24 +408,6 @@ class User_model extends MY_Model
                 $this->database = $row['database'];
                 $ip = $row['ip'];
 
-                // $this->permission
-                $this->mongo_db->select(array('permission'));
-                $this->mongo_db->where('_id', $this->user_group_id);
-                $this->mongo_db->limit(1);
-                $Q3 = $this->mongo_db->get('user_group');
-                if(count($Q3)>0){
-                    $row3 = $Q3[0];
-                    $permissions = $row3['permission'];
-                    if (is_array($permissions)) {
-                        foreach ($permissions as $key => $value) {
-                            $this->permission[$key] = $value;
-                        }
-                    }
-                }else{
-                    $this->logout();
-                    return;
-                }
-
                 // $this->client_id
                 $this->mongo_db->select(array('client_id'));
                 $this->mongo_db->where('user_id', new MongoID($this->user_id));
@@ -439,10 +421,60 @@ class User_model extends MY_Model
                     $this->client_id = null;
                 }
 
-                if($this->getAdminGroupID() || $this->client_id){
-
-                    // $this->site_id
+                // $this->site_id
+                if($this->client_id) {
                     $this->site_id = $this->fetchSiteId($this->client_id);
+                }
+
+                // $this->permission
+                if($this->user_group_id == $this->getAdminGroupID()){
+                    // Login as Playbasis admin
+                    $this->mongo_db->select(array('permission'));
+                    $this->mongo_db->where('_id', $this->user_group_id);
+                    $this->mongo_db->limit(1);
+                    $Q3 = $this->mongo_db->get('user_group');
+                    if(count($Q3)>0){
+                        $row3 = $Q3[0];
+                        $permissions = $row3['permission'];
+                        if (is_array($permissions)) {
+                            foreach ($permissions as $key => $value) {
+                                $this->permission[$key] = $value;
+                            }
+                        }
+                    }else{
+                        $this->logout();
+                        return false;
+                    }
+                }else {
+                    // Login as Client user
+                    $this->mongo_db->select(array('permission'));
+                    $this->mongo_db->where('_id', $this->user_group_id);
+                    $this->mongo_db->limit(1);
+                    $Q3 = $this->mongo_db->get('user_group_to_client');
+                    if (count($Q3) > 0) {
+                        $row3 = $Q3[0];
+                        $permissions = $row3['permission'];
+                        if (is_array($permissions)) {
+                            foreach ($permissions as $key => $value) {
+                                $this->permission[$key] = $value;
+                            }
+                        }
+                    } else {
+                        $this->mongo_db->where('status', true);
+                        $this->mongo_db->where('site_id', new MongoID($this->site_id));
+                        $this->mongo_db->where('client_id', new MongoID($this->client_id));
+                        $this->mongo_db->order_by(array('sort_order' => 1));
+                        $results = $this->mongo_db->get("playbasis_feature_to_client");
+                        foreach ($results as $key => $value) {
+                            $access[$key] = $value['link'];
+                            $modify[$key] = $value['link'];
+                        }
+                        $this->permission['access'] = $access;
+                        $this->permission['modify'] = $modify;
+                    }
+                }
+
+                if($this->getAdminGroupID() || $this->client_id){
                     $this->mobile = $this->findMobileByClientId($this->client_id);
 
                     $this->set_site_mongodb($this->site_id);

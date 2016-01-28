@@ -13,6 +13,7 @@ class User_group extends MY_Controller{
         $this->lang->load("form_validation", $lang['folder']);
 
         $this->load->model('User_group_model');
+        $this->load->model('User_group_to_client_model');
         $this->load->model('User_model');
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
@@ -57,7 +58,11 @@ class User_group extends MY_Controller{
 
 		$this->load->library('pagination');
 		$config['base_url'] = site_url('user_group/page');
-        $config['total_rows'] = $this->User_group_model->getTotalNumUsers();
+        if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+            $config['total_rows'] = $this->User_group_model->getTotalNumUsers();
+        }else{
+            $config['total_rows'] = $this->User_group_to_client_model->getTotalNumUsers($this->User_model->getClientId());
+        }
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
@@ -109,13 +114,22 @@ class User_group extends MY_Controller{
                     'filter_name' => $_GET['filter_name']
                 );
 
-            $this->data['user_groups'] = $this->User_group_model->fetchAllUserGroups($filter);
+            if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                $this->data['user_groups'] = $this->User_group_model->fetchAllUserGroups($filter);
+            }else{
+                $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($this->User_model->getClientId(),$filter);
+            }
         }else{
             $filter = array(
                 'limit' => $config['per_page'],
                 'start' => $offset
             );
-            $this->data['user_groups'] = $this->User_group_model->fetchAllUserGroups($filter);
+
+            if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                $this->data['user_groups'] = $this->User_group_model->fetchAllUserGroups($filter);
+            }else{
+                $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($this->User_model->getClientId(),$filter);
+            }
         }
 
 		$this->data['main'] = 'user_group';
@@ -136,7 +150,12 @@ class User_group extends MY_Controller{
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             if($this->form_validation->run()){
-                $this->User_group_model->editUserGroup($user_group_id, $this->input->post());  
+
+                if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                    $this->User_group_model->editUserGroup($user_group_id, $this->input->post());
+                }else{
+                    $this->User_group_to_client_model->editUserGroup($this->User_model->getClientId(),$user_group_id, $this->input->post());
+                }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('user_group/','refresh');
@@ -164,7 +183,11 @@ class User_group extends MY_Controller{
             
         	if($this->form_validation->run()){
         		$this->session->data['success'] = $this->lang->line('text_success');
-                $this->User_group_model->insertUserGroup();
+                if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                    $this->User_group_model->insertUserGroup();
+                }else{
+                    $this->User_group_to_client_model->insertUserGroup($this->User_model->getClientId());
+                }
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
                 redirect('user_group/','refresh');
         	}else{
@@ -179,14 +202,24 @@ class User_group extends MY_Controller{
 
 	public function getForm($user_group_id = 0){
 		if((isset($user_group_id) && $user_group_id !=0)){
-			$user_group_info = $this->User_group_model->getUserGroupInfo($user_group_id);
+
+            if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                $user_group_info = $this->User_group_model->getUserGroupInfo($user_group_id);
+            }else{
+                $user_group_info = $this->User_group_to_client_model->getUserGroupInfo($this->User_model->getClientId(), $user_group_id);
+            }
 		}
 
 		if(isset($user_group_info)){
             $this->data['user_group_info'] = $user_group_info;
 		}
-        
-        $this->data['all_features'] = $this->User_group_model->getAllFeatures();
+
+        if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+            $this->data['all_features'] = $this->User_group_model->getAllFeatures();
+        }else{
+            $this->data['all_features'] = $this->User_group_to_client_model->getAllFeatures($this->User_model->getClientId(),$this->User_model->getSiteId());
+        }
+
         $this->data['main'] = 'user_group_form';
         $this->render_page('template');
 	}
@@ -196,10 +229,19 @@ class User_group extends MY_Controller{
 
         foreach($selectedUserGroups as $selectedUserGroup){
 
-            $check = $this->User_group_model->checkUsersInUserGroup($selectedUserGroup);
+            $check = null;
+            if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                $check = $this->User_group_model->checkUsersInUserGroup($selectedUserGroup);
+            }else{
+                $check = $this->User_group_to_client_model->checkUsersInUserGroup($this->User_model->getClientId(),$selectedUserGroup);
+            }
 
             if($check==null){
-                $this->User_group_model->deleteUserGroup($selectedUserGroup);
+                if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                    $this->User_group_model->deleteUserGroup($selectedUserGroup);
+                }else{
+                    $this->User_group_to_client_model->deleteUserGroup($this->User_model->getClientId(),$selectedUserGroup);
+                }
             }else{
                 $this->session->set_flashdata('fail', $this->lang->line('text_fail_users_exists'));
                 redirect('/user_group', 'refresh');
@@ -225,7 +267,12 @@ class User_group extends MY_Controller{
                 'filter_name' => $filter_name
             );
 
-            $results_usergroup = $this->User_group_model->fetchAllUserGroups($data);
+
+            if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                $results_usergroup = $this->User_group_model->fetchAllUserGroups($data);
+            }else{
+                $results_usergroup = $this->User_group_to_client_model->fetchAllUserGroups($this->User_model->getClientId(),$data);
+            }
 
             foreach ($results_usergroup as $result) {
                 $json[] = array(

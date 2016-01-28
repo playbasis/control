@@ -22,6 +22,7 @@ class User extends MY_Controller
         $this->load->model('Merchant_model');
         $this->load->model('Goods_model');
         $this->load->model('User_group_model');
+        $this->load->model('User_group_to_client_model');
         $this->load->model('Setting_model');
 
         $lang = get_lang($this->session, $this->config);
@@ -384,7 +385,12 @@ class User extends MY_Controller
             $this->data['user'] = $user_info;    
         }
 
-        $this->data['user_groups'] = $this->User_model->getUserGroups();
+        $client_id= $this->User_model->getClientIdByUserId(new MongoId($user_id));
+        /*if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+            $this->data['user_groups'] = $this->User_model->getUserGroups();
+        }else{*/
+            $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
+        //}
 
         $this->data['main'] = 'user_form';
         $this->render_page('template');
