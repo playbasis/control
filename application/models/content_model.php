@@ -142,4 +142,16 @@ class Content_model extends MY_Model
         $this->mongo_db->where('deleted', false);
         return $this->mongo_db->get("playbasis_content_category_to_client");
     }
+    public function getContentCategoryNameById($client_id, $site_id, $categoryId)
+    {
+
+        $this->mongo_db->where('_id', $categoryId);
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->select(array('name'));
+        $this->mongo_db->select(array(),array('_id'));
+        $result =$this->mongo_db->get("playbasis_content_category_to_client");
+        return $result ? $result[0]['name']:null;
+    }
 }
