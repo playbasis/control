@@ -136,6 +136,7 @@ class Engine extends Quest
 						'input',
 						'date_added'
 					));
+					$jigsaw['state'] = $jigsaw['state']?$jigsaw['state']:null;
 				}
 				$this->applyBadgeObjGoodsObj($this->client_id, $this->site_id, $jigsaw['config']);
 				array_walk_recursive($jigsaw, array($this, "convert_mongo_object"));
