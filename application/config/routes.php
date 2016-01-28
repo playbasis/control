@@ -325,6 +325,7 @@ $route['StoreOrg/rankPeerByAccAction'] = 'store_org/rankPeerByAccumulateAction/0
 
 //content API
 $route['Content'] = 'content/list';
+$route['Category'] = 'content/category';
 
 //CMS API
 $route['CMS/getArticles'] = 'cms/getArticles';
