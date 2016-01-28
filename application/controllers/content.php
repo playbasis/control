@@ -32,7 +32,7 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
 
-        array_walk_recursive($contents, array($this, "convert_mongo_object"));
+        array_walk_recursive($contents, array($this, "convert_mongo_object_and_category"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -46,8 +46,11 @@ class Content extends REST2_Controller
      * @param mixed $item this is reference
      * @param string $key
      */
-    private function convert_mongo_object(&$item, $key)
+    private function convert_mongo_object_and_category(&$item, $key)
     {
+        if ($key == 'category'){
+            $item = $this->content_model->getContentCategoryNameById($this->client_id, $this->site_id, $item);
+        }
         if (is_object($item)) {
             if (get_class($item) === 'MongoId') {
                 $item = $item->{'$id'};
@@ -57,5 +60,6 @@ class Content extends REST2_Controller
                 }
             }
         }
+
     }
 }
