@@ -572,6 +572,20 @@ class FileManager extends MY_Controller
         }
 
         if (!isset($json['error'])) {
+            $client_id = $this->User_model->getClientId();
+            $site_id   = $this->User_model->getSiteId();
+
+            $this->load->model('Plan_model');
+            $this->load->model('Permission_model');
+            // Get Limit
+            $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+            $limit_images = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'image');
+
+            $size = $this->Image_model->getTotalSize($client_id);
+            if ($limit_images && ($size + $_FILES['image']['size'] > $limit_images)){
+                $json['error'] = $this->lang->line('error_overall_size_limit_reached');
+            }
+
             //create a new bucket
             //$this->s3->putBucket("elasticbeanstalk-ap-southeast-1-007834438823", S3::ACL_PUBLIC_READ);
 
@@ -579,8 +593,12 @@ class FileManager extends MY_Controller
 
             //move the file
             if ($this->s3->putObjectFile($_FILES['image']['tmp_name'], "elasticbeanstalk-ap-southeast-1-007834438823", rtrim('data/' . str_replace('../', '', $this->input->post('directory')), '/')."/". $filename, S3::ACL_PUBLIC_READ)) {
+                $url = rtrim(S3_IMAGE . 'data/' . str_replace('../', '', $this->input->post('directory')),
+                        '/') . "/" . urlencode($filename);
+                @copy($url, $directory . '/' . $filename);
 
-                @copy(rtrim(S3_IMAGE.'data/' . str_replace('../', '', $this->input->post('directory')), '/')."/". urlencode($filename), $directory . '/' . $filename);
+                $this->Image_model->registerImageToSite($client_id, $site_id, $_FILES['image']['size'], $filename,
+                    $url);
 
                 $json['success'] = $this->lang->line('text_uploaded');
             }else{

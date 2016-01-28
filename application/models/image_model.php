@@ -60,5 +60,88 @@ class Image_model extends MY_Model
 
         return S3_IMAGE . $new_image;
     }
+
+    public function getTotalSize ($client_id){
+
+        $match = array(
+            'client_id' => $client_id
+        );
+        $result = $this->mongo_db->aggregate('playbasis_file', array(
+            array(
+                '$match' => $match,
+            ),
+            array(
+                '$group' => array('_id' => null,'size' => array('$sum' => '$file_size'))
+            ),
+        ));
+
+        if (isset($result['result'][0])){
+            $result = $result['result'][0]['size'];
+        }else{
+            $result = 0;
+        }
+        return $result;
+
+    }
+
+    public function registerImageToSite($client_id, $site_id, $image_size, $filename, $url, $directory = null)
+    {
+        if ($this->getImageUrl($client_id, $site_id, $filename, $directory)) {
+            $mongoDate = new MongoDate(time());
+
+            $this->mongo_db->set('date_modified', $mongoDate);
+            $this->mongo_db->set('file_size', $image_size);
+            $this->mongo_db->set('url', $url);
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->where('file_name', $filename);
+
+            $result = $this->mongo_db->update('playbasis_file');
+        } else {
+            $mongoDate = new MongoDate(time());
+            $this->set_site_mongodb($site_id);
+            $data = array(
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'url' => $url,
+                'file_size' => $image_size
+            );
+            if (isset($filename)) {
+                $data['file_name'] = $filename;
+            }
+            if (isset($filename)) {
+                $data['directory'] = $directory;
+            }
+
+            $data['date_added'] = $mongoDate;
+            $data['date_modified'] = $mongoDate;
+
+            try{
+                $result = $this->mongo_db->insert('playbasis_file', $data);
+            }catch (Exception $e){
+                $result = false;
+            }
+        }
+
+        return $result;
+
+    }
+
+    public function getImageUrl ($client_id,$site_id,$filename,$directory=null,$pb_player_id=null){
+
+        $this->mongo_db->select(array ('url'));
+        $this->mongo_db->select(array (),array('_id'));
+        $this->mongo_db->where('client_id',$client_id);
+        $this->mongo_db->where('site_id',$site_id);
+        $this->mongo_db->where('file_name',$filename);
+        $this->mongo_db->where('directory',$directory);
+
+        if ($pb_player_id)$this->mongo_db->where('pb_player_id',$pb_player_id);
+
+        $result = $this->mongo_db->get('playbasis_file');
+
+        return $result? $result[0]['url']:null;
+
+    }
 }
 ?>
