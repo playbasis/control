@@ -149,9 +149,9 @@ class Content_model extends MY_Model
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->select(array('display'));
+        $this->mongo_db->select(array('name'));
         $this->mongo_db->select(array(),array('_id'));
         $result =$this->mongo_db->get("playbasis_content_category_to_client");
-        return $result ? $result[0]['display']:null;
+        return $result ? $result[0]['name']:null;
     }
 }
