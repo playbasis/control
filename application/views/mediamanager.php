@@ -61,7 +61,7 @@
             }
             ?>
             <div class="row-fluid">
-                <div class="span9 well" style="min-height: 500px">
+                <div class="span9 well" style="min-height: 700px">
                     <ul id="thumbnails_grid" class="thumbnails">
 
                     </ul>
@@ -93,14 +93,14 @@
     <li class="thumbfix span3" data-id="{{img_id}}" data-file_name="{{file_name}}" data-file_size="{{file_size}}"
         data-url="{{img_url}}" data-sm_url="{{img_sm_url}}" data-lg_url="{{img_lg_url}}">
         <a href="#" class="thumbnail">
-            <img src="" style="width: 200px; height: 180px;">
+            <img src="">
         </a>
     </li>
 </ul>
 
 <div id="hiddenPreview" class="hide">
     <div class="thumbnail">
-        <img src="" style="width: 300px; height: 200px; border: black solid 1px">
+        <img src="" style="border: black solid 1px">
         <div class="caption">
             <div class="row-fluid">
                 <h3 style="word-wrap: break-word">{{file_name}}</h3>
@@ -130,25 +130,6 @@
                 <p>File Size: {{file_size}} bytes</p>
             </div>
         </div>
-    </div>
-</div>
-
-<div id="pleaseWaitSpanDiv" class="hide">
-    <span id="pleaseWaitSpan"><i class="fa fa-spinner fa-spin"></i></span>
-</div>
-
-<div class="modal hide" id="savedDialog" data-backdrop="static" data-keyboard="false">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h1>Data Saved</h1>
-    </div>
-    <div class="modal-body">
-        <div>
-            <i class="fa fa-save"></i>&nbsp;<span>Data has been saved!</span>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
     </div>
 </div>
 
@@ -202,7 +183,7 @@
         if (imageDataJSONObject != null) {
             imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{img_id}}', 'g'), imageDataJSONObject._id);
             imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{img_url}}', 'g'), imageDataJSONObject.url);
-            imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('src=""', 'g'), 'src="' + imageDataJSONObject.url + '"');
+            imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('src=""', 'g'), 'src="' + imageDataJSONObject.lg_thumb + '"');
             imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{file_name}}', 'g'), imageDataJSONObject.file_name);
             imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{file_size}}', 'g'), imageDataJSONObject.file_size);
             imageThumbnailGrid = imageThumbnailGrid.replace(new RegExp('{{img_sm_url}}', 'g'), imageDataJSONObject.sm_thumb);
@@ -224,7 +205,7 @@
 
         if (filename || url || filesize) {
             hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{img_url}}', 'g'), url);
-            hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('src=""', 'g'), 'src="' + url + '"');
+            hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('src=""', 'g'), 'src="' + lg_thumb + '"');
             hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{file_name}}', 'g'), filename);
             hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{file_size}}', 'g'), filesize);
             hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{img_sm_url}}', 'g'), sm_thumb);
@@ -246,13 +227,14 @@
 //                if (console && console.log) {
 //                    console.log("Sample of data:", data);
 //                }
-                $waitDialog.modal('hide');
                 $.each(data.rows, function (index, value) {
                     createImageThumbnailGrid(value);
                 });
+                if(data.rows !== undefined)
+                    $(".thumbfix")[0].click();
+                $waitDialog.modal('hide');
             })
             .always(function () {
-                $('form.store-organize-form').trigger("reset");
                 $waitDialog.modal('hide');
             });
     }

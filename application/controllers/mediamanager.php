@@ -90,9 +90,10 @@ class MediaManager extends MY_Controller
                         if (isset($result['date_modified'])) {
                             $result['date_modified'] = datetimeMongotoReadable($result['date_modified']);
                         }
-                        if (isset($document['file_name'])) {
-                            $document['sm_thumb'] = $this->Image_model->resize($document['file_name'], MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH, MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT);
-                            $document['lg_thumb'] = $this->Image_model->resize($document['file_name'], MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH, MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT);
+                        if (isset($document['url'])) {
+                            $info = pathinfo($document['url']);
+                            $document['lg_thumb'] = $info['dirname'] . '/' . $info['filename'] . '-' . MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT . '.' . $info['extension'];
+                            $document['sm_thumb'] = $info['dirname'] . '/' . $info['filename'] . '-' . MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT . '.' . $info['extension'];
                         }
 
                         $this->output->set_status_header('200');
@@ -115,9 +116,10 @@ class MediaManager extends MY_Controller
                         if (isset($document['date_modified'])) {
                             $document['date_modified'] = datetimeMongotoReadable($document['date_modified']);
                         }
-                        if (isset($document['file_name'])) {
-                            $document['sm_thumb'] = $this->Image_model->resize($document['file_name'], MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH, MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT);
-                            $document['lg_thumb'] = $this->Image_model->resize($document['file_name'], MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH, MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT);
+                        if (isset($document['url'])) {
+                            $info = pathinfo($document['url']);
+                            $document['lg_thumb'] = $info['dirname'] . '/' . $info['filename'] . '-' . MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT . '.' . $info['extension'];
+                            $document['sm_thumb'] = $info['dirname'] . '/' . $info['filename'] . '-' . MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT . '.' . $info['extension'];
                         }
                     }
 

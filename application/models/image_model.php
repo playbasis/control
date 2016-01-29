@@ -16,7 +16,8 @@ class Image_model extends MY_Model
         $extension = $info['extension'];
 
         $old_image = $filename;
-        $new_image = 'cache/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
+        $new_image = 'data/' . utf8_substr($filename, 0,
+                utf8_strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
 
 //        $headers = get_headers(S3_IMAGE.$new_image, 1);
 
@@ -52,10 +53,13 @@ class Image_model extends MY_Model
 
             $this->s3->setEndpoint("s3-ap-southeast-1.amazonaws.com");
 
-            $data_image = @file_get_contents(DIR_IMAGE.$new_image);
-
             //move the file
-            $this->s3->putObject($data_image, "elasticbeanstalk-ap-southeast-1-007834438823", $new_image, S3::ACL_PUBLIC_READ);
+            if ($this->s3->putObjectFile(DIR_IMAGE . $new_image, "elasticbeanstalk-ap-southeast-1-007834438823",
+                $new_image, S3::ACL_PUBLIC_READ)
+            ) {
+                unlink(DIR_IMAGE . $old_image);
+                unlink(DIR_IMAGE . $new_image);
+            }
         }
 
         return S3_IMAGE . $new_image;
