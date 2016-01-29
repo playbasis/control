@@ -25,8 +25,8 @@ class Image_model extends MY_Model
 //        }
 
         if (!file_exists(DIR_IMAGE . $filename) || !is_file(DIR_IMAGE . $filename)) {
-            if(@fopen(S3_IMAGE . $filename,"r")){
-                @copy(S3_IMAGE . $filename, DIR_IMAGE . $filecopy);
+            if(@fopen(S3_IMAGE . 'data/' . $filename,"r")){
+                @copy(S3_IMAGE . 'data/' . $filename, DIR_IMAGE . $filecopy);
             }else{
                 return S3_IMAGE."cache/no_image-".$width.'x'.$height.".jpg";
             }
