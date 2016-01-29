@@ -88,12 +88,6 @@ class User_group_to_client_model extends MY_model{
         $this->mongo_db->insert('user_group_to_client', $data);
     }
 
-    public function checkUsersInUserGroup($client_id,$user_group_id){
-        $this->mongo_db->where('client_id', new MongoID($client_id));
-        $this->mongo_db->where('user_group_id', new MongoID($user_group_id));
-        return $this->mongo_db->get('user');
-    }
-
     public function deleteUserGroup($client_id,$usergroup_id){
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('_id', new MongoID($usergroup_id));

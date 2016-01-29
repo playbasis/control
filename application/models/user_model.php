@@ -711,6 +711,10 @@ class User_model extends MY_Model
         }
     }
 
+    public function getPermission() {
+        return $this->permission;
+    }
+
     public function isLogged() {
         return $this->user_id;
     }

@@ -16,9 +16,19 @@ class Dashboard extends MY_Controller
             $this->User_model->updateSiteId($this->input->get('site_id'));
         }
 
-        $lang = get_lang($this->session, $this->config);
-        $this->lang->load($lang['name'], $lang['folder']);
-        $this->lang->load("home", $lang['folder']);
+        if($this->validateAccess()){
+            $lang = get_lang($this->session, $this->config);
+            $this->lang->load($lang['name'], $lang['folder']);
+            $this->lang->load("home", $lang['folder']);
+        }else{
+            $permission = $this->User_model->getPermission();
+            if($permission){
+                redirect("/".$permission['access'][0], 'refresh');
+            }else{
+                redirect('/block', 'refresh');
+            }
+        }
+
     }
 
     public function index(){

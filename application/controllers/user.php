@@ -385,12 +385,22 @@ class User extends MY_Controller
             $this->data['user'] = $user_info;    
         }
 
-        $client_id= $this->User_model->getClientIdByUserId(new MongoId($user_id));
-        /*if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
-            $this->data['user_groups'] = $this->User_model->getUserGroups();
-        }else{*/
-            $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
-        //}
+        if(!$user_id) {
+            if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                $this->data['user_groups'] = $this->User_model->getUserGroups();
+            }else{
+                $client_id = $this->User_model->getClientId();
+                $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
+            }
+        }else {
+            $user_info = $this->User_model->getUserInfo($user_id);
+            if ($user_info['user_group_id'] == $this->User_model->getAdminGroupID()) {
+                $this->data['user_groups'] = $this->User_model->getUserGroups();
+            }else {
+                $client_id = $this->User_model->getClientIdByUserId(new MongoId($user_id));
+                $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
+            }
+        }
 
         $this->data['main'] = 'user_form';
         $this->render_page('template');
@@ -504,6 +514,14 @@ class User extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    public function block(){
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['main'] = 'block';
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
     }
 
     public function login(){

@@ -229,12 +229,7 @@ class User_group extends MY_Controller{
 
         foreach($selectedUserGroups as $selectedUserGroup){
 
-            $check = null;
-            if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
-                $check = $this->User_group_model->checkUsersInUserGroup($selectedUserGroup);
-            }else{
-                $check = $this->User_group_to_client_model->checkUsersInUserGroup($this->User_model->getClientId(),$selectedUserGroup);
-            }
+            $check = $this->User_group_model->checkUsersInUserGroup($selectedUserGroup);
 
             if($check==null){
                 if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
