@@ -102,14 +102,33 @@
     <div class="thumbnail">
         <img src="" style="width: 300px; height: 200px; border: black solid 1px">
         <div class="caption">
-            <h3 style="word-wrap: break-word">{{file_name}}</h3>
-            <label for="img_url">Image URL:</label>
-            <textarea id="img_url" rows="3" class="input-block-level" readonly>{{img_url}}</textarea>
-            <label for="sm_thumb_url">Small thumbnail URL:</label>
-            <textarea id="sm_thumb_url" rows="3" class="input-block-level" readonly>{{img_sm_url}}</textarea>
-            <label for="lg_thumb_url">Large thumbnail URL:</label>
-            <textarea id="lg_thumb_url" rows="3" class="input-block-level" readonly>{{img_lg_url}}</textarea>
-            <p>File Size: {{file_size}} bytes</p>
+            <div class="row-fluid">
+                <h3 style="word-wrap: break-word">{{file_name}}</h3>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <label for="img_url">Image URL:</label>
+                    <textarea id="img_url" rows="3" class="input-block-level" readonly>{{img_url}}</textarea>
+                    <button class="btn btn-block" onclick="copyToClipboard('#img_url')">Copy to clipboard</button>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <label for="sm_thumb_url">Small thumbnail URL:</label>
+                    <textarea id="sm_thumb_url" rows="3" class="input-block-level" readonly>{{img_sm_url}}</textarea>
+                    <button class="btn btn-block" onclick="copyToClipboard('#sm_thumb_url')">Copy to clipboard</button>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <label for="lg_thumb_url">Large thumbnail URL:</label>
+                    <textarea id="lg_thumb_url" rows="3" class="input-block-level" readonly>{{img_lg_url}}</textarea>
+                    <button class="btn btn-block" onclick="copyToClipboard('#lg_thumb_url')">Copy to clipboard</button>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <p>File Size: {{file_size}} bytes</p>
+            </div>
         </div>
     </div>
 </div>
@@ -237,4 +256,12 @@
 //       console.log($(this).data('id'));
         displayThumbnailPreview($(this).data('file_name'), $(this).data('url'), $(this).data('file_size'), $(this).data('sm_url'), $(this).data('lg_url'));
     });
+
+    function copyToClipboard(element) {
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($(element).text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+    }
 </script>
