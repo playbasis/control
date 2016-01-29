@@ -32,6 +32,7 @@ $lang['error_copy']       = 'Warning: Can not copy this file or directory!';
 $lang['error_rename']     = 'Warning: Can not rename this directory!';
 $lang['error_file_type']  = 'Warning: Incorrect file type!';
 $lang['error_file_size']  = 'Warning: File too big please keep below 3MB and no more than 2000px height or width!';
+$lang['error_overall_size_limit_reached']  = 'Warning: Overall files size is reached the limit!';
 //$lang['error_width']		  = 'Warning: The width must be between 500 px and 1000px';
 //$lang['error_height']		  = 'Warning: The height must be between 500 px and 1000px';
 $lang['error_width']		  = 'Warning: The width must less than 2000px';
