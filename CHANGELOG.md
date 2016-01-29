@@ -1,5 +1,91 @@
 # Change Log
 
+## [2.2.0](https://github.com/playbasis/api/tree/2.2.0) (2016-01-29)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.49...2.2.0)
+
+## [2.2.0-alpha.7](https://github.com/playbasis/api/tree/2.2.0-alpha.7) (2016-01-28)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.49...2.2.0-alpha.7)
+
+## [2.1.49](https://github.com/playbasis/api/tree/2.1.49) (2016-01-28)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.48...2.1.49)
+
+**Implemented enhancements:**
+
+- Hotfix/2.1.49 [\#139](https://github.com/playbasis/api/pull/139) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.48](https://github.com/playbasis/api/tree/2.1.48) (2016-01-28)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.47...2.1.48)
+
+**Fixed bugs:**
+
+- Hotfix/2.1.48 [\#138](https://github.com/playbasis/api/pull/138) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.47](https://github.com/playbasis/api/tree/2.1.47) (2016-01-28)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.0-alpha.6...2.1.47)
+
+**Fixed bugs:**
+
+- Hotfix/2.1.47 [\#137](https://github.com/playbasis/api/pull/137) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.2.0-alpha.6](https://github.com/playbasis/api/tree/2.2.0-alpha.6) (2016-01-27)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.0-alpha.5...2.2.0-alpha.6)
+
+**Implemented enhancements:**
+
+- Feature : Quiz Support Question Order [\#136](https://github.com/playbasis/api/pull/136) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.2.0-alpha.5](https://github.com/playbasis/api/tree/2.2.0-alpha.5) (2016-01-27)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.0-alpha.4...2.2.0-alpha.5)
+
+**Implemented enhancements:**
+
+- Feature : Support Quiz Log [\#135](https://github.com/playbasis/api/pull/135) ([narut-playbasis](https://github.com/narut-playbasis))
+- Security - to validate input of all APIs [\#134](https://github.com/playbasis/api/pull/134) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.2.0-alpha.4](https://github.com/playbasis/api/tree/2.2.0-alpha.4) (2016-01-26)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.0-alpha.3...2.2.0-alpha.4)
+
+**Implemented enhancements:**
+
+- Add docker-compose project [\#133](https://github.com/playbasis/api/pull/133) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.2.0-alpha.3](https://github.com/playbasis/api/tree/2.2.0-alpha.3) (2016-01-25)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.0-alpha.2...2.2.0-alpha.3)
+
+**Implemented enhancements:**
+
+- Feature : Enable XSS [\#132](https://github.com/playbasis/api/pull/132) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.2.0-alpha.2](https://github.com/playbasis/api/tree/2.2.0-alpha.2) (2016-01-20)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.46...2.2.0-alpha.2)
+
+## [2.1.46](https://github.com/playbasis/api/tree/2.1.46) (2016-01-20)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.45...2.1.46)
+
+**Merged pull requests:**
+
+- Hotfix/2.1.46 [\#131](https://github.com/playbasis/api/pull/131) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.45](https://github.com/playbasis/api/tree/2.1.45) (2016-01-20)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.0-alpha.1...2.1.45)
+
+**Implemented enhancements:**
+
+- Hotfix/2.1.45 [\#130](https://github.com/playbasis/api/pull/130) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.2.0-alpha.1](https://github.com/playbasis/api/tree/2.2.0-alpha.1) (2016-01-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.44...2.2.0-alpha.1)
+
+## [2.1.44](https://github.com/playbasis/api/tree/2.1.44) (2016-01-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.14...2.1.44)
+
+**Implemented enhancements:**
+
+- Hotfix/2.1.44 [\#129](https://github.com/playbasis/api/pull/129) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [2.1.43-alpha.14](https://github.com/playbasis/api/tree/2.1.43-alpha.14) (2016-01-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43...2.1.43-alpha.14)
+
 ## [2.1.43](https://github.com/playbasis/api/tree/2.1.43) (2016-01-18)
 [Full Changelog](https://github.com/playbasis/api/compare/remove_cms_endpoint_from_iodocs...2.1.43)
 
@@ -1222,31 +1308,31 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.2-alpha.1...2.1.2-alpha.20)
 
 ## [2.1.2-alpha.1](https://github.com/playbasis/api/tree/2.1.2-alpha.1) (2014-06-20)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.3...2.1.2-alpha.1)
-
-## [2.1.1-rc.3](https://github.com/playbasis/api/tree/2.1.1-rc.3) (2014-06-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.2...2.1.1-rc.3)
-
-## [2.1.1-alpha.2](https://github.com/playbasis/api/tree/2.1.1-alpha.2) (2014-06-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.3...2.1.1-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.3...2.1.2-alpha.1)
 
 ## [2.1.1-beta.3](https://github.com/playbasis/api/tree/2.1.1-beta.3) (2014-06-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.1...2.1.1-beta.3)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.2...2.1.1-beta.3)
 
-## [2.1.1-alpha.1](https://github.com/playbasis/api/tree/2.1.1-alpha.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.1...2.1.1-alpha.1)
+## [2.1.1-alpha.2](https://github.com/playbasis/api/tree/2.1.1-alpha.2) (2014-06-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.3...2.1.1-alpha.2)
 
-## [2.1.1-rc.1](https://github.com/playbasis/api/tree/2.1.1-rc.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.1...2.1.1-rc.1)
+## [2.1.1-rc.3](https://github.com/playbasis/api/tree/2.1.1-rc.3) (2014-06-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.1...2.1.1-rc.3)
 
 ## [2.1.1-beta.1](https://github.com/playbasis/api/tree/2.1.1-beta.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-beta.1...2.1.1-beta.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.1...2.1.1-beta.1)
 
-## [2.1.0-beta.1](https://github.com/playbasis/api/tree/2.1.0-beta.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-rc.1...2.1.0-beta.1)
+## [2.1.1-rc.1](https://github.com/playbasis/api/tree/2.1.1-rc.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.1...2.1.1-rc.1)
+
+## [2.1.1-alpha.1](https://github.com/playbasis/api/tree/2.1.1-alpha.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-rc.1...2.1.1-alpha.1)
 
 ## [2.1.0-rc.1](https://github.com/playbasis/api/tree/2.1.0-rc.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-alpha.1...2.1.0-rc.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-beta.1...2.1.0-rc.1)
+
+## [2.1.0-beta.1](https://github.com/playbasis/api/tree/2.1.0-beta.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-alpha.1...2.1.0-beta.1)
 
 ## [2.1.0-alpha.1](https://github.com/playbasis/api/tree/2.1.0-alpha.1) (2014-06-06)
 [Full Changelog](https://github.com/playbasis/api/compare/1.0-ALPHA.2...2.1.0-alpha.1)
