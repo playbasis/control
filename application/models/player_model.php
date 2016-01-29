@@ -2655,8 +2655,6 @@ class Player_model extends MY_Model
 
 	public function storeDeviceToken($data)
 	{
-		$mongoDate = new MongoDate(time());
-
 		$this->mongo_db->select(null);
 		$this->mongo_db->where(array(
 			'client_id' => new MongoId($data['client_id']),
@@ -2668,7 +2666,7 @@ class Player_model extends MY_Model
 		$results = $this->mongo_db->get('playbasis_player_device');
 		if (!$results)
 		{
-			$this->mongo_db->insert('playbasis_player_device', array(
+			$result = $this->mongo_db->insert('playbasis_player_device', array(
 				'client_id' => new MongoId($data['client_id']),
 				'site_id' => new MongoId($data['site_id']),
 				'pb_player_id' => new MongoId($data['pb_player_id']),
@@ -2677,10 +2675,24 @@ class Player_model extends MY_Model
 				'device_name' => $data['device_name'],
 				'os_type' => $data['os_type'],
 				'status' => true,
-				'date_added' => $mongoDate,
-				'date_modified' => $mongoDate,
+				'date_added' => new MongoDate(),
+				'date_modified' => new MongoDate(),
 			));
+		} else {
+			$this->mongo_db->where('client_id', new MongoId($data['client_id']));
+			$this->mongo_db->where('site_id', new MongoId($data['site_id']));
+			$this->mongo_db->where('pb_player_id', new MongoId($data['pb_player_id']));
+
+			$this->mongo_db->set('device_token', $data['device_token']);
+			$this->mongo_db->set('device_description', $data['device_description']);
+			$this->mongo_db->set('device_name', $data['device_name']);
+			$this->mongo_db->set('os_type', $data['os_type']);
+			$this->mongo_db->set('status', true);
+			$this->mongo_db->set('date_modified', new MongoDate());
+
+			$result = $this->mongo_db->update("playbasis_player_device");
 		}
+		return $result ? true : false;
 	}
 
 	public function listDevices($client_id, $site_id, $pb_player_id, $fields=null)
