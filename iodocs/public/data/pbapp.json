@@ -2019,6 +2019,17 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "random",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "enumerated",
+                            "Description": "1=Random, 2=Not Random",
+                            "EnumeratedList": [
+                                "1",
+                                "2"
+                            ]
                         }
                     ]
                 },

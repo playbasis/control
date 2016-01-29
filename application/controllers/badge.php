@@ -21,9 +21,15 @@ class Badge extends REST2_Controller
                 $badgeId = null;
             }
 			//get badge by specific id
-			$badge['badge'] = $this->badge_model->getBadge(array_merge($this->validToken, array(
+			$result = $this->badge_model->getBadge(array_merge($this->validToken, array(
 				'badge_id' => new MongoId($badgeId)
 			)));
+
+			if(!$result){
+				$this->response($this->error->setError('BADGE_NOT_FOUND'), 200);
+			}
+
+			$badge['badge'] = $result;
 			$this->response($this->resp->setRespond($badge), 200);
 		}
 		else

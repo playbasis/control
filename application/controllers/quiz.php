@@ -233,6 +233,7 @@ class Quiz extends REST2_Controller
 
         /* param "player_id" */
         $player_id = $this->input->get('player_id');
+        $random = $this->input->get('random')== "1"?true:false;
         if ($player_id === false) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
         $pb_player_id = $this->player_model->getPlaybasisId(array(
             'client_id' => $this->client_id,
@@ -242,14 +243,23 @@ class Quiz extends REST2_Controller
         if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
         $result = $this->quiz_model->find_quiz_by_quiz_and_player($this->client_id, $this->site_id, $quiz_id, $pb_player_id);
+
+        if (isset($quiz['question_order']) && $quiz['question_order'] ){
+            if ($random){
+                $this->response($this->error->setError('QUIZ_QUESTION_NOT_ALLOW_RANDOM'), 200);
+            }
+            $quiz['questions'] = $this->sortArray($quiz['questions'],"question_number","question");
+        }
+
         $completed_questions = $result ? $result['questions'] : array();
         $question = null;
         $index = -1;
+        $remain_count = count($completed_questions) - count($quiz['questions']);
         foreach ($quiz['questions'] as $i => $q) {
             if (!in_array($q['question_id'], $completed_questions)) {
                 $question = $q; // get the first question in the quiz that the player has not submitted an answer
                 $index = $i;
-                break;
+                if (($remain_count != 0) && (rand() %$remain_count == 0) ) break;
             }
         }
         if ($question) {
@@ -322,6 +332,23 @@ class Quiz extends REST2_Controller
         $completed_questions = $result ? $result['questions'] : array();
         if (in_array($question_id, $completed_questions)) $this->response($this->error->setError('QUIZ_QUESTION_ALREADY_COMPLETED'), 200);
 
+        if (isset($quiz['question_order']) && $quiz['question_order'] ){
+            $quiz['questions'] = $this->sortArray($quiz['questions'],"question_number","question");
+            $index = 0;
+            if (!empty($completed_questions)){
+                $latest_id = end($completed_questions); // get latest question id
+                if(is_array($quiz['questions'])) foreach ($quiz['questions'] as $index => $q){
+                    if ($latest_id == $q['question_id']) {
+                        $index++;
+                        break;
+                    }
+                }
+            }
+            if (($index) >= count($quiz['questions']) ||  $question_id != $quiz['questions'][$index]['question_id']){
+                $this->response($this->error->setError('QUIZ_QUESTION_OUT_OF_SEQUENCE'), 200);
+            }
+        }
+
         /* get score from answering that option */
         $score = intval($option['score']);
         $explanation = $option['explanation'];
@@ -367,6 +394,28 @@ class Quiz extends REST2_Controller
         /* update player's score */
         $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $option_id, $score, $grade);
 
+        $this->tracker_model->trackQuiz(array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'pb_player_id' => $pb_player_id,
+            'quiz_id' => $quiz_id,
+            'quiz_name' => $quiz['name'],
+            'question' => $question,
+            'option' => $option,
+            'grade' => $grade,
+            'quiz_completed' => false,
+        ));
+        if (isset($completeQuizActionId) && $completeQuizActionId) {
+            $this->tracker_model->trackQuiz(array(
+                'client_id' => $this->client_id,
+                'site_id' => $this->site_id,
+                'pb_player_id' => $pb_player_id,
+                'quiz_id' => $quiz_id,
+                'quiz_name' => $quiz['name'],
+                'grade' => $grade,
+                'quiz_completed' => true,
+            ));
+        }
         /* publish the reward (if any) */
         if (is_array($rewards)) foreach ($rewards as $reward) $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $quiz, $this->validToken['domain_name'], $reward);
 
@@ -949,6 +998,19 @@ class Quiz extends REST2_Controller
                 $item = $this->config->item('IMG_PATH')."no_image.jpg";
             }
         }
+    }
+    private function sortArray ($list, $sort_by, $name){
+        $result = $list;
+        foreach ($list as $key => $raw){
+
+            $temp_name[$key] = $raw[$name];
+            $temp_value[$key] =  $raw[$sort_by];
+        }
+        if (isset($temp_value) && isset($temp_name))
+        {
+            array_multisort( $temp_value, SORT_ASC,$temp_name, SORT_ASC, $result);
+        }
+        return $result;
     }
 }
 ?>

@@ -33,6 +33,10 @@ class Push extends REST2_Controller
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
         )));
+
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
         $devices = $this->player_model->listDevices($this->client_id, $this->site_id, $pb_player_id, array('device_token', 'os_type'));
         if ($devices) foreach ($devices as $device) {
             $notificationInfo = array(
@@ -141,6 +145,10 @@ class Push extends REST2_Controller
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
         )));
+
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
         $this->player_model->storeDeviceToken(array(
             'client_id' => $this->client_id,
             'site_id' => $this->site_id,

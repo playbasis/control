@@ -224,6 +224,10 @@ class Error extends CI_Model
             $errorData['message'] = "Email already exist.";
             $errorData['error_code'] = '0216';
             break;
+        case 'BADGE_NOT_FOUND':
+            $errorData['message'] = "Badge not available.";
+            $errorData['error_code'] = '0217';
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';
@@ -272,6 +276,10 @@ class Error extends CI_Model
             $errorData["message"] = "Quest not found";
             $errorData["error_code"] = "0705";
             break;
+        case "MISSION_NOT_FOUND":
+            $errorData["message"] = "Mission not found";
+            $errorData["error_code"] = "0706";
+            break;
         case 'QUIZ_NOT_FOUND':
             $errorData['message'] = "Quiz not found";
             $errorData['error_code'] = '1001';
@@ -287,6 +295,14 @@ class Error extends CI_Model
         case 'QUIZ_QUESTION_ALREADY_COMPLETED':
             $errorData['message'] = "Question has already been completed by the player";
             $errorData['error_code'] = '1004';
+            break;
+        case 'QUIZ_QUESTION_NOT_ALLOW_RANDOM':
+            $errorData['message'] = "Question has been set to be in order, random is not allowed";
+            $errorData['error_code'] = '1005';
+            break;
+        case 'QUIZ_QUESTION_OUT_OF_SEQUENCE':
+            $errorData['message'] = "Question is out of sequence ";
+            $errorData['error_code'] = '1006';
             break;
         case 'RULE_NOT_FOUND':
             $errorData['message'] = "Rule not available";
@@ -325,7 +341,7 @@ class Error extends CI_Model
                 $errorData['error_code'] = '2302';
                 break;
         case 'STORE_ORG_NODE_NOT_FOUND':
-            $errorData['message'] = "Node value is not found";
+            $errorData['message'] = "Node ID is not found";
             $errorData['error_code'] = '2401';
             break;
         case 'STORE_ORG_PLAYER_ALREADY_EXISTS_WITH_NODE':
