@@ -530,6 +530,39 @@ input[type=radio]:checked + label {
     color: #333;
 }
 
+.select-wrapper{
+	height: 35px;
+}
+
+/* Actions */
+.actions-wrapper{
+	
+}
+.actions-wrapper .completeBy select{
+	width: 100%;
+	margin-top: 5px;
+}
+.actions-wrapper .actionValue input{
+	width: 100%;
+}
+
+.actions-wrapper .actionParameter select{
+	width: 100%;
+	margin-top: 5px;
+}
+.actions-wrapper .filterString input{
+	width: 90%;
+}
+
+@media screen and (max-width: 960px) {
+
+}
+@media screen and (max-width: 767px){
+	.box-add-item .box-content label{
+		    text-align: left;
+	}
+}
+
 .title-row{
 	clear: both;
 	margin: 0 20px 0 0;
@@ -1676,6 +1709,7 @@ input[type=radio]:checked + label {
 	}
 }
 
+
 /* ====== [ Merchant Page ] ======= */
 .merchant-page .nav {
     margin-bottom: 0;
@@ -1811,6 +1845,40 @@ input[type=radio]:checked + label {
 }
 
 .content-page .tab-pane h3 {
+    font-size: 26px;
+    font-weight: normal;
+}
+
+/* ====== [ Media Manager Page ] ======= */
+.mediamanager-page .nav {
+    margin-bottom: 0;
+}
+
+.mediamanager-page .content {
+    background-color: white;
+}
+
+.mediamanager-page .tab-pane:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.mediamanager-page iframe {
+    border-radius: 5px;
+    border: 1px solid #F5F5F5;
+}
+
+.mediamanager-page .tab-pane {
+    padding: 30px;
+    background: #FFF;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.mediamanager-page .tab-pane h3 {
     font-size: 26px;
     font-weight: normal;
 }

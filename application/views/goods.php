@@ -371,6 +371,7 @@
             $.ajax({
                     type: "POST",
                     url: baseUrlPath + "goods/markUsed/" + marked_goods_id,
+                    data:{'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'},
                     beforeSend: function (xhr) {
                         $confirmDialog.modal('hide');
                         $pleaseWaitDialog.modal();

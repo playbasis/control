@@ -7,18 +7,22 @@
 		<div class="modal-card-content" >
 			<!-- <h3>Please verify your account</h3> -->
 			<p>Provide your mobile phone number <br>and receive the validation code by SMS.</p>
-			<form class="form" id="form_phonenumber">
+			<?php
+			$attributes = array('class' => 'form', 'id' => 'form_phonenumber');
+			echo form_open('', $attributes);?>
 				<div class="form-group input-group">
 					<input id="phone" type="tel"  class="form-control phone-number" >
 					<button type="submit" class="btn btn-primary">Request Code </button>
 				</div>
 				<div class="error" style="display:none"></div>
-			</form>
+			<?php echo form_close();?>
 			
 			<hr>
 			<p>
 				Enter the code received in the field below.
-				<form class="form" id="form_verify" method="POST">
+				<?php
+				$attributes = array('class' => 'form', 'id' => 'form_verify','method' => 'POST');
+				echo form_open('', $attributes);?>
 					<div class="form-group input-group">
 						
 						<input type="text" class="form-control code-input" name="code"><button type="submit" class="btn btn-primary">OK <i class="fa fa-arrow-right"></i> </button>
@@ -26,7 +30,7 @@
 					<div class="error" style="display:block">
 						<?php echo isset($message) ? $message : '' ; ?>
 					</div>
-				</form>
+				<?php echo form_close();?>
 			</p>
 			<hr>
 			<p>
@@ -77,6 +81,7 @@
 		            url: baseUrlPath+'account/request_code',
 		            dataType: 'json',
 		            data:{
+						'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
 		                phone_number: user_phone_number
 		            },
 		            success:function(data){

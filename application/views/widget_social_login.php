@@ -171,7 +171,9 @@ $plan_widget['trackevent'] = true;
         </div>
 
         <div class="span11">
-            <form class="form-horizontal">
+            <?php
+            $attributes = array('class' => 'form-horizontal');
+            echo form_open('', $attributes);?>
                 <div id="social-panel">
                 <?php
                 $social_system = array(
@@ -319,8 +321,7 @@ $plan_widget['trackevent'] = true;
                         <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                     </div>
                 </div>
-
-            </form>
+            <?php echo form_close();?>
 
         </div>
         <div class="span11">
@@ -337,6 +338,8 @@ $plan_widget['trackevent'] = true;
 <script type="text/javascript" src="<?php echo base_url();?>javascript/widget/jquery.tooltipster.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/widget/social.js"></script>
 <script>
+var csrf_token_name = '<?php echo $this->security->get_csrf_token_name(); ?>';
+var csrf_token_hash = '<?php echo $this->security->get_csrf_hash(); ?>';
 $(document).ready(function(){
 
     $('form').submit(function(e){

@@ -125,7 +125,7 @@
         $.ajax({
             url: baseUrlPath+'workflow/pending',
             type: 'POST',
-            //data: {selected: player_id},
+            data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'},
             success: function() {
                 location.href = baseUrlPath+'workflow';
             }

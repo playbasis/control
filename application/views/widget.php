@@ -7,7 +7,9 @@
         <div class="content">
         
         <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
-        <form class="form-horizontal well" id="widget-globel">
+        <?php
+        $attributes = array('class' => 'form-horizontal well', 'id' => 'widget-globel');
+        echo form_open('', $attributes);?>
 
             <div class="control-group hide">
             <label class="control-label" ><?php echo $this->lang->line('text_choose_key'); ?></label>
@@ -47,8 +49,7 @@
                         <input type="text" width="50%" class="wg-globel-cssfile" placeholder="<?php echo $this->lang->line('text_cssfile'); ?>">
                     </div>
             </div>
-        </form>
-
+        <?php echo form_close();?>
     <ul class="nav nav-tabs">
         <?php if(isset($plan_widget['social']) && $plan_widget['social']){ ?>
             <li> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login'));?></li>
@@ -128,7 +129,9 @@
                     
                     <div class="row">
                         <div class="span6 offset3">
-                            <form class="form-horizontal">
+                            <?php
+                            $attributes = array('class' => 'form-horizontal');
+                            echo form_open('', $attributes);?>
                                 <div class="control-group">
                                     <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
                                     <div class="controls">
@@ -157,8 +160,7 @@
                                     </div>
                                 </div>
 
-                            </form>
-
+                            <?php echo form_close();?>
                         </div>
                         <div class="span11">
                             <iframe id="iframe-profile" src="<?php echo base_url();?>index.php/widget/preview?type=profile" width="100%" height="280" frameborder="0"></iframe>
@@ -174,7 +176,9 @@
 			
 			<div class="row">
 		        	<div class="span5">
-				<form class="form-horizontal">
+				<?php
+				$attributes = array('class' => 'form-horizontal');
+				echo form_open('', $attributes);?>
 					<div class="control-group">
 						<label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
 						<div class="controls">
@@ -203,8 +207,8 @@
 							<a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-leaderboard" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
 						</div>
 					</div>
-					
-				</form>
+
+                <?php echo form_close();?>
 
 		        	</div>
                 <div class="span7">
@@ -222,7 +226,9 @@
 
             <div class="row">
                 <div class="span5">
-                    <form class="form-horizontal">
+                    <?php
+                    $attributes = array('class' => 'form-horizontal');
+                    echo form_open('', $attributes);?>
                         <div class="control-group">
                             <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
                             <div class="controls">
@@ -243,8 +249,7 @@
                                 <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-achievement" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                             </div>
                         </div>
-
-                    </form>
+                    <?php echo form_close();?>
 
                 </div>
                 <div class="span7">
@@ -261,7 +266,9 @@
 
                 <div class="row">
                     <div class="span5">
-                        <form class="form-horizontal">
+                        <?php
+                        $attributes = array('class' => 'form-horizontal');
+                        echo form_open('', $attributes);?>
                             <div class="control-group">
                                 <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
                                 <div class="controls">
@@ -282,8 +289,7 @@
                                     <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-quiz" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                                 </div>
                             </div>
-
-                        </form>
+                        <?php echo form_close();?>
 
                     </div>
                     <div class="span7">
@@ -302,7 +308,9 @@
 
                     <div class="row">
                         <div class="span5">
-                            <form class="form-horizontal">
+                            <?php
+                            $attributes = array('class' => 'form-horizontal');
+                            echo form_open('', $attributes);?>
                                 <div class="control-group">
                                     <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
                                     <div class="controls">
@@ -323,8 +331,7 @@
                                         <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-quest" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                                     </div>
                                 </div>
-
-                            </form>
+                            <?php echo form_close();?>
 
                         </div>
                         <div class="span7">
@@ -342,7 +349,9 @@
 
                         <div class="row">
                             <div class="span6 offset3">
-                                <form class="form-horizontal">
+                                <?php
+                                $attributes = array('class' => 'form-horizontal');
+                                echo form_open('', $attributes);?>
                                     <div class="control-group">
                                         <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
                                         <div class="controls">
@@ -363,8 +372,7 @@
                                             <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-feed" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                                         </div>
                                     </div>
-
-                                </form>
+                                <?php echo form_close();?>
 
                             </div>
                             <div class="span11">
@@ -381,7 +389,9 @@
 
                             <div class="row">
                                 <div class="span6 offset3">
-                                    <form class="form-horizontal">
+                                    <?php
+                                    $attributes = array('class' => 'form-horizontal');
+                                    echo form_open('', $attributes);?>
                                         <div class="control-group">
                                             <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
                                             <div class="controls">
@@ -402,8 +412,7 @@
                                                 <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-rewardstore" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                                             </div>
                                         </div>
-
-                                    </form>
+                                    <?php echo form_close();?>
 
                                 </div>
                                 <div class="span11">
@@ -421,7 +430,9 @@
 
                                 <div class="row">
                                     <div class="span5">
-                                        <form class="form-horizontal">
+                                        <?php
+                                        $attributes = array('class' => 'form-horizontal');
+                                        echo form_open('', $attributes);?>
                                             <div class="control-group">
                                                 <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
                                                 <div class="controls">
@@ -449,8 +460,7 @@
                                                     <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-treasure" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                                                 </div>
                                             </div>
-
-                                        </form>
+                                        <?php echo form_close();?>
 
                                     </div>
                                     <div class="span7">

@@ -21,7 +21,9 @@
         <div class="registration-page registration-forgotpassword">
           <div class="registration-form-bg"></div>
           <div class="registration-form">
-            <form id="forgotpassword_form" class="pbf-form">
+          <?php
+          $attributes = array('class' => 'pbf-form', 'id' => 'forgotpassword_form');
+          echo form_open('', $attributes);?>
               <fieldset>
 
                 <legend>Please provide your email<br><small>We will send you a link via email to reset your password.</small></legend>
@@ -49,8 +51,7 @@
                 </div>
 
               </fieldset>
-
-            </form>
+              <?php echo form_close();?>
 
           </div><!-- /form -->
 
