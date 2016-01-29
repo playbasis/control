@@ -191,7 +191,8 @@
         $(".cover").fadeOut(1000);
     });
 
-    var $thumbnails_grids = $('#thumbnails_grid');
+    var $thumbnails_grids = $('#thumbnails_grid'),
+        $waitDialog = $('#pleaseWaitDialog');
 
     function createImageThumbnailGrid(imageDataJSONObject) {
         imageDataJSONObject = typeof imageDataJSONObject !== 'undefined' ? imageDataJSONObject : null;
@@ -236,16 +237,23 @@
     function ajaxGetMediaList() {
         $.ajax({
                 url: baseUrlPath + "mediamanager/media",
-                dataType: "json"
+                dataType: "json",
+                beforeSend: function (xhr) {
+                    $waitDialog.modal();
+                }
             })
             .done(function (data) {
 //                if (console && console.log) {
 //                    console.log("Sample of data:", data);
 //                }
-
+                $waitDialog.modal('hide');
                 $.each(data.rows, function (index, value) {
                     createImageThumbnailGrid(value);
                 });
+            })
+            .always(function () {
+                $('form.store-organize-form').trigger("reset");
+                $waitDialog.modal('hide');
             });
     }
     $(function () {
