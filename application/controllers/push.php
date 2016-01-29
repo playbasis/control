@@ -136,6 +136,8 @@ class Push extends REST2_Controller
 
     public function deviceRegistration_post()
     {
+        $this->benchmark->mark('start');
+
         $player_id = $this->input->post('player_id');
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
@@ -149,7 +151,7 @@ class Push extends REST2_Controller
         if(!$pb_player_id)
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
-        $this->player_model->storeDeviceToken(array(
+        $result = $this->player_model->storeDeviceToken(array(
             'client_id' => $this->client_id,
             'site_id' => $this->site_id,
             'pb_player_id' => $pb_player_id,
@@ -158,7 +160,12 @@ class Push extends REST2_Controller
             'device_name' => $this->input->post('device_name'),
             'os_type' => $this->input->post('os_type')
         ));
-        $this->response($this->resp->setRespond(''), 200);
+        if(!$result)
+            $this->response($this->error->setError('INTERNAL_ERROR'), 200);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
     /*
     public function adhocSend_post()
