@@ -252,6 +252,26 @@ class Error extends CI_Model
             $errorData['message'] = "Coupon code is invalid for this goods";
             $errorData['error_code'] = '0602';
             break;
+        case 'REDEEM_GOODS_NOT_AVAILABLE':
+            $errorData['message'] = "Goods is not available to redeem";
+            $errorData['error_code'] = '0603';
+            break;
+        case 'REDEEM_GOODS_NOT_ENOUGH':
+            $errorData['message'] = "Goods is not enough to redeem";
+            $errorData['error_code'] = '0604';
+            break;
+        case 'REDEEM_POINT_NOT_ENOUGH':
+            $errorData['message'] = "Point is not enough to redeem";
+            $errorData['error_code'] = '0605';
+            break;
+        case 'REDEEM_BADGE_NOT_ENOUGH':
+            $errorData['message'] = "Badge is not enough to redeem";
+            $errorData['error_code'] = '0606';
+            break;
+        case 'REDEEM_CUSTOM_POINT_NOT_ENOUGH':
+            $errorData['message'] = $dataArray." is not enough to redeem";
+            $errorData['error_code'] = '0607';
+            break;
         case 'BRANCH_IS_NOT_ALLOW_TO_VERIFY_GOODS':
             $errorData['message'] = "This branch(pincode) is not allowed to verify the goods";
             $errorData['error_code'] = '0603';

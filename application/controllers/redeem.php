@@ -16,6 +16,7 @@ class Redeem extends REST2_Controller
         $this->load->model('sms_model');
         $this->load->model('merchant_model');
         $this->load->model('store_org_model');
+        $this->load->model('client_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -72,6 +73,33 @@ class Redeem extends REST2_Controller
         $redeemResult = null;
         try {
             $redeemResult = $this->redeem($validToken['site_id'], $pb_player_id, $goods, $amount, $validToken);
+            if (isset($redeemResult['events'][0]['event_type']) && ($redeemResult['events'][0]['event_type'] != 'GOODS_RECEIVED')){
+                $msg = $redeemResult['events'][0]['event_type'];
+                switch ($msg){
+                    case 'GOODS_NOT_AVAILABLE':
+                        $this->response($this->error->setError('REDEEM_GOODS_NOT_AVAILABLE'), 200);
+                        break;
+                    case 'GOODS_NOT_ENOUGH':
+                        $this->response($this->error->setError('REDEEM_GOODS_NOT_ENOUGH'), 200);
+                        break;
+                    case 'POINT_NOT_ENOUGH':
+                        $this->response($this->error->setError('REDEEM_POINT_NOT_ENOUGH'), 200);
+                        break;
+                    case 'BADGE_NOT_ENOUGH':
+                        $this->response($this->error->setError('REDEEM_BADGE_NOT_ENOUGH'), 200);
+                        break;
+                    case 'CUSTOM_POINT_NOT_ENOUGH':
+                        $reward_id = key($redeemResult['events'][0]['incomplete'][0]);
+                        $reward_name = $this->client_model->getRewardName(array(
+                            'client_id' => $validToken['client_id'],
+                            'site_id'   => $validToken['site_id'],
+                            'reward_id' => $reward_id
+                        ));
+                        $this->response($this->error->setError('REDEEM_CUSTOM_POINT_NOT_ENOUGH',$reward_name), 200);
+                        break;
+                }
+
+            }
         } catch (Exception $e) {
             $msg = $e->getMessage();
             switch ($msg) {
