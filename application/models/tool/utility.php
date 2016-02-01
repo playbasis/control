@@ -244,8 +244,18 @@ class Utility extends CI_Model
 		}
 	}
 
-
-
-
+	public function request($class, $method, $arg)
+	{
+log_message('error', 'EXEC');
+log_message('error', '$class = '.print_r($class,true));
+log_message('error', '$method = '.print_r($method,true));
+log_message('error', '$arg = '.print_r($arg,true));
+		$cmd = "php index.php $class $method $arg";
+		if (EXEC_BACKGROUND) $cmd .= ' > /dev/null 2>&1 &';
+		exec($cmd, $output, $exit);
+log_message('error', '$output = '.print_r($output,true));
+log_message('error', '$exit = '.print_r($exit,true));
+		return $exit == 0;
+	}
 }
 ?>

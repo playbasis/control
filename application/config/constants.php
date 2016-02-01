@@ -119,9 +119,16 @@ define('JIVE_USER_AGENT', 'Jive SBS');
 
 define('LITHIUM_USER_AGENT', 'Jakarta Commons-HttpClient/3.1');
 
-define('COMPLETE_MISSION_ACTION', 'complete-mission');
-define('COMPLETE_QUEST_ACTION', 'complete-quest');
-define('COMPLETE_QUIZ_ACTION', 'complete-quiz');
+define('ACTION_COMPLETE_MISSION', 'complete-mission');
+define('ACTION_COMPLETE_QUEST', 'complete-quest');
+define('ACTION_COMPLETE_QUIZ', 'complete-quiz');
+define('ACTION_REGISTER', 'register');
+define('ACTION_LOGIN', 'login');
+define('ACTION_LOGOUT', 'logout');
+define('ACTION_INVITE', 'invite');
+define('ACTION_INVITED', 'invited');
+
+define('EXEC_BACKGROUND', true);
 
 define('GOOGLE_USER_AGENT', 'APIs-Google');
 define('STRIPE_USER_AGENT', 'Stripe');

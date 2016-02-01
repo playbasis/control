@@ -71,11 +71,12 @@ class Quest extends REST2_Controller
             }
         }
 
-        $completeMissionActionId = $this->action_model->findAction(array(
+        $platform = $this->auth_model->getOnePlatform($this->client_id, $this->site_id);
+        /*$completeMissionActionId = $this->action_model->findAction(array(
             'client_id' => $validToken['client_id'],
             'site_id' => $validToken['site_id'],
-            'action_name' => COMPLETE_MISSION_ACTION,
-        ));
+            'action_name' => ACTION_COMPLETE_MISSION,
+        ));*/
 
         foreach($quests as $q){
 
@@ -161,17 +162,21 @@ class Quest extends REST2_Controller
                                         $pb_player_id
                                     );
                                     /* fire complete-mission action */
-                                    if ($completeMissionActionId) {
+                                    /*if ($completeMissionActionId) {
                                         $this->tracker_model->trackAction(array(
                                             'client_id' => $client_id,
                                             'site_id' => $site_id,
                                             'pb_player_id' => $pb_player_id,
                                             'action_id' => $completeMissionActionId,
-                                            'action_name' => COMPLETE_MISSION_ACTION,
+                                            'action_name' => ACTION_COMPLETE_MISSION,
                                             'url' => $m["mission_id"],
                                         ));
-                                    }
-
+                                    }*/
+                                    $this->utility->request('engine', 'json', urlencode(json_encode(array(
+                                        'api_key' => $platform['api_key'],
+                                        'pb_player_id' => $pb_player_id.'',
+                                        'action' => ACTION_COMPLETE_MISSION,
+                                    ))));
                                 }
 
                                 //for check total mission finish
@@ -237,17 +242,21 @@ class Quest extends REST2_Controller
                                         $pb_player_id
                                     );
                                     /* fire complete-mission action */
-                                    if ($completeMissionActionId) {
+                                    /*if ($completeMissionActionId) {
                                         $this->tracker_model->trackAction(array(
                                             'client_id' => $client_id,
                                             'site_id' => $site_id,
                                             'pb_player_id' => $pb_player_id,
                                             'action_id' => $completeMissionActionId,
-                                            'action_name' => COMPLETE_MISSION_ACTION,
+                                            'action_name' => ACTION_COMPLETE_MISSION,
                                             'url' => $m["mission_id"],
                                         ));
-                                    }
-                                    
+                                    }*/
+                                    $this->utility->request('engine', 'json', urlencode(json_encode(array(
+                                        'api_key' => $platform['api_key'],
+                                        'pb_player_id' => $pb_player_id.'',
+                                        'action' => ACTION_COMPLETE_MISSION,
+                                    ))));
                                 }
                                 //for check total mission finish
                                 $player_finish_count++;
@@ -294,10 +303,10 @@ class Quest extends REST2_Controller
                         $pb_player_id
                     );
                     /* fire complete-quest action */
-                    $completeQuestActionId = $this->action_model->findAction(array(
+                    /*$completeQuestActionId = $this->action_model->findAction(array(
                         'client_id' => $client_id,
                         'site_id' => $site_id,
-                        'action_name' => COMPLETE_QUEST_ACTION,
+                        'action_name' => ACTION_COMPLETE_QUEST,
                     ));
                     if ($completeQuestActionId) {
                         $this->tracker_model->trackAction(array(
@@ -305,10 +314,15 @@ class Quest extends REST2_Controller
                             'site_id' => $site_id,
                             'pb_player_id' => $pb_player_id,
                             'action_id' => $completeQuestActionId,
-                            'action_name' => COMPLETE_QUEST_ACTION,
+                            'action_name' => ACTION_COMPLETE_QUEST,
                             'url' => $q["quest_id"],
                         ));
-                    }
+                    }*/
+                    $this->utility->request('engine', 'json', urlencode(json_encode(array(
+                        'api_key' => $platform['api_key'],
+                        'pb_player_id' => $pb_player_id.'',
+                        'action' => ACTION_COMPLETE_QUEST,
+                    ))));
                     try {
                         $this->client_model->permissionProcess(
                             $this->client_data,

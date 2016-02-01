@@ -203,6 +203,104 @@ class Engine extends Quest
 		$this->response($this->resp->setRespond($response), 200);
     }
 
+	public function json_get($json='')
+	{
+		$this->benchmark->mark('engine_rule_start');
+
+		if (!$json) $this->response($this->resp->setRespond('Missing JSON string parameter'), 200);
+		$json = urldecode($json);
+		$data = json_decode($json, true);
+		if (!$data) $this->response($this->resp->setRespond('Cannot convert JSON to data'), 200);
+
+		$required = array();
+		if(!isset($data['api_key'])) array_push($required, 'api_key');
+		if(!isset($data['action'])) array_push($required, 'action');
+		if(!isset($data['pb_player_id'])) array_push($required, 'pb_player_id');
+		if ($required) $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+
+		$api_key = $data['api_key'];
+		$pb_player_id = new MongoId($data['pb_player_id']);
+		$actionName = $data['action'];
+
+		$this->_early_checks(null, $api_key);
+
+		//$validToken = $this->auth_model->createTokenFromAPIKey($api_key);
+		$validToken = $this->validToken;
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_TOKEN'), 200);
+
+		if(!$pb_player_id)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+		//get playbasis player id from client player id
+		$anonymous = $this->player_model->isAnonymous($validToken['client_id'], $validToken["site_id"], null, $pb_player_id);
+		if ($pb_player_id && $anonymous) {
+			/* List all active sessions of the anonymous player */
+			$sessions = $this->player_model->listSessions($validToken['client_id'], $validToken["site_id"], $pb_player_id);
+			if (count($sessions) == 0) {
+				$this->response($this->error->setError('ANONYMOUS_SESSION_NOT_VALID'), 200);
+			}
+		}
+
+		//get action id by action name
+		$action = $this->client_model->getAction(array(
+				'client_id' => $validToken['client_id'],
+				'site_id' => $validToken['site_id'],
+				'action_name' => $actionName
+		));
+		if(!$action)
+			$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+		$actionId = $action['action_id'];
+		$actionIcon = $action['icon'];
+
+		$input = array_merge($data, $validToken, array(
+				'pb_player_id' => $pb_player_id,
+				'action_id' => $actionId,
+				'action_name' => $actionName,
+				'action_icon' => $actionIcon,
+				'test' => false,
+		));
+		if (isset($data['pb_player_id-2'])) {
+			$input['pb_player_id-2'] = new MongoId($data['pb_player_id-2']);
+		}
+
+		try {
+			$apiResult = $this->processRule($input, $validToken, null, null);
+		} catch (Exception $e){
+			if ($e->getPrevious()){
+				$prev_e = $e->getPrevious();
+				$this->response($this->error->setError('PARAMETER_MISSING',array($prev_e->getMessage())), 200);
+			}else{
+				$this->response($this->error->setError($e->getMessage()), 200);
+			}
+		}
+
+		//Log validated action
+		$action_dataset = $this->jigsaw_model->getActionDatasetInfo($input['action_name']);
+		$input['parameters'] = array();
+		if (is_array($action_dataset))foreach ($action_dataset as $dataset){
+			if (isset($input[$dataset['param_name']])){
+				$input['parameters'][$dataset['param_name']] = $input[$dataset['param_name']];
+			}
+		}
+		$headers = $this->input->request_headers();
+		$action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;
+		$time = $action_time;
+		if (!isset($input['node_id'])){
+			$node = $this->store_org_model->retrieveNodeByPBPlayerID($validToken['client_id'],$validToken['site_id'],$pb_player_id);
+			$input['node_id'] = isset($node[0]['node_id']) ?$node[0]['node_id']:null;
+		}
+		$this->tracker_model->trackValidatedAction($input,$time);
+
+		//Quest Process
+		$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
+		$apiResult = array_merge($apiResult, $apiQuestResult);
+
+		$this->benchmark->mark('engine_rule_end');
+		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
+		$this->response($this->resp->setRespond($apiResult), 200);
+	}
+
 	public function rule_post($option = 0)
 	{
 		$this->benchmark->mark('engine_rule_start');
@@ -416,7 +514,6 @@ class Engine extends Quest
 					$this->response($this->error->setError($e->getMessage()), 200);
 				}
 			}
-
 		}
 		//Log validated action
 		if (!$test){
