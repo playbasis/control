@@ -442,33 +442,6 @@ class Player extends REST2_Controller
 
 		/* trigger reward for referral program (if any) */
 		if ($playerA) {
-			/*$inviteAction = $this->client_model->getAction(array(
-				'client_id' => $this->validToken["client_id"],
-				'site_id' => $this->validToken['site_id'],
-				'action_name' => ACTION_INVITE,
-			));
-			if(!$inviteAction)
-				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-
-			$invitedAction = $this->client_model->getAction(array(
-				'client_id' => $this->validToken["client_id"],
-				'site_id' => $this->validToken['site_id'],
-				'action_name' => ACTION_INVITED,
-			));
-			if(!$invitedAction)
-				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);*/
-
-			/*$engine = new Engine();
-
-			// A invite B
-			$input = array_merge($this->validToken, array(
-				'pb_player_id' => $playerA['_id'],
-				'action_id' => $inviteAction['action_id'],
-				'action_name' => ACTION_INVITE,
-				'player-2' => $pb_player_id,
-				'test' => false
-			));
-			$engine->processRule($input, $this->validToken, null, null);*/
 
 			// [rule] A invite B
 			$this->utility->request('engine', 'json', urlencode(json_encode(array(
@@ -478,15 +451,6 @@ class Player extends REST2_Controller
 				'pb_player_id-2' => $pb_player_id.''
 			))));
 
-			// B invited by A
-			/*$input = array_merge($this->validToken, array(
-				'pb_player_id' => $pb_player_id,
-				'action_id' => $invitedAction['action_id'],
-				'action_name' => ACTION_INVITED,
-				'player-2' => $playerA['_id'],
-				'test' => false
-			));
-			$engine->processRule($input, $this->validToken, null, null);*/
 
 			// [rule] B invited by A
 			$this->utility->request('engine', 'json', urlencode(json_encode(array(
@@ -497,24 +461,7 @@ class Player extends REST2_Controller
 			))));
 		}
 
-		/* track action=register automatically after creating a new player */
-		/*$action = $this->client_model->getAction(array(
-			'client_id' => $this->validToken['client_id'],
-			'site_id' => $this->validToken['site_id'],
-			'action_name' => ACTION_REGISTER
-		));
-		if ($action) {
-			$engine = new Engine();
-			$input = array_merge($this->validToken, array(
-				'pb_player_id' => $pb_player_id,
-				'action_id' => $action['action_id'],
-				'action_name' => ACTION_REGISTER,
-				'url' => null,
-				'test' => false
-			));
-			$engine->processRule($input, $this->validToken, null, null);
-		}*/
-		// [rule] register
+
 		$this->utility->request('engine', 'json', urlencode(json_encode(array(
 			'api_key' => $platform['api_key'],
 			'pb_player_id' => $pb_player_id.'',
@@ -967,6 +914,7 @@ class Player extends REST2_Controller
 				$session_expires_in);
 		}
 
+		$platform = $this->auth_model->getOnePlatform($this->client_id, $this->site_id);
 		$this->utility->request('engine', 'json', urlencode(json_encode(array(
 			'api_key' => $platform['api_key'],
 			'pb_player_id' =>  $player['_id'].'',
