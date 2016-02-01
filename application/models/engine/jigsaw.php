@@ -1042,6 +1042,60 @@ class jigsaw extends MY_Model
 		$results = $this->mongo_db->get('jigsaw_log_precomp');
 		return $results ? $results[0]['date_added'] : array();
 	}
+	public function groupOr($config, $input, &$exInfo = array())
+	{
+		$return_val = false;
+		$condition_group = $config['condition_group_container'];
+		if (is_array($condition_group))foreach ($condition_group as $con ){
+			if (array_key_exists('condition_id',$con)){
+				$jigsaw_id = new MongoId($con['condition_id']);
+				$processor = $this->getJigsawProcessor($jigsaw_id, $input['site_id']);
+				$jigsaw_result = $this->$processor($con, $input, $exInfo = array());
+				if ($jigsaw_result == true){
+					$return_val = true;
+					break;
+				}
+			}
+		}
+		return $return_val; // can reach this line if (1) there is no entry (2) all entries are invalid
+	}
+	public function groupNot($config, $input, &$exInfo = array())
+	{
+		$return_val = true;
+		$condition_group = $config['condition_group_container'];
+		if (is_array($condition_group))foreach ($condition_group as $con ){
+			if (array_key_exists('condition_id',$con)){
+				$jigsaw_id = new MongoId($con['condition_id']);
+				$processor = $this->getJigsawProcessor($jigsaw_id, $input['site_id']);
+				$jigsaw_result = $this->$processor($con, $input, $exInfo = array());
+				if ($jigsaw_result == true){
+					$return_val = false;
+					break;
+				}
+			}
+		}
+		return $return_val; // can reach this line if (1) there is no entry (2) all entries are invalid
+	}
+
+	/* copied over from client_model */
+	private function getJigsawProcessor($jigsawId, $site_id)
+	{
+		assert($jigsawId);
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('class_path'));
+		$this->mongo_db->where(array(
+			'jigsaw_id' => $jigsawId
+		));
+		$this->mongo_db->limit(1);
+		$jigsawProcessor = $this->mongo_db->get('playbasis_game_jigsaw_to_client');
+		if($jigsawProcessor){
+			assert($jigsawProcessor);
+			return $jigsawProcessor[0]['class_path'];
+		}else{
+			return null;
+		}
+	}
+
 
 }
 ?>
