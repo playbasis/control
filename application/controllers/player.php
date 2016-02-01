@@ -967,6 +967,12 @@ class Player extends REST2_Controller
 				$session_expires_in);
 		}
 
+		$this->utility->request('engine', 'json', urlencode(json_encode(array(
+			'api_key' => $platform['api_key'],
+			'pb_player_id' =>  $player['_id'].'',
+			'action' => ACTION_LOGIN,
+		))));
+
 		$this->response($this->resp->setRespond(array(
 			'cl_player_id' => $player['cl_player_id'],
 			'session_id' => $session_id
