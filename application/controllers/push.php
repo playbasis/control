@@ -341,7 +341,7 @@ class Push extends MY_Controller
             }
         }
 
-        $this->data['main'] = 'push_setup';
+        $this->data['main'] = 'push_ios';
         $this->load->vars($this->data);
         $this->render_page('template');
     }
@@ -354,7 +354,9 @@ class Push extends MY_Controller
         $this->form_validation->set_rules('push-sender', $this->lang->line('push-sender'), 'trim|required|xss_clean');
 
         $setting_group_id = $this->User_model->getAdminGroupID();
-        $this->data['push'] = $this->Push_model->getAndroidSetup($this->User_model->getUserGroupId() != $setting_group_id ? $this->User_model->getClientId() : null);
+        $client_id = $this->User_model->getUserGroupId() != $setting_group_id ? $this->User_model->getClientId() : null;
+        $site_id = $this->User_model->getSiteId();
+        $this->data['push'] = $this->Push_model->getAndroidSetup($client_id, $site_id);
 
         if($this->input->post()){
             if($this->form_validation->run()){
