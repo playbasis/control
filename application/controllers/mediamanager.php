@@ -90,10 +90,24 @@ class MediaManager extends MY_Controller
                         if (isset($result['date_modified'])) {
                             $result['date_modified'] = datetimeMongotoReadable($result['date_modified']);
                         }
-                        if (isset($document['url'])) {
-                            $info = pathinfo($document['url']);
-                            $document['lg_thumb'] = $info['dirname'] . '/' . $info['filename'] . '-' . MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT . '.' . $info['extension'];
-                            $document['sm_thumb'] = $info['dirname'] . '/' . $info['filename'] . '-' . MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT . '.' . $info['extension'];
+                        if (isset($document['file_name'])) {
+                            $info = pathinfo($document['file_name']);
+                            if (isset($info['extension'])) {
+                                $extension = $info['extension'];
+                                $new_lg_image = 'cache/data/' . utf8_substr($document['file_name'], 0,
+                                        utf8_strrpos($document['file_name'],
+                                            '.')) . '-' . MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT . '.' . $extension;
+                                $lg_thumb = S3_IMAGE . $new_lg_image;
+                                $new_sm_image = 'cache/data/' . utf8_substr($document['file_name'], 0,
+                                        utf8_strrpos($document['file_name'],
+                                            '.')) . '-' . MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT . '.' . $extension;
+                                $sm_thumb = S3_IMAGE . $new_sm_image;
+                            } else {
+                                $lg_thumb = S3_IMAGE . "cache/no_image-50x50.jpg";
+                                $sm_thumb = S3_IMAGE . "cache/no_image-50x50.jpg";
+                            }
+                            $document['lg_thumb'] = $lg_thumb;
+                            $document['sm_thumb'] = $sm_thumb;
                         }
 
                         $this->output->set_status_header('200');
@@ -116,10 +130,24 @@ class MediaManager extends MY_Controller
                         if (isset($document['date_modified'])) {
                             $document['date_modified'] = datetimeMongotoReadable($document['date_modified']);
                         }
-                        if (isset($document['url'])) {
-                            $info = pathinfo($document['url']);
-                            $document['lg_thumb'] = $info['dirname'] . '/' . $info['filename'] . '-' . MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT . '.' . $info['extension'];
-                            $document['sm_thumb'] = $info['dirname'] . '/' . $info['filename'] . '-' . MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT . '.' . $info['extension'];
+                        if (isset($document['file_name'])) {
+                            $info = pathinfo($document['file_name']);
+                            if (isset($info['extension'])) {
+                                $extension = $info['extension'];
+                                $new_lg_image = 'cache/data/' . utf8_substr($document['file_name'], 0,
+                                        utf8_strrpos($document['file_name'],
+                                            '.')) . '-' . MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT . '.' . $extension;
+                                $lg_thumb = S3_IMAGE . $new_lg_image;
+                                $new_sm_image = 'cache/data/' . utf8_substr($document['file_name'], 0,
+                                        utf8_strrpos($document['file_name'],
+                                            '.')) . '-' . MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT . '.' . $extension;
+                                $sm_thumb = S3_IMAGE . $new_sm_image;
+                            } else {
+                                $lg_thumb = S3_IMAGE . "cache/no_image-50x50.jpg";
+                                $sm_thumb = S3_IMAGE . "cache/no_image-50x50.jpg";
+                            }
+                            $document['lg_thumb'] = $lg_thumb;
+                            $document['sm_thumb'] = $sm_thumb;
                         }
                     }
 

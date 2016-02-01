@@ -605,12 +605,12 @@ class FileManager extends MY_Controller
 
                     $this->Image_model->registerImageToSite($client_id, $site_id, $_FILES['image']['size'], $filename,
                         $url);
-                }
 
-                $this->Image_model->resize($filename, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH,
-                    MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT);
-                $this->Image_model->resize($filename, MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH,
-                    MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT);
+                    $this->Image_model->resize('data/' . $filename, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH,
+                        MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT);
+                    $this->Image_model->resize('data/' . $filename, MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH,
+                        MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT);
+                }
 
                 $json['success'] = $this->lang->line('text_uploaded');
             }else{

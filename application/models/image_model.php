@@ -16,8 +16,7 @@ class Image_model extends MY_Model
         $extension = $info['extension'];
 
         $old_image = $filename;
-        $new_image = 'data/' . utf8_substr($filename, 0,
-                utf8_strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
+        $new_image = 'cache/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
 
 //        $headers = get_headers(S3_IMAGE.$new_image, 1);
 
@@ -26,8 +25,8 @@ class Image_model extends MY_Model
 //        }
 
         if (!file_exists(DIR_IMAGE . $filename) || !is_file(DIR_IMAGE . $filename)) {
-            if(@fopen(S3_IMAGE . 'data/' . $filename,"r")){
-                @copy(S3_IMAGE . 'data/' . $filename, DIR_IMAGE . $filecopy);
+            if(@fopen(S3_IMAGE . $filename,"r")){
+                @copy(S3_IMAGE . $filename, DIR_IMAGE . $filecopy);
             }else{
                 return S3_IMAGE."cache/no_image-".$width.'x'.$height.".jpg";
             }
