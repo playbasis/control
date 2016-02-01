@@ -411,36 +411,50 @@ class Content extends MY_Controller
                             $device_tokens_android = array();
                             $device_tokens_iOS = array();
 
-                            // loop each devices
-                            foreach ($devices as $device) {
-                                switch ($device['os_type']) {
-                                    case "ios":
-                                        array_push($device_tokens_iOS, $device['device_token']);
-                                        break;
-                                    case "android":
-                                        array_push($device_tokens_android, $device['device_token']);
-                                        break;
-                                    default:
-                                        break;
+                            for ($i = 0; $i <= round(count($devices) / 1000); $i++) {
+                                $offset = 1000 * $i;
+
+                                $devices_slice = array_slice($devices, $offset, 1000);
+                                // loop each devices
+                                foreach ($devices_slice as $device) {
+                                    switch (strtolower($device['os_type'])) {
+                                        case "ios":
+                                            array_push($device_tokens_iOS, $device['device_token']);
+                                            break;
+                                        case "android":
+                                            array_push($device_tokens_android, $device['device_token']);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+
+                                }
+                                //     prep notification message
+                                if (array_key_exists('category', $content_info)) {
+                                    $content_cat = ucfirst($content_info['category']['name']);
+                                }else{
+                                    $content_cat = 'content!';
                                 }
 
-                                if (count($device_tokens_iOS) === 1000 || count($device_tokens_android) === 1000) {
-                                    //     prep notification message
-                                    $notificationData = array(
-                                        'title' => "Checkout new " . ucfirst($content_info['category']['name']),
-                                        // android only
-                                        'message' => "Checkout new " . ucfirst($content_info['category']['name']) . ", '" . ucfirst($content_info['title']) . "' is available.",
-                                        // message in iOS, body in android
-                                        'badge_number' => 1,
-                                    );
-                                    //     initial push
-                                    $this->initiateContentPush($device_tokens_android, $notificationData, 'android');
+                                $notificationData = array(
+                                    'title' => "Checkout new " . $content_cat,
+                                    // android only
+                                    'message' => "Checkout new " . $content_cat  . ", '" . ucfirst($content_info['title']) . "' is available.",
+                                    // message in iOS, body in android
+                                    'badge_number' => 1,
+                                );
+                                //     initial push
+                                if (!empty($device_tokens_android)) {
+                                    $this->initiateContentPush($device_tokens_android, $notificationData,
+                                        'android');
+                                }
+                                if (!empty($device_tokens_iOS)) {
                                     $this->initiateContentPush($device_tokens_iOS, $notificationData, 'ios');
-
-                                    // empty
-                                    $device_tokens_android = array();
-                                    $device_tokens_iOS = array();
                                 }
+
+                                // empty
+                                $device_tokens_android = array();
+                                $device_tokens_iOS = array();
                             }
                             $this->output->set_status_header('200');
                             echo json_encode(array(
@@ -568,7 +582,7 @@ class Content extends MY_Controller
                 $msg = array
                 (
                     'title' => $notificationData['title'],
-                    'body' => $notificationData['message'],
+                    'message' => $notificationData['message'],
                     'badge' => $notificationData['badge_number'],
                     'sound' => 'default',
                 );
