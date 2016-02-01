@@ -825,6 +825,8 @@ abstract class REST_Controller extends CI_Controller
 	 */
 	protected function _parse_get()
 	{
+		if (!isset($_SERVER['REQUEST_URI'])) return;
+
 		// Grab proper GET variables
 		parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY), $get);
 

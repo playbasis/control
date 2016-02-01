@@ -194,6 +194,8 @@ $route['Engine/rule/'.ANY_STRING] = 'engine/rule/$1';
 $route['Engine/rule']	= 'engine/rule/0';
 $route['Engine/facebook']	= 'engine/rule/facebook';
 $route['Engine/quest']	= 'engine/quest';
+$route['Engine/json/'.ANY_STRING] = 'engine/json/$1';
+$route['Engine/json']	= 'engine/json/0';
 
 //redeem API
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';

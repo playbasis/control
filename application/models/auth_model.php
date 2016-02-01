@@ -215,5 +215,17 @@ class Auth_model extends MY_Model
 
         return array();
 	}
+	public function getOnePlatform($client_id, $site_id) {
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'status' => true,
+			'deleted' => false
+		));
+		$this->mongo_db->limit(1);
+		$results = $this->mongo_db->get('playbasis_platform_client_site');
+		return $results ? $results[0] : array();
+	}
 }
 ?>
