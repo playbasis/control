@@ -54,12 +54,8 @@ class Image_model extends MY_Model
             $this->s3->setEndpoint("s3-ap-southeast-1.amazonaws.com");
 
             //move the file
-            if ($this->s3->putObjectFile(DIR_IMAGE . $new_image, "elasticbeanstalk-ap-southeast-1-007834438823",
-                $new_image, S3::ACL_PUBLIC_READ)
-            ) {
-                unlink(DIR_IMAGE . $old_image);
-                unlink(DIR_IMAGE . $new_image);
-            }
+            $this->s3->putObjectFile(DIR_IMAGE . $new_image, "elasticbeanstalk-ap-southeast-1-007834438823",
+                $new_image, S3::ACL_PUBLIC_READ);
         }
 
         return S3_IMAGE . $new_image;
