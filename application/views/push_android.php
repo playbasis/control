@@ -7,7 +7,7 @@
         <div class="content">
             <div id="tabs" class="htabs">
                 <a href="<?php echo site_url('push');?>" style="display: inline;"><?php echo $this->lang->line('tab_template'); ?></a>
-                <a href="<?php echo site_url('push/ios');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_ios'); ?></a>
+                <a href="<?php echo site_url('push/ios');?>" style="display: inline;"><?php echo $this->lang->line('tab_ios'); ?></a>
                 <a href="<?php echo site_url('push/android');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_android'); ?></a>
             </div>
 
