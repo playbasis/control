@@ -258,11 +258,47 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
 
 
             }
+            _pushConditionGroupContainerRowToJigsaw = function(k, v, group_id){
+
+                var $row = $('<tr class="pbd_rule_condition_group_container state_text parent_id_'+group_id+'" id="'+group_id+'"><td colspan="2"><div class="pbd_group_container" id="'+group_id+'"><ul class="pbd_ul_group pbd_group_'+json_jigsaw.name+' "></ul><div style="clear:both" class="pbd_group_action"><a herf="#" class="new_condition_group_item_btn"><i class="icon-plus icon-white"></i> Add Condition</a></div></div></td></tr>');
+
+
+                var tempItemGroup = [];
+                if( v.value.length > 0 ){
+                    $.each(v.value, function(keyGroupItem, groupItemJson) {
+                        console.log(groupItemJson);
+                        var nodeGroupItem = new Node( groupItemJson );
+                        tempItemGroup.push( nodeGroupItem );
+                        $row.find( '.pbd_ul_group' ).append( nodeGroupItem.getHTML() );
+                    });
+
+                    v.value = tempItemGroup;
+
+                }
+
+                jigsaw.append($row);
+
+                //Event : Insert new Reward
+                $('.pbd_group_container[id='+group_id+'] .new_condition_group_item_btn').live('click',function(event){
+                    event.preventDefault();
+                    var theModal = $('#newrule_condition_modal');
+
+                    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Condition,'condition');
+                    theModal.modal('show');
+                    oneRuleMan.openNodeSelectionDialogType = 'CONDITION_GROUP_ITEM';
+                    oneRuleMan.openNodeSelectionDialogTargetId = group_id;
+                    oneRuleMan.openNodeSelectionDialogTargetType = json_jigsaw.name;
+
+                })
+            }
              // looping world
             $.each(jsonArray, function(k, v) {
                 if(v.field_type == 'group_container'){
                     _pushGroupContainerRowToJigsaw(k, v, parent_id);
-                }else{
+                }else if (v.field_type == 'condition_group_container') {
+                    _pushConditionGroupContainerRowToJigsaw(k, v, parent_id);
+                }
+                else{
                     _pushDatasetRowToJigsaw(k, v);
                 }
             });
@@ -918,10 +954,34 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
 
                     return group_container;
             }
+            var _getParamFromConditionGroupContainer = function( ){
+                var group_container = {
+                    "param_name": "condition_group_container",
+                    "label": "condition_group",
+                    "placeholder": "",
+                    "sortOrder": "0",
+                    "field_type": "condition_group_container",
+                    "value": []
+                };
+
+                var groupContainer = groupMan.findGroupContainerInNodeList(_this.parent_id);
+
+                for(var key in groupContainer.value){
+                    var json = groupContainer.value[key].getJSON();
+                    json.is_group_item = _this.parent_id;
+                    group_container.value.push(json);
+                }
+
+                return group_container;
+            }
 
             $('#'+this.parent_id+' table:first').find('>tbody>tr').each(function() {
                 if( $(this).hasClass('pbd_rule_group_container') ){
                     var obj =  _getParamFromGroupContainer();
+                    result.push(obj);
+                }
+                else if( $(this).hasClass('pbd_rule_condition_group_container') ){
+                    var obj =  _getParamFromConditionGroupContainer();
                     result.push(obj);
                 }else{
                     var obj =  _getParamFromUI( $(this) );

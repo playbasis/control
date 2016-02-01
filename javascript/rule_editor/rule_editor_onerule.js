@@ -761,6 +761,15 @@ $('#new_condition_btn').live('click',function(event){
     theModal.modal('show');
     oneRuleMan.openNodeSelectionDialogType = 'CONDITION';
 })
+//Event : Insert new Condition
+$('#new_condition_group_btn').live('click',function(event){
+    event.preventDefault();
+    var theModal = $('#newrule_condition_modal');
+
+    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_ConditionGroup,'condition_group');
+    theModal.modal('show');
+    oneRuleMan.openNodeSelectionDialogType = 'CONDITION_GROUP';
+})
 
 //Event : Insert new Reward
 $('#new_reward_btn').live('click',function(event){
@@ -818,6 +827,8 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
             jsonItemSet = jsonString_Action;
         else if(type === 'CONDITION')
             jsonItemSet = jsonString_Condition;
+        else if (type == 'CONDITION_GROUP')
+            jsonItemSet = jsonString_ConditionGroup;
         else if(type === 'REWARD')
             jsonItemSet = jsonString_Reward;
         else if(type === 'FEEDBACK')
@@ -826,6 +837,8 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
             jsonItemSet = jsonString_Group;
         else if(type === 'GROUP_ITEM')
             jsonItemSet = jsonString_Feedback;
+        else if(type === 'CONDITION_GROUP_ITEM')
+            jsonItemSet = jsonString_Condition;
 
         for(var index in jsonItemSet){
             var item = jsonItemSet[index];
@@ -841,7 +854,7 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
             oneRuleMan.nodeInsertAfterPosition = undefined;
 
             chainMan.hideAddActionButton()
-        }else if(type=='GROUP_ITEM'){
+        }else if(type=='GROUP_ITEM' || type=='CONDITION_GROUP_ITEM'){
 
             groupMan.addItem(selected_jsonstring, targetId, targetType)
             oneRuleMan.nodeInsertAfterPosition = undefined;

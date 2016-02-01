@@ -188,10 +188,11 @@ class Push_model extends MY_Model
         }
     }
 
-    public function getAndroidSetup($client_id=null)
+    public function getAndroidSetup($client_id=null, $site_id=null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_push_android");
         return $results ? $results[0] : null;
@@ -202,17 +203,19 @@ class Push_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $client_id = isset($data['client_id']) && !empty($data['client_id']) ? new MongoId($data['client_id']) : null;
-        $api_key = isset($data['api_key']) && !empty($data['api_key']) ? $data['api_key'] : null;
+        $site_id = isset($data['site_id']) && !empty($data['site_id']) ? new MongoId($data['site_id']) : null;
         $d = new MongoDate();
-        if ($this->getAndroidSetup($api_key)) {
+        if ($this->getAndroidSetup($client_id,$site_id)) {
             $this->mongo_db->where('client_id', $client_id);
-            $this->mongo_db->where('api_key', $data['push-key']);
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->set('api_key', $data['push-key']);
             $this->mongo_db->set('sender_id', $data['push-sender']);
             $this->mongo_db->set('date_modified', $d);
             $this->mongo_db->update('playbasis_push_android');
         } else {
             $this->mongo_db->insert('playbasis_push_android', array(
                 'client_id' => $client_id,
+                'site_id' => $site_id,
                 'api_key' => $data['push-key'],
                 'sender_id' => $data['push-sender'],
                 'date_modified' => $d,
