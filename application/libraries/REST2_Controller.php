@@ -28,6 +28,16 @@ abstract class REST2_Controller extends REST_Controller
 	 */
 	protected function early_checks()
 	{
+		$token = $this->input->post('token'); // token: POST
+		$api_key = $this->input->get('api_key'); // api_key: GET/POST
+		if (empty($api_key)) {
+			$api_key = $this->input->post('api_key');
+		}
+		return $this->_early_checks($token, $api_key);
+	}
+
+	protected function _early_checks($token=null, $api_key=null)
+	{
 		/* 0.1 Load libraries */
 		$this->load->model('rest_model');
 		$this->load->model('auth_model');
@@ -48,10 +58,8 @@ abstract class REST2_Controller extends REST_Controller
 		}
 
 		/* 1.1 Log request */
-		$token = $this->input->post('token'); // token: POST
-		$api_key = $this->input->get('api_key'); // api_key: GET/POST
-		if (empty($api_key)) {
-			$api_key = $this->input->post('api_key');
+		if (!$token && !$api_key) {
+			return; // return early if neither token or api_key is found
 		}
 		$this->validToken = !empty($token) ? $this->auth_model->findToken($token) : (!empty($api_key) ? $this->auth_model->createTokenFromAPIKey($api_key) : null);
 		$this->client_id = !empty($this->validToken) ? $this->validToken['client_id'] : null;
@@ -64,9 +72,9 @@ abstract class REST2_Controller extends REST_Controller
 			'class_name' => null,
 			'class_method' => null,
 			'method' => $this->request->method,
-			'scheme' => !empty($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : (!empty($_SERVER['HTTPS']) ? 'https' : 'http'),
+			'scheme' => isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] ? $_SERVER['REQUEST_SCHEME'] : (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http'),
 			'uri' => $this->uri->uri_string(),
-			'query' => $_SERVER['QUERY_STRING'],
+			'query' => isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : null,
 			'request' => !empty($this->request->body) ? $this->request->body : $_POST,
 			'response' => null,
 			'format' => null,
