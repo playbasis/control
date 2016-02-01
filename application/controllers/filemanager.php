@@ -571,9 +571,9 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_permission');
         }
 
-        if (!isset($json['error'])) {
+        if ($this->validateMediaManagerAccess()) {
             $client_id = $this->User_model->getClientId();
-            $site_id   = $this->User_model->getSiteId();
+            $site_id = $this->User_model->getSiteId();
 
             $this->load->model('Plan_model');
             $this->load->model('Permission_model');
@@ -582,10 +582,12 @@ class FileManager extends MY_Controller
             $limit_images = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'image');
 
             $size = $this->Image_model->getTotalSize($client_id);
-            if ($limit_images && ($size + $_FILES['image']['size'] > $limit_images)){
+            if ($limit_images && ($size + $_FILES['image']['size'] > $limit_images)) {
                 $json['error'] = $this->lang->line('error_overall_size_limit_reached');
             }
+        }
 
+        if (!isset($json['error'])) {
             //create a new bucket
             //$this->s3->putBucket("elasticbeanstalk-ap-southeast-1-007834438823", S3::ACL_PUBLIC_READ);
 
@@ -597,8 +599,13 @@ class FileManager extends MY_Controller
                         '/') . "/" . urlencode($filename);
                 @copy($url, $directory . '/' . $filename);
 
-                $this->Image_model->registerImageToSite($client_id, $site_id, $_FILES['image']['size'], $filename,
-                    $url);
+                if ($this->validateMediaManagerAccess()) {
+                    $client_id = $this->User_model->getClientId();
+                    $site_id = $this->User_model->getSiteId();
+
+                    $this->Image_model->registerImageToSite($client_id, $site_id, $_FILES['image']['size'], $filename,
+                        $url);
+                }
 
                 $this->Image_model->resize($filename, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH,
                     MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT);
@@ -613,5 +620,21 @@ class FileManager extends MY_Controller
 
         $this->output->set_output(json_encode($json));
     }
+
+    private function validateMediaManagerAccess()
+    {
+        if ($this->User_model->isAdmin()) {
+            return true;
+        }
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access',
+                'mediamanager') && $this->Feature_model->getFeatureExistByClientId($client_id, 'mediamanager')
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
-?>
