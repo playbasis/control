@@ -71,6 +71,7 @@ class Rule extends MY_Controller
             $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
             $pushList = $this->Push_model->listTemplatesBySiteId($site_id);
             $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList, $pushList);
+            $conditionGroupList = $this->Rule_model->getConditionGroupJigsawList($site_id, $client_id);
             $groupList = $this->Rule_model->getGroupJigsawList($site_id, $client_id);
             $levelConditionList = $this->Level_model->getLevelConditions();
             if (is_array($rewardList)) foreach ($rewardList as &$reward) {
@@ -87,6 +88,7 @@ class Rule extends MY_Controller
             $this->data['rewardList'] = $rewardList;
             $this->data['feedbackList'] = array_merge($rewardList, $feedbackList);
             $this->data['groupList'] = $groupList;
+            $this->data['conditionGroupList'] = $conditionGroupList;
             $this->data['emailList'] = $emailList;
             $this->data['smsList'] = $smsList;
             $this->data['pushList'] = $pushList;

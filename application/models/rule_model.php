@@ -111,7 +111,59 @@ class Rule_model extends MY_Model
 
         return $output;
     }
+    public function getConditionGroupJigsawList($siteId,$clientId){
+        if (filter_var($clientId, FILTER_VALIDATE_BOOLEAN) !=
+            filter_var($siteId, FILTER_VALIDATE_BOOLEAN))
+            throw new Exception("error_xor_client_site");
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        $this->mongo_db->select(array(
+            'jigsaw_id',
+            'name',
+            'description',
+            'sort_order',
+            'icon',
+            'status',
+            'init_dataset'
+        ));
+        $this->mongo_db->where('category', 'CONDITION_GROUP');
+        if ($clientId) {
+            $this->mongo_db->where('site_id', $siteId);
+            $this->mongo_db->where('client_id', $clientId);
+            $results = $this->mongo_db->get("playbasis_game_jigsaw_to_client");
+        } else {
+            $results = $this->mongo_db->get("playbasis_jigsaw");
+        }
+
+        $output = array(
+            'error'=>1,
+            'success'=>false,
+            'msg'=>'Error , invalid request format or missing parameter'
+        );
+
+        try{
+            if(count($results)>0){
+                foreach ($results as &$rowx) {
+                    $jigsaw_id = strval($rowx['jigsaw_id']);
+                    $rowx['id'] = $jigsaw_id;
+                    $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
+                    $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
+                    $rowx['dataSet'] = $rowx['init_dataset'];
+                    $rowx['specific_id'] = $jigsaw_id; // no specific id for condition so using the same id with jigsaw id.
+                    $rowx['category']='CONDITION_GROUP';
+                    unset($rowx['jigsaw_id']);
+                    unset($rowx['init_dataset']);
+                    unset($rowx['_id']);
+                }
+                $output = $results;
+            }
+
+        }catch(Exception $e){
+            //Exception stuff
+        }
+
+        return $output;
+    }
     public function getRewardJigsawList($siteId,$clientId){
         if (filter_var($clientId, FILTER_VALIDATE_BOOLEAN) !=
             filter_var($siteId, FILTER_VALIDATE_BOOLEAN))
@@ -550,6 +602,18 @@ class Rule_model extends MY_Model
                         $each['config']['group_container'][$i]['reward_id'] = $reward_id;
                     }
                     break;
+                case 'CONDITION_GROUP':
+                    $specific_id = ''.$this->findIdByTemplateJigsawId($each['specific_id']);
+                    $each['id'] = $specific_id;
+                    $each['specific_id'] = $specific_id;
+                    $each['config']['group_id'] = $specific_id;
+                    foreach ($each['dataSet'][0]['value'] as $i => &$element) {
+                        $sub_id = ''.$this->findIdByTemplateJigsawId($element['specific_id']);
+                        $element['specific_id'] = $sub_id;
+                        $element['config']['reward_id'] = $sub_id;
+                        $each['config']['condition_group_container'][$i]['condition_id'] = $sub_id;
+                    }
+                    break;
                 default:
                     break;
                 }
@@ -892,7 +956,7 @@ class Rule_model extends MY_Model
                 $check_reward = true;
                 // check each entry in "GROUP"
                 foreach ($each['dataSet'] as $data) {
-                    if ($data['field_type'] == 'group_container') {
+                    if ($data['field_type'] == 'group_container'){
                         // recursive call
                         $error = array_merge($error, $this->checkRuleError($data['value'], $params));
                     }

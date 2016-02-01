@@ -438,6 +438,7 @@
 
     var jsonString_Action    = <?php echo json_encode($actionList); ?>;
     var jsonString_Condition = <?php echo json_encode($conditionList); ?>;
+    var jsonString_ConditionGroup = <?php echo json_encode($conditionGroupList); ?>;
     var jsonString_Reward    = <?php echo json_encode($rewardList); ?>;
     var jsonString_Feedback  = <?php echo json_encode($feedbackList); ?>;
     var jsonString_Group     = <?php echo json_encode($groupList); ?>;
@@ -564,6 +565,21 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
         <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select an codition to add this rule." data-original-title="Condition" >Choose Condition</h3>
+    </div>
+    <div class="modal-body">
+        <div class="selection_wrapper" style="margin-left:4px"></div>
+    </div>
+    <div class="modal-footer">
+        <a href="javaScript:void()" class="btn btn-primary pbd_modal_confirm_btn">OK</a>
+    </div>
+</div>
+<!-- end : choose condition modal -->
+
+<!-- start : choose condition group modal -->
+<div class="modal hide fade rule_modal_condition pbd_rule_editor_modal" id="newrule_condition_group_modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select an condition group to add this rule." data-original-title="Condition" >Choose Condition Group</h3>
     </div>
     <div class="modal-body">
         <div class="selection_wrapper" style="margin-left:4px"></div>
