@@ -81,5 +81,10 @@ define('TEST_PLAYER_ID', 'test');
 define('LIMIT_PLAYERS_QUERY', 10000);
 
 define('ALLOW_SIGN_UP', false);
+
+define('MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH', 80);
+define('MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT', 80);
+define('MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH', 240);
+define('MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT', 240);
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

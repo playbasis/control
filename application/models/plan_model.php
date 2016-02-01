@@ -604,15 +604,14 @@ class Plan_model extends MY_Model
     }
 
     /**
-
-    /**
      * Return Permission limitation by Plan ID
      * in particular type and field
      * e.g. notifications email
-     * @param plan_id string
-     * @param type notifications | requests | others
-     * @param field string
-     * @return integer | array | null
+     * @param string $plan_id
+     * @param string $type "notifications"|"others"|"requests"
+     * @param string $field
+     * @return array|int|null
+     * @throws Exception
      */
     public function getPlanLimitById($plan_id, $type, $field)
     {
