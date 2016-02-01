@@ -427,7 +427,7 @@ class User_model extends MY_Model
                 }
 
                 // $this->permission
-                if($this->user_group_id == $this->getAdminGroupID()){
+                if($this->user_group_id == $this->getAdminGroupID() || !$this->site_id){
                     // Login as Playbasis admin
                     $this->mongo_db->select(array('permission'));
                     $this->mongo_db->where('_id', $this->user_group_id);
