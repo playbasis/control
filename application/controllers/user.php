@@ -279,7 +279,7 @@ class User extends MY_Controller
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_password'), 'required|matches[password]');
-        $this->form_validation->set_rules('user_group', $this->lang->line('form_user_group'), 'required');
+        //$this->form_validation->set_rules('user_group', $this->lang->line('form_user_group'), 'required');
 
         $json = array();
 
@@ -387,6 +387,7 @@ class User extends MY_Controller
 
         if(!$user_id) {
             if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                $this->data['is_admin_groups'] = true;
                 $this->data['user_groups'] = $this->User_model->getUserGroups();
             }else{
                 $client_id = $this->User_model->getClientId();
@@ -395,6 +396,7 @@ class User extends MY_Controller
         }else {
             $user_info = $this->User_model->getUserInfo($user_id);
             if ($user_info['user_group_id'] == $this->User_model->getAdminGroupID()) {
+                $this->data['is_admin_groups'] = true;
                 $this->data['user_groups'] = $this->User_model->getUserGroups();
             }else {
                 $client_id = $this->User_model->getClientIdByUserId(new MongoId($user_id));

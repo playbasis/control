@@ -65,9 +65,11 @@ class User_model extends MY_Model
         $check_update = false;
         $this->mongo_db->where('_id', new MongoID($user_id));
 
-        if(isset($data['user_group']) && !is_null($data['user_group'])){
+        if($data['user_group']){
             $this->mongo_db->set('user_group_id', new MongoID($data['user_group']));
             $check_update = true;
+        }else{
+            $this->mongo_db->set('user_group_id', null);
         }
 
         // if(isset($data['username']) && !is_null($data['username'])){
@@ -123,13 +125,9 @@ class User_model extends MY_Model
 
         if($this->mongo_db->count('user')==0){
             if($this->input->post('user_group')){
-                $user_group_id = $this->input->post('user_group');    
+                $user_group_id = new MongoID($this->input->post('user_group'));
             }else{
-                $this->mongo_db->where('name', 'Super User');
-                $user_group_id = $this->mongo_db->get('user_group');
-                if($user_group_id){
-                    $user_group_id = $user_group_id[0]['_id'];
-                }
+                $user_group_id = null;
             }
 
             // $username = $this->input->post('username');
@@ -161,7 +159,7 @@ class User_model extends MY_Model
             $random_key = get_random_password(8,8);
 
             $data = array(
-                'user_group_id' => new MongoID($user_group_id),
+                'user_group_id' => $user_group_id,
                 'username' => $username,
                 'password' => $password,
                 'salt' => $salt,
@@ -427,7 +425,7 @@ class User_model extends MY_Model
                 }
 
                 // $this->permission
-                if($this->user_group_id == $this->getAdminGroupID() || !$this->site_id){
+                if($this->user_group_id == $this->getAdminGroupID()){
                     // Login as Playbasis admin
                     $this->mongo_db->select(array('permission'));
                     $this->mongo_db->where('_id', $this->user_group_id);
@@ -444,6 +442,35 @@ class User_model extends MY_Model
                     }else{
                         $this->logout();
                         return false;
+                    }
+                }elseif (!$this->site_id) {
+                    // For first login
+                    if($this->client_id) {
+                        $plan = $this->getPlan();
+                        $features = $plan['feature_to_plan'];
+                        $has_account = false;
+                        $has_app = false;
+                        foreach ($features as $feature) {
+                            $this->mongo_db->select(array('link'));
+                            $this->mongo_db->where('_id', $feature);
+                            $this->mongo_db->where('status', true);
+                            $this->mongo_db->limit(1);
+                            $Q4 = $this->mongo_db->get('playbasis_feature');
+                            $access[] = $Q4[0]['link'];
+                            $modify[] = $Q4[0]['link'];
+                            if ($Q4[0]['link'] == 'account') $has_account = true;
+                            if ($Q4[0]['link'] == 'app') $has_app = true;
+                        }
+                        if (!$has_account) {
+                            $access[] = 'account';
+                            $modify[] = 'account';
+                        }
+                        if (!$has_app) {
+                            $access[] = 'app';
+                            $modify[] = 'app';
+                        }
+                        $this->permission['access'] = $access;
+                        $this->permission['modify'] = $modify;
                     }
                 }else {
                     // Login as Client user
@@ -650,21 +677,6 @@ class User_model extends MY_Model
             $this->database = $row['database'];
             $ip = $row['ip'];
 
-            // $this->permission
-            $this->mongo_db->select(array('permission'));
-            $this->mongo_db->where('_id', $this->user_group_id);
-            $this->mongo_db->limit(1);
-            $Q3 = $this->mongo_db->get('user_group');
-            if(count($Q3)>0){
-                $row3 = $Q3[0];
-                $permissions = $row3['permission'];
-                if (is_array($permissions)) {
-                        foreach ($permissions as $key => $value) {
-                            $this->permission[$key] = $value;
-                        }
-                }
-            }
-
             // $this->client_id
             $this->mongo_db->select(array('client_id'));
             $this->mongo_db->where('user_id', new MongoID($this->user_id));
@@ -676,6 +688,35 @@ class User_model extends MY_Model
                 $this->client_id = $row1['client_id'];
             }else{
                 $this->client_id = null;
+            }
+
+            // $this->permission
+            if($this->client_id) {
+                $plan = $this->getPlan();
+                $features = $plan['feature_to_plan'];
+                $has_account = false;
+                $has_app = false;
+                foreach ($features as $feature) {
+                    $this->mongo_db->select(array('link'));
+                    $this->mongo_db->where('_id', $feature);
+                    $this->mongo_db->where('status', true);
+                    $this->mongo_db->limit(1);
+                    $Q4 = $this->mongo_db->get('playbasis_feature');
+                    $access[] = $Q4[0]['link'];
+                    $modify[] = $Q4[0]['link'];
+                    if ($Q4[0]['link'] == 'account') $has_account = true;
+                    if ($Q4[0]['link'] == 'app') $has_app = true;
+                }
+                if (!$has_account) {
+                    $access[] = 'account';
+                    $modify[] = 'account';
+                }
+                if (!$has_app) {
+                    $access[] = 'app';
+                    $modify[] = 'app';
+                }
+                $this->permission['access'] = $access;
+                $this->permission['modify'] = $modify;
             }
 
             if($this->getAdminGroupID() || $this->client_id){

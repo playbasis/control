@@ -55,30 +55,29 @@
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_user_group'); ?>:</td>
                                 <td>
                                     <select name ="user_group">
-                                    <?php if(!$this->session->userdata('client_id')){?>
-                                        <?php if($user_groups){?>
-                                            <?php foreach($user_groups as $user_group){?>
-                                                <?php if((isset($user['user_group_id']) && $user['user_group_id']==$user_group['_id'])|| $user_group['_id'] == set_value('user_group')){?>
-                                                    <option value = "<?php echo $user_group['_id'];?>" selected><?php echo $user_group['name'];?></option>    
-                                                <?php }else{?>
-                                                    <option value = "<?php echo $user_group['_id'];?>"><?php echo $user_group['name'];?></option>
-                                                <?php }?>
+
+                                    <?php $group_chk = false?>
+                                    <?php if($user_groups){?>
+                                        <?php foreach($user_groups as $user_group){?>
+                                            <?php if($user_group['name'] != "Top Administrator"){?>
                                             <?php }?>
-                                        <?php }?>    
-                                    <?php }else{?>
-                                        <?php if($user_groups){?>
-                                            <?php foreach($user_groups as $user_group){?>
-                                                <?php //if($user_group['name']=='Super User'||$user_group['name']=='User'){?>
-                                                <?php if($user_group['name'] != "Top Administrator"){?>
-                                                    <?php if(isset($user['user_group_id']) && ($user['user_group_id']==$user_group['_id'])){?>
-                                                        <option value = "<?php echo $user_group['_id'];?>" selected><?php echo $user_group['name'];?></option>    
-                                                    <?php }else{?>
-                                                        <option value = "<?php echo $user_group['_id'];?>"><?php echo $user_group['name'];?></option>
-                                                    <?php }?>
-                                                <?php }?>
+                                            <?php if((isset($user['user_group_id']) && $user['user_group_id']==$user_group['_id'])|| $user_group['_id'] == set_value('user_group')){?>
+                                                <option value = "<?php echo $user_group['_id'];?>" selected><?php echo $user_group['name'];?></option>
+                                                <?php $group_chk = true ?>
+                                            <?php }else{?>
+                                                <option value = "<?php echo $user_group['_id'];?>"><?php echo $user_group['name'];?></option>
                                             <?php }?>
-                                        <?php }?>    
+                                        <?php }?>
                                     <?php }?>
+                                    <?php if(!(isset($is_admin_groups) && $is_admin_groups==true)){ ?>
+                                        <?php if($group_chk){ ?>
+                                            <option value="" ><?php echo $this->lang->line('text_default_admin'); ?></option>
+                                        <?php } else { ?>
+                                            <option value="" selected="selected"><?php echo $this->lang->line('text_default_admin'); ?></option>
+                                        <?php } ?>
+                                    <?php } ?>
+
+
                                     </select>
                                 </td>
                             </tr>

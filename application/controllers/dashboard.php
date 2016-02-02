@@ -256,7 +256,7 @@ class Dashboard extends MY_Controller
     private function is_default_enabled($features) {
         if (!$features) return false;
         if (is_array($features)) foreach ($features as $feature) {
-            if (array_key_exists('link', $feature) && $feature['link'] == '/') return true;
+            if (array_key_exists('link', $feature) && $feature['link'] == '/' &&  $this->User_model->hasPermission('access', $feature['link'])) return true;
         }
         return false;
     }
