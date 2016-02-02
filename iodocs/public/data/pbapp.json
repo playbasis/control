@@ -1581,6 +1581,29 @@
                     "parameters": []
                 },
                 {
+                    "MethodName": "List Rules",
+                    "Synopsis": "Returns list of active game rules defined for a client’s website.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Engine/rules",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "action",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of action performed"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Rule Detail",
                     "Synopsis": "Get the detail of the rule.",
                     "HTTPMethod": "GET",
