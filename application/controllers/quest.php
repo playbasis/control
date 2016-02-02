@@ -1393,6 +1393,7 @@ class Quest extends REST2_Controller
 
             $resp['quests'] = $quests;
         }
+        if (!$resp['quests']) $resp['quests'] = null; // force PHP to output null instead of empty array
         $this->response($this->resp->setRespond($resp), 200);
     }
 
