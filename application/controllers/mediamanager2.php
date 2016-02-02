@@ -37,7 +37,7 @@ class MediaManager2 extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $this->data['main'] = 'mediamanager';
+        $this->data['main'] = 'mediamanager2';
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
@@ -62,7 +62,25 @@ class MediaManager2 extends MY_Controller
         }
 
         $this->load->vars($this->data);
-        $this->render_page('mediamanager2');
+        $this->render_page('template');
+    }
+
+    public function dialog()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        } elseif (!$this->validateModify()) {
+            echo "<script>alert('" . $this->lang->line('error_permission') . "'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $this->load->vars($this->data);
+        $this->render_page('mediamanager2_dialog');
     }
 
     public function media($fileId = null)
