@@ -1573,14 +1573,6 @@
             "name": "Engine API",
             "methods": [
                 {
-                    "MethodName": "Action Config",
-                    "Synopsis": "Returns names of actions that can trigger game rules within a client’s website.",
-                    "HTTPMethod": "GET",
-                    "URI": "/Engine/actionConfig",
-                    "RequiresOAuth": "N",
-                    "parameters": []
-                },
-                {
                     "MethodName": "List Rules",
                     "Synopsis": "Returns list of active game rules defined for a client’s website.",
                     "HTTPMethod": "GET",
