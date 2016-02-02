@@ -28,6 +28,7 @@ class Engine extends Quest
 		$this->load->model('tool/node_stream', 'node');
 		$this->load->model('energy_model');
 	}
+
 	public function getActionConfig_get()
 	{
 		$required = $this->input->checkParam(array(
@@ -45,7 +46,6 @@ class Engine extends Quest
 		$actionConfig = array();
 		foreach($ruleSet as $rule)
 		{
-//			$jigsawSet = unserialize($rule['jigsaw_set']);
 			$jigsawSet = $rule['jigsaw_set'];
 			$actionId = $jigsawSet[0]['config']['action_id'];
 			$actionInput = $jigsawSet[0]['config'];
@@ -87,6 +87,88 @@ class Engine extends Quest
 		}
 		$this->response($this->resp->setRespond($actionConfig), 200);
 	}
+
+	public function rules_get()
+	{
+		/* check parameters */
+		$clientData = array('client_id' => $this->client_id, 'site_id' => $this->site_id);
+		$actionName = $this->input->get('action');
+		if ($actionName) {
+			$action = $this->client_model->getAction(array(
+				'client_id' => $this->client_id,
+				'site_id' => $this->site_id,
+				'action_name' => $actionName
+			));
+			if (!$action) $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+			$clientData['action_id'] = $action['action_id'];
+		}
+		$pb_player_id = null;
+		$player_id = $this->input->get('player_id');
+		if ($player_id !== false) {
+			$pb_player_id = $this->player_model->getPlaybasisId(array(
+				'client_id' => $this->client_id,
+				'site_id' => $this->site_id,
+				'cl_player_id' => $player_id,
+			));
+			if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		}
+
+		$rules = null;
+		$ruleSet = $this->client_model->getRuleSetByClientSite($clientData);
+		if ($ruleSet) {
+			$rules = array();
+			foreach ($ruleSet as $r) {
+				/* get rule detail */
+				$rule = $this->client_model->getRuleDetail($this->validToken, $r['rule_id']);
+
+				/* format output */
+				$rule['id'] = $rule['_id'].'';
+				unset($rule['_id']);
+				$rule['action'] = $actionName;
+				unset($rule['action_id']);
+
+				/* find current state of rule execution of the player */
+				if (isset($rule['jigsaw_set'])) {
+					$input = array(
+						'site_id' => $this->site_id,
+						'rule_id' => $r['rule_id'],
+					);
+					if ($pb_player_id) $input = array_merge($input, array('pb_player_id' => $pb_player_id));
+					foreach ($rule['jigsaw_set'] as &$jigsaw) {
+						if ($pb_player_id) {
+							try {
+								$jigsaw_id = new MongoId($jigsaw['id']);
+							} catch (MongoException $ex) {
+								$jigsaw_id = "";
+							}
+							$input['jigsaw_id'] = $jigsaw_id;
+							$input['jigsaw_name'] = $jigsaw['name'];
+							$input['jigsaw_category'] = $jigsaw['category'];
+							$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
+							$jigsaw['state'] = $this->jigsaw_model->getMostRecentJigsaw($input, array(
+								'input',
+								'date_added'
+							));
+							$jigsaw['state'] = $jigsaw['state'] ? $jigsaw['state'] : null;
+						}
+						try {
+							$this->applyBadgeObjGoodsObj($this->client_id, $this->site_id, $jigsaw['config']);
+						} catch (MongoException $ex) {
+							log_message('error', 'Error in applyBadgeObjGoodsObj(), client_id = '.$this->client_id);
+							log_message('error', 'Error in applyBadgeObjGoodsObj(), site_id = '.$this->site_id);
+							log_message('error', 'Error in applyBadgeObjGoodsObj(), jigsawConfig = '.print_r($jigsaw['config'], true));
+							$jigsaw['config']['data'] = null;
+						}
+						array_walk_recursive($jigsaw, array($this, "convert_mongo_object"));
+					}
+				}
+				array_push($rules, $rule);
+			}
+		}
+
+		$this->response($this->resp->setRespond($rules), 200);
+	}
+
 	public function rule_get($rule_id=0)
 	{
 		/* check parameters */
@@ -136,9 +218,16 @@ class Engine extends Quest
 						'input',
 						'date_added'
 					));
-					$jigsaw['state'] = $jigsaw['state']?$jigsaw['state']:null;
+					$jigsaw['state'] = $jigsaw['state'] ? $jigsaw['state'] : null;
 				}
-				$this->applyBadgeObjGoodsObj($this->client_id, $this->site_id, $jigsaw['config']);
+				try {
+					$this->applyBadgeObjGoodsObj($this->client_id, $this->site_id, $jigsaw['config']);
+				} catch (MongoException $ex) {
+					log_message('error', 'Error in applyBadgeObjGoodsObj(), client_id = '.$this->client_id);
+					log_message('error', 'Error in applyBadgeObjGoodsObj(), site_id = '.$this->site_id);
+					log_message('error', 'Error in applyBadgeObjGoodsObj(), jigsawConfig = '.print_r($jigsaw['config'], true));
+					$jigsaw['config']['data'] = null;
+				}
 				array_walk_recursive($jigsaw, array($this, "convert_mongo_object"));
 			}
 		}
@@ -605,7 +694,7 @@ class Engine extends Quest
 		if (isset($input["rule_id"]))
 			$ruleSet = $this->client_model->getRuleSetById($input["rule_id"]);
 		else
-			$ruleSet = $this->client_model->getRuleSetByActionId(array(
+			$ruleSet = $this->client_model->getRuleSetByClientSite(array(
 				'client_id' => $client_id,
 				'site_id' => $site_id,
 				'action_id' => $input['action_id']
