@@ -247,12 +247,7 @@ class Quest extends MY_Controller
                                         $item = new MongoId($item);
                                     }
                                 }
-                                if(in_array('DATETIME_START', $v)){
-                                    $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 00:00:00")));
-                                }
-                                if(in_array('DATETIME_END', $v)){
-                                    $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 23:59:59")));
-                                }
+
                                 $qdata = array(
                                     'client_id' => $client_id,
                                     'site_id' => $site_id
