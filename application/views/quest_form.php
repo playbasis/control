@@ -543,7 +543,7 @@
                                                                         <label class="span4">Sum of : </label>
                                                                         <?php foreach($actions as $aa){
                                                                         if($aa['action_id'] == $action['completion_id']){ ?>
-                                                                            <select class="param_list select" style="margin-left: 18px;" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_filter]" value = "<?php echo $action['completion_sum_param']?>">
+                                                                            <select class="param_list select" style="margin-left: 18px;" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_filter]" value = "<?php echo $action['completion_filter']?>">
                                                                                 <?php foreach ($aa['init_dataset'] as $data_set){?>
                                                                                 <option label="<?php echo $data_set['param_name'] ?>" value="<?php echo $data_set['param_name'] ?>" <?php echo (isset($action['completion_filter']) && $action['completion_filter']==$data_set['param_name'])? "selected='selected'":"";?>>
                                                                                 <?php }?>
@@ -2777,7 +2777,7 @@ function selectActionsItem(){
                     inputParamListHtml = '<label class="span4">Sum of : </label>\
                     <select class="param_list select" style="margin-left: 18px;" name="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_filter]" value = "'+parameter_name[0]+'">';
                     for (var j=0 in parameter_label) {
-                        inputParamListHtml += '<option label="'+parameter_label[j]+'" value="'+parameter_name[j]+'">';
+                        inputParamListHtml += '<option label="'+parameter_name[j]+'" value="'+parameter_name[j]+'">';
                     }
                     inputParamListHtml += '</select>';
 
