@@ -182,22 +182,26 @@ class Client_model extends MY_Model
 
         if (isset($data['user_value'])) {
 
-            $this->mongo_db->where('client_id', new MongoID($client_id));
-            $this->mongo_db->delete_all('user_to_client');
+            //$this->mongo_db->where('client_id', new MongoID($client_id));
+            //$this->mongo_db->delete_all('user_to_client');
 
             foreach ($data['user_value'] as $user_value) {
 
                 $this->mongo_db->where('_id', new MongoID($user_value['user_id']));
-                $this->mongo_db->set('user_group_id',  new MongoID($user_value['user_group_id']));
+                if($user_value['user_group_id']) {
+                    $this->mongo_db->set('user_group_id', new MongoID($user_value['user_group_id']));
+                }else{
+                    $this->mongo_db->set('user_group_id', null);
+                }
                 $this->mongo_db->set('status',  (bool)$user_value['status']);
                 $this->mongo_db->update('user');
 
-                $data_insert = array(
+               /* $data_insert = array(
                     'client_id' => new MongoID($client_id),
                     'user_id' => new MongoID($user_value['user_id']),
                     'status' => (bool)$user_value['status']
                 );
-                $this->mongo_db->insert('user_to_client', $data_insert);
+                $this->mongo_db->insert('user_to_client', $data_insert);*/
             }
         }
     }

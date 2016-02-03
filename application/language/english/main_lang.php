@@ -82,6 +82,7 @@ $lang['text_user']                        = 'Users';
 $lang['text_documentation']               = 'Documentation';
 $lang['text_users']                       = 'Users';
 $lang['text_user_group']                  = 'User Groups';
+$lang['text_default_admin']               = 'Admin (default)';
 $lang['text_voucher']                     = 'Gift Vouchers';
 $lang['text_voucher_theme']               = 'Voucher Themes';
 $lang['text_weight_class']                = 'Weight Classes';

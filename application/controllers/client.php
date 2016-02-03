@@ -9,6 +9,7 @@ class Client extends MY_Controller
 
         $this->load->model('User_model');
         $this->load->model('Client_model');
+        $this->load->model('User_group_to_client_model');
         $this->load->model('Permission_model');
 
         if(!$this->User_model->isLogged()){
@@ -454,7 +455,8 @@ class Client extends MY_Controller
 
         $this->data['plan_data'] = $this->Plan_model->getAvailablePlans();
 
-        $this->data['groups'] = $this->User_model->getUserGroups();
+        //$this->data['groups'] = $this->User_model->getUserGroups();
+        $this->data['groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
 
         $this->data['main'] = 'client_form';
 
@@ -624,7 +626,10 @@ class Client extends MY_Controller
             }
         }
         $this->data['list_client_id'] = $data['client_id'];
-        $this->data['groups'] = $this->User_model->getUserGroups();
+        //$this->data['groups'] = $this->User_model->getUserGroups();
+
+        $this->data['groups'] = $this->User_group_to_client_model->fetchAllUserGroups($this->input->get('client_id'));
+
 
         $this->load->vars($this->data);
         $this->render_page('client_user');

@@ -22,6 +22,7 @@ class User extends MY_Controller
         $this->load->model('Merchant_model');
         $this->load->model('Goods_model');
         $this->load->model('User_group_model');
+        $this->load->model('User_group_to_client_model');
         $this->load->model('Setting_model');
 
         $lang = get_lang($this->session, $this->config);
@@ -278,7 +279,7 @@ class User extends MY_Controller
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_password'), 'required|matches[password]');
-        $this->form_validation->set_rules('user_group', $this->lang->line('form_user_group'), 'required');
+        //$this->form_validation->set_rules('user_group', $this->lang->line('form_user_group'), 'required');
 
         $json = array();
 
@@ -384,7 +385,24 @@ class User extends MY_Controller
             $this->data['user'] = $user_info;    
         }
 
-        $this->data['user_groups'] = $this->User_model->getUserGroups();
+        if(!$user_id) {
+            if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                $this->data['is_admin_groups'] = true;
+                $this->data['user_groups'] = $this->User_model->getUserGroups();
+            }else{
+                $client_id = $this->User_model->getClientId();
+                $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
+            }
+        }else {
+            $user_info = $this->User_model->getUserInfo($user_id);
+            if ($user_info['user_group_id'] == $this->User_model->getAdminGroupID()) {
+                $this->data['is_admin_groups'] = true;
+                $this->data['user_groups'] = $this->User_model->getUserGroups();
+            }else {
+                $client_id = $this->User_model->getClientIdByUserId(new MongoId($user_id));
+                $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
+            }
+        }
 
         $this->data['main'] = 'user_form';
         $this->render_page('template');
@@ -498,6 +516,16 @@ class User extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    public function block(){
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
+        $this->data['main'] = 'block';
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
     }
 
     public function login(){
