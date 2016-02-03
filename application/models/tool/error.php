@@ -285,7 +285,7 @@ class Error extends CI_Model
             $errorData["error_code"] = "0702";
             break;
         case "QUEST_CONDITION":
-            $errorData["message"] = "User has no permission to join this quest";
+            $errorData["message"] = $dataArray;
             $errorData["error_code"] = "0703";
             break;
         case "QUEST_CANCEL_FAILED":

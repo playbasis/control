@@ -1118,7 +1118,7 @@ class Quest extends REST2_Controller
                 $this->quest_model->joinQuest(array_merge($data, $quest));
             else
                 // condition failed
-                $this->response($this->error->setError("QUEST_CONDITION"), 200);
+                $this->response($this->error->setError("QUEST_CONDITION",$condition_quest[0]['message']), 200);
         } else {
             // already join, let check quest_to_client status
             if ($player_quest["status"] == "join")
