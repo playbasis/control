@@ -504,22 +504,23 @@ class Quest extends REST2_Controller
         if($mission && isset($mission["completion"])){
 
             foreach($mission["completion"] as $c){
-
                 if($c["completion_type"] == "ACTION"){
                     // default is count for compatibility
                     if (!isset($c["completion_op"])) {
                         $c["completion_op"] = "count";
                     }
                     if ( $c["completion_op"] == "count"){
-                        $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"],
+                        $action = $this->player_model->getActionCountFromDatetime($pb_player_id, new MongoId($c["completion_id"]),
                             isset($c["completion_filter"]) ? $c["completion_filter"] : null,
-                            isset($c["completion_string"]) ? $c["completion_string"] : null,
+                            isset($c["filtered_param"]) ? $c["filtered_param"] : null,
                             $validToken['site_id'],
                             $datetime_check);
+                        $c["completion_filter"] = isset($action['action_name'])? $action['action_name']:null;
                     }
                     else{ // sum
                         $action = $this->player_model->getActionSumFromDatetime($pb_player_id, $c["completion_id"],
                             isset($c["completion_filter"]) ? $c["completion_filter"] : null,
+                            isset($c["filtered_param"]) ? $c["filtered_param"] : null,
                             $validToken['site_id'],
                             $datetime_check);
                     }
@@ -1398,7 +1399,6 @@ class Quest extends REST2_Controller
         foreach ($quests as &$quest) {
             if ($pb_player_id) {
                 $quest_player = $this->quest_model->getPlayerQuest(array('site_id' => $this->site_id, 'pb_player_id' => $pb_player_id, 'quest_id' => new MongoId($quest['_id'])));
-                array_walk_recursive($quest_player, array($this, "convert_mongo_object"));
                 if ($quest_player) {
                     $quest['player_status'] = $quest_player['status'];
                     foreach($quest_player["missions"] as $k=>$m){
@@ -1411,7 +1411,7 @@ class Quest extends REST2_Controller
             $quest['quest_id'] = $quest['_id'];
             unset($quest['_id']);
         }
-
+        array_walk_recursive($quest, array($this, "convert_mongo_object"));
         $resp['quests'] = $quests;
         $this->response($this->resp->setRespond($resp), 200);
     }

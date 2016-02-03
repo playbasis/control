@@ -151,5 +151,6 @@ define('S3_IMAGE', 'http://elasticbeanstalk-ap-southeast-1-007834438823.s3.amazo
 define('S3_CONTENT_FOLDER','user_content/');
 define('DIR_IMAGE', FCPATH.'images/');
 define('THUMBNAIL_FOLDER','thumb/');
+define('POSTFIX_NUMERIC_PARAM','_numeric');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
