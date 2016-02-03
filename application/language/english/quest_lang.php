@@ -43,7 +43,8 @@ $lang = array(
 	'form_organize_name'				=> 'Organize Type',
 	'form_global_quest'					=> 'Global Quest?',
     'error_quest_limit'                 => 'You have reached Quest Limit.',
-    'error_mission_limit'               => 'You have reached Mission Limit.'
+    'error_mission_limit'               => 'You have reached Mission Limit.',
+    'text_fail_set_role'                => 'Please select node before setting role'
 );
 
 $lang['error_permission']       = 'Warning: You do not have permission to modify quest!';
