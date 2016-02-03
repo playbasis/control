@@ -25,7 +25,7 @@
     your browser</a> to improve your experience.</p>
 <![endif]-->
 
-<div class="container-fluid">
+<div class="container-fluid media-manager2-wrapper">
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar">
@@ -47,57 +47,26 @@
 
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade" id="upload-tab">
-                    <div id="dropzone"><form action="/upload" class="dropzone needsclick dz-clickable" id="demo-upload">
-
+                    <div id="dropzone" style="padding-top: 20px">
+                        <form action="/upload" class="dropzone needsclick dz-clickable" id="demo-upload">
                             <div class="dz-message needsclick">
                                 Drop files here or click to upload.<br>
                                 <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
                             </div>
-
-                        </form></div>
+                        </form>
+                    </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade in active" id="media-manager-tab">
                     <div class="row" style="padding-top: 20px">
                         <div class="col-xs-12" id="thumbnail-grid"></div>
 
-                        <div id="detail-panel" class="collapse">
-                            <div class="thumbnail">
-                                <img src="" style="border: black solid 1px">
-                                <div class="caption">
-                                    <div class="row-fluid">
-                                        <h3 style="word-wrap: break-word">{{file_name}}</h3>
-                                    </div>
-                                    <div class="row-fluid">
-                                        <div class="span12">
-                                            <label for="img_url">Image URL:</label>
-                                            <textarea id="img_url" rows="3" class="input-block-level" readonly>{{img_url}}</textarea>
-                                            <button class="btn btn-block" onclick="copyToClipboard('#img_url')">Copy to
-                                                clipboard
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="row-fluid">
-                                        <div class="span12">
-                                            <label for="sm_thumb_url">Small thumbnail URL:</label>
-                                            <textarea id="sm_thumb_url" rows="3" class="input-block-level" readonly>{{img_sm_url}}</textarea>
-                                            <button class="btn btn-block" onclick="copyToClipboard('#sm_thumb_url')">
-                                                Copy to clipboard
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="row-fluid">
-                                        <div class="span12">
-                                            <label for="lg_thumb_url">Large thumbnail URL:</label>
-                                            <textarea id="lg_thumb_url" rows="3" class="input-block-level" readonly>{{img_lg_url}}</textarea>
-                                            <button class="btn btn-block" onclick="copyToClipboard('#lg_thumb_url')">
-                                                Copy to clipboard
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="row-fluid">
-                                        <p>File Size: {{file_size}} bytes</p>
-                                    </div>
-                                </div>
+                        <div class="collapse" id="detail-panel"></div>
+
+                    </div>
+                    <div class="row">
+                        <div class="footer-div col-md-offset-2 col-sm-offset-3">
+                            <div class="select-btn-wrapper">
+                                <button class="btn btn-primary pull-right" id="select-photo">Insert</button>
                             </div>
                         </div>
                     </div>
@@ -108,9 +77,12 @@
 </div>
 
 <div id="hiddenThumbs" class="hidden">
-    <div class="col-xs-6 col-md-3" data-id="{{img_id}}" data-file_name="{{file_name}}" data-file_size="{{file_size}}"
-         data-url="{{img_url}}" data-sm_url="{{img_sm_url}}" data-lg_url="{{img_lg_url}}">
-        <a class="thumbnail" href="#">
+    <div class="col-xs-6 col-md-3 thumbnail-wrapper">
+        <a class="thumbnail" href="#" data-id="{{img_id}}" data-file_name="{{file_name}}" data-file_size="{{file_size}}"
+           data-url="{{img_url}}" data-sm_url="{{img_sm_url}}" data-lg_url="{{img_lg_url}}">
+            <div class="caption">
+                <p class=""><span href="#" class="label label-default">asd</span></p>
+            </div>
             <img src="" style="display: block;">
         </a>
     </div>
@@ -134,8 +106,64 @@
     </div>
 </div>
 
+<div id="hidden_detail_panel" class="hidden">
+    <div class="thumbnail">
+        <img src="" style="border: black solid 1px">
+        <div class="caption">
+            <h3 style="word-wrap: break-word">{{file_name}}</h3>
+
+            <div style="padding-bottom: 10px">
+                <label for="img_url">Image URL:</label>
+                <div class="input-group">
+                    <input type="text" id="img_url" class="form-control" readonly
+                           value="{{img_url}}">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="button"
+                                onclick="copyToClipboard('#img_url')"><span
+                                class="glyphicon glyphicon-copy" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding-bottom: 10px">
+                <label for="sm_thumb_url">Small thumbnail URL:</label>
+                <div class="input-group">
+                    <input type="text" id="sm_thumb_url" class="form-control" readonly
+                           value="{{img_sm_url}}">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="button"
+                                onclick="copyToClipboard('#sm_thumb_url')"><span
+                                class="glyphicon glyphicon-copy" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding-bottom: 10px">
+                <label for="lg_thumb_url">Large thumbnail URL:</label>
+
+                <div class="input-group">
+                    <input type="text" id="lg_thumb_url" class="form-control" readonly
+                           value="{{img_lg_url}}">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="button"
+                                onclick="copyToClipboard('#lg_thumb_url')"><span
+                                class="glyphicon glyphicon-copy" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding-bottom: 10px">File Size: {{file_size}} bytes</div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script>window.jQuery || document.write('<script src="<?php echo base_url(); ?>javascript/mediaManager2/js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+<script>window.Pace || document.write('<script src="<?php echo base_url(); ?>javascript/pace/pace.min.js"><\/script>')</script>
 <script type="text/javascript">
     var baseUrlPath = "<?php echo base_url();?><?php echo (index_page() == '') ? '' : index_page() . "/" ?>";
     Pace.on("done", function () {

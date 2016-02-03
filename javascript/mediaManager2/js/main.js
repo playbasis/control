@@ -9,13 +9,19 @@ $("#media-manager-tab")
 
         //todo: to check if clicked 'a' is has same 'data-id'
         if ($detail_panel.is(':visible')) {
-            $detail_panel.hide().removeClass("col-xs-3");
-            $thumbnail_grid.addClass("col-xs-12").removeClass("col-xs-9");
+            $detail_panel.hide().removeClass("col-xs-4");
+            $thumbnail_grid.addClass("col-xs-12").removeClass("col-xs-8");
         } else {
-            $thumbnail_grid.removeClass("col-xs-12").addClass("col-xs-9");
-            $detail_panel.addClass("col-xs-3").show();
+            displayThumbnailPreview($(this).data('file_name'), $(this).data('url'), $(this).data('file_size'), $(this).data('sm_url'), $(this).data('lg_url'));
+
+            $thumbnail_grid.removeClass("col-xs-12").addClass("col-xs-8");
+            $detail_panel.addClass("col-xs-4").show();
         }
     });
+
+$thumbnail_grid.on("selection-changed", function (event, selection) {
+    console.log(selection);
+});
 
 function createImageThumbnailGrid(imageDataJSONObject) {
     imageDataJSONObject = typeof imageDataJSONObject !== 'undefined' ? imageDataJSONObject : null;
@@ -42,19 +48,18 @@ function displayThumbnailPreview(filename,url,filesize,sm_thumb,lg_thumb) {
     sm_thumb = typeof sm_thumb !== 'undefined' ? sm_thumb : null;
     lg_thumb = typeof lg_thumb !== 'undefined' ? lg_thumb : null;
 
-    var thumbPreview = $('#thumb_preview'),
-        hiddenPreviewHTML = $('#hiddenPreview').html();
+    var hidden_detail_panelHTML = $('#hidden_detail_panel').html();
 
     if (filename || url || filesize) {
-        hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{img_url}}', 'g'), url);
-        hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('src=""', 'g'), 'src="' + lg_thumb + '"');
-        hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{file_name}}', 'g'), filename);
-        hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{file_size}}', 'g'), filesize);
-        hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{img_sm_url}}', 'g'), sm_thumb);
-        hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{img_lg_url}}', 'g'), lg_thumb);
+        hidden_detail_panelHTML = hidden_detail_panelHTML.replace(new RegExp('{{img_url}}', 'g'), url);
+        hidden_detail_panelHTML = hidden_detail_panelHTML.replace(new RegExp('src=""', 'g'), 'src="' + lg_thumb + '"');
+        hidden_detail_panelHTML = hidden_detail_panelHTML.replace(new RegExp('{{file_name}}', 'g'), filename);
+        hidden_detail_panelHTML = hidden_detail_panelHTML.replace(new RegExp('{{file_size}}', 'g'), filesize);
+        hidden_detail_panelHTML = hidden_detail_panelHTML.replace(new RegExp('{{img_sm_url}}', 'g'), sm_thumb);
+        hidden_detail_panelHTML = hidden_detail_panelHTML.replace(new RegExp('{{img_lg_url}}', 'g'), lg_thumb);
     }
 
-    thumbPreview.empty().append(hiddenPreviewHTML).show();
+    $detail_panel.empty().append(hidden_detail_panelHTML).show();
 }
 
 function ajaxGetMediaList() {
@@ -69,6 +74,9 @@ function ajaxGetMediaList() {
             $.each(data.rows, function (index, value) {
                 createImageThumbnailGrid(value);
             });
+
+            $("#thumbnail-grid").thumbnailSelectable();
+
             $waitDialog.modal('hide');
         })
         .always(function () {
@@ -76,6 +84,41 @@ function ajaxGetMediaList() {
         });
 }
 
+function copyToClipboard(element) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(element).text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+}
+
+jQuery.fn.extend({
+    thumbnailSelectable: function () {
+        var thumbnailSelectable = this;
+        thumbnailSelectable.getSelection = function () {
+            var selection = [];
+            thumbnailSelectable.find(".active").each(function (ix, el) {
+                selection.push($(el)[0]);
+            });
+            return selection;
+        };
+        var selectionChanged = function () {
+            $(this).toggleClass("active");
+            thumbnailSelectable.trigger("selection-changed", [thumbnailSelectable.getSelection()]);
+        };
+        $(thumbnailSelectable).find(".thumbnail").on("click", selectionChanged);
+        return thumbnailSelectable;
+    }
+});
+
 $(function () {
     ajaxGetMediaList();
+
+    $('#thumbnail-grid')
+        .on('mouseenter', 'a.thumbnail', function () {
+            $(this).find('.caption').fadeIn(250);
+        })
+        .on('mouseleave', 'a.thumbnail', function () {
+            $(this).find('.caption').fadeOut(250);
+        });
 });
