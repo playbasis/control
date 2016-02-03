@@ -520,6 +520,8 @@ class User extends MY_Controller
 
     public function block(){
         $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['main'] = 'block';
 
         $this->load->vars($this->data);
