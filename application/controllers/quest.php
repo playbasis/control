@@ -228,6 +228,16 @@ class Quest extends MY_Controller
                 }
 
                 if (!$this->data['message']) {
+                    if ($this->User_model->hasPermission('access','store_org') &&
+                        $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org') &&
+                        !$this->input->post('global_quest') ) {
+                        if($data['organize_role']&& !$data['organize_id']){
+                            $this->data['message'][] = $this->lang->line('text_fail_set_role');
+                        }
+                    }
+                }
+
+                if (!$this->data['message']) {
                     foreach($data as $key => $value){
                         if(in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))){
                             $i = 0;
@@ -342,7 +352,14 @@ class Quest extends MY_Controller
                             $data['organize_id'] = null;
                             $data['organize_role'] = null;
                         }else{
-                            $data['organize_id']= new MongoID($data['organize_id']);
+                            if($data['organize_id']){
+                                $data['organize_id']= new MongoID($data['organize_id']);
+                            }else{
+                                $data['organize_id']= null;
+                            }
+                            if(!$data['organize_role']){
+                                $data['organize_role']= null;
+                            }
                         }
                     }
 
@@ -1232,6 +1249,16 @@ class Quest extends MY_Controller
                 }
 
                 if (!$this->data['message']) {
+                    if ($this->User_model->hasPermission('access','store_org') &&
+                        $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org') &&
+                        !$this->input->post('global_quest') ) {
+                        if($data['organize_role']&& !$data['organize_id']){
+                            $this->data['message'][] = $this->lang->line('text_fail_set_role');
+                        }
+                    }
+                }
+
+                if (!$this->data['message']) {
                     foreach ($data as $key => $value) {
                         if (in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))) {
                             $i = 0;
@@ -1361,7 +1388,14 @@ class Quest extends MY_Controller
                             $data['organize_id'] = null;
                             $data['organize_role'] = null;
                         }else{
-                            $data['organize_id']= new MongoID($data['organize_id']);
+                            if($data['organize_id']){
+                                $data['organize_id']= new MongoID($data['organize_id']);
+                            }else{
+                                $data['organize_id']= null;
+                            }
+                            if(!$data['organize_role']){
+                                $data['organize_role']= null;
+                            }
                         }
                     }
 
