@@ -814,9 +814,11 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_type'] = $mm['completion_type'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_value'] = $mm['completion_value'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_id'] = $mm['completion_id'];
-                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_filter'] = $mm['completion_filter'];
+                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_filter'] = isset($mm['completion_filter'])?$mm['completion_filter']:null;
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_op'] = isset($mm['completion_op']) ? $mm['completion_op']:"sum";
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_string'] = isset($mm['completion_string'])?$mm['completion_string']:"";
+                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['filtered_param'] = isset($mm['filtered_param'])?$mm['filtered_param']:null;
+                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_sum_param'] = isset($mm['completion_sum_param'])?$mm['completion_sum_param']:"";
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_title'] = $mm['completion_title'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_element_id'] = $mm['completion_element_id'];
                                 $countActions++;

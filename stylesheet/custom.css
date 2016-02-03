@@ -538,12 +538,19 @@ input[type=radio]:checked + label {
 .actions-wrapper{
 	
 }
-.actions-wrapper .completeBy select{
-	width: 100%;
-	margin-top: 5px;
+.actions-wrapper .completeBy input{
+	clear: both;
+	margin: 0 20px 0 0;
+	width: 95%;
+}
+.actions-wrapper .completeParamList input{
+	clear: both;
+	margin: 0 20px 0 0;
+	width: 95%;
 }
 .actions-wrapper .actionValue input{
-	width: 100%;
+	clear: both;
+	margin: 0 20px 0 0;
 }
 
 .actions-wrapper .actionParameter select{
@@ -551,7 +558,21 @@ input[type=radio]:checked + label {
 	margin-top: 5px;
 }
 .actions-wrapper .filterString input{
+	width: 100%;
+}
+.actions-wrapper .operation select{
+	width: 100%;
+}
+.actions-wrapper .actionTitle input{
+	clear: both;
+	margin: 0 20px 0 0;
+	width: 85%;
+}
+
+.table-responsive .paramTr tr{
 	width: 90%;
+	height: 20px;
+	margin-top: 5px;
 }
 
 @media screen and (max-width: 960px) {
