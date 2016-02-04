@@ -48,12 +48,16 @@
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade" id="upload-tab">
                     <div id="dropzone" style="padding-top: 20px">
-                        <form action="/upload" class="dropzone needsclick dz-clickable" id="demo-upload">
+                        <?php
+                        $attributes = array('id' => 'dz-upload', 'class' => 'dropzone needsclick dz-clickable');
+                        echo form_open(base_url() ."mediamanager2/upload_s3" ,$attributes);
+                        ?>
                             <div class="dz-message needsclick">
                                 Drop files here or click to upload.<br>
-                                <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
                             </div>
-                        </form>
+                        <?php
+                        echo form_close();
+                        ?>
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade in active" id="media-manager-tab">
@@ -65,7 +69,8 @@
                     </div>
                     <div class="row">
                         <div class="footer-div col-md-offset-2 col-sm-offset-3">
-                            <div class="select-btn-wrapper">
+                            <div class="selected-wrapper col-xs-8"></div>
+                            <div class="select-btn-wrapper col-xs-4">
                                 <button class="btn btn-primary pull-right" id="select-photo">Insert</button>
                             </div>
                         </div>
@@ -80,11 +85,22 @@
     <div class="col-xs-6 col-md-3 thumbnail-wrapper">
         <a class="thumbnail" href="#" data-id="{{img_id}}" data-file_name="{{file_name}}" data-file_size="{{file_size}}"
            data-url="{{img_url}}" data-sm_url="{{img_sm_url}}" data-lg_url="{{img_lg_url}}">
-            <div class="caption">
-                <p class=""><span href="#" class="label label-default">asd</span></p>
-            </div>
             <img src="" style="display: block;">
         </a>
+    </div>
+</div>
+
+<div id="hiddenSelectedThumbs" class="hidden">
+    <div class="col-xs-12">
+        <div class="col-xs-6 col-sm-3">
+            <span>1 Selected</span>
+            <span><a href="#" id="clear-selected" class="text-danger">Clear</a></span>
+        </div>
+        <div class="col-xs-6 col-sm-3">
+            <div class="thumbnail active" href="#" data-id="{{img_id}}" style="width: 40px; height: 40px; color: #23527c">
+                <img src="" style="display: block;">
+            </div>
+        </div>
     </div>
 </div>
 
@@ -107,7 +123,7 @@
 </div>
 
 <div id="hidden_detail_panel" class="hidden">
-    <div class="thumbnail">
+    <div class="thumbnail" data-id="{{img_id}}">
         <img src="" style="border: black solid 1px">
         <div class="caption">
             <h3 style="word-wrap: break-word">{{file_name}}</h3>
@@ -160,9 +176,9 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<!--<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>-->
 <script>window.jQuery || document.write('<script src="<?php echo base_url(); ?>javascript/mediaManager2/js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>-->
 <script>window.Pace || document.write('<script src="<?php echo base_url(); ?>javascript/pace/pace.min.js"><\/script>')</script>
 <script type="text/javascript">
     var baseUrlPath = "<?php echo base_url();?><?php echo (index_page() == '') ? '' : index_page() . "/" ?>";

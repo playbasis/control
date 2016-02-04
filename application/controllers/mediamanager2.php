@@ -3,6 +3,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
+define('MAX_UPLOADED_FILE_SIZE', 3*1024*1024);
 
 class MediaManager2 extends MY_Controller
 {
@@ -182,6 +183,215 @@ class MediaManager2 extends MY_Controller
                 die();
             }
         }
+    }
+
+    public function image() {
+        if ($this->input->get('image')) {
+            //thumbnail
+            $this->Image_model->resize($this->input->get('image'), 40, 40);
+            $this->Image_model->resize($this->input->get('image'), 50, 50);
+            $this->Image_model->resize($this->input->get('image'), 140, 140);
+            $this->output->set_output($this->Image_model->resize(html_entity_decode($this->input->get('image'), ENT_QUOTES, 'UTF-8'), 100, 100));
+        }
+    }
+
+    public function files() {
+        $json = array();
+
+        if (!empty($this->input->post['directory'])) {
+            $directory = DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post['directory']);
+        } else {
+            $directory = DIR_IMAGE . 'data/';
+        }
+
+        $allowed = array(
+            '.jpg',
+            '.jpeg',
+            '.png',
+            '.gif'
+        );
+
+        $files = glob(rtrim($directory, '/') . '/*');
+
+        if ($files) {
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    $ext = strrchr($file, '.');
+                } else {
+                    $ext = '';
+                }
+
+                if (in_array(strtolower($ext), $allowed)) {
+                    $size = filesize($file);
+
+                    $i = 0;
+
+                    $suffix = array(
+                        'B',
+                        'KB',
+                        'MB',
+                        'GB',
+                        'TB',
+                        'PB',
+                        'EB',
+                        'ZB',
+                        'YB'
+                    );
+
+                    while (($size / 1024) > 1) {
+                        $size = $size / 1024;
+                        $i++;
+                    }
+
+                    $json[] = array(
+                        'filename' => basename($file),
+                        'file'     => utf8_substr($file, utf8_strlen(DIR_IMAGE . 'data/')),
+                        'size'     => round(utf8_substr($size, 0, utf8_strpos($size, '.') + 4), 2) . $suffix[$i]
+                    );
+                }
+            }
+        }
+
+        $this->output->set_output(json_encode($json));
+    }
+
+    public function upload_s3() {
+
+        $json = array();
+
+        if ($this->input->post('directory') || $this->input->post('directory')=="") {
+
+            if ($_FILES['file'] && $_FILES['file']['tmp_name']) {
+                $filename = basename(html_entity_decode($_FILES['file']['name'], ENT_QUOTES, 'UTF-8'));
+
+                $t = explode('.' , $filename);
+                $type = end($t);
+
+                $filename = md5($this->User_model->getClientId().$this->User_model->getSiteId().$filename).".".$type;
+
+                if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
+                    $json['error'] = $this->lang->line('error_filename');
+                }
+
+                $directory = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post('directory')), '/');
+
+                if (!is_dir($directory)) {
+                    $json['error'] = $this->lang->line('error_directory');
+                }
+
+                if ($_FILES['file']['size'] > MAX_UPLOADED_FILE_SIZE) {
+                    $json['error'] = $this->lang->line('error_file_size');
+                }
+
+                $image_info = getimagesize($_FILES['file']['tmp_name']);
+                $image_width = $image_info[0];
+                $image_height = $image_info[1];
+
+                //if($image_width < 500 || $image_width >1000){
+                if($image_width > 2000){
+                    $json['error'] = $this->lang->line('error_width');
+                    // $json['error'] = $image_height." ".$image_width;
+                }
+
+                //if($image_height < 500 || $image_height >1000){
+                if($image_height > 2000){
+                    $json['error'] = $this->lang->line('error_height');
+                    // $json['error'] = $image_height." ".$image_width;
+                }
+
+//                if(intval($image_height) != intval($image_width)){
+//                    $json['error'] = $this->lang->line('error_square');
+//                }
+
+                $allowed = array(
+                    'image/jpeg',
+                    'image/pjpeg',
+                    'image/png',
+                    'image/x-png',
+                    'image/gif',
+                    'application/x-shockwave-flash'
+                );
+
+                if (!in_array($_FILES['file']['type'], $allowed)) {
+                    $json['error'] = $this->lang->line('error_file_type');
+                }
+
+                $allowed = array(
+                    '.jpg',
+                    '.jpeg',
+                    '.gif',
+                    '.png',
+                    '.flv'
+                );
+
+                if (!in_array(strtolower(strrchr($filename, '.')), $allowed)) {
+                    $json['error'] = $this->lang->line('error_file_type');
+                }
+
+                if ($_FILES['file']['error'] != UPLOAD_ERR_OK) {
+                    $json['error'] = 'error_upload_' . $_FILES['file']['error'];
+                }
+            } else {
+                $json['error'] = $this->lang->line('error_file');
+            }
+        } else {
+            $json['error'] = $this->lang->line('error_directory');
+        }
+
+        if (!$this->User_model->hasPermission('modify', 'mediamanager2')) {
+            $json['error'] = $this->lang->line('error_permission');
+        }
+
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $this->load->model('Plan_model');
+        $this->load->model('Permission_model');
+        // Get Limit
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+        $limit_images = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'image');
+
+        $size = $this->Image_model->getTotalSize($client_id);
+        if ($limit_images && ($size + $_FILES['file']['size'] > $limit_images)) {
+            $json['error'] = $this->lang->line('error_overall_size_limit_reached');
+        }
+
+        if (!isset($json['error'])) {
+            //create a new bucket
+            //$this->s3->putBucket("elasticbeanstalk-ap-southeast-1-007834438823", S3::ACL_PUBLIC_READ);
+
+            $this->s3->setEndpoint("s3-ap-southeast-1.amazonaws.com");
+
+            //move the file
+            if ($this->s3->putObjectFile($_FILES['file']['tmp_name'], "elasticbeanstalk-ap-southeast-1-007834438823", rtrim('data/' . str_replace('../', '', $this->input->post('directory')), '/')."/". $filename, S3::ACL_PUBLIC_READ)) {
+                $url = rtrim(S3_IMAGE . 'data/' . str_replace('../', '', $this->input->post('directory')),
+                        '/') . "/" . urlencode($filename);
+                @copy($url, $directory . '/' . $filename);
+
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+
+                $this->Image_model->registerImageToSite($client_id, $site_id, $_FILES['file']['size'], $filename,
+                    $url);
+
+                $this->Image_model->resize('data/' . $filename, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH,
+                    MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT);
+                $this->Image_model->resize('data/' . $filename, MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH,
+                    MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT);
+
+                $json['success'] = $this->lang->line('text_uploaded');
+            }else{
+                $json['error'] = $this->lang->line('error_uploaded');
+            }
+        }
+
+        if(!isset($json['error'])){
+            $this->output->set_status_header('200');
+        }else{
+            $this->output->set_status_header('400');
+        }
+        $this->output->set_output(json_encode($json));
     }
 
     private function validateModify()

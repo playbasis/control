@@ -20,7 +20,12 @@ body {
 
 .select-btn-wrapper {
   padding-top: 10px;
-  padding-right: 50px;
+  padding-right: 10px;
+}
+
+.selected-wrapper {
+  padding-top: 10px;
+  padding-left: 10px;
 }
 
 .footer-div {
