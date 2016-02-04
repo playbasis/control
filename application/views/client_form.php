@@ -282,7 +282,7 @@ function addNewUser() {
             var notification = $('#notification');
 
             if (json['error']) {
-                $('#notification').html(json['error']).addClass('warning').show();
+                $('#notification').html(json['error']).addClass().show();
             } else {
 
                 $('#notification').html(json['success']).addClass('success').show().removeClass('warning');
