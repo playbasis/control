@@ -1849,6 +1849,27 @@ input[type=radio]:checked + label {
     font-weight: normal;
 }
 
+.content-page div#mm2Modal.modal-body
+{
+    max-height:80%;
+}
+
+.content-page div#mm2Modal.modal
+{
+    height:75%;
+    width:75%;
+    margin-left: -40%;
+    margin-top: -30%;
+}
+
+@media (max-width: 768px) {
+    .content-page div#mm2Modal.modal
+    {
+        width:90%;
+        margin-left: 2%;
+    }
+}
+
 /* ====== [ Media Manager Page ] ======= */
 .mediamanager-page .nav {
     margin-bottom: 0;
