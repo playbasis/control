@@ -71,11 +71,7 @@ class Quest extends REST2_Controller
             }
         }
 
-        $completeMissionActionId = $this->action_model->findAction(array(
-            'client_id' => $validToken['client_id'],
-            'site_id' => $validToken['site_id'],
-            'action_name' => COMPLETE_MISSION_ACTION,
-        ));
+        $platform = $this->auth_model->getOnePlatform($this->client_id, $this->site_id);
 
         foreach($quests as $q){
 
@@ -161,17 +157,11 @@ class Quest extends REST2_Controller
                                         $pb_player_id
                                     );
                                     /* fire complete-mission action */
-                                    if ($completeMissionActionId) {
-                                        $this->tracker_model->trackAction(array(
-                                            'client_id' => $client_id,
-                                            'site_id' => $site_id,
-                                            'pb_player_id' => $pb_player_id,
-                                            'action_id' => $completeMissionActionId,
-                                            'action_name' => COMPLETE_MISSION_ACTION,
-                                            'url' => $m["mission_id"],
-                                        ));
-                                    }
-
+                                    $this->utility->request('engine', 'json', urlencode(json_encode(array(
+                                        'api_key' => $platform['api_key'],
+                                        'pb_player_id' => $pb_player_id.'',
+                                        'action' => ACTION_COMPLETE_MISSION,
+                                    ))));
                                 }
 
                                 //for check total mission finish
@@ -237,17 +227,12 @@ class Quest extends REST2_Controller
                                         $pb_player_id
                                     );
                                     /* fire complete-mission action */
-                                    if ($completeMissionActionId) {
-                                        $this->tracker_model->trackAction(array(
-                                            'client_id' => $client_id,
-                                            'site_id' => $site_id,
-                                            'pb_player_id' => $pb_player_id,
-                                            'action_id' => $completeMissionActionId,
-                                            'action_name' => COMPLETE_MISSION_ACTION,
-                                            'url' => $m["mission_id"],
-                                        ));
-                                    }
-                                    
+
+                                    $this->utility->request('engine', 'json', urlencode(json_encode(array(
+                                        'api_key' => $platform['api_key'],
+                                        'pb_player_id' => $pb_player_id.'',
+                                        'action' => ACTION_COMPLETE_MISSION,
+                                    ))));
                                 }
                                 //for check total mission finish
                                 $player_finish_count++;
@@ -294,21 +279,12 @@ class Quest extends REST2_Controller
                         $pb_player_id
                     );
                     /* fire complete-quest action */
-                    $completeQuestActionId = $this->action_model->findAction(array(
-                        'client_id' => $client_id,
-                        'site_id' => $site_id,
-                        'action_name' => COMPLETE_QUEST_ACTION,
-                    ));
-                    if ($completeQuestActionId) {
-                        $this->tracker_model->trackAction(array(
-                            'client_id' => $client_id,
-                            'site_id' => $site_id,
-                            'pb_player_id' => $pb_player_id,
-                            'action_id' => $completeQuestActionId,
-                            'action_name' => COMPLETE_QUEST_ACTION,
-                            'url' => $q["quest_id"],
-                        ));
-                    }
+
+                    $this->utility->request('engine', 'json', urlencode(json_encode(array(
+                        'api_key' => $platform['api_key'],
+                        'pb_player_id' => $pb_player_id.'',
+                        'action' => ACTION_COMPLETE_QUEST,
+                    ))));
                     try {
                         $this->client_model->permissionProcess(
                             $this->client_data,
@@ -528,22 +504,23 @@ class Quest extends REST2_Controller
         if($mission && isset($mission["completion"])){
 
             foreach($mission["completion"] as $c){
-
                 if($c["completion_type"] == "ACTION"){
                     // default is count for compatibility
                     if (!isset($c["completion_op"])) {
                         $c["completion_op"] = "count";
                     }
                     if ( $c["completion_op"] == "count"){
-                        $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"],
+                        $action = $this->player_model->getActionCountFromDatetime($pb_player_id, new MongoId($c["completion_id"]),
                             isset($c["completion_filter"]) ? $c["completion_filter"] : null,
-                            isset($c["completion_string"]) ? $c["completion_string"] : null,
+                            isset($c["filtered_param"]) ? $c["filtered_param"] : null,
                             $validToken['site_id'],
                             $datetime_check);
+                        $c["completion_filter"] = isset($action['action_name'])? $action['action_name']:null;
                     }
                     else{ // sum
                         $action = $this->player_model->getActionSumFromDatetime($pb_player_id, $c["completion_id"],
                             isset($c["completion_filter"]) ? $c["completion_filter"] : null,
+                            isset($c["filtered_param"]) ? $c["filtered_param"] : null,
                             $validToken['site_id'],
                             $datetime_check);
                     }
@@ -1141,7 +1118,7 @@ class Quest extends REST2_Controller
                 $this->quest_model->joinQuest(array_merge($data, $quest));
             else
                 // condition failed
-                $this->response($this->error->setError("QUEST_CONDITION"), 200);
+                $this->response($this->error->setError("QUEST_CONDITION",$condition_quest[0]['message']), 200);
         } else {
             // already join, let check quest_to_client status
             if ($player_quest["status"] == "join")
@@ -1422,7 +1399,6 @@ class Quest extends REST2_Controller
         foreach ($quests as &$quest) {
             if ($pb_player_id) {
                 $quest_player = $this->quest_model->getPlayerQuest(array('site_id' => $this->site_id, 'pb_player_id' => $pb_player_id, 'quest_id' => new MongoId($quest['_id'])));
-                array_walk_recursive($quest_player, array($this, "convert_mongo_object"));
                 if ($quest_player) {
                     $quest['player_status'] = $quest_player['status'];
                     foreach($quest_player["missions"] as $k=>$m){
@@ -1435,7 +1411,7 @@ class Quest extends REST2_Controller
             $quest['quest_id'] = $quest['_id'];
             unset($quest['_id']);
         }
-
+        array_walk_recursive($quest, array($this, "convert_mongo_object"));
         $resp['quests'] = $quests;
         $this->response($this->resp->setRespond($resp), 200);
     }

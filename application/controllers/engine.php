@@ -28,6 +28,7 @@ class Engine extends Quest
 		$this->load->model('tool/node_stream', 'node');
 		$this->load->model('energy_model');
 	}
+
 	public function getActionConfig_get()
 	{
 		$required = $this->input->checkParam(array(
@@ -45,7 +46,6 @@ class Engine extends Quest
 		$actionConfig = array();
 		foreach($ruleSet as $rule)
 		{
-//			$jigsawSet = unserialize($rule['jigsaw_set']);
 			$jigsawSet = $rule['jigsaw_set'];
 			$actionId = $jigsawSet[0]['config']['action_id'];
 			$actionInput = $jigsawSet[0]['config'];
@@ -87,6 +87,88 @@ class Engine extends Quest
 		}
 		$this->response($this->resp->setRespond($actionConfig), 200);
 	}
+
+	public function rules_get()
+	{
+		/* check parameters */
+		$clientData = array('client_id' => $this->client_id, 'site_id' => $this->site_id);
+		$actionName = $this->input->get('action');
+		if ($actionName) {
+			$action = $this->client_model->getAction(array(
+				'client_id' => $this->client_id,
+				'site_id' => $this->site_id,
+				'action_name' => $actionName
+			));
+			if (!$action) $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+			$clientData['action_id'] = $action['action_id'];
+		}
+		$pb_player_id = null;
+		$player_id = $this->input->get('player_id');
+		if ($player_id !== false) {
+			$pb_player_id = $this->player_model->getPlaybasisId(array(
+				'client_id' => $this->client_id,
+				'site_id' => $this->site_id,
+				'cl_player_id' => $player_id,
+			));
+			if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		}
+
+		$rules = null;
+		$ruleSet = $this->client_model->getRuleSetByClientSite($clientData);
+		if ($ruleSet) {
+			$rules = array();
+			foreach ($ruleSet as $r) {
+				/* get rule detail */
+				$rule = $this->client_model->getRuleDetail($this->validToken, $r['rule_id']);
+
+				/* format output */
+				$rule['id'] = $rule['_id'].'';
+				unset($rule['_id']);
+				$rule['action'] = $actionName;
+				unset($rule['action_id']);
+
+				/* find current state of rule execution of the player */
+				if (isset($rule['jigsaw_set'])) {
+					$input = array(
+						'site_id' => $this->site_id,
+						'rule_id' => $r['rule_id'],
+					);
+					if ($pb_player_id) $input = array_merge($input, array('pb_player_id' => $pb_player_id));
+					foreach ($rule['jigsaw_set'] as &$jigsaw) {
+						if ($pb_player_id) {
+							try {
+								$jigsaw_id = new MongoId($jigsaw['id']);
+							} catch (MongoException $ex) {
+								$jigsaw_id = "";
+							}
+							$input['jigsaw_id'] = $jigsaw_id;
+							$input['jigsaw_name'] = $jigsaw['name'];
+							$input['jigsaw_category'] = $jigsaw['category'];
+							$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
+							$jigsaw['state'] = $this->jigsaw_model->getMostRecentJigsaw($input, array(
+								'input',
+								'date_added'
+							));
+							$jigsaw['state'] = $jigsaw['state'] ? $jigsaw['state'] : null;
+						}
+						try {
+							$this->applyBadgeObjGoodsObj($this->client_id, $this->site_id, $jigsaw['config']);
+						} catch (MongoException $ex) {
+							log_message('error', 'Error in applyBadgeObjGoodsObj(), client_id = '.$this->client_id);
+							log_message('error', 'Error in applyBadgeObjGoodsObj(), site_id = '.$this->site_id);
+							log_message('error', 'Error in applyBadgeObjGoodsObj(), jigsawConfig = '.print_r($jigsaw['config'], true));
+							$jigsaw['config']['data'] = null;
+						}
+						array_walk_recursive($jigsaw, array($this, "convert_mongo_object"));
+					}
+				}
+				array_push($rules, $rule);
+			}
+		}
+
+		$this->response($this->resp->setRespond($rules), 200);
+	}
+
 	public function rule_get($rule_id=0)
 	{
 		/* check parameters */
@@ -136,9 +218,16 @@ class Engine extends Quest
 						'input',
 						'date_added'
 					));
-					$jigsaw['state'] = $jigsaw['state']?$jigsaw['state']:null;
+					$jigsaw['state'] = $jigsaw['state'] ? $jigsaw['state'] : null;
 				}
-				$this->applyBadgeObjGoodsObj($this->client_id, $this->site_id, $jigsaw['config']);
+				try {
+					$this->applyBadgeObjGoodsObj($this->client_id, $this->site_id, $jigsaw['config']);
+				} catch (MongoException $ex) {
+					log_message('error', 'Error in applyBadgeObjGoodsObj(), client_id = '.$this->client_id);
+					log_message('error', 'Error in applyBadgeObjGoodsObj(), site_id = '.$this->site_id);
+					log_message('error', 'Error in applyBadgeObjGoodsObj(), jigsawConfig = '.print_r($jigsaw['config'], true));
+					$jigsaw['config']['data'] = null;
+				}
 				array_walk_recursive($jigsaw, array($this, "convert_mongo_object"));
 			}
 		}
@@ -203,6 +292,104 @@ class Engine extends Quest
         $response =  $this->QuestProcess(NULL, $token, $quest_id);
 		$this->response($this->resp->setRespond($response), 200);
     }
+
+	public function json_get($json='')
+	{
+		$this->benchmark->mark('engine_rule_start');
+
+		if (!$json) $this->response($this->resp->setRespond('Missing JSON string parameter'), 200);
+		$json = urldecode($json);
+		$data = json_decode($json, true);
+		if (!$data) $this->response($this->resp->setRespond('Cannot convert JSON to data'), 200);
+
+		$required = array();
+		if(!isset($data['api_key'])) array_push($required, 'api_key');
+		if(!isset($data['action'])) array_push($required, 'action');
+		if(!isset($data['pb_player_id'])) array_push($required, 'pb_player_id');
+		if ($required) $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+
+		$api_key = $data['api_key'];
+		$pb_player_id = new MongoId($data['pb_player_id']);
+		$actionName = $data['action'];
+
+		$this->_early_checks(null, $api_key);
+
+		//$validToken = $this->auth_model->createTokenFromAPIKey($api_key);
+		$validToken = $this->validToken;
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_TOKEN'), 200);
+
+		if(!$pb_player_id)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+		//get playbasis player id from client player id
+		$anonymous = $this->player_model->isAnonymous($validToken['client_id'], $validToken["site_id"], null, $pb_player_id);
+		if ($pb_player_id && $anonymous) {
+			/* List all active sessions of the anonymous player */
+			$sessions = $this->player_model->listSessions($validToken['client_id'], $validToken["site_id"], $pb_player_id);
+			if (count($sessions) == 0) {
+				$this->response($this->error->setError('ANONYMOUS_SESSION_NOT_VALID'), 200);
+			}
+		}
+
+		//get action id by action name
+		$action = $this->client_model->getAction(array(
+				'client_id' => $validToken['client_id'],
+				'site_id' => $validToken['site_id'],
+				'action_name' => $actionName
+		));
+		if(!$action)
+			$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+		$actionId = $action['action_id'];
+		$actionIcon = $action['icon'];
+
+		$input = array_merge($data, $validToken, array(
+				'pb_player_id' => $pb_player_id,
+				'action_id' => $actionId,
+				'action_name' => $actionName,
+				'action_icon' => $actionIcon,
+				'test' => false,
+		));
+		if (isset($data['pb_player_id-2'])) {
+			$input['pb_player_id-2'] = new MongoId($data['pb_player_id-2']);
+		}
+
+		try {
+			$apiResult = $this->processRule($input, $validToken, null, null);
+		} catch (Exception $e){
+			if ($e->getPrevious()){
+				$prev_e = $e->getPrevious();
+				$this->response($this->error->setError('PARAMETER_MISSING',array($prev_e->getMessage())), 200);
+			}else{
+				$this->response($this->error->setError($e->getMessage()), 200);
+			}
+		}
+
+		//Log validated action
+		$action_dataset = $this->jigsaw_model->getActionDatasetInfo($input['action_name']);
+		$input['parameters'] = array();
+		if (is_array($action_dataset))foreach ($action_dataset as $dataset){
+			if (isset($input[$dataset['param_name']])){
+				$input['parameters'][$dataset['param_name']] = $input[$dataset['param_name']];
+			}
+		}
+		$headers = $this->input->request_headers();
+		$action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;
+		$time = $action_time;
+		if (!isset($input['node_id'])){
+			$node = $this->store_org_model->retrieveNodeByPBPlayerID($validToken['client_id'],$validToken['site_id'],$pb_player_id);
+			$input['node_id'] = isset($node[0]['node_id']) ?$node[0]['node_id']:null;
+		}
+		$this->tracker_model->trackValidatedAction($input,$time);
+
+		//Quest Process
+		$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
+		$apiResult = array_merge($apiResult, $apiQuestResult);
+
+		$this->benchmark->mark('engine_rule_end');
+		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
+		$this->response($this->resp->setRespond($apiResult), 200);
+	}
 
 	public function rule_post($option = 0)
 	{
@@ -417,7 +604,6 @@ class Engine extends Quest
 					$this->response($this->error->setError($e->getMessage()), 200);
 				}
 			}
-
 		}
 		//Log validated action
 		if (!$test){
@@ -508,7 +694,7 @@ class Engine extends Quest
 		if (isset($input["rule_id"]))
 			$ruleSet = $this->client_model->getRuleSetById($input["rule_id"]);
 		else
-			$ruleSet = $this->client_model->getRuleSetByActionId(array(
+			$ruleSet = $this->client_model->getRuleSetByClientSite(array(
 				'client_id' => $client_id,
 				'site_id' => $site_id,
 				'action_id' => $input['action_id']

@@ -227,6 +227,11 @@ class Tracker_model extends MY_Model
         if ($action_time && $action_time > $current_time) $action_time = $current_time; // cannot be something from the future
         $mongoDate = new MongoDate($action_time ? $action_time : $current_time);
 
+        if (is_array($input['parameters'])) foreach ($input['parameters'] as $name => $value){
+            if (is_numeric($value)){
+                $input['parameters'][$name.POSTFIX_NUMERIC_PARAM] = floatval($value);
+            }
+        }
         $this->mongo_db->insert('playbasis_validated_action_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'cl_player_id'     => $input['player_id'],

@@ -75,8 +75,6 @@ $route['Universe/deviceRegistration'] = 'universe/deviceRegistration';
 $route['Universe/'.ANY_STRING.'/directMsg'] = 'universe/directMsg/$1';
 $route['Universe/directMsg'] = 'universe/directMsg';
 
-
-
 //auth API
 $route['Auth'] = 'auth';
 $route['Auth/renew'] = 'auth/renew';
@@ -190,10 +188,13 @@ $route['Goods/ad'] = 'goods/personalizedSponsor';
 
 //engine API
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
+$route['Engine/rules']	= 'engine/rules';
 $route['Engine/rule/'.ANY_STRING] = 'engine/rule/$1';
 $route['Engine/rule']	= 'engine/rule/0';
 $route['Engine/facebook']	= 'engine/rule/facebook';
 $route['Engine/quest']	= 'engine/quest';
+$route['Engine/json/'.ANY_STRING] = 'engine/json/$1';
+$route['Engine/json']	= 'engine/json/0';
 
 //redeem API
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
@@ -234,7 +235,6 @@ $route['Service/reset_point'] = 'service/reset_point';
 
 //Internal API
 $route['Internal/listLimitFeature'] = 'internal/listLimitFeature';
-
 
 //Quest
 //$route['quest/testquest'] = 'quest/testQuest';
@@ -335,6 +335,7 @@ $route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 //File API
 $route['File/upload'] = 'file/upload';
 $route['File/delete'] = 'file/delete';
+
 //misc
 //$route['test']	= 'playbasis/test';
 $route['test']	= 'notification/index';

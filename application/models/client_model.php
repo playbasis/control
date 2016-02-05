@@ -110,13 +110,10 @@ class Client_model extends MY_Model
         }
         return $rules;
     }
-	public function getRuleSetByActionId($clientData)
+	public function getRuleSetByClientSite($clientData)
 	{
-		assert($clientData);
-		assert(is_array($clientData));
 		assert(isset($clientData['client_id']));
 		assert(isset($clientData['site_id']));
-		assert(isset($clientData['action_id']));
 		$clientData['active_status'] = true;
 		$this->set_site_mongodb($clientData['site_id']);
 		$this->mongo_db->select(array(
@@ -126,7 +123,7 @@ class Client_model extends MY_Model
 		));
 		$this->mongo_db->where($clientData);
 		$rules = $this->mongo_db->get('playbasis_rule');
-		foreach($rules as &$rule)
+		if ($rules) foreach($rules as &$rule)
 		{
 			$rule['rule_id'] = $rule['_id'];
 			unset($rule['_id']);

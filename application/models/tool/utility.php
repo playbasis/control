@@ -244,8 +244,12 @@ class Utility extends CI_Model
 		}
 	}
 
-
-
-
+	public function request($class, $method, $arg)
+	{
+		$cmd = "php index.php $class $method $arg";
+		if (EXEC_BACKGROUND) $cmd .= ' > /dev/null 2>&1 &';
+		exec($cmd, $output, $exit);
+		return $exit == 0;
+	}
 }
 ?>

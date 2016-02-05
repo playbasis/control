@@ -369,18 +369,15 @@ class Quiz extends REST2_Controller
             $completeQuizActionId = $this->action_model->findAction(array(
                 'client_id' => $this->client_id,
                 'site_id' => $this->site_id,
-                'action_name' => COMPLETE_QUIZ_ACTION,
+                'action_name' => ACTION_COMPLETE_QUIZ,
             ));
-            if ($completeQuizActionId) {
-                $this->tracker_model->trackAction(array(
-                    'client_id' => $this->client_id,
-                    'site_id' => $this->site_id,
-                    'pb_player_id' => $pb_player_id,
-                    'action_id' => $completeQuizActionId,
-                    'action_name' => COMPLETE_QUIZ_ACTION,
-                    'url' => $quiz_id,
-                ));
-            }
+
+            $platform = $this->auth_model->getOnePlatform($this->client_id, $this->site_id);
+            $this->utility->request('engine', 'json', urlencode(json_encode(array(
+                'api_key' => $platform['api_key'],
+                'pb_player_id' => $pb_player_id.'',
+                'action' => ACTION_COMPLETE_QUIZ,
+            ))));
         }
 
         /* check to see if grade has any reward associated with it */

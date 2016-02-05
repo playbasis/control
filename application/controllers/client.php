@@ -36,7 +36,7 @@ class Client extends REST2_Controller
 		));
 		print_r($action_id);
 		echo '<br>getRuleSetByActionId<br>';
-		$result = $this->client_model->getRuleSetByActionId(array(
+		$result = $this->client_model->getRuleSetByClientSite(array(
 			'client_id' => $token['client_id'],
 			'site_id' => $token['site_id'],
 			'action_id' => $action_id
