@@ -438,7 +438,7 @@ class Quest extends REST2_Controller
                     }
                 }else if($c["condition_type"] == "QUIZ"){
 
-                    $complete_quiz = $this->action_model->actionLogByURL($validToken,COMPLETE_QUIZ_ACTION,$c['condition_id'],$pb_player_id);
+                    $complete_quiz = $this->action_model->actionLogByURL($validToken,ACTION_COMPLETE_QUIZ,$c['condition_id'],$pb_player_id);
                     if($complete_quiz == null)
                     {
                         $event = array(
@@ -591,7 +591,7 @@ class Quest extends REST2_Controller
                 }
                 if($c["completion_type"] == "QUIZ")
                 {
-                    $complete_quiz = $this->action_model->actionLogByURL($validToken,COMPLETE_QUIZ_ACTION,$c['completion_id'],$pb_player_id);
+                    $complete_quiz = $this->action_model->actionLogByURL($validToken,ACTION_COMPLETE_QUIZ,$c['completion_id'],$pb_player_id);
                     if($complete_quiz == null)
                     {
                         $event = array(
