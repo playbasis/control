@@ -3,11 +3,11 @@
 ## [2.3.0](https://github.com/playbasis/api/tree/2.3.0) (2016-02-05)
 [Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.5...2.3.0)
 
-## [2.3.0-alpha.5](https://github.com/playbasis/api/tree/2.3.0-alpha.5) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/Bug_rankPeerByAccAction_wrong_month_type...2.3.0-alpha.5)
+## [2.2.4](https://github.com/playbasis/api/tree/2.2.4) (2016-02-05)
+[Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.5...2.2.4)
 
-## [Bug_rankPeerByAccAction_wrong_month_type](https://github.com/playbasis/api/tree/Bug_rankPeerByAccAction_wrong_month_type) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.4...Bug_rankPeerByAccAction_wrong_month_type)
+## [2.3.0-alpha.5](https://github.com/playbasis/api/tree/2.3.0-alpha.5) (2016-02-05)
+[Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.4...2.3.0-alpha.5)
 
 **Fixed bugs:**
 
@@ -175,17 +175,17 @@
 - Hotfix/hotfix php error in engine [\#125](https://github.com/playbasis/api/pull/125) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [Optimize_saleBoard_to_calculate_faster](https://github.com/playbasis/api/tree/Optimize_saleBoard_to_calculate_faster) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...Optimize_saleBoard_to_calculate_faster)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...Optimize_saleBoard_to_calculate_faster)
 
 **Implemented enhancements:**
 
 - Hotfix/optimize sale board to calculate faster [\#124](https://github.com/playbasis/api/pull/124) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
-## [2.1.43-alpha.11](https://github.com/playbasis/api/tree/2.1.43-alpha.11) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...2.1.43-alpha.11)
-
 ## [2.1.43-alpha.12](https://github.com/playbasis/api/tree/2.1.43-alpha.12) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.12)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...2.1.43-alpha.12)
+
+## [2.1.43-alpha.11](https://github.com/playbasis/api/tree/2.1.43-alpha.11) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.11)
 
 **Implemented enhancements:**
 
