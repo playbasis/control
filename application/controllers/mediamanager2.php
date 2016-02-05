@@ -76,6 +76,12 @@ class MediaManager2 extends MY_Controller
             die();
         }
 
+        if ($this->input->get('field')) {
+            $this->data['field'] = $this->input->get('field');
+        } else {
+            $this->data['field'] = '';
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');

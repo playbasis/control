@@ -1,7 +1,8 @@
 var $detail_panel = $("#detail-panel"),
     $thumbnail_grid = $("#thumbnail-grid"),
     $waitDialog = $("#pleaseWaitDialog"),
-    $selected_wrapper = $(".selected-wrapper");
+    $selected_wrapper = $(".selected-wrapper"),
+    $footer_div = $(".footer-div");
 
 $("#media-manager-tab")
     .on("click", "a.thumbnail", function (e) {
@@ -23,13 +24,26 @@ $("#media-manager-tab")
 
         }
 
-        displaySelectedThumbnail($(this).data('id'), $(this).data('sm_url'));
+        displaySelectedThumbnail($(this).data('id'), $(this).data('sm_url'), $(this).data('file_name'));
+        if ($footer_div.find('.thumbnail').length >= 0) {
+            $('button#select-photo').removeClass('disabled');
+        }
     })
-    .on("click", "a#clear-selected", function(e){
-        $selected_wrapper.empty()
+    .on("click", "a#clear-selected", function (e) {
+        $selected_wrapper.empty();
+        if ($footer_div.find('.thumbnail').length >= 0) {
+            $('button#select-photo').addClass('disabled');
+        }
     })
-    .on("click", "button#select-photo", function(e){
-        $selected_wrapper.empty()
+    .on("click", "button#select-photo", function (e) {
+        if ($footer_div.find('.thumbnail') !== 0) {
+            if (parentField !== '') {
+                var file_name = $('.footer-div').find('.thumbnail').data('file_name');
+                parent.$(parentField).val('data/' + file_name);
+            }
+
+            parent.$('#mm2Modal').modal('hide');
+        }
     });
 
 $thumbnail_grid.on("selection-changed", function (event, selection) {
@@ -77,15 +91,17 @@ function displayThumbnailPreview(id, filename, url, filesize, sm_thumb, lg_thumb
     }
 }
 
-function displaySelectedThumbnail(id, sm_thumb){
+function displaySelectedThumbnail(id, sm_thumb, filename){
     id = typeof id !== 'undefined' ? id : null;
     sm_thumb = typeof sm_thumb !== 'undefined' ? sm_thumb : null;
+    filename = typeof filename !== 'undefined' ? filename : null;
 
     var hidden_selected_thumbHTML = $('#hiddenSelectedThumbs').html();
 
-    if (id || sm_thumb) {
+    if (id && sm_thumb && filename) {
         hidden_selected_thumbHTML = hidden_selected_thumbHTML.replace(new RegExp('{{img_id}}', 'g'), id);
         hidden_selected_thumbHTML = hidden_selected_thumbHTML.replace(new RegExp('src=""', 'g'), 'src="' + sm_thumb + '"');
+        hidden_selected_thumbHTML = hidden_selected_thumbHTML.replace(new RegExp('{{file_name}}', 'g'), filename);
 
         $selected_wrapper.empty().append(hidden_selected_thumbHTML).show();
     }

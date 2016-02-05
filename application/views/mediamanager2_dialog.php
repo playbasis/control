@@ -32,7 +32,7 @@
                 <li class="active"><a href="#">Insert Media</a></li>
             </ul>
             <ul class="nav nav-sidebar">
-                <li class=""><a href="#">Insert from URL</a></li>
+                <li class="disabled"><a href="#">Insert from URL <span class="text-danger">(Soon)</span></a></li>
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -71,7 +71,7 @@
                         <div class="footer-div col-md-offset-2 col-sm-offset-3">
                             <div class="selected-wrapper col-xs-8"></div>
                             <div class="select-btn-wrapper col-xs-4">
-                                <button class="btn btn-primary pull-right" id="select-photo">Insert</button>
+                                <button class="btn btn-primary pull-right disabled" id="select-photo">Insert</button>
                             </div>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
             <span><a href="#" id="clear-selected" class="text-danger">Clear</a></span>
         </div>
         <div class="col-xs-6 col-sm-3">
-            <div class="thumbnail active" href="#" data-id="{{img_id}}" style="width: 40px; height: 40px; color: #23527c">
+            <div class="thumbnail active" href="#" data-id="{{img_id}}" data-file_name="{{file_name}}" style="width: 40px; height: 40px; color: #23527c">
                 <img src="" style="display: block;">
             </div>
         </div>
@@ -182,6 +182,7 @@
 <script>window.Pace || document.write('<script src="<?php echo base_url(); ?>javascript/pace/pace.min.js"><\/script>')</script>
 <script type="text/javascript">
     var baseUrlPath = "<?php echo base_url();?><?php echo (index_page() == '') ? '' : index_page() . "/" ?>";
+    var parentField = "<?php echo ($field == '') ? '' : $field ?>";
     Pace.on("done", function () {
         $(".cover").fadeOut(1000);
     });
