@@ -1,7 +1,50 @@
 # Change Log
 
-## [2.3.0](https://github.com/playbasis/control/tree/2.3.0) (2016-01-29)
+## [2.4.0](https://github.com/playbasis/control/tree/2.4.0) (2016-02-05)
 
+[Full Changelog](https://github.com/playbasis/control/compare/2.3.4...2.4.0)
+
+**Implemented enhancements:**
+
+- Display exact error for adding user into client [\#123](https://github.com/playbasis/control/pull/123) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Feature : Quest Support Multi Param [\#120](https://github.com/playbasis/control/pull/120) ([narut-playbasis](https://github.com/narut-playbasis))
+- Feature/user group to client [\#118](https://github.com/playbasis/control/pull/118) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Quest - insert date condition as string  [\#122](https://github.com/playbasis/control/pull/122) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- BugFix : Quest Show Empty Value [\#121](https://github.com/playbasis/control/pull/121) ([narut-playbasis](https://github.com/narut-playbasis))
+- Quest - to set organization type and role [\#119](https://github.com/playbasis/control/pull/119) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.3.4](https://github.com/playbasis/control/tree/2.3.4) (2016-02-01)
+[Full Changelog](https://github.com/playbasis/control/compare/2.3.3...2.3.4)
+
+**Implemented enhancements:**
+
+- Feature : Engine Support Condition Group [\#116](https://github.com/playbasis/control/pull/116) ([narut-playbasis](https://github.com/narut-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/remove unlink local file after resize [\#117](https://github.com/playbasis/control/pull/117) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.3.3](https://github.com/playbasis/control/tree/2.3.3) (2016-02-01)
+[Full Changelog](https://github.com/playbasis/control/compare/2.3.2...2.3.3)
+
+**Fixed bugs:**
+
+- Fix Android push info not being saved [\#115](https://github.com/playbasis/control/pull/115) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.3.2](https://github.com/playbasis/control/tree/2.3.2) (2016-02-01)
+[Full Changelog](https://github.com/playbasis/control/compare/2.3.1...2.3.2)
+
+**Fixed bugs:**
+
+- Fix content broadcast not sent [\#114](https://github.com/playbasis/control/pull/114) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.3.1](https://github.com/playbasis/control/tree/2.3.1) (2016-01-29)
+[Full Changelog](https://github.com/playbasis/control/compare/2.3.0...2.3.1)
+
+## [2.3.0](https://github.com/playbasis/control/tree/2.3.0) (2016-01-29)
 [Full Changelog](https://github.com/playbasis/control/compare/2.2.34...2.3.0)
 
 **Implemented enhancements:**
@@ -9,12 +52,18 @@
 - Feature : Quiz support Question order [\#111](https://github.com/playbasis/control/pull/111) ([narut-playbasis](https://github.com/narut-playbasis))
 - Feature : Report Support Quiz [\#110](https://github.com/playbasis/control/pull/110) ([narut-playbasis](https://github.com/narut-playbasis))
 - Add docker-compose project [\#109](https://github.com/playbasis/control/pull/109) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Feature : Enable CSRF and XSS [\#103](https://github.com/playbasis/control/pull/103) ([narut-playbasis](https://github.com/narut-playbasis))
+- CSRF for javascript [\#102](https://github.com/playbasis/control/pull/102) ([narut-playbasis](https://github.com/narut-playbasis))
+- PHP for CSRF [\#101](https://github.com/playbasis/control/pull/101) ([narut-playbasis](https://github.com/narut-playbasis))
+- Enhancement : Quantity Support Text in rule  [\#97](https://github.com/playbasis/control/pull/97) ([narut-playbasis](https://github.com/narut-playbasis))
+- Enhancement : Report Support Custom Param [\#96](https://github.com/playbasis/control/pull/96) ([narut-playbasis](https://github.com/narut-playbasis))
 
 **Fixed bugs:**
 
 - Bug Fix : option improperly show when there is no option [\#112](https://github.com/playbasis/control/pull/112) ([narut-playbasis](https://github.com/narut-playbasis))
 - Feature/quest fix layout [\#108](https://github.com/playbasis/control/pull/108) ([notjiam](https://github.com/notjiam))
 - fix input keyup event [\#107](https://github.com/playbasis/control/pull/107) ([notjiam](https://github.com/notjiam))
+- Bugfix : leaderboard not show image of badges [\#98](https://github.com/playbasis/control/pull/98) ([narut-playbasis](https://github.com/narut-playbasis))
 
 **Merged pull requests:**
 
@@ -34,9 +83,6 @@
 **Implemented enhancements:**
 
 - Hotfix/2.2.33 [\#104](https://github.com/playbasis/control/pull/104) ([narut-playbasis](https://github.com/narut-playbasis))
-- Feature : Enable CSRF and XSS [\#103](https://github.com/playbasis/control/pull/103) ([narut-playbasis](https://github.com/narut-playbasis))
-- CSRF for javascript [\#102](https://github.com/playbasis/control/pull/102) ([narut-playbasis](https://github.com/narut-playbasis))
-- PHP for CSRF [\#101](https://github.com/playbasis/control/pull/101) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [2.2.32](https://github.com/playbasis/control/tree/2.2.32) (2016-01-20)
 [Full Changelog](https://github.com/playbasis/control/compare/2.2.31...2.2.32)
@@ -48,15 +94,9 @@
 ## [2.2.31](https://github.com/playbasis/control/tree/2.2.31) (2016-01-19)
 [Full Changelog](https://github.com/playbasis/control/compare/v2.2.30...2.2.31)
 
-**Implemented enhancements:**
-
-- Enhancement : Quantity Support Text in rule  [\#97](https://github.com/playbasis/control/pull/97) ([narut-playbasis](https://github.com/narut-playbasis))
-- Enhancement : Report Support Custom Param [\#96](https://github.com/playbasis/control/pull/96) ([narut-playbasis](https://github.com/narut-playbasis))
-
 **Fixed bugs:**
 
 - Hotfix/2.2.31 [\#99](https://github.com/playbasis/control/pull/99) ([narut-playbasis](https://github.com/narut-playbasis))
-- Bugfix : leaderboard not show image of badges [\#98](https://github.com/playbasis/control/pull/98) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [v2.2.30](https://github.com/playbasis/control/tree/v2.2.30) (2016-01-18)
 [Full Changelog](https://github.com/playbasis/control/compare/make_category_optional_and_add_subtitle...v2.2.30)
