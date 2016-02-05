@@ -144,7 +144,6 @@
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_group'); ?>:</td>
                             <td>
                                 <select name="user_group">
-                                    <option value="" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
                                     <?php if ($groups) { ?>
                                         <?php foreach ($groups as $group) { ?>
                                             <?php if($this->session->userdata('client_id')){?>
@@ -156,6 +155,7 @@
                                             <?php }?>
                                         <?php } ?>
                                     <?php } ?>
+                                    <option value="" selected="selected"><?php echo $this->lang->line('text_default_admin'); ?></option>
                                 </select>
                             </td>
                         </tr>
@@ -282,7 +282,7 @@ function addNewUser() {
             var notification = $('#notification');
 
             if (json['error']) {
-                $('#notification').html(json['error']).addClass('warning').show();
+                $('#notification').html(json['error']).addClass().show();
             } else {
 
                 $('#notification').html(json['success']).addClass('success').show().removeClass('warning');

@@ -18,7 +18,9 @@ groupMan = {
                 {
                     for(var keyDataset in oneRuleMan.nodeList[index].currentDataSet.dataset )
                     {
-                        if( oneRuleMan.nodeList[index].currentDataSet.dataset[keyDataset].field_type == "group_container" )
+                        if( oneRuleMan.nodeList[index].currentDataSet.dataset[keyDataset].field_type == "group_container" ||
+                            oneRuleMan.nodeList[index].currentDataSet.dataset[keyDataset].field_type == "condition_group_container"
+                        )
                         {
                            groupContainer = oneRuleMan.nodeList[index].currentDataSet.dataset[keyDataset];
                            break;
@@ -39,7 +41,9 @@ groupMan = {
                 {
                     for(var keyDataset in oneRuleMan.nodeList[index].currentDataSet.dataset )
                     {
-                        if( oneRuleMan.nodeList[index].currentDataSet.dataset[keyDataset].field_type == "group_container" )
+                        if( oneRuleMan.nodeList[index].currentDataSet.dataset[keyDataset].field_type == "group_container" ||
+                            oneRuleMan.nodeList[index].currentDataSet.dataset[keyDataset].field_type == "condition_group_container"
+                        )
                         {
                            groupContainer = oneRuleMan.nodeList[index].currentDataSet.dataset[keyDataset];
 

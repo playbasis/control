@@ -228,6 +228,16 @@ class Quest extends MY_Controller
                 }
 
                 if (!$this->data['message']) {
+                    if ($this->User_model->hasPermission('access','store_org') &&
+                        $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org') &&
+                        !$this->input->post('global_quest') ) {
+                        if($data['organize_role']&& !$data['organize_id']){
+                            $this->data['message'][] = $this->lang->line('text_fail_set_role');
+                        }
+                    }
+                }
+
+                if (!$this->data['message']) {
                     foreach($data as $key => $value){
                         if(in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))){
                             $i = 0;
@@ -237,12 +247,7 @@ class Quest extends MY_Controller
                                         $item = new MongoId($item);
                                     }
                                 }
-                                if(in_array('DATETIME_START', $v)){
-                                    $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 00:00:00")));
-                                }
-                                if(in_array('DATETIME_END', $v)){
-                                    $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 23:59:59")));
-                                }
+
                                 $qdata = array(
                                     'client_id' => $client_id,
                                     'site_id' => $site_id
@@ -342,7 +347,14 @@ class Quest extends MY_Controller
                             $data['organize_id'] = null;
                             $data['organize_role'] = null;
                         }else{
-                            $data['organize_id']= new MongoID($data['organize_id']);
+                            if($data['organize_id']){
+                                $data['organize_id']= new MongoID($data['organize_id']);
+                            }else{
+                                $data['organize_id']= null;
+                            }
+                            if(!$data['organize_role']){
+                                $data['organize_role']= null;
+                            }
                         }
                     }
 
@@ -797,9 +809,11 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_type'] = $mm['completion_type'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_value'] = $mm['completion_value'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_id'] = $mm['completion_id'];
-                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_filter'] = $mm['completion_filter'];
+                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_filter'] = isset($mm['completion_filter'])?$mm['completion_filter']:null;
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_op'] = isset($mm['completion_op']) ? $mm['completion_op']:"sum";
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_string'] = isset($mm['completion_string'])?$mm['completion_string']:"";
+                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['filtered_param'] = isset($mm['filtered_param'])?$mm['filtered_param']:null;
+                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_sum_param'] = isset($mm['completion_sum_param'])?$mm['completion_sum_param']:"";
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_title'] = $mm['completion_title'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_element_id'] = $mm['completion_element_id'];
                                 $countActions++;
@@ -1232,6 +1246,16 @@ class Quest extends MY_Controller
                 }
 
                 if (!$this->data['message']) {
+                    if ($this->User_model->hasPermission('access','store_org') &&
+                        $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org') &&
+                        !$this->input->post('global_quest') ) {
+                        if($data['organize_role']&& !$data['organize_id']){
+                            $this->data['message'][] = $this->lang->line('text_fail_set_role');
+                        }
+                    }
+                }
+
+                if (!$this->data['message']) {
                     foreach ($data as $key => $value) {
                         if (in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))) {
                             $i = 0;
@@ -1361,7 +1385,14 @@ class Quest extends MY_Controller
                             $data['organize_id'] = null;
                             $data['organize_role'] = null;
                         }else{
-                            $data['organize_id']= new MongoID($data['organize_id']);
+                            if($data['organize_id']){
+                                $data['organize_id']= new MongoID($data['organize_id']);
+                            }else{
+                                $data['organize_id']= null;
+                            }
+                            if(!$data['organize_role']){
+                                $data['organize_role']= null;
+                            }
                         }
                     }
 

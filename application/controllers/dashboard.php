@@ -123,7 +123,11 @@ class Dashboard extends MY_Controller
                     $is_default_enabled = $this->is_default_enabled($features);
                     if (!$is_default_enabled) {
                         $second_default = $this->find_second_default($features);
-                        if ($second_default) redirect('/'.$second_default, 'refresh'); /* if it isn't, then we select second menu for the user */
+                        if ($second_default){
+                            redirect('/'.$second_default, 'refresh');
+                        }else{
+                            redirect('/block', 'refresh');
+                        }
                     }
                 } else {
                     $user_plan = $this->User_model->getPlan();
@@ -252,7 +256,7 @@ class Dashboard extends MY_Controller
     private function is_default_enabled($features) {
         if (!$features) return false;
         if (is_array($features)) foreach ($features as $feature) {
-            if (array_key_exists('link', $feature) && $feature['link'] == '/') return true;
+            if (array_key_exists('link', $feature) && $feature['link'] == '/' &&  $this->User_model->hasPermission('access', $feature['link'])) return true;
         }
         return false;
     }
@@ -260,7 +264,7 @@ class Dashboard extends MY_Controller
     private function find_second_default($features) {
         if (!$features) return null;
         if (is_array($features)) foreach ($features as $feature) {
-            if (array_key_exists('link', $feature) && $feature['link'] != '/') return $feature['link'];
+            if (array_key_exists('link', $feature) && $feature['link'] != '/' &&  $this->User_model->hasPermission('access', $feature['link'])) return $feature['link'];
         }
         return null;
     }

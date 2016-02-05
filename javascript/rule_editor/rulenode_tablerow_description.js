@@ -332,5 +332,19 @@ toolstip = {
 				
 			}
 		}
+	},
+	condition_group: {
+		or: {
+			description: 'Or Condition',
+			field_desc: {
+
+			}
+		},
+		not: {
+			description: 'Not Condition',
+			field_desc: {
+
+			}
+		}
 	}
 }

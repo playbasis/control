@@ -16,26 +16,22 @@
             <td class="left"><?php echo anchor('user/update/'.$user['user_id'], $user['username']); ?></td>
             <td class="left">
                 <select name="user_value[<?php echo $user_row; ?>][user_group_id]">
+                    <?php $group_chk = false?>
                     <?php if ($groups) { ?>
-                        <?php if($this->session->userdata('client_id')){?>
-                            <?php foreach ($groups as $group) { ?>
-                                <?php if($group['name']=='User'||$group['name']=='Admin'){?> 
-                                    <?php if ($group['_id']==$user['user_group_id']) { ?>
-                                        <option value="<?php echo $group['_id']; ?>" selected="selected"><?php echo $group['name']; ?></option>
-                                    <?php } else { ?>
-                                        <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
-                                    <?php } ?>
-                                <?php }?>
+
+                        <?php foreach ($groups as $group) { ?>
+                            <?php if ($group['_id']==$user['user_group_id']) { ?>
+                                <?php $group_chk = true ?>
+                                <option value="<?php echo $group['_id']; ?>" selected="selected"><?php echo $group['name']; ?></option>
+                            <?php } else { ?>
+                                <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
                             <?php } ?>
-                        <?php }else{?>
-                            <?php foreach ($groups as $group) { ?>
-                                <?php if ($group['_id']==$user['user_group_id']) { ?>
-                                    <option value="<?php echo $group['_id']; ?>" selected="selected"><?php echo $group['name']; ?></option>
-                                <?php } else { ?>
-                                    <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
-                                <?php } ?>
-                            <?php } ?>
-                        <?php }?>
+                        <?php } ?>
+                    <?php } ?>
+                    <?php if($group_chk){ ?>
+                        <option value="" ><?php echo $this->lang->line('text_default_admin'); ?></option>
+                    <?php } else { ?>
+                        <option value="" selected="selected"><?php echo $this->lang->line('text_default_admin'); ?></option>
                     <?php } ?>
                 </select>
             </td>
