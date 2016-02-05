@@ -117,7 +117,7 @@
                                             <input type="hidden" name="image" value="<?php echo $image; ?>"
                                                    id="image"/>
                                             <br/><a
-                                                onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                                onclick="image_upload('#image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
                                             <a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
                                         </div>
                                     </div>
@@ -255,46 +255,35 @@
 <script type="text/javascript" src="<?php echo base_url(); ?>javascript/content/ckeditor/ckeditor.js"></script>
 <script type="text/javascript">
     function image_upload(field, thumb) {
-        $('#mm2Modal').remove();
+        var $mm2Modal = $('#mm2Modal');
+
+        if ($mm2Modal.length !== 0) $mm2Modal.remove();
 
         var frameSrc = baseUrlPath + "mediamanager2/dialog?field=" + encodeURIComponent(field);
         var mm2_modal_str = "";
-        mm2_modal_str += "<div id=\"mm2Modal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\"";
-//        mm2_modal_str += "	<div class=\"modal-header\">";
-//        mm2_modal_str += "		<button type=\"button\" class=\"close\" data-dismiss=\"modal\">×<\/button>";
-//        mm2_modal_str += "	<\/div>";
+        mm2_modal_str += "<div id=\"mm2Modal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\">";
         mm2_modal_str += " <div class=\"modal-body\">";
-        mm2_modal_str += "      <iframe src=\"" + frameSrc + "\" style=\"zoom:0.60\" width=\"100%\" height=\"100%\" frameborder=\"0\"><\/iframe>";
+        mm2_modal_str += "   <iframe src=\"" + frameSrc + "\" style=\"position:absolute; zoom:0.60\" width=\"99.6%\" height=\"99.6%\" frameborder=\"0\"><\/iframe>";
         mm2_modal_str += " <\/div>";
         mm2_modal_str += "<\/div>";
 
-        $('.content-page').prepend(mm2_modal_str);
+        $mm2Modal = $(mm2_modal_str);
+        $('#page-render').append($mm2Modal);
 
-        $('#mm2Modal').modal('show');
+        $mm2Modal.modal('show');
 
-//        $('#dialog').remove();
-//
-//        $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="' + baseUrlPath + 'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 200px; height: 100%;" frameborder="no" scrolling="no"></iframe></div>');
-//
-//        $('#dialog').dialog({
-//            title: '<?php //echo $this->lang->line('text_image_manager'); ?>//',
-//            close: function (event, ui) {
-//                if ($('#' + field).attr('value')) {
-//                    $.ajax({
-//                        url: baseUrlPath + 'filemanager/image?image=' + encodeURIComponent($('#' + field).val()),
-//                        dataType: 'text',
-//                        success: function (data) {
-//                            $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php //echo base_url();?>//image/default-image.png\');" />');
-//                        }
-//                    });
-//                }
-//            },
-//            bgiframe: false,
-//            width: 200,
-//            height: 100,
-//            resizable: false,
-//            modal: false
-//        });
+        $mm2Modal.on('hidden', function () {
+            var $field = $(field);
+            if ($field.attr('value')) {
+                $.ajax({
+                    url: baseUrlPath + 'mediamanager2/image?image=' + encodeURIComponent($field.val()),
+                    dataType: 'text',
+                    success: function (data) {
+                        $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
+                    }
+                });
+            }
+        });
     }
 
     var $startDateTextBox = $('#date_start'),

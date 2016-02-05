@@ -1849,25 +1849,19 @@ input[type=radio]:checked + label {
     font-weight: normal;
 }
 
-.content-page div#mm2Modal.modal-body
+div#mm2Modal > .modal-body
 {
-    max-height:80%;
+    padding: 2px;
 }
 
-.content-page div#mm2Modal.modal
+div#mm2Modal.modal
 {
-    height:75%;
-    width:75%;
-    margin-left: -40%;
-    margin-top: -30%;
-}
-
-@media (max-width: 768px) {
-    .content-page div#mm2Modal.modal
-    {
-        width:90%;
-        margin-left: 2%;
-    }
+    margin: 0;
+    top: 10%;
+    width: auto;
+    left: 10%;
+    right: 10%;
+    bottom: 10%;
 }
 
 /* ====== [ Media Manager Page ] ======= */
