@@ -395,19 +395,19 @@ class Service_model extends MY_Model
 
         if(isset($event['url'])){
             switch ($event['action_name']) {
-                case COMPLETE_QUEST_ACTION:
+                case ACTION_COMPLETE_QUEST:
                     $quest_id = new MongoId($event['url']);
                     $event['quest'] = $this->getQuest(array('site_id' => $site_id, 'quest_id' => $quest_id));
                     unset($event['url']);
                     break;
-                case COMPLETE_MISSION_ACTION:
+                case ACTION_COMPLETE_QUEST:
                     $mission_id = new MongoId($event['url']);
                     $event['mission'] = $this->getMission(array('site_id' => $site_id, 'mission_id' => $mission_id));
                     $quest_id = $this->getQuestIdByMissionId(array('site_id' => $site_id, 'mission_id' => $mission_id));
                     $event['quest'] = $this->getQuest(array('site_id' => $site_id, 'quest_id' => $quest_id));
                     unset($event['url']);
                     break;
-                case COMPLETE_QUIZ_ACTION:
+                case ACTION_COMPLETE_QUIZ:
                     $quiz_id = new MongoId($event['url']);
                     $event['quiz'] = $this->getQuiz($site_id, $quiz_id);
                     unset($event['url']);
