@@ -888,8 +888,15 @@ class Store_org extends REST2_Controller
         $month = isset($input['month']) ? $input['month'] : date("m", time());
         $page = isset($input['page']) ? $input['page'] : 1; // default is first page
         $role = isset($input['role']) ? $input['role'] : null;
-        $prev_month = $month -1 ? $month -1 : 12;
-        $prev_year = $month -1 ? $year : $year - 1;
+
+        $this_month_time = strtotime($year . "-" . $month);
+        $previous_month_time = strtotime('-1 month', $this_month_time);
+
+        $current_month = date("m", $this_month_time);
+        $current_year = date("Y", $this_month_time);
+
+        $previous_month = date("m", $previous_month_time);
+        $previous_year = date("Y", $previous_month_time);
 
         $results = array();
         $leaderboard_list = array();
@@ -903,9 +910,9 @@ class Store_org extends REST2_Controller
 
             if (!empty($list)) {
                 $result = $this->store_org_model->getSaleHistoryOfNode($client_id, $site_id, $list, $action,
-                    $param, $month, $year, 2);
-                $current_value = $result[$year][$month][$param];
-                $prev_value = $result[$prev_year][$prev_month][$param];
+                    $param, $current_month, $current_year, 2);
+                $current_value = $result[$current_year][$current_month][$param];
+                $prev_value = $result[$previous_year][$previous_month][$param];
                 array_push($leaderboard_list,array ( 'name' => $node['name'],
                     $param => $current_value,
                     'previous_'.$param => $prev_value,
