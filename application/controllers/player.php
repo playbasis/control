@@ -1920,15 +1920,13 @@ class Player extends REST2_Controller
         if(!$role_info){
             $this->response($this->error->setError('STORE_ORG_PLAYER_NOT_EXISTS_WITH_NODE'), 200);
         }else{
-
             $org_info= $this->store_org_model->retrieveOrganizeById($this->validToken['client_id'],$this->validToken['site_id'],$node['organize']);
             $roles = array();
-            $array_role = array_keys($role_info['roles']);
-            foreach($array_role as $role) {
+            $array_role = isset($role_info['roles']) ? array_keys($role_info['roles']) : array();
+            if (is_array($array_role)) foreach($array_role as $role) {
                 $roles[]=array('role'=>$role,
                                'join_date'=>datetimeMongotoReadable($role_info['roles'][$role]));
             }
-
             $result=array(
                 'organize_type'=>$org_info['name'],
                 'roles'=>$roles
@@ -1936,6 +1934,7 @@ class Player extends REST2_Controller
             $this->response($this->resp->setRespond($result), 200);
         }
     }
+
     public function unlock_post($player_id = '') {
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
