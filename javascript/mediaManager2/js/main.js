@@ -4,24 +4,35 @@ var $detail_panel = $("#detail-panel"),
     $selected_wrapper = $(".selected-wrapper"),
     $footer_div = $(".footer-div");
 
+function clearSelected() {
+    $selected_wrapper.empty();
+    if ($footer_div.find('.thumbnail').length >= 0) {
+        $('button#select-photo').addClass('disabled');
+    }
+}
+function hideDetailPanel() {
+    $detail_panel.hide().removeClass("col-xs-4");
+    $thumbnail_grid.addClass("col-xs-12").removeClass("col-xs-8");
+}
+function showDetailPanel() {
+    $thumbnail_grid.removeClass("col-xs-12").addClass("col-xs-8");
+    $detail_panel.addClass("col-xs-4").show();
+}
 $("#media-manager-tab")
     .on("click", "a.thumbnail", function (e) {
         e.preventDefault();
-        console.log("a.thumbnail clicked!");
+        //console.log("a.thumbnail clicked!");
 
         if ($detail_panel.is(':visible')) {
             if ($(this).data('id') === $detail_panel.children(".thumbnail").data('id')) {
-                $detail_panel.hide().removeClass("col-xs-4");
-                $thumbnail_grid.addClass("col-xs-12").removeClass("col-xs-8");
+                hideDetailPanel();
             } else {
                 displayThumbnailPreview($(this).data('id'), $(this).data('file_name'), $(this).data('url'), $(this).data('file_size'), $(this).data('sm_url'), $(this).data('lg_url'));
             }
         } else {
             displayThumbnailPreview($(this).data('id'), $(this).data('file_name'), $(this).data('url'), $(this).data('file_size'), $(this).data('sm_url'), $(this).data('lg_url'));
 
-            $thumbnail_grid.removeClass("col-xs-12").addClass("col-xs-8");
-            $detail_panel.addClass("col-xs-4").show();
-
+            showDetailPanel();
         }
 
         displaySelectedThumbnail($(this).data('id'), $(this).data('sm_url'), $(this).data('file_name'));
@@ -30,10 +41,7 @@ $("#media-manager-tab")
         }
     })
     .on("click", "a#clear-selected", function (e) {
-        $selected_wrapper.empty();
-        if ($footer_div.find('.thumbnail').length >= 0) {
-            $('button#select-photo').addClass('disabled');
-        }
+        clearSelected();
     })
     .on("click", "button#select-photo", function (e) {
         if ($footer_div.find('.thumbnail') !== 0) {
@@ -44,11 +52,41 @@ $("#media-manager-tab")
 
             parent.$('#mm2Modal').modal('hide');
         }
+    })
+    .on("click", "button.delete-media", function (e) {
+        //console.log('Delete!', $(this).closest('.thumbnail').data('id'))
+        var _id = $(this).closest('.thumbnail').data('id');
+        bootbox.confirm("Are you sure to remove this media?", function (result) {
+            if (result) {
+                $.ajax({
+                        url: baseUrlPath + "mediamanager2/media/" + _id,
+                        method: "DELETE",
+                        dataType: "json",
+                        beforeSend: function (xhr) {
+                            $waitDialog.modal('show');
+                        }
+                    })
+                    .done(function (data) {
+                        clearSelected();
+                        //todo: should create function to remove  thumbnail instead reload
+                        ajaxGetMediaList();
+                        hideDetailPanel();
+                        $waitDialog.modal('hide');
+                        bootbox.alert("Media Deleted!");
+                    })
+                    .fail(function(xhr,status,error){
+                        bootbox.alert("Remove Error!")
+                    })
+                    .always(function () {
+                        $waitDialog.modal('hide');
+                    });
+            }
+        });
     });
 
-$thumbnail_grid.on("selection-changed", function (event, selection) {
-    console.log(selection);
-});
+//$thumbnail_grid.on("selection-changed", function (event, selection) {
+//    console.log(selection);
+//});
 
 function createImageThumbnailGrid(imageDataJSONObject) {
     imageDataJSONObject = typeof imageDataJSONObject !== 'undefined' ? imageDataJSONObject : null;
@@ -91,7 +129,7 @@ function displayThumbnailPreview(id, filename, url, filesize, sm_thumb, lg_thumb
     }
 }
 
-function displaySelectedThumbnail(id, sm_thumb, filename){
+function displaySelectedThumbnail(id, sm_thumb, filename) {
     id = typeof id !== 'undefined' ? id : null;
     sm_thumb = typeof sm_thumb !== 'undefined' ? sm_thumb : null;
     filename = typeof filename !== 'undefined' ? filename : null;
@@ -131,14 +169,6 @@ function ajaxGetMediaList() {
         });
 }
 
-function copyToClipboard(element) {
-    var $temp = $("<input>");
-    $("body").append($temp);
-    $temp.val($(element).text()).select();
-    document.execCommand("copy");
-    $temp.remove();
-}
-
 //jQuery.fn.extend({
 //    thumbnailSelectable: function () {
 //        var thumbnailSelectable = this;
@@ -161,6 +191,8 @@ function copyToClipboard(element) {
 $(function () {
     ajaxGetMediaList();
 
+    var clipboard = new Clipboard(".btn[data-clipboard-target]");
+
     //$('#thumbnail-grid')
     //    .on('mouseenter', 'a.thumbnail', function () {
     //        $(this).find('.caption').fadeIn(250);
@@ -171,7 +203,7 @@ $(function () {
 });
 
 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-    if($(e.target).attr("href") === "#media-manager-tab"){
+    if ($(e.target).attr("href") === "#media-manager-tab") {
         ajaxGetMediaList();
     }
 });

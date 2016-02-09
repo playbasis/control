@@ -134,8 +134,7 @@
                     <input type="text" id="img_url" class="form-control" readonly
                            value="{{img_url}}">
                     <div class="input-group-btn">
-                        <button class="btn btn-default" type="button"
-                                onclick="copyToClipboard('#img_url')"><span
+                        <button class="btn btn-default" type="button" data-clipboard-target="#img_url"><span
                                 class="glyphicon glyphicon-copy" aria-hidden="true"></span>
                         </button>
                     </div>
@@ -148,8 +147,7 @@
                     <input type="text" id="sm_thumb_url" class="form-control" readonly
                            value="{{img_sm_url}}">
                     <div class="input-group-btn">
-                        <button class="btn btn-default" type="button"
-                                onclick="copyToClipboard('#sm_thumb_url')"><span
+                        <button class="btn btn-default" type="button" data-clipboard-target="#sm_thumb_url"><span
                                 class="glyphicon glyphicon-copy" aria-hidden="true"></span>
                         </button>
                     </div>
@@ -163,8 +161,7 @@
                     <input type="text" id="lg_thumb_url" class="form-control" readonly
                            value="{{img_lg_url}}">
                     <div class="input-group-btn">
-                        <button class="btn btn-default" type="button"
-                                onclick="copyToClipboard('#lg_thumb_url')"><span
+                        <button class="btn btn-default" type="button" data-clipboard-target="#lg_thumb_url"><span
                                 class="glyphicon glyphicon-copy" aria-hidden="true"></span>
                         </button>
                     </div>
@@ -172,13 +169,19 @@
             </div>
 
             <div style="padding-bottom: 10px">File Size: {{file_size}} bytes</div>
+
+            <div style="padding-bottom: 10px">
+                <button class="btn btn-danger btn-block delete-media" type="button">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp;Delete
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
-<!--<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>-->
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script>window.jQuery || document.write('<script src="<?php echo base_url(); ?>javascript/mediaManager2/js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
 <script>window.Pace || document.write('<script src="<?php echo base_url(); ?>javascript/pace/pace.min.js"><\/script>')</script>
 <script type="text/javascript">
     var baseUrlPath = "<?php echo base_url();?><?php echo (index_page() == '') ? '' : index_page() . "/" ?>";
