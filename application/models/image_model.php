@@ -12,7 +12,7 @@ class Image_model extends MY_Model
 
     public function uploadImage ($client_id,$site_id,$image,$filename,$directory=null,$pb_player_id=null){
         $result = $this->s3->putObjectFile($image['tmp_name'], S3_BUCKET, rtrim(S3_CONTENT_FOLDER . $directory, '/')."/". $filename, S3::ACL_PUBLIC_READ);
-        $url = rtrim(S3_IMAGE.S3_CONTENT_FOLDER. $directory, '/')."/". urlencode($filename);
+        $url = rtrim(S3_CONTENT_FOLDER. $directory, '/')."/". urlencode($filename);
 
         if ($result){
 
