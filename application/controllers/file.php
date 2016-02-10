@@ -129,6 +129,8 @@ class File extends REST2_Controller
                 $uri = $filename;
             }
             $json['thumb_url'] = $this->image_model->createThumbnail($uri);
+            @unlink($local_directory . '/' . $filename);
+            @unlink($local_directory . '/'.THUMBNAIL_FOLDER . $filename);
 
         }else{
             $this->response($this->error->setError('UPLOAD_FILE_ERROR',"S3 fail"), 200);
