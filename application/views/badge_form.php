@@ -85,7 +85,7 @@
                             <td><?php echo $this->lang->line('entry_image'); ?>:</td>
                             <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                                 <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
-                                <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
+                                <br /><a onclick="image_upload('#image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_quantity'); ?>:</td>
@@ -183,31 +183,37 @@ CKEDITOR.replace('description', {
 
 //--></script>
 <script type="text/javascript"><!--
-function image_upload(field, thumb) {
-    $('#dialog').remove();
+    function image_upload(field, thumb) {
+        var $mm_Modal = $('#mmModal');
 
-    $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="'+baseUrlPath+'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 200px; height: 100%;" frameborder="no" scrolling="no"></iframe></div>');
+        if ($mm_Modal.length !== 0) $mm_Modal.remove();
 
-    $('#dialog').dialog({
-        title: '<?php echo $this->lang->line('text_image_manager'); ?>',
-        close: function (event, ui) {
-            if ($('#' + field).attr('value')) {
+        var frameSrc = baseUrlPath + "mediamanager/dialog?field=" + encodeURIComponent(field);
+        var mm_modal_str = "";
+        mm_modal_str += "<div id=\"mmModal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\">";
+        mm_modal_str += " <div class=\"modal-body\">";
+        mm_modal_str += "   <iframe src=\"" + frameSrc + "\" style=\"position:absolute; zoom:0.60\" width=\"99.6%\" height=\"99.6%\" frameborder=\"0\"><\/iframe>";
+        mm_modal_str += " <\/div>";
+        mm_modal_str += "<\/div>";
+
+        $mm_Modal = $(mm_modal_str);
+        $('#page-render').append($mm_Modal);
+
+        $mm_Modal.modal('show');
+
+        $mm_Modal.on('hidden', function () {
+            var $field = $(field);
+            if ($field.attr('value')) {
                 $.ajax({
-                    url: baseUrlPath+'filemanager/image?image=' + encodeURIComponent($('#' + field).val()),
+                    url: baseUrlPath + 'mediamanager/image?image=' + encodeURIComponent($field.val()),
                     dataType: 'text',
-                    success: function(data) {
+                    success: function (data) {
                         $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
                     }
                 });
             }
-        },
-        bgiframe: false,
-        width: 200,
-        height: 100,
-        resizable: false,
-        modal: false
-    });
-};
+        });
+    }
 //--></script>
 <script type="text/javascript"><!--
 $('#tabs a').tabs();

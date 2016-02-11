@@ -1870,6 +1870,21 @@ input[type=radio]:checked + label {
     font-weight: normal;
 }
 
+div#mmModal > .modal-body
+{
+    padding: 2px;
+}
+
+div#mmModal.modal
+{
+    margin: 0;
+    top: 10%;
+    width: auto;
+    left: 10%;
+    right: 10%;
+    bottom: 10%;
+}
+
 /* ====== [ Media Manager Page ] ======= */
 .mediamanager-page .nav {
     margin-bottom: 0;
