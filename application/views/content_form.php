@@ -355,10 +355,7 @@
         });
     }
     function initComponents() {
-        CKEDITOR.replace('inputDetail',{
-            filebrowserUploadUrl : 'mediamanager2/dialog?editor=ckeditor',
-            filebrowserImageBrowseUrl : 'mediamanager2/dialog?editor=ckeditor'
-        });
+        CKEDITOR.replace('inputDetail');
 
         $inputCategory.select2({
             allowClear: true,
