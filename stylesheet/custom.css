@@ -1849,12 +1849,12 @@ input[type=radio]:checked + label {
     font-weight: normal;
 }
 
-div#mm2Modal > .modal-body
+div#mmModal > .modal-body
 {
     padding: 2px;
 }
 
-div#mm2Modal.modal
+div#mmModal.modal
 {
     margin: 0;
     top: 10%;

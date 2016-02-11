@@ -50,7 +50,7 @@ $("#media-manager-tab")
                 parent.$(parentField).val('data/' + file_name);
             }
 
-            parent.$('#mm2Modal').modal('hide');
+            parent.$('#mmModal').modal('hide');
         }
     })
     .on("click", "button.delete-media", function (e) {

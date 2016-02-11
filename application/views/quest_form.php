@@ -2896,24 +2896,24 @@ response($.map(json, function(item) {
 
 <script type="text/javascript">
     function image_upload(field, thumb) {
-        var $mm2Modal = $('#mm2Modal');
+        var $mm_Modal = $('#mmModal');
 
-        if ($mm2Modal.length !== 0) $mm2Modal.remove();
+        if ($mm_Modal.length !== 0) $mm_Modal.remove();
 
         var frameSrc = baseUrlPath + "mediamanager/dialog?field=" + encodeURIComponent(field);
-        var mm2_modal_str = "";
-        mm2_modal_str += "<div id=\"mm2Modal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\">";
-        mm2_modal_str += " <div class=\"modal-body\">";
-        mm2_modal_str += "   <iframe src=\"" + frameSrc + "\" style=\"position:absolute; zoom:0.60\" width=\"99.6%\" height=\"99.6%\" frameborder=\"0\"><\/iframe>";
-        mm2_modal_str += " <\/div>";
-        mm2_modal_str += "<\/div>";
+        var mm_modal_str = "";
+        mm_modal_str += "<div id=\"mmModal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\">";
+        mm_modal_str += " <div class=\"modal-body\">";
+        mm_modal_str += "   <iframe src=\"" + frameSrc + "\" style=\"position:absolute; zoom:0.60\" width=\"99.6%\" height=\"99.6%\" frameborder=\"0\"><\/iframe>";
+        mm_modal_str += " <\/div>";
+        mm_modal_str += "<\/div>";
 
-        $mm2Modal = $(mm2_modal_str);
-        $('#page-render').append($mm2Modal);
+        $mm_Modal = $(mm_modal_str);
+        $('#page-render').append($mm_Modal);
 
-        $mm2Modal.modal('show');
+        $mm_Modal.modal('show');
 
-        $mm2Modal.on('hidden', function () {
+        $mm_Modal.on('hidden', function () {
             var $field = $(field);
             if ($field.attr('value')) {
                 $.ajax({

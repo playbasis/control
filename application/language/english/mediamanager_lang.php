@@ -1,6 +1,6 @@
 <?php
 // Heading
-$lang['heading_title'] = 'Media Manager2';
+$lang['heading_title'] = 'Media Manager';
 
 // Column
 
