@@ -2900,7 +2900,7 @@ response($.map(json, function(item) {
 
         if ($mm2Modal.length !== 0) $mm2Modal.remove();
 
-        var frameSrc = baseUrlPath + "mediamanager2/dialog?field=" + encodeURIComponent(field);
+        var frameSrc = baseUrlPath + "mediamanager/dialog?field=" + encodeURIComponent(field);
         var mm2_modal_str = "";
         mm2_modal_str += "<div id=\"mm2Modal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\">";
         mm2_modal_str += " <div class=\"modal-body\">";
@@ -2917,7 +2917,7 @@ response($.map(json, function(item) {
             var $field = $(field);
             if ($field.attr('value')) {
                 $.ajax({
-                    url: baseUrlPath + 'mediamanager2/image?image=' + encodeURIComponent($field.val()),
+                    url: baseUrlPath + 'mediamanager/image?image=' + encodeURIComponent($field.val()),
                     dataType: 'text',
                     success: function (data) {
                         $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');

@@ -50,7 +50,7 @@
                     <div id="dropzone" style="padding-top: 20px">
                         <?php
                         $attributes = array('id' => 'dz-upload', 'class' => 'dropzone needsclick dz-clickable');
-                        echo form_open(base_url() ."mediamanager2/upload_s3" ,$attributes);
+                        echo form_open("mediamanager/upload_s3" ,$attributes);
                         ?>
                             <div class="dz-message needsclick">
                                 Drop files here or click to upload.<br>
@@ -186,6 +186,8 @@
 <script type="text/javascript">
     var baseUrlPath = "<?php echo base_url();?><?php echo (index_page() == '') ? '' : index_page() . "/" ?>";
     var parentField = "<?php echo ($field == '') ? '' : $field ?>";
+    var csrf_token_name = '<?php echo $this->security->get_csrf_token_name(); ?>';
+    var csrf_token_hash = '<?php echo $this->security->get_csrf_hash(); ?>';
     Pace.on("done", function () {
         $(".cover").fadeOut(1000);
     });

@@ -59,7 +59,7 @@ $("#media-manager-tab")
         bootbox.confirm("Are you sure to remove this media?", function (result) {
             if (result) {
                 $.ajax({
-                        url: baseUrlPath + "mediamanager2/media/" + _id,
+                        url: baseUrlPath + "mediamanager/media/" + _id,
                         method: "DELETE",
                         dataType: "json",
                         beforeSend: function (xhr) {
@@ -147,7 +147,7 @@ function displaySelectedThumbnail(id, sm_thumb, filename) {
 
 function ajaxGetMediaList() {
     $.ajax({
-            url: baseUrlPath + "mediamanager2/media",
+            url: baseUrlPath + "mediamanager/media",
             dataType: "json",
             beforeSend: function (xhr) {
                 $waitDialog.modal('show');
@@ -207,3 +207,13 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         ajaxGetMediaList();
     }
 });
+
+Dropzone.options.dzUpload = {
+    maxFilesize: 3, // MB
+    addRemoveLinks: true,
+    init: function() {
+        this.on("sending", function(file, xhr, formData){
+            formData.append(csrf_token_name, csrf_token_hash);
+        });
+    },
+};
