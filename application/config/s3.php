@@ -10,7 +10,7 @@
 |
 */
 
-$config['use_ssl'] = TRUE;
+$config['use_ssl'] = true;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +23,7 @@ $config['use_ssl'] = TRUE;
 */
 
 //$config['verify_peer'] = TRUE;
-$config['verify_peer'] = FALSE;
+$config['verify_peer'] = false;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,15 +49,26 @@ $config['secret_key'] = 'OkPieozFKd62MA5eJgbD//HELeFmExg7ADdN/lse';
 
 /*
 |--------------------------------------------------------------------------
+| Default Endpoint
+|--------------------------------------------------------------------------
+|
+| Your Amazon S3 Default Endpoint.
+|
+*/
+
+$config['endpoint'] = 's3-ap-southeast-1.amazonaws.com';
+
+/*
+|--------------------------------------------------------------------------
 | Use Enviroment?
 |--------------------------------------------------------------------------
 |
-| Get Settings from enviroment instead of this file? 
+| Get Settings from enviroment instead of this file?
 | Used as best-practice on Heroku
 |
 */
 
-$config['get_from_enviroment'] = FALSE;
+$config['get_from_enviroment'] = false;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,7 +97,7 @@ $config['secret_key_envname'] = 'S3_SECRET';
 |
 */
 
-if ($config['get_from_enviroment']){
+if ($config['get_from_enviroment']) {
 	$config['access_key'] = getenv($config['access_key_envname']);
 	$config['secret_key'] = getenv($config['secret_key_envname']);
 
