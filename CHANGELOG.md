@@ -1,7 +1,20 @@
 # Change Log
 
-## [2.4.0](https://github.com/playbasis/control/tree/2.4.0) (2016-02-05)
+## [2.5.0](https://github.com/playbasis/control/tree/2.5.0) (2016-02-12)
 
+[Full Changelog](https://github.com/playbasis/control/compare/2.4.0...2.5.0)
+
+**Implemented enhancements:**
+
+- Fix security issue of S3 config [\#126](https://github.com/playbasis/control/pull/126) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Feature/revamp media manager [\#124](https://github.com/playbasis/control/pull/124) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+**Fixed bugs:**
+
+- Fix security issue of S3 config [\#126](https://github.com/playbasis/control/pull/126) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Save only path url instead of full path [\#125](https://github.com/playbasis/control/pull/125) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.4.0](https://github.com/playbasis/control/tree/2.4.0) (2016-02-05)
 [Full Changelog](https://github.com/playbasis/control/compare/2.3.4...2.4.0)
 
 **Implemented enhancements:**
@@ -9,37 +22,25 @@
 - Display exact error for adding user into client [\#123](https://github.com/playbasis/control/pull/123) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - Feature : Quest Support Multi Param [\#120](https://github.com/playbasis/control/pull/120) ([narut-playbasis](https://github.com/narut-playbasis))
 - Feature/user group to client [\#118](https://github.com/playbasis/control/pull/118) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Feature : Engine Support Condition Group [\#116](https://github.com/playbasis/control/pull/116) ([narut-playbasis](https://github.com/narut-playbasis))
 
 **Fixed bugs:**
 
 - Quest - insert date condition as string  [\#122](https://github.com/playbasis/control/pull/122) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - BugFix : Quest Show Empty Value [\#121](https://github.com/playbasis/control/pull/121) ([narut-playbasis](https://github.com/narut-playbasis))
 - Quest - to set organization type and role [\#119](https://github.com/playbasis/control/pull/119) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/remove unlink local file after resize [\#117](https://github.com/playbasis/control/pull/117) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Fix Android push info not being saved [\#115](https://github.com/playbasis/control/pull/115) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Fix content broadcast not sent [\#114](https://github.com/playbasis/control/pull/114) ([burachit-playbasis](https://github.com/burachit-playbasis))
 
 ## [2.3.4](https://github.com/playbasis/control/tree/2.3.4) (2016-02-01)
 [Full Changelog](https://github.com/playbasis/control/compare/2.3.3...2.3.4)
 
-**Implemented enhancements:**
-
-- Feature : Engine Support Condition Group [\#116](https://github.com/playbasis/control/pull/116) ([narut-playbasis](https://github.com/narut-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/remove unlink local file after resize [\#117](https://github.com/playbasis/control/pull/117) ([burachit-playbasis](https://github.com/burachit-playbasis))
-
 ## [2.3.3](https://github.com/playbasis/control/tree/2.3.3) (2016-02-01)
 [Full Changelog](https://github.com/playbasis/control/compare/2.3.2...2.3.3)
 
-**Fixed bugs:**
-
-- Fix Android push info not being saved [\#115](https://github.com/playbasis/control/pull/115) ([burachit-playbasis](https://github.com/burachit-playbasis))
-
 ## [2.3.2](https://github.com/playbasis/control/tree/2.3.2) (2016-02-01)
 [Full Changelog](https://github.com/playbasis/control/compare/2.3.1...2.3.2)
-
-**Fixed bugs:**
-
-- Fix content broadcast not sent [\#114](https://github.com/playbasis/control/pull/114) ([burachit-playbasis](https://github.com/burachit-playbasis))
 
 ## [2.3.1](https://github.com/playbasis/control/tree/2.3.1) (2016-01-29)
 [Full Changelog](https://github.com/playbasis/control/compare/2.3.0...2.3.1)

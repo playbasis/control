@@ -221,4 +221,25 @@ class Image_model extends MY_Model
             return null;
         }
     }
+
+    public function deleteImage($image_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        try {
+            if ($image = $this->retrieveImage($image_id)) {
+                $this->s3->setEndpoint("s3-ap-southeast-1.amazonaws.com");
+                if ($this->s3->deleteObject("elasticbeanstalk-ap-southeast-1-007834438823", $image['url'])) {
+                    $this->mongo_db->where('_id', new MongoId($image_id));
+                    $c = $this->mongo_db->delete('playbasis_file');
+                    if ($c) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 }

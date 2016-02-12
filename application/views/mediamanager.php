@@ -33,33 +33,12 @@
             <h1><img src="<?php echo base_url(); ?>image/category.png" alt=""/> <?php echo $heading_title; ?></h1>
 
             <div class="buttons">
-                <a class="btn btn-primary"
-                   onclick="image_upload('image', 'thumb');"><i class="fa fa-upload"></i>&nbsp;<?php echo $this->lang->line('text_upload'); ?></a>
+<!--                <a class="btn btn-primary"-->
+<!--                   onclick="image_upload('image', 'thumb');"><i class="fa fa-upload"></i>&nbsp;--><?php //echo $this->lang->line('btn_upload'); ?><!--</a>-->
                 <a class="btn btn-success" onclick="location = baseUrlPath"><i class="fa fa-home"></i></a>
             </div>
         </div>
         <div class="content">
-            <?php if ($this->session->flashdata('limit_reached')) { ?>
-                <div class="content messages half-width">
-                    <div class="warning"><?php echo $this->session->flashdata('limit_reached'); ?></div>
-                </div>
-            <?php }
-            if (validation_errors() || isset($message)) {
-                ?>
-                <div class="content messages half-width">
-                    <?php
-                    echo validation_errors('<div class="warning">', '</div>');
-
-                    if (isset($message) && $message) {
-                        ?>
-                        <div class="warning"><?php echo $message; ?></div>
-                        <?php
-                    }
-                    ?>
-                </div>
-                <?php
-            }
-            ?>
             <div class="row-fluid">
                 <div class="span9 well" style="min-height: 700px">
                     <ul id="thumbnails_grid" class="thumbnails">
@@ -99,7 +78,7 @@
 </ul>
 
 <div id="hiddenPreview" class="hide">
-    <div class="thumbnail">
+    <div class="thumbnail" data-id="{{img_id}}">
         <img src="" style="border: black solid 1px">
         <div class="caption">
             <div class="row-fluid">
@@ -129,42 +108,47 @@
             <div class="row-fluid">
                 <p>File Size: {{file_size}} bytes</p>
             </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <button class="delete-media btn btn-danger btn-block">Delete</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
-<link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-table.min.css" rel="stylesheet" type="text/css">
-<link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
-<link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
-<!--<link href="--><?php //echo base_url(); ?><!--javascript/bootstrap/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet" type="text/css">-->
-<script src="<?php echo base_url(); ?>javascript/custom/bootstrap-switch.min.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>javascript/custom/bootstrap-table.min.js" type="text/javascript"></script>
-<!--<script src="--><?php //echo base_url(); ?><!--javascript/bootstrap/bootstrap-editable/js/bootstrap-editable.min.js" type="text/javascript"></script>-->
-<!--<script src="--><?php //echo base_url(); ?><!--javascript/custom/bootstrap-table-editable.min.js" type="text/javascript"></script>-->
-<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
-<!--<script src="--><?php //echo base_url(); ?><!--javascript/md5.js" type="text/javascript"></script>-->
-<!--<script src="--><?php //echo base_url(); ?><!--javascript/mongoid.js" type="text/javascript"></script>-->
-
 <script type="text/javascript">
-    function image_upload(field, thumb) {
-        $('#dialog').remove();
-
-        $('#content').prepend('<div id="dialog" style="padding: 3px 0 0 0;"><iframe src="' + baseUrlPath + 'filemanager'+ '" style="padding:0; margin: 0; display: block; width: 200px; height: 100%;" frameborder="no" scrolling="no"></iframe></div>');
-
-        $('#dialog').dialog({
-            title: '<?php echo $this->lang->line('text_image_manager'); ?>',
-            close: function (event, ui) {
-                $thumbnails_grids.empty();
-                ajaxGetMediaList();
-            },
-            bgiframe: false,
-            width: 200,
-            height: 100,
-            resizable: false,
-            modal: false
-        });
-    }
+//    function image_upload(field, thumb) {
+//        var $mm_Modal = $('#mmModal');
+//
+//        if ($mm_Modal.length !== 0) $mm_Modal.remove();
+//
+//        var frameSrc = baseUrlPath + "mediamanager/dialog?field=" + encodeURIComponent(field);
+//        var mm_modal_str = "";
+//        mm_modal_str += "<div id=\"mmModal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\">";
+//        mm_modal_str += " <div class=\"modal-body\">";
+//        mm_modal_str += "   <iframe src=\"" + frameSrc + "\" style=\"position:absolute; zoom:0.60\" width=\"99.6%\" height=\"99.6%\" frameborder=\"0\"><\/iframe>";
+//        mm_modal_str += " <\/div>";
+//        mm_modal_str += "<\/div>";
+//
+//        $mm_Modal = $(mm_modal_str);
+//        $('#page-render').append($mm_Modal);
+//
+//        $mm_Modal.modal('show');
+//
+//        $mm_Modal.on('hidden', function () {
+//            var $field = $(field);
+//            if ($field.attr('value')) {
+//                $.ajax({
+//                    url: baseUrlPath + 'mediamanager/image?image=' + encodeURIComponent($field.val()),
+//                    dataType: 'text',
+//                    success: function (data) {
+//                        $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php //echo base_url();?>//image/default-image.png\');" />');
+//                    }
+//                });
+//            }
+//        });
+//    }
 
     var csrf_token_name = '<?php echo $this->security->get_csrf_token_name(); ?>';
     var csrf_token_hash = '<?php echo $this->security->get_csrf_hash(); ?>';
@@ -193,7 +177,7 @@
         $thumbnails_grids.append(imageThumbnailGrid);
     }
 
-    function displayThumbnailPreview(filename,url,filesize,sm_thumb,lg_thumb) {
+    function displayThumbnailPreview(id, filename,url,filesize,sm_thumb,lg_thumb) {
         filename = typeof filename !== 'undefined' ? filename : null;
         url = typeof url !== 'undefined' ? url : null;
         filesize = typeof filesize !== 'undefined' ? filesize : null;
@@ -204,6 +188,7 @@
             hiddenPreviewHTML = $('#hiddenPreview').html();
 
         if (filename || url || filesize) {
+            hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{img_id}}', 'g'), id);
             hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{img_url}}', 'g'), url);
             hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('src=""', 'g'), 'src="' + lg_thumb + '"');
             hiddenPreviewHTML = hiddenPreviewHTML.replace(new RegExp('{{file_name}}', 'g'), filename);
@@ -227,6 +212,8 @@
 //                if (console && console.log) {
 //                    console.log("Sample of data:", data);
 //                }
+                $thumbnails_grids.empty();
+
                 $.each(data.rows, function (index, value) {
                     createImageThumbnailGrid(value);
                 });
@@ -244,7 +231,34 @@
 
     $($thumbnails_grids).on("click",".thumbfix", function(){
 //       console.log($(this).data('id'));
-        displayThumbnailPreview($(this).data('file_name'), $(this).data('url'), $(this).data('file_size'), $(this).data('sm_url'), $(this).data('lg_url'));
+        displayThumbnailPreview($(this).data('id'),$(this).data('file_name'), $(this).data('url'), $(this).data('file_size'), $(this).data('sm_url'), $(this).data('lg_url'));
+    });
+
+    $("#thumb_preview").on("click", "button.delete-media", function (e) {
+        //console.log('Delete!', $(this).closest('.thumbnail').data('id'))
+        var _id = $(this).closest('.thumbnail').data('id');
+
+        if (confirm("Are you sure to remove this media?")) {
+            $.ajax({
+                    url: baseUrlPath + "mediamanager/media/" + _id,
+                    type: "DELETE",
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $waitDialog.modal('show');
+                    }
+                })
+                .done(function (data) {
+                    //todo: should create function to remove  thumbnail instead reload
+                    ajaxGetMediaList();
+                    $waitDialog.modal('hide');
+                })
+                .fail(function (xhr, status, error) {
+                    alert("Deletion Error!")
+                })
+                .always(function () {
+                    $waitDialog.modal('hide');
+                });
+        }
     });
 
     function copyToClipboard(element) {
