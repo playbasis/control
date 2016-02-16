@@ -1345,7 +1345,7 @@ class Quest extends REST2_Controller
                 $resp['quest'] = array();
             }
         } else {
-            // get all questss related to clients
+            // get all quests related to clients
             $data['status'] = array("join","finish");
             $quests_player = $this->quest_model->getPlayerQuests($data);
 
@@ -1368,9 +1368,8 @@ class Quest extends REST2_Controller
 
             array_walk_recursive($quests, array($this, "convert_mongo_object"));
 
-            $resp['quests'] = $quests;
+            $resp['quests'] = $quests ? $quests : null; // force PHP to output null instead of empty array
         }
-        if (isset($resp['quests']) && $resp['quests']) $resp['quests'] = null; // force PHP to output null instead of empty array
         $this->response($this->resp->setRespond($resp), 200);
     }
 
