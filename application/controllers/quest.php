@@ -1411,7 +1411,7 @@ class Quest extends REST2_Controller
             $quest['quest_id'] = $quest['_id'];
             unset($quest['_id']);
         }
-        array_walk_recursive($quest, array($this, "convert_mongo_object"));
+        array_walk_recursive($quests, array($this, "convert_mongo_object"));
         $resp['quests'] = $quests;
         $this->response($this->resp->setRespond($resp), 200);
     }
