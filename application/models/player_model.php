@@ -462,7 +462,7 @@ class Player_model extends MY_Model
         );
         if(is_array($filtered_param)){
             foreach ($filtered_param as $param_name => $param){
-                if ($param['completion_string'] != ""){
+                if (isset($param['completion_string']) && $param['completion_string']){
                     switch ($param['operation']){
                         case "=":
                             $fields['parameters'.'.'.$param_name] =  $param['completion_string'];
@@ -524,7 +524,7 @@ class Player_model extends MY_Model
         );
         if(is_array($filtered_param)){
             foreach ($filtered_param as $param_name => $param){
-                if ($param['completion_string'] != ""){
+                if (isset($param['completion_string']) && $param['completion_string']){
                     switch ($param['operation']){
                         case "=":
                             $fields['parameters'.'.'.$param_name] =  $param['completion_string'];
