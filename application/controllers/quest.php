@@ -1370,6 +1370,16 @@ class Quest extends REST2_Controller
 
             $resp['quests'] = $quests ? $quests : null; // force PHP to output null instead of empty array
         }
+        $filter = $this->input->get('filter');
+        if ($filter){
+            $filtered_quests = array();
+            foreach ($quests as $q){
+                $filtered_quest = $this->filterArray($filter,$q);
+                array_push($filtered_quests, $filtered_quest);
+            }
+
+            if (!empty($filtered_quest)) $resp['quests'] = $filtered_quests ;
+        }
         $this->response($this->resp->setRespond($resp), 200);
     }
 
@@ -1638,6 +1648,18 @@ class Quest extends REST2_Controller
                 $item =  datetimeMongotoReadable($item);
             }
         }
+    }
+    /**
+     * Use for filtering selected field or input array by toFilterField
+     * delimiter is ','
+     */
+    private function filterArray($toFilterField, $array) {
+        $filter_array = explode(',',$toFilterField);
+        $filtered_quest = null;
+        foreach ($filter_array as $field){
+            if (isset($array[$field]) )$filtered_quest[$field] = $array[$field];
+        }
+        return $filtered_quest;
     }
 }
 ?>
