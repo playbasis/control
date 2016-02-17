@@ -273,6 +273,21 @@ class Player extends REST2_Controller
             ksort($point);
         }
         $player['player']['points'] = $points;
+
+        $nodes_list = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'], $this->validToken['site_id'],$pb_player_id);
+        $organization = array();
+        if (is_array($nodes_list)) foreach ($nodes_list as $node){
+            $name = $this->store_org_model->retrieveNodeById($this->validToken['site_id'],$node['node_id'])['name'];
+            $node_id = (String)$node['node_id'];
+            $roles = array();
+            if (isset($node['roles']) && is_array($node['roles']) )foreach ($node['roles'] as $role_name => $date_join){
+                array_push($roles,$role_name);
+            }
+            if (empty($roles))$roles = null;
+            array_push($organization,array ('name' => $name, 'node_id' => $node_id, 'roles' => $roles ));
+        }
+        $player['player']['organization'] = empty($organization)? null:$organization;
+
 		//get last login/logout
 		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
 		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
