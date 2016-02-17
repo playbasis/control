@@ -1151,6 +1151,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "filter",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "field to be filter, this can be put multiple field with delimiter ',' "
                         }
                     ]
                 },
