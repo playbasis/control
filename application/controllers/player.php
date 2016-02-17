@@ -279,12 +279,12 @@ class Player extends REST2_Controller
         if (is_array($nodes_list)) foreach ($nodes_list as $node){
             $name = $this->store_org_model->retrieveNodeById($this->validToken['site_id'],$node['node_id'])['name'];
             $node_id = (String)$node['node_id'];
-            $role = null;
+            $roles = array();
             if (isset($node['roles']) && is_array($node['roles']) )foreach ($node['roles'] as $role_name => $date_join){
-                $role = $role.$role_name;
-                if (count($node['roles']) > 1) $role = $role.',';
+                array_push($roles,$role_name);
             }
-            array_push($organization,array ('name' => $name, 'node_id' => $node_id, 'role' => $role ));
+            if (empty($roles))$roles = null;
+            array_push($organization,array ('name' => $name, 'node_id' => $node_id, 'roles' => $roles ));
         }
         $player['player']['organization'] = empty($organization)? null:$organization;
 
