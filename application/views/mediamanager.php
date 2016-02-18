@@ -33,23 +33,48 @@
             <h1><img src="<?php echo base_url(); ?>image/category.png" alt=""/> <?php echo $heading_title; ?></h1>
 
             <div class="buttons">
-<!--                <a class="btn btn-primary"-->
-<!--                   onclick="image_upload('image', 'thumb');"><i class="fa fa-upload"></i>&nbsp;--><?php //echo $this->lang->line('btn_upload'); ?><!--</a>-->
                 <a class="btn btn-success" onclick="location = baseUrlPath"><i class="fa fa-home"></i></a>
             </div>
         </div>
         <div class="content">
-            <div class="row-fluid">
-                <div class="span9 well" style="min-height: 700px">
-                    <ul id="thumbnails_grid" class="thumbnails">
+            <div class="tabbable">
+                <ul class="nav nav-tabs" id="mainTab">
+                    <li class="active"><a href="#mediaLibrary"
+                                          data-toggle="tab"><?php echo $this->lang->line('tab_library'); ?></a></li>
+                    <li><a href="#Upload" data-toggle="tab"><?php echo $this->lang->line('tab_upload'); ?></a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade active in" id="mediaLibrary">
+                        <div class="row-fluid">
+                            <div class="span9 well" style="min-height: 700px">
+                                <ul id="thumbnails_grid" class="thumbnails">
 
-                    </ul>
-                </div>
-                <div class="span3">
-                    <div class="row-fluid">
-                        <ul class="thumbnails">
-                            <li class="span12 hide" id="thumb_preview"></li>
-                        </ul>
+                                </ul>
+                            </div>
+                            <div class="span3">
+                                <div class="row-fluid">
+                                    <ul class="thumbnails">
+                                        <li class="span12 hide" id="thumb_preview"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade in" id="Upload">
+                        <div class="row-fluid">
+                            <div id="dropzone">
+                                <?php
+                                $attributes = array('id' => 'dz-upload', 'class' => 'dropzone needsclick dz-clickable');
+                                echo form_open("mediamanager/upload_s3" ,$attributes);
+                                ?>
+                                <div class="dz-message needsclick">
+                                    <?php echo $this->lang->line('text_dropzone'); ?><br>
+                                </div>
+                                <?php
+                                echo form_close();
+                                ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,27 +107,27 @@
         <img src="" style="border: black solid 1px">
         <div class="caption">
             <div class="row-fluid">
-                <h3 style="word-wrap: break-word">{{file_name}}</h3>
+                <h4 style="word-wrap: break-word">{{file_name}}</h4>
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    <label for="img_url">Image URL:</label>
+                    <label for="img_url"><?php echo $this->lang->line('entry_img_url'); ?></label>
                     <textarea id="img_url" rows="3" class="input-block-level" readonly>{{img_url}}</textarea>
-                    <button class="btn btn-block" onclick="copyToClipboard('#img_url')">Copy to clipboard</button>
+                    <button class="btn btn-block" onclick="copyToClipboard('#img_url')"><?php echo $this->lang->line('btn_copy_to_clipboard'); ?></button>
                 </div>
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    <label for="sm_thumb_url">Small thumbnail URL:</label>
+                    <label for="sm_thumb_url"><?php echo $this->lang->line('entry_sm_thumb_url'); ?></label>
                     <textarea id="sm_thumb_url" rows="3" class="input-block-level" readonly>{{img_sm_url}}</textarea>
-                    <button class="btn btn-block" onclick="copyToClipboard('#sm_thumb_url')">Copy to clipboard</button>
+                    <button class="btn btn-block" onclick="copyToClipboard('#sm_thumb_url')"><?php echo $this->lang->line('btn_copy_to_clipboard'); ?></button>
                 </div>
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    <label for="lg_thumb_url">Large thumbnail URL:</label>
+                    <label for="lg_thumb_url"><?php echo $this->lang->line('entry_lg_thumb_url'); ?></label>
                     <textarea id="lg_thumb_url" rows="3" class="input-block-level" readonly>{{img_lg_url}}</textarea>
-                    <button class="btn btn-block" onclick="copyToClipboard('#lg_thumb_url')">Copy to clipboard</button>
+                    <button class="btn btn-block" onclick="copyToClipboard('#lg_thumb_url')"><?php echo $this->lang->line('btn_copy_to_clipboard'); ?></button>
                 </div>
             </div>
             <div class="row-fluid">
@@ -110,49 +135,19 @@
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    <button class="delete-media btn btn-danger btn-block">Delete</button>
+                    <button class="delete-media btn btn-danger btn-block"><?php echo $this->lang->line('btn_delete'); ?></button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<script src="<?php echo base_url(); ?>javascript/dropzone/dropzone-4.2.0.min.js"></script>
+<link href="<?php echo base_url(); ?>javascript/dropzone/dropzone-4.2.0.min.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
-//    function image_upload(field, thumb) {
-//        var $mm_Modal = $('#mmModal');
-//
-//        if ($mm_Modal.length !== 0) $mm_Modal.remove();
-//
-//        var frameSrc = baseUrlPath + "mediamanager/dialog?field=" + encodeURIComponent(field);
-//        var mm_modal_str = "";
-//        mm_modal_str += "<div id=\"mmModal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\">";
-//        mm_modal_str += " <div class=\"modal-body\">";
-//        mm_modal_str += "   <iframe src=\"" + frameSrc + "\" style=\"position:absolute; zoom:0.60\" width=\"99.6%\" height=\"99.6%\" frameborder=\"0\"><\/iframe>";
-//        mm_modal_str += " <\/div>";
-//        mm_modal_str += "<\/div>";
-//
-//        $mm_Modal = $(mm_modal_str);
-//        $('#page-render').append($mm_Modal);
-//
-//        $mm_Modal.modal('show');
-//
-//        $mm_Modal.on('hidden', function () {
-//            var $field = $(field);
-//            if ($field.attr('value')) {
-//                $.ajax({
-//                    url: baseUrlPath + 'mediamanager/image?image=' + encodeURIComponent($field.val()),
-//                    dataType: 'text',
-//                    success: function (data) {
-//                        $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php //echo base_url();?>//image/default-image.png\');" />');
-//                    }
-//                });
-//            }
-//        });
-//    }
-
     var csrf_token_name = '<?php echo $this->security->get_csrf_token_name(); ?>';
     var csrf_token_hash = '<?php echo $this->security->get_csrf_hash(); ?>';
-    Pace.on("done", function(){
+    Pace.on("done", function () {
         $(".cover").fadeOut(1000);
     });
 
@@ -177,7 +172,7 @@
         $thumbnails_grids.append(imageThumbnailGrid);
     }
 
-    function displayThumbnailPreview(id, filename,url,filesize,sm_thumb,lg_thumb) {
+    function displayThumbnailPreview(id, filename, url, filesize, sm_thumb, lg_thumb) {
         filename = typeof filename !== 'undefined' ? filename : null;
         url = typeof url !== 'undefined' ? url : null;
         filesize = typeof filesize !== 'undefined' ? filesize : null;
@@ -209,15 +204,12 @@
                 }
             })
             .done(function (data) {
-//                if (console && console.log) {
-//                    console.log("Sample of data:", data);
-//                }
                 $thumbnails_grids.empty();
 
                 $.each(data.rows, function (index, value) {
                     createImageThumbnailGrid(value);
                 });
-                if(data.rows !== undefined)
+                if (data.rows !== undefined)
                     $(".thumbfix")[0].click();
                 $waitDialog.modal('hide');
             })
@@ -229,9 +221,9 @@
         ajaxGetMediaList();
     });
 
-    $($thumbnails_grids).on("click",".thumbfix", function(){
+    $($thumbnails_grids).on("click", ".thumbfix", function () {
 //       console.log($(this).data('id'));
-        displayThumbnailPreview($(this).data('id'),$(this).data('file_name'), $(this).data('url'), $(this).data('file_size'), $(this).data('sm_url'), $(this).data('lg_url'));
+        displayThumbnailPreview($(this).data('id'), $(this).data('file_name'), $(this).data('url'), $(this).data('file_size'), $(this).data('sm_url'), $(this).data('lg_url'));
     });
 
     $("#thumb_preview").on("click", "button.delete-media", function (e) {
@@ -268,4 +260,20 @@
         document.execCommand("copy");
         $temp.remove();
     }
+
+    $('a[data-toggle="tab"]').on('show', function (e) {
+        if ($(e.target).attr("href") === "#mediaLibrary") {
+            ajaxGetMediaList();
+        }
+    });
+
+    Dropzone.options.dzUpload = {
+        maxFilesize: 3, // MB
+        addRemoveLinks: true,
+        init: function() {
+            this.on("sending", function(file, xhr, formData){
+                formData.append(csrf_token_name, csrf_token_hash);
+            });
+        },
+    };
 </script>
