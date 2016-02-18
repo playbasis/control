@@ -97,7 +97,7 @@
             <span><a href="#" id="clear-selected" class="text-danger">Clear</a></span>
         </div>
         <div class="col-xs-6 col-sm-3">
-            <div class="thumbnail active" href="#" data-id="{{img_id}}" data-file_name="{{file_name}}" style="width: 40px; height: 40px; color: #23527c">
+            <div class="thumbnail active" href="#" data-id="{{img_id}}" data-file_name="{{file_name}}" data-url="{{img_url}}" style="width: 40px; height: 40px; color: #23527c">
                 <img src="" style="display: block;">
             </div>
         </div>
@@ -186,6 +186,7 @@
 <script type="text/javascript">
     var baseUrlPath = "<?php echo base_url();?><?php echo (index_page() == '') ? '' : index_page() . "/" ?>";
     var parentField = "<?php echo ($field == '') ? '' : $field ?>";
+    var funcNum = "<?php echo ($fckeditor == '') ? '' : $fckeditor ?>";
     var csrf_token_name = '<?php echo $this->security->get_csrf_token_name(); ?>';
     var csrf_token_hash = '<?php echo $this->security->get_csrf_hash(); ?>';
     Pace.on("done", function () {

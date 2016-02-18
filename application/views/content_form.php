@@ -355,7 +355,9 @@
         });
     }
     function initComponents() {
-        CKEDITOR.replace('inputDetail');
+        CKEDITOR.replace('inputDetail', {
+            filebrowserImageBrowseUrl : 'mediamanager/dialog/'
+        });
 
         $inputCategory.select2({
             allowClear: true,
