@@ -1327,11 +1327,13 @@ class Quest extends REST2_Controller
 
             if($quest_player){
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
+                $quest['num_missions'] = array('total' => count($quest_player["missions"]), 'join' => 0, 'unjoin' => 0, 'finish' => 0);
 
                 foreach($quest_player["missions"] as $k=>$m){
                     $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
                     $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
                     $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken, $badge_player_check, $m);
+                    if ($quest["missions"][$k]["status"]) $quest['num_missions'][$quest["missions"][$k]["status"]]++;
                 }
 
                 $quest['status'] = $quest_player['status'];
@@ -1352,11 +1354,13 @@ class Quest extends REST2_Controller
             $quests = array();
             foreach ($quests_player as $q) {
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
+                $quest['num_missions'] = array('total' => count($q["missions"]), 'join' => 0, 'unjoin' => 0, 'finish' => 0);
 
                 foreach($q["missions"] as $k=>$m){
                     $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
                     $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
                     $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken, $badge_player_check, $m);
+                    if ($quest["missions"][$k]["status"]) $quest['num_missions'][$quest["missions"][$k]["status"]]++;
                 }
 
                 $quest['status'] = $q['status'];
