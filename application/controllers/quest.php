@@ -1325,6 +1325,7 @@ class Quest extends REST2_Controller
             $data['status'] = array("join","finish");
             $quest_player = $this->quest_model->getPlayerQuest($data);
 
+            $resp['quest'] = array();
             if($quest_player){
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
                 $quest['num_missions'] = array('total' => count($quest_player["missions"]), 'join' => 0, 'unjoin' => 0, 'finish' => 0);
@@ -1341,10 +1342,7 @@ class Quest extends REST2_Controller
                 unset($quest['_id']);
 
                 array_walk_recursive($quest, array($this, "convert_mongo_object"));
-
                 $resp['quest'] = $quest;
-            }else{
-                $resp['quest'] = array();
             }
         } else {
             // get all quests related to clients
@@ -1371,18 +1369,21 @@ class Quest extends REST2_Controller
             }
 
             array_walk_recursive($quests, array($this, "convert_mongo_object"));
-
             $resp['quests'] = $quests ? $quests : null; // force PHP to output null instead of empty array
         }
+        /* filter to include only requested fields */
         $filter = $this->input->get('filter');
-        if ($filter){
-            $filtered_quests = array();
-            foreach ($quests as $q){
-                $filtered_quest = $this->filterArray($filter,$q);
-                array_push($filtered_quests, $filtered_quest);
+        if ($filter) {
+            if (isset($resp['quest'])) {
+                $resp['quest'] = $this->filterArray($filter, $resp['quest']);
+            } else { // isset($resp['quests'])
+                $filtered_quests = array();
+                foreach ($resp['quests'] as $q) {
+                    $filtered_quest = $this->filterArray($filter, $q);
+                    array_push($filtered_quests, $filtered_quest);
+                }
+                if ($filtered_quests) $resp['quests'] = $filtered_quests;
             }
-
-            if (!empty($filtered_quest)) $resp['quests'] = $filtered_quests ;
         }
         $this->response($this->resp->setRespond($resp), 200);
     }
