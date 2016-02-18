@@ -1313,6 +1313,7 @@ class Quest extends REST2_Controller
             'pb_player_id' => $pb_player_id
         );
 
+        $resp = array();
         if ($quest_id) {
             // get specific quest
             try {
@@ -1349,6 +1350,7 @@ class Quest extends REST2_Controller
             $data['status'] = array("join","finish");
             $quests_player = $this->quest_model->getPlayerQuests($data);
 
+            $resp['quests'] = null;
             $quests = array();
             foreach ($quests_player as $q) {
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
@@ -1369,18 +1371,17 @@ class Quest extends REST2_Controller
             }
 
             array_walk_recursive($quests, array($this, "convert_mongo_object"));
-            $resp['quests'] = $quests ? $quests : null; // force PHP to output null instead of empty array
+            if ($quests) $resp['quests'] = $quests;
         }
         /* filter to include only requested fields */
         $filter = $this->input->get('filter');
         if ($filter) {
             if (isset($resp['quest'])) {
                 $resp['quest'] = $this->filterArray($filter, $resp['quest']);
-            } else { // isset($resp['quests'])
+            } else if (isset($resp['quests'])) {
                 $filtered_quests = array();
-                foreach ($resp['quests'] as $q) {
-                    $filtered_quest = $this->filterArray($filter, $q);
-                    array_push($filtered_quests, $filtered_quest);
+                if (is_array($resp['quests'])) foreach ($resp['quests'] as $q) {
+                    array_push($filtered_quests, $this->filterArray($filter, $q));
                 }
                 if ($filtered_quests) $resp['quests'] = $filtered_quests;
             }
@@ -1660,7 +1661,7 @@ class Quest extends REST2_Controller
      */
     private function filterArray($toFilterField, $array) {
         $filter_array = explode(',',$toFilterField);
-        $filtered_quest = null;
+        $filtered_quest = array();
         foreach ($filter_array as $field){
             if (isset($array[$field]) )$filtered_quest[$field] = $array[$field];
         }
