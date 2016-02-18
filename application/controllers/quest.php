@@ -1313,6 +1313,7 @@ class Quest extends REST2_Controller
             'pb_player_id' => $pb_player_id
         );
 
+        $resp = array();
         if ($quest_id) {
             // get specific quest
             try {
@@ -1325,13 +1326,16 @@ class Quest extends REST2_Controller
             $data['status'] = array("join","finish");
             $quest_player = $this->quest_model->getPlayerQuest($data);
 
+            $resp['quest'] = array();
             if($quest_player){
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
+                $quest['num_missions'] = array('total' => count($quest_player["missions"]), 'join' => 0, 'unjoin' => 0, 'finish' => 0);
 
                 foreach($quest_player["missions"] as $k=>$m){
                     $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
                     $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
                     $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken, $badge_player_check, $m);
+                    if ($quest["missions"][$k]["status"]) $quest['num_missions'][$quest["missions"][$k]["status"]]++;
                 }
 
                 $quest['status'] = $quest_player['status'];
@@ -1339,24 +1343,24 @@ class Quest extends REST2_Controller
                 unset($quest['_id']);
 
                 array_walk_recursive($quest, array($this, "convert_mongo_object"));
-
                 $resp['quest'] = $quest;
-            }else{
-                $resp['quest'] = array();
             }
         } else {
             // get all quests related to clients
             $data['status'] = array("join","finish");
             $quests_player = $this->quest_model->getPlayerQuests($data);
 
+            $resp['quests'] = null;
             $quests = array();
             foreach ($quests_player as $q) {
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
+                $quest['num_missions'] = array('total' => count($q["missions"]), 'join' => 0, 'unjoin' => 0, 'finish' => 0);
 
                 foreach($q["missions"] as $k=>$m){
                     $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
                     $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
                     $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken, $badge_player_check, $m);
+                    if ($quest["missions"][$k]["status"]) $quest['num_missions'][$quest["missions"][$k]["status"]]++;
                 }
 
                 $quest['status'] = $q['status'];
@@ -1367,18 +1371,21 @@ class Quest extends REST2_Controller
             }
 
             array_walk_recursive($quests, array($this, "convert_mongo_object"));
-
-            $resp['quests'] = $quests ? $quests : null; // force PHP to output null instead of empty array
+            if ($quests) $resp['quests'] = $quests;
         }
+        /* filter to include only requested fields */
         $filter = $this->input->get('filter');
-        if ($filter){
-            $filtered_quests = array();
-            foreach ($quests as $q){
-                $filtered_quest = $this->filterArray($filter,$q);
-                array_push($filtered_quests, $filtered_quest);
+        if ($filter) {
+            $fields = explode(',', $filter);
+            if (isset($resp['quest'])) {
+                $resp['quest'] = $this->filterOnlyFields($fields, $resp['quest']);
+            } else if (isset($resp['quests'])) {
+                $filtered_quests = array();
+                if (is_array($resp['quests'])) foreach ($resp['quests'] as $q) {
+                    array_push($filtered_quests, $this->filterOnlyFields($fields, $q));
+                }
+                if ($filtered_quests) $resp['quests'] = $filtered_quests;
             }
-
-            if (!empty($filtered_quest)) $resp['quests'] = $filtered_quests ;
         }
         $this->response($this->resp->setRespond($resp), 200);
     }
@@ -1649,17 +1656,17 @@ class Quest extends REST2_Controller
             }
         }
     }
+
     /**
-     * Use for filtering selected field or input array by toFilterField
-     * delimiter is ','
+     * Filter array elements to include only allowed fields
      */
-    private function filterArray($toFilterField, $array) {
-        $filter_array = explode(',',$toFilterField);
-        $filtered_quest = null;
-        foreach ($filter_array as $field){
-            if (isset($array[$field]) )$filtered_quest[$field] = $array[$field];
+    private function filterOnlyFields($fields, $arr) {
+        if (!$fields) return $arr;
+        $ret = array();
+        if (is_array($fields)) foreach ($fields as $field){
+            if (isset($arr[$field])) $ret[$field] = $arr[$field];
         }
-        return $filtered_quest;
+        return $ret;
     }
 }
 ?>
