@@ -1,3 +1,7 @@
+<link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
+<script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
+        src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
+<div class="cover"></div>
 <link rel="stylesheet" media="screen" type="text/css" href="<?php echo base_url();?>stylesheet/goods/style.css" />
 <div id="content" class="span10">
     <div class="box">
@@ -284,16 +288,12 @@
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
 
 <script type="text/javascript"><!--
-
-CKEDITOR.replace('description', {
-    filebrowserBrowseUrl: baseUrlPath+'filemanager',
-    filebrowserImageBrowseUrl: baseUrlPath+'filemanager',
-    filebrowserFlashBrowseUrl: baseUrlPath+'filemanager',
-    filebrowserUploadUrl: baseUrlPath+'filemanager',
-    filebrowserImageUploadUrl: baseUrlPath+'filemanager',
-    filebrowserFlashUploadUrl: baseUrlPath+'filemanager'
-});
-
+    Pace.on("done", function () {
+        $(".cover").fadeOut(1000);
+    });
+    CKEDITOR.replace('description', {
+        filebrowserImageBrowseUrl: 'mediamanager/dialog/'
+    });
 //--></script>
 <script type="text/javascript">
     $(function(){

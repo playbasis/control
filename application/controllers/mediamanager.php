@@ -82,6 +82,12 @@ class MediaManager extends MY_Controller
             $this->data['field'] = '';
         }
 
+        if ($this->input->get('CKEditorFuncNum')) {
+            $this->data['fckeditor'] = $this->input->get('CKEditorFuncNum');
+        } else {
+            $this->data['fckeditor'] = false;
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
