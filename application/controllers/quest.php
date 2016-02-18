@@ -1376,12 +1376,13 @@ class Quest extends REST2_Controller
         /* filter to include only requested fields */
         $filter = $this->input->get('filter');
         if ($filter) {
+            $fields = explode(',', $filter);
             if (isset($resp['quest'])) {
-                $resp['quest'] = $this->filterArray($filter, $resp['quest']);
+                $resp['quest'] = $this->filterOnlyFields($fields, $resp['quest']);
             } else if (isset($resp['quests'])) {
                 $filtered_quests = array();
                 if (is_array($resp['quests'])) foreach ($resp['quests'] as $q) {
-                    array_push($filtered_quests, $this->filterArray($filter, $q));
+                    array_push($filtered_quests, $this->filterOnlyFields($fields, $q));
                 }
                 if ($filtered_quests) $resp['quests'] = $filtered_quests;
             }
@@ -1655,17 +1656,17 @@ class Quest extends REST2_Controller
             }
         }
     }
+
     /**
-     * Use for filtering selected field or input array by toFilterField
-     * delimiter is ','
+     * Filter array elements to include only allowed fields
      */
-    private function filterArray($toFilterField, $array) {
-        $filter_array = explode(',',$toFilterField);
-        $filtered_quest = array();
-        foreach ($filter_array as $field){
-            if (isset($array[$field]) )$filtered_quest[$field] = $array[$field];
+    private function filterOnlyFields($fields, $arr) {
+        if (!$fields) return $arr;
+        $ret = array();
+        if (is_array($fields)) foreach ($fields as $field){
+            if (isset($arr[$field])) $ret[$field] = $arr[$field];
         }
-        return $filtered_quest;
+        return $ret;
     }
 }
 ?>
