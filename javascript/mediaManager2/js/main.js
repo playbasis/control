@@ -35,7 +35,7 @@ $("#media-manager-tab")
             showDetailPanel();
         }
 
-        displaySelectedThumbnail($(this).data('id'), $(this).data('sm_url'), $(this).data('file_name'));
+        displaySelectedThumbnail($(this).data('id'), $(this).data('sm_url'), $(this).data('file_name'), $(this).data('url'));
         if ($footer_div.find('.thumbnail').length >= 0) {
             $('button#select-photo').removeClass('disabled');
         }
@@ -45,9 +45,15 @@ $("#media-manager-tab")
     })
     .on("click", "button#select-photo", function (e) {
         if ($footer_div.find('.thumbnail') !== 0) {
+            var file_name = $footer_div.find('.thumbnail').data('file_name'),
+                url = $footer_div.find('.thumbnail').data('url');
             if (parentField !== '') {
-                var file_name = $('.footer-div').find('.thumbnail').data('file_name');
                 parent.$(parentField).val('data/' + file_name);
+            }
+
+            if (funcNum !== ''){
+                window.opener.CKEDITOR.tools.callFunction(funcNum, url);
+                window.close();
             }
 
             parent.$('#mmModal').modal('hide');
@@ -116,7 +122,7 @@ function displayThumbnailPreview(id, filename, url, filesize, sm_thumb, lg_thumb
 
     var hidden_detail_panelHTML = $('#hidden_detail_panel').html();
 
-    if (filename || url || filesize || lg_thumb) {
+    if (id && filename && url && filesize && sm_thumb && lg_thumb) {
         hidden_detail_panelHTML = hidden_detail_panelHTML.replace(new RegExp('{{img_id}}', 'g'), id);
         hidden_detail_panelHTML = hidden_detail_panelHTML.replace(new RegExp('{{img_url}}', 'g'), url);
         hidden_detail_panelHTML = hidden_detail_panelHTML.replace(new RegExp('src=""', 'g'), 'src="' + lg_thumb + '"');
@@ -129,17 +135,19 @@ function displayThumbnailPreview(id, filename, url, filesize, sm_thumb, lg_thumb
     }
 }
 
-function displaySelectedThumbnail(id, sm_thumb, filename) {
+function displaySelectedThumbnail(id, sm_thumb, filename, url) {
     id = typeof id !== 'undefined' ? id : null;
     sm_thumb = typeof sm_thumb !== 'undefined' ? sm_thumb : null;
     filename = typeof filename !== 'undefined' ? filename : null;
+    url = typeof url !== 'undefined' ? url : null;
 
     var hidden_selected_thumbHTML = $('#hiddenSelectedThumbs').html();
 
-    if (id && sm_thumb && filename) {
+    if (id && sm_thumb && filename && url) {
         hidden_selected_thumbHTML = hidden_selected_thumbHTML.replace(new RegExp('{{img_id}}', 'g'), id);
         hidden_selected_thumbHTML = hidden_selected_thumbHTML.replace(new RegExp('src=""', 'g'), 'src="' + sm_thumb + '"');
         hidden_selected_thumbHTML = hidden_selected_thumbHTML.replace(new RegExp('{{file_name}}', 'g'), filename);
+        hidden_selected_thumbHTML = hidden_selected_thumbHTML.replace(new RegExp('{{img_url}}', 'g'), url);
 
         $selected_wrapper.empty().append(hidden_selected_thumbHTML).show();
     }
