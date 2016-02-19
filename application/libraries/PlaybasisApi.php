@@ -69,6 +69,11 @@ class PlaybasisApi{
         return $result;
     }
 
+    public function testRule($data){
+        $result = $this->_get('Engine/json/'.urlencode(json_encode($data)), $data);
+        return $result;
+    }
+
     public function engine($player_id, $action, $optionalParams=array()){
         $result = $this->_post('Engine/rule', array_merge(array(
             'player_id' => $player_id,
