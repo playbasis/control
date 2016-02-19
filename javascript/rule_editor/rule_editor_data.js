@@ -209,7 +209,7 @@ dataMan = {
         $.ajax({
           url: urlConfig.URL_playRule(),
           data: _data,
-          type:'POST',
+          type:'GET',
           beforeSend:function(){
             progressDialog.show('Playing rule ...');
           },

@@ -214,10 +214,11 @@ class Rule extends MY_Controller
      * does not edit anything in database
      */
     public function jsonPlayRule() {
-        $id = $this->input->post("id");
-        $client_id = $this->input->post("client_id");
-        $site_id = $this->input->post("site_id");
+        $id = $this->input->get("id");
+        $client_id = $this->input->get("client_id");
+        $site_id = $this->input->get("site_id");
         $rule = $this->Rule_model->getById($id);
+        $result = $this->User_model->get_api_key_secret($client_id, $site_id);
 
         // extract the rule parameters
         $action = null;
@@ -233,6 +234,7 @@ class Rule extends MY_Controller
         }
 
         $data = array_merge(array(
+            "api_key" => $result["api_key"],
             "rule_id" => strval($rule["_id"]),
             "action" => $action,
             "client_id" => $client_id,
@@ -240,11 +242,9 @@ class Rule extends MY_Controller
             "test" => true
         ), $params);
 
-        $result = $this->curl(
-            API_SERVER."/Engine/rule",
-            $data
-        );
-
+        $this->_api = $this->playbasisapi;
+        $result = $this->_api->testRule($data);
+        $result = json_encode($result);
         $this->output->set_output($result);
     }
 
