@@ -162,7 +162,7 @@ abstract class REST2_Controller extends REST_Controller
 		));
 		try {
 			/* 2.1 Validate request (basic common validation for all controllers) */
-			if (!in_array($class_name, array('Auth', 'Engine', 'Facebook', 'Geditor', 'Instagram', 'Janrain', 'Mobile', 'Notification', 'Pipedrive', 'Playbasis'))) { // list of modules that don't require auth info
+			if (!in_array($class_name, array('Auth', 'Facebook', 'Geditor', 'Instagram', 'Janrain', 'Mobile', 'Notification', 'Pipedrive', 'Playbasis'))) { // list of modules that don't require auth info
 				switch ($this->request->method) {
 				case 'get': // every GET call requires 'api_key'
 					$required = $this->input->checkParam(array(
