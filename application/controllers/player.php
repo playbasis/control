@@ -277,14 +277,16 @@ class Player extends REST2_Controller
         $nodes_list = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'], $this->validToken['site_id'],$pb_player_id);
         $organization = array();
         if (is_array($nodes_list)) foreach ($nodes_list as $node){
-            $name = $this->store_org_model->retrieveNodeById($this->validToken['site_id'],$node['node_id'])['name'];
+            $org_node = $this->store_org_model->retrieveNodeById($this->validToken['site_id'],$node['node_id']);
+            $name = $org_node['name'];
+            $org_info= $this->store_org_model->retrieveOrganizeById($this->validToken['client_id'],$this->validToken['site_id'],$org_node['organize']);
             $node_id = (String)$node['node_id'];
             $roles = array();
             if (isset($node['roles']) && is_array($node['roles']) )foreach ($node['roles'] as $role_name => $date_join){
-                array_push($roles,$role_name);
+                array_push($roles,array ('role' => $role_name, 'join_date' => datetimeMongotoReadable($date_join)));
             }
             if (empty($roles))$roles = null;
-            array_push($organization,array ('name' => $name, 'node_id' => $node_id, 'roles' => $roles ));
+            array_push($organization,array ('name' => $name, 'node_id' => $node_id, 'organize_type' => $org_info['name'],'roles' => $roles ));
         }
         $player['player']['organization'] = empty($organization)? null:$organization;
 
