@@ -27,6 +27,7 @@ class Engine extends Quest
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/node_stream', 'node');
 		$this->load->model('energy_model');
+        $this->load->model('level_model');
 	}
 
 	public function getActionConfig_get()
@@ -770,6 +771,17 @@ class Engine extends Quest
 				$exInfo = array();
 				$jigsawConfig = $jigsaw['config'];
 				$jigsawCategory = $jigsaw['category'];
+
+                // Level condition
+                if (($input['jigsaw_name']) == 'level'){
+                    //read player information
+                    $player['player'] = $this->player_model->readPlayer($input['pb_player_id'], $this->site_id, array(
+                        'exp',
+                    ));
+
+                    $level = $this->level_model->getLevelByExp($player['player']['exp'], $this->validToken['client_id'], $this->validToken['site_id']);
+                    $input['level'] = $level['level'];
+                }
 
 				// support formula-based quantity
 				if (isset($jigsawConfig['quantity']) && strpos($jigsawConfig['quantity'], '{') !== false) {

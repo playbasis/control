@@ -70,6 +70,31 @@ class jigsaw extends MY_Model
 		}
 		return $result;
 	}
+    public function level($config, $input, &$exInfo = array()) {
+        assert($config != false);
+        assert(is_array($config));
+        assert(isset($config['type']));
+        assert(isset($config['value']));
+
+        $result = false;
+
+        if (isset($input['level'])){
+            if($config['type']=='='){
+                $result = ($input['level'] == $config['value']);
+            }elseif($config['type']=='>'){
+                $result = ($input['level'] > $config['value']);
+            }elseif($config['type']=='<'){
+                $result = ($input['level'] < $config['value']);
+            }elseif($config['type']=='>='){
+                $result = ($input['level'] >= $config['value']);
+            }elseif($config['type']=='<='){
+                $result = ($input['level'] <= $config['value']);
+            }
+        }
+
+        return $result;
+    }
+
 	public function reward($config, $input, &$exInfo = array(), $cache=array())
 	{
 		assert($config != false);
