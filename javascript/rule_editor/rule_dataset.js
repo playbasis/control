@@ -555,7 +555,6 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 rowField.children().hide();
                                 rowField.append(operation_option);
                                 $('#operation').val(rowText.html());
-                                //console.log('CUSTOMPARAMETER');
                             }else{
                                 if(DEBUG)console.log('edit > text');
                                 rowField.find('input').val(rowText.html());
