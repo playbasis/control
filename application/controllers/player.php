@@ -749,6 +749,12 @@ class Player extends REST2_Controller
 		/* Optionally, keep track of session */
 		$session_id = $this->input->post('session_id');
 		$session_expires_in = $this->input->post('session_expires_in');
+		if (!$session_expires_in){
+			$setting = $this->player_model->getSecuritySetting($this->client_id,$this->site_id);
+			$timeout = (isset($setting['timeout']))? ($setting['timeout'] > 0 ? $setting['timeout']:0): false;
+			$session_expires_in = $timeout;
+		}
+
 		if ($session_id) {
 			$this->player_model->login($this->client_id, $this->site_id, $pb_player_id, $session_id, $session_expires_in);
 		}
