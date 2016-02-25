@@ -783,6 +783,14 @@ class Engine extends Quest
 					$input['level'] = $level['level'];
 				}
 
+				// Badge condition
+				if (($input['jigsaw_name']) == 'badge'){
+					//read player badge information
+					$badge = $this->player_model->getBadge($input['pb_player_id'], $this->site_id);
+
+					$input['player_badge'] = $badge;
+				}
+
 				// support formula-based quantity
 				if (isset($jigsawConfig['quantity']) && strpos($jigsawConfig['quantity'], '{') !== false) {
 					require_once APPPATH . '/libraries/ipsum/Parser.class.php';
