@@ -102,7 +102,7 @@ class jigsaw extends MY_Model
         $result = false;
 
         foreach ($input['player_badge'] as $key => $badge) {
-            if(($badge['badge_id'] == $config['badge_id']) && $badge['amount'] == $config['value'] ){
+            if(($badge['badge_id'] == $config['badge_id']) && $badge['amount'] >= $config['value'] ){
                 $result = true;
                 break;
             }
