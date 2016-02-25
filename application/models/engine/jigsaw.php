@@ -94,7 +94,21 @@ class jigsaw extends MY_Model
 
         return $result;
     }
+    public function badgeCondition($config, $input, &$exInfo = array()) {
+        assert($config != false);
+        assert(is_array($config));
+        assert(isset($config['badge_id']));
+        assert(isset($config['value']));
+        $result = false;
 
+        foreach ($input['player_badge'] as $key => $badge) {
+            if(($badge['badge_id'] == $config['badge_id']) && $badge['amount'] >= $config['value'] ){
+                $result = true;
+                break;
+            }
+        }
+        return $result;
+    }
 	public function reward($config, $input, &$exInfo = array(), $cache=array())
 	{
 		assert($config != false);
