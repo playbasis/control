@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Custompoints extends MY_Controller
 {
     public function __construct()
@@ -8,7 +9,7 @@ class Custompoints extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -20,10 +21,11 @@ class Custompoints extends MY_Controller
         $this->lang->load("custompoints", $lang['folder']);
     }
 
-    public function index() {
+    public function index()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -49,7 +51,8 @@ class Custompoints extends MY_Controller
         $this->getList(0);
     }
 
-    public function insert(){
+    public function insert()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -86,7 +89,8 @@ class Custompoints extends MY_Controller
             if ($this->input->post('type_custompoint') != "normal") {
                 $this->form_validation->set_rules('energy_maximum', $this->lang->line('entry_energy_maximum'),
                     'required|numeric|is_natural_no_zero|xss_clean');
-                $this->form_validation->set_rules('energy_changing_period', $this->lang->line('entry_energy_changing_period'),
+                $this->form_validation->set_rules('energy_changing_period',
+                    $this->lang->line('entry_energy_changing_period'),
                     'required|xss_clean');
                 $this->form_validation->set_rules('energy_changing_per_period',
                     $this->lang->line('entry_energy_changing_per_period'),
@@ -109,9 +113,8 @@ class Custompoints extends MY_Controller
 
                 $insert = $this->Custompoints_model->insertCustompoints($data);
 
-                if ($insert ) {
-                    if ($this->initPlayerPoint($data))
-                    {
+                if ($insert) {
+                    if ($this->initPlayerPoint($data)) {
                         redirect('/custompoints', 'refresh');
                     }
                 }
@@ -120,10 +123,11 @@ class Custompoints extends MY_Controller
         $this->getForm();
     }
 
-    public function page($offset=0) {
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -135,7 +139,8 @@ class Custompoints extends MY_Controller
         $this->getList($offset);
     }
 
-    private function getList($offset) {
+    private function getList($offset)
+    {
 
         $site_id = $this->User_model->getSiteId();
         $client_id = $this->User_model->getClientId();
@@ -151,13 +156,13 @@ class Custompoints extends MY_Controller
             'site_id' => $site_id,
             'sort' => 'name'
         );
-        if(isset($_GET['filter_name'])){
+        if (isset($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
         $config['base_url'] = site_url('custompoints/page');
 
-        if($client_id){
+        if ($client_id) {
             $this->data['client_id'] = $client_id;
 
             $custompoints = $this->Custompoints_model->getCustompoints($filter);
@@ -216,7 +221,8 @@ class Custompoints extends MY_Controller
         $this->render_page('template');
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
         if ($this->User_model->hasPermission('modify', 'custompoints')) {
             return true;
         } else {
@@ -224,25 +230,29 @@ class Custompoints extends MY_Controller
         }
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'custompoints') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'custompoints')) {
+        if ($this->User_model->hasPermission('access',
+                'custompoints') && $this->Feature_model->getFeatureExistByClientId($client_id, 'custompoints')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function getForm($custompoints_id = null){
+    public function getForm($custompoints_id = null)
+    {
         $this->data['main'] = 'custompoints_form';
 
         if (isset($custompoints_id) && ($custompoints_id != 0)) {
-            if($this->User_model->getClientId()){
+            if ($this->User_model->getClientId()) {
                 $custompoints_info = $this->Custompoints_model->getCustompoint($custompoints_id);
             }
         }
@@ -285,12 +295,13 @@ class Custompoints extends MY_Controller
         $this->render_page('template');
     }
 
-    public function update($custompoints_id) {
+    public function update($custompoints_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'custompoints/update/'.$custompoints_id;
+        $this->data['form'] = 'custompoints/update/' . $custompoints_id;
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
@@ -298,14 +309,15 @@ class Custompoints extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            if(!$this->validateModify()){
+            if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
             if ($this->input->post('type_custompoint') != "normal") {
                 $this->form_validation->set_rules('energy_maximum', $this->lang->line('entry_energy_maximum'),
                     'required|numeric|is_natural_no_zero|xss_clean');
-                $this->form_validation->set_rules('energy_changing_period', $this->lang->line('entry_energy_changing_period'),
+                $this->form_validation->set_rules('energy_changing_period',
+                    $this->lang->line('entry_energy_changing_period'),
                     'required|xss_clean');
                 $this->form_validation->set_rules('energy_changing_per_period',
                     $this->lang->line('entry_energy_changing_per_period'),
@@ -320,14 +332,14 @@ class Custompoints extends MY_Controller
                 $data['reward_id'] = $custompoints_id;
                 $data['name'] = $custompoints_data['name'];
                 $data['type'] = $custompoints_data['type_custompoint'];
-                if ($custompoints_data['type_custompoint'] != "normal"){
+                if ($custompoints_data['type_custompoint'] != "normal") {
                     $data['maximum'] = $custompoints_data['energy_maximum'];
                     $data['changing_period'] = $custompoints_data['energy_changing_period'];
                     $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
                 }
 
                 $update = $this->Custompoints_model->updateCustompoints($data);
-                if($update){
+                if ($update) {
                     redirect('/custompoints', 'refresh');
                 }
             }
@@ -336,7 +348,8 @@ class Custompoints extends MY_Controller
         $this->getForm($custompoints_id);
     }
 
-    public function delete() {
+    public function delete()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -356,14 +369,16 @@ class Custompoints extends MY_Controller
 
         $this->getList(0);
     }
-    public function initPlayerPoint($data){
+
+    public function initPlayerPoint($data)
+    {
 
         $client_id = $data['client_id'];
         $site_id = $data['site_id'];
         $reward_id = $this->Custompoints_model->getRewardId($data);
         $total = $this->Custompoints_model->findPlayersToInsert($client_id, $site_id, true);
         $completed_flag = false;
-        if (isset($reward_id)){
+        if (isset($reward_id)) {
             for ($i = 0; $i <= round($total / LIMIT_PLAYERS_QUERY); $i++) {
                 $offset = LIMIT_PLAYERS_QUERY * $i;
                 $players_without_energy = $this->Custompoints_model->findPlayersToInsert($client_id, $site_id, false,

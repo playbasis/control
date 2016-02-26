@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Jive extends MY_Controller
 {
     public function __construct()
@@ -8,7 +9,7 @@ class Jive extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -27,19 +28,23 @@ class Jive extends MY_Controller
                 $this->_api->initialize($this->jive['jive_url'], $this->jive['token']['access_token']);
             } catch (Exception $e) {
                 if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($this->jive['jive_client_id'], $this->jive['jive_client_secret'], $this->jive['token']['refresh_token']);
+                    $token = $this->_api->refreshToken($this->jive['jive_client_id'], $this->jive['jive_client_secret'],
+                        $this->jive['token']['refresh_token']);
                     if ($token) {
-                        $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($this->jive['jive_url'], $token->access_token); // re-initialize with new token
+                        $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(),
+                            (array)$token);
+                        $this->_api->initialize($this->jive['jive_url'],
+                            $token->access_token); // re-initialize with new token
                     }
                 }
             }
         }
     }
 
-    public function index() {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function index()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -56,11 +61,15 @@ class Jive extends MY_Controller
         $this->render_page('template');
     }
 
-    public function download() {
+    public function download()
+    {
         $this->load->library('zip');
-        $this->zip->add_data('data/extension-16.png', fread(fopen('image/default-image-16.png', 'r'), filesize('image/default-image-16.png')));
-        $this->zip->add_data('data/extension-48.png', fread(fopen('image/default-image-48.png', 'r'), filesize('image/default-image-48.png')));
-        $this->zip->add_data('data/extension-128.png', fread(fopen('image/default-image-128.png', 'r'), filesize('image/default-image-128.png')));
+        $this->zip->add_data('data/extension-16.png',
+            fread(fopen('image/default-image-16.png', 'r'), filesize('image/default-image-16.png')));
+        $this->zip->add_data('data/extension-48.png',
+            fread(fopen('image/default-image-48.png', 'r'), filesize('image/default-image-48.png')));
+        $this->zip->add_data('data/extension-128.png',
+            fread(fopen('image/default-image-128.png', 'r'), filesize('image/default-image-128.png')));
         $this->zip->add_data('definition.json', json_encode(array('integrationUser' => array("systemAdmin" => false))));
         $this->zip->add_data('i18n/en.properties', '');
         $this->zip->add_data('meta.json', json_encode(array(
@@ -78,9 +87,9 @@ class Jive extends MY_Controller
 
             "service_url" => API_SERVER,
             //"service_url" => 'https://api.pbapp.net',
-            "redirect_url" => base_url()."/jive/authorize",
-            "register_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
-            "unregister_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
+            "redirect_url" => base_url() . "/jive/authorize",
+            "register_url" => "%serviceURL%/notification/" . $this->User_model->getSiteId()->{'$id'},
+            "unregister_url" => "%serviceURL%/notification/" . $this->User_model->getSiteId()->{'$id'},
 
             "icon_16" => "extension-16.png",
             "icon_48" => "extension-48.png",
@@ -95,20 +104,25 @@ class Jive extends MY_Controller
         $this->zip->download('Playbasis-events-listener.zip');
     }
 
-    public function authorize() {
+    public function authorize()
+    {
         $code = $this->input->get('code');
         if (!empty($code)) {
             $this->_api = $this->jiveapi;
             $this->_api->initialize($this->jive['jive_url']);
             $token = $this->_api->newToken($this->jive['jive_client_id'], $this->jive['jive_client_secret'], $code);
-            if ($token) $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
+            if ($token) {
+                $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(),
+                    (array)$token);
+            }
         }
         redirect('/jive', 'refresh');
     }
 
-    public function place($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function place($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -120,7 +134,7 @@ class Jive extends MY_Controller
         if ($this->input->post('selected')) {
             if (!$this->validateModify()) {
                 $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
-                redirect('/jive/places'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/jive/places' . ($offset ? '/' . $offset : ''), 'refresh');
             }
         }
 
@@ -130,17 +144,21 @@ class Jive extends MY_Controller
                 $success = false;
                 $fail = false;
                 foreach ($this->input->post('selected') as $placeId) {
-                        try {
-                            $this->_api->createContentWebhook($placeId);
-                            $success = true;
-                        } catch (Exception $e) {
-                            log_message('error', 'ERROR = '.$e->getMessage());
-                            $fail = $e->getMessage();
-                        }
+                    try {
+                        $this->_api->createContentWebhook($placeId);
+                        $success = true;
+                    } catch (Exception $e) {
+                        log_message('error', 'ERROR = ' . $e->getMessage());
+                        $fail = $e->getMessage();
+                    }
                 }
-                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch_place'));
-                if ($fail) $this->session->set_flashdata('fail', $fail);
-                redirect('/jive/places'.($offset ? '/'.$offset : ''), 'refresh');
+                if ($success) {
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_watch_place'));
+                }
+                if ($fail) {
+                    $this->session->set_flashdata('fail', $fail);
+                }
+                redirect('/jive/places' . ($offset ? '/' . $offset : ''), 'refresh');
             }
 
             $this->data['jive'] = $this->jive;
@@ -153,9 +171,10 @@ class Jive extends MY_Controller
         }
     }
 
-    public function event($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function event($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -167,7 +186,7 @@ class Jive extends MY_Controller
         if ($this->input->post('selected')) {
             if (!$this->validateModify()) {
                 $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
-                redirect('/jive/events'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/jive/events' . ($offset ? '/' . $offset : ''), 'refresh');
             }
         }
 
@@ -181,17 +200,22 @@ class Jive extends MY_Controller
                         $this->_api->createSystemWebhook($this->Jive_model->getEventType($eventId), $eventId);
                         $success = true;
                     } catch (Exception $e) {
-                        log_message('error', 'ERROR = '.$e->getMessage());
+                        log_message('error', 'ERROR = ' . $e->getMessage());
                         $fail = $e->getMessage();
                     }
                 }
-                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch_event'));
-                if ($fail) $this->session->set_flashdata('fail', $fail);
-                redirect('/jive/events'.($offset ? '/'.$offset : ''), 'refresh');
+                if ($success) {
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_watch_event'));
+                }
+                if ($fail) {
+                    $this->session->set_flashdata('fail', $fail);
+                }
+                redirect('/jive/events' . ($offset ? '/' . $offset : ''), 'refresh');
             }
 
             $this->data['jive'] = $this->jive;
-            $this->session->set_userdata('total_events', $this->Jive_model->totalEvents($this->User_model->getSiteId()));
+            $this->session->set_userdata('total_events',
+                $this->Jive_model->totalEvents($this->User_model->getSiteId()));
             $this->getListEvents($offset);
         } else {
             $this->data['main'] = 'jive_event';
@@ -200,9 +224,10 @@ class Jive extends MY_Controller
         }
     }
 
-    public function webhook($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function webhook($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -214,7 +239,7 @@ class Jive extends MY_Controller
         if ($this->input->post('selected')) {
             if (!$this->validateModify()) {
                 $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
-                redirect('/jive/webhooks'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/jive/webhooks' . ($offset ? '/' . $offset : ''), 'refresh');
             }
         }
 
@@ -228,13 +253,17 @@ class Jive extends MY_Controller
                         $this->_api->deleteWebhook($webhookId);
                         $success = true;
                     } catch (Exception $e) {
-                        log_message('error', 'ERROR = '.$e->getMessage());
+                        log_message('error', 'ERROR = ' . $e->getMessage());
                         $fail = $e->getMessage();
                     }
                 }
-                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-                if ($fail) $this->session->set_flashdata('fail', $fail);
-                redirect('/jive/webhooks'.($offset ? '/'.$offset : ''), 'refresh');
+                if ($success) {
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                }
+                if ($fail) {
+                    $this->session->set_flashdata('fail', $fail);
+                }
+                redirect('/jive/webhooks' . ($offset ? '/' . $offset : ''), 'refresh');
             }
 
             $this->data['jive'] = $this->jive;
@@ -247,9 +276,10 @@ class Jive extends MY_Controller
         }
     }
 
-    public function places($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function places($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -261,7 +291,8 @@ class Jive extends MY_Controller
         $this->getListPlaces($offset);
     }
 
-    private function getListPlaces($offset) {
+    private function getListPlaces($offset)
+    {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
@@ -276,7 +307,9 @@ class Jive extends MY_Controller
         $this->data['offset'] = $offset;
 
         $places = $this->_api->listPlaces($per_page, $offset);
-        if ($this->session->userdata('total_places') === false) $this->session->set_userdata('total_places', $this->_api->totalPlaces());
+        if ($this->session->userdata('total_places') === false) {
+            $this->session->set_userdata('total_places', $this->_api->totalPlaces());
+        }
         $total = $this->session->userdata('total_places');
 
         foreach ($places->list as $place) {
@@ -289,7 +322,8 @@ class Jive extends MY_Controller
                 'viewCount' => $place->viewCount,
                 'creator' => isset($place->creator) ? (isset($place->creator->displayName) ? $place->creator->displayName : $place->creator->id) : '',
                 'status' => $place->status,
-                'selected' => ($this->input->post('selected') && in_array($place->placeID, $this->input->post('selected'))),
+                'selected' => ($this->input->post('selected') && in_array($place->placeID,
+                        $this->input->post('selected'))),
             );
         }
 
@@ -334,9 +368,10 @@ class Jive extends MY_Controller
         $this->render_page('template');
     }
 
-    public function events($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function events($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -348,7 +383,8 @@ class Jive extends MY_Controller
         $this->getListEvents($offset);
     }
 
-    private function getListEvents($offset) {
+    private function getListEvents($offset)
+    {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
@@ -363,11 +399,16 @@ class Jive extends MY_Controller
         $this->data['offset'] = $offset;
 
         $events = $this->Jive_model->listEvents($this->User_model->getSiteId(), $per_page, $offset);
-        if ($this->session->userdata('total_events') === false) $this->session->set_userdata('total_events', $this->Jive_model->totalEvents($this->User_model->getSiteId()));
+        if ($this->session->userdata('total_events') === false) {
+            $this->session->set_userdata('total_events',
+                $this->Jive_model->totalEvents($this->User_model->getSiteId()));
+        }
         $total = $this->session->userdata('total_events');
 
         foreach ($events as $event) {
-            $this->data['events'][] = array_merge($event, array('selected' => ($this->input->post('selected') && in_array($event['id'], $this->input->post('selected')))));
+            $this->data['events'][] = array_merge($event, array(
+                'selected' => ($this->input->post('selected') && in_array($event['id'], $this->input->post('selected')))
+            ));
         }
 
         $config['total_rows'] = $total;
@@ -411,9 +452,10 @@ class Jive extends MY_Controller
         $this->render_page('template');
     }
 
-    public function webhooks($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function webhooks($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -425,7 +467,8 @@ class Jive extends MY_Controller
         $this->getListWebhooks($offset);
     }
 
-    private function getListWebhooks($offset) {
+    private function getListWebhooks($offset)
+    {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
@@ -440,7 +483,9 @@ class Jive extends MY_Controller
         $this->data['offset'] = $offset;
 
         $webhooks = $this->_api->listWebhooks($per_page, $offset);
-        if ($this->session->userdata('total_webhooks') === false) $this->session->set_userdata('total_webhooks', $this->_api->totalWebhooks());
+        if ($this->session->userdata('total_webhooks') === false) {
+            $this->session->set_userdata('total_webhooks', $this->_api->totalWebhooks());
+        }
         $total = $this->session->userdata('total_webhooks');
 
         foreach ($webhooks->list as $webhook) {
@@ -449,7 +494,8 @@ class Jive extends MY_Controller
                 'events' => isset($webhook->events) && !empty($webhook->events) ? $webhook->events : 'place',
                 'object' => $webhook->object,
                 'callback' => $webhook->callback,
-                'selected' => ($this->input->post('selected') && in_array($webhook->webhookID, $this->input->post('selected'))),
+                'selected' => ($this->input->post('selected') && in_array($webhook->webhookID,
+                        $this->input->post('selected'))),
             );
         }
 
@@ -494,7 +540,8 @@ class Jive extends MY_Controller
         $this->render_page('template');
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
         if ($this->User_model->hasPermission('modify', 'jive')) {
             return true;
         } else {
@@ -502,18 +549,22 @@ class Jive extends MY_Controller
         }
     }
 
-    private function validateAccess() {
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'jive') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'jive')) {
+        if ($this->User_model->hasPermission('access',
+                'jive') && $this->Feature_model->getFeatureExistByClientId($client_id, 'jive')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 }
+
 ?>

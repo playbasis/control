@@ -89,18 +89,19 @@ class Store_org extends MY_Controller
                     $query_data = $this->input->get(null, true);
 
                     $result = $this->Store_org_model->retrieveOrganize($client_id, $site_id, $query_data);
-                    foreach($result as &$document){
-                        if(isset($document['_id'])){
-                            $document['_id'] = $document['_id']."";
+                    foreach ($result as &$document) {
+                        if (isset($document['_id'])) {
+                            $document['_id'] = $document['_id'] . "";
                         }
-                        if(isset($document['parent'])){
-                            $tmp = $document['parent']."";
+                        if (isset($document['parent'])) {
+                            $tmp = $document['parent'] . "";
                             $document['parent'] = array();
                             $document['parent']['_id'] = $tmp;
 
                             $org_res = $this->Store_org_model->retrieveOrganizeById($document['parent']['_id']);
-                            if(isset($org_res))
+                            if (isset($org_res)) {
                                 $document['parent']['name'] = $org_res['name'];
+                            }
                         }
                     }
 
@@ -238,27 +239,29 @@ class Store_org extends MY_Controller
                     $query_data = $this->input->get(null, true);
 
                     $result = $this->Store_org_model->retrieveNode($client_id, $site_id, $query_data);
-                    foreach($result as &$document){
-                        if(isset($document['_id'])){
-                            $document['_id'] = $document['_id']."";
+                    foreach ($result as &$document) {
+                        if (isset($document['_id'])) {
+                            $document['_id'] = $document['_id'] . "";
                         }
-                        if(isset($document['organize'])){
-                            $tmp = $document['organize']."";
+                        if (isset($document['organize'])) {
+                            $tmp = $document['organize'] . "";
                             $document['organize'] = array();
                             $document['organize']['_id'] = $tmp;
 
                             $org_res = $this->Store_org_model->retrieveOrganizeById($document['organize']['_id']);
-                            if(isset($org_res))
+                            if (isset($org_res)) {
                                 $document['organize']['name'] = $org_res['name'];
+                            }
                         }
-                        if(isset($document['parent'])){
-                            $tmp = $document['parent']."";
+                        if (isset($document['parent'])) {
+                            $tmp = $document['parent'] . "";
                             $document['parent'] = array();
                             $document['parent']['_id'] = $tmp;
 
                             $node_res = $this->Store_org_model->retrieveNodeById($document['parent']['_id']);
-                            if(isset($node_res))
+                            if (isset($node_res)) {
                                 $document['parent']['name'] = $node_res['name'];
+                            }
                         }
                     }
 

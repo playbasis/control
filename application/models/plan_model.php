@@ -1,28 +1,32 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class Plan_model extends MY_Model
 {
-    public function getPlan($plan_id) {
+    public function getPlan($plan_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('_id',  new MongoID($plan_id));
+        $this->mongo_db->where('_id', new MongoID($plan_id));
         $results = $this->mongo_db->get("playbasis_plan");
 
         return $results ? $results[0] : null;
     }
 
-    public function getPlanById($plan_id) {
+    public function getPlanById($plan_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('_id', $plan_id);
         $results = $this->mongo_db->get("playbasis_plan");
         return $results ? $results[0] : null;
     }
 
-    public function getPlans($data = array()) {
+    public function getPlans($data = array())
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -67,20 +71,23 @@ class Plan_model extends MY_Model
         return $plans;
     }
 
-    public function getAvailablePlans(){
+    public function getAvailablePlans()
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->order_by(array('name' => 1));
         $plans = $this->mongo_db->get("playbasis_plan");
 
-        foreach($plans as $key => $plan){
+        foreach ($plans as $key => $plan) {
             $subscribers = array();
             $this->mongo_db->select(array('client_id'));
             $this->mongo_db->where('plan_id', $plan['_id']);
             $records = $this->mongo_db->get('playbasis_permission');
             // one "client_id" can have several "site_id"s within the same "plan_id", so we do the manual count
             // current version always counts a client regardless of the status of the client
-            if ($records) foreach ($records as $record) {
-                $subscribers[$record['client_id']->{'$id'}] = true;
+            if ($records) {
+                foreach ($records as $record) {
+                    $subscribers[$record['client_id']->{'$id'}] = true;
+                }
             }
             $number_of_subscribers = count($subscribers);
             $planLimit = !empty($plan['limit_num_client']) ? $plan['limit_num_client'] : null;
@@ -92,11 +99,12 @@ class Plan_model extends MY_Model
         return $plans;
     }
 
-    public function getTotalPlans($data){
+    public function getTotalPlans($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -109,31 +117,34 @@ class Plan_model extends MY_Model
         return $total;
     }
 
-    public function getClientByPlan($plan_id) {
+    public function getClientByPlan($plan_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('plan_id',  new MongoID($plan_id));
+        $this->mongo_db->where('plan_id', new MongoID($plan_id));
         $results = $this->mongo_db->get("playbasis_permission");
 
         return $results;
     }
 
-    public function getClientByPlanOnlyClient($plan_id) {
+    public function getClientByPlanOnlyClient($plan_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('client_id'));
-        $this->mongo_db->select(array(),array('_id'));
-        $this->mongo_db->where('plan_id',  new MongoID($plan_id));
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where('plan_id', new MongoID($plan_id));
         $results = $this->mongo_db->get("playbasis_permission");
 
         $client_id_list = array();
-        foreach($results as $r){
-            $client_id_list[$r['client_id'].""] = $r;
+        foreach ($results as $r) {
+            $client_id_list[$r['client_id'] . ""] = $r;
         }
         return $client_id_list;
     }
 
-    public function getFeatures($data){
+    public function getFeatures($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -177,7 +188,8 @@ class Plan_model extends MY_Model
         return $feaures_data;
     }
 
-    public function getActions($data){
+    public function getActions($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $sort_data = array(
@@ -217,7 +229,8 @@ class Plan_model extends MY_Model
         return $actions_data;
     }
 
-    public function getJigsaws($data){
+    public function getJigsaws($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $sort_data = array(
@@ -257,7 +270,8 @@ class Plan_model extends MY_Model
         return $jigsaws_data;
     }
 
-    public function getRewards($data){
+    public function getRewards($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $sort_data = array(
@@ -297,18 +311,19 @@ class Plan_model extends MY_Model
         return $rewards_data;
     }
 
-    public function addPlan($data) {
+    public function addPlan($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        if(isset($data['sort_order'])){
+        if (isset($data['sort_order'])) {
             $sort_order = (int)$data['sort_order'];
-        }else{
+        } else {
             $sort_order = 0;
         }
 
         $dinsert = array(
-            'name' => $data['name']|'' ,
-            'description' => $data['description']|'',
+            'name' => $data['name'] | '',
+            'description' => $data['description'] | '',
             'price' => intval($data['price']),
             'display' => (bool)$data['display'],
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
@@ -316,11 +331,11 @@ class Plan_model extends MY_Model
             'status' => (bool)$data['status'],
             'sort_order' => $sort_order
         );
-        if (isset($data['limit_num_client']) && !empty($data['limit_num_client'])){
+        if (isset($data['limit_num_client']) && !empty($data['limit_num_client'])) {
             $dinsert['limit_num_client'] = new MongoInt32($data['limit_num_client']);
-        }else{
+        } else {
             $dinsert['limit_num_client'] = null;
-        }   
+        }
 
         if (isset($data['feature_data'])) {
             $feature = array();
@@ -384,15 +399,17 @@ class Plan_model extends MY_Model
         }
         if (isset($data['limit_req'])) {
             $limit_req = array();
-            for ($i=0; $i<sizeof($data['limit_req']); $i++) {
+            for ($i = 0; $i < sizeof($data['limit_req']); $i++) {
                 $item = $data['limit_req'][$i];
-                if (!$item['field']) continue;
+                if (!$item['field']) {
+                    continue;
+                }
                 // strip only first path of the api and lowercase
                 $item['field'] = strtolower(preg_replace(
                     "/(\w+)\/.*/", '${1}',
                     $item['field']));
                 if (substr($item['field'], 0, 1) != "/") {
-                    $item['field'] = "/".$item['field'];
+                    $item['field'] = "/" . $item['field'];
                 }
                 $limit_req[$item['field']] = ($item['limit'] != null && $item['limit'] !== '' ? intval($item['limit']) : null);
             }
@@ -401,15 +418,17 @@ class Plan_model extends MY_Model
         return $this->mongo_db->insert('playbasis_plan', $dinsert);
     }
 
-    public function editPlan($plan_id, $data) {
+    public function editPlan($plan_id, $data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('_id',  new MongoID($plan_id));
+        $this->mongo_db->where('_id', new MongoID($plan_id));
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('price', intval($data['price']));
         $this->mongo_db->set('display', (bool)$data['display']);
-        $this->mongo_db->set('limit_num_client', !empty($data['limit_num_client']) ? new MongoInt32($data['limit_num_client']) : null);
+        $this->mongo_db->set('limit_num_client',
+            !empty($data['limit_num_client']) ? new MongoInt32($data['limit_num_client']) : null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
@@ -419,7 +438,7 @@ class Plan_model extends MY_Model
                 array_push($feature, new MongoId($feature_value));
             }
             $this->mongo_db->set('feature_to_plan', $feature);
-        }else{
+        } else {
             $feature = array();
             $this->mongo_db->set('feature_to_plan', $feature);
         }
@@ -429,7 +448,7 @@ class Plan_model extends MY_Model
                 array_push($action, new MongoId($action_value));
             }
             $this->mongo_db->set('action_to_plan', $action);
-        }else{
+        } else {
             $action = array();
             $this->mongo_db->set('action_to_plan', $action);
         }
@@ -439,7 +458,7 @@ class Plan_model extends MY_Model
                 array_push($jigsaw, new MongoId($jigsaw_value));
             }
             $this->mongo_db->set('jigsaw_to_plan', $jigsaw);
-        }else{
+        } else {
             $jigsaw = array();
             $this->mongo_db->set('jigsaw_to_plan', $jigsaw);
         }
@@ -448,8 +467,8 @@ class Plan_model extends MY_Model
             foreach ($data['reward_data'] as $reward_value => $value) {
                 $arr_val = array(
                     'reward_id' => new MongoId($value['reward_id']),
-                    'limit' => (isset($value['limit']) && $value['limit'] != '')? new MongoInt32($value['limit']) : null
-                ) ;
+                    'limit' => (isset($value['limit']) && $value['limit'] != '') ? new MongoInt32($value['limit']) : null
+                );
                 array_push($reward, $arr_val);
             }
             $this->mongo_db->set('reward_to_plan', $reward);
@@ -484,15 +503,17 @@ class Plan_model extends MY_Model
         }
         if (isset($data['limit_req'])) {
             $limit_req = array();
-            for ($i=0; $i<sizeof($data['limit_req']); $i++) {
+            for ($i = 0; $i < sizeof($data['limit_req']); $i++) {
                 $item = $data['limit_req'][$i];
-                if (!$item['field']) continue;
+                if (!$item['field']) {
+                    continue;
+                }
                 // strip only first path of the api and lowercase
                 $item['field'] = strtolower(preg_replace(
                     "/(\w+)\/.*/", '${1}',
                     $item['field']));
                 if (substr($item['field'], 0, 1) != "/") {
-                    $item['field'] = "/".$item['field'];
+                    $item['field'] = "/" . $item['field'];
                 }
                 $limit_req[$item['field']] = ($item['limit'] != null && $item['limit'] !== '' ? intval($item['limit']) : null);
             }
@@ -503,7 +524,8 @@ class Plan_model extends MY_Model
 
     }
 
-    public function deletePlan($plan_id) {
+    public function deletePlan($plan_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($plan_id));
@@ -511,48 +533,55 @@ class Plan_model extends MY_Model
 
     }
 
-    public function getPlanID($name){
+    public function getPlanID($name)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('name', $name);
-        $results =  $this->mongo_db->get('playbasis_plan');
+        $results = $this->mongo_db->get('playbasis_plan');
         return $results ? $results[0]['_id'] : null;
     }
 
-    public function getPlanByName($name){
+    public function getPlanByName($name)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('name', $name);
-        $results =  $this->mongo_db->get('playbasis_plan');
+        $results = $this->mongo_db->get('playbasis_plan');
         return $results ? $results[0] : null;
     }
 
-    public function getPlanTrialDays($name){
+    public function getPlanTrialDays($name)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('name', $name);
-        $results =  $this->mongo_db->get('playbasis_plan');
+        $results = $this->mongo_db->get('playbasis_plan');
 
         return $results && isset($results[0]['limit_others']['trial']) ? $results[0]['limit_others']['trial'] : null;
     }
 
-    public function getDisplayedPlans(){
+    public function getDisplayedPlans()
+    {
         $ret = array();
         $plans = $this->listDisplayPlans();
-        if ($plans) foreach ($plans as $plan) {
-            array_push($ret, $plan['_id']->{'$id'});
+        if ($plans) {
+            foreach ($plans as $plan) {
+                array_push($ret, $plan['_id']->{'$id'});
+            }
         }
         return $ret;
     }
 
-    public function checkPlanExistsByName($plan_name){
+    public function checkPlanExistsByName($plan_name)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('name'));
         $plan_names = $this->mongo_db->get('playbasis_plan');
 
-        foreach($plan_names as $plan){
-            if(trim(strtolower($plan['name'])) == strtolower($plan_name)){
+        foreach ($plan_names as $plan) {
+            if (trim(strtolower($plan['name'])) == strtolower($plan_name)) {
                 return true;
             }
         }
@@ -575,9 +604,8 @@ class Plan_model extends MY_Model
         $res = $this->mongo_db->get('playbasis_plan');
         if ($res) {
             $res = $res[0];
-            return isset($res['limit_widget'])?$res['limit_widget']:null;
-        }
-        else {
+            return isset($res['limit_widget']) ? $res['limit_widget'] : null;
+        } else {
             throw new Exception("getPlanLimitById plan_id not found");
         }
     }
@@ -596,9 +624,8 @@ class Plan_model extends MY_Model
         $res = $this->mongo_db->get('playbasis_plan');
         if ($res) {
             $res = $res[0];
-            return isset($res['limit_cms'])?$res['limit_cms']:null;
-        }
-        else {
+            return isset($res['limit_cms']) ? $res['limit_cms'] : null;
+        } else {
             throw new Exception("getPlanLimitById plan_id not found");
         }
     }
@@ -616,8 +643,9 @@ class Plan_model extends MY_Model
     public function getPlanLimitById($plan_id, $type, $field)
     {
         // wrong type
-        if ($type != "notifications" && $type != "requests" && $type != "others")
+        if ($type != "notifications" && $type != "requests" && $type != "others") {
             throw new Exception("WRONG_TYPE");
+        }
 
         $this->mongo_db->where(array(
             '_id' => $plan_id,
@@ -625,38 +653,40 @@ class Plan_model extends MY_Model
         $res = $this->mongo_db->get('playbasis_plan');
         if ($res) {
             $res = $res[0];
-            $limit = 'limit_'.$type;  // mongodb_field
+            $limit = 'limit_' . $type;  // mongodb_field
             if (is_array($field)) {
                 $result = array();
-                for ($i=0; $i<sizeof($field); $i++) {  // get multiple limits
+                for ($i = 0; $i < sizeof($field); $i++) {  // get multiple limits
                     if (isset($res[$limit]) &&
-                        isset($res[$limit][$field[$i]])) {
-                            $result[$field[$i]] = $res[$limit][$field[$i]];
-                        } else {
-                            $result[$field[$i]] = null;
-                        }
+                        isset($res[$limit][$field[$i]])
+                    ) {
+                        $result[$field[$i]] = $res[$limit][$field[$i]];
+                    } else {
+                        $result[$field[$i]] = null;
+                    }
                 }
                 return $result;
             }
             if (isset($res[$limit]) &&
-                isset($res[$limit][$field])) {
-                    return $res[$limit][$field];
-                }
-            else { // this plan does not set this limitation
+                isset($res[$limit][$field])
+            ) {
+                return $res[$limit][$field];
+            } else { // this plan does not set this limitation
                 return null;
             }
-        }
-        else {
+        } else {
             throw new Exception("getPlanLimitById plan_id not found");
         }
     }
 
-	public function listDisplayPlans() {
-		$this->set_site_mongodb($this->session->userdata('site_id'));
-		$this->mongo_db->where('display', true);
-		$this->mongo_db->order_by(array('price' => 1));
-		$results = $this->mongo_db->get("playbasis_plan");
-		return $results;
-	}
+    public function listDisplayPlans()
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('display', true);
+        $this->mongo_db->order_by(array('price' => 1));
+        $results = $this->mongo_db->get("playbasis_plan");
+        return $results;
+    }
 }
+
 ?>

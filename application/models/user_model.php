@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class User_model extends MY_Model
 {
     private $user_id;
@@ -12,11 +13,12 @@ class User_model extends MY_Model
     private $admin_group_id;
     private $mobile;
 
-    public function __construct(){
+    public function __construct()
+    {
         parent::__construct();
         $this->load->library('mongo_db');
 
-        if($this->session->userdata('user_id')){
+        if ($this->session->userdata('user_id')) {
             $this->user_id = $this->session->userdata('user_id');
             $this->username = $this->session->userdata('username');
             $this->user_group_id = $this->session->userdata('user_group_id');
@@ -26,36 +28,39 @@ class User_model extends MY_Model
             $this->permission = $this->session->userdata('permission');
             $this->mobile = $this->session->userdata('mobile');
 
-            if($this->session->userdata('ip') != $_SERVER['REMOTE_ADDR']){
+            if ($this->session->userdata('ip') != $_SERVER['REMOTE_ADDR']) {
                 // update new ip //
                 $this->mongo_db->where('_id', $this->user_id);
                 $this->mongo_db->set('ip', db_clean($_SERVER['REMOTE_ADDR'], 30));
                 $this->mongo_db->update('user');
                 // end update new ip //
             }
-        }else{
+        } else {
             $this->logout();
             return;
         }
 
     }
 
-    public function getTotalNumUsers(){
+    public function getTotalNumUsers()
+    {
         $this->set_site_mongodb($this->site_id);
 
         return $this->mongo_db->count('user');
     }
 
-    public function getUserInfo($user_id){
+    public function getUserInfo($user_id)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($user_id));
-        $results =  $this->mongo_db->get('user');  
+        $results = $this->mongo_db->get('user');
 
         return $results ? $results[0] : null;
     }
 
-    public function editUser($user_id, $data){
+    public function editUser($user_id, $data)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $find_salt = $this->getUserInfo($user_id);
@@ -65,10 +70,10 @@ class User_model extends MY_Model
         $check_update = false;
         $this->mongo_db->where('_id', new MongoID($user_id));
 
-        if($data['user_group']){
+        if ($data['user_group']) {
             $this->mongo_db->set('user_group_id', new MongoID($data['user_group']));
             $check_update = true;
-        }else{
+        } else {
             $this->mongo_db->set('user_group_id', null);
         }
 
@@ -76,57 +81,58 @@ class User_model extends MY_Model
         //     $this->mongo_db->set('username', $data['username']);
         //     $check_update = true;
         // }
-        
-        if(isset($data['firstname']) && !is_null($data['firstname'])){
+
+        if (isset($data['firstname']) && !is_null($data['firstname'])) {
             $this->mongo_db->set('firstname', $data['firstname']);
             $check_update = true;
         }
-        
-        if(isset($data['lastname']) && !is_null($data['lastname'])){
+
+        if (isset($data['lastname']) && !is_null($data['lastname'])) {
             $this->mongo_db->set('lastname', $data['lastname']);
             $check_update = true;
         }
 
-        if($check_email){
+        if ($check_email) {
             $this->mongo_db->set('email', $data['email']);
             $this->mongo_db->set('username', $data['email']);
             $check_update = true;
         }
-        
-        if(isset($data['status']) && !is_null($data['status'])){
+
+        if (isset($data['status']) && !is_null($data['status'])) {
             $this->mongo_db->set('status', (bool)$data['status']);
             $check_update = true;
         }
 
-        if(isset($data['image']) && !is_null($data['image'])){
+        if (isset($data['image']) && !is_null($data['image'])) {
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
             $check_update = true;
         }
-        
-        if($data['password'] == $data['confirm_password']){
-            if(trim($data['password']) !="" && trim($data['confirm_password'] !="")){
-                $this->mongo_db->set('password', dohash($data['password'],$salt));
+
+        if ($data['password'] == $data['confirm_password']) {
+            if (trim($data['password']) != "" && trim($data['confirm_password'] != "")) {
+                $this->mongo_db->set('password', dohash($data['password'], $salt));
                 $check_update = true;
             }
         }
 
-        if($check_update){
+        if ($check_update) {
             $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
             return $this->mongo_db->update('user');
         }
         return false;
     }
 
-    public function insertUser(){
+    public function insertUser()
+    {
         $this->set_site_mongodb($this->site_id);
 
-        $regex = new MongoRegex("/^".preg_quote(utf8_strtolower($this->input->post('email')))."$/i");
+        $regex = new MongoRegex("/^" . preg_quote(utf8_strtolower($this->input->post('email'))) . "$/i");
         $this->mongo_db->where('username', $regex);
 
-        if($this->mongo_db->count('user')==0){
-            if($this->input->post('user_group')){
+        if ($this->mongo_db->count('user') == 0) {
+            if ($this->input->post('user_group')) {
                 $user_group_id = new MongoID($this->input->post('user_group'));
-            }else{
+            } else {
                 $user_group_id = null;
             }
 
@@ -136,19 +142,19 @@ class User_model extends MY_Model
             $email = $this->input->post('email');
             $lastname = $this->input->post('lastname');
 
-            if($this->User_model->getClientId()){
+            if ($this->User_model->getClientId()) {
                 $status = false;
-            }else{
+            } else {
                 $status = $this->input->post('status');
-                if($status == "1"){
+                if ($status == "1") {
                     $status = true;
-                }else{
+                } else {
                     $status = false;
                 }
             }
-            
+
             $ip = $_SERVER['REMOTE_ADDR'];
-            $salt = get_random_password(10,10);
+            $salt = get_random_password(10, 10);
 
             $insert_password = $this->input->post('password');
 
@@ -156,7 +162,7 @@ class User_model extends MY_Model
 
             $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
-            $random_key = get_random_password(8,8);
+            $random_key = get_random_password(8, 8);
 
             $data = array(
                 'user_group_id' => $user_group_id,
@@ -172,7 +178,7 @@ class User_model extends MY_Model
                 'database' => "core",
                 'date_added' => $date_added,
                 'random_key' => $random_key,
-                'password_key'=> null
+                'password_key' => null
             );
 
             $this->load->library('parser');
@@ -183,45 +189,48 @@ class User_model extends MY_Model
                 'username' => $email,
                 'password' => $insert_password,
                 'key' => $random_key,
-                'url'=> site_url('enable_user/?key='),
+                'url' => site_url('enable_user/?key='),
                 'base_url' => site_url()
             );
 
-            if($insert_password == DEFAULT_PASSWORD){
+            if ($insert_password == DEFAULT_PASSWORD) {
                 $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
-            }else{
+            } else {
                 $htmlMessage = $this->parser->parse('emails/user_activateaccountwithpassword.html', $vars, true);
             }
-            
+
             $this->email($email, '[Playbasis] Please activate your account', $htmlMessage);
 
             return $this->mongo_db->insert('user', $data);
-        }else{
+        } else {
             return false;
         }
     }
 
-    private function email($to, $subject, $message) {
+    private function email($to, $subject, $message)
+    {
         $this->amazon_ses->from(EMAIL_FROM, 'Playbasis');
         $this->amazon_ses->to($to);
-        $this->amazon_ses->bcc(array(EMAIL_FROM,'pascal@playbasis.com'));
+        $this->amazon_ses->bcc(array(EMAIL_FROM, 'pascal@playbasis.com'));
         $this->amazon_ses->subject($subject);
         $this->amazon_ses->message($message);
         $this->amazon_ses->send();
     }
 
-    public function addUserToClient($data){
+    public function addUserToClient($data)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
             'user_id' => new MongoID($data['user_id']),
-            'status' =>true
+            'status' => true
         );
         return $this->mongo_db->insert('user_to_client', $data_insert);
     }
 
-    public function listPendingUsers() {
+    public function listPendingUsers()
+    {
         $this->set_site_mongodb(0); // use default in case of pending users
         $this->mongo_db->where('status', false);
         $this->mongo_db->order_by(array('date_added' => -1));
@@ -229,7 +238,8 @@ class User_model extends MY_Model
         return $results;
     }
 
-    public function enableUser($user_id) {
+    public function enableUser($user_id)
+    {
         $this->set_site_mongodb(0); // use default in case of pending users
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->set('status', true);
@@ -237,18 +247,20 @@ class User_model extends MY_Model
         $this->mongo_db->update('user');
     }
 
-    public function getById($user_id) {
+    public function getById($user_id)
+    {
         $this->set_site_mongodb(0); // use default in case of pending users
         $this->mongo_db->where('_id', new MongoID($user_id));
         $results = $this->mongo_db->get("user");
         return ($results && count($results) > 0) ? $results[0] : null;
     }
 
-    public function fetchAllUsers($data){
+    public function fetchAllUsers($data)
+    {
         $this->set_site_mongodb($this->site_id);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('username', $regex);
         }
 
@@ -274,7 +286,8 @@ class User_model extends MY_Model
         return $results;
     }
 
-    public function getTotalUserByClientId($data){
+    public function getTotalUserByClientId($data)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -301,7 +314,8 @@ class User_model extends MY_Model
         return $user_data;
     }
 
-    public function getUserByClientId($data){
+    public function getUserByClientId($data)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -328,7 +342,8 @@ class User_model extends MY_Model
         return $user_data;
     }
 
-    public function getClientIdByUserId($user_id){
+    public function getClientIdByUserId($user_id)
+    {
         $this->set_site_mongodb($this->site_id);
         $this->mongo_db->where('user_id', $user_id);
         $this->mongo_db->limit(1);
@@ -336,30 +351,33 @@ class User_model extends MY_Model
         return $result ? $result[0]['client_id'] : null;
     }
 
-    public function getUserGroups(){
+    public function getUserGroups()
+    {
         $this->set_site_mongodb($this->site_id);
 
         return $this->mongo_db->get("user_group");
     }
 
-    public function getUserGroupNameForUser($user_id){
+    public function getUserGroupNameForUser($user_id)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $usergroups = $this->mongo_db->get('user_group');
         $user = $this->getUserInfo($user_id);
 
         $usergroup_name = "";
-        foreach($usergroups as $usergroup){
-            if($usergroup['_id']==$user['user_group_id']){
+        foreach ($usergroups as $usergroup) {
+            if ($usergroup['_id'] == $user['user_group_id']) {
                 $usergroup_name = $usergroup['name'];
-                break; 
+                break;
             }
         }
 
         return $usergroup_name;
     }
 
-    public function deleteUser($user_id){
+    public function deleteUser($user_id)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($user_id));
@@ -368,10 +386,11 @@ class User_model extends MY_Model
         $this->mongo_db->delete("user_to_client");
     }
 
-    public function login($u, $p){
+    public function login($u, $p)
+    {
         $this->set_site_mongodb(0);
         $this->mongo_db->select(array('salt'));
-        $regex = array('$regex' => new MongoRegex("/^".preg_quote(db_clean($u, 255))."$/i"));
+        $regex = array('$regex' => new MongoRegex("/^" . preg_quote(db_clean($u, 255)) . "$/i"));
         $this->mongo_db->where('username', $regex);
         $this->mongo_db->limit(1);
         $Q = $this->mongo_db->get('user');
@@ -379,7 +398,7 @@ class User_model extends MY_Model
         if (count($Q) > 0) {
             $row = $Q[0];
 
-            $this->mongo_db->select(array('_id','user_id','username','user_group_id','database','ip'));
+            $this->mongo_db->select(array('_id', 'user_id', 'username', 'user_group_id', 'database', 'ip'));
             $this->mongo_db->where('username', $regex);
             $this->mongo_db->where('password', db_clean(dohash($p, $row['salt']), 40));
             $this->mongo_db->where('status', true);
@@ -390,7 +409,8 @@ class User_model extends MY_Model
 
                 // update new salt
                 $salt = get_random_password(10, 10);
-                $data = array('salt' => db_clean($salt, 40),
+                $data = array(
+                    'salt' => db_clean($salt, 40),
                     'password' => db_clean(dohash($p, $salt), 40)
                 );
                 $this->mongo_db->where('username', $regex);
@@ -412,26 +432,26 @@ class User_model extends MY_Model
                 $this->mongo_db->where('status', true);
                 $this->mongo_db->limit(1);
                 $Q1 = $this->mongo_db->get('user_to_client');
-                if(count($Q1)>0){
+                if (count($Q1) > 0) {
                     $row1 = $Q1[0];
                     $this->client_id = $row1['client_id'];
-                }else{
+                } else {
                     $this->client_id = null;
                 }
 
                 // $this->site_id
-                if($this->client_id) {
+                if ($this->client_id) {
                     $this->site_id = $this->fetchSiteId($this->client_id);
                 }
 
                 // $this->permission
-                if($this->user_group_id == $this->getAdminGroupID()){
+                if ($this->user_group_id == $this->getAdminGroupID()) {
                     // Login as Playbasis admin
                     $this->mongo_db->select(array('permission'));
                     $this->mongo_db->where('_id', $this->user_group_id);
                     $this->mongo_db->limit(1);
                     $Q3 = $this->mongo_db->get('user_group');
-                    if(count($Q3)>0){
+                    if (count($Q3) > 0) {
                         $row3 = $Q3[0];
                         $permissions = $row3['permission'];
                         if (is_array($permissions)) {
@@ -439,13 +459,13 @@ class User_model extends MY_Model
                                 $this->permission[$key] = $value;
                             }
                         }
-                    }else{
+                    } else {
                         $this->logout();
                         return false;
                     }
-                }elseif (!$this->site_id) {
+                } elseif (!$this->site_id) {
                     // For first login
-                    if($this->client_id) {
+                    if ($this->client_id) {
                         $plan = $this->getPlan();
                         $features = $plan['feature_to_plan'];
                         $has_account = false;
@@ -458,8 +478,12 @@ class User_model extends MY_Model
                             $Q4 = $this->mongo_db->get('playbasis_feature');
                             $access[] = $Q4[0]['link'];
                             $modify[] = $Q4[0]['link'];
-                            if ($Q4[0]['link'] == 'account') $has_account = true;
-                            if ($Q4[0]['link'] == 'app') $has_app = true;
+                            if ($Q4[0]['link'] == 'account') {
+                                $has_account = true;
+                            }
+                            if ($Q4[0]['link'] == 'app') {
+                                $has_app = true;
+                            }
                         }
                         if (!$has_account) {
                             $access[] = 'account';
@@ -472,7 +496,7 @@ class User_model extends MY_Model
                         $this->permission['access'] = $access;
                         $this->permission['modify'] = $modify;
                     }
-                }else {
+                } else {
                     // Login as Client user
                     $this->mongo_db->select(array('permission'));
                     $this->mongo_db->where('_id', $this->user_group_id);
@@ -501,22 +525,22 @@ class User_model extends MY_Model
                     }
                 }
 
-                if($this->getAdminGroupID() || $this->client_id){
+                if ($this->getAdminGroupID() || $this->client_id) {
                     $this->mobile = $this->findMobileByClientId($this->client_id);
 
                     $this->set_site_mongodb($this->site_id);
 
                     $this->session->set_userdata('multi_login', $this->setMultiLoginKey($this->user_id));
-                    $this->session->set_userdata('user_id',$this->user_id );
-                    $this->session->set_userdata('username',$this->username );
-                    $this->session->set_userdata('user_group_id',$this->user_group_id );
-                    $this->session->set_userdata('database',$this->database );
-                    $this->session->set_userdata('client_id',$this->client_id );
-                    $this->session->set_userdata('site_id',$this->site_id );
-                    $this->session->set_userdata('permission',$this->permission );
-                    $this->session->set_userdata('ip',$ip );
-                    $this->session->set_userdata('mobile',$this->mobile );
-                }else {
+                    $this->session->set_userdata('user_id', $this->user_id);
+                    $this->session->set_userdata('username', $this->username);
+                    $this->session->set_userdata('user_group_id', $this->user_group_id);
+                    $this->session->set_userdata('database', $this->database);
+                    $this->session->set_userdata('client_id', $this->client_id);
+                    $this->session->set_userdata('site_id', $this->site_id);
+                    $this->session->set_userdata('permission', $this->permission);
+                    $this->session->set_userdata('ip', $ip);
+                    $this->session->set_userdata('mobile', $this->mobile);
+                } else {
                     $this->logout();
                 }
 
@@ -526,10 +550,11 @@ class User_model extends MY_Model
         }
     }
 
-    public function cms_login($u, $p){
+    public function cms_login($u, $p)
+    {
         $this->set_site_mongodb(0);
         $this->mongo_db->select(array('salt'));
-        $regex = array('$regex' => new MongoRegex("/^".preg_quote(db_clean($u, 255))."$/i"));
+        $regex = array('$regex' => new MongoRegex("/^" . preg_quote(db_clean($u, 255)) . "$/i"));
         $this->mongo_db->where('username', $regex);
         $this->mongo_db->limit(1);
         $Q = $this->mongo_db->get('user');
@@ -537,7 +562,7 @@ class User_model extends MY_Model
         if (count($Q) > 0) {
             $row = $Q[0];
 
-            $this->mongo_db->select(array('_id','user_id','username','user_group_id','database','ip'));
+            $this->mongo_db->select(array('_id', 'user_id', 'username', 'user_group_id', 'database', 'ip'));
             $this->mongo_db->where('username', $regex);
             $this->mongo_db->where('password', db_clean(dohash($p, $row['salt']), 40));
             $this->mongo_db->where('status', true);
@@ -548,7 +573,8 @@ class User_model extends MY_Model
 
                 // update new salt
                 $salt = get_random_password(10, 10);
-                $data = array('salt' => db_clean($salt, 40),
+                $data = array(
+                    'salt' => db_clean($salt, 40),
                     'password' => db_clean(dohash($p, $salt), 40)
                 );
                 $this->mongo_db->where('username', $regex);
@@ -569,7 +595,7 @@ class User_model extends MY_Model
                 $this->mongo_db->where('_id', $this->user_group_id);
                 $this->mongo_db->limit(1);
                 $Q3 = $this->mongo_db->get('user_group');
-                if(count($Q3)>0){
+                if (count($Q3) > 0) {
                     $row3 = $Q3[0];
                     $permissions = $row3['permission'];
                     if (is_array($permissions)) {
@@ -577,7 +603,7 @@ class User_model extends MY_Model
                             $this->permission[$key] = $value;
                         }
                     }
-                }else{
+                } else {
                     $this->logout();
                     return false;
                 }
@@ -588,14 +614,14 @@ class User_model extends MY_Model
                 $this->mongo_db->where('status', true);
                 $this->mongo_db->limit(1);
                 $Q1 = $this->mongo_db->get('user_to_client');
-                if(count($Q1)>0){
+                if (count($Q1) > 0) {
                     $row1 = $Q1[0];
                     $this->client_id = $row1['client_id'];
-                }else{
+                } else {
                     $this->client_id = null;
                 }
 
-                if($this->getAdminGroupID() || $this->client_id){
+                if ($this->getAdminGroupID() || $this->client_id) {
 
                     // $this->site_id
                     $this->site_id = $this->fetchSiteId($this->client_id);
@@ -604,16 +630,16 @@ class User_model extends MY_Model
                     $this->set_site_mongodb($this->site_id);
 
                     $this->session->set_userdata('multi_login', $this->setMultiLoginKey($this->user_id));
-                    $this->session->set_userdata('user_id',$this->user_id );
-                    $this->session->set_userdata('username',$this->username );
-                    $this->session->set_userdata('user_group_id',$this->user_group_id );
-                    $this->session->set_userdata('database',$this->database );
-                    $this->session->set_userdata('client_id',$this->client_id );
-                    $this->session->set_userdata('site_id',$this->site_id );
-                    $this->session->set_userdata('permission',$this->permission );
-                    $this->session->set_userdata('ip',$ip );
-                    $this->session->set_userdata('mobile',$this->mobile );
-                }else {
+                    $this->session->set_userdata('user_id', $this->user_id);
+                    $this->session->set_userdata('username', $this->username);
+                    $this->session->set_userdata('user_group_id', $this->user_group_id);
+                    $this->session->set_userdata('database', $this->database);
+                    $this->session->set_userdata('client_id', $this->client_id);
+                    $this->session->set_userdata('site_id', $this->site_id);
+                    $this->session->set_userdata('permission', $this->permission);
+                    $this->session->set_userdata('ip', $ip);
+                    $this->session->set_userdata('mobile', $this->mobile);
+                } else {
                     $this->logout();
                     return false;
                 }
@@ -628,7 +654,8 @@ class User_model extends MY_Model
         }
     }
 
-    public function logout() {
+    public function logout()
+    {
         $this->session->unset_userdata('user_id');
         $this->session->unset_userdata('username');
         $this->session->unset_userdata('client_id');
@@ -652,11 +679,12 @@ class User_model extends MY_Model
         $this->admin_group_id = '';
     }
 
-    public function force_login($user_id){
+    public function force_login($user_id)
+    {
 
         $this->set_site_mongodb(0);
 
-        $this->mongo_db->select(array('_id','user_id','username','user_group_id','database','ip'));
+        $this->mongo_db->select(array('_id', 'user_id', 'username', 'user_group_id', 'database', 'ip'));
         $this->mongo_db->where('_id', $user_id);
         $this->mongo_db->where('status', true);
         $this->mongo_db->limit(1);
@@ -683,15 +711,15 @@ class User_model extends MY_Model
             $this->mongo_db->where('status', true);
             $this->mongo_db->limit(1);
             $Q1 = $this->mongo_db->get('user_to_client');
-            if(count($Q1)>0){
+            if (count($Q1) > 0) {
                 $row1 = $Q1[0];
                 $this->client_id = $row1['client_id'];
-            }else{
+            } else {
                 $this->client_id = null;
             }
 
             // $this->permission
-            if($this->client_id) {
+            if ($this->client_id) {
                 $plan = $this->getPlan();
                 $features = $plan['feature_to_plan'];
                 $has_account = false;
@@ -704,8 +732,12 @@ class User_model extends MY_Model
                     $Q4 = $this->mongo_db->get('playbasis_feature');
                     $access[] = $Q4[0]['link'];
                     $modify[] = $Q4[0]['link'];
-                    if ($Q4[0]['link'] == 'account') $has_account = true;
-                    if ($Q4[0]['link'] == 'app') $has_app = true;
+                    if ($Q4[0]['link'] == 'account') {
+                        $has_account = true;
+                    }
+                    if ($Q4[0]['link'] == 'app') {
+                        $has_app = true;
+                    }
                 }
                 if (!$has_account) {
                     $access[] = 'account';
@@ -719,7 +751,7 @@ class User_model extends MY_Model
                 $this->permission['modify'] = $modify;
             }
 
-            if($this->getAdminGroupID() || $this->client_id){
+            if ($this->getAdminGroupID() || $this->client_id) {
 
                 // $this->site_id
                 $this->site_id = $this->fetchSiteId($this->client_id);
@@ -728,15 +760,15 @@ class User_model extends MY_Model
                 $this->set_site_mongodb($this->site_id);
 
                 $this->session->set_userdata('multi_login', $this->setMultiLoginKey($this->user_id));
-                $this->session->set_userdata('user_id',$this->user_id );
-                $this->session->set_userdata('username',$this->username );
-                $this->session->set_userdata('user_group_id',$this->user_group_id );
-                $this->session->set_userdata('database',$this->database );
-                $this->session->set_userdata('client_id',$this->client_id );
-                $this->session->set_userdata('site_id',$this->site_id );
-                $this->session->set_userdata('permission',$this->permission );
-                $this->session->set_userdata('ip',$ip );
-                $this->session->set_userdata('mobile',$mobile );
+                $this->session->set_userdata('user_id', $this->user_id);
+                $this->session->set_userdata('username', $this->username);
+                $this->session->set_userdata('user_group_id', $this->user_group_id);
+                $this->session->set_userdata('database', $this->database);
+                $this->session->set_userdata('client_id', $this->client_id);
+                $this->session->set_userdata('site_id', $this->site_id);
+                $this->session->set_userdata('permission', $this->permission);
+                $this->session->set_userdata('ip', $ip);
+                $this->session->set_userdata('mobile', $mobile);
 
                 return true;
             }
@@ -744,7 +776,8 @@ class User_model extends MY_Model
         return false;
     }
 
-    public function hasPermission($key, $value) {
+    public function hasPermission($key, $value)
+    {
         if (isset($this->permission[$key])) {
             return in_array($value, $this->permission[$key]);
         } else {
@@ -752,47 +785,58 @@ class User_model extends MY_Model
         }
     }
 
-    public function getPermission() {
+    public function getPermission()
+    {
         return $this->permission;
     }
 
-    public function isLogged() {
+    public function isLogged()
+    {
         return $this->user_id;
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->user_id;
     }
 
-    public function getClientId() {
+    public function getClientId()
+    {
         return $this->client_id;
     }
 
-    public function getSiteId() {
+    public function getSiteId()
+    {
         return $this->site_id;
     }
 
-    public function getUserGroupId() {
+    public function getUserGroupId()
+    {
         return $this->user_group_id;
     }
 
-    public function getUserName() {
+    public function getUserName()
+    {
         return $this->username;
     }
 
-    public function getClientDatabase() {
+    public function getClientDatabase()
+    {
         return isset($this->database) ? $this->database : "core";
     }
 
-    public function getMobile() {
+    public function getMobile()
+    {
         return $this->mobile;
     }
 
-    public function getAdminGroupID(){
+    public function getAdminGroupID()
+    {
         $this->set_site_mongodb($this->site_id);
 
-        if($this->session->userdata('admin_group_id'))
+        if ($this->session->userdata('admin_group_id')) {
             return $this->session->userdata('admin_group_id');
+        }
 
         $this->mongo_db->select(array('_id'));
         $this->mongo_db->where('name', 'Top Administrator');
@@ -800,44 +844,47 @@ class User_model extends MY_Model
         $Q = $this->mongo_db->get('user_group');
 
         $this->admin_group_id = null;
-        if($Q){
+        if ($Q) {
             $this->admin_group_id = $Q[0]['_id'];
         }
 
-        $this->session->set_userdata('admin_group_id',$this->admin_group_id );
+        $this->session->set_userdata('admin_group_id', $this->admin_group_id);
 
         return $this->admin_group_id;
     }
 
-    public function updateSiteId($site_id){
+    public function updateSiteId($site_id)
+    {
         $this->set_site_mongodb($this->site_id);
 
-        if($this->checkSiteId($site_id) > 0){
+        if ($this->checkSiteId($site_id) > 0) {
             $this->site_id = new MongoId($site_id);
-            $this->session->set_userdata('site_id',$this->site_id );
+            $this->session->set_userdata('site_id', $this->site_id);
         }
 
         return true;
     }
 
-    public function fetchSiteId($client_id) {
+    public function fetchSiteId($client_id)
+    {
         $this->mongo_db->select(array('_id'));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('status', true);
         $this->mongo_db->limit(1);
         $Q2 = $this->mongo_db->get('playbasis_client_site');
 
-        if(count($Q2)>0){
+        if (count($Q2) > 0) {
             $row2 = $Q2[0];
             $site_id = $row2['_id'];
-        }else{
+        } else {
             $site_id = null;
         }
 
         return $site_id;
     }
 
-    private function checkSiteId($site_id){
+    private function checkSiteId($site_id)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($site_id));
@@ -845,13 +892,14 @@ class User_model extends MY_Model
         return $this->mongo_db->count('playbasis_client_site');
     }
 
-    public function checkRandomKey($random_key){
+    public function checkRandomKey($random_key)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('random_key', $random_key);
         $user = $this->mongo_db->get('user');
 
-        if($user){
+        if ($user) {
 
             $this->mongo_db->where('_id', new MongoID($user[0]['_id']));
             $this->mongo_db->set('status', true);
@@ -859,12 +907,13 @@ class User_model extends MY_Model
             $this->mongo_db->update('user');
 
             return $user;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function findEmail($data){
+    public function findEmail($data)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $email = $data['email'];
@@ -873,41 +922,44 @@ class User_model extends MY_Model
         $this->mongo_db->where('status', true);
         $user = $this->mongo_db->get('user');
 
-        if($user){
+        if ($user) {
             return $user;
-        }else{
+        } else {
             return false;
         }
 
     }
 
-    public function insertRandomPasswordKey($random_key, $user_id){
+    public function insertRandomPasswordKey($random_key, $user_id)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($user_id));
-        $this->mongo_db->set('password_key',$random_key);
-        
+        $this->mongo_db->set('password_key', $random_key);
+
         $this->mongo_db->update('user');
 
     }
 
-    public function checkRandomPasswordKey($random_key){
+    public function checkRandomPasswordKey($random_key)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('password_key', $random_key);
         $user = $this->mongo_db->get('user');
 
-        if($user){
+        if ($user) {
             $this->mongo_db->where('_id', new MongoID($user[0]['_id']));
             $this->mongo_db->set('password_key', null);
             $this->mongo_db->update('user');
             return $user;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function insertNewPassword($user_id, $new_password){
+    public function insertNewPassword($user_id, $new_password)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $find_salt = $this->getUserInfo($user_id);
@@ -920,7 +972,8 @@ class User_model extends MY_Model
 
     }
 
-    public function disableUser($user_id){
+    public function disableUser($user_id)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($user_id));
@@ -928,7 +981,8 @@ class User_model extends MY_Model
         $this->mongo_db->update('user');
     }
 
-    public function getMultiLogin($user_id){
+    public function getMultiLogin($user_id)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($user_id));
@@ -937,38 +991,40 @@ class User_model extends MY_Model
         return $key ? $key[0]['multi_login'] : null;
     }
 
-    public function setMultiLoginKey($user_id){
+    public function setMultiLoginKey($user_id)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($user_id));
-        $hashed = do_hash(get_random_password().$user_id);
+        $hashed = do_hash(get_random_password() . $user_id);
         $this->mongo_db->set('multi_login', $hashed);
         $this->mongo_db->update('user');
         return $hashed;
     }
 
-	public function get_api_key_secret($client_id, $site_id) {
-		$this->set_site_mongodb($this->session->userdata('site_id'));
+    public function get_api_key_secret($client_id, $site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         try {
             $this->mongo_db->where('client_id', new MongoID($client_id));
             $this->mongo_db->where('site_id', new MongoID($site_id));
             $this->mongo_db->limit(1);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
         }
 
-		$result = $this->mongo_db->get("playbasis_platform_client_site");
+        $result = $this->mongo_db->get("playbasis_platform_client_site");
 
-		return $result ? $result[0] : null;
-	}
+        return $result ? $result[0] : null;
+    }
 
     public function isAdmin()
     {
         return $this->getAdminGroupID() == $this->getUserGroupId();
     }
 
-    public function getPlan(){
+    public function getPlan()
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('client_id', new MongoID($this->client_id));
@@ -976,20 +1032,21 @@ class User_model extends MY_Model
         $this->mongo_db->limit(1);
         $permission = $this->mongo_db->get('playbasis_permission');
 
-        $permission = $permission?$permission[0]:array();
+        $permission = $permission ? $permission[0] : array();
 
         $plan = array();
-        if($permission){
+        if ($permission) {
             $this->mongo_db->where('_id', $permission['plan_id']);
             $plan = $this->mongo_db->get('playbasis_plan');
         }
 
-        $plan = $plan?$plan[0]:array();
+        $plan = $plan ? $plan[0] : array();
 
         return $plan;
     }
 
-    public function findMobileByClientId($client_id) {
+    public function findMobileByClientId($client_id)
+    {
         $this->set_site_mongodb($this->site_id);
         $this->mongo_db->select(array('mobile'));
         $this->mongo_db->where('_id', $client_id);
@@ -998,7 +1055,8 @@ class User_model extends MY_Model
         return $results ? $results[0]['mobile'] : null;
     }
 
-    public function updateMobile($client_id, $mobile){
+    public function updateMobile($client_id, $mobile)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', $client_id);
@@ -1007,15 +1065,17 @@ class User_model extends MY_Model
 
         if ($this->client_id == $client_id) {
             $this->mobile = $mobile;
-            $this->session->set_userdata('mobile',$this->mobile );
+            $this->session->set_userdata('mobile', $this->mobile);
         }
     }
 
-    public function usedMobile($mobile) {
+    public function usedMobile($mobile)
+    {
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('mobile', $mobile);
         return $this->mongo_db->count('playbasis_client');
     }
 }
+
 ?>

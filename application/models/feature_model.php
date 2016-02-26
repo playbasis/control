@@ -1,8 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class Feature_model extends MY_Model
 {
-    public function getFeature($feature_id) {
+    public function getFeature($feature_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($feature_id));
@@ -11,7 +13,8 @@ class Feature_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function getFeatures() {
+    public function getFeatures()
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('status', true);
@@ -21,7 +24,8 @@ class Feature_model extends MY_Model
         return $results;
     }
 
-    public function getFeatureByClientId($client_id) {
+    public function getFeatureByClientId($client_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('status', true);
@@ -31,18 +35,19 @@ class Feature_model extends MY_Model
 
         $temp = array();
 
-        foreach($results as $result){
-            $temp[$result['feature_id'].""] = array(
-                '_id'=>$result['_id'],
-                'name'=>$result['name'],
-                'link'=>$result['link'],
-                'icon'=>$result['icon']
-                );
-        }        
+        foreach ($results as $result) {
+            $temp[$result['feature_id'] . ""] = array(
+                '_id' => $result['_id'],
+                'name' => $result['name'],
+                'link' => $result['link'],
+                'icon' => $result['icon']
+            );
+        }
         return $temp;
     }
 
-    public function getFeatureBySiteId($client_id, $site_id) {
+    public function getFeatureBySiteId($client_id, $site_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('status', true);
@@ -54,7 +59,8 @@ class Feature_model extends MY_Model
         return $results;
     }
 
-    public function getFeatureName($feature_name) {
+    public function getFeatureName($feature_name)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('name', $feature_name);
@@ -63,7 +69,8 @@ class Feature_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function getFeatureExistByClientId($client_id, $link) {
+    public function getFeatureExistByClientId($client_id, $link)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('status', true);
@@ -74,4 +81,5 @@ class Feature_model extends MY_Model
         return $this->mongo_db->count("playbasis_feature_to_client") > 0;
     }
 }
+
 ?>

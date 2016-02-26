@@ -1,13 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Report extends MY_Controller
 {
     public function __construct()
     {
         parent::__construct();
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
         $lang = get_lang($this->session, $this->config);
@@ -15,10 +16,11 @@ class Report extends MY_Controller
         $this->lang->load("report", $lang['folder']);
     }
 
-    public function index() {
+    public function index()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -30,10 +32,11 @@ class Report extends MY_Controller
         $this->getActionList(0, site_url('report/page'));
     }
 
-    public function page($offset=0) {
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -45,10 +48,11 @@ class Report extends MY_Controller
         $this->getActionList($offset, site_url('report/page'));
     }
 
-    public function action() {
+    public function action()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -60,10 +64,11 @@ class Report extends MY_Controller
         $this->getActionList(0, site_url('report/action_page'));
     }
 
-    public function action_page($offset=0) {
+    public function action_page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -75,11 +80,12 @@ class Report extends MY_Controller
         $this->getActionList($offset, site_url('report/action_page'));
     }
 
-    private function getActionList($offset, $url){
+    private function getActionList($offset, $url)
+    {
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
-        $parameter_url = "?t=".rand();
+        $parameter_url = "?t=" . rand();
 
         $this->load->library('pagination');
 
@@ -92,19 +98,19 @@ class Report extends MY_Controller
 
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
-            $parameter_url .= "&date_start=".$filter_date_start;
+            $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
             $filter_date_start = date("Y-m-d", strtotime("-30 days"));
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=".$filter_date_end;
+            $parameter_url .= "&date_expire=" . $filter_date_end;
 
             //--> This will enable to search on the day until the time 23:59:59
             $date = $this->input->get('date_expire');
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
 
@@ -114,26 +120,26 @@ class Report extends MY_Controller
             //--> This will enable to search on the current day until the time 23:59:59
             $date = date("Y-m-d");
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         }
 
         if ($this->input->get('username')) {
             $filter_username = $this->input->get('username');
-            $parameter_url .= "&username=".$filter_username;
+            $parameter_url .= "&username=" . $filter_username;
         } else {
             $filter_username = '';
         }
 
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
-            $parameter_url .= "&action_id=".$filter_action_id;
+            $parameter_url .= "&action_id=" . $filter_action_id;
         } else {
             $filter_action_id = '';
         }
 
-        $limit =($this->input->get('limit')) ? $this->input->get('limit') : $per_page ;
+        $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
 
         $this->data['reports'] = array();
 
@@ -141,21 +147,21 @@ class Report extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         $data = array(
-            'client_id'              => $client_id,
-            'site_id'                => $site_id,
-            'date_start'	         => $filter_date_start,
-            'date_expire'	         => $filter_date_end,
-            'username'               => $filter_username,
-            'action_id'              => $filter_action_id,
-            'start'                  => $offset,
-            'limit'                  => $limit
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date_start' => $filter_date_start,
+            'date_expire' => $filter_date_end,
+            'username' => $filter_username,
+            'action_id' => $filter_action_id,
+            'start' => $offset,
+            'limit' => $limit
         );
 
         $report_total = 0;
 
         $results = array();
 
-        if($client_id){
+        if ($client_id) {
             $report_total = $this->Action_model->getTotalActionReport($data);
 
             $results = $this->Action_model->getActionReport($data);
@@ -165,10 +171,10 @@ class Report extends MY_Controller
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
-            if (!empty($player['image'])){
+            if (!empty($player['image'])) {
                 $thumb = $player['image'];
-            }else{
-                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+            } else {
+                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
             /*if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
                 $thumb = $player['image'];
@@ -177,28 +183,28 @@ class Report extends MY_Controller
             }*/
 
             $this->data['reports'][] = array(
-                'cl_player_id'      => $player['cl_player_id'],
-                'username'          => $player['username'],
-                'image'             => $thumb,
-                'email'             => $player['email'],
+                'cl_player_id' => $player['cl_player_id'],
+                'username' => $player['username'],
+                'image' => $thumb,
+                'email' => $player['email'],
                 // 'exp'               => $player['exp'],
                 // 'level'             => $player['level'],
-                'action_name'       => $result['action_name'],
-                'url'               => $result['url'],
-                'parameters'         => ($filter_action_id != '')?$result['parameters']:null,
-                'date_added'        => $this->datetimeMongotoReadable($result['date_added'])
+                'action_name' => $result['action_name'],
+                'url' => $result['url'],
+                'parameters' => ($filter_action_id != '') ? $result['parameters'] : null,
+                'date_added' => $this->datetimeMongotoReadable($result['date_added'])
             );
         }
 
         $this->data['actions'] = array();
 
-        if($client_id){
+        if ($client_id) {
             $data_filter['client_id'] = $client_id;
             $data_filter['site_id'] = $site_id;
             $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
         }
 
-        $config['base_url'] = $url.$parameter_url;
+        $config['base_url'] = $url . $parameter_url;
 
         $config['total_rows'] = $report_total;
         $config['per_page'] = $per_page;
@@ -238,7 +244,7 @@ class Report extends MY_Controller
         $this->data['filter_date_start'] = $filter_date_start;
 
         // --> This will show only the date, not including the time
-        $filter_date_end_exploded = explode(" ",$filter_date_end);
+        $filter_date_end_exploded = explode(" ", $filter_date_end);
         $this->data['filter_date_end'] = $filter_date_end_exploded[0];
         // --> end
 
@@ -250,7 +256,8 @@ class Report extends MY_Controller
         $this->render_page('template');
     }
 
-    public function actionDownload() {
+    public function actionDownload()
+    {
         $this->load->model('Action_model');
         $this->load->model('Player_model');
 
@@ -282,12 +289,12 @@ class Report extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         $data = array(
-            'client_id'              => $client_id,
-            'site_id'                => $site_id,
-            'date_start'	         => $filter_date_start,
-            'date_expire'	         => $filter_date_end,
-            'username'               => $filter_username,
-            'action_id'              => $filter_action_id
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date_start' => $filter_date_start,
+            'date_expire' => $filter_date_end,
+            'username' => $filter_username,
+            'action_id' => $filter_action_id
         );
 
         $this->load->helper('export_data');
@@ -307,15 +314,16 @@ class Report extends MY_Controller
             $this->lang->line('column_action_name'),
         );
 
-        if($filter_action_id != 0 &&  is_array($results[0]['parameters']))foreach ($results[0]['parameters'] as $key => $param){
-            array_push($row_to_add, $key);
+        if ($filter_action_id != 0 && is_array($results[0]['parameters'])) {
+            foreach ($results[0]['parameters'] as $key => $param) {
+                array_push($row_to_add, $key);
+            }
         }
 
         array_push($row_to_add, $this->lang->line('column_date_added'));
-        $exporter->addRow($row_to_add );
+        $exporter->addRow($row_to_add);
 
-        foreach($results as $row)
-        {
+        foreach ($results as $row) {
             $player = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
             $row_to_add = array(
                 $player['cl_player_id'],
@@ -325,8 +333,10 @@ class Report extends MY_Controller
                 $player['exp'],
                 $row['action_name']
             );
-            if ($filter_action_id != 0 && is_array($row['parameters']))foreach ($row['parameters'] as $param){
-                array_push($row_to_add, $param);
+            if ($filter_action_id != 0 && is_array($row['parameters'])) {
+                foreach ($row['parameters'] as $param) {
+                    array_push($row_to_add, $param);
+                }
             }
             array_push($row_to_add, $this->datetimeMongotoReadable($row['date_added']));
             $exporter->addRow($row_to_add);
@@ -348,18 +358,22 @@ class Report extends MY_Controller
         return $dateTimeMongo;
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'report/action') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')) {
+        if ($this->User_model->hasPermission('access',
+                'report/action') && $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 }
+
 ?>

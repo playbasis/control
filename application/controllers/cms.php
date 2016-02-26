@@ -18,7 +18,7 @@ class CMS extends MY_Controller
         $this->load->model('CMS_model');
         $this->load->model('User_model');
         $this->load->model('User_group_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -30,16 +30,16 @@ class CMS extends MY_Controller
     }
 
 
-
     public function index()
     {
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
-        $cms = $this->CMS_model->getCmsInfo($client_id,$site_id);
+        $cms = $this->CMS_model->getCmsInfo($client_id, $site_id);
 
         $create = isset($cms) != null ? false : true;
-        if(!$create)
-            $this->data['link'] = 'https://cms.pbapp.net/'.$cms['site_slug'].'/login';
+        if (!$create) {
+            $this->data['link'] = 'https://cms.pbapp.net/' . $cms['site_slug'] . '/login';
+        }
 
         $user_info = $this->User_model->getUserInfo($this->User_model->getId());
         $userGroup = $this->User_group_model->getUserGroupInfo($user_info['user_group_id']);
@@ -47,15 +47,12 @@ class CMS extends MY_Controller
         $access = $permission['access'];
         $modify = $permission['modify'];
 
-        $editor = array_search('cms',$modify) != -1 ? true : false;
-        $contributor = array_search('cms',$access) != -1 ? true : false;
+        $editor = array_search('cms', $modify) != -1 ? true : false;
+        $contributor = array_search('cms', $access) != -1 ? true : false;
 
-        if($editor||$contributor)
-        {
+        if ($editor || $contributor) {
             $this->data['role'] = $editor ? 'editor' : 'contributor';
         }
-
-
 
 
         $this->data['main'] = 'cms';
@@ -68,12 +65,13 @@ class CMS extends MY_Controller
 
         $this->render_page('template');
     }
+
     public function createCMS()
     {
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $user_info = $this->User_model->getUserInfo($this->User_model->getId());
-        $site_info = $this->Client_model->getSiteInfo($client_id,$site_id);
+        $site_info = $this->Client_model->getSiteInfo($client_id, $site_id);
         $data = array(
             'client_id' => $this->User_model->getClientId(),
             'site_id' => $this->User_model->getSiteId(),
@@ -89,6 +87,6 @@ class CMS extends MY_Controller
         $this->CMS_model->createCMS($data);
     }
 
-
 }
+
 ?>

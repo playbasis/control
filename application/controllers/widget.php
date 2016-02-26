@@ -15,7 +15,7 @@ class Widget extends MY_Controller
         $this->load->model('App_model');
         $this->load->model('Custompoints_model');
         $this->load->model('Widget_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -26,7 +26,8 @@ class Widget extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
-    public function index(){
+    public function index()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -39,20 +40,23 @@ class Widget extends MY_Controller
         $points_data = array();
         $plan_widget = array();
 
-        if($client_id){
+        if ($client_id) {
             $site_data = $this->App_model->getAppsBySiteId($site_id);
             $platform_data = $this->App_model->getPlatformWithType($site_id, 'web');
 
             //force use first web app platform
             $this->data['platform_data'] = $platform_data;
 
-            $points_data = $this->Custompoints_model->getCustompoints(array('client_id' => $client_id, 'site_id' => $site_id));
+            $points_data = $this->Custompoints_model->getCustompoints(array(
+                'client_id' => $client_id,
+                'site_id' => $site_id
+            ));
 
             $this->load->model('Client_model');
             $this->load->model('Plan_model');
             $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
             // get Plan display
-            $plan_widget = $this->Plan_model-> getPlanDisplayWidget($plan_subscription["plan_id"]);
+            $plan_widget = $this->Plan_model->getPlanDisplayWidget($plan_subscription["plan_id"]);
         }
 
         $this->data['plan_widget'] = $plan_widget;
@@ -62,7 +66,8 @@ class Widget extends MY_Controller
         $this->render_page('template');
     }
 
-    public function preview(){
+    public function preview()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -73,9 +78,12 @@ class Widget extends MY_Controller
         $site_data = array();
         $points_data = array();
 
-        if($client_id){
+        if ($client_id) {
             $site_data = $this->App_model->getAppsBySiteId($site_id);
-            $points_data = $this->Custompoints_model->getCustompoints(array('client_id' => $client_id, 'site_id' => $site_id));
+            $points_data = $this->Custompoints_model->getCustompoints(array(
+                'client_id' => $client_id,
+                'site_id' => $site_id
+            ));
         }
 
         $this->data['site_data'] = $site_data;
@@ -83,7 +91,8 @@ class Widget extends MY_Controller
         $this->render_page('widget_preview');
     }
 
-    public function social_login(){
+    public function social_login()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -96,7 +105,7 @@ class Widget extends MY_Controller
         $sw_data = array();
         $plan_widget = array();
 
-        if($client_id){
+        if ($client_id) {
             $site_data = $this->App_model->getAppsBySiteId($site_id);
             $platform_data = $this->App_model->getPlatformWithType($site_id, 'web');
 
@@ -104,8 +113,8 @@ class Widget extends MY_Controller
             $this->data['platform_data'] = $platform_data;
 
             $w_data = array(
-                'client_id'=>$client_id,
-                'site_id'=>$site_id,
+                'client_id' => $client_id,
+                'site_id' => $site_id,
             );
             $sw_data = $this->Widget_model->getWidgetSocialsSite($w_data);
 
@@ -113,9 +122,9 @@ class Widget extends MY_Controller
             $this->load->model('Plan_model');
             $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
             // get Plan display
-            $plan_widget = $this->Plan_model-> getPlanDisplayWidget($plan_subscription["plan_id"]);
+            $plan_widget = $this->Plan_model->getPlanDisplayWidget($plan_subscription["plan_id"]);
 
-            if(!(isset($plan_widget['social']) && $plan_widget['social'])){
+            if (!(isset($plan_widget['social']) && $plan_widget['social'])) {
                 redirect('/widget', 'refresh');
             }
         }
@@ -123,7 +132,7 @@ class Widget extends MY_Controller
         $sw_ready = array();
 
         $callback = '';
-        foreach($sw_data as $sw){
+        foreach ($sw_data as $sw) {
             $sw_prepare = array();
             $sw_prepare['key'] = $sw['key'];
             $sw_prepare['secret'] = $sw['secret'];
@@ -141,24 +150,25 @@ class Widget extends MY_Controller
         $this->render_page('template');
     }
 
-    public function social_manage(){
+    public function social_manage()
+    {
         $data = $this->input->post('socials');
         $data_callback = $this->input->post('socials_callback');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        if($data){
-            foreach($data as $d){
+        if ($data) {
+            foreach ($data as $d) {
                 $s_data = array(
-                    'client_id'=>$client_id,
-                    'site_id'=>$site_id,
-                    'provider'=>$d['name'],
-                    'key'=>$d['key'],
-                    'secret'=>$d['secret'],
-                    'sort_order'=>$d['sort_order'],
-                    'status'=>$d['status'],
-                    'callback'=>$data_callback
+                    'client_id' => $client_id,
+                    'site_id' => $site_id,
+                    'provider' => $d['name'],
+                    'key' => $d['key'],
+                    'secret' => $d['secret'],
+                    'sort_order' => $d['sort_order'],
+                    'status' => $d['status'],
+                    'callback' => $data_callback
                 );
                 $this->Widget_model->updateWidgetSocials($s_data);
             }
@@ -166,4 +176,5 @@ class Widget extends MY_Controller
         $this->output->set_output(json_encode(array('status' => 'success')));
     }
 }
+
 ?>

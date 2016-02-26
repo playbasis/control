@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class User extends MY_Controller
 {
     public function __construct()
@@ -31,10 +32,11 @@ class User extends MY_Controller
         $this->lang->load("login", $lang['folder']);
     }
 
-    public function index(){
+    public function index()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -42,14 +44,15 @@ class User extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        
+
         $this->getList(0);
     }
 
-    public function page($offset = 0){
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -57,21 +60,22 @@ class User extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        
+
         $this->getList($offset);
     }
 
-    public function getList($offset){
+    public function getList($offset)
+    {
 
         $client_id = $this->User_model->getClientId();
 
-        $this->load->library('pagination');        
+        $this->load->library('pagination');
         $config['base_url'] = site_url('user/page');
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
-        if($client_id){
+        if ($client_id) {
             $config['total_rows'] = $this->User_model->getTotalUserByClientId(array('client_id' => $client_id));
-        }else{
+        } else {
             $config['total_rows'] = $this->User_model->getTotalNumUsers();
         }
 
@@ -123,23 +127,23 @@ class User extends MY_Controller
             'limit' => $config['per_page'],
             'start' => $offset
         );
-        if(isset($_GET['filter_name'])){
+        if (isset($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
-        if($client_id){
+        if ($client_id) {
 
             $filter['client_id'] = $client_id;
             $user_ids = $this->User_model->getUserByClientId($filter);
 
             $UsersInfoForClientId = array();
-            foreach ($user_ids as $user_id){
+            foreach ($user_ids as $user_id) {
                 $UsersInfoForClientId[] = $this->User_model->getUserInfo($user_id['user_id']);
             }
 
             $this->data['users'] = $UsersInfoForClientId;
 
-        }else{
+        } else {
             $this->data['users'] = $this->User_model->fetchAllUsers($filter);
         }
 
@@ -147,50 +151,56 @@ class User extends MY_Controller
         $this->render_page('template');
     }
 
-    public function update($user_id){
+    public function update($user_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'user/update/'.$user_id;
+        $this->data['form'] = 'user/update/' . $user_id;
 
         //Rules need to be set
 
         // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
-        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean');
-        if($this->input->post('password')!=''){
-            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|max_length[255]|xss_clean|check_space|min_length[5]');
-            $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'),
+            'trim|valid_email|xss_clean|required|cehck_space');
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
+        if ($this->input->post('password') != '') {
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'),
+                'trim|max_length[255]|xss_clean|check_space|min_length[5]');
+            $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'),
+                'required|matches[password]');
         }
         $this->form_validation->set_rules('user_group', "", '');
         $this->form_validation->set_rules('status', "", '');
-        
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             //Check to see if it passes the form validation
 
-            if($this->form_validation->run()){
+            if ($this->form_validation->run()) {
                 $data = array();
                 $data['email'] = $this->input->post('email');
-                if(!$this->User_model->findEmail($data)){
+                if (!$this->User_model->findEmail($data)) {
                     $this->User_model->editUser($user_id, $this->input->post());
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                     redirect('/user', 'refresh');
-                }else{
+                } else {
                     $user = $this->User_model->getUserInfo($user_id);
-                    if($user['username'] != $data['email']){
+                    if ($user['username'] != $data['email']) {
                         $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
-                        redirect('/user/update/'.$user_id);    
+                        redirect('/user/update/' . $user_id);
                     }
                     $this->User_model->editUser($user_id, $this->input->post());
                     $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                     redirect('/user', 'refresh');
                 }
             }
-            
+
         }
         $this->getForm($user_id);
 
@@ -201,7 +211,8 @@ class User extends MY_Controller
      * Each Client-Site has limit according to plan
      * ** Compatible-purpose ** default is 3
      */
-    public function insert(){
+    public function insert()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -211,25 +222,30 @@ class User extends MY_Controller
 
         //Rules need to be set
         // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
-        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
-        $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'),
+            'trim|valid_email|xss_clean|required|cehck_space');
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('password', $this->lang->line('form_password'),
+            'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
+        $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'),
+            'required|matches[password]');
         $this->form_validation->set_rules('user_group', "", '');
         $this->form_validation->set_rules('status', "", '');
 
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $client_id = $this->User_model->getClientId();
             $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
-            if($this->form_validation->run()){
+            if ($this->form_validation->run()) {
                 // get Plan limit_others.user
                 $user_limit = null;
                 try {
                     $user_limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "user");
-                } catch(Exception $e) {
+                } catch (Exception $e) {
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
                     redirect("user/");
                 }
@@ -246,8 +262,8 @@ class User extends MY_Controller
 
                 $user_id = $this->User_model->insertUser();
 
-                if($user_id){
-                    if($client_id){
+                if ($user_id) {
+                    if ($client_id) {
                         $data = array(
                             'client_id' => $client_id,
                             'user_id' => $user_id
@@ -258,8 +274,8 @@ class User extends MY_Controller
                     $this->session->data['success'] = $this->lang->line('text_success');
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                    redirect('user/','refresh');
-                }else{
+                    redirect('user/', 'refresh');
+                } else {
                     $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
                     redirect('user/insert');
                 }
@@ -270,20 +286,26 @@ class User extends MY_Controller
 
     }
 
-    public function insert_ajax(){
+    public function insert_ajax()
+    {
 
         //Rules need to be set
         // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
-        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|check_space');
-        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
-        $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'),
+            'trim|valid_email|xss_clean|required|check_space');
+        $this->form_validation->set_rules('password', $this->lang->line('form_password'),
+            'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
+        $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'),
+            'required|matches[password]');
         //$this->form_validation->set_rules('user_group', $this->lang->line('form_user_group'), 'required');
 
         $json = array();
 
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $this->data['message'] = null;
 
@@ -292,38 +314,39 @@ class User extends MY_Controller
                 $json['error'] = $this->data['message'];
             }*/
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 $email = $this->input->post('email');
                 $data['email'] = $email;
                 $check_email = $this->User_model->findEmail($data);
 
-                if(!$check_email){
-                $user_id = $this->User_model->insertUser();
+                if (!$check_email) {
+                    $user_id = $this->User_model->insertUser();
 
-                if ($user_id) {
-                    $data = array(
-                        'client_id' => $this->input->post('client_id'),
-                        'user_id' => $user_id
-                    );
-                    $this->User_model->addUserToClient($data);
-                }
+                    if ($user_id) {
+                        $data = array(
+                            'client_id' => $this->input->post('client_id'),
+                            'user_id' => $user_id
+                        );
+                        $this->User_model->addUserToClient($data);
+                    }
 
-                $this->session->data['success'] = $this->lang->line('text_success');
-                $json['success'] =  $this->lang->line('text_success');
-                }else{
+                    $this->session->data['success'] = $this->lang->line('text_success');
+                    $json['success'] = $this->lang->line('text_success');
+                } else {
                     $json['error'] = 'The Email provided already exists';
                 }
-                
-            }else{
-                $json['error'] = validation_errors('<div class="warning">','</div>');
+
+            } else {
+                $json['error'] = validation_errors('<div class="warning">', '</div>');
             }
         }
 
         $this->output->set_output(json_encode($json));
     }
 
-    public function delete(){
+    public function delete()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -331,8 +354,8 @@ class User extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->error['warning'] = null;
-        
-        if(!$this->validateModify()){
+
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
@@ -340,7 +363,7 @@ class User extends MY_Controller
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             $selectedUsers = $this->input->post('selected');
 
-            foreach ($selectedUsers as $selectedUser){
+            foreach ($selectedUsers as $selectedUser) {
                 $this->User_model->deleteUser($selectedUser);
             }
 
@@ -351,54 +374,56 @@ class User extends MY_Controller
         $this->getList(0);
     }
 
-    public function delete_ajax(){
+    public function delete_ajax()
+    {
 
         $json = array();
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
         if ($this->input->post('user_id') && $this->error['warning'] == null) {
 
-            if($this->checkOwnerUser($this->input->post('user_id'))){
+            if ($this->checkOwnerUser($this->input->post('user_id'))) {
 
                 $this->User_model->deleteUser($this->input->post('user_id'));
             }
 
             $this->session->data['success'] = $this->lang->line('text_success');
 
-            $json['success'] =  $this->lang->line('text_success');
+            $json['success'] = $this->lang->line('text_success');
         }
 
         $this->output->set_output(json_encode($json));
     }
 
-    public function getForm($user_id = 0){
+    public function getForm($user_id = 0)
+    {
 
-        if((isset($user_id)) && $user_id !=0){
+        if ((isset($user_id)) && $user_id != 0) {
             $user_info = $this->User_model->getUserInfo($user_id);
         }
 
-        if(isset($user_info)){
-            $this->data['user'] = $user_info;    
+        if (isset($user_info)) {
+            $this->data['user'] = $user_info;
         }
 
-        if(!$user_id) {
+        if (!$user_id) {
             if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                 $this->data['is_admin_groups'] = true;
                 $this->data['user_groups'] = $this->User_model->getUserGroups();
-            }else{
+            } else {
                 $client_id = $this->User_model->getClientId();
                 $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
             }
-        }else {
+        } else {
             $user_info = $this->User_model->getUserInfo($user_id);
             if ($user_info['user_group_id'] == $this->User_model->getAdminGroupID()) {
                 $this->data['is_admin_groups'] = true;
                 $this->data['user_groups'] = $this->User_model->getUserGroups();
-            }else {
+            } else {
                 $client_id = $this->User_model->getClientIdByUserId(new MongoId($user_id));
                 $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
             }
@@ -409,7 +434,8 @@ class User extends MY_Controller
 
     }
 
-    public function autocomplete(){
+    public function autocomplete()
+    {
         $json = array();
 
         $client_id = $this->User_model->getClientId();
@@ -426,15 +452,15 @@ class User extends MY_Controller
                 'filter_name' => $filter_name
             );
 
-            if($client_id){
+            if ($client_id) {
 
                 $data['client_id'] = $client_id;
                 $user_ids = $this->User_model->getUserByClientId($data);
 
                 $UsersInfoForClientId = array();
-                foreach ($user_ids as $user_id){
+                foreach ($user_ids as $user_id) {
                     $user_info = $this->User_model->getUserInfo($user_id['user_id']);
-                    if(preg_match('/'.$filter_name.'/', $user_info['username'])){
+                    if (preg_match('/' . $filter_name . '/', $user_info['username'])) {
                         $UsersInfoForClientId[] = $user_info;
                     }
                 }
@@ -442,7 +468,7 @@ class User extends MY_Controller
                 $results_user = $UsersInfoForClientId;
 
 
-            }else{
+            } else {
                 $results_user = $this->User_model->fetchAllUsers($data);
             }
 
@@ -455,7 +481,8 @@ class User extends MY_Controller
         $this->output->set_output(json_encode($json));
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
 
         if ($this->User_model->hasPermission('modify', 'user')) {
             return true;
@@ -464,37 +491,41 @@ class User extends MY_Controller
         }
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'user') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'user')) {
+        if ($this->User_model->hasPermission('access',
+                'user') && $this->Feature_model->getFeatureExistByClientId($client_id, 'user')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 
-    private function checkOwnerUser($user_id){
+    private function checkOwnerUser($user_id)
+    {
 
         $error = null;
 
-        if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+        if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
 
             $users = $this->User_model->getUserByClientId($this->User_model->getClientId());
 
             $has = false;
 
             foreach ($users as $user) {
-                if($user['user_id']."" == $user_id.""){
+                if ($user['user_id'] . "" == $user_id . "") {
                     $has = true;
                 }
             }
 
-            if(!$has){
+            if (!$has) {
                 $error = $this->lang->line('error_permission');
             }
         }
@@ -506,7 +537,8 @@ class User extends MY_Controller
         }
     }
 
-    private function checkLimitUser($client_id){
+    private function checkLimitUser($client_id)
+    {
 
         $data['client_id'] = $client_id;
         $users = $this->User_model->getTotalUserByClientId($data);
@@ -518,7 +550,8 @@ class User extends MY_Controller
         }
     }
 
-    public function block(){
+    public function block()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
@@ -528,17 +561,19 @@ class User extends MY_Controller
         $this->render_page('template');
     }
 
-    public function login(){
+    public function login()
+    {
 
         if ($this->session->userdata('user_id')) {
             redirect('/', 'refresh');
         }
 
-        if($this->input->get('back')){
+        if ($this->input->get('back')) {
             $this->session->set_userdata('redirect', $this->input->get('back'));
         }
 
-        $this->form_validation->set_rules('username', $this->lang->line('entry_username'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('username', $this->lang->line('entry_username'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         // $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('entry_password'), 'trim|required');
 
@@ -546,10 +581,10 @@ class User extends MY_Controller
 
         $this->lang->load('login', $lang['folder']);
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $this->data['message'] = null;
-            if($this->form_validation->run()){
+            if ($this->form_validation->run()) {
                 $this->load->model('User_model');
                 $u = $this->input->post('username');
                 $pw = $this->input->post('password');
@@ -565,19 +600,19 @@ class User extends MY_Controller
                     } else {
                         $redirect = '/';
                     }
-                    if($this->input->post('format') == 'json'){
+                    if ($this->input->post('format') == 'json') {
                         echo json_encode(array('status' => 'success', 'message' => ''));
                         exit();
                     }
                     redirect($redirect, 'refresh');
                 }
-                if($this->input->post('format') == 'json'){
+                if ($this->input->post('format') == 'json') {
                     echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_login')));
                     exit();
                 }
                 $this->data['message'] = $this->lang->line('error_login');
-            }else{
-                if($this->input->post('format') == 'json'){
+            } else {
+                if ($this->input->post('format') == 'json') {
                     echo json_encode(array('status' => 'error', 'message' => validation_errors()));
                     exit();
                 }
@@ -593,7 +628,8 @@ class User extends MY_Controller
         $this->render_page('template_beforelogin');
     }
 
-    public function logout(){
+    public function logout()
+    {
         $this->load->model('User_model');
         $this->User_model->logout();
         setcookie("client_id", null);
@@ -602,7 +638,8 @@ class User extends MY_Controller
         redirect('/', 'refresh');
     }
 
-    public function register(){
+    public function register()
+    {
 
 //        $this->data['meta_description'] = $this->lang->line('meta_description');
 //        $this->data['main'] = 'register';
@@ -745,7 +782,8 @@ class User extends MY_Controller
 
 //        $this->load->vars($this->data);
 //        $this->render_page('template');
-        redirect('login'.($this->input->get('plan') ? '?plan='.$this->input->get('plan') : '').'#register', 'refresh');
+        redirect('login' . ($this->input->get('plan') ? '?plan=' . $this->input->get('plan') : '') . '#register',
+            'refresh');
     }
 
     /* new register flow (without captcha, plan and domain) */
@@ -814,13 +852,14 @@ class User extends MY_Controller
         echo json_encode($res);
     }
 
-    public function signup_finish(){
+    public function signup_finish()
+    {
         $user_id = $this->input->get('i');
 
         $user_info = $this->User_model->getUserInfo(new MongoId($user_id));
 
         $this->data['user_before_info'] = $user_info;
-        $this->data['url_resend'] = site_url('user/resend_signup_email?i='.$user_id."");
+        $this->data['url_resend'] = site_url('user/resend_signup_email?i=' . $user_id . "");
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'account_activated';
         $this->data['title'] = $this->lang->line('title');
@@ -830,7 +869,8 @@ class User extends MY_Controller
         $this->render_page('template_beforelogin');
     }
 
-    public function resend_signup_email(){
+    public function resend_signup_email()
+    {
         $user_id = $this->input->get('i');
 
         $user_info = $this->User_model->getUserInfo(new MongoId($user_id));
@@ -842,18 +882,19 @@ class User extends MY_Controller
             'lastname' => $user_info['lastname'],
             'username' => $user_info['username'],
             'key' => $user_info['random_key'],
-            'url'=> site_url('enable_user?key='),
-            'base_url' =>site_url()
+            'url' => site_url('enable_user?key='),
+            'base_url' => site_url()
         );
 
         $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
 
         $this->email($user_info['email'], '[Playbasis] Please activate your account', $htmlMessage);
 
-        redirect('user/signup_finish?i='.$user_id, 'refresh');
+        redirect('user/signup_finish?i=' . $user_id, 'refresh');
     }
 
-    public function list_pending_users() {
+    public function list_pending_users()
+    {
         $this->data['users'] = array();
         if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
             $results = $this->User_model->listPendingUsers();
@@ -873,20 +914,21 @@ class User extends MY_Controller
                 }
             }
         } else {
-	        $this->session->set_flashdata('error', $this->lang->line('error_access'));
+            $this->session->set_flashdata('error', $this->lang->line('error_access'));
         }
         $this->data['main'] = 'user_pending';
         $this->load->vars($this->data);
         $this->render_page('template');
     }
 
-    public function enable_users() {
+    public function enable_users()
+    {
         $this->load->library('parser');
         $this->error['warning'] = null;
         if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
             if ($this->input->post('selected') && $this->error['warning'] == null) {
                 foreach ($this->input->post('selected') as $user_id) {
-                    $initial_password = get_random_password(8,8);
+                    $initial_password = get_random_password(8, 8);
                     $this->User_model->insertNewPassword($user_id, $initial_password);
                     $this->User_model->enableUser($user_id);
                     $user = $this->User_model->getById($user_id);
@@ -921,16 +963,17 @@ class User extends MY_Controller
         redirect('/pending_users', 'refresh');
     }
 
-    public function enable_user(){
+    public function enable_user()
+    {
         $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'enable user';
         $this->data['title'] = $this->lang->line('title');
 
-        if(isset($_GET['key'])){
+        if (isset($_GET['key'])) {
             $random_key = $_GET['key'];
             $user = $this->User_model->checkRandomKey($random_key);
-            if($user != null){
+            if ($user != null) {
                 $user_id = $user[0]['_id'];
 
                 /* generate initial password */
@@ -967,13 +1010,13 @@ class User extends MY_Controller
                 /* force login, so that user doesn't have to type email and password (obtained by email) */
                 $this->User_model->force_login($user_id);
                 redirect('account/update_profile', 'refresh');
-            }else{
+            } else {
                 $this->data['topic_message'] = 'Your validation key is invalid,';
                 $this->data['message'] = 'Please contact Playbasis.';
                 $this->data['main'] = 'partial/something_wrong';
                 $this->render_page('template_beforelogin');
             }
-        }else{
+        } else {
             $this->data['topic_message'] = 'Your validation key is invalid,';
             $this->data['message'] = 'Please contact Playbasis.';
             $this->data['main'] = 'partial/something_wrong';
@@ -981,10 +1024,11 @@ class User extends MY_Controller
         }
     }
 
-    public function referral($code='') {
+    public function referral($code = '')
+    {
         $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['form'] = 'referral/'.$code;
+        $this->data['form'] = 'referral/' . $code;
         $this->data['title'] = $this->lang->line('title');
 
         if (!$code) {
@@ -1031,7 +1075,10 @@ class User extends MY_Controller
             ));
             $error = $status && isset($status->success) && $status->success ? null : (isset($status->message) ? $status->message : 'Unknown reason');
             if ($this->input->post('format') == 'json') {
-                echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'Your registration has been saved!' : $error));
+                echo json_encode(array(
+                    'status' => !$error ? 'success' : 'fail',
+                    'message' => !$error ? 'Your registration has been saved!' : $error
+                ));
                 exit();
             }
         }
@@ -1046,7 +1093,8 @@ class User extends MY_Controller
         $this->render_page('template_beforelogin');
     }
 
-    public function merchant() {
+    public function merchant()
+    {
         $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['form'] = 'merchant_verify';
@@ -1063,7 +1111,11 @@ class User extends MY_Controller
                     $this->session->set_userdata(array('pin' => $pin));
                 }
                 if ($this->input->post('format') == 'json') {
-                    echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'You successfully log in to merchant page!' : $error, 'login' => true));
+                    echo json_encode(array(
+                        'status' => !$error ? 'success' : 'fail',
+                        'message' => !$error ? 'You successfully log in to merchant page!' : $error,
+                        'login' => true
+                    ));
                     exit();
                 }
             }
@@ -1105,19 +1157,26 @@ class User extends MY_Controller
                 }
             }
 
-            $goods_list = array_map('user_index_goods_id', $this->Goods_model->listGoodsByGroupAndCode($group, $coupon, array('goods_id')));
+            $goods_list = array_map('user_index_goods_id',
+                $this->Goods_model->listGoodsByGroupAndCode($group, $coupon, array('goods_id')));
             if (!$goods_list) {
                 if ($this->input->post('format') == 'json') {
                     /* invalid = FAIL */
-                    echo json_encode(array('status' => 'fail', 'message' => 'Such coupon code cannot be found for the selected goods'));
+                    echo json_encode(array(
+                        'status' => 'fail',
+                        'message' => 'Such coupon code cannot be found for the selected goods'
+                    ));
                     exit();
                 }
             }
-            $redeemed_goods_list = $this->Goods_model->listRedeemedGoods($goods_list, array('goods_id', 'cl_player_id', 'pb_player_id'));
+            $redeemed_goods_list = $this->Goods_model->listRedeemedGoods($goods_list,
+                array('goods_id', 'cl_player_id', 'pb_player_id'));
             $goods_list_redeemed = array_map('user_index_goods_id', $redeemed_goods_list);
-            $verified_goods_list = $this->Goods_model->listVerifiedGoods($goods_list, array('goods_id', 'branch', 'date_added'));
+            $verified_goods_list = $this->Goods_model->listVerifiedGoods($goods_list,
+                array('goods_id', 'branch', 'date_added'));
             $goods_list_verified = array_map('user_index_goods_id', $verified_goods_list);
-            $goods_list_ok = array_diff($goods_list_redeemed, $goods_list_verified); // coupon is redeemed but not yet exercised (found record in "playbasis_goods_to_player", not "playbasis_merchant_goodsgroup_redeem_log")
+            $goods_list_ok = array_diff($goods_list_redeemed,
+                $goods_list_verified); // coupon is redeemed but not yet exercised (found record in "playbasis_goods_to_player", not "playbasis_merchant_goodsgroup_redeem_log")
             if ($goods_list_ok) {
                 if ($mark) {
                     $goods_id = $goods_list_ok[0];
@@ -1145,13 +1204,21 @@ class User extends MY_Controller
                     if ($this->input->post('format') == 'json') {
                         /* valid, redeemed, used = FAIL */
                         $verified_goods_list = $verified_goods_list[0];
-                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is invalid as it has been used already', 'at' => $verified_goods_list['branch']['b_name'], 'when' => $this->datetimeMongotoReadable($verified_goods_list['date_added'])));
+                        echo json_encode(array(
+                            'status' => 'fail',
+                            'message' => 'Coupon is invalid as it has been used already',
+                            'at' => $verified_goods_list['branch']['b_name'],
+                            'when' => $this->datetimeMongotoReadable($verified_goods_list['date_added'])
+                        ));
                         exit();
                     }
                 } else {
                     if ($this->input->post('format') == 'json') {
                         /* valid, NOT redeemed = FAIL */
-                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is invalid as it is not yet redeemed'));
+                        echo json_encode(array(
+                            'status' => 'fail',
+                            'message' => 'Coupon is invalid as it is not yet redeemed'
+                        ));
                         exit();
                     }
                 }
@@ -1165,7 +1232,8 @@ class User extends MY_Controller
         $this->render_page('template_beforelogin');
     }
 
-    public function merchant_logout() {
+    public function merchant_logout()
+    {
         $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['form'] = 'merchant_verify';
@@ -1183,7 +1251,8 @@ class User extends MY_Controller
         $this->render_page('template_beforelogin');
     }
 
-    public function player_reset_password($code='') {
+    public function player_reset_password($code = '')
+    {
         $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = 'Reset Password';
@@ -1210,53 +1279,57 @@ class User extends MY_Controller
         }
 
         $sess_data = array(
-            'player'=>$player
+            'player' => $player
         );
         $this->session->set_userdata($sess_data);
 
-        if($this->session->userdata('player')) {
+        if ($this->session->userdata('player')) {
 
 
             $player_info = $this->Player_model->getPlayerById($player['pb_player_id']);
             $inhibited_str = $player_info['username'];
             $setting = $this->Setting_model->retrieveSetting($player_info);
-            if (isset($setting['password_policy'])){
+            if (isset($setting['password_policy'])) {
                 $password_policy = $setting['password_policy'];
                 $rule = 'trim|required|xss_clean|check_space|max_length[40]';
-                if ($password_policy['min_char'] && $password_policy['min_char'] > 0){
-                    $rule = $rule.'|'.'min_length['.$password_policy['min_char'].']';
+                if ($password_policy['min_char'] && $password_policy['min_char'] > 0) {
+                    $rule = $rule . '|' . 'min_length[' . $password_policy['min_char'] . ']';
                     $this->data['min_length'] = $password_policy['min_char'];
                 }
-                if ($password_policy['alphabet'] && $password_policy['numeric']){
-                    $rule = $rule.'|callback_require_at_least_number_and_alphabet';
-                }
-                elseif ($password_policy['alphabet']){
-                    $rule = $rule.'|callback_require_at_least_alphabet';
-                }elseif($password_policy['numeric']){
-                    $rule = $rule.'|callback_require_at_least_number';
+                if ($password_policy['alphabet'] && $password_policy['numeric']) {
+                    $rule = $rule . '|callback_require_at_least_number_and_alphabet';
+                } elseif ($password_policy['alphabet']) {
+                    $rule = $rule . '|callback_require_at_least_alphabet';
+                } elseif ($password_policy['numeric']) {
+                    $rule = $rule . '|callback_require_at_least_number';
                 }
 
-                if ($password_policy['user_in_password'] && ($inhibited_str != '')){
-                    $rule = $rule.'|callback_word_in_password['.$inhibited_str.']';
+                if ($password_policy['user_in_password'] && ($inhibited_str != '')) {
+                    $rule = $rule . '|callback_word_in_password[' . $inhibited_str . ']';
                 }
                 $this->form_validation->set_rules('password', $this->lang->line('form_password'), $rule);
 
             } else {
-                $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[8]|max_length[40]|xss_clean|check_space');
+                $this->form_validation->set_rules('password', $this->lang->line('form_password'),
+                    'trim|required|min_length[8]|max_length[40]|xss_clean|check_space');
             }
 
-            $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+            $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'),
+                'required|matches[password]');
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                if($this->form_validation->run()) {
+                if ($this->form_validation->run()) {
                     $new_password = $this->input->post('password');
 
                     $this->Player_model->setPlayerPasswordByPlayerId($player['pb_player_id'], $new_password);
                     $this->Player_model->deletePasswordResetCode($code);
                     $this->session->unset_userdata('user');
 
-                    if($this->input->post('format') == 'json'){
-                        echo json_encode(array('status' => 'success', 'message' => 'You password has been changed. You can login again with new password.'));
+                    if ($this->input->post('format') == 'json') {
+                        echo json_encode(array(
+                            'status' => 'success',
+                            'message' => 'You password has been changed. You can login again with new password.'
+                        ));
                         exit();
                     }
 
@@ -1264,8 +1337,8 @@ class User extends MY_Controller
                     $this->data['message'] = 'You password has been changed. You can login again with new password.';
                     $this->data['main'] = 'partial/something_wrong';
                     $this->render_page('template_beforelogin');
-                }else{
-                    if($this->input->post('format') == 'json'){
+                } else {
+                    if ($this->input->post('format') == 'json') {
                         echo json_encode(array('status' => 'error', 'message' => validation_errors()));
                         exit();
                     }
@@ -1283,7 +1356,8 @@ class User extends MY_Controller
         }
     }
 
-    public function player_reset_password_complete() {
+    public function player_reset_password_complete()
+    {
         $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = 'Reset Password';
@@ -1294,24 +1368,29 @@ class User extends MY_Controller
         $this->render_page('template_beforelogin');
     }
 
-    private function findGoodsToPlayerByGoodsId($goods_id, $goods_list) {
+    private function findGoodsToPlayerByGoodsId($goods_id, $goods_list)
+    {
         foreach ($goods_list as $goods) {
-            if ($goods['goods_id'] == $goods_id) return $goods;
+            if ($goods['goods_id'] == $goods_id) {
+                return $goods;
+            }
         }
-        throw new Exception('Cannot find goods record given goods_id: '.$goods_id);
+        throw new Exception('Cannot find goods record given goods_id: ' . $goods_id);
     }
 
-    private function email($to, $subject, $message) {
+    private function email($to, $subject, $message)
+    {
         $this->amazon_ses->from(EMAIL_FROM, 'Playbasis');
         $this->amazon_ses->to($to);
-        $this->amazon_ses->bcc(array(EMAIL_FROM,'pascal@playbasis.com'));
+        $this->amazon_ses->bcc(array(EMAIL_FROM, 'pascal@playbasis.com'));
         $this->amazon_ses->subject($subject);
         $this->amazon_ses->message($message);
         $this->amazon_ses->send();
     }
 
-    public function edit_account(){
-        if($this->session->userdata('user_id')){
+    public function edit_account()
+    {
+        if ($this->session->userdata('user_id')) {
 
             $this->data['message'] = null;
             $user_id = $this->session->userdata('user_id');
@@ -1320,7 +1399,7 @@ class User extends MY_Controller
             $this->data['title'] = $this->lang->line('text_edit_account');
             $this->data['form'] = 'user/edit_account';
 
-            $this->data['user_info'] = $this->User_model->getUserInfo($user_id);            
+            $this->data['user_info'] = $this->User_model->getUserInfo($user_id);
 
             if ($this->input->post('image')) {
                 $this->data['image'] = $this->input->post('image');
@@ -1330,42 +1409,47 @@ class User extends MY_Controller
                 $this->data['image'] = 'no_image.jpg';
             }
 
-            if ($this->data['image']){
+            if ($this->data['image']) {
                 $info = pathinfo($this->data['image']);
-                if(isset($info['extension'])){
+                if (isset($info['extension'])) {
                     $extension = $info['extension'];
-                    $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
-                    $this->data['thumb'] = S3_IMAGE.$new_image;
-                }else{
-                    $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                    $new_image = 'cache/' . utf8_substr($this->data['image'], 0,
+                            utf8_strrpos($this->data['image'], '.')) . '-100x100.' . $extension;
+                    $this->data['thumb'] = S3_IMAGE . $new_image;
+                } else {
+                    $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
                 }
-            }else{
-                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+            } else {
+                $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
             }
 
             $this->data['usergroup_name'] = $this->User_model->getUserGroupNameForUser($user_id);
 
-            $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
-            $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
-            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[40]|xss_clean|check_space');
-            $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'matches[password]');
+            $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'),
+                'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'),
+                'trim|required|min_length[3]|max_length[40]|xss_clean');
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'),
+                'trim|min_length[3]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'),
+                'matches[password]');
 
-            if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $data = array(
-                    'firstname'=>$this->input->post('firstname'),
-                    'lastname'=>$this->input->post('lastname'),
-                    'password'=>$this->input->post('password'),
-                    'confirm_password' =>$this->input->post('password_confirm'),
-                    'edit_account'=>true,
+                    'firstname' => $this->input->post('firstname'),
+                    'lastname' => $this->input->post('lastname'),
+                    'password' => $this->input->post('password'),
+                    'confirm_password' => $this->input->post('password_confirm'),
+                    'edit_account' => true,
                 );
-                if($this->input->post('image') != "no_image.jpg"){
-                    $data['image'] =$this->input->post('image');
+                if ($this->input->post('image') != "no_image.jpg") {
+                    $data['image'] = $this->input->post('image');
                 }
-                if($this->input->post('image') == ''){
+                if ($this->input->post('image') == '') {
                     $data['image'] = '';
                 }
-                if($this->form_validation->run()){
-                    if($this->User_model->editUser($user_id, $data)){
+                if ($this->form_validation->run()) {
+                    if ($this->User_model->editUser($user_id, $data)) {
                         $this->data['success'] = $this->lang->line('text_success_update');
                     }
                 }
@@ -1376,33 +1460,35 @@ class User extends MY_Controller
         }
     }
 
-    public function forgot_password(){
+    public function forgot_password()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'register';
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_forgot_password'] = $this->lang->line('heading_forgot_password');
         $this->data['form'] = 'user/forgot_password';
-        
-        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|check_space');
+
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'),
+            'trim|valid_email|xss_clean|required|check_space');
 
         $this->data['message'] = null;
 
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            if($this->form_validation->run() && $this->data['message'] == null){
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($this->form_validation->run() && $this->data['message'] == null) {
                 $check_email = $this->User_model->findEmail($this->input->post());
 
-                if($check_email){
-                    $random_key = get_random_password(8,8);
+                if ($check_email) {
+                    $random_key = get_random_password(8, 8);
                     $this->User_model->insertRandomPasswordKey($random_key, $check_email[0]['_id']);
                     $email = $check_email[0]['email'];
 
                     $this->load->library('email');
                     $this->load->library('parser');
-               
+
                     $data = array(
-                        'url' => site_url('reset_password?key='.$random_key),
-                        'base_url' =>site_url()
-                        );
+                        'url' => site_url('reset_password?key=' . $random_key),
+                        'base_url' => site_url()
+                    );
 
                     $config['mailtype'] = 'html';
                     $config['charset'] = 'utf-8';
@@ -1416,8 +1502,11 @@ class User extends MY_Controller
                     $this->amazon_ses->message($htmlMessage);
                     $this->amazon_ses->send();
 
-                    if($this->input->post('format') == 'json'){
-                        echo json_encode(array('status' => 'success', 'message' => 'A link has been sent to your email, please click on it and change your password.'));
+                    if ($this->input->post('format') == 'json') {
+                        echo json_encode(array(
+                            'status' => 'success',
+                            'message' => 'A link has been sent to your email, please click on it and change your password.'
+                        ));
                         exit();
                     }
 
@@ -1425,10 +1514,10 @@ class User extends MY_Controller
                     $this->data['message'] = 'Please click on it and change your password.';
                     $this->data['main'] = 'partial/something_wrong';
                     $this->render_page('template_beforelogin');
-                }else{
+                } else {
                     // echo "<script>alert('The email was not found in our server, please make sure you have typed it correctly.');</script>";
                     // $this->data['message'] = $this->lang->line('error_no_email');
-                    if($this->input->post('format') == 'json'){
+                    if ($this->input->post('format') == 'json') {
                         echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_no_email')));
                         exit();
                     }
@@ -1436,8 +1525,8 @@ class User extends MY_Controller
 //                    redirect('forgot_password', 'refresh');
                     redirect('login#forgotpassword', 'refresh');
                 }
-            }else{
-                if($this->input->post('format') == 'json'){
+            } else {
+                if ($this->input->post('format') == 'json') {
                     echo json_encode(array('status' => 'error', 'message' => validation_errors()));
                     exit();
                 }
@@ -1451,17 +1540,18 @@ class User extends MY_Controller
         redirect('login#forgotpassword', 'refresh');
     }
 
-    public function reset_password(){
-        if(isset($_GET['key'])){
+    public function reset_password()
+    {
+        if (isset($_GET['key'])) {
             $random_key = $_GET['key'];
             $user = $this->User_model->checkRandomPasswordKey($random_key);
             $data = array(
-                'user'=>$user
-                );
+                'user' => $user
+            );
             $this->session->set_userdata($data);
         }
 
-        if($this->session->userdata('user')){
+        if ($this->session->userdata('user')) {
 
             $this->data['meta_description'] = $this->lang->line('meta_description');
             $this->data['main'] = 'register';
@@ -1469,29 +1559,34 @@ class User extends MY_Controller
             $this->data['heading_forgot_password'] = $this->lang->line('heading_forgot_password');
             $this->data['form'] = 'user/reset_password';
 
-            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[5]|max_length[40]|xss_clean|check_space');
-            $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'),
+                'trim|required|min_length[5]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'),
+                'required|matches[password]');
 
-            if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-                if($this->form_validation->run()){
+                if ($this->form_validation->run()) {
                     $new_password = $this->input->post('password');
 //                    $user_id = $this->session->userdata('user')[0]['_id'];
                     $user_id = $this->session->userdata('user');
                     $this->User_model->insertNewPassword($user_id[0]['_id'], $new_password);
                     $this->session->unset_userdata('user');
 
-                    if($this->input->post('format') == 'json'){
-                        echo json_encode(array('status' => 'success', 'message' => 'Your password has been changed! We will redirect you to our login page.'));
+                    if ($this->input->post('format') == 'json') {
+                        echo json_encode(array(
+                            'status' => 'success',
+                            'message' => 'Your password has been changed! We will redirect you to our login page.'
+                        ));
                         exit();
                     }
 
                     $this->data['topic_message'] = 'Your password has been changed!';
-                    $this->data['message'] = 'You will click <a href="'.site_url().'">back</a> go to our login page.';
+                    $this->data['message'] = 'You will click <a href="' . site_url() . '">back</a> go to our login page.';
                     $this->data['main'] = 'partial/something_wrong';
                     $this->render_page('template_beforelogin');
-                }else{
-                    if($this->input->post('format') == 'json'){
+                } else {
+                    if ($this->input->post('format') == 'json') {
                         echo json_encode(array('status' => 'error', 'message' => validation_errors()));
                         exit();
                     }
@@ -1501,7 +1596,7 @@ class User extends MY_Controller
 
             $this->data['main'] = 'reset_password_form';
             $this->render_page('template_beforelogin');
-        }else{
+        } else {
             $this->data['topic_message'] = 'The link has already been used.';
             $this->data['message'] = 'Please contact Playbasis.';
             $this->data['main'] = 'partial/something_wrong';
@@ -1514,9 +1609,8 @@ class User extends MY_Controller
         $username = $this->input->post('username');
         $password = $this->input->post('password');
         $site_slug = $this->input->post('site_slug');
-        $result = $this->User_model->cms_login($username,$password);
-        if(isset($result))
-        {
+        $result = $this->User_model->cms_login($username, $password);
+        if (isset($result)) {
             $user = $this->User_model->getUserInfo($result);
             $client = $this->User_model->getClientIdByUserId($user['_id']);
             $cms = $this->CMS_model->getCmsBySiteSlug($site_slug);
@@ -1526,7 +1620,7 @@ class User extends MY_Controller
             $permission = $userGroup['permission'];
             $modify = $permission['modify'];
 
-            $editor = array_search('cms',$modify) != -1 ? true : false;
+            $editor = array_search('cms', $modify) != -1 ? true : false;
 
             $role = $editor ? 'editor' : 'contributor';
             $response = array(
@@ -1535,16 +1629,17 @@ class User extends MY_Controller
                 'site_slug' => $site_slug,
                 'role' => $role
             );
-            echo json_encode(array('status' => 'success', 'message' => validation_errors(),'response' => $response));
-        }else
-        {
+            echo json_encode(array('status' => 'success', 'message' => validation_errors(), 'response' => $response));
+        } else {
             echo json_encode(array('status' => 'failed'));
         }
     }
-    public function checksession(){
-        if($this->session->userdata('user_id')){
+
+    public function checksession()
+    {
+        if ($this->session->userdata('user_id')) {
             echo json_encode(array("status" => "login"));
-        }else{
+        } else {
             echo json_encode(array("status" => "logout"));
         }
     }
@@ -1562,6 +1657,7 @@ class User extends MY_Controller
         }
         return $dateTimeMongo;
     }
+
     public function require_at_least_number_and_alphabet($str)
     {
         if (preg_match('#[0-9]#', $str) && preg_match('#[a-zA-Z]#', $str)) {
@@ -1591,9 +1687,10 @@ class User extends MY_Controller
             'The %s field require at least one alphabet');
         return false;
     }
+
     public function word_in_password($str, $val)
     {
-        if (strpos($str,$val) !== false) {
+        if (strpos($str, $val) !== false) {
             $this->form_validation->set_message('word_in_password',
                 'The %s field disallow to contain logon IDs');
             return false;
@@ -1602,10 +1699,12 @@ class User extends MY_Controller
     }
 }
 
-function user_index_goods_group($obj) {
+function user_index_goods_group($obj)
+{
     return $obj['goods_group'];
 }
 
-function user_index_goods_id($obj) {
+function user_index_goods_id($obj)
+{
     return $obj['goods_id'];
 }

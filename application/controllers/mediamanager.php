@@ -3,7 +3,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
-define('MAX_UPLOADED_FILE_SIZE', 3*1024*1024);
+define('MAX_UPLOADED_FILE_SIZE', 3 * 1024 * 1024);
 
 class MediaManager extends MY_Controller
 {
@@ -104,10 +104,13 @@ class MediaManager extends MY_Controller
 
             if (!$this->validateAccess()) {
                 $this->output->set_status_header('401');
-                $this->output->set_output(json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access'))));
+                $this->output->set_output(json_encode(array(
+                    'status' => 'error',
+                    'message' => $this->lang->line('error_access')
+                )));
             }
 
-            switch($_SERVER['REQUEST_METHOD']){
+            switch ($_SERVER['REQUEST_METHOD']) {
                 case "GET":
                     if (isset($fileId)) {
                         try {
@@ -154,9 +157,9 @@ class MediaManager extends MY_Controller
                         $query_data = $this->input->get(null, true);
 
                         $result = $this->Image_model->retrieveImages($client_id, $site_id, $query_data);
-                        foreach($result as &$document){
-                            if(isset($document['_id'])){
-                                $document['_id'] = $document['_id']."";
+                        foreach ($result as &$document) {
+                            if (isset($document['_id'])) {
+                                $document['_id'] = $document['_id'] . "";
                             }
                             if (isset($document['date_added'])) {
                                 $document['date_added'] = datetimeMongotoReadable($document['date_added']);
@@ -206,7 +209,10 @@ class MediaManager extends MY_Controller
                                 $response = array('status' => 'success');
                             } else {
                                 $this->output->set_status_header('404');
-                                $response = array('status' => 'error', 'message' => $this->lang->line('error_no_contents'));
+                                $response = array(
+                                    'status' => 'error',
+                                    'message' => $this->lang->line('error_no_contents')
+                                );
                             }
                         } catch (Exception $e) {
                             $this->output->set_status_header('400');
@@ -226,17 +232,20 @@ class MediaManager extends MY_Controller
         }
     }
 
-    public function image() {
+    public function image()
+    {
         if ($this->input->get('image')) {
             //thumbnail
             $this->Image_model->resize($this->input->get('image'), 40, 40);
             $this->Image_model->resize($this->input->get('image'), 50, 50);
             $this->Image_model->resize($this->input->get('image'), 140, 140);
-            $this->output->set_output($this->Image_model->resize(html_entity_decode($this->input->get('image'), ENT_QUOTES, 'UTF-8'), 100, 100));
+            $this->output->set_output($this->Image_model->resize(html_entity_decode($this->input->get('image'),
+                ENT_QUOTES, 'UTF-8'), 100, 100));
         }
     }
 
-    public function files() {
+    public function files()
+    {
         $json = array();
 
         if (!empty($this->input->post['directory'])) {
@@ -286,8 +295,8 @@ class MediaManager extends MY_Controller
 
                     $json[] = array(
                         'filename' => basename($file),
-                        'file'     => utf8_substr($file, utf8_strlen(DIR_IMAGE . 'data/')),
-                        'size'     => round(utf8_substr($size, 0, utf8_strpos($size, '.') + 4), 2) . $suffix[$i]
+                        'file' => utf8_substr($file, utf8_strlen(DIR_IMAGE . 'data/')),
+                        'size' => round(utf8_substr($size, 0, utf8_strpos($size, '.') + 4), 2) . $suffix[$i]
                     );
                 }
             }
@@ -296,19 +305,20 @@ class MediaManager extends MY_Controller
         $this->output->set_output(json_encode($json));
     }
 
-    public function upload_s3() {
+    public function upload_s3()
+    {
 
         $json = array();
 
-        if ($this->input->post('directory') || $this->input->post('directory')=="") {
+        if ($this->input->post('directory') || $this->input->post('directory') == "") {
 
             if ($_FILES['file'] && $_FILES['file']['tmp_name']) {
                 $filename = basename(html_entity_decode($_FILES['file']['name'], ENT_QUOTES, 'UTF-8'));
 
-                $t = explode('.' , $filename);
+                $t = explode('.', $filename);
                 $type = end($t);
 
-                $filename = md5($this->User_model->getClientId().$this->User_model->getSiteId().$filename).".".$type;
+                $filename = md5($this->User_model->getClientId() . $this->User_model->getSiteId() . $filename) . "." . $type;
 
                 if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
                     $json['error'] = $this->lang->line('error_filename');
@@ -329,13 +339,13 @@ class MediaManager extends MY_Controller
                 $image_height = $image_info[1];
 
                 //if($image_width < 500 || $image_width >1000){
-                if($image_width > 2000){
+                if ($image_width > 2000) {
                     $json['error'] = $this->lang->line('error_width');
                     // $json['error'] = $image_height." ".$image_width;
                 }
 
                 //if($image_height < 500 || $image_height >1000){
-                if($image_height > 2000){
+                if ($image_height > 2000) {
                     $json['error'] = $this->lang->line('error_height');
                     // $json['error'] = $image_height." ".$image_width;
                 }
@@ -405,7 +415,10 @@ class MediaManager extends MY_Controller
             $this->s3->setEndpoint("s3-ap-southeast-1.amazonaws.com");
 
             //move the file
-            if ($this->s3->putObjectFile($_FILES['file']['tmp_name'], "elasticbeanstalk-ap-southeast-1-007834438823", rtrim('data/' . str_replace('../', '', $this->input->post('directory')), '/')."/". $filename, S3::ACL_PUBLIC_READ)) {
+            if ($this->s3->putObjectFile($_FILES['file']['tmp_name'], "elasticbeanstalk-ap-southeast-1-007834438823",
+                rtrim('data/' . str_replace('../', '', $this->input->post('directory')), '/') . "/" . $filename,
+                S3::ACL_PUBLIC_READ)
+            ) {
                 $url = rtrim(S3_IMAGE . 'data/' . str_replace('../', '', $this->input->post('directory')),
                         '/') . "/" . urlencode($filename);
                 @copy($url, $directory . '/' . $filename);
@@ -423,14 +436,14 @@ class MediaManager extends MY_Controller
                     MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT);
 
                 $json['success'] = $this->lang->line('text_uploaded');
-            }else{
+            } else {
                 $json['error'] = $this->lang->line('error_uploaded');
             }
         }
 
-        if(!isset($json['error'])){
+        if (!isset($json['error'])) {
             $this->output->set_status_header('200');
-        }else{
+        } else {
             $this->output->set_status_header('400');
         }
         $this->output->set_output(json_encode($json));

@@ -108,7 +108,7 @@ class Merchant_model extends MY_Model
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('desc', $data['desc']);
         $this->mongo_db->set('status', $data['status']);
-        
+
         $this->mongo_db->push(array('branches' => array('$each' => $data['branches'])));
 
         $this->mongo_db->set('date_modified', new MongoDate());
@@ -161,7 +161,7 @@ class Merchant_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->select(array('_id','branch_name','pin_code', 'status', 'date_modified'),null);
+        $this->mongo_db->select(array('_id', 'branch_name', 'pin_code', 'status', 'date_modified'), null);
 
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
@@ -171,8 +171,9 @@ class Merchant_model extends MY_Model
 
         $results = $this->mongo_db->get('playbasis_merchant_branch_to_client');
 
-        foreach($results as &$result)
-            $result['_id'] = $result['_id']."";
+        foreach ($results as &$result) {
+            $result['_id'] = $result['_id'] . "";
+        }
 
         return json_encode($results);
     }
@@ -350,7 +351,7 @@ class Merchant_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->select(array('_id','goods_group','branches_allow', 'status'),null);
+        $this->mongo_db->select(array('_id', 'goods_group', 'branches_allow', 'status'), null);
 
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));

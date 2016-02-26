@@ -1,26 +1,29 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function index_id($obj) {
+function index_id($obj)
+{
     return $obj['_id'];
 }
 
 class Action_model extends MY_Model
 {
-    public function getAction($action_id) {
+    public function getAction($action_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('_id',  new MongoID($action_id));
+        $this->mongo_db->where('_id', new MongoID($action_id));
         $results = $this->mongo_db->get("playbasis_action");
 
         return $results ? $results[0] : null;
     }
 
-    public function getActions($data){
+    public function getActions($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -61,7 +64,8 @@ class Action_model extends MY_Model
         return $results;
     }
 
-    public function getTotalActions(){
+    public function getTotalActions()
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $results = $this->mongo_db->count("playbasis_action");
@@ -69,33 +73,38 @@ class Action_model extends MY_Model
         return $results;
     }
 
-    public function getTotalActionReport($data) {
+    public function getTotalActionReport($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['username']) && $data['username'] != '') {
-            $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['username']))."/i");
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['username'])) . "/i");
             $this->mongo_db->where('username', $regex);
             $users1 = $this->mongo_db->get("playbasis_player");
 
-            $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
             $this->mongo_db->where('email', $data['username']);
             $users2 = $this->mongo_db->get("playbasis_player");
 
-            $this->mongo_db->where_in('pb_player_id', array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
+            $this->mongo_db->where_in('pb_player_id',
+                array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
         }
 
-        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
-        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '' ) {
-            $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lte' => new MongoDate(strtotime($data['date_expire']))));
+        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
+            $this->mongo_db->where('date_added', array(
+                '$gt' => new MongoDate(strtotime($data['date_start'])),
+                '$lte' => new MongoDate(strtotime($data['date_expire']))
+            ));
         }
 
         if (isset($data['action_id']) && $data['action_id'] != 0) {
-            $this->mongo_db->where('action_id',  new MongoID($data['action_id']));
+            $this->mongo_db->where('action_id', new MongoID($data['action_id']));
         }
 
         $results = $this->mongo_db->count("playbasis_validated_action_log");
@@ -104,78 +113,90 @@ class Action_model extends MY_Model
 
     }
 
-    public function getActionSiteInfo($action_id, $site_id) {
+    public function getActionSiteInfo($action_id, $site_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('action_id',  new MongoID($action_id));
-        $this->mongo_db->where('site_id',  new MongoID($site_id));
+        $this->mongo_db->where('action_id', new MongoID($action_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
         $results = $this->mongo_db->get("playbasis_action_to_client");
 
         return $results ? $results[0] : null;
     }
 
-     public function getActionsClient($data) {
-         $this->set_site_mongodb($this->session->userdata('site_id'));
+    public function getActionsClient($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
-         $this->mongo_db->select(array('action_id','name','description','icon','color','sort_order','status','date_added','date_modified'));
+        $this->mongo_db->select(array(
+            'action_id',
+            'name',
+            'description',
+            'icon',
+            'color',
+            'sort_order',
+            'status',
+            'date_added',
+            'date_modified'
+        ));
 
-         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
 
-         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-             $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
-             $this->mongo_db->where('name', $regex);
-         }
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
+            $this->mongo_db->where('name', $regex);
+        }
 
-         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
-             $this->mongo_db->where('status', (bool)$data['filter_status']);
-         }
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
 
-         $sort_data = array(
-             '_id',
-             'name',
-             'status',
-             'sort_order'
-         );
+        $sort_data = array(
+            '_id',
+            'name',
+            'status',
+            'sort_order'
+        );
 
-         if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
-             $order = -1;
-         } else {
-             $order = 1;
-         }
+        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
 
-         if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-             $this->mongo_db->order_by(array($data['sort'] => $order));
-         } else {
-             $this->mongo_db->order_by(array('name' => $order));
-         }
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
 
-         if (isset($data['start']) || isset($data['limit'])) {
-             if ($data['start'] < 0) {
-                 $data['start'] = 0;
-             }
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
 
-             if ($data['limit'] < 1) {
-                 $data['limit'] = 20;
-             }
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
 
-             $this->mongo_db->limit((int)$data['limit']);
-             $this->mongo_db->offset((int)$data['start']);
-         }
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
 
-         $results = $this->mongo_db->get("playbasis_action_to_client");
+        $results = $this->mongo_db->get("playbasis_action_to_client");
 
-         $actions = array();
-         $tmp = array();
-         foreach ($results as $result) {
-             if (!in_array($result['action_id'], $tmp)) {
-                 $a = $result;
-                 $actions[] = $a;
-                 $tmp[] = $result['action_id'];
-             }
-         }
+        $actions = array();
+        $tmp = array();
+        foreach ($results as $result) {
+            if (!in_array($result['action_id'], $tmp)) {
+                $a = $result;
+                $actions[] = $a;
+                $tmp[] = $result['action_id'];
+            }
+        }
 
-         return $actions;
-     }
+        return $actions;
+    }
 
     //dupicate function just count on getActionClient
     /*public function getTotalActionClient($data) {
@@ -208,16 +229,27 @@ class Action_model extends MY_Model
         return count($actions);
     }*/
 
-    public function getActionsSite($data) {
+    public function getActionsSite($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->select(array('action_id','name','description','icon','color','sort_order','status','date_added','date_modified'));
+        $this->mongo_db->select(array(
+            'action_id',
+            'name',
+            'description',
+            'icon',
+            'color',
+            'sort_order',
+            'status',
+            'date_added',
+            'date_modified'
+        ));
 
-        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -260,14 +292,15 @@ class Action_model extends MY_Model
         return $this->mongo_db->get("playbasis_action_to_client");
     }
 
-    public function getTotalActionsSite($data) {
+    public function getTotalActionsSite($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -278,33 +311,38 @@ class Action_model extends MY_Model
         return $this->mongo_db->count("playbasis_action_to_client");
     }
 
-    public function getActionReport($data) {
+    public function getActionReport($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['username']) && $data['username'] != '') {
-            $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['username']))."/i");
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['username'])) . "/i");
             $this->mongo_db->where('username', $regex);
             $users1 = $this->mongo_db->get("playbasis_player");
 
-            $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
             $this->mongo_db->where('email', $data['username']);
             $users2 = $this->mongo_db->get("playbasis_player");
 
-            $this->mongo_db->where_in('pb_player_id', array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
+            $this->mongo_db->where_in('pb_player_id',
+                array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
         }
 
-        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
-        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '' ) {
-            $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lte' => new MongoDate(strtotime($data['date_expire']))));
+        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
+            $this->mongo_db->where('date_added', array(
+                '$gt' => new MongoDate(strtotime($data['date_start'])),
+                '$lte' => new MongoDate(strtotime($data['date_expire']))
+            ));
         }
 
         if (isset($data['action_id']) && $data['action_id'] != 0) {
-            $this->mongo_db->where('action_id',  new MongoID($data['action_id']));
+            $this->mongo_db->where('action_id', new MongoID($data['action_id']));
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
@@ -326,20 +364,21 @@ class Action_model extends MY_Model
 
     }
 
-    public function getAllIcons(){
+    public function getAllIcons()
+    {
 
         $handle = fopen(base_url('stylesheet/custom/font-awesome.css'), 'r');
         $all_icons = array();
 
-        if($handle){
-            while(($line = fgets($handle)) != false){
+        if ($handle) {
+            while (($line = fgets($handle)) != false) {
 
                 $temp = explode(":before", $line);
-                if(count($temp) > 1){
+                if (count($temp) > 1) {
                     $all_icons[] = substr($temp[0], 1);
                 }
             }
-        }else{
+        } else {
             echo "File of the font-awesome.css not found";
         }
 
@@ -347,7 +386,8 @@ class Action_model extends MY_Model
         return $all_icons;
     }
 
-    public function addAction($data){
+    public function addAction($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
@@ -356,22 +396,23 @@ class Action_model extends MY_Model
         $init_dataset = $this->processActionDataSet($data['init_dataset']);
 
         $data_insert = array(
-                'name'=>utf8_strtolower($data['name']),
-                'description'=>$data['description'],
-                'icon'=>$data['icon'],
-                'color'=>$data['color'],
-                'sort_order'=>(int)$data['sort_order'],
-                'status'=>(bool)$data['status'],
-                'init_dataset'=>$init_dataset,
-                'date_added'=>$date_added,
-                'date_modified'=>$date_modified
-            );
+            'name' => utf8_strtolower($data['name']),
+            'description' => $data['description'],
+            'icon' => $data['icon'],
+            'color' => $data['color'],
+            'sort_order' => (int)$data['sort_order'],
+            'status' => (bool)$data['status'],
+            'init_dataset' => $init_dataset,
+            'date_added' => $date_added,
+            'date_modified' => $date_modified
+        );
 
         return $this->mongo_db->insert('playbasis_action', $data_insert);
 
     }
 
-    public function addActionToClient($data){
+    public function addActionToClient($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
@@ -380,25 +421,26 @@ class Action_model extends MY_Model
         $init_dataset = $this->processActionDataSet($data['init_dataset']);
 
         $data_insert = array(
-                'action_id'=>new MongoID($data['action_id']),
-                'client_id'=>new MongoID($data['client_id']),
-                'site_id'=>new MongoID($data['site_id']),
-                'name'=>utf8_strtolower($data['name']),
-                'description'=>$data['description'],
-                'icon'=>$data['icon'],
-                'color'=>$data['color'],
-                'init_dataset'=>$init_dataset,
-                'sort_order'=>(int)$data['sort_order'],
-                'status'=>(bool)$data['status'],
-                'date_added'=>$date_added,
-                'date_modified'=>$date_modified,
-                'is_custom' => true
-            );
+            'action_id' => new MongoID($data['action_id']),
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id']),
+            'name' => utf8_strtolower($data['name']),
+            'description' => $data['description'],
+            'icon' => $data['icon'],
+            'color' => $data['color'],
+            'init_dataset' => $init_dataset,
+            'sort_order' => (int)$data['sort_order'],
+            'status' => (bool)$data['status'],
+            'date_added' => $date_added,
+            'date_modified' => $date_modified,
+            'is_custom' => true
+        );
 
         return $this->mongo_db->insert('playbasis_action_to_client', $data_insert);
     }
 
-    public function delete($action_id){
+    public function delete($action_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($action_id));
@@ -406,39 +448,41 @@ class Action_model extends MY_Model
 
     }
 
-    public function deleteActionClient($action_id){
+    public function deleteActionClient($action_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoId($action_id));
         $this->mongo_db->delete('playbasis_action_to_client');
     }
 
-    public function editAction($action_id, $data){
+    public function editAction($action_id, $data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($action_id));
 
-        if(isset($data['name']) && !is_null($data['name'])){
+        if (isset($data['name']) && !is_null($data['name'])) {
             $this->mongo_db->set('name', utf8_strtolower($data['name']));
         }
 
-        if(isset($data['description']) && !is_null($data['description'])){
+        if (isset($data['description']) && !is_null($data['description'])) {
             $this->mongo_db->set('description', $data['description']);
         }
 
-        if(isset($data['sort_order']) && !is_null($data['sort_order'])){
+        if (isset($data['sort_order']) && !is_null($data['sort_order'])) {
             $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         }
 
-        if(isset($data['status']) && !is_null($data['status'])){
+        if (isset($data['status']) && !is_null($data['status'])) {
             $this->mongo_db->set('status', (bool)$data['status']);
         }
 
-        if(isset($data['icon']) && !is_null($data['icon'])){
+        if (isset($data['icon']) && !is_null($data['icon'])) {
             $this->mongo_db->set('icon', $data['icon']);
         }
 
-        if(isset($data['color']) && !is_null($data['color'])){
+        if (isset($data['color']) && !is_null($data['color'])) {
             $this->mongo_db->set('color', $data['color']);
         }
 
@@ -452,36 +496,37 @@ class Action_model extends MY_Model
 
     }
 
-    public function editActionToClient($action_id, $data){
+    public function editActionToClient($action_id, $data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('action_id', new MongoID($action_id));
 
-        if(isset($data['client_id']) && !is_null($data['client_id'])){
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));            
+        if (isset($data['client_id']) && !is_null($data['client_id'])) {
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         }
 
-        if(isset($data['name']) && !is_null($data['name'])){
+        if (isset($data['name']) && !is_null($data['name'])) {
             $this->mongo_db->set('name', utf8_strtolower($data['name']));
         }
 
-        if(isset($data['description']) && !is_null($data['description'])){
+        if (isset($data['description']) && !is_null($data['description'])) {
             $this->mongo_db->set('description', $data['description']);
         }
 
-        if(isset($data['sort_order']) && !is_null($data['sort_order'])){
+        if (isset($data['sort_order']) && !is_null($data['sort_order'])) {
             $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         }
 
-        if(isset($data['status']) && !is_null($data['status'])){
+        if (isset($data['status']) && !is_null($data['status'])) {
             $this->mongo_db->set('status', (bool)$data['status']);
         }
 
-        if(isset($data['icon']) && !is_null($data['icon'])){
+        if (isset($data['icon']) && !is_null($data['icon'])) {
             $this->mongo_db->set('icon', $data['icon']);
         }
 
-        if(isset($data['color']) && !is_null($data['color'])){
+        if (isset($data['color']) && !is_null($data['color'])) {
             $this->mongo_db->set('color', $data['color']);
         }
 
@@ -491,21 +536,20 @@ class Action_model extends MY_Model
 
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
-        if(isset($data['client_id']) && !is_null($data['client_id'])){
+        if (isset($data['client_id']) && !is_null($data['client_id'])) {
             $update = $this->mongo_db->update('playbasis_action_to_client');
-        }
-        else{
+        } else {
             $update = $this->mongo_db->update_all('playbasis_action_to_client');
         }
 
 
         // update rule engine //
         $this->mongo_db->where(array('jigsaw_set.specific_id' => $action_id));
-        if(isset($data['name']) && !is_null($data['name'])){
+        if (isset($data['name']) && !is_null($data['name'])) {
             $this->mongo_db->set(array('jigsaw_set.$.name' => utf8_strtolower($data['name'])));
             $this->mongo_db->set(array('jigsaw_set.$.config.action_name' => utf8_strtolower($data['name'])));
         }
-        if(isset($data['description']) && !is_null($data['description'])){
+        if (isset($data['description']) && !is_null($data['description'])) {
             $this->mongo_db->set(array('jigsaw_set.$.description' => utf8_strtolower($data['description'])));
         }
         $this->mongo_db->update_all('playbasis_rule');
@@ -514,7 +558,8 @@ class Action_model extends MY_Model
         return $update;
     }
 
-    public function checkActionExists($data){
+    public function checkActionExists($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('name', utf8_strtolower($data['name']));
@@ -523,7 +568,8 @@ class Action_model extends MY_Model
         return $result ? $result[0] : null;
     }
 
-    public function checkActionClientExists($data){
+    public function checkActionClientExists($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('name', utf8_strtolower($data['name']));
@@ -533,15 +579,16 @@ class Action_model extends MY_Model
         return $result ? $result[0] : null;
     }
 
-    public function increaseOrderByOne($action_id){
+    public function increaseOrderByOne($action_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoId($action_id));
         $theAction = $this->mongo_db->get('playbasis_action');
 
         $currentSort = $theAction[0]['sort_order'];
-        
-        $newSort = $currentSort+1;
+
+        $newSort = $currentSort + 1;
 
         $this->mongo_db->where('_id', new MongoID($action_id));
         $this->mongo_db->set('sort_order', $newSort);
@@ -549,8 +596,9 @@ class Action_model extends MY_Model
 
     }
 
-    
-    public function increaseOrderByOneClient($action_id, $client_id){
+
+    public function increaseOrderByOneClient($action_id, $client_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('action_id', new MongoId($action_id));
@@ -558,8 +606,8 @@ class Action_model extends MY_Model
         $theAction = $this->mongo_db->get('playbasis_action_to_client');
 
         $currentSort = $theAction[0]['sort_order'];
-        
-        $newSort = $currentSort+1;
+
+        $newSort = $currentSort + 1;
 
         $this->mongo_db->where('action_id', new MongoID($action_id));
         $this->mongo_db->where('client_id', new MongoId($client_id));
@@ -568,16 +616,17 @@ class Action_model extends MY_Model
 
     }
 
-    public function decreaseOrderByOne($action_id){
+    public function decreaseOrderByOne($action_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoId($action_id));
         $theAction = $this->mongo_db->get('playbasis_action');
 
         $currentSort = $theAction[0]['sort_order'];
-        
-        if($currentSort != 0){
-            $newSort = $currentSort-1;    
+
+        if ($currentSort != 0) {
+            $newSort = $currentSort - 1;
 
             $this->mongo_db->where('_id', new MongoID($action_id));
             $this->mongo_db->set('sort_order', $newSort);
@@ -585,7 +634,8 @@ class Action_model extends MY_Model
         }
     }
 
-    public function decreaseOrderByOneClient($action_id, $client_id){
+    public function decreaseOrderByOneClient($action_id, $client_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('action_id', new MongoId($action_id));
@@ -593,9 +643,9 @@ class Action_model extends MY_Model
         $theAction = $this->mongo_db->get('playbasis_action_to_client');
 
         $currentSort = $theAction[0]['sort_order'];
-        
-        if($currentSort != 0){
-            $newSort = $currentSort-1;    
+
+        if ($currentSort != 0) {
+            $newSort = $currentSort - 1;
 
             $this->mongo_db->where('action_id', new MongoID($action_id));
             $this->mongo_db->where('client_id', new MongoId($client_id));
@@ -604,35 +654,36 @@ class Action_model extends MY_Model
         }
     }
 
-    public function getActionsForDownload($data){
+    public function getActionsForDownload($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        if(isset($data['username']) && $data['username'] != null){
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['username']))."/i");
+        if (isset($data['username']) && $data['username'] != null) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['username'])) . "/i");
             $this->mongo_db->where('username', $regex);
             $player_info = $this->mongo_db->get('playbasis_player');
-            $player_id = ($player_info)?$player_info[0]['_id']:null;
+            $player_id = ($player_info) ? $player_info[0]['_id'] : null;
         }
 
 
-        if(isset($data['site_id'])&&$data['site_id']!=null){
+        if (isset($data['site_id']) && $data['site_id'] != null) {
             $this->mongo_db->where('site_id', $data['site_id']);
-            
+
         }
 
-        if(isset($data['client_id'])&&$data['client_id']!=null){
+        if (isset($data['client_id']) && $data['client_id'] != null) {
             $this->mongo_db->where('client_id', $data['client_id']);
-            
+
         }
 
-        if(isset($player_id) && $player_id!=null){
+        if (isset($player_id) && $player_id != null) {
             $this->mongo_db->where('pb_player_id', $player_id);
             echo $data['client_id'];
         }
 
-        if(isset($data['action_id'])&&$data['action_id']!=null){
+        if (isset($data['action_id']) && $data['action_id'] != null) {
             $this->mongo_db->where('action_id', $data['action_id']);
-        }        
+        }
 
         $results = $this->mongo_db->get('playbasis_action_log');
 
@@ -645,28 +696,31 @@ class Action_model extends MY_Model
      * @param bool $includeDisable
      * @return array
      */
-    public function getAllActions($includeDisable=false) {
+    public function getAllActions($includeDisable = false)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        if ($includeDisable)
-            $this->mongo_db->where('status',  true);
+        if ($includeDisable) {
+            $this->mongo_db->where('status', true);
+        }
         return $this->mongo_db->get("playbasis_action");
     }
-    private function processActionDataSet($init_dataset){
-        if (isset($init_dataset) && !is_null($init_dataset))
-        {
-            foreach($init_dataset as $key => $data_set){
+
+    private function processActionDataSet($init_dataset)
+    {
+        if (isset($init_dataset) && !is_null($init_dataset)) {
+            foreach ($init_dataset as $key => $data_set) {
                 $temp[$key] = (object)array(
                     'param_name' => $data_set['param_name'],
-                    'label' => isset($data_set['label'])?$data_set['label']:'',
+                    'label' => isset($data_set['label']) ? $data_set['label'] : '',
                     'placeholder' => '',
                     'sortOrder' => $key,
                     'field_type' => 'text',
                     'value' => '',
-                    'required' => isset($data_set['required'])?$data_set['required']:false
+                    'required' => isset($data_set['required']) ? $data_set['required'] : false
                 );
             }
-        }else {
+        } else {
             $temp[0] = (object)array(
                 'param_name' => 'url',
                 'label' => 'URL or filter String',
@@ -680,4 +734,5 @@ class Action_model extends MY_Model
         return $temp;
     }
 }
+
 ?>

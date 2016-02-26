@@ -1,7 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Lithium_model extends MY_Model {
+class Lithium_model extends MY_Model
+{
 
     protected $events = array(
         array('id' => 'UserRegistered', 'type' => 'user', 'description' => 'User has registered'),
@@ -20,16 +21,28 @@ class Lithium_model extends MY_Model {
         array('id' => 'SendPrivateMessage', 'type' => 'message', 'description' => 'Private message has been sent'),*/
     );
 
-    public function hasValidRegistration($site_id) {
+    public function hasValidRegistration($site_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where_ne('deleted', true);
         return $this->mongo_db->count("playbasis_lithium_to_client") > 0;
     }
 
-    public function getRegistration($site_id) {
+    public function getRegistration($site_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->select(array('lithium_url', 'lithium_username', 'lithium_password', 'http_auth_username', 'http_auth_password', 'tenant_id', 'lithium_client_id', 'lithium_client_secret', 'token'));
+        $this->mongo_db->select(array(
+            'lithium_url',
+            'lithium_username',
+            'lithium_password',
+            'http_auth_username',
+            'http_auth_password',
+            'tenant_id',
+            'lithium_client_id',
+            'lithium_client_secret',
+            'token'
+        ));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->limit(1);
@@ -37,7 +50,8 @@ class Lithium_model extends MY_Model {
         return $results ? $results[0] : null;
     }
 
-    public function insertRegistration($site_id, $lithium) {
+    public function insertRegistration($site_id, $lithium)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         return $this->mongo_db->insert('playbasis_lithium_to_client', array(
@@ -52,20 +66,26 @@ class Lithium_model extends MY_Model {
         ));
     }
 
-    public function updateRegistration($site_id, $lithium) {
+    public function updateRegistration($site_id, $lithium)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->set('lithium_url', $lithium['lithium_url']);
         $this->mongo_db->set('lithium_username', $lithium['lithium_username']);
         $this->mongo_db->set('lithium_password', $lithium['lithium_password']);
-        if (isset($lithium['http_auth_username'])) $this->mongo_db->set('http_auth_username', $lithium['http_auth_username']);
-        if (isset($lithium['http_auth_password'])) $this->mongo_db->set('http_auth_password', $lithium['http_auth_password']);
+        if (isset($lithium['http_auth_username'])) {
+            $this->mongo_db->set('http_auth_username', $lithium['http_auth_username']);
+        }
+        if (isset($lithium['http_auth_password'])) {
+            $this->mongo_db->set('http_auth_password', $lithium['http_auth_password']);
+        }
         $this->mongo_db->set('date_modified', $date_modified);
         $this->mongo_db->update('playbasis_lithium_to_client');
     }
 
-    public function updateToken($site_id, $token) {
+    public function updateToken($site_id, $token)
+    {
         $this->set_site_mongodb($site_id);
         $d = new MongoDate(time());
         $token['date_start'] = $d;
@@ -77,23 +97,32 @@ class Lithium_model extends MY_Model {
         $this->mongo_db->update("playbasis_lithium_to_client");
     }
 
-    public function listEvents($site_id) {
+    public function listEvents($site_id)
+    {
         return $this->events;
     }
 
-    public function getEventType($eventId) {
+    public function getEventType($eventId)
+    {
         foreach ($this->events as $event) {
-            if ($event['id'] == $eventId) return $event['type'];
+            if ($event['id'] == $eventId) {
+                return $event['type'];
+            }
         }
         return false;
     }
 
-    public function saveSubscriptions($site_id, $subscriptions) {
+    public function saveSubscriptions($site_id, $subscriptions)
+    {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->delete_all("playbasis_lithium_subscription");
-        if (!$subscriptions) return null;
-        return $this->mongo_db->batch_insert('playbasis_lithium_subscription', $subscriptions, array("w" => 0, "j" => false));
+        if (!$subscriptions) {
+            return null;
+        }
+        return $this->mongo_db->batch_insert('playbasis_lithium_subscription', $subscriptions,
+            array("w" => 0, "j" => false));
     }
 }
+
 ?>

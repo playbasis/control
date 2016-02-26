@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Level extends MY_Controller
 {
     public function __construct()
@@ -8,7 +9,7 @@ class Level extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -19,10 +20,11 @@ class Level extends MY_Controller
         $this->lang->load("level", $lang['folder']);
     }
 
-    public function index() {
+    public function index()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -33,10 +35,11 @@ class Level extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -47,7 +50,8 @@ class Level extends MY_Controller
         $this->getList($offset);
     }
 
-    public function insert() {
+    public function insert()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -55,8 +59,10 @@ class Level extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'level/insert';
 
-        $this->form_validation->set_rules('exp', $this->lang->line('entry_exp'), 'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
-        $this->form_validation->set_rules('level', $this->lang->line('entry_level'), 'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('exp', $this->lang->line('entry_exp'),
+            'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('level', $this->lang->line('entry_level'),
+            'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         // $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('level_title', "", '');
 
@@ -68,27 +74,27 @@ class Level extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
-                if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
+                if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
                     $data = $this->input->post();
                     $data['client_id'] = $this->User_model->getClientId();
                     $data['site_id'] = $this->User_model->getSiteId();
 
                     $checkLevelExists = $this->Level_model->checkLevelExists($data);
 
-                    if(!$checkLevelExists){
+                    if (!$checkLevelExists) {
                         $insertLevel = $this->Level_model->addLevelSite($data);
 
-                        if($insertLevel){
+                        if ($insertLevel) {
                             $this->session->set_flashdata('success', $this->lang->line('text_success'));
                             redirect('/level', 'refresh');
-                        }else{
-                            $this->data['message'] = $this->lang->line('error_exp_level');          
-                        }    
-                    }else{
+                        } else {
+                            $this->data['message'] = $this->lang->line('error_exp_level');
+                        }
+                    } else {
                         $this->data['message'] = $this->lang->line('error_exp_level_exists');
                     }
-                }else{
+                } else {
                     $this->Level_model->addLevel($this->input->post());
                 }
             }
@@ -97,19 +103,22 @@ class Level extends MY_Controller
         $this->getForm();
     }
 
-    public function update($level_id) {
+    public function update($level_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'level/update/'.$level_id;
+        $this->data['form'] = 'level/update/' . $level_id;
 
-        $this->form_validation->set_rules('exp', $this->lang->line('entry_exp'), 'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
-        $this->form_validation->set_rules('level', $this->lang->line('entry_level'), 'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('exp', $this->lang->line('entry_exp'),
+            'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('level', $this->lang->line('entry_level'),
+            'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         // $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('level_title', "", '');
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $this->data['message'] = null;
 
@@ -117,42 +126,43 @@ class Level extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 $checkLevelExistsEdit = $this->Level_model->checkLevelExistsEdit($this->input->post(), $level_id);
 
-                if(!$checkLevelExistsEdit){
-                    if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+                if (!$checkLevelExistsEdit) {
+                    if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
                         $insertEditClient = $this->Level_model->editLevelSite($level_id, $this->input->post());
 
-                        if($insertEditClient){
+                        if ($insertEditClient) {
                             $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                             redirect('/level', 'refresh');
-                        }else{
+                        } else {
                             $this->data['message'] = $this->lang->line('error_exp_level');
                         }
-                    }else{
+                    } else {
                         $this->Level_model->editLevel($level_id, $this->input->post());
                     }
-                }else{
+                } else {
                     $this->data['message'] = $this->lang->line('error_exp_level_exists');
                 }
 
-                
+
             }
         }
 
         $this->getForm($level_id);
     }
 
-    public function useTemplate($template) {
+    public function useTemplate($template)
+    {
         $this->data['message'] = null;
 
         if (!$this->validateModify()) {
             $this->data['message'] = $this->lang->line('error_permission');
         }
 
-        if($this->data['message'] == null) {
+        if ($this->data['message'] == null) {
             if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
 
                 // playbasis_client_exp_table
@@ -165,28 +175,28 @@ class Level extends MY_Controller
             }
 
             $max = $this->input->post("max");
-            if ($max && intval($max))
+            if ($max && intval($max)) {
                 $max = intval($max);
-            else
+            } else {
                 $max = 100;
+            }
 
-            try
-            {
+            try {
                 $result = $this->Level_model->addTemplate($template, $client_id, $site_id, $max);
                 if ($result) {
                     $this->session->set_flashdata("success", $this->lang->line("text_success"));
                 } else {
                     $this->data["message"] = $this->lang->line("error_exp_level");
                 }
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 error_log($e->getMessage());
             }
             redirect("/level", "refresh");
         }
     }
 
-    public function delete() {
+    public function delete()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -195,17 +205,17 @@ class Level extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
 
-            if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
                 foreach ($this->input->post('selected') as $level_id) {
                     $this->Level_model->deleteLevelSite($level_id);
                 }
-            }else{
+            } else {
                 foreach ($this->input->post('selected') as $level_id) {
                     $this->Level_model->deleteLevel($level_id);
                 }
@@ -219,9 +229,10 @@ class Level extends MY_Controller
         $this->getList(0);
     }
 
-    private function getList($offset) {
+    private function getList($offset)
+    {
 
-        $per_page = 2*NUMBER_OF_RECORDS_PER_PAGE;
+        $per_page = 2 * NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
 
@@ -239,10 +250,10 @@ class Level extends MY_Controller
             $order = 'ASC';
         }
 
-        $limit = isset($params['limit']) ? $params['limit'] : $per_page ;
+        $limit = isset($params['limit']) ? $params['limit'] : $per_page;
 
         $data = array(
-            'sort'  => $sort,
+            'sort' => $sort,
             'order' => $order,
             'start' => $offset,
             'limit' => $limit
@@ -250,7 +261,7 @@ class Level extends MY_Controller
 
         $this->data['levels'] = array();
 
-        if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+        if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
             $data['client_id'] = $this->User_model->getClientId();
             $data['site_id'] = $this->User_model->getSiteId();
 
@@ -260,7 +271,7 @@ class Level extends MY_Controller
             $total = $this->Level_model->getTotalLevelsSite($data);
 
             $results = $this->Level_model->getLevelsSite($data);
-        }else{
+        } else {
             $total = $this->Level_model->getTotalLevels($data);
 
             $results = $this->Level_model->getLevels($data);
@@ -277,8 +288,9 @@ class Level extends MY_Controller
                     'level' => $result['level'],
                     'title' => $result['level_title'],
                     'exp' => number_format($result['exp'], 0),
-                    'status' => ($result['status']==false)? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'),
-                    'selected' => $this->input->post('selected') && in_array($result['level_id'], $this->input->post('selected')),
+                    'status' => ($result['status'] == false) ? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'),
+                    'selected' => $this->input->post('selected') && in_array($result['level_id'],
+                            $this->input->post('selected')),
                 );
             }
         }
@@ -341,7 +353,8 @@ class Level extends MY_Controller
 //        $this->render_page('level');
     }
 
-    private function getForm($level_id=null) {
+    private function getForm($level_id = null)
+    {
 
         $this->load->model('Image_model');
 
@@ -370,15 +383,15 @@ class Level extends MY_Controller
         }
 
         if (isset($level_id) && ($level_id != 0)) {
-            if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                    $level_info = $this->Level_model->getLevelSite($level_id);
-                }else{
-                    $level_info = $this->Level_model->getLevel($level_id);
-                }
-            
+            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+                $level_info = $this->Level_model->getLevelSite($level_id);
+            } else {
+                $level_info = $this->Level_model->getLevel($level_id);
+            }
+
         }
 
-        if(isset($level_id)){
+        if (isset($level_id)) {
             $this->data['level_id'] = $level_id;
         } else {
             $this->data['level_id'] = null;
@@ -392,17 +405,18 @@ class Level extends MY_Controller
             $this->data['image'] = 'no_image.jpg';
         }
 
-        if ($this->data['image']){
+        if ($this->data['image']) {
             $info = pathinfo($this->data['image']);
-            if(isset($info['extension'])){
+            if (isset($info['extension'])) {
                 $extension = $info['extension'];
-                $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
-                $this->data['thumb'] = S3_IMAGE.$new_image;
-            }else{
-                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0,
+                        utf8_strrpos($this->data['image'], '.')) . '-100x100.' . $extension;
+                $this->data['thumb'] = S3_IMAGE . $new_image;
+            } else {
+                $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
             }
-        }else{
-            $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        } else {
+            $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
         }
 
         /*if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
@@ -413,7 +427,7 @@ class Level extends MY_Controller
             $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
         }*/
 
-        $this->data['no_image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        $this->data['no_image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
 
         if ($this->input->post('level_title')) {
             $this->data['level_title'] = $this->input->post('level_title');
@@ -457,7 +471,8 @@ class Level extends MY_Controller
 //        $this->render_page('level_form');
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
 
         if ($this->User_model->hasPermission('modify', 'level')) {
             return true;
@@ -466,18 +481,22 @@ class Level extends MY_Controller
         }
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'level') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'level')) {
+        if ($this->User_model->hasPermission('access',
+                'level') && $this->Feature_model->getFeatureExistByClientId($client_id, 'level')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 }
+
 ?>

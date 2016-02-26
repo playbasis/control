@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Plan extends MY_Controller
 {
     public function __construct()
@@ -10,7 +11,7 @@ class Plan extends MY_Controller
         $this->load->model('User_model');
         $this->load->model('Plan_model');
 
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -19,10 +20,11 @@ class Plan extends MY_Controller
         $this->lang->load("plan", $lang['folder']);
     }
 
-    public function index() {
+    public function index()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -34,10 +36,11 @@ class Plan extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -50,7 +53,8 @@ class Plan extends MY_Controller
 
     }
 
-    public function insert() {
+    public function insert()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -58,8 +62,10 @@ class Plan extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'plan/insert';
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('description', $this->lang->line('entry_description'), 'trim|min_length[2]|max_length[1000]|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('description', $this->lang->line('entry_description'),
+            'trim|min_length[2]|max_length[1000]|xss_clean');
         $this->form_validation->set_rules('price', $this->lang->line('entry_price'), 'trim|required|numeric');
         $this->form_validation->set_rules('display', $this->lang->line('entry_display'), 'trim|required');
         $this->form_validation->set_rules('status', $this->lang->line('entry_status'), 'trim|required');
@@ -73,8 +79,8 @@ class Plan extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            foreach($this->input->post('reward_data') as $reward){
-                if(!is_numeric($reward['limit']) && $reward['limit']!=null){
+            foreach ($this->input->post('reward_data') as $reward) {
+                if (!is_numeric($reward['limit']) && $reward['limit'] != null) {
                     $this->data['message'] = "Please provide only numeric characters in the Rewards";
                     break;
                 }
@@ -82,11 +88,11 @@ class Plan extends MY_Controller
 
             $plan_name = $this->input->post('name');
 
-            if($this->Plan_model->checkPlanExistsByName($plan_name)){
+            if ($this->Plan_model->checkPlanExistsByName($plan_name)) {
                 $this->data['message'] = "The Plan name provided already exists.";
             }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
                 $this->Plan_model->addPlan($this->input->post());
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
@@ -99,19 +105,23 @@ class Plan extends MY_Controller
         $this->getForm();
     }
 
-    public function update($plan_id) {
+    public function update($plan_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'plan/update/'.$plan_id;
+        $this->data['form'] = 'plan/update/' . $plan_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('description', $this->lang->line('entry_description'), 'trim|min_length[2]|max_length[1000]|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('description', $this->lang->line('entry_description'),
+            'trim|min_length[2]|max_length[1000]|xss_clean');
         $this->form_validation->set_rules('price', $this->lang->line('entry_price'), 'trim|required|numeric');
         $this->form_validation->set_rules('display', $this->lang->line('entry_display'), 'trim|required');
         $this->form_validation->set_rules('status', $this->lang->line('entry_status'), 'trim|required');
-        $this->form_validation->set_rules('limit_num_client', $this->lang->line('entry_limit_num_clients'), 'trim|numeric');
+        $this->form_validation->set_rules('limit_num_client', $this->lang->line('entry_limit_num_clients'),
+            'trim|numeric');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 
@@ -121,11 +131,12 @@ class Plan extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
                 if (PAYMENT_CHANNEL_DEFAULT == PAYMENT_CHANNEL_STRIPE) {
                     $limit_other = $this->input->post('limit_others');
                     $trial_days = $limit_other['trial']['limit'];
-                    $valid = $this->updatePlanInStripe($plan_id, $this->input->post('name'), intval($this->input->post('price')), $trial_days);
+                    $valid = $this->updatePlanInStripe($plan_id, $this->input->post('name'),
+                        intval($this->input->post('price')), $trial_days);
                     if (!$valid) {
                         $this->session->set_flashdata('fail', $this->lang->line('text_fail_update'));
                         redirect('/plan', 'refresh');
@@ -148,7 +159,8 @@ class Plan extends MY_Controller
         $this->getForm($plan_id);
     }
 
-    public function delete() {
+    public function delete()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -157,7 +169,7 @@ class Plan extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
@@ -170,19 +182,19 @@ class Plan extends MY_Controller
 
                 $c = array();
 
-                foreach ($all_clients_in_plan as $client){
+                foreach ($all_clients_in_plan as $client) {
                     $the_client_id = $client['client_id'];
 
                     $temp = $this->Client_model->getClient($the_client_id);
-                    if (!$temp['deleted']){
+                    if (!$temp['deleted']) {
                         $c[] = $temp;
                     }
                 }
 
-                if(empty($c)){
+                if (empty($c)) {
                     $this->Plan_model->deletePlan($plan_id);
-                    
-                }else{
+
+                } else {
                     $p = $this->Plan_model->getPlan($plan_id);
                     $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
                     redirect('/plan', 'refresh');
@@ -191,11 +203,12 @@ class Plan extends MY_Controller
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             redirect('/plan', 'refresh');
         }
-        
+
         $this->getList(0);
     }
 
-    private function getList($offset) {
+    private function getList($offset)
+    {
 
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
@@ -221,10 +234,10 @@ class Plan extends MY_Controller
             $order = 'ASC';
         }
 
-        $limit = isset($params['limit']) ? $params['limit'] : $per_page ;
+        $limit = isset($params['limit']) ? $params['limit'] : $per_page;
 
         $data = array(
-            'sort'  => $sort,
+            'sort' => $sort,
             'order' => $order,
             'start' => $offset,
             'limit' => $limit
@@ -240,11 +253,13 @@ class Plan extends MY_Controller
                     'plan_id' => $result['_id'],
                     'name' => $result['name'],
                     'description' => $result['description'],
-                    'trial' => array_key_exists('limit_others', $result) && array_key_exists('trial', $result['limit_others']) ? $result['limit_others']['trial'] : DEFAULT_TRIAL_DAYS,
+                    'trial' => array_key_exists('limit_others', $result) && array_key_exists('trial',
+                        $result['limit_others']) ? $result['limit_others']['trial'] : DEFAULT_TRIAL_DAYS,
                     'price' => array_key_exists('price', $result) ? $result['price'] : DEFAULT_PLAN_PRICE,
                     'display' => array_key_exists('display', $result) ? $result['display'] : DEFAULT_PLAN_DISPLAY,
                     'status' => $result['status'],
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
+                    'selected' => ($this->input->post('selected') && in_array($result['_id'],
+                            $this->input->post('selected'))),
                 );
             }
         }
@@ -304,7 +319,8 @@ class Plan extends MY_Controller
         $this->render_page('template');
     }
 
-    private function getForm($plan_id=null) {
+    private function getForm($plan_id = null)
+    {
 
         if ($plan_id && ($_SERVER['REQUEST_METHOD'] != 'POST')) {
             $plan_info = $this->Plan_model->getPlan($plan_id);
@@ -345,7 +361,8 @@ class Plan extends MY_Controller
         if ($this->input->post('price')) {
             $this->data['price'] = htmlentities($this->input->post('price'));
         } elseif (!empty($plan_info)) {
-            $this->data['price'] = htmlentities(array_key_exists('price', $plan_info) ? $plan_info['price'] : DEFAULT_PLAN_PRICE);
+            $this->data['price'] = htmlentities(array_key_exists('price',
+                $plan_info) ? $plan_info['price'] : DEFAULT_PLAN_PRICE);
         } else {
             $this->data['price'] = '';
         }
@@ -353,26 +370,27 @@ class Plan extends MY_Controller
         if ($this->input->post('display')) {
             $this->data['display'] = htmlentities($this->input->post('display'));
         } elseif (!empty($plan_info)) {
-            $this->data['display'] = htmlentities(array_key_exists('display', $plan_info) ? $plan_info['display'] : DEFAULT_PLAN_DISPLAY);
+            $this->data['display'] = htmlentities(array_key_exists('display',
+                $plan_info) ? $plan_info['display'] : DEFAULT_PLAN_DISPLAY);
         } else {
             $this->data['display'] = DEFAULT_PLAN_DISPLAY;
         }
 
-        if ($this->input->post('limit_num_client')){
+        if ($this->input->post('limit_num_client')) {
             $this->data['limit_num_client'] = $this->input->post('limit_num_client');
-        }elseif(!empty($plan_info)){
+        } elseif (!empty($plan_info)) {
             $this->data['limit_num_client'] = $plan_info['limit_num_client'];
-        }else{
+        } else {
             $this->data['limit_num_client'] = null;
         }
 
         if ($this->input->post('feature_data')) {
             $this->data['feature_data'] = $this->input->post('feature_data');
-        } elseif (!empty($plan_info)){
-            if(isset($plan_info['feature_to_plan'])){
+        } elseif (!empty($plan_info)) {
+            if (isset($plan_info['feature_to_plan'])) {
                 $this->data['feature_data'] = $plan_info['feature_to_plan'];
-            }else{
-                $this->data['feature_data'] = array();    
+            } else {
+                $this->data['feature_data'] = array();
             }
         } else {
             $this->data['feature_data'] = array();
@@ -380,11 +398,11 @@ class Plan extends MY_Controller
 
         if ($this->input->post('action_data')) {
             $this->data['action_data'] = $this->input->post('action_data');
-        } elseif (!empty($plan_info)){
-            if(isset($plan_info['action_to_plan'])){
-                $this->data['action_data'] = $plan_info["action_to_plan"];    
-            }else{
-                $this->data['action_data'] = array(); 
+        } elseif (!empty($plan_info)) {
+            if (isset($plan_info['action_to_plan'])) {
+                $this->data['action_data'] = $plan_info["action_to_plan"];
+            } else {
+                $this->data['action_data'] = array();
             }
         } else {
             $this->data['action_data'] = array();
@@ -392,11 +410,11 @@ class Plan extends MY_Controller
 
         if ($this->input->post('jigsaw_data')) {
             $this->data['jigsaw_data'] = $this->input->post('jigsaw_data');
-        } elseif (!empty($plan_info)){
-            if(isset($plan_info["jigsaw_to_plan"])){
-                $this->data['jigsaw_data'] = $plan_info["jigsaw_to_plan"];    
-            }else{
-                $this->data['jigsaw_data'] = array(); 
+        } elseif (!empty($plan_info)) {
+            if (isset($plan_info["jigsaw_to_plan"])) {
+                $this->data['jigsaw_data'] = $plan_info["jigsaw_to_plan"];
+            } else {
+                $this->data['jigsaw_data'] = array();
             }
         } else {
             $this->data['jigsaw_data'] = array();
@@ -404,7 +422,7 @@ class Plan extends MY_Controller
 
         if ($this->input->post('reward_data')) {
             $this->data['reward_data'] = $this->input->post('reward_data');
-        } elseif (!empty($plan_info)){
+        } elseif (!empty($plan_info)) {
             $this->data['reward_data'] = $plan_info["reward_to_plan"];
         } else {
             $this->data['reward_data'] = array();
@@ -418,7 +436,7 @@ class Plan extends MY_Controller
         );
         if ($this->input->post('limit_noti')) {
             $this->data['limit_noti'] = $this->input->post('limit_noti');
-        } elseif (!empty($plan_info) && isset($plan_info['limit_notifications'])){
+        } elseif (!empty($plan_info) && isset($plan_info['limit_notifications'])) {
             $this->data['limit_noti'] = $plan_info["limit_notifications"];
             // merge with default, prevent missing fields
             $this->data["limit_noti"] = array_merge(
@@ -445,15 +463,16 @@ class Plan extends MY_Controller
             "custompoint" => null,
             "trial" => null,
             "user" => null,
-            "image" => null);
+            "image" => null
+        );
         if ($this->input->post('limit_others')) {
             $this->data['limit_others'] = $this->input->post('limit_others');
-        } elseif (!empty($plan_info) && isset($plan_info['limit_others'])){
+        } elseif (!empty($plan_info) && isset($plan_info['limit_others'])) {
             $this->data['limit_others'] = $plan_info["limit_others"];
             // merge with default, prevent missing fields
-            foreach($this->data['limit_others'] as $k=>$v){
+            foreach ($this->data['limit_others'] as $k => $v) {
                 if (!array_key_exists($k, $default_limit_others)) {
-                   unset($this->data['limit_others'][$k]);
+                    unset($this->data['limit_others'][$k]);
                 }
             }
             $this->data["limit_others"] = array_merge($default_limit_others, $this->data["limit_others"]);
@@ -464,9 +483,9 @@ class Plan extends MY_Controller
 
         if ($this->input->post('limit_req')) {
             $this->data['limit_req'] = $this->input->post('limit_req');
-        } elseif (!empty($plan_info) && isset($plan_info['limit_requests'])){
+        } elseif (!empty($plan_info) && isset($plan_info['limit_requests'])) {
             $limit_req = array();
-            foreach ($plan_info['limit_requests'] as $key=>$value) {
+            foreach ($plan_info['limit_requests'] as $key => $value) {
                 $limit_req[] = array(
                     'field' => $key,
                     'limit' => $value
@@ -499,10 +518,10 @@ class Plan extends MY_Controller
         );
         if ($this->input->post('limit_widget')) {
             $this->data['limit_widget'] = $this->input->post('limit_widget');
-        } elseif (!empty($plan_info) && isset($plan_info['limit_widget'])){
+        } elseif (!empty($plan_info) && isset($plan_info['limit_widget'])) {
             $this->data['limit_widget'] = $plan_info["limit_widget"];
             // merge with default, prevent missing fields
-            foreach($this->data['limit_widget'] as $k=>$v){
+            foreach ($this->data['limit_widget'] as $k => $v) {
                 if (!array_key_exists($k, $default_limit_widgets)) {
                     unset($this->data['limit_widget'][$k]);
                 }
@@ -515,10 +534,10 @@ class Plan extends MY_Controller
 
         if ($this->input->post('limit_cms')) {
             $this->data['limit_cms'] = $this->input->post('limit_cms');
-        } elseif (!empty($plan_info) && isset($plan_info['limit_cms'])){
+        } elseif (!empty($plan_info) && isset($plan_info['limit_cms'])) {
             $this->data['limit_cms'] = $plan_info["limit_cms"];
             // merge with default, prevent missing fields
-            foreach($this->data['limit_cms'] as $k=>$v){
+            foreach ($this->data['limit_cms'] as $k => $v) {
                 if (!array_key_exists($k, $default_limit_cms)) {
                     unset($this->data['limit_cms'][$k]);
                 }
@@ -580,9 +599,9 @@ class Plan extends MY_Controller
         if ($rewards) {
             foreach ($rewards as $reward) {
                 $limit = null;
-                if(!empty($plan_info)){
-                    foreach($plan_info["reward_to_plan"] as $reward_to_plan){
-                        if($reward_to_plan['reward_id'] == $reward['_id']){
+                if (!empty($plan_info)) {
+                    foreach ($plan_info["reward_to_plan"] as $reward_to_plan) {
+                        if ($reward_to_plan['reward_id'] == $reward['_id']) {
                             $limit = $reward_to_plan['limit'];
                         }
                     }
@@ -604,7 +623,8 @@ class Plan extends MY_Controller
         $this->render_page('template');
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
 
         if ($this->User_model->hasPermission('modify', 'plan')) {
             return true;
@@ -613,8 +633,9 @@ class Plan extends MY_Controller
         }
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         if ($this->User_model->hasPermission('access', 'plan')) {
@@ -624,25 +645,27 @@ class Plan extends MY_Controller
         }
     }
 
-    public function getClientsByPlanId($plan_id){
+    public function getClientsByPlanId($plan_id)
+    {
 
         $allClientsInThisPlan = $this->Plan_model->getClientByPlanOnlyClient($plan_id);
 
         $listOfClients = array();
         $this->load->model('Client_model');
-        foreach ($allClientsInThisPlan as $client){
+        foreach ($allClientsInThisPlan as $client) {
             $get_client = $this->Client_model->getClient($client['client_id']);
-            if($get_client != null){
-                if(!$get_client['deleted']){
-                    $listOfClients[] = $get_client;                
+            if ($get_client != null) {
+                if (!$get_client['deleted']) {
+                    $listOfClients[] = $get_client;
                 }
             }
         }
         return $listOfClients;
     }
 
-    private function updatePlanInStripe($plan_id, $name, $price, $trial_days) {
-        require_once(APPPATH.'/libraries/stripe/init.php');
+    private function updatePlanInStripe($plan_id, $name, $price, $trial_days)
+    {
+        require_once(APPPATH . '/libraries/stripe/init.php');
         \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
         $plan = null;
         try {
@@ -652,9 +675,15 @@ class Plan extends MY_Controller
             return true;
         }
         try {
-            if ($plan->name != $name) $plan->name = $name;
-            if ($plan->amount != $price*100) $plan->amount = $price*100;
-            if ($plan->trial_period_days != $trial_days) $plan->trial_period_days = $trial_days;
+            if ($plan->name != $name) {
+                $plan->name = $name;
+            }
+            if ($plan->amount != $price * 100) {
+                $plan->amount = $price * 100;
+            }
+            if ($plan->trial_period_days != $trial_days) {
+                $plan->trial_period_days = $trial_days;
+            }
             $plan->save();
         } catch (Exception $e) {
             /* from https://stripe.com/docs/api/php#update_plan */
@@ -665,4 +694,5 @@ class Plan extends MY_Controller
         return true;
     }
 }
+
 ?>

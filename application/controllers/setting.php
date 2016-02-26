@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class setting extends MY_Controller
 {
     public function __construct()
@@ -9,7 +10,7 @@ class setting extends MY_Controller
 
         $this->load->model('User_model');
         $this->load->model('Setting_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
         $lang = get_lang($this->session, $this->config);
@@ -18,9 +19,10 @@ class setting extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
-    public function index() {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function index()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -33,14 +35,18 @@ class setting extends MY_Controller
         $this->getList();
     }
 
-    public function insert() {
+    public function insert()
+    {
 
     }
 
-    public function delete() {
+    public function delete()
+    {
 
     }
-    public function edit() {
+
+    public function edit()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -51,7 +57,8 @@ class setting extends MY_Controller
         $this->error['warning'] = null;
 
         $this->form_validation->set_rules('min_char', $this->lang->line('entry_min_char'), 'trim|numeric|xss_clean');
-        $this->form_validation->set_rules('max_retries', $this->lang->line('entry_max_retries'), 'trim|numeric|xss_clean');
+        $this->form_validation->set_rules('max_retries', $this->lang->line('entry_max_retries'),
+            'trim|numeric|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->data['message'] = null;
@@ -64,13 +71,13 @@ class setting extends MY_Controller
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-                $data['password_policy_enable'] = (isset($data['password_policy_enable']) && $data['password_policy_enable'] == "true")?true : false;
+                $data['password_policy_enable'] = (isset($data['password_policy_enable']) && $data['password_policy_enable'] == "true") ? true : false;
 
-                $data['password_policy']['alphabet'] = (isset($data['password_policy']['alphabet']) && $data['password_policy']['alphabet'] == "on")?true : false;
-                $data['password_policy']['numeric'] = (isset($data['password_policy']['numeric']) && $data['password_policy']['numeric'] == "on") == "on"?true : false;
-                $data['password_policy']['user_in_password'] = (isset($data['password_policy']['user_in_password']) && $data['password_policy']['user_in_password'] == "on")?true : false;
-                $data['password_policy']['min_char'] = isset($data['password_policy']['min_char'])?intval($data['password_policy']['min_char']) : 0;
-                $data['max_retries'] = isset($data['max_retries'])? intval($data['max_retries']):0;
+                $data['password_policy']['alphabet'] = (isset($data['password_policy']['alphabet']) && $data['password_policy']['alphabet'] == "on") ? true : false;
+                $data['password_policy']['numeric'] = (isset($data['password_policy']['numeric']) && $data['password_policy']['numeric'] == "on") == "on" ? true : false;
+                $data['password_policy']['user_in_password'] = (isset($data['password_policy']['user_in_password']) && $data['password_policy']['user_in_password'] == "on") ? true : false;
+                $data['password_policy']['min_char'] = isset($data['password_policy']['min_char']) ? intval($data['password_policy']['min_char']) : 0;
+                $data['max_retries'] = isset($data['max_retries']) ? intval($data['max_retries']) : 0;
 
                 $data['timeout'] = $this->wordToTime($data['timeout']);
 
@@ -85,7 +92,8 @@ class setting extends MY_Controller
         $this->getList();
     }
 
-    private function getList() {
+    private function getList()
+    {
 
 
         $config['base_url'] = site_url('setting');
@@ -95,16 +103,15 @@ class setting extends MY_Controller
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
         $setting = $this->Setting_model->retrieveSetting($this->data);
-        if (is_array($setting)){
+        if (is_array($setting)) {
             $this->data = array_merge($this->data, $setting);
-        }
-        else{
+        } else {
             $this->data['password_policy_enable'] = true;
         }
-        $this->data['timeout'] = isset($setting['timeout'])? $this->timeToWord($setting['timeout']): null;
-        $timeout_list = array(60,300,900,3600,7200,86400,604800,1209600,-1);
+        $this->data['timeout'] = isset($setting['timeout']) ? $this->timeToWord($setting['timeout']) : null;
+        $timeout_list = array(60, 300, 900, 3600, 7200, 86400, 604800, 1209600, -1);
         $this->data['timeout_list'] = array();
-        foreach ($timeout_list as $key => $time){
+        foreach ($timeout_list as $key => $time) {
             $this->data['timeout_list'][$key] = $this->timeToWord($time);
         }
 
@@ -113,8 +120,8 @@ class setting extends MY_Controller
     }
 
 
-
-    private function validateModify() {
+    private function validateModify()
+    {
         if ($this->User_model->hasPermission('modify', 'data')) {
             return true;
         } else {
@@ -122,29 +129,36 @@ class setting extends MY_Controller
         }
     }
 
-    private function validateAccess() {
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'setting') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'setting')) {
+        if ($this->User_model->hasPermission('access',
+                'setting') && $this->Feature_model->getFeatureExistByClientId($client_id, 'setting')
+        ) {
             return true;
         } else {
             return false;
         }
     }
-    private function timeToWord($time){
-        if ($time == -1) return "Forever";
+
+    private function timeToWord($time)
+    {
+        if ($time == -1) {
+            return "Forever";
+        }
         $chunks = array(
-            array(60 * 60 * 24 * 365 , 'year'),
-            array(60 * 60 * 24 * 30 , 'month'),
+            array(60 * 60 * 24 * 365, 'year'),
+            array(60 * 60 * 24 * 30, 'month'),
             array(60 * 60 * 24 * 7, 'week'),
-            array(60 * 60 * 24 , 'day'),
-            array(60 * 60 , 'hour'),
-            array(60 , 'minute'),
-            array(1 , 'second')
+            array(60 * 60 * 24, 'day'),
+            array(60 * 60, 'hour'),
+            array(60, 'minute'),
+            array(1, 'second')
         );
 
         for ($i = 0, $j = count($chunks); $i < $j; $i++) {
@@ -155,23 +169,27 @@ class setting extends MY_Controller
             }
         }
 
-        $print = ($count == 1) ? '1 '.$name : "$count {$name}s";
+        $print = ($count == 1) ? '1 ' . $name : "$count {$name}s";
         return $print;
     }
-    private function wordToTime($word){
-        if ($word == "Forever") return -1;
+
+    private function wordToTime($word)
+    {
+        if ($word == "Forever") {
+            return -1;
+        }
         $chunks = array(
-            array(60 * 60 * 24 * 365 , 'year'),
-            array(60 * 60 * 24 * 30 , 'month'),
+            array(60 * 60 * 24 * 365, 'year'),
+            array(60 * 60 * 24 * 30, 'month'),
             array(60 * 60 * 24 * 7, 'week'),
-            array(60 * 60 * 24 , 'day'),
-            array(60 * 60 , 'hour'),
-            array(60 , 'minute'),
-            array(1 , 'second')
+            array(60 * 60 * 24, 'day'),
+            array(60 * 60, 'hour'),
+            array(60, 'minute'),
+            array(1, 'second')
         );
 
-        $word_array = explode(" ",$word);
-        $unit = (substr($word_array[1], -1) == 's') ? rtrim($word_array[1],'s'):$word_array[1];
+        $word_array = explode(" ", $word);
+        $unit = (substr($word_array[1], -1) == 's') ? rtrim($word_array[1], 's') : $word_array[1];
         $value = intval($word_array[0]);
         for ($i = 0, $j = count($chunks); $i < $j; $i++) {
             $seconds = $chunks[$i][0];

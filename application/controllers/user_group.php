@@ -2,11 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
-class User_group extends MY_Controller{
+class User_group extends MY_Controller
+{
 
 
-	public function __construct(){
-		parent::__construct();
+    public function __construct()
+    {
+        parent::__construct();
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -15,52 +17,55 @@ class User_group extends MY_Controller{
         $this->load->model('User_group_model');
         $this->load->model('User_group_to_client_model');
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("usergroup", $lang['folder']);
-	}
+    }
 
-	public function index(){
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function index()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
-		$this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->getList(0);
 
-	}
+    }
 
-	public function page($offset = 0){
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
-		$this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->getList($offset);
-	}
+    }
 
-	public function getList($offset){
+    public function getList($offset)
+    {
 
-		$this->load->library('pagination');
-		$config['base_url'] = site_url('user_group/page');
+        $this->load->library('pagination');
+        $config['base_url'] = site_url('user_group/page');
         if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
             $config['total_rows'] = $this->User_group_model->getTotalNumUsers();
-        }else{
+        } else {
             $config['total_rows'] = $this->User_group_to_client_model->getTotalNumUsers($this->User_model->getClientId());
         }
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
@@ -109,17 +114,18 @@ class User_group extends MY_Controller{
             $this->data['success'] = '';
         }
 
-        if(isset($_GET['filter_name'])){
-        	$filter = array(
-                    'filter_name' => $_GET['filter_name']
-                );
+        if (isset($_GET['filter_name'])) {
+            $filter = array(
+                'filter_name' => $_GET['filter_name']
+            );
 
             if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                 $this->data['user_groups'] = $this->User_group_model->fetchAllUserGroups($filter);
-            }else{
-                $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($this->User_model->getClientId(),$filter);
+            } else {
+                $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($this->User_model->getClientId(),
+                    $filter);
             }
-        }else{
+        } else {
             $filter = array(
                 'limit' => $config['per_page'],
                 'start' => $offset
@@ -127,117 +133,127 @@ class User_group extends MY_Controller{
 
             if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                 $this->data['user_groups'] = $this->User_group_model->fetchAllUserGroups($filter);
-            }else{
-                $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($this->User_model->getClientId(),$filter);
+            } else {
+                $this->data['user_groups'] = $this->User_group_to_client_model->fetchAllUserGroups($this->User_model->getClientId(),
+                    $filter);
             }
         }
 
-		$this->data['main'] = 'user_group';
-		$this->render_page('template');
-	}
+        $this->data['main'] = 'user_group';
+        $this->render_page('template');
+    }
 
-    public function update($user_group_id){
+    public function update($user_group_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'user_group/update/'.$user_group_id;
+        $this->data['form'] = 'user_group/update/' . $user_group_id;
 
         //Rules need to be set
-        $this->form_validation->set_rules('usergroup_name', $this->lang->line('form_usergroup_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('usergroup_name', $this->lang->line('form_usergroup_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
         //-->
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            if($this->form_validation->run()){
+            if ($this->form_validation->run()) {
 
                 if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                     $this->User_group_model->editUserGroup($user_group_id, $this->input->post());
-                }else{
-                    $this->User_group_to_client_model->editUserGroup($this->User_model->getClientId(),$user_group_id, $this->input->post());
+                } else {
+                    $this->User_group_to_client_model->editUserGroup($this->User_model->getClientId(), $user_group_id,
+                        $this->input->post());
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                redirect('user_group/','refresh');
-            }else{
+                redirect('user_group/', 'refresh');
+            } else {
                 $this->data['temp_features'] = $this->input->post();
-            }            
+            }
         }
         $this->getForm($user_group_id);
-        
+
 
     }
 
-	public function insert(){
-		$this->data['meta_description'] = $this->lang->line('meta_description');
+    public function insert()
+    {
+        $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'user_group/insert/';
 
         //Rules need to be set
-        $this->form_validation->set_rules('usergroup_name', $this->lang->line('form_usergroup_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('usergroup_name', $this->lang->line('form_usergroup_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
         //-->
 
-        if($_SERVER['REQUEST_METHOD'] =='POST'){
-            
-        	if($this->form_validation->run()){
-        		$this->session->data['success'] = $this->lang->line('text_success');
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            if ($this->form_validation->run()) {
+                $this->session->data['success'] = $this->lang->line('text_success');
                 if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                     $this->User_group_model->insertUserGroup();
-                }else{
+                } else {
                     $this->User_group_to_client_model->insertUserGroup($this->User_model->getClientId());
                 }
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                redirect('user_group/','refresh');
-        	}else{
+                redirect('user_group/', 'refresh');
+            } else {
                 $this->data['temp_features'] = $this->input->post();
-        	}
+            }
         }
 
         $this->getForm();
-	}
+    }
 
 
-
-	public function getForm($user_group_id = 0){
-		if((isset($user_group_id) && $user_group_id !=0)){
+    public function getForm($user_group_id = 0)
+    {
+        if ((isset($user_group_id) && $user_group_id != 0)) {
 
             if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                 $user_group_info = $this->User_group_model->getUserGroupInfo($user_group_id);
-            }else{
-                $user_group_info = $this->User_group_to_client_model->getUserGroupInfo($this->User_model->getClientId(), $user_group_id);
+            } else {
+                $user_group_info = $this->User_group_to_client_model->getUserGroupInfo($this->User_model->getClientId(),
+                    $user_group_id);
             }
-		}
+        }
 
-		if(isset($user_group_info)){
+        if (isset($user_group_info)) {
             $this->data['user_group_info'] = $user_group_info;
-		}
+        }
 
         if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
             $this->data['all_features'] = $this->User_group_model->getAllFeatures();
-        }else{
-            $this->data['all_features'] = $this->User_group_to_client_model->getAllFeatures($this->User_model->getClientId(),$this->User_model->getSiteId());
+        } else {
+            $this->data['all_features'] = $this->User_group_to_client_model->getAllFeatures($this->User_model->getClientId(),
+                $this->User_model->getSiteId());
         }
 
         $this->data['main'] = 'user_group_form';
         $this->render_page('template');
-	}
+    }
 
-    public function delete(){
+    public function delete()
+    {
         $selectedUserGroups = $this->input->post('selected');
 
-        foreach($selectedUserGroups as $selectedUserGroup){
+        foreach ($selectedUserGroups as $selectedUserGroup) {
 
             $check = $this->User_group_model->checkUsersInUserGroup($selectedUserGroup);
 
-            if($check==null){
+            if ($check == null) {
                 if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                     $this->User_group_model->deleteUserGroup($selectedUserGroup);
-                }else{
-                    $this->User_group_to_client_model->deleteUserGroup($this->User_model->getClientId(),$selectedUserGroup);
+                } else {
+                    $this->User_group_to_client_model->deleteUserGroup($this->User_model->getClientId(),
+                        $selectedUserGroup);
                 }
-            }else{
+            } else {
                 $this->session->set_flashdata('fail', $this->lang->line('text_fail_users_exists'));
                 redirect('/user_group', 'refresh');
             }
@@ -247,7 +263,8 @@ class User_group extends MY_Controller{
 
     }
 
-    public function autocomplete(){
+    public function autocomplete()
+    {
         $json = array();
 
         if ($this->input->get('filter_name')) {
@@ -265,8 +282,9 @@ class User_group extends MY_Controller{
 
             if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                 $results_usergroup = $this->User_group_model->fetchAllUserGroups($data);
-            }else{
-                $results_usergroup = $this->User_group_to_client_model->fetchAllUserGroups($this->User_model->getClientId(),$data);
+            } else {
+                $results_usergroup = $this->User_group_to_client_model->fetchAllUserGroups($this->User_model->getClientId(),
+                    $data);
             }
 
             foreach ($results_usergroup as $result) {
@@ -278,8 +296,9 @@ class User_group extends MY_Controller{
         $this->output->set_output(json_encode($json));
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         if ($this->User_model->hasPermission('access', 'user_group')) {

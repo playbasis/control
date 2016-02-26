@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Sms extends MY_Controller
 {
     public function __construct()
@@ -8,7 +9,7 @@ class Sms extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -20,9 +21,10 @@ class Sms extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
-    public function index() {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function index()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -34,9 +36,10 @@ class Sms extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function page($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -48,16 +51,20 @@ class Sms extends MY_Controller
         $this->getList($offset);
     }
 
-    public function insert() {
+    public function insert()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'sms/insert';
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|required|xss_clean|max_length[160]');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('body', $this->lang->line('entry_body'),
+            'trim|required|xss_clean|max_length[160]');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->data['message'] = null;
@@ -91,16 +98,20 @@ class Sms extends MY_Controller
         $this->getForm();
     }
 
-    public function update($template_id) {
+    public function update($template_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'sms/update/'.$template_id;
+        $this->data['form'] = 'sms/update/' . $template_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|required|xss_clean|max_length[160]');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('body', $this->lang->line('entry_body'),
+            'trim|required|xss_clean|max_length[160]');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
             $this->data['message'] = null;
@@ -136,7 +147,8 @@ class Sms extends MY_Controller
         $this->getForm($template_id);
     }
 
-    public function delete() {
+    public function delete()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -144,7 +156,7 @@ class Sms extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
@@ -159,7 +171,8 @@ class Sms extends MY_Controller
         $this->getList(0);
     }
 
-    private function getList($offset, $ajax=false) {
+    private function getList($offset, $ajax = false)
+    {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
@@ -179,14 +192,15 @@ class Sms extends MY_Controller
         $total = $this->Sms_model->getTotalTemplatesBySiteId($site_id, $paging_data);
 
         foreach ($templates as $template) {
-            if(!$template['deleted']){
+            if (!$template['deleted']) {
                 $this->data['templates'][] = array(
                     '_id' => $template['_id'],
                     'name' => $template['name'],
                     'body' => $template['body'],
                     'status' => $template['status'],
-                    'sort_order'  => $template['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($template['_id'], $this->input->post('selected'))),
+                    'sort_order' => $template['sort_order'],
+                    'selected' => ($this->input->post('selected') && in_array($template['_id'],
+                            $this->input->post('selected'))),
                 );
             }
         }
@@ -246,11 +260,13 @@ class Sms extends MY_Controller
         $this->render_page($ajax ? 'sms_ajax' : 'template');
     }
 
-    public function getListForAjax($offset) {
+    public function getListForAjax($offset)
+    {
         $this->getList($offset, true);
     }
 
-    private function getForm($template_id=null) {
+    private function getForm($template_id = null)
+    {
         $info = null;
         if (isset($template_id) && $template_id) {
             $info = $this->Sms_model->getTemplate($template_id);
@@ -303,45 +319,50 @@ class Sms extends MY_Controller
         $this->render_page('template');
     }
 
-    public function increase_order($template_id){
+    public function increase_order($template_id)
+    {
         $success = $this->Sms_model->increaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
-    public function decrease_order($template_id){
+    public function decrease_order($template_id)
+    {
         $success = $this->Sms_model->decreaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
-    public function setup() {
+    public function setup()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
         $this->form_validation->set_rules('sms-mode', $this->lang->line('sms-mode'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('sms-account_sid', $this->lang->line('sms-account_sid'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('sms-auth_token', $this->lang->line('sms-auth_token'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('sms-account_sid', $this->lang->line('sms-account_sid'),
+            'trim|required|xss_clean');
+        $this->form_validation->set_rules('sms-auth_token', $this->lang->line('sms-auth_token'),
+            'trim|required|xss_clean');
         $this->form_validation->set_rules('sms-number', $this->lang->line('sms-number'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('sms-name', $this->lang->line('sms-name'), 'trim|required|xss_clean');
 
         $setting_group_id = $this->User_model->getAdminGroupID();
-        if($this->User_model->getUserGroupId() != $setting_group_id){
+        if ($this->User_model->getUserGroupId() != $setting_group_id) {
             $this->data['sms'] = $this->Sms_model->getSMSClient($this->User_model->getClientId());
-        }else{
-            $this->data['sms'] = $this->Sms_model->getSMSMaster() ;
+        } else {
+            $this->data['sms'] = $this->Sms_model->getSMSMaster();
         }
 
-        if($this->input->post()){
-            if($this->form_validation->run()){
+        if ($this->input->post()) {
+            if ($this->form_validation->run()) {
 
                 $sms_data = $this->input->post();
-                if($this->User_model->getClientId()){
+                if ($this->User_model->getClientId()) {
 
                     $sms_data['client_id'] = $this->User_model->getClientId();
                     $sms_data['site_id'] = $this->User_model->getSiteId();
                     $this->Sms_model->updateSMS($sms_data);
 
-                }else{
+                } else {
                     $this->Sms_model->updateSMS($sms_data);
                 }
 
@@ -354,7 +375,8 @@ class Sms extends MY_Controller
         $this->render_page('template');
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
         if ($this->User_model->hasPermission('modify', 'sms')) {
             return true;
         } else {
@@ -362,18 +384,22 @@ class Sms extends MY_Controller
         }
     }
 
-    private function validateAccess() {
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'sms') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'sms')) {
+        if ($this->User_model->hasPermission('access',
+                'sms') && $this->Feature_model->getFeatureExistByClientId($client_id, 'sms')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 }
+
 ?>

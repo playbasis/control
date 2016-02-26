@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Player extends MY_Controller
 {
     public function __construct()
@@ -8,7 +9,7 @@ class Player extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -19,10 +20,11 @@ class Player extends MY_Controller
         $this->lang->load("player", $lang['folder']);
     }
 
-    public function index() {
+    public function index()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             exit();
         }
 
@@ -35,10 +37,10 @@ class Player extends MY_Controller
 
         $params = $this->getParameters();
 
-        $limit = isset($params['limit']) ? $params['limit'] : 10 ;
+        $limit = isset($params['limit']) ? $params['limit'] : 10;
 
         $data = array(
-            'sort'  => $params['sort'],
+            'sort' => $params['sort'],
             'order' => $params['order'],
             'start' => ($params['page'] - 1) * $limit,
             'limit' => $limit,
@@ -57,7 +59,7 @@ class Player extends MY_Controller
             if ($result['image']) {
                 $image = $result['image'];
             } else {
-                $image = S3_IMAGE."cache/no_image-100x100.jpg";
+                $image = S3_IMAGE . "cache/no_image-100x100.jpg";
             }
 
             $this->data['players'][] = array(
@@ -71,8 +73,10 @@ class Player extends MY_Controller
                 'color' => $color,
                 'exp' => $result['exp'],
                 'status' => $result['status'],
-                'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_added']))),
-                'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_modified'])))
+                'date_added' => date($this->lang->line('date_format_short'),
+                    strtotime($this->datetimeMongotoReadable($result['date_added']))),
+                'last_active' => date($this->lang->line('date_format_short'),
+                    strtotime($this->datetimeMongotoReadable($result['date_modified'])))
             );
         }
 
@@ -113,10 +117,12 @@ class Player extends MY_Controller
         $this->data['order'] = $params['order'];
 
         // get Action list and reward list
-        if($this->data['client_id']){
-            $this->data['rewardList'] = $this->Player_model->getRewardListAPI($this->data['client_id'], $this->data['site_id']);
-            $this->data['actionList'] = $this->Player_model->getActionListAPI($this->data['client_id'], $this->data['site_id']);
-        }else{
+        if ($this->data['client_id']) {
+            $this->data['rewardList'] = $this->Player_model->getRewardListAPI($this->data['client_id'],
+                $this->data['site_id']);
+            $this->data['actionList'] = $this->Player_model->getActionListAPI($this->data['client_id'],
+                $this->data['site_id']);
+        } else {
             $this->data['rewardList'] = array();
             $this->data['actionList'] = array();
         }
@@ -128,7 +134,8 @@ class Player extends MY_Controller
 //        $this->render_page('player');
     }
 
-    public function getSummary() {
+    public function getSummary()
+    {
 
         //level_value gender_value reward_id reward_value action id action_value
         //choose parameter level gender reward action
@@ -146,7 +153,9 @@ class Player extends MY_Controller
             |lelel:1-6|gender:m|action:like|action_value:1-100|reward:coin|reward_value:1-100
         */
 
-        if(!$this->input->get('filter_sort'))return;
+        if (!$this->input->get('filter_sort')) {
+            return;
+        }
         $paremSet = $this->input->get('filter_sort');
         $paramSet = explode("|", $paremSet);
 
@@ -156,8 +165,8 @@ class Player extends MY_Controller
 
         $value_data = explode(':', $value);
 
-        if(empty($value_data[1]) && $value_data[1] !== 0){
-            switch ($value_data[0]){
+        if (empty($value_data[1]) && $value_data[1] !== 0) {
+            switch ($value_data[0]) {
                 case 'level' :
                     $json = $this->firstDonut();
                     break;
@@ -167,17 +176,17 @@ class Player extends MY_Controller
 
             }
         } else {
-            switch ($value_data[0]){
+            switch ($value_data[0]) {
                 case 'level' :
                     $json = $this->levelDonut();
                     break;
                 case 'gender' :
                     $json = $this->genderDonut();
                     break;
-                case ($value_data[0]=='action_id' || $value_data[0]=='action_value'):
+                case ($value_data[0] == 'action_id' || $value_data[0] == 'action_value'):
                     $json = $this->actionDonut();
                     break;
-                case ($value_data[0]=='reward_id' || $value_data[0]=='reward_value'):
+                case ($value_data[0] == 'reward_id' || $value_data[0] == 'reward_value'):
                     $json = $this->rewardDonut();
                     break;
             }
@@ -187,7 +196,8 @@ class Player extends MY_Controller
 
     }
 
-    private function firstDonut(){
+    private function firstDonut()
+    {
         $json = array();
 
         $data = $this->filterData();
@@ -199,11 +209,11 @@ class Player extends MY_Controller
         $max_last = $output['result'];
         $total_players = $output['total'];
 
-        if(isset($max_last['level']) && $max_last['level'] >= 3){
+        if (isset($max_last['level']) && $max_last['level'] >= 3) {
 
             $json = $this->splitThree($data, $total_players, $max_last);
 
-        }else{
+        } else {
             $json[] = $this->levelRange($data, 'level', 1, 1, $total_players);
 
             $json[] = $this->levelRange($data, 'level', 2, 2, $total_players);
@@ -213,14 +223,15 @@ class Player extends MY_Controller
 
         $return_data = array(
             'donut' => $json,
-            'options' => $this->getOptions(1,1,1,1)
+            'options' => $this->getOptions(1, 1, 1, 1)
         );
 
         return json_encode($return_data);
     }
 
-    private function splitThree($data, $total_players, $max_last){
-        $range = ceil($max_last['level']/3);
+    private function splitThree($data, $total_players, $max_last)
+    {
+        $range = ceil($max_last['level'] / 3);
 
         $start_text = '1';
 
@@ -231,21 +242,20 @@ class Player extends MY_Controller
 //        $mid = $high - $range;
 
 
-
         /*if(!isset($data['show_level_0'])){
             $start_text = '1';
         }else{
             $start_text = '0';
         }*/
 
-        if((int)$high >= (int)$max_last['level']){
-            $json[] = $this->levelRange($data, 'low', $start_text, ($mid-1), $total_players);
+        if ((int)$high >= (int)$max_last['level']) {
+            $json[] = $this->levelRange($data, 'low', $start_text, ($mid - 1), $total_players);
 
             $json[] = $this->levelRange($data, 'high', $mid, $max_last['level'], $total_players);
-        }else{
-            $json[] = $this->levelRange($data, 'low', $start_text, ($mid-1), $total_players);
+        } else {
+            $json[] = $this->levelRange($data, 'low', $start_text, ($mid - 1), $total_players);
 
-            $json[] = $this->levelRange($data, 'medium', $mid, ($high-1), $total_players);
+            $json[] = $this->levelRange($data, 'medium', $mid, ($high - 1), $total_players);
 
             $json[] = $this->levelRange($data, 'high', $high, $max_last['level'], $total_players);
         }
@@ -253,11 +263,12 @@ class Player extends MY_Controller
         return $json;
     }
 
-    private function levelRange($data, $text, $min, $max, $total_players){
-        if($min == $max){
+    private function levelRange($data, $text, $min, $max, $total_players)
+    {
+        if ($min == $max) {
             $text_level = (int)$min;
-        }else{
-            $text_level = (int)$min."-".(int)$max;
+        } else {
+            $text_level = (int)$min . "-" . (int)$max;
         }
 
         $data['filter_sort'] = array(array('name' => 'level', 'value' => $text_level));
@@ -265,20 +276,21 @@ class Player extends MY_Controller
         $player = $this->Player_model->getDonutLevel($data);
 
         $sum = 0;
-        foreach($player as $p){
-            $sum = $sum+(int)$p['value'];
+        foreach ($player as $p) {
+            $sum = $sum + (int)$p['value'];
         }
 
         $json = array(
-            'label' => $text.':'.$text_level,
-            'data' => ($total_players > 0)? round(($sum * 100) / $total_players) : 0,
+            'label' => $text . ':' . $text_level,
+            'data' => ($total_players > 0) ? round(($sum * 100) / $total_players) : 0,
             'value' => $sum,
         );
 
         return $json;
     }
 
-    public function levelDonut(){
+    public function levelDonut()
+    {
         $json = array();
 
         $data = $this->filterData();
@@ -291,7 +303,7 @@ class Player extends MY_Controller
             foreach ($data['filter_sort'] as $filter) {
                 $filter_name = $filter['name'];
 
-                if($filter_name == 'level'){
+                if ($filter_name == 'level') {
                     $level_pos = strrpos($filter['value'], '-');
 
                     if ($level_pos) {
@@ -300,7 +312,7 @@ class Player extends MY_Controller
                         $min_lv = $lv_explode[0];
                         $max_lv = $lv_explode[1];
                         $lv_range = $max_lv - $min_lv;
-                    }else{
+                    } else {
                         $min_lv = $filter['value'];
                         $max_lv = $filter['value'];
                         $lv_range = 1;
@@ -310,32 +322,33 @@ class Player extends MY_Controller
             }
         }
 
-        $lv_loop = ($lv_range > 10)? 10 : $lv_range;
+        $lv_loop = ($lv_range > 10) ? 10 : $lv_range;
 
-        $range = ceil($lv_range/$lv_loop)-1;
+        $range = ceil($lv_range / $lv_loop) - 1;
 
-        for($s=1;$s <= 10; $s++){
-            $max_data = (($min_lv+$range)*$s) - (($min_lv-1)*($s-1));
+        for ($s = 1; $s <= 10; $s++) {
+            $max_data = (($min_lv + $range) * $s) - (($min_lv - 1) * ($s - 1));
             $min_data = $max_data - $range;
 
-            if($max_data >= $max_lv){
+            if ($max_data >= $max_lv) {
                 $max_data = $max_lv;
             }
             $json[] = $this->levelRange($data, 'level', $min_data, $max_data, $total_players);
-            if($max_data >= $max_lv){
+            if ($max_data >= $max_lv) {
                 break;
             }
         }
 
         $return_data = array(
             'donut' => $json,
-            'options' => $this->getOptions(1,1,1,1)
+            'options' => $this->getOptions(1, 1, 1, 1)
         );
 
         return json_encode($return_data);
     }
 
-    public function genderDonut(){
+    public function genderDonut()
+    {
         $json = array();
 
         $data = $this->filterData();
@@ -345,16 +358,16 @@ class Player extends MY_Controller
         $gender_player = $output['result'];
         $total_players = $output['total'];
 
-        foreach($gender_player as $player){
-            if($player['gender_id'] == 1){
+        foreach ($gender_player as $player) {
+            if ($player['gender_id'] == 1) {
                 $text = "Male";
-            }elseif($player['gender_id'] == 2){
+            } elseif ($player['gender_id'] == 2) {
                 $text = "Female";
-            }else{
+            } else {
                 $text = "Unknow";
             }
             $json[] = array(
-                'label' => "gender:".$text,
+                'label' => "gender:" . $text,
                 'data' => round(($player['value'] * 100) / $total_players),
                 'value' => $player['value'],
             );
@@ -362,25 +375,27 @@ class Player extends MY_Controller
 
         $return_data = array(
             'donut' => $json,
-            'options' => $this->getOptions(1,1,1,1)
+            'options' => $this->getOptions(1, 1, 1, 1)
         );
 
         return json_encode($return_data);
     }
 
-    private function actionRange($data, $text, $min, $max, $total_players){
-        if($min == $max){
+    private function actionRange($data, $text, $min, $max, $total_players)
+    {
+        if ($min == $max) {
             $text_range = $min;
-        }else{
-            $text_range = $min."-".$max;
+        } else {
+            $text_range = $min . "-" . $max;
         }
 
-        $data['filter_sort'] = array_merge($data['filter_sort'], array(array('name' => 'action_value', 'value' => $text_range)));
+        $data['filter_sort'] = array_merge($data['filter_sort'],
+            array(array('name' => 'action_value', 'value' => $text_range)));
 
         $output = $this->Player_model->getDonutAction($data);
 
         $json = array(
-            'label' => $text.':'.$text_range,
+            'label' => $text . ':' . $text_range,
 //            'data' => round(($a['value'] * 100) / $total_players),
             'data' => round(($output['total'] * 100) / $total_players),
 //            'value' => $a['value'],
@@ -390,7 +405,8 @@ class Player extends MY_Controller
         return $json;
     }
 
-    public function actionDonut(){
+    public function actionDonut()
+    {
         $json = array();
 
         $data = $this->filterData();
@@ -402,30 +418,30 @@ class Player extends MY_Controller
         $action_player = $output['result'];
         $total_players = $output['total'];
 
-        if(count($action_player) >= 10){
+        if (count($action_player) >= 10) {
             $first_player = current($action_player);
             $last_player = end($action_player);
             reset($action_player);
 
-            $range = ceil(($last_player['action_value'] - $first_player['action_value'])/10)-1;
+            $range = ceil(($last_player['action_value'] - $first_player['action_value']) / 10) - 1;
 
-            for($s=1;$s <= 10; $s++){
-                $max_data = (($first_player['action_value']+$range)*$s) - (($first_player['action_value']-1)*($s-1));
+            for ($s = 1; $s <= 10; $s++) {
+                $max_data = (($first_player['action_value'] + $range) * $s) - (($first_player['action_value'] - 1) * ($s - 1));
                 $min_data = $max_data - $range;
 
-                if($max_data >= $last_player['action_value']){
+                if ($max_data >= $last_player['action_value']) {
                     $max_data = $last_player['action_value'];
                 }
                 $json[] = $this->actionRange($data, 'action_value', $min_data, $max_data, $total_players);
-                if($max_data >= $last_player['action_value']){
+                if ($max_data >= $last_player['action_value']) {
                     break;
                 }
             }
 
-        }else{
-            foreach($action_player as $player){
+        } else {
+            foreach ($action_player as $player) {
                 $json[] = array(
-                    'label' => "action_value:".$player['action_value'],
+                    'label' => "action_value:" . $player['action_value'],
                     'data' => round(($player['value'] * 100) / $total_players),
                     'value' => $player['value'],
                 );
@@ -434,25 +450,27 @@ class Player extends MY_Controller
 
         $return_data = array(
             'donut' => $json,
-            'options' => $this->getOptions(1,1,1,1)
+            'options' => $this->getOptions(1, 1, 1, 1)
         );
 
         return json_encode($return_data);
     }
 
-    private function rewardRange($data, $text, $min, $max, $total_players){
-        if($min == $max){
+    private function rewardRange($data, $text, $min, $max, $total_players)
+    {
+        if ($min == $max) {
             $text_range = $min;
-        }else{
-            $text_range = $min."-".$max;
+        } else {
+            $text_range = $min . "-" . $max;
         }
 
-        $data['filter_sort'] = array_merge($data['filter_sort'], array(array('name' => 'reward_value', 'value' => $text_range)));
+        $data['filter_sort'] = array_merge($data['filter_sort'],
+            array(array('name' => 'reward_value', 'value' => $text_range)));
 
         $output = $this->Player_model->getDonutReward($data);
 
         $json = array(
-            'label' => $text.':'.$text_range,
+            'label' => $text . ':' . $text_range,
             'data' => round(($output['total'] * 100) / $total_players),
             'value' => $output['total'],
         );
@@ -460,7 +478,8 @@ class Player extends MY_Controller
         return $json;
     }
 
-    public function rewardDonut(){
+    public function rewardDonut()
+    {
         $json = array();
 
         $data = $this->filterData();
@@ -472,31 +491,31 @@ class Player extends MY_Controller
         $reward_player = $output['result'];
         $total_players = $output['total'];
 
-        if(count($reward_player) >= 10){
+        if (count($reward_player) >= 10) {
             $first_player = current($reward_player);
             $last_player = end($reward_player);
             reset($reward_player);
 
-            $range = ceil(($last_player['reward_value'] - $first_player['reward_value'])/10)-1;
+            $range = ceil(($last_player['reward_value'] - $first_player['reward_value']) / 10) - 1;
 
-            for($s=1;$s <= 10; $s++){
-                $max_data = (($first_player['reward_value']+$range)*$s) - (($first_player['reward_value']-1)*($s-1));
+            for ($s = 1; $s <= 10; $s++) {
+                $max_data = (($first_player['reward_value'] + $range) * $s) - (($first_player['reward_value'] - 1) * ($s - 1));
                 $min_data = $max_data - $range;
 
-                if($max_data >= $last_player['reward_value']){
+                if ($max_data >= $last_player['reward_value']) {
                     $max_data = $last_player['reward_value'];
                 }
 
                 $json[] = $this->rewardRange($data, 'reward_value', $min_data, $max_data, $total_players);
-                if($max_data >= $last_player['reward_value']){
+                if ($max_data >= $last_player['reward_value']) {
                     break;
                 }
             }
 
-        }else{
-            foreach($reward_player as $player){
+        } else {
+            foreach ($reward_player as $player) {
                 $json[] = array(
-                    'label' => "reward_value:".$player['reward_value'],
+                    'label' => "reward_value:" . $player['reward_value'],
                     'data' => round(($player['value'] * 100) / $total_players),
                     'value' => $player['value'],
                 );
@@ -505,42 +524,43 @@ class Player extends MY_Controller
 
         $return_data = array(
             'donut' => $json,
-            'options' => $this->getOptions(1,1,1,1)
+            'options' => $this->getOptions(1, 1, 1, 1)
         );
 
         return json_encode($return_data);
     }
 
-    public function getOptions($viewUserEnable,$genderEnable,$actionListEnable,$rewardListEnable){
+    public function getOptions($viewUserEnable, $genderEnable, $actionListEnable, $rewardListEnable)
+    {
         $output = array();
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        if($viewUserEnable){
+        if ($viewUserEnable) {
             $output['Gender'] = array();
         }
 
-        if($genderEnable){
+        if ($genderEnable) {
             $output['View_User'] = array();
         }
 
-        if($actionListEnable){
+        if ($actionListEnable) {
             $output['Action'] = array();
             $tmp = $this->Player_model->getActionListAPI($client_id, $site_id);
 
             foreach ($tmp as $key => $value) {
-                array_push($output['Action'],  array('id'=>$key,'name'=>$value) );
+                array_push($output['Action'], array('id' => $key, 'name' => $value));
             }
 
         }
 
-        if($rewardListEnable){
+        if ($rewardListEnable) {
             $output['Reward'] = array();
             $tmp = $this->Player_model->getRewardListAPI($client_id, $site_id);
 
             foreach ($tmp as $key => $value) {
-                array_push($output['Reward'],  array('id'=>$key,'name'=>$value) );
+                array_push($output['Reward'], array('id' => $key, 'name' => $value));
             }
 
         }
@@ -548,7 +568,8 @@ class Player extends MY_Controller
         return $output;
     }
 
-    private function filterData() {
+    private function filterData()
+    {
 
         if ($this->input->get('filter_sort')) {
             $sort = explode('|', $this->input->get('filter_sort'));
@@ -557,8 +578,8 @@ class Player extends MY_Controller
                 foreach ($sort as $value) {
                     $sort_explode = explode(':', $value);
 
-                    if(!empty($sort_explode[1]) && $sort_explode[0] == "gender"){
-                        switch($sort_explode[1]){
+                    if (!empty($sort_explode[1]) && $sort_explode[0] == "gender") {
+                        switch ($sort_explode[1]) {
                             case "Male":
                                 $sort_explode[1] = 1;
                                 break;
@@ -573,8 +594,8 @@ class Player extends MY_Controller
 
                     if (is_array($sort_explode)) {
                         $sort_data[] = array(
-                            'name' => (isset($sort_explode[0]) && !empty($sort_explode[0]))? $sort_explode[0] : '',
-                            'value' => (isset($sort_explode[1]) && (!empty($sort_explode[1]) || $sort_explode[1]  === "0") )? $sort_explode[1] : ''
+                            'name' => (isset($sort_explode[0]) && !empty($sort_explode[0])) ? $sort_explode[0] : '',
+                            'value' => (isset($sort_explode[1]) && (!empty($sort_explode[1]) || $sort_explode[1] === "0")) ? $sort_explode[1] : ''
                         );
                     }
                 }
@@ -599,12 +620,13 @@ class Player extends MY_Controller
 
     }
 
-    private function getParameters() {
+    private function getParameters()
+    {
         // default value of each params
         $paramList = array(
-            'sort' =>'p.date_added',
-            'order'=>'DESC',
-            'page' =>1
+            'sort' => 'p.date_added',
+            'order' => 'DESC',
+            'page' => 1
         );
 
         foreach ($paramList as $key => $value) {
@@ -615,8 +637,10 @@ class Player extends MY_Controller
         return $paramList;
     }
 
-    private function colorizeLevel($level) {
-        $player_color = array('rgb(120, 205, 81)',
+    private function colorizeLevel($level)
+    {
+        $player_color = array(
+            'rgb(120, 205, 81)',
             'rgb(148, 64, 237)',
             'rgb(250, 187, 61)',
             'rgb(47, 171, 233)',
@@ -625,8 +649,9 @@ class Player extends MY_Controller
             '#4c54fe',
             '#b94cff',
             '#ff7ee5',
-            '#ff4545');
-        
+            '#ff4545'
+        );
+
         switch ($level) {
             case ($level >= 0) && ($level <= 10) :
                 $color = $player_color[0];
@@ -662,7 +687,8 @@ class Player extends MY_Controller
         return $color;
     }
 
-    private function getAge($birthdate) {
+    private function getAge($birthdate)
+    {
         $now = new DateTime();
         $birthdate = $this->datetimeMongotoReadable($birthdate);
         $oDateBirth = new DateTime($birthdate);
@@ -685,18 +711,22 @@ class Player extends MY_Controller
         return $dateTimeMongo;
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'player') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'player')) {
+        if ($this->User_model->hasPermission('access',
+                'player') && $this->Feature_model->getFeatureExistByClientId($client_id, 'player')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 }
+
 ?>

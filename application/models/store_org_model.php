@@ -11,8 +11,7 @@ class Store_org_model extends MY_Model
         $organize = null,
         $parent = null,
         $status = true
-    )
-    {
+    ) {
         $this->load->helper('url');
 
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -370,7 +369,8 @@ class Store_org_model extends MY_Model
         return $update;
     }
 
-    public function listNodes($node_id_list, $fields = array()) {
+    public function listNodes($node_id_list, $fields = array())
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         if ($fields) {
             $this->mongo_db->select($fields);
@@ -379,7 +379,8 @@ class Store_org_model extends MY_Model
         return $this->mongo_db->get("playbasis_store_organize_to_client");
     }
 
-    public function listOrganizations($organization_id_list, $fields = array()) {
+    public function listOrganizations($organization_id_list, $fields = array())
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         if ($fields) {
             $this->mongo_db->select($fields);

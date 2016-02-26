@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Badge extends MY_Controller
 {
     public function __construct()
@@ -8,7 +9,7 @@ class Badge extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -19,10 +20,11 @@ class Badge extends MY_Controller
         $this->lang->load("badge", $lang['folder']);
     }
 
-    public function index() {
+    public function index()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -34,10 +36,11 @@ class Badge extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -50,7 +53,8 @@ class Badge extends MY_Controller
 
     }
 
-    public function insert() {
+    public function insert()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -59,10 +63,14 @@ class Badge extends MY_Controller
         $this->data['form'] = 'badge/insert';
 
         //I took out the check_space because some badges may have spaces? - Joe
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
-        $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
-        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'),
+            'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('stackable', "", '');
         $this->form_validation->set_rules('substract', "", '');
         $this->form_validation->set_rules('claim', "", '');
@@ -71,7 +79,7 @@ class Badge extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            if($this->checkLimitBadge()){
+            if ($this->checkLimitBadge()) {
                 $this->data['message'] = null;
 
                 if (!$this->validateModify()) {
@@ -80,7 +88,7 @@ class Badge extends MY_Controller
 
                 $badge_data = $this->input->post();
 
-                if($this->form_validation->run() && $this->data['message'] == null){
+                if ($this->form_validation->run() && $this->data['message'] == null) {
 
                     if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                         $this->Badge_model->addBadge($badge_data, true);
@@ -88,7 +96,7 @@ class Badge extends MY_Controller
                         redirect('/badge', 'refresh');
                     }
 
-                    if($this->User_model->getClientId()){
+                    if ($this->User_model->getClientId()) {
 
                         $badge_id = $this->Badge_model->addBadge($badge_data);
 
@@ -101,17 +109,17 @@ class Badge extends MY_Controller
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
                         redirect('/badge', 'refresh');
-                    }else{
+                    } else {
 
                         $this->load->model('Client_model');
 
-                        if(isset($badge_data['sponsor'])){
+                        if (isset($badge_data['sponsor'])) {
                             $badge_data['sponsor'] = true;
-                        }else{
+                        } else {
                             $badge_data['sponsor'] = false;
                         }
 
-                        if(isset($badge_data['admin_client_id']) && $badge_data['admin_client_id'] != 'all_clients'){
+                        if (isset($badge_data['admin_client_id']) && $badge_data['admin_client_id'] != 'all_clients') {
 
                             $clients_sites = $this->Client_model->getSitesByClientId($badge_data['admin_client_id']);
 
@@ -119,16 +127,16 @@ class Badge extends MY_Controller
 
                             $badge_data['client_id'] = $badge_data['admin_client_id'];
 
-                            foreach ($clients_sites as $client){
-                                $badge_data['site_id'] = $client['_id']; 
+                            foreach ($clients_sites as $client) {
+                                $badge_data['site_id'] = $client['_id'];
                                 $this->Badge_model->addBadgeToClient($badge_data);
-                            }    
-                        }else{
-                            $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);   
+                            }
+                        } else {
+                            $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);
 
                             $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
 
-                            foreach($all_sites_clients as $site){
+                            foreach ($all_sites_clients as $site) {
                                 $badge_data['site_id'] = $site['_id'];
                                 $badge_data['client_id'] = $site['client_id'];
                                 $this->Badge_model->addBadgeToClient($badge_data);
@@ -137,8 +145,8 @@ class Badge extends MY_Controller
                         redirect('/badge', 'refresh');
                     }
 
-                }    
-            }else{
+                }
+            } else {
                 $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_badge'));
                 redirect('/badge/insert', 'refresh');
             }
@@ -146,19 +154,24 @@ class Badge extends MY_Controller
         $this->getForm();
     }
 
-    public function update($badge_id) {
+    public function update($badge_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'badge/update/'.$badge_id;
+        $this->data['form'] = 'badge/update/' . $badge_id;
 
         //I took out the check_space because some badges may have spaces? - Joe
         //OK - Wee
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
-        $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
-        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
+        $this->form_validation->set_rules('name', $this->lang->line('name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'),
+            'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('stackable', "", '');
         $this->form_validation->set_rules('substract', "", '');
         $this->form_validation->set_rules('claim', "", '');
@@ -174,18 +187,18 @@ class Badge extends MY_Controller
 
             $badge_data = $this->input->post();
 
-            if($this->form_validation->run() && $this->data['message'] == null){
-                if($this->User_model->getClientId()){
-                    if(!$this->Badge_model->checkBadgeIsSponsor($badge_id)){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
+                if ($this->User_model->getClientId()) {
+                    if (!$this->Badge_model->checkBadgeIsSponsor($badge_id)) {
                         $badge_data['client_id'] = $this->User_model->getClientId();
                         $badge_data['site_id'] = $this->User_model->getSiteId();
                         $this->Badge_model->editBadgeToClient($badge_id, $badge_data);
-                    }else{
+                    } else {
                         redirect('/badge', 'refresh');
                     }
-                }else{
+                } else {
                     $this->Badge_model->editBadge($badge_id, $badge_data);
-                    
+
                     $this->Badge_model->editBadgeToClientFromAdmin($badge_id, $badge_data);
                 }
 
@@ -198,7 +211,8 @@ class Badge extends MY_Controller
         $this->getForm($badge_id);
     }
 
-    public function delete() {
+    public function delete()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -207,25 +221,25 @@ class Badge extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             foreach ($this->input->post('selected') as $badge_id) {
-                if($this->checkOwnerBadge($badge_id)){
-                    
-                    if($this->User_model->getClientId()){
-                        if(!$this->Badge_model->checkBadgeIsSponsor($badge_id)){
+                if ($this->checkOwnerBadge($badge_id)) {
+
+                    if ($this->User_model->getClientId()) {
+                        if (!$this->Badge_model->checkBadgeIsSponsor($badge_id)) {
                             $this->Badge_model->deleteBadgeClient($badge_id);
-                        }else{
+                        } else {
                             redirect('/badge', 'refresh');
                         }
-                    }else{
-                        $this->Badge_model->deleteBadge($badge_id); 
-                        $this->Badge_model->deleteClientBadgeFromAdmin($badge_id);   
+                    } else {
+                        $this->Badge_model->deleteBadge($badge_id);
+                        $this->Badge_model->deleteClientBadgeFromAdmin($badge_id);
                     }
-                    
+
                 }
             }
 
@@ -236,7 +250,8 @@ class Badge extends MY_Controller
         $this->getList(0);
     }
 
-    private function getList($offset) {
+    private function getList($offset)
+    {
 
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
@@ -292,17 +307,18 @@ class Badge extends MY_Controller
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }*/
-                if ($result['image']){
+                if ($result['image']) {
                     $info = pathinfo($result['image']);
-                    if(isset($info['extension'])){
+                    if (isset($info['extension'])) {
                         $extension = $info['extension'];
-                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
-                        $image = S3_IMAGE.$new_image;
-                    }else{
-                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                        $new_image = 'cache/' . utf8_substr($result['image'], 0,
+                                utf8_strrpos($result['image'], '.')) . '-50x50.' . $extension;
+                        $image = S3_IMAGE . $new_image;
+                    } else {
+                        $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                     }
-                }else{
-                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                } else {
+                    $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                 }
 
                 $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
@@ -313,13 +329,14 @@ class Badge extends MY_Controller
                     'quantity' => $result['quantity'],
                     'status' => $result['status'],
                     'image' => $image,
-                    'sort_order'  => $result['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'is_public'=>$badgeIsPublic,
+                    'sort_order' => $result['sort_order'],
+                    'selected' => ($this->input->post('selected') && in_array($result['_id'],
+                            $this->input->post('selected'))),
+                    'is_public' => $badgeIsPublic,
                     // 'sponsor' => $result['sponsor']
                 );
             }
-        }else{  // Client Account
+        } else {  // Client Account
             $this->load->model('Reward_model');
 
             // get all client badges id
@@ -327,7 +344,12 @@ class Badge extends MY_Controller
             // sync template
             $this->Badge_model->syncTemplate($client_badges, $client_id, $site_id);
 
-            $badge_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
+            $badge_data = array(
+                'site_id' => $site_id,
+                'limit' => $per_page,
+                'start' => $offset,
+                'sort' => 'sort_order'
+            );
 
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
@@ -340,25 +362,26 @@ class Badge extends MY_Controller
                 $slot_total = $reward_limit_data['limit'] - $badge_total;
 
                 $this->data['slots'] = $slot_total;
-                $this->data['no_image'] = S3_IMAGE."cache/no_image-50x50.jpg";
+                $this->data['no_image'] = S3_IMAGE . "cache/no_image-50x50.jpg";
 
                 foreach ($badges as $badge) {
 
                     $badge_info = $this->Badge_model->getBadgeToClient($badge['_id']);
 
-                    if($badge_info){
+                    if ($badge_info) {
 
-                        if ($badge_info['image']){
+                        if ($badge_info['image']) {
                             $info = pathinfo($badge_info['image']);
-                            if(isset($info['extension'])){
+                            if (isset($info['extension'])) {
                                 $extension = $info['extension'];
-                                $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-50x50.'.$extension;
-                                $image = S3_IMAGE.$new_image;
-                            }else{
-                                $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                                $new_image = 'cache/' . utf8_substr($badge_info['image'], 0,
+                                        utf8_strrpos($badge_info['image'], '.')) . '-50x50.' . $extension;
+                                $image = S3_IMAGE . $new_image;
+                            } else {
+                                $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                             }
-                        }else{
-                            $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                        } else {
+                            $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                         }
 
                         /*if ($badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
@@ -366,19 +389,20 @@ class Badge extends MY_Controller
                         }else {
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                         }*/
-                        
-                        if(!$badge_info['deleted']){
+
+                        if (!$badge_info['deleted']) {
                             $this->data['badges'][] = array(
-                            'badge_id' => $badge_info['_id'],
-                            'name' => $badge_info['name'],
-                            'hint' => $badge_info['hint'],
-                            'quantity' => $badge_info['quantity'],
-                            'status' => $badge_info['status'],
-                            'image' => $image,
-                            'sort_order'  => $badge_info['sort_order'],
-                            'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
-                            'sponsor' => isset($badge_info['sponsor'])?$badge_info['sponsor']:null,
-                            "is_template" => isset($badge_info["is_template"]) ? $badge_info["is_template"] : false
+                                'badge_id' => $badge_info['_id'],
+                                'name' => $badge_info['name'],
+                                'hint' => $badge_info['hint'],
+                                'quantity' => $badge_info['quantity'],
+                                'status' => $badge_info['status'],
+                                'image' => $image,
+                                'sort_order' => $badge_info['sort_order'],
+                                'selected' => ($this->input->post('selected') && in_array($badge_info['_id'],
+                                        $this->input->post('selected'))),
+                                'sponsor' => isset($badge_info['sponsor']) ? $badge_info['sponsor'] : null,
+                                "is_template" => isset($badge_info["is_template"]) ? $badge_info["is_template"] : false
                             );
                         }
                     }
@@ -441,7 +465,8 @@ class Badge extends MY_Controller
         $this->render_page('template');
     }
 
-    public function getListForAjax($offset) {
+    public function getListForAjax($offset)
+    {
 
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
@@ -473,17 +498,18 @@ class Badge extends MY_Controller
 
             foreach ($results as $result) {
 
-                if ($result['image']){
+                if ($result['image']) {
                     $info = pathinfo($result['image']);
-                    if(isset($info['extension'])){
+                    if (isset($info['extension'])) {
                         $extension = $info['extension'];
-                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
-                        $image = S3_IMAGE.$new_image;
-                    }else{
-                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                        $new_image = 'cache/' . utf8_substr($result['image'], 0,
+                                utf8_strrpos($result['image'], '.')) . '-50x50.' . $extension;
+                        $image = S3_IMAGE . $new_image;
+                    } else {
+                        $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                     }
-                }else{
-                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                } else {
+                    $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                 }
 
                 /*if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
@@ -499,18 +525,23 @@ class Badge extends MY_Controller
                     'quantity' => $result['quantity'],
                     'status' => $result['status'],
                     'image' => $image,
-                    'sort_order'  => $result['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
+                    'sort_order' => $result['sort_order'],
+                    'selected' => ($this->input->post('selected') && in_array($result['_id'],
+                            $this->input->post('selected'))),
                     'is_public' => $badgeIsPublic,
-                    'sponsor' => isset($badge_info['sponsor'])?$badge_info['sponsor']:null
+                    'sponsor' => isset($badge_info['sponsor']) ? $badge_info['sponsor'] : null
                 );
             }
-        }
-        else {
+        } else {
 
             $this->load->model('Reward_model');
 
-            $badge_data = array('site_id'=>$site_id, 'limit'=>$per_page, 'start' => $offset, 'sort'=>'sort_order');
+            $badge_data = array(
+                'site_id' => $site_id,
+                'limit' => $per_page,
+                'start' => $offset,
+                'sort' => 'sort_order'
+            );
 
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
@@ -523,25 +554,26 @@ class Badge extends MY_Controller
                 $slot_total = $reward_limit_data['limit'] - $badge_total;
 
                 $this->data['slots'] = $slot_total;
-                $this->data['no_image'] = S3_IMAGE."cache/no_image-50x50.jpg";
+                $this->data['no_image'] = S3_IMAGE . "cache/no_image-50x50.jpg";
 
                 foreach ($badges as $badge) {
 
                     $badge_info = $this->Badge_model->getBadgeToClient($badge['_id']);
 
-                    if($badge_info){
+                    if ($badge_info) {
 
-                        if ($badge_info['image']){
+                        if ($badge_info['image']) {
                             $info = pathinfo($badge_info['image']);
-                            if(isset($info['extension'])){
+                            if (isset($info['extension'])) {
                                 $extension = $info['extension'];
-                                $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-50x50.'.$extension;
-                                $image = S3_IMAGE.$new_image;
-                            }else{
-                                $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                                $new_image = 'cache/' . utf8_substr($badge_info['image'], 0,
+                                        utf8_strrpos($badge_info['image'], '.')) . '-50x50.' . $extension;
+                                $image = S3_IMAGE . $new_image;
+                            } else {
+                                $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                             }
-                        }else{
-                            $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                        } else {
+                            $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                         }
 
                         /*if ($badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
@@ -551,7 +583,7 @@ class Badge extends MY_Controller
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                         }*/
 
-                        if(!$badge_info['deleted']){
+                        if (!$badge_info['deleted']) {
                             $this->data['badges'][] = array(
                                 'badge_id' => $badge_info['_id'],
                                 'name' => $badge_info['name'],
@@ -559,12 +591,13 @@ class Badge extends MY_Controller
                                 'quantity' => $badge_info['quantity'],
                                 'status' => $badge_info['status'],
                                 'image' => $image,
-                                'sort_order'  => $badge_info['sort_order'],
-                                'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
-                                'sponsor' => isset($badge_info['sponsor'])?$badge_info['sponsor']:null
-                            );    
+                                'sort_order' => $badge_info['sort_order'],
+                                'selected' => ($this->input->post('selected') && in_array($badge_info['_id'],
+                                        $this->input->post('selected'))),
+                                'sponsor' => isset($badge_info['sponsor']) ? $badge_info['sponsor'] : null
+                            );
                         }
-                        
+
 
                     }
                 }
@@ -626,17 +659,18 @@ class Badge extends MY_Controller
         $this->render_page('badge_ajax');
     }
 
-    private function getForm($badge_id=null) {
+    private function getForm($badge_id = null)
+    {
 
         $this->load->model('Image_model');
 
         if (isset($badge_id) && ($badge_id != 0)) {
-            if($this->User_model->getClientId()){
+            if ($this->User_model->getClientId()) {
                 $badge_info = $this->Badge_model->getBadgeToClient($badge_id);
-            }else{
-                $badge_info = $this->Badge_model->getBadge($badge_id);    
+            } else {
+                $badge_info = $this->Badge_model->getBadge($badge_id);
             }
-            
+
         }
 
         if ($this->input->post('name')) {
@@ -671,17 +705,18 @@ class Badge extends MY_Controller
             $this->data['image'] = 'no_image.jpg';
         }
 
-        if ($this->data['image']){
+        if ($this->data['image']) {
             $info = pathinfo($this->data['image']);
-            if(isset($info['extension'])){
+            if (isset($info['extension'])) {
                 $extension = $info['extension'];
-                $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
-                $this->data['thumb'] = S3_IMAGE.$new_image;
-            }elsE{
-                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0,
+                        utf8_strrpos($this->data['image'], '.')) . '-100x100.' . $extension;
+                $this->data['thumb'] = S3_IMAGE . $new_image;
+            } elsE {
+                $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
             }
-        }else{
-            $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        } else {
+            $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
         }
 
         /*if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
@@ -692,7 +727,7 @@ class Badge extends MY_Controller
             $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
         }*/
 
-        $this->data['no_image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        $this->data['no_image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
 
         if ($this->input->post('sort_order')) {
             $this->data['sort_order'] = $this->input->post('sort_order');
@@ -754,7 +789,7 @@ class Badge extends MY_Controller
             // echo $this->input->post('sponsor');
             $this->data['sponsor'] = $this->input->post('sponsor');
         } elseif (!empty($badge_info)) {
-            $this->data['sponsor'] = isset($badge_info['sponsor'])?$badge_info['sponsor']:null;
+            $this->data['sponsor'] = isset($badge_info['sponsor']) ? $badge_info['sponsor'] : null;
         } else {
             $this->data['sponsor'] = false;
         }
@@ -765,8 +800,8 @@ class Badge extends MY_Controller
             $this->data['badge_id'] = null;
         }
 
-        if($this->User_model->getClientId()){
-            if($this->data['sponsor']){
+        if ($this->User_model->getClientId()) {
+            if ($this->data['sponsor']) {
                 redirect('badge', 'refresh');
             }
         }
@@ -782,7 +817,8 @@ class Badge extends MY_Controller
         $this->render_page('template');
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
 
         if ($this->User_model->hasPermission('modify', 'badge')) {
             return true;
@@ -791,75 +827,77 @@ class Badge extends MY_Controller
         }
     }
 
-    private function checkLimitBadge(){
+    private function checkLimitBadge()
+    {
 
         // if(isset($client)){
-        if($this->User_model->getClientId()){
+        if ($this->User_model->getClientId()) {
             $error = null;
 
-            if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
 
                 $this->load->model('Reward_model');
 
                 $plan_limit = $this->Reward_model->getRewardByClientId($this->User_model->getClientId());
 
                 $data = array(
-                        'site_id'=>$this->User_model->getSiteId()
-                    );
+                    'site_id' => $this->User_model->getSiteId()
+                );
                 // $badges_count = $this->Badge_model->getTotalBadgeBySiteId($data);
                 $badges_count = $this->Badge_model->getTotalBadgeBySiteIdWithoutSponsor($data);
-                
+
 
                 foreach ($plan_limit as $plan) {
-                    if($plan['site_id'] == $this->input->post('site_id')){
-                        if($plan['name'] == 'badge'){
-                            if($plan['limit']){
-                                $limit_badge =  $plan['limit'];
+                    if ($plan['site_id'] == $this->input->post('site_id')) {
+                        if ($plan['name'] == 'badge') {
+                            if ($plan['limit']) {
+                                $limit_badge = $plan['limit'];
                             }
                         }
                     }
                 }
-             
-                if(isset($limit_badge)){
-                    if($badges_count >= $limit_badge){
+
+                if (isset($limit_badge)) {
+                    if ($badges_count >= $limit_badge) {
                         $over_limit = true;
-                    }else{
+                    } else {
                         $over_limit = false;
                     }
-                }else{
+                } else {
                     $over_limit = false;
                 }
             }
 
-            if(!$over_limit){
+            if (!$over_limit) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
-        }else{
+        } else {
             return true;
         }
 
     }
 
-    private function checkOwnerBadge($badgeId){
+    private function checkOwnerBadge($badgeId)
+    {
 
         $error = null;
 
-        if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+        if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
 
-            $badge_data = array('site_id'=>$this->User_model->getSiteId());
+            $badge_data = array('site_id' => $this->User_model->getSiteId());
 
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
             $has = false;
-    
+
             foreach ($badges as $badge) {
-                if($badge['_id']."" == $badgeId.""){
+                if ($badge['_id'] . "" == $badgeId . "") {
                     $has = true;
-                }    
+                }
             }
 
-            if(!$has){
+            if (!$has) {
                 $error = $this->lang->line('error_permission');
             }
         }
@@ -871,58 +909,64 @@ class Badge extends MY_Controller
         }
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'badge') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'badge')) {
+        if ($this->User_model->hasPermission('access',
+                'badge') && $this->Feature_model->getFeatureExistByClientId($client_id, 'badge')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function increase_order($badge_id){
+    public function increase_order($badge_id)
+    {
 
-        if($this->User_model->getClientId()){
-            $this->Badge_model->increaseOrderByOneClient($badge_id);   
-        }else{
-            $this->Badge_model->increaseOrderByOne($badge_id);    
+        if ($this->User_model->getClientId()) {
+            $this->Badge_model->increaseOrderByOneClient($badge_id);
+        } else {
+            $this->Badge_model->increaseOrderByOne($badge_id);
         }
-        
-        $json = array('success'=>'Okay increase!');
+
+        $json = array('success' => 'Okay increase!');
 
         $this->output->set_output(json_encode($json));
     }
 
-    public function decrease_order($badge_id){
+    public function decrease_order($badge_id)
+    {
 
-        if($this->User_model->getClientId()){
+        if ($this->User_model->getClientId()) {
             $this->Badge_model->decreaseOrderByOneClient($badge_id);
-        }else{
-            $this->Badge_model->decreaseOrderByOne($badge_id);    
+        } else {
+            $this->Badge_model->decreaseOrderByOne($badge_id);
         }
 
-        $json = array('success'=>'Okay decrease!');
+        $json = array('success' => 'Okay decrease!');
 
         $this->output->set_output(json_encode($json));
     }
 
-    public function checkBadgeIsPublic($badge_id){
+    public function checkBadgeIsPublic($badge_id)
+    {
         $allBadgesFromClients = $this->Badge_model->checkBadgeIsPublic($badge_id);
 
-        if(isset($allBadgesFromClients[0]['client_id'])){
+        if (isset($allBadgesFromClients[0]['client_id'])) {
             $firstBadge = $allBadgesFromClients[0]['client_id'];
-            foreach($allBadgesFromClients as $badge){
-                if($badge['client_id'] != $firstBadge){
+            foreach ($allBadgesFromClients as $badge) {
+                if ($badge['client_id'] != $firstBadge) {
                     return true;
                 }
             }
-            return false;    
-        }else{
+            return false;
+        } else {
             return true;
         }
     }

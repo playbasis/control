@@ -94,7 +94,7 @@ class Leaderboard extends MY_Controller
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-                $data['month'] = (isset($data['month']) && $data['month'])?new MongoDate(strtotime($data['month'])):"";
+                $data['month'] = (isset($data['month']) && $data['month']) ? new MongoDate(strtotime($data['month'])) : "";
                 $data['status'] = $data['status'] == 'enable' ? true : false;
                 $data['occur_once'] = $data['occur_once'] == 'true' ? true : false;
 
@@ -134,7 +134,7 @@ class Leaderboard extends MY_Controller
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['status'] = $data['status'] == 'enable' ? true : false;
-                $data['month'] = (isset($data['month']) && $data['month'])?new MongoDate(strtotime($data['month'])):"";
+                $data['month'] = (isset($data['month']) && $data['month']) ? new MongoDate(strtotime($data['month'])) : "";
                 $data['occur_once'] = $data['occur_once'] == 'true' ? true : false;
 
                 $update = $this->Leaderboard_model->updateLeaderBoard($data);
@@ -192,8 +192,8 @@ class Leaderboard extends MY_Controller
 
             $leaderboards = $this->Leaderboard_model->retrieveLeaderBoards($filter);
 
-            foreach ($leaderboards as $key => $leaderboard){
-                if (isset($leaderboard['selected_org']) && ($leaderboard['selected_org'] != "")){
+            foreach ($leaderboards as $key => $leaderboard) {
+                if (isset($leaderboard['selected_org']) && ($leaderboard['selected_org'] != "")) {
                     $org_info = $this->Store_org_model->retrieveOrganizeById(new MongoID($leaderboard['selected_org']));
                     $leaderboards[$key]['selected_org'] = $org_info['name'];
                 }
@@ -245,53 +245,61 @@ class Leaderboard extends MY_Controller
         if (isset($leaderboard_id) && ($leaderboard_id != 0)) {
             if ($this->User_model->getClientId()) {
                 $leaderboard_info = $this->Leaderboard_model->retrieveLeaderBoard($leaderboard_id);
-                $this->data = array_merge($this->data,$leaderboard_info);
+                $this->data = array_merge($this->data, $leaderboard_info);
             }
-        }else{
+        } else {
             $this->data['status'] = true;
             $this->data['rankBy'] = "action";
         }
 
         $inputs = $this->input->post();
-        if (isset($inputs) && $inputs){
-            foreach ($inputs as $key => $input){
+        if (isset($inputs) && $inputs) {
+            foreach ($inputs as $key => $input) {
                 $this->data[$key] = $input;
             }
         }
 
 
-        if (isset($this->data['rewards'])) foreach ($this->data['rewards'] as $rank => $reward_type){
-            if (!is_array($reward_type)) continue;
-            foreach ($reward_type as $type => $list){
-                if (!is_array($list)) continue;
-                foreach ($list as $id => $item){
-                    switch ($type){
-                        case "goods":
-                            $this->data['rewards'][$rank][$type][$id]['reward_data'] = $this->Goods_model->getGoodsOfClientPrivate($id);
-                            break;
-                        case "badges":
-                            $this->data['rewards'][$rank][$type][$id]['reward_data'] = $this->Quest_model->getBadge(array(
-                                'client_id' => $this->data['client_id'],
-                                'site_id' => $this->data['site_id'],
-                                'badge_id' => $id
-                            ));
-                            break;
-                        case "feedbacks":
-                            $this->getFeedbackData($this->data['rewards'][$rank][$type][$id]);
-                            break;
+        if (isset($this->data['rewards'])) {
+            foreach ($this->data['rewards'] as $rank => $reward_type) {
+                if (!is_array($reward_type)) {
+                    continue;
+                }
+                foreach ($reward_type as $type => $list) {
+                    if (!is_array($list)) {
+                        continue;
                     }
-                    if (isset($this->data['rewards'][$rank][$type][$id]['reward_data']['image'])){
-                        $info = pathinfo($this->data['rewards'][$rank][$type][$id]['reward_data']['image']);
-                        if(isset($info['extension'])){
-                            $extension = $info['extension'];
-                            $new_image = 'cache/' . utf8_substr($this->data['rewards'][$rank][$type][$id]['reward_data']['image'], 0,
-                                    utf8_strrpos($this->data['rewards'][$rank][$type][$id]['reward_data']['image'], '.')).'-100x100.'.$extension;
-                            $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE.$new_image;
-                        }else{
-                            $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                    foreach ($list as $id => $item) {
+                        switch ($type) {
+                            case "goods":
+                                $this->data['rewards'][$rank][$type][$id]['reward_data'] = $this->Goods_model->getGoodsOfClientPrivate($id);
+                                break;
+                            case "badges":
+                                $this->data['rewards'][$rank][$type][$id]['reward_data'] = $this->Quest_model->getBadge(array(
+                                    'client_id' => $this->data['client_id'],
+                                    'site_id' => $this->data['site_id'],
+                                    'badge_id' => $id
+                                ));
+                                break;
+                            case "feedbacks":
+                                $this->getFeedbackData($this->data['rewards'][$rank][$type][$id]);
+                                break;
                         }
-                    }else{
-                        $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                        if (isset($this->data['rewards'][$rank][$type][$id]['reward_data']['image'])) {
+                            $info = pathinfo($this->data['rewards'][$rank][$type][$id]['reward_data']['image']);
+                            if (isset($info['extension'])) {
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($this->data['rewards'][$rank][$type][$id]['reward_data']['image'],
+                                        0,
+                                        utf8_strrpos($this->data['rewards'][$rank][$type][$id]['reward_data']['image'],
+                                            '.')) . '-100x100.' . $extension;
+                                $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE . $new_image;
+                            } else {
+                                $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+                            }
+                        } else {
+                            $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+                        }
                     }
                 }
             }
@@ -299,18 +307,22 @@ class Leaderboard extends MY_Controller
 
         $this->data['rewards_list'] = $this->Leaderboard_model->getRewards($this->data);
 
-        $this->data['org_lists']  = $this->Store_org_model->retrieveOrganize($this->data['client_id'],$this->data['site_id']);
+        $this->data['org_lists'] = $this->Store_org_model->retrieveOrganize($this->data['client_id'],
+            $this->data['site_id']);
 
         $this->data['actions'] = $this->Quest_model->getActionsByClientSiteId($this->data);
         $this->data['exp_id'] = $this->Quest_model->getExpId($this->data);
 
         $this->data['point_id'] = $this->Quest_model->getPointId($this->data);
 
-        $this->data['emails'] = $this->Feature_model->getFeatureExistByClientId($this->data['client_id'], 'email') ? $this->Email_model->listTemplatesBySiteId($this->data['site_id']) : null;
+        $this->data['emails'] = $this->Feature_model->getFeatureExistByClientId($this->data['client_id'],
+            'email') ? $this->Email_model->listTemplatesBySiteId($this->data['site_id']) : null;
 
-        $this->data['smses'] = $this->Feature_model->getFeatureExistByClientId($this->data['client_id'], 'sms') ? $this->Sms_model->listTemplatesBySiteId($this->data['site_id']) : null;
+        $this->data['smses'] = $this->Feature_model->getFeatureExistByClientId($this->data['client_id'],
+            'sms') ? $this->Sms_model->listTemplatesBySiteId($this->data['site_id']) : null;
 
-        $this->data['pushes'] = $this->Feature_model->getFeatureExistByClientId($this->data['client_id'], 'push') ? $this->Push_model->listTemplatesBySiteId($this->data['site_id']) : null;
+        $this->data['pushes'] = $this->Feature_model->getFeatureExistByClientId($this->data['client_id'],
+            'push') ? $this->Push_model->listTemplatesBySiteId($this->data['site_id']) : null;
 
         $this->data['goods_items'] = $this->Goods_model->getGoodsBySiteId($this->data);
 
@@ -369,11 +381,12 @@ class Leaderboard extends MY_Controller
             return false;
         }
     }
+
     private function getFeedbackData(&$feedbacks) // Beware !! parameter has been passing by reference
     {
         $feedback_data = null;
-        foreach ($feedbacks as $feedback){
-            switch ($feedback['feedback_type']){
+        foreach ($feedbacks as $feedback) {
+            switch ($feedback['feedback_type']) {
                 case "EMAIL":
                     $feedback_data = $this->Email_model->getTemplate($feedback['template_id']);
                     break;

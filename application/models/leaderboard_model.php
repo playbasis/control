@@ -83,7 +83,7 @@ class Leaderboard_model extends MY_Model
             'date_added' => $date,
             'date_modified' => $date
         );
-        $insert_data = array_merge($data,$date_array);
+        $insert_data = array_merge($data, $date_array);
 
         $insert = $this->mongo_db->insert('playbasis_leaderboard', $insert_data);
 
@@ -101,12 +101,11 @@ class Leaderboard_model extends MY_Model
             'date_modified' => $date
         );
 
-        $update_data = array_merge($data,$date_array);
+        $update_data = array_merge($data, $date_array);
         // ignore _id
         unset($update_data['_id']);
-        foreach ($update_data as $key => $value)
-        {
-            $this->mongo_db->set($key,$value);
+        foreach ($update_data as $key => $value) {
+            $this->mongo_db->set($key, $value);
         }
         $update = $this->mongo_db->update('playbasis_leaderboard');
 
@@ -121,13 +120,15 @@ class Leaderboard_model extends MY_Model
 
         return $this->mongo_db->delete('playbasis_leaderboard');
     }
-    public function getRewards($data){
+
+    public function getRewards($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->where('status', true);
-        $this->mongo_db->where('group','POINT');
+        $this->mongo_db->where('group', 'POINT');
 
         return $this->mongo_db->get('playbasis_reward_to_client');
     }

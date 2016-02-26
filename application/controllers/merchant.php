@@ -92,7 +92,8 @@ class Merchant extends MY_Controller
             foreach ($newBranches as $branch) {
                 if (!empty($branch['branchName'])) {
                     $this->form_validation->set_rules('newBranches[' . $i++ . '][branchName]',
-                        $this->lang->line('entry_branch_name'), 'trim|xss_clean|min_length[3]|callback_alpha_dash_space');
+                        $this->lang->line('entry_branch_name'),
+                        'trim|xss_clean|min_length[3]|callback_alpha_dash_space');
                 }
             }
         }
@@ -108,7 +109,7 @@ class Merchant extends MY_Controller
 
                 $batch_data = array();
 
-                if(isset($merchant_data['newBranches'])&&!empty($merchant_data['newBranches'])){
+                if (isset($merchant_data['newBranches']) && !empty($merchant_data['newBranches'])) {
                     $postArr = array_map('array_filter', $merchant_data['newBranches']);
                     foreach ($postArr as $key => $branch) {
                         if (!array_key_exists('branchName', $branch)) {
@@ -331,7 +332,8 @@ class Merchant extends MY_Controller
                         }
                     }
                 } else {
-                    $ggdelete = $this->Merchant_model->deleteMerchantGoodsGroupByMerchantId($client_id, $site_id, $merchant_id);
+                    $ggdelete = $this->Merchant_model->deleteMerchantGoodsGroupByMerchantId($client_id, $site_id,
+                        $merchant_id);
                 }
 
                 $update = $this->Merchant_model->updateMerchant($data);
@@ -352,7 +354,7 @@ class Merchant extends MY_Controller
             die();
         }
 
-        if(!empty($merchant_id)){
+        if (!empty($merchant_id)) {
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 $client_id = $this->User_model->getClientId();
                 $site_id = $this->User_model->getSiteId();
@@ -369,14 +371,15 @@ class Merchant extends MY_Controller
 
                         $branches = $this->Merchant_model->retrieveBranches($client_id, $site_id, $tmpArrBranchID);
 
-                        foreach($branches as &$branch)
-                            $branch['_id'] = $branch['_id']."";
+                        foreach ($branches as &$branch) {
+                            $branch['_id'] = $branch['_id'] . "";
+                        }
 
                         echo json_encode($branches);
                     }
                 }
             }
-        }else{
+        } else {
             $this->output->set_status_header('401');
             echo json_encode(array('status' => 'error'));
         }
@@ -435,8 +438,9 @@ class Merchant extends MY_Controller
                         $id_entry = new MongoId($id_entry);
                     }
                     $result = $this->Merchant_model->removeBranchesByIdArray($remove_id);
-                } elseif (is_string($remove_id))
+                } elseif (is_string($remove_id)) {
                     $result = $this->Merchant_model->removeBranchById($remove_id);
+                }
             }
 
             if (!$result) {
@@ -622,10 +626,11 @@ class Merchant extends MY_Controller
 
     function alpha_dash_space($str)
     {
-        if( ! preg_match("/([ _-\d\w])+/i", $str)){
-            $this->form_validation->set_message('alpha_dash_space', 'The %s field may only contain alpha-numeric characters, spaces, underscores, and dashes');
+        if (!preg_match("/([ _-\d\w])+/i", $str)) {
+            $this->form_validation->set_message('alpha_dash_space',
+                'The %s field may only contain alpha-numeric characters, spaces, underscores, and dashes');
             return false;
-        }else{
+        } else {
             return true;
         }
     }

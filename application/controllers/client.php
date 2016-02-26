@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Client extends MY_Controller
 {
     public function __construct()
@@ -12,7 +13,7 @@ class Client extends MY_Controller
         $this->load->model('User_group_to_client_model');
         $this->load->model('Permission_model');
 
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -21,9 +22,10 @@ class Client extends MY_Controller
         $this->lang->load("client", $lang['folder']);
     }
 
-    public function index() {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function index()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -36,10 +38,11 @@ class Client extends MY_Controller
 
     }
 
-    public function page($offset=0) {
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -52,7 +55,8 @@ class Client extends MY_Controller
 
     }
 
-    public function insert() {
+    public function insert()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -60,11 +64,15 @@ class Client extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'client/insert';
 
-        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[3]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('entry_email'), 'trim|required|valid_email');
-        $this->form_validation->set_rules('plan_id', $this->lang->line('entry_plan'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('plan_id', $this->lang->line('entry_plan'),
+            'trim|required|min_length[1]|max_length[255]|xss_clean');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 
@@ -74,7 +82,7 @@ class Client extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 $client_id = $this->Client_model->addClient($this->input->post());
 
@@ -86,46 +94,51 @@ class Client extends MY_Controller
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                redirect('/client/update/'.$client_id, 'refresh');
+                redirect('/client/update/' . $client_id, 'refresh');
             }
         }
 
         $this->getForm();
     }
 
-    public function update($client_id) {
+    public function update($client_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'client/update/'.$client_id;
+        $this->data['form'] = 'client/update/' . $client_id;
 
-        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'),
+            'trim|required|min_length[1]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
-        $this->form_validation->set_rules('plan_id', $this->lang->line('entry_plan'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('plan_id', $this->lang->line('entry_plan'),
+            'trim|required|min_length[1]|max_length[255]|xss_clean');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerClient($client_id)) {
 
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
-                
+
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 $this->Client_model->editClient($client_id, $this->input->post());
 
-                if($this->input->post('status')==false){
-                    $data = array('client_id'=>$client_id);
+                if ($this->input->post('status') == false) {
+                    $data = array('client_id' => $client_id);
                     $results = $this->User_model->getUserByClientId($data);
-                    foreach($results as $result){
+                    foreach ($results as $result) {
                         $user_id = $result['user_id'];
                         $this->User_model->disableUser($user_id);
-                    }    
+                    }
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
@@ -137,7 +150,8 @@ class Client extends MY_Controller
         $this->getForm($client_id);
     }
 
-    public function delete() {
+    public function delete()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -146,21 +160,21 @@ class Client extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             foreach ($this->input->post('selected') as $client_id) {
-                if($this->checkOwnerClient($client_id)){
+                if ($this->checkOwnerClient($client_id)) {
                     $this->Client_model->deleteClient($client_id);
                     $this->Client_model->deleteClientPersmission($client_id);
                     $site_id = $this->User_model->getSiteId();
                     $this->App_model->deleteAppByClientId($client_id);
 
-                    $data = array('client_id'=>$client_id);
+                    $data = array('client_id' => $client_id);
                     $results = $this->User_model->getUserByClientId($data);
-                    foreach($results as $result){
+                    foreach ($results as $result) {
                         $user_id = $result['user_id'];
                         $this->User_model->deleteUser($user_id);
                     }
@@ -175,7 +189,8 @@ class Client extends MY_Controller
         $this->getList(0, site_url('client'));
     }
 
-    public function getList($offset) {
+    public function getList($offset)
+    {
 
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
@@ -188,7 +203,7 @@ class Client extends MY_Controller
 
         $this->load->library('pagination');
 
-        $parameter_url = "?t=".rand();
+        $parameter_url = "?t=" . rand();
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -196,32 +211,32 @@ class Client extends MY_Controller
 
         if ($this->input->get('filter_name')) {
             $filter_name = $this->input->get('filter_name');
-            $parameter_url .= "&filter_name=".$filter_name;
+            $parameter_url .= "&filter_name=" . $filter_name;
         } else {
             $filter_name = null;
         }
 
         if ($this->input->get('sort')) {
             $sort = $this->input->get('sort');
-            $parameter_url .= "&sort=".$sort;
+            $parameter_url .= "&sort=" . $sort;
         } else {
             $sort = 'first_name';
         }
 
         if ($this->input->get('order')) {
             $order = $this->input->get('order');
-            $parameter_url .= "&order=".$order;
+            $parameter_url .= "&order=" . $order;
         } else {
             $order = 'ASC';
         }
 
-        $limit = isset($params['limit']) ? $params['limit'] : $per_page ;
+        $limit = isset($params['limit']) ? $params['limit'] : $per_page;
 
         $data = array(
             'client_id' => $client_id,
             'site_id' => $site_id,
             'filter_name' => $filter_name,
-            'sort'  => $sort,
+            'sort' => $sort,
             'order' => $order,
             'start' => $offset,
             'limit' => $limit
@@ -238,20 +253,21 @@ class Client extends MY_Controller
                 $plan_subscription = $this->Client_model->getPlanByClientId($result['_id']);
                 $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
 
-                $data_client = array("client_id" => $result['_id'], 'site_id'=>$site_id);
+                $data_client = array("client_id" => $result['_id'], 'site_id' => $site_id);
                 $domain_total = $this->App_model->getTotalAppsByClientId($data_client);
 
-                if (isset($result['image'])){
+                if (isset($result['image'])) {
                     $info = pathinfo($result['image']);
-                    if(isset($info['extension'])){
+                    if (isset($info['extension'])) {
                         $extension = $info['extension'];
-                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-140x140.'.$extension;
-                        $image = S3_IMAGE.$new_image;
-                    }else{
-                        $image = S3_IMAGE."cache/no_image-140x140.jpg";
+                        $new_image = 'cache/' . utf8_substr($result['image'], 0,
+                                utf8_strrpos($result['image'], '.')) . '-140x140.' . $extension;
+                        $image = S3_IMAGE . $new_image;
+                    } else {
+                        $image = S3_IMAGE . "cache/no_image-140x140.jpg";
                     }
-                }else{
-                    $image = S3_IMAGE."cache/no_image-140x140.jpg";
+                } else {
+                    $image = S3_IMAGE . "cache/no_image-140x140.jpg";
                 }
 
                 /*if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
@@ -271,7 +287,8 @@ class Client extends MY_Controller
                     'image' => $image,
                     'quantity' => $domain_total,
                     'status' => $result['status'],
-                    'selected'    => is_array($this->input->post('selected')) && in_array($result['client_id'], $this->input->post('selected')),
+                    'selected' => is_array($this->input->post('selected')) && in_array($result['client_id'],
+                            $this->input->post('selected')),
                 );
             }
         }
@@ -290,7 +307,7 @@ class Client extends MY_Controller
             $this->data['success'] = '';
         }
 
-        $config['base_url'] = site_url('client/page').$parameter_url;
+        $config['base_url'] = site_url('client/page') . $parameter_url;
         $config['total_rows'] = $total;
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
@@ -334,7 +351,8 @@ class Client extends MY_Controller
         $this->render_page('template');
     }
 
-    private function getForm($client_id=null) {
+    private function getForm($client_id = null)
+    {
 
         $this->load->model('Image_model');
         $this->load->model('Plan_model');
@@ -342,7 +360,7 @@ class Client extends MY_Controller
         if (isset($client_id) && ($client_id != 0)) {
             $client_info = $this->Client_model->getClient($client_id);
             $this->data['list_client_id'] = $client_id;
-        }else {
+        } else {
             $this->data['list_client_id'] = null;
         }
 
@@ -398,7 +416,8 @@ class Client extends MY_Controller
         if ($this->input->post('date_start')) {
             $this->data['date_start'] = date("Y-m-d", strtotime($this->input->post('date_start')));
         } elseif (isset($client_id) && ($client_id != 0)) {
-            $this->data['date_start'] = array_key_exists('date_start', $client_info) && $client_info['date_start'] ? date("Y-m-d", $client_info['date_start']->sec) : null;
+            $this->data['date_start'] = array_key_exists('date_start',
+                $client_info) && $client_info['date_start'] ? date("Y-m-d", $client_info['date_start']->sec) : null;
         } else {
             $this->data['date_start'] = '';
         }
@@ -406,7 +425,8 @@ class Client extends MY_Controller
         if ($this->input->post('date_expire')) {
             $this->data['date_expire'] = date("Y-m-d", strtotime($this->input->post('date_expire')));
         } elseif (isset($client_id) && ($client_id != 0)) {
-            $this->data['date_expire'] = array_key_exists('date_expire', $client_info) && $client_info['date_expire'] ? date("Y-m-d", $client_info['date_expire']->sec) : null;
+            $this->data['date_expire'] = array_key_exists('date_expire',
+                $client_info) && $client_info['date_expire'] ? date("Y-m-d", $client_info['date_expire']->sec) : null;
         } else {
             $this->data['date_expire'] = '';
         }
@@ -419,17 +439,18 @@ class Client extends MY_Controller
             $this->data['image'] = 'no_image.jpg';
         }
 
-        if ($this->data['image']){
+        if ($this->data['image']) {
             $info = pathinfo($this->data['image']);
-            if(isset($info['extension'])){
+            if (isset($info['extension'])) {
                 $extension = $info['extension'];
-                $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
-                $this->data['thumb'] = S3_IMAGE.$new_image;
-            }else{
-                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0,
+                        utf8_strrpos($this->data['image'], '.')) . '-100x100.' . $extension;
+                $this->data['thumb'] = S3_IMAGE . $new_image;
+            } else {
+                $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
             }
-        }else{
-            $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        } else {
+            $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
         }
 
         /*if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
@@ -440,7 +461,7 @@ class Client extends MY_Controller
             $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
         }*/
 
-        $this->data['no_image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        $this->data['no_image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
 
         if ($this->input->post('status')) {
             $this->data['status'] = $this->input->post('status');
@@ -464,7 +485,8 @@ class Client extends MY_Controller
         $this->render_page('template');
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
 
         if ($this->User_model->hasPermission('modify', 'client')) {
             return true;
@@ -473,8 +495,9 @@ class Client extends MY_Controller
         }
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         if ($this->User_model->hasPermission('access', 'client')) {
@@ -484,28 +507,32 @@ class Client extends MY_Controller
         }
     }
 
-    private function checkOwnerClient($clientId){
+    private function checkOwnerClient($clientId)
+    {
 
 //        $this->load->model('Domain_model');
         $this->load->model('App_model');
 
         $error = null;
 
-        if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+        if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
 
-            $theData = array('client_id'=> $this->User_model->getClientId(), 'site_id'=>$this->User_model->getSiteId());
+            $theData = array(
+                'client_id' => $this->User_model->getClientId(),
+                'site_id' => $this->User_model->getSiteId()
+            );
 
             $clients = $this->App_model->getAppsByClientId($theData);
 
             $has = false;
 
             foreach ($clients as $client) {
-                if($client['_id']."" == $clientId.""){
+                if ($client['_id'] . "" == $clientId . "") {
                     $has = true;
                 }
             }
 
-            if(!$has){
+            if (!$has) {
                 $error = $this->lang->line('error_permission');
             }
         }
@@ -517,7 +544,8 @@ class Client extends MY_Controller
         }
     }
 
-    public function autocomplete(){
+    public function autocomplete()
+    {
         $json = array();
 
         if ($this->input->get('filter_name')) {
@@ -550,7 +578,8 @@ class Client extends MY_Controller
         $this->output->set_output(json_encode($json));
     }
 
-    public function domain($offset=0) {
+    public function domain($offset = 0)
+    {
 
         $this->load->model('App_model');
         $this->load->model('Plan_model');
@@ -559,7 +588,7 @@ class Client extends MY_Controller
 
         $data = array(
             'client_id' => $this->input->get('client_id'),
-            'site_id' =>$this->User_model->getSiteId()
+            'site_id' => $this->User_model->getSiteId()
         );
 
         $results = $this->App_model->getAppsByClientId($data);
@@ -595,7 +624,8 @@ class Client extends MY_Controller
         $this->render_page('client_domain');
     }
 
-    public function users($offset=0) {
+    public function users($offset = 0)
+    {
 
         $this->load->model('Plan_model');
 
@@ -611,7 +641,7 @@ class Client extends MY_Controller
             foreach ($results as $result) {
 
                 $user_data = $this->User_model->getUserInfo($result['user_id']);
-                if($user_data) {
+                if ($user_data) {
                     $this->data['users'][] = array(
                         'user_id' => $result['user_id'],
                         'user_group_id' => $user_data['user_group_id'],
@@ -635,4 +665,5 @@ class Client extends MY_Controller
         $this->render_page('client_user');
     }
 }
+
 ?>
