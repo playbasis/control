@@ -2,8 +2,9 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once APPPATH . '/libraries/S3.php';
-define('MAX_UPLOADED_FILE_SIZE', 3*1024*1024);
+define('MAX_UPLOADED_FILE_SIZE', 3 * 1024 * 1024);
 define('S3_BUCKET', 'elasticbeanstalk-ap-southeast-1-007834438823');
+
 class File extends REST2_Controller
 {
     public function __construct()
@@ -23,10 +24,9 @@ class File extends REST2_Controller
         $this->benchmark->mark('start');
 
 
-        if (empty($_FILES)){
+        if (empty($_FILES)) {
             $this->response($this->error->setError('FILE_NOT_FOUND'), 200);
-        }
-        else{
+        } else {
             $array = $_FILES;
             reset($array);
             $image = $_FILES[key($array)];
@@ -34,25 +34,27 @@ class File extends REST2_Controller
 
         if ($image && $image['tmp_name']) {
             $input = $this->input->get();
-            $pb_player_id = isset($input['player_id'])?$this->player_model->getPlaybasisId(array_merge($this->validToken, array(
-                'cl_player_id' => $input['player_id']))):null;
+            $pb_player_id = isset($input['player_id']) ? $this->player_model->getPlaybasisId(array_merge($this->validToken,
+                array(
+                    'cl_player_id' => $input['player_id']
+                ))) : null;
             $client_id = $this->validToken['client_id'];
-            $site_id   = $this->validToken['site_id'];
+            $site_id = $this->validToken['site_id'];
 
-            $limit = $this->plan_model->getLimitPlanByClientId($client_id,"others");
-            $limit_images  = isset($limit['image'])?$limit['image']:null;
+            $limit = $this->plan_model->getLimitPlanByClientId($client_id, "others");
+            $limit_images = isset($limit['image']) ? $limit['image'] : null;
             $size = $this->image_model->getTotalSize($client_id);
-            if ($limit_images && ($size + $image['size'] > $limit_images)){
+            if ($limit_images && ($size + $image['size'] > $limit_images)) {
                 $this->response($this->error->setError('UPLOAD_EXCEED_LIMIT'), 200);
             }
-            $directory = isset($input['directory'])?str_replace('../', '', $input['directory']):null;
+            $directory = isset($input['directory']) ? str_replace('../', '', $input['directory']) : null;
             $filename = basename(html_entity_decode($image['name'], ENT_QUOTES, 'UTF-8'));
 
-            $t = explode('.' , $filename);
+            $t = explode('.', $filename);
             $type = end($t);
 
 
-            $filename = md5($client_id.$site_id.$filename).".".$type;
+            $filename = md5($client_id . $site_id . $filename) . "." . $type;
 
             if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
                 $this->response($this->error->setError('FILE_NAME_IS_INVALID'), 200);
@@ -73,13 +75,13 @@ class File extends REST2_Controller
             $image_height = $image_info[1];
 
             //if($image_width < 500 || $image_width >1000){
-            if($image_width > 2000){
+            if ($image_width > 2000) {
                 $this->response($this->error->setError('IMAGE_WIDTH_IS_INVALID'), 200);
                 // $json['error'] = $image_height." ".$image_width;
             }
 
             //if($image_height < 500 || $image_height >1000){
-            if($image_height > 2000){
+            if ($image_height > 2000) {
                 $this->response($this->error->setError('IMAGE_HEIGHT_IS_INVALID'), 200);
             }
 
@@ -110,30 +112,30 @@ class File extends REST2_Controller
             }
 
             if ($image['error'] != UPLOAD_ERR_OK) {
-                $this->response($this->error->setError('UPLOAD_FILE_ERROR',$image['error']), 200);
+                $this->response($this->error->setError('UPLOAD_FILE_ERROR', $image['error']), 200);
             }
         } else {
             $this->response($this->error->setError('FILE_NOT_FOUND'), 200);
         }
 
 
-        if ($this->image_model->uploadImage($client_id,$site_id,$image,$filename,$directory,$pb_player_id)) {
+        if ($this->image_model->uploadImage($client_id, $site_id, $image, $filename, $directory, $pb_player_id)) {
 
 
-            $json['url'] = rtrim(S3_IMAGE.S3_CONTENT_FOLDER . $directory, '/')."/". urlencode($filename);
-            @copy(rtrim(S3_IMAGE.S3_CONTENT_FOLDER . $directory, '/')."/". urlencode($filename), $directory . '/' . $filename);
-            if ($directory){
-                $uri = $directory."/".$filename;
-            }
-            else{
+            $json['url'] = rtrim(S3_IMAGE . S3_CONTENT_FOLDER . $directory, '/') . "/" . urlencode($filename);
+            @copy(rtrim(S3_IMAGE . S3_CONTENT_FOLDER . $directory, '/') . "/" . urlencode($filename),
+                $directory . '/' . $filename);
+            if ($directory) {
+                $uri = $directory . "/" . $filename;
+            } else {
                 $uri = $filename;
             }
             $json['thumb_url'] = $this->image_model->createThumbnail($uri);
             @unlink($local_directory . '/' . $filename);
-            @unlink($local_directory . '/'.THUMBNAIL_FOLDER . $filename);
+            @unlink($local_directory . '/' . THUMBNAIL_FOLDER . $filename);
 
-        }else{
-            $this->response($this->error->setError('UPLOAD_FILE_ERROR',"S3 fail"), 200);
+        } else {
+            $this->response($this->error->setError('UPLOAD_FILE_ERROR', "S3 fail"), 200);
         }
 
         $this->benchmark->mark('end');
@@ -142,20 +144,21 @@ class File extends REST2_Controller
         $json['processing_time'] = $t;
         $this->response($this->resp->setRespond($json), 200);
     }
+
     public function delete_post()
     {
         $this->benchmark->mark('start');
         $input = $this->input->post();
         $client_id = $this->validToken['client_id'];
-        $site_id   = $this->validToken['site_id'];
+        $site_id = $this->validToken['site_id'];
 
         $filename = $input['file_name'];
-        $directory = isset($input['directory'])?str_replace('../', '', $input['directory']):null;
-        if (!$filename){
+        $directory = isset($input['directory']) ? str_replace('../', '', $input['directory']) : null;
+        if (!$filename) {
             $this->response($this->error->setError('FILE_NOT_FOUND'), 200);
         }
 
-        if (!$this->image_model->deleteImage($client_id,$site_id,$filename,$directory)) {
+        if (!$this->image_model->deleteImage($client_id, $site_id, $filename, $directory)) {
 
             $this->response($this->error->setError('DELETE_FILE_FAILED'), 200);
         }

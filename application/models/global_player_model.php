@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class Global_Player_Model extends MY_Model
 {
     public function __construct()
@@ -8,14 +9,15 @@ class Global_Player_Model extends MY_Model
         $this->config->load('playbasis');
         $this->load->library('mongo_db');
     }
+
     public function testAction()
     {
         return 'test action';
     }
-    public function loginAction($data , $type)
+
+    public function loginAction($data, $type)
     {
-        if($type == "login")
-        {
+        if ($type == "login") {
 
             $this->mongo_db->select(array('salt'));
             $this->mongo_db->where(array(
@@ -32,9 +34,7 @@ class Global_Player_Model extends MY_Model
             $this->mongo_db->limit(1);
             $id = $this->mongo_db->get('global_player');
             return $id;
-        }
-        else
-        {
+        } else {
             $this->mongo_db->select(array('_id'));
             $this->mongo_db->where(array(
                 'player_id' => $data['player_id'],
@@ -43,13 +43,11 @@ class Global_Player_Model extends MY_Model
             $this->mongo_db->limit(1);
             $token = $this->mongo_db->get('global_token');
 
-            if(!$token)
-            {
-                if($token == $data['token'])
+            if (!$token) {
+                if ($token == $data['token']) {
                     return true;
-            }
-            else
-            {
+                }
+            } else {
 
 
             }
@@ -62,17 +60,17 @@ class Global_Player_Model extends MY_Model
      * @param $data
      * @param $social_data
      */
-    public function createGlobalPlayer($data,$social_data)
+    public function createGlobalPlayer($data, $social_data)
     {
         $mongoDate = new MongoDate(time());
 
-        $salt = get_random_password(10,10);
+        $salt = get_random_password(10, 10);
 
         $insert_password = $data['password'];
 
         $password = dohash($insert_password, $salt);
 
-        if(!$social_data) {
+        if (!$social_data) {
             $social = array(
                 'provider' => $social_data['provider'],
                 'id' => $social_data['id'],
@@ -102,11 +100,9 @@ class Global_Player_Model extends MY_Model
                 'date_modified' => $mongoDate,
 
             ));
-        }
-        else
-        {
-            array_push($social,$social_data['profile']);
-            array_push($social,$social_data['accessCredentials']);
+        } else {
+            array_push($social, $social_data['profile']);
+            array_push($social, $social_data['accessCredentials']);
             $profile = $social_data['profile'];
             return $this->mongo_db->insert('global_player', array(
 
@@ -124,15 +120,17 @@ class Global_Player_Model extends MY_Model
             ));
         }
     }
-    public function updateGlobalPlayer($id, $fieldData )
-    {
-        if(!$id)
-            return false;
 
-        if(isset($fieldData['gender'])){
+    public function updateGlobalPlayer($id, $fieldData)
+    {
+        if (!$id) {
+            return false;
+        }
+
+        if (isset($fieldData['gender'])) {
             $fieldData['gender'] = intval($fieldData['gender']);
         }
-        if(isset($fieldData['birth_date'])){
+        if (isset($fieldData['birth_date'])) {
             $fieldData['birth_date'] = new MongoDate(strtotime($fieldData['birth_date']));
         }
 
@@ -141,27 +139,32 @@ class Global_Player_Model extends MY_Model
         $this->mongo_db->set($fieldData);
         return $this->mongo_db->update('global_player');
     }
-    public function readGlobalPlayer($id, $fields=null)
+
+    public function readGlobalPlayer($id, $fields = null)
     {
-        if(!$id)
+        if (!$id) {
             return array();
-        if($fields)
+        }
+        if ($fields) {
             $this->mongo_db->select($fields);
+        }
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where('_id', $id);
         $result = $this->mongo_db->get('global_player');
-        if(!$result)
+        if (!$result) {
             return $result;
+        }
         $result = $result[0];
-        if(isset($result['date_added']))
-        {
+        if (isset($result['date_added'])) {
             $result['registered'] = datetimeMongotoReadable($result['date_added']);
             unset($result['date_added']);
         }
-        if(isset($result['birth_date']) && $result['birth_date'])
+        if (isset($result['birth_date']) && $result['birth_date']) {
             $result['birth_date'] = date('Y-m-d', $result['birth_date']->sec);
+        }
         return $result;
     }
+
     private function getToken($data)
     {
         $this->mongo_db->select(array('_id'));
@@ -172,6 +175,7 @@ class Global_Player_Model extends MY_Model
         $this->mongo_db->limit(1);
         return $this->mongo_db->get('global_token');
     }
+
     public function requestClientSite($data)
     {
         $mongoDate = new MongoDate(time());
@@ -187,16 +191,18 @@ class Global_Player_Model extends MY_Model
         ));
 
     }
+
     public function searchClient($data)
     {
         $this->mongo_db->select(null);
         $this->mongo_db->where(array(
-               'company' => $data
+            'company' => $data
         ));
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_client');
         return $results;
     }
+
     public function searchSite($client_id)
     {
         $this->mongo_db->select(null);
@@ -207,37 +213,37 @@ class Global_Player_Model extends MY_Model
         $results = $this->mongo_db->get('playbasis_client_site');
         return $results;
     }
-    public function searchFeatureForClient($client_id,$site_id)
+
+    public function searchFeatureForClient($client_id, $site_id)
     {
         $clientFeature = array();
         $this->mongo_db->select('feature_id');
         $this->mongo_db->where(array(
             'client_id' => new MongoId($client_id),
-            'site_id'=> new MongoId($site_id)
+            'site_id' => new MongoId($site_id)
         ));
         $allfeature = $this->mongo_db->get('playbasis_feature_to_client');
 
-        foreach($allfeature as $feature)
-        {
-            array_push($clientFeature,$feature['feature_id']);
+        foreach ($allfeature as $feature) {
+            array_push($clientFeature, $feature['feature_id']);
         }
 
         $this->mongo_db->select(null);
-        $this->mongo_db->where_in('_id',$clientFeature);
+        $this->mongo_db->where_in('_id', $clientFeature);
         $features = $this->mongo_db->get('playbasis_feature');
 
         $menus = array();
-        foreach($features as $feature)
-        {
-            if(array_key_exists('dash',$feature))
-            {
-                if($feature['dash'] ==1)
-                    array_push($menus,$feature);
+        foreach ($features as $feature) {
+            if (array_key_exists('dash', $feature)) {
+                if ($feature['dash'] == 1) {
+                    array_push($menus, $feature);
+                }
             }
 
         }
         return $menus;
     }
+
     public function chooseService($data)
     {
         $mongoDate = new MongoDate(time());
@@ -254,6 +260,7 @@ class Global_Player_Model extends MY_Model
 
         ));
     }
+
     public function storeDeviceToken($data)
     {
         $mongoDate = new MongoDate(time());
@@ -266,8 +273,7 @@ class Global_Player_Model extends MY_Model
         ));
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('global_player_device');
-        if(!$results)
-        {
+        if (!$results) {
             $this->mongo_db->insert('global_player_device', array(
 
                 'player_id' => new MongoId($data['player_id']),

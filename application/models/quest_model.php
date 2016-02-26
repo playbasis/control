@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class Quest_model extends MY_Model
 {
     public function __construct()
@@ -7,7 +8,8 @@ class Quest_model extends MY_Model
         parent::__construct();
         $this->config->load('playbasis');
     }
-    public function getQuest($data, $test=NULL)
+
+    public function getQuest($data, $test = null)
     {
         //get quest
         $this->set_site_mongodb($data['site_id']);
@@ -18,8 +20,9 @@ class Quest_model extends MY_Model
             '_id' => $data['quest_id'],
         );
 
-        if (!$test)
+        if (!$test) {
             $criteria["status"] = true;
+        }
 
         $this->mongo_db->where($criteria);
         $this->mongo_db->where_ne('deleted', true);
@@ -30,6 +33,7 @@ class Quest_model extends MY_Model
         array_walk_recursive($result, array($this, "change_image_path"));
         return $result;
     }
+
     public function getQuests($data)
     {
         // get all quests related to client
@@ -46,6 +50,7 @@ class Quest_model extends MY_Model
         array_walk_recursive($result, array($this, "change_image_path"));
         return $result;
     }
+
     public function getMission($data)
     {
         //get mission
@@ -78,18 +83,20 @@ class Quest_model extends MY_Model
         //log_message('debug', 'MISSION : player = '.$data["pb_player_id"].' quest id = '.$data["quest_id"].' after sort : '.print_r($data["missions"], true));
 
         $first = true;
-        if (is_array($data["missions"]))foreach($data["missions"] as &$m){
-            if($data["mission_order"]){
-                if($first){
+        if (is_array($data["missions"])) {
+            foreach ($data["missions"] as &$m) {
+                if ($data["mission_order"]) {
+                    if ($first) {
+                        $m["status"] = "join";
+                        $first = false;
+                    } else {
+                        $m["status"] = "unjoin";
+                    }
+                } else {
                     $m["status"] = "join";
-                    $first = false;
-                }else{
-                    $m["status"] = "unjoin";
                 }
-            }else{
-                $m["status"] = "join";
+                $m["date_modified"] = new MongoDate(time());
             }
-            $m["date_modified"] = new MongoDate(time());
         }
 
         //log_message('debug', 'MISSION : player = '.$data["pb_player_id"].' quest id = '.$data["quest_id"].' update status : '.print_r($data["missions"], true));
@@ -107,14 +114,15 @@ class Quest_model extends MY_Model
         ));
     }
 
-    public function getPlayerQuest($data) {
+    public function getPlayerQuest($data)
+    {
         $this->set_site_mongodb($data["site_id"]);
 
         $this->mongo_db->where(array(
             "pb_player_id" => $data["pb_player_id"],
             "quest_id" => $data["quest_id"]
         ));
-        if(isset($data['status'])){
+        if (isset($data['status'])) {
             $this->mongo_db->where_in('status', $data['status']);
         }
         $this->mongo_db->where_ne('deleted', true);
@@ -126,13 +134,14 @@ class Quest_model extends MY_Model
         return $result;
     }
 
-    public function getPlayerQuests($data) {
+    public function getPlayerQuests($data)
+    {
         $this->set_site_mongodb($data["site_id"]);
 
         $this->mongo_db->where(array(
             "pb_player_id" => $data["pb_player_id"]
         ));
-        if(isset($data['status'])){
+        if (isset($data['status'])) {
             $this->mongo_db->where_in('status', $data['status']);
         }
         $this->mongo_db->where_ne('deleted', true);
@@ -142,7 +151,8 @@ class Quest_model extends MY_Model
         return $result;
     }
 
-    public function updateQuestStatus($data, $status){
+    public function updateQuestStatus($data, $status)
+    {
         $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where(array(
@@ -155,7 +165,9 @@ class Quest_model extends MY_Model
         $this->mongo_db->set(array('date_modified' => new MongoDate(time())));
         $this->mongo_db->update('playbasis_quest_to_player');
     }
-    public function updateMissionStatus($data, $status){
+
+    public function updateMissionStatus($data, $status)
+    {
         $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where(array(
@@ -167,7 +179,7 @@ class Quest_model extends MY_Model
         $this->mongo_db->where_ne('deleted', true);
         $qp = $this->mongo_db->get('playbasis_quest_to_player');
 
-        if($qp && isset($qp[0])){
+        if ($qp && isset($qp[0])) {
             $this->mongo_db->where(array(
                 'site_id' => $data['site_id'],
                 'pb_player_id' => $data['pb_player_id'],
@@ -180,7 +192,8 @@ class Quest_model extends MY_Model
         }
     }
 
-    public function getQuestName($client_id, $site_id, $quest_id) {
+    public function getQuestName($client_id, $site_id, $quest_id)
+    {
         $this->mongo_db->where(array(
             '_id' => $quest_id,
         ));
@@ -188,9 +201,10 @@ class Quest_model extends MY_Model
         return $records ? $records[0]['quest_name'] : null;
     }
 
-    public function getRewardHistoryFromPlayerID($client_id, $site_id, $pb_player_id, $offset, $limit) {
+    public function getRewardHistoryFromPlayerID($client_id, $site_id, $pb_player_id, $offset, $limit)
+    {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array(),array('_id','client_id','site_id','pb_player_id'));
+        $this->mongo_db->select(array(), array('_id', 'client_id', 'site_id', 'pb_player_id'));
         $this->mongo_db->where(array(
             'client_id' => $client_id,
             'site_id' => $site_id,
@@ -199,7 +213,9 @@ class Quest_model extends MY_Model
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
         $records = $this->mongo_db->get('playbasis_quest_reward_log');
-        if (!$records) $records = array();
+        if (!$records) {
+            $records = array();
+        }
         foreach ($records as &$record) {
             $record['quest_name'] = $this->getQuestName($client_id, $site_id, $record['quest_id']);
             $record['type'] = $record['mission_id'] === null ? 'quest' : 'mission';
@@ -207,7 +223,8 @@ class Quest_model extends MY_Model
         return $records;
     }
 
-    public function insertQuestUsage($client_id, $site_id, $quest_id, $mission_id, $pb_player_id) {
+    public function insertQuestUsage($client_id, $site_id, $quest_id, $mission_id, $pb_player_id)
+    {
         $this->set_site_mongodb($site_id);
         $mongoDate = new MongoDate(time());
         return $this->mongo_db->insert('playbasis_quest_log', array(
@@ -221,9 +238,12 @@ class Quest_model extends MY_Model
         ), array("w" => 0, "j" => false));
     }
 
-    public function delete($client_id, $site_id, $pb_player_id, $quest_id) {
+    public function delete($client_id, $site_id, $pb_player_id, $quest_id)
+    {
         $this->set_site_mongodb($site_id);
-        if ($quest_id) $this->mongo_db->where('quest_id', new MongoId($quest_id));
+        if ($quest_id) {
+            $this->mongo_db->where('quest_id', new MongoId($quest_id));
+        }
         $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update_all('playbasis_quest_to_player');
@@ -231,14 +251,15 @@ class Quest_model extends MY_Model
 
     private function change_image_path(&$item, $key)
     {
-        if($key === "image"){
-            if(!empty($item)){
-                $item = $this->config->item('IMG_PATH').$item;
-            }else{
-                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+        if ($key === "image") {
+            if (!empty($item)) {
+                $item = $this->config->item('IMG_PATH') . $item;
+            } else {
+                $item = $this->config->item('IMG_PATH') . "no_image.jpg";
             }
 
         }
     }
 }
+
 ?>

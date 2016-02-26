@@ -9,7 +9,7 @@ class Leaderboard_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
-    public function listLeaderBoards( $query_date_check = false)
+    public function listLeaderBoards($query_date_check = false)
     {
 
         $this->mongo_db->where(array(
@@ -20,10 +20,10 @@ class Leaderboard_model extends MY_Model
             $selected_time = time();
 
             $first = date('Y-m-01', $selected_time);
-            $from = strtotime($first.' 00:00:00');
+            $from = strtotime($first . ' 00:00:00');
 
             $last = date('Y-m-t', $selected_time);
-            $to   = strtotime($last.' 23:59:59');
+            $to = strtotime($last . ' 23:59:59');
             $this->mongo_db->where(array(
                 'month' => array('$gte' => $this->new_mongo_date($from), '$lte' => $this->new_mongo_date($to))
             ));

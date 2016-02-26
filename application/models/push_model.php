@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 date_default_timezone_set('Asia/Bangkok');
+
 class Push_model extends MY_Model
 {
     public function __construct()
@@ -10,13 +11,15 @@ class Push_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
-    public function initial($data,$type=null)
+    public function initial($data, $type = null)
     {
         $type = strtolower($type);
         switch ($type) {
             case "ios":
-                $setup = $this->getIosSetup($data['data']['client_id'],$data['data']['site_id']);
-                if (!$setup) break; // suppress the error for now
+                $setup = $this->getIosSetup($data['data']['client_id'], $data['data']['site_id']);
+                if (!$setup) {
+                    break;
+                } // suppress the error for now
 
                 $f_cert = tmpfile();
                 $f_ca = tmpfile();
@@ -103,7 +106,9 @@ class Push_model extends MY_Model
 
             case "android":
                 $setup = $this->getAndroidSetup();
-                if (!$setup) break; // suppress the error for now
+                if (!$setup) {
+                    break;
+                } // suppress the error for now
 
                 $api_access_key = $setup['api_key'];
 
@@ -112,22 +117,23 @@ class Push_model extends MY_Model
                 $registrationIds = $data['device_token'];
                 $msg = array
                 (
-                    'message' 	=> $data['messages'],
-                    //'title'		=> $data['title'],
-                    //'subtitle'	=> $data['subtitle'],
-                    //'tickerText'	=> $data['description'],
+                    'message' => $data['messages'],
+                    //'title'       => $data['title'],
+                    //'subtitle'    => $data['subtitle'],
+                    //'tickerText'  => $data['description'],
                     'badge' => $data['badge_number'],
-                    'vibrate'	=> 1,
-                    'sound'		=> 1,
-                    'largeIcon'	=> 'large_icon',
-                    'smallIcon'	=> 'small_icon',
-                    'dataInfo', $data['data']
+                    'vibrate' => 1,
+                    'sound' => 1,
+                    'largeIcon' => 'large_icon',
+                    'smallIcon' => 'small_icon',
+                    'dataInfo',
+                    $data['data']
                 );
 
                 $fields = array
                 (
-                    'registration_ids' 	=> $registrationIds,
-                    'data'			=> $msg
+                    'registration_ids' => $registrationIds,
+                    'data' => $msg
                 );
 
                 $headers = array
@@ -137,19 +143,19 @@ class Push_model extends MY_Model
                 );
 
                 $ch = curl_init();
-                curl_setopt( $ch,CURLOPT_URL, 'https://android.googleapis.com/gcm/send' );
-                curl_setopt( $ch,CURLOPT_POST, true );
-                curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
-                curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
-                curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
-                curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode( $fields ) );
-                $result = curl_exec($ch );
-                curl_close( $ch );
+                curl_setopt($ch, CURLOPT_URL, 'https://android.googleapis.com/gcm/send');
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+                $result = curl_exec($ch);
+                curl_close($ch);
                 //echo $result;
                 break;
 
             default:
-                throw new Exception("Unsupported device type: ".$type);
+                throw new Exception("Unsupported device type: " . $type);
                 break;
         }
     }
@@ -159,20 +165,20 @@ class Push_model extends MY_Model
 
         $server = new ApnsPHP_Push_Server(
             ApnsPHP_Abstract::ENVIRONMENT_PRODUCTION,
-            APPPATH.'libraries/ApnsPHP/Certificates/push_production.pem'
+            APPPATH . 'libraries/ApnsPHP/Certificates/push_production.pem'
         );
 
         // $push->setProviderCertificatePassphrase('test');
-            $server->setProviderCertificatePassphrase('playbasis');
+        $server->setProviderCertificatePassphrase('playbasis');
 
         // Set the Root Certificate Autority to verify the Apple remote peer
-            $server->setRootCertificationAuthority(APPPATH.'libraries/ApnsPHP/Certificates/Entrust_Root_Certification_Authority.pem');
+        $server->setRootCertificationAuthority(APPPATH . 'libraries/ApnsPHP/Certificates/Entrust_Root_Certification_Authority.pem');
 
         // Set the number of concurrent processes
-            $server->setProcesses(2);
+        $server->setProcesses(2);
 
         // Starts the server forking the new processes
-            $server->start();
+        $server->start();
 
         // Main loop...
         $i = 1;
@@ -188,9 +194,9 @@ class Push_model extends MY_Model
             // Send 10 messages
             if ($i <= 10) {
                 // Instantiate a new Message with a single recipient
-                $message = new ApnsPHP_Message($this.$data['device_token']);
+                $message = new ApnsPHP_Message($this . $data['device_token']);
                 $message->setCustomIdentifier("Playbasis-Notification-Production");
-                $message->setText($this.$data['messages']);
+                $message->setText($this . $data['messages']);
                 // Set badge icon to "i"
                 $message->setBadge($i);
                 $message->setCustomProperty('DataInfo', $data['data']);
@@ -206,14 +212,15 @@ class Push_model extends MY_Model
         }
     }
 
-    public function getIosSetup($client_id=null, $site_id=null) {
+    public function getIosSetup($client_id = null, $site_id = null)
+    {
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $results = $this->mongo_db->get("playbasis_push_ios");
         return $results ? $results[0] : null;
     }
 
-    public function getAndroidSetup($client_id=null, $site_id=null)
+    public function getAndroidSetup($client_id = null, $site_id = null)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('client_id', $client_id);
@@ -221,7 +228,8 @@ class Push_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function getTemplateById($site_id, $template_id) {
+    public function getTemplateById($site_id, $template_id)
+    {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('_id', new MongoId($template_id));
         $this->mongo_db->where('status', true);
@@ -229,7 +237,9 @@ class Push_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_push_to_client');
         return $results ? $results[0] : null;
     }
-    public function getTemplateByTemplateId($site_id, $template_id) {
+
+    public function getTemplateByTemplateId($site_id, $template_id)
+    {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('name', $template_id);
         $this->mongo_db->where('status', true);
@@ -238,10 +248,16 @@ class Push_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_push_to_client');
         return $results ? $results[0] : null;
     }
-    public function listTemplates($site_id, $includes=null, $excludes=null) {
+
+    public function listTemplates($site_id, $includes = null, $excludes = null)
+    {
         $this->set_site_mongodb($site_id);
-        if ($includes) $this->mongo_db->select($includes);
-        if ($excludes) $this->mongo_db->select(null, $excludes);
+        if ($includes) {
+            $this->mongo_db->select($includes);
+        }
+        if ($excludes) {
+            $this->mongo_db->select(null, $excludes);
+        }
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('status', true);
         $this->mongo_db->where('deleted', false);
@@ -256,18 +272,26 @@ class Push_model extends MY_Model
         ));
         return $this->mongo_db->get('playbasis_player_device');
     }
-    public function recent($site_id, $cl_player_id, $since) {
-        if (!$cl_player_id) return array();
+
+    public function recent($site_id, $cl_player_id, $since)
+    {
+        if (!$cl_player_id) {
+            return array();
+        }
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('message', 'date_added'));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('cl_player_id', $cl_player_id);
-        if ($since) $this->mongo_db->where_gt('date_added', new MongoDate($since));
+        if ($since) {
+            $this->mongo_db->where_gt('date_added', new MongoDate($since));
+        }
         $this->mongo_db->order_by(array('date_added' => -1));
         return $this->mongo_db->get('playbasis_push_log');
     }
-    public function log($notificationInfo,$device,$pb_player_id,$cl_player_id){
+
+    public function log($notificationInfo, $device, $pb_player_id, $cl_player_id)
+    {
         $mongoDate = new MongoDate(time());
         $client_id = $notificationInfo['data']['client_id'];
         $site_id = $notificationInfo['data']['site_id'];

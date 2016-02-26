@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
+
 //require_once APPPATH . '/libraries/GCM/loader.php';
 class Universe extends REST2_Controller
 {
@@ -34,20 +35,22 @@ class Universe extends REST2_Controller
             'password' => $this->input->post('password')
 
         );
-        $this->global_player_model->createGlobalPlayer($playerInfo,null);
+        $this->global_player_model->createGlobalPlayer($playerInfo, null);
         $this->response($this->resp->setRespond(''), 200);
 
     }
+
     public function login_post()
     {
         $playerInfo = array(
             'username' => $this->input->post('username'),
             'password' => $this->input->post('password')
         );
-        $result = $this->global_player_model->loginAction($playerInfo,'login');
+        $result = $this->global_player_model->loginAction($playerInfo, 'login');
         $result = $result[0];
         $this->response($this->resp->setRespond($result['_id']), 200);
     }
+
     public function join_post()
     {
         $joinInfo = array(
@@ -60,19 +63,18 @@ class Universe extends REST2_Controller
         $this->response($this->resp->setRespond(''), 200);
 
     }
+
     public function searchClientSite_post()
     {
         $keyword = $this->input->post('company');
         $results = $this->global_player_model->searchClient($keyword);
 
 
-        foreach($results as $result)
-        {
+        foreach ($results as $result) {
             //echo('id : '.$result['_id'].' company : '.$result['company']."\r\n");
             $sites = $this->global_player_model->searchSite($result['_id']);
 
-            foreach($sites as $site)
-            {
+            foreach ($sites as $site) {
                 //echo('id : '.$site['_id'].' site : '.$site['site_name']."\r\n");
                 $site = array(
                     'id' => $site['_id'],
@@ -90,23 +92,24 @@ class Universe extends REST2_Controller
         $this->response($this->resp->setRespond($company), 200);
 
     }
+
     public function feature_post()
     {
 
         $client_id = $this->input->post('client_id');
         $site_id = $this->input->post('site_id');
 
-        $menus =$this->global_player_model->searchFeatureForClient($client_id,$site_id);
-        foreach($menus as $menu)
-        {
+        $menus = $this->global_player_model->searchFeatureForClient($client_id, $site_id);
+        foreach ($menus as $menu) {
             //echo($menu['name'].' : '.$menu['_id']."\r\n");
             $feature = array(
-                'id' =>$menu['_id'],
+                'id' => $menu['_id'],
                 'feature' => $menu['name']
             );
         }
         $this->response($this->resp->setRespond($feature), 200);
     }
+
     public function service_post()
     {
         $serviceInfo = array(
@@ -120,12 +123,13 @@ class Universe extends REST2_Controller
         $this->response($this->resp->setRespond(''), 200);
 
     }
+
     public function deviceRegistration_post()
     {
-        $deviceInfo =  array(
+        $deviceInfo = array(
             'player_id' => $this->input->post('player_id'),
             'site_id' => $this->input->post('site_id'),
-            'device_token' => $this->input->post('device_token') ,
+            'device_token' => $this->input->post('device_token'),
             'device_description' => $this->input->post('device_description'),
             'device_name' => $this->input->post('device_name'),
             'type' => $this->input->post('type')
@@ -133,6 +137,7 @@ class Universe extends REST2_Controller
         $this->global_player_model->storeDeviceToken($deviceInfo);
         $this->response($this->resp->setRespond(''), 200);
     }
+
     public function directMsg_post($data)
     {
         /*
@@ -161,7 +166,7 @@ class Universe extends REST2_Controller
             'data' => $data,
             'badge_number' => 1
         );
-        $this->push_model->initial($notificationInfo,$type);
+        $this->push_model->initial($notificationInfo, $type);
         $this->response($this->resp->setRespond(''), 200);
 
     }

@@ -27,8 +27,12 @@ class Merchant_model extends MY_Model
         return (!empty($result) && $result) ? $result : null;
     }
 
-    public function getMerchantBranchByBranchesAndPinCode($client_id, $site_id, $branches_id_array = array(), $pin_code = null)
-    {
+    public function getMerchantBranchByBranchesAndPinCode(
+        $client_id,
+        $site_id,
+        $branches_id_array = array(),
+        $pin_code = null
+    ) {
         $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where(array(
@@ -39,15 +43,22 @@ class Merchant_model extends MY_Model
             'deleted' => false
         ));
 
-        $this->mongo_db->where_in('_id',$branches_id_array);
+        $this->mongo_db->where_in('_id', $branches_id_array);
 
         $result = $this->mongo_db->get('playbasis_merchant_branch_to_client');
 
         return (!empty($result) && $result) ? $result[0] : null;
     }
 
-    public function logMerchantRedeem($client_id, $site_id, $goods_id, $goods_group, $cl_player_id, $pb_player_id, $branch)
-    {
+    public function logMerchantRedeem(
+        $client_id,
+        $site_id,
+        $goods_id,
+        $goods_group,
+        $cl_player_id,
+        $pb_player_id,
+        $branch
+    ) {
         $this->set_site_mongodb($site_id);
 
         $result = $this->mongo_db->insert('playbasis_merchant_goodsgroup_redeem_log', array(

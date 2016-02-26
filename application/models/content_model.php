@@ -19,7 +19,8 @@ class Content_model extends MY_Model
             $this->mongo_db->where('title', $regex);
         }
         if (isset($optionalParams['category']) && !is_null($optionalParams['category'])) {
-            $category_result = $this->retrieveContentCategory($client_id, $site_id, array('name' => $optionalParams['category']));
+            $category_result = $this->retrieveContentCategory($client_id, $site_id,
+                array('name' => $optionalParams['category']));
             $this->mongo_db->where('category', $category_result[0]['_id']);
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
@@ -142,16 +143,16 @@ class Content_model extends MY_Model
         $this->mongo_db->where('deleted', false);
         return $this->mongo_db->get("playbasis_content_category_to_client");
     }
+
     public function getContentCategoryNameById($client_id, $site_id, $categoryId)
     {
-
         $this->mongo_db->where('_id', $categoryId);
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->select(array('name'));
-        $this->mongo_db->select(array(),array('_id'));
-        $result =$this->mongo_db->get("playbasis_content_category_to_client");
-        return $result ? $result[0]['name']:null;
+        $this->mongo_db->select(array(), array('_id'));
+        $result = $this->mongo_db->get("playbasis_content_category_to_client");
+        return $result ? $result[0]['name'] : null;
     }
 }

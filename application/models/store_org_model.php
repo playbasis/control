@@ -290,7 +290,9 @@ class Store_org_model extends MY_Model
             return null;
         }
     }
-    public function getOrgInfoOfNode($client_id, $site_id, $node_id){
+
+    public function getOrgInfoOfNode($client_id, $site_id, $node_id)
+    {
         $this->mongo_db->select(array(
             'name',
             'description',
@@ -307,7 +309,8 @@ class Store_org_model extends MY_Model
         return $result;
     }
 
-    public function findAdjacentChildNode($client_id, $site_id, $node_id){
+    public function findAdjacentChildNode($client_id, $site_id, $node_id)
+    {
         $this->mongo_db->select(array(
             'name',
             'organize',
@@ -319,15 +322,16 @@ class Store_org_model extends MY_Model
             'parent' => $node_id,
         ));
         $result = $this->mongo_db->get('playbasis_store_organize_to_client');
-        if(empty($result)){
+        if (empty($result)) {
             return null;
-        }else{
+        } else {
             return $result;
         }
 
     }
 
-    public function getPlayersByNodeId($client_id, $site_id, $node_id , $role=null){
+    public function getPlayersByNodeId($client_id, $site_id, $node_id, $role = null)
+    {
         $this->mongo_db->select(array('pb_player_id'));
 
         $this->mongo_db->where(array(
@@ -335,18 +339,20 @@ class Store_org_model extends MY_Model
             'site_id' => $site_id,
             'node_id' => $node_id,
         ));
-        if (!is_null($role)){
-            $this->mongo_db->where_exists('roles.'.$role, true);
+        if (!is_null($role)) {
+            $this->mongo_db->where_exists('roles.' . $role, true);
         }
         $result = $this->mongo_db->get('playbasis_store_organize_to_player');
-        if(empty($result)){
+        if (empty($result)) {
             return null;
-        }else{
+        } else {
             return $result;
         }
 
     }
-    public function getlistByOrgId($client_id, $site_id, $org_id){
+
+    public function getlistByOrgId($client_id, $site_id, $org_id)
+    {
         $this->mongo_db->where(array(
             'client_id' => $client_id,
             'site_id' => $site_id,
@@ -354,36 +360,45 @@ class Store_org_model extends MY_Model
         ));
 
         $result = $this->mongo_db->get('playbasis_store_organize_to_client');
-        if(empty($result)){
+        if (empty($result)) {
             return null;
-        }else{
+        } else {
             return $result;
         }
 
     }
 
-    public function getSaleHistoryOfNode($client_id, $site_id, $node_list, $action,$parameter, $month=null, $year=null,$count){
+    public function getSaleHistoryOfNode(
+        $client_id,
+        $site_id,
+        $node_list,
+        $action,
+        $parameter,
+        $month = null,
+        $year = null,
+        $count
+    ) {
         $result = array();
 
         $node_to_match = array();
-        foreach($node_list as $node){
-            array_push($node_to_match, array('node_id'=>new MongoId($node)));
+        foreach ($node_list as $node) {
+            array_push($node_to_match, array('node_id' => new MongoId($node)));
         }
         // default is present month/year
-        if(!isset($month)){
-            $month = date("m",time());
+        if (!isset($month)) {
+            $month = date("m", time());
         }
-        if(!isset($year)){
-            $year = date("Y",time());
+        if (!isset($year)) {
+            $year = date("Y", time());
         }
 
-        $this_month_time = strtotime($year."-".$month);
+        $this_month_time = strtotime($year . "-" . $month);
 
-        $first = date('Y-m-01', strtotime('-'.($count).' month', $this_month_time));
-        $from = strtotime($first.' 00:00:00');
+        $first = date('Y-m-01', strtotime('-' . ($count) . ' month', $this_month_time));
+        $from = strtotime($first . ' 00:00:00');
 
         $last = date('Y-m-t', $this_month_time);
-        $to   = strtotime($last.' 23:59:59');
+        $to = strtotime($last . ' 23:59:59');
 
         $status = $this->mongo_db->aggregate('playbasis_validated_action_log', array(
 
@@ -392,38 +407,51 @@ class Store_org_model extends MY_Model
                     'action_name' => $action,
                     'site_id' => $site_id,
                     'client_id' => $client_id,
-                    'date_added' => array('$gte' => new MongoDate($from),'$lte' => new MongoDate($to)),
+                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
                     '$or' => $node_to_match
                 ),
             ),
             array(
                 '$group' => array(
-                    '_id' => array("year"=>array('$year' => '$date_added'),"month"=> array('$month' => '$date_added')),
-                    $parameter => array('$push' => '$parameters.'.$parameter))
+                    '_id' => array(
+                        "year" => array('$year' => '$date_added'),
+                        "month" => array('$month' => '$date_added')
+                    ),
+                    $parameter => array('$push' => '$parameters.' . $parameter)
+                )
             ),
             array(
                 '$sort' => array('_id' => -1),
             )
         ));
 
-        array_push($status['result'],0);
-        $gap=0;
-        for($index = 0; $index < $count; $index++){
-            $current_month = date("m",strtotime('-'.($index).' month', $this_month_time));
-            $current_year = date("Y",strtotime('-'.($index).' month', $this_month_time));
+        array_push($status['result'], 0);
+        $gap = 0;
+        for ($index = 0; $index < $count; $index++) {
+            $current_month = date("m", strtotime('-' . ($index) . ' month', $this_month_time));
+            $current_year = date("Y", strtotime('-' . ($index) . ' month', $this_month_time));
 
-            if($status['result'][$index-$gap]['_id']['month']!=$current_month || $status['result'][$index-$gap]['_id']['year']!=$current_year){
-                $result[$current_year][$current_month]=array($parameter=>0);
+            if ($status['result'][$index - $gap]['_id']['month'] != $current_month || $status['result'][$index - $gap]['_id']['year'] != $current_year) {
+                $result[$current_year][$current_month] = array($parameter => 0);
                 $gap++;
-            }else{
-                $result[$current_year][$current_month]= array($parameter=>array_sum($status['result'][$index-$gap][$parameter]));
+            } else {
+                $result[$current_year][$current_month] = array($parameter => array_sum($status['result'][$index - $gap][$parameter]));
             }
 
         }
 
         return $result;
     }
-    public function getMonthlyPeerLeaderboard($ranked_by, $limit, $client_id, $site_id,$node_to_match=null,$month=null,$year=null) {
+
+    public function getMonthlyPeerLeaderboard(
+        $ranked_by,
+        $limit,
+        $client_id,
+        $site_id,
+        $node_to_match = null,
+        $month = null,
+        $year = null
+    ) {
         $limit = intval($limit);
         $this->set_site_mongodb($site_id);
         /* get reward_id */
@@ -436,51 +464,56 @@ class Store_org_model extends MY_Model
             $resetTime = $reset_time[0]->sec;
         }
         // default is present month
-        if (is_null($year) || is_null($month))
-        {
+        if (is_null($year) || is_null($month)) {
             $selected_time = time();
-        }
-        else{
-            $selected_time = strtotime($year."-".$month);
+        } else {
+            $selected_time = strtotime($year . "-" . $month);
         }
 
 
         // Aggregate the data
         $first = date('Y-m-01', $selected_time);
-        $from = strtotime($first.' 00:00:00');
+        $from = strtotime($first . ' 00:00:00');
 
         $last = date('Y-m-t', $selected_time);
-        $to   = strtotime($last.' 23:59:59');
+        $to = strtotime($last . ' 23:59:59');
 
         $match = array(
             'event_type' => 'REWARD',
             'site_id' => $site_id,
             'reward_id' => $reward_id,
-            'date_added' => array('$gte' => new MongoDate($from),'$lte' => new MongoDate($to)),
+            'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
         );
-        if ($node_to_match){
+        if ($node_to_match) {
             // set match parameter for aggregate
             $match['$or'] = $node_to_match;
         }
 
-        if ($resetTime && $resetTime > $from) $from = $resetTime;
+        if ($resetTime && $resetTime > $from) {
+            $from = $resetTime;
+        }
         $results = $this->mongo_db->aggregate('playbasis_event_log', array(
             array(
                 '$match' => $match,
             ),
             array(
-                '$group' => array('_id' => array('pb_player_id' => '$pb_player_id'), 'value' => array('$sum' => '$value'))
+                '$group' => array(
+                    '_id' => array('pb_player_id' => '$pb_player_id'),
+                    'value' => array('$sum' => '$value')
+                )
             ),
             array(
                 '$sort' => array('value' => -1),
             ),
             array(
-                '$limit' => $limit+5,
+                '$limit' => $limit + 5,
             ),
         ));
         return $results ? $this->removeDeletedPlayers($results['result'], $limit, $ranked_by) : array();
     }
-    private function removeDeletedPlayers($results, $limit, $rankedBy) {
+
+    private function removeDeletedPlayers($results, $limit, $rankedBy)
+    {
         $total = count($results);
         $c = 0;
         for ($i = 0; $i < $total; $i++) {
@@ -508,7 +541,9 @@ class Store_org_model extends MY_Model
         }
         return array_values($results);
     }
-    private function getRewardIdByName($client_id, $site_id, $name) {
+
+    private function getRewardIdByName($client_id, $site_id, $name)
+    {
         $this->mongo_db->select(array('reward_id'));
         $this->mongo_db->where(array(
             'name' => $name,
@@ -519,10 +554,12 @@ class Store_org_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_reward_to_client');
         return $results ? $results[0]['reward_id'] : null;
     }
-    public function getResetRewardEvent($site_id, $reward_id=null) {
+
+    public function getResetRewardEvent($site_id, $reward_id = null)
+    {
         $this->set_site_mongodb($site_id);
 
-        $this->mongo_db->select(array('reward_id','date_added'));
+        $this->mongo_db->select(array('reward_id', 'date_added'));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('event_type', 'RESET');
         if ($reward_id) {
@@ -532,10 +569,12 @@ class Store_org_model extends MY_Model
         $this->mongo_db->order_by(array('date_added' => 'DESC')); // use 'date_added' instead of '_id'
         $results = $this->mongo_db->get('playbasis_event_log');
         $ret = array();
-        if ($results){
+        if ($results) {
             foreach ($results as $result) {
                 $reward_id = $result['reward_id']->{'$id'};
-                if (array_key_exists($reward_id, $ret)) continue;
+                if (array_key_exists($reward_id, $ret)) {
+                    continue;
+                }
                 $ret[$reward_id] = $result['date_added'];
             }
         }
@@ -543,7 +582,8 @@ class Store_org_model extends MY_Model
         return $ret;
     }
 
-    public function getAssociatedNodeOfPlayer($client_id, $site_id,$player_id){
+    public function getAssociatedNodeOfPlayer($client_id, $site_id, $player_id)
+    {
 
         $this->mongo_db->select(array(
             'node_id',
@@ -558,7 +598,8 @@ class Store_org_model extends MY_Model
         return $this->mongo_db->get('playbasis_store_organize_to_player');
     }
 
-    public function getRoleOfPlayer($client_id, $site_id, $player_id, $node_id){
+    public function getRoleOfPlayer($client_id, $site_id, $player_id, $node_id)
+    {
 
         $this->mongo_db->select(array(
             'roles',
@@ -571,9 +612,9 @@ class Store_org_model extends MY_Model
             'node_id' => $node_id,
         ));
         $result = $this->mongo_db->get('playbasis_store_organize_to_player');
-        if(empty($result)){
+        if (empty($result)) {
             return null;
-        }else{
+        } else {
             return $result[0];
         }
 

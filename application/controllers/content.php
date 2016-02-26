@@ -20,9 +20,9 @@ class Content extends REST2_Controller
         $query_data = $this->input->get(null, true);
 
         if (isset($query_data['id'])) {
-            try{
+            try {
                 $query_data['id'] = new MongoId($query_data['id']);
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
             }
         }
@@ -38,6 +38,7 @@ class Content extends REST2_Controller
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $contents, 'processing_time' => $t)), 200);
     }
+
     public function category_get()
     {
         $this->benchmark->mark('start');
@@ -45,9 +46,9 @@ class Content extends REST2_Controller
         $query_data = $this->input->get(null, true);
 
         if (isset($query_data['id'])) {
-            try{
+            try {
                 $query_data['id'] = new MongoId($query_data['id']);
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
             }
         }
@@ -58,11 +59,15 @@ class Content extends REST2_Controller
         }
 
         $result = array();
-        if (is_array($categories)) foreach ($categories as $category){
-            array_push($result,$category['name']);
+        if (is_array($categories)) {
+            foreach ($categories as $category) {
+                array_push($result, $category['name']);
+            }
         }
 
-        if (empty($result)) $result=null;
+        if (empty($result)) {
+            $result = null;
+        }
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
@@ -77,7 +82,7 @@ class Content extends REST2_Controller
      */
     private function convert_mongo_object_and_category(&$item, $key)
     {
-        if ($key == 'category'){
+        if ($key == 'category') {
             $item = $this->content_model->getContentCategoryNameById($this->client_id, $this->site_id, $item);
         }
         if (is_object($item)) {

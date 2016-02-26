@@ -1,10 +1,14 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) {
+    exit('No direct script access allowed');
+}
+
 /**
  * Small test suite for the Amazon Simple Email Service library
  *
  * @see /application/libraries/Amazon_ses.php
  */
-class Test_amazon_ses extends CI_Controller {
+class Test_amazon_ses extends CI_Controller
+{
 
     function index()
     {
@@ -13,10 +17,11 @@ class Test_amazon_ses extends CI_Controller {
         $this->load->library('unit_test');
 
         // Make sure we're running in strict test mode
-        $this->unit->use_strict(TRUE);
+        $this->unit->use_strict(true);
 
         // Check if the config is loaded correctly
-        $this->unit->run($this->amazon_ses->from, 'is_string', 'Configuration file loaded', 'Since most config variables are protected, we only test $from and assume other config variables are in the same state.');
+        $this->unit->run($this->amazon_ses->from, 'is_string', 'Configuration file loaded',
+            'Since most config variables are protected, we only test $from and assume other config variables are in the same state.');
 
         // Set from address
         $this->amazon_ses->from(EMAIL_FROM);
@@ -24,7 +29,8 @@ class Test_amazon_ses extends CI_Controller {
 
         // Set invalid from address
         $this->amazon_ses->from('wee@wee.com');
-        $this->unit->run($this->amazon_ses->from, 'wee@wee.com', 'Set invalid from address', 'Because we provided an invalid address, the previously set address is still set.');
+        $this->unit->run($this->amazon_ses->from, 'wee@wee.com', 'Set invalid from address',
+            'Because we provided an invalid address, the previously set address is still set.');
 
         // Set to
         $receipients = 'wee@playbasis.com';
@@ -39,14 +45,18 @@ class Test_amazon_ses extends CI_Controller {
         // Set to in comma list
         $receipients = 'wee_weerapat@hotmail.com, wee.weerapat@gmail.com';
         $this->amazon_ses->to($receipients);
-        $this->unit->run($this->amazon_ses->recipients['to'][1], 'wee_weerapat@hotmail.com', 'Set to address (comma separeted) (1)', '-');
-        $this->unit->run($this->amazon_ses->recipients['to'][2], 'wee.weerapat@gmail.com', 'Set to address (comma separeted) (2)', '-');
+        $this->unit->run($this->amazon_ses->recipients['to'][1], 'wee_weerapat@hotmail.com',
+            'Set to address (comma separeted) (1)', '-');
+        $this->unit->run($this->amazon_ses->recipients['to'][2], 'wee.weerapat@gmail.com',
+            'Set to address (comma separeted) (2)', '-');
 
         // Set to in array
         $receipients = array('wee_weerapat@hotmail.com', 'wee.weerapat@gmail.com');
         $this->amazon_ses->to($receipients);
-        $this->unit->run($this->amazon_ses->recipients['to'][3], 'wee_weerapat@hotmail.com', 'Set to address (array) (3)', '-');
-        $this->unit->run($this->amazon_ses->recipients['to'][4], 'wee.weerapat@gmail.com', 'Set to address (array) (4)', '-');
+        $this->unit->run($this->amazon_ses->recipients['to'][3], 'wee_weerapat@hotmail.com',
+            'Set to address (array) (3)', '-');
+        $this->unit->run($this->amazon_ses->recipients['to'][4], 'wee.weerapat@gmail.com', 'Set to address (array) (4)',
+            '-');
 
         // Set subject
         $this->amazon_ses->subject('Subject');
@@ -61,7 +71,8 @@ class Test_amazon_ses extends CI_Controller {
 
     }
 
-    function send(){
+    function send()
+    {
 
         $this->load->library('parser');
         $data = array(
@@ -98,7 +109,7 @@ class Test_amazon_ses extends CI_Controller {
             'C:\Program Files (x86)\Ampps\www\api\images\tweet-glyph.png' => 'b.png',
         ));*/
 
-        $this->amazon_ses->debug(TRUE);
+        $this->amazon_ses->debug(true);
 
         $res = $this->amazon_ses->send();
 
