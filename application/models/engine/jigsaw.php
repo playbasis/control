@@ -543,9 +543,14 @@ class jigsaw extends MY_Model
 			'site_id' => $site_id,
 			'pb_player_id' => $pb_player_id,
 			'action_id' => $action_id,
-			'parameters' => $parameters,
 		));
-		return $this->mongo_db->count('playbasis_validated_action_log');
+
+		foreach ($parameters as $name => $value){
+			$this->mongo_db->where(array ('parameters.'.$name => $value));
+		}
+
+		$temp = $this->mongo_db->count('playbasis_validated_action_log');
+		return $temp;
 	}
 	public function email($config, $input, &$exInfo = array())
 	{
