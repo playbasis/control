@@ -1,21 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function vsort (&$array, $key, $order='asc') {
-    $res=array();
-    $sort=array();
+function vsort(&$array, $key, $order = 'asc')
+{
+    $res = array();
+    $sort = array();
     reset($array);
     foreach ($array as $ii => $va) {
-        $sort[$ii]=$va[$key];
+        $sort[$ii] = $va[$key];
     }
-    if(strtolower($order) == 'asc'){
+    if (strtolower($order) == 'asc') {
         asort($sort);
-    }else{
+    } else {
         arsort($sort);
     }
     foreach ($sort as $ii => $va) {
-        $res[$ii]=$array[$ii];
+        $res[$ii] = $array[$ii];
     }
-    $array=$res;
+    $array = $res;
     return $array;
 }

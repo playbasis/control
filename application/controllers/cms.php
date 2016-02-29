@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
+
 class CMS extends REST2_Controller
 {
     public function __construct()
@@ -13,6 +14,7 @@ class CMS extends REST2_Controller
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
+
     public function getArticles_get()
     {
         $category = $this->input->get('category');
@@ -32,6 +34,7 @@ class CMS extends REST2_Controller
         $results = $this->CMS_model->listArticles($data);
         $this->response($this->resp->setRespond($results), 200);
     }
+
     public function getArticle_get($article_id)
     {
         $data = array(
@@ -41,7 +44,6 @@ class CMS extends REST2_Controller
         );
         $results = $this->CMS_model->getArticleByID($data);
         $this->response($this->resp->setRespond($results), 200);
-
 
 
     }

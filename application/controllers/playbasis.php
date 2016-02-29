@@ -2,106 +2,129 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/REST2_Controller.php';
 define('PLAN_ID_FOR_CALL_US', '5409409daf6072480f0001ae');
+
 class Playbasis extends REST2_Controller
 {
-	public function __construct()
-	{
-		parent::__construct();
-		$this->load->model('plan_model');
-		$this->load->model('payment_model');
-		$this->load->model('tool/error', 'error');
-		$this->load->model('tool/respond', 'resp');
-	}
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model('plan_model');
+        $this->load->model('payment_model');
+        $this->load->model('tool/error', 'error');
+        $this->load->model('tool/respond', 'resp');
+    }
 
-	public function plans_get() {
-		$plans = $this->plan_model->listDisplayPlans(array('site_id' => 0));
-		$plan_call_us = $this->plan_model->getPlanById(new MongoId(PLAN_ID_FOR_CALL_US));
-		if (is_array($plans)) {
-			if ($plan_call_us) array_push($plans, $plan_call_us);
-		} else {
-			if ($plan_call_us) $plans = array($plan_call_us);
-		}
-		$cache = array();
-		if (is_array($plans)) foreach ($plans as &$plan) {
-			$plan['_id'] = $plan['_id']->{'$id'};
-			$plan['price'] = array_key_exists('price', $plan) ? intval($plan['price']) : DEFAULT_PLAN_PRICE;
-			$plan['free_flag'] = $plan['price'] <= 0;
-			$plan['custom_flag'] = ($plan['_id'] == PLAN_ID_FOR_CALL_US);
-			$plan['date_added'] = $plan['date_added']->sec;
-			$plan['date_modified'] = $plan['date_modified']->sec;
-			if (array_key_exists('feature_to_plan', $plan)) foreach ($plan['feature_to_plan'] as $i => $feature_id) {
-				$plan['feature_to_plan'][$i] = $this->getSytemFeatureById($feature_id, $cache, 'name');
-			}
-			if (array_key_exists('action_to_plan', $plan)) foreach ($plan['action_to_plan'] as $i => $action_id) {
-				$plan['action_to_plan'][$i] = $this->getSytemActionById($action_id, $cache, 'name');
-			}
-			if (array_key_exists('reward_to_plan', $plan)) foreach ($plan['reward_to_plan'] as $i => $reward) {
-				$plan['reward_to_plan'][$i]['name'] = $this->getSytemRewardById($reward['reward_id'], $cache, 'name');
-				unset($plan['reward_to_plan'][$i]['reward_id']);
-			}
-			if (array_key_exists('jigsaw_to_plan', $plan)) foreach ($plan['jigsaw_to_plan'] as $i => $jigsaw_id) {
-				$plan['jigsaw_to_plan'][$i] = $this->getSytemJigsawById($jigsaw_id, $cache, 'name');;
-			}
-			if (array_key_exists('limit_requests', $plan)) foreach ($plan['limit_requests'] as $key => $value) {
-				$plan['limit_requests'][str_replace('/','',$key)] = $value;
-				unset($plan['limit_requests'][$key]);
-			}
-		}
-		$this->response($this->resp->setRespond($plans), 200);
-	}
+    public function plans_get()
+    {
+        $plans = $this->plan_model->listDisplayPlans(array('site_id' => 0));
+        $plan_call_us = $this->plan_model->getPlanById(new MongoId(PLAN_ID_FOR_CALL_US));
+        if (is_array($plans)) {
+            if ($plan_call_us) {
+                array_push($plans, $plan_call_us);
+            }
+        } else {
+            if ($plan_call_us) {
+                $plans = array($plan_call_us);
+            }
+        }
+        $cache = array();
+        if (is_array($plans)) {
+            foreach ($plans as &$plan) {
+                $plan['_id'] = $plan['_id']->{'$id'};
+                $plan['price'] = array_key_exists('price', $plan) ? intval($plan['price']) : DEFAULT_PLAN_PRICE;
+                $plan['free_flag'] = $plan['price'] <= 0;
+                $plan['custom_flag'] = ($plan['_id'] == PLAN_ID_FOR_CALL_US);
+                $plan['date_added'] = $plan['date_added']->sec;
+                $plan['date_modified'] = $plan['date_modified']->sec;
+                if (array_key_exists('feature_to_plan', $plan)) {
+                    foreach ($plan['feature_to_plan'] as $i => $feature_id) {
+                        $plan['feature_to_plan'][$i] = $this->getSytemFeatureById($feature_id, $cache, 'name');
+                    }
+                }
+                if (array_key_exists('action_to_plan', $plan)) {
+                    foreach ($plan['action_to_plan'] as $i => $action_id) {
+                        $plan['action_to_plan'][$i] = $this->getSytemActionById($action_id, $cache, 'name');
+                    }
+                }
+                if (array_key_exists('reward_to_plan', $plan)) {
+                    foreach ($plan['reward_to_plan'] as $i => $reward) {
+                        $plan['reward_to_plan'][$i]['name'] = $this->getSytemRewardById($reward['reward_id'], $cache,
+                            'name');
+                        unset($plan['reward_to_plan'][$i]['reward_id']);
+                    }
+                }
+                if (array_key_exists('jigsaw_to_plan', $plan)) {
+                    foreach ($plan['jigsaw_to_plan'] as $i => $jigsaw_id) {
+                        $plan['jigsaw_to_plan'][$i] = $this->getSytemJigsawById($jigsaw_id, $cache, 'name');;
+                    }
+                }
+                if (array_key_exists('limit_requests', $plan)) {
+                    foreach ($plan['limit_requests'] as $key => $value) {
+                        $plan['limit_requests'][str_replace('/', '', $key)] = $value;
+                        unset($plan['limit_requests'][$key]);
+                    }
+                }
+            }
+        }
+        $this->response($this->resp->setRespond($plans), 200);
+    }
 
-	private function getSytemFeatureById($feature_id, $cache, $field) {
-		$key = $feature_id->{'$id'};
-		if (!array_key_exists($key, $cache)) {
-			$value = $this->payment_model->getSytemFeatureById($feature_id);
-			$cache[$key] = $value;
-		}
-		return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
-	}
+    private function getSytemFeatureById($feature_id, $cache, $field)
+    {
+        $key = $feature_id->{'$id'};
+        if (!array_key_exists($key, $cache)) {
+            $value = $this->payment_model->getSytemFeatureById($feature_id);
+            $cache[$key] = $value;
+        }
+        return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
+    }
 
-	private function getSytemActionById($action_id, $cache, $field) {
-		$key = $action_id->{'$id'};
-		if (!array_key_exists($key, $cache)) {
-			$value = $this->payment_model->getSytemActionById($action_id);
-			$cache[$key] = $value;
-		}
-		return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
-	}
+    private function getSytemActionById($action_id, $cache, $field)
+    {
+        $key = $action_id->{'$id'};
+        if (!array_key_exists($key, $cache)) {
+            $value = $this->payment_model->getSytemActionById($action_id);
+            $cache[$key] = $value;
+        }
+        return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
+    }
 
-	private function getSytemRewardById($reward_id, $cache, $field) {
-		$key = $reward_id->{'$id'};
-		if (!array_key_exists($key, $cache)) {
-			$value = $this->payment_model->getSytemRewardById($reward_id);
-			$cache[$key] = $value;
-		}
-		return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
-	}
+    private function getSytemRewardById($reward_id, $cache, $field)
+    {
+        $key = $reward_id->{'$id'};
+        if (!array_key_exists($key, $cache)) {
+            $value = $this->payment_model->getSytemRewardById($reward_id);
+            $cache[$key] = $value;
+        }
+        return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
+    }
 
-	private function getSytemJigsawById($jigsaw_id, $cache, $field) {
-		$key = $jigsaw_id->{'$id'};
-		if (!array_key_exists($key, $cache)) {
-			$value = $this->payment_model->getSytemJigsawById($jigsaw_id);
-			$cache[$key] = $value;
-		}
-		return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
-	}
+    private function getSytemJigsawById($jigsaw_id, $cache, $field)
+    {
+        $key = $jigsaw_id->{'$id'};
+        if (!array_key_exists($key, $cache)) {
+            $value = $this->payment_model->getSytemJigsawById($jigsaw_id);
+            $cache[$key] = $value;
+        }
+        return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
+    }
 
-	public function test()
-	{
-		$this->load->view('playbasis/apitest');
-	}
+    public function test()
+    {
+        $this->load->view('playbasis/apitest');
+    }
 
-	public function fb()
-	{
-		$this->load->view('playbasis/fb');
-	}
+    public function fb()
+    {
+        $this->load->view('playbasis/fb');
+    }
 
-	public function login()
-	{
-		$this->load->view('playbasis/login');
-	}
+    public function login()
+    {
+        $this->load->view('playbasis/login');
+    }
 
-	/*
+    /*
     public function memtest()
     {
         $this->load->model('auth_model');
@@ -183,11 +206,11 @@ class Playbasis extends REST2_Controller
 
         echo "getRuleSetByActionId model return : ".var_dump($ruleSet)."<br><br>";
 
-		$processor = $this->client_model->getJigsawProcessor(1,1);
+        $processor = $this->client_model->getJigsawProcessor(1,1);
 
         echo "getJigsawProcessor model return : ".$processor."<br><br>";
 
-		$badgePlayer = $this->client_model->updateplayerBadge(1, 1, 1, 1);
+        $badgePlayer = $this->client_model->updateplayerBadge(1, 1, 1, 1);
 
         echo "updateplayerBadge model return : ".$badgePlayer."<br><br>";
 
@@ -198,7 +221,7 @@ class Playbasis extends REST2_Controller
 
         echo "updateExpAndLevel model return : ".$lv."<br><br>";
 
-		$badge = $this->client_model->getBadgeById(1,1);
+        $badge = $this->client_model->getBadgeById(1,1);
 
         echo "getBadgeById model return : ".var_dump($badge)."<br><br>";
 
@@ -236,27 +259,27 @@ class Playbasis extends REST2_Controller
 
         echo "getPlaybasisId model return : ".$pb_player_id."<br><br>";
 
-		$cl_player_id = $this->player_model->getClientPlayerId(1,1);
+        $cl_player_id = $this->player_model->getClientPlayerId(1,1);
 
         echo "getClientPlayerId model return : ".$cl_player_id."<br><br>";
 
-		$points = $this->player_model->getPlayerPoints(1,1);
+        $points = $this->player_model->getPlayerPoints(1,1);
 
         echo "getPlayerPoints model return : ".var_dump($points)."<br><br>";
 
-		$points = $this->player_model->getPlayerPoint(1,1,1);
+        $points = $this->player_model->getPlayerPoint(1,1,1);
 
         echo "getPlayerPoint model return : ".var_dump($points)."<br><br>";
 
-		$actions = $this->player_model->getLastActionPerform(1,1);
+        $actions = $this->player_model->getLastActionPerform(1,1);
 
         echo "getLastActionPerform model return : ".var_dump($actions)."<br><br>";
 
-		$actions = $this->player_model->getActionPerform(1,1,1);
+        $actions = $this->player_model->getActionPerform(1,1,1);
 
         echo "getActionPerform model return : ".var_dump($actions)."<br><br>";
 
-		$actions = $this->player_model->getActionCount(1,1,1);
+        $actions = $this->player_model->getActionCount(1,1,1);
 
         echo "getActionCount model return : ".var_dump($actions)."<br><br>";
 
@@ -266,7 +289,7 @@ class Playbasis extends REST2_Controller
 
         echo "getBadge model return : ".var_dump($badge)."<br><br>";
 
-		$player = $this->player_model->getLastEventTime(1,1, 'LOGIN');
+        $player = $this->player_model->getLastEventTime(1,1, 'LOGIN');
 
         echo "getLastEventTime model return : ".$player."<br><br>";
 
@@ -291,6 +314,7 @@ class Playbasis extends REST2_Controller
         echo "findPoint model return : ".$haspoint."<br><br>";
 
     }
-	*/
+    */
 }
+
 ?>

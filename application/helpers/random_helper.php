@@ -1,9 +1,9 @@
 <?php
-if (!defined('BASEPATH')) exit('No direct script access allowed');
+if (!defined('BASEPATH')) {
+    exit('No direct script access allowed');
+}
 
-
-if ( ! function_exists('get_random_password'))
-{
+if (!function_exists('get_random_password')) {
     /**
      * Generate a random password.
      *
@@ -18,35 +18,47 @@ if ( ! function_exists('get_random_password'))
      *
      * @return    string containing a random password
      */
-    function get_random_password($chars_min=6, $chars_max=8, $use_upper_case=false, $include_numbers=false, $include_special_chars=false)
-    {
+    function get_random_password(
+        $chars_min = 6,
+        $chars_max = 8,
+        $use_upper_case = false,
+        $include_numbers = false,
+        $include_special_chars = false
+    ) {
         $length = rand($chars_min, $chars_max);
         $selection = 'aeuoyibcdfghjklmnpqrstvwxz';
-        if($include_numbers) {
+        if ($include_numbers) {
             $selection .= "1234567890";
         }
-        if($include_special_chars) {
+        if ($include_special_chars) {
             $selection .= "!@\"#$%&[]{}?|";
         }
 
         $password = "";
-        for($i=0; $i<$length; $i++) {
-            $current_letter = $use_upper_case ? (rand(0,1) ? strtoupper($selection[(rand() % strlen($selection))]) : $selection[(rand() % strlen($selection))]) : $selection[(rand() % strlen($selection))];
-            $password .=  $current_letter;
+        for ($i = 0; $i < $length; $i++) {
+            $current_letter = $use_upper_case ? (rand(0,
+                1) ? strtoupper($selection[(rand() % strlen($selection))]) : $selection[(rand() % strlen($selection))]) : $selection[(rand() % strlen($selection))];
+            $password .= $current_letter;
         }
 
         return $password;
     }
 
-    function get_random_code($length=6, $use_lower_case=true, $use_upper_case=false, $use_numbers=false)
+    function get_random_code($length = 6, $use_lower_case = true, $use_upper_case = false, $use_numbers = false)
     {
         $selection = '';
-        if ($use_lower_case) $selection .= "aeuoyibcdfghjklmnpqrstvwxz";
-        if ($use_upper_case) $selection .= strtoupper("aeuoyibcdfghjklmnpqrstvwxz");
-        if ($use_numbers) $selection .= "1234567890";
+        if ($use_lower_case) {
+            $selection .= "aeuoyibcdfghjklmnpqrstvwxz";
+        }
+        if ($use_upper_case) {
+            $selection .= strtoupper("aeuoyibcdfghjklmnpqrstvwxz");
+        }
+        if ($use_numbers) {
+            $selection .= "1234567890";
+        }
 
         $password = "";
-        for($i=0; $i<$length; $i++) {
+        for ($i = 0; $i < $length; $i++) {
             $password .= $selection[(rand() % strlen($selection))];
         }
 

@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
+
 class Goods extends REST2_Controller
 {
     public function __construct()
@@ -37,21 +38,27 @@ class Goods extends REST2_Controller
                 'site_id' => $this->site_id,
                 'cl_player_id' => $player_id,
             ));
-            if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            if (!$pb_player_id) {
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            }
             $myGoods = $this->player_model->getGoods($pb_player_id, $this->site_id);
             $m = $this->mapByGoodsId($myGoods);
 
-            $org_list = $this->store_org_model->retrieveNodeByPBPlayerID($this->client_id,$this->site_id,$pb_player_id);
+            $org_list = $this->store_org_model->retrieveNodeByPBPlayerID($this->client_id, $this->site_id,
+                $pb_player_id);
 
-            if (is_array($org_list)) foreach ($org_list as $node){
-                $org_info = $this->store_org_model->getOrgInfoOfNode($this->client_id,$this->site_id, $node['node_id']);
-                $a = array ((string)$org_info[0]['organize'] => isset($node['roles'])? $node['roles']:array() );
-                $org_id_list = array_merge($org_id_list, $a);
+            if (is_array($org_list)) {
+                foreach ($org_list as $node) {
+                    $org_info = $this->store_org_model->getOrgInfoOfNode($this->client_id, $this->site_id,
+                        $node['node_id']);
+                    $a = array((string)$org_info[0]['organize'] => isset($node['roles']) ? $node['roles'] : array());
+                    $org_id_list = array_merge($org_id_list, $a);
+                }
             }
 
         }
         /* main */
-        if($goodsId) // given specified goods_id
+        if ($goodsId) // given specified goods_id
         {
             $goods['goods'] = $this->goods_model->getGoods(array_merge($this->validToken, array(
                 'goods_id' => new MongoId($goodsId)
@@ -60,15 +67,16 @@ class Goods extends REST2_Controller
             // return an error if
             // 1. good id is set organize and player_id is not in that organize
             // Or 2. organize role is set and player role is not matched
-            if (isset($goods['goods']['organize_id'])){
+            if (isset($goods['goods']['organize_id'])) {
                 if ((!array_key_exists((string)$goods['goods']['organize_id'], $org_id_list)
-                        || ((isset($goods['goods']['organize_role']) && $goods['goods']['organize_role'] != "")
-                            && !array_key_exists($goods['goods']['organize_role'],
-                                $org_id_list[(string)$goods['goods']['organize_id']])))
+                    || ((isset($goods['goods']['organize_role']) && $goods['goods']['organize_role'] != "")
+                        && !array_key_exists($goods['goods']['organize_role'],
+                            $org_id_list[(string)$goods['goods']['organize_id']])))
                 ) {
                     $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
                 }
-                $org = $this->store_org_model->retrieveOrganizeById($this->client_id, $this->site_id, $goods['goods']['organize_id']);
+                $org = $this->store_org_model->retrieveOrganizeById($this->client_id, $this->site_id,
+                    $goods['goods']['organize_id']);
                 $goods['goods']['organize'] = $org['name'];
                 unset($goods['goods']['organize_id']);
             }
@@ -82,44 +90,53 @@ class Goods extends REST2_Controller
                         break;
                     }
                 }
-                if ($player_id !== false) $goods['amount'] = isset($m[$group]) ? $m[$group]['amount'] : 0;
+                if ($player_id !== false) {
+                    $goods['amount'] = isset($m[$group]) ? $m[$group]['amount'] : 0;
+                }
             } else {
-                if ($player_id !== false) $goods['amount'] = isset($m[$goodsId]) ? $m[$goodsId]['amount'] : 0;
+                if ($player_id !== false) {
+                    $goods['amount'] = isset($m[$goodsId]) ? $m[$goodsId]['amount'] : 0;
+                }
             }
             $this->response($this->resp->setRespond($goods), 200);
-        }
-        else // list all
+        } else // list all
         {
             $goodsList['goods_list'] = $this->goods_model->getAllGoods($this->validToken, $ids);
-            if (is_array($goodsList['goods_list'])) foreach ($goodsList['goods_list'] as $key=> &$goods) {
-                $goods_id = $goods['_id'];
-                $is_group = array_key_exists('group', $goods);
-                if ($is_group) {
-                    $goods['is_group'] = true;
-                    $goods['name'] = $group_name[$goods_id]['group'];
-                    $goods['quantity'] = $group_name[$goods_id]['quantity'];
-                    if ($player_id !== false) $goods['amount'] = isset($m[$goods['name']]) ? $m[$goods['name']]['amount'] : 0;
-                } else {
-                    if ($player_id !== false) $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
-                }
-                unset($goods['_id']);
-                $goods['code'] = null;
-                // unset the result if
-                // 1. good id is set organize and player_id is not in that organize
-                // Or 2. organize role is set and player role is not matched
-                if (isset($goods['organize_id'])) {
-                    if ((!array_key_exists((string)$goods['organize_id'], $org_id_list)
+            if (is_array($goodsList['goods_list'])) {
+                foreach ($goodsList['goods_list'] as $key => &$goods) {
+                    $goods_id = $goods['_id'];
+                    $is_group = array_key_exists('group', $goods);
+                    if ($is_group) {
+                        $goods['is_group'] = true;
+                        $goods['name'] = $group_name[$goods_id]['group'];
+                        $goods['quantity'] = $group_name[$goods_id]['quantity'];
+                        if ($player_id !== false) {
+                            $goods['amount'] = isset($m[$goods['name']]) ? $m[$goods['name']]['amount'] : 0;
+                        }
+                    } else {
+                        if ($player_id !== false) {
+                            $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
+                        }
+                    }
+                    unset($goods['_id']);
+                    $goods['code'] = null;
+                    // unset the result if
+                    // 1. good id is set organize and player_id is not in that organize
+                    // Or 2. organize role is set and player role is not matched
+                    if (isset($goods['organize_id'])) {
+                        if ((!array_key_exists((string)$goods['organize_id'], $org_id_list)
                             || ((isset($goods['organize_role']) && $goods['organize_role'] != "")
                                 && !array_key_exists($goods['organize_role'],
                                     $org_id_list[(string)$goods['organize_id']]))
                         )
-                    ) {
-                        unset($goodsList['goods_list'][$key]);
-                    } else {
-                        $org = $this->store_org_model->retrieveOrganizeById($this->client_id, $this->site_id,
-                            $goods['organize_id']);
-                        $goods['organize'] = $org['name'];
-                        unset($goods['organize_id']);
+                        ) {
+                            unset($goodsList['goods_list'][$key]);
+                        } else {
+                            $org = $this->store_org_model->retrieveOrganizeById($this->client_id, $this->site_id,
+                                $goods['organize_id']);
+                            $goods['organize'] = $org['name'];
+                            unset($goods['organize_id']);
+                        }
                     }
                 }
             }
@@ -151,12 +168,14 @@ class Goods extends REST2_Controller
                 'site_id' => $this->site_id,
                 'cl_player_id' => $player_id,
             ));
-            if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            if (!$pb_player_id) {
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            }
             $myGoods = $this->player_model->getGoods($pb_player_id, $this->site_id);
             $m = $this->mapByGoodsId($myGoods);
         }
         /* main */
-        if($goodsId) // given specified goods_id
+        if ($goodsId) // given specified goods_id
         {
             $goods['goods'] = $this->goods_model->getGoods(array_merge($validToken_ad, array(
                 'goods_id' => new MongoId($goodsId)
@@ -170,48 +189,60 @@ class Goods extends REST2_Controller
                         break;
                     }
                 }
-                if ($player_id !== false) $goods['amount'] = isset($m[$group]) ? $m[$group]['amount'] : 0;
+                if ($player_id !== false) {
+                    $goods['amount'] = isset($m[$group]) ? $m[$group]['amount'] : 0;
+                }
             } else {
-                if ($player_id !== false) $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
+                if ($player_id !== false) {
+                    $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
+                }
             }
             $this->response($this->resp->setRespond($goods), 200);
-        }
-        else // list all
+        } else // list all
         {
             $goodsList['goods_list'] = $this->goods_model->getAllGoods($validToken_ad, $ids);
-            if (is_array($goodsList['goods_list'])) foreach ($goodsList['goods_list'] as &$goods) {
-                $goods_id = $goods['_id'];
-                $is_group = array_key_exists('group', $goods);
-                if ($is_group) {
-                    $goods['is_group'] = true;
-                    $goods['name'] = $group_name[$goods_id]['group'];
-                    $goods['quantity'] = $group_name[$goods_id]['quantity'];
-                    if ($player_id !== false) $goods['amount'] = isset($m[$goods['name']]) ? $m[$goods['name']]['amount'] : 0;
-                } else {
-                    if ($player_id !== false) $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
+            if (is_array($goodsList['goods_list'])) {
+                foreach ($goodsList['goods_list'] as &$goods) {
+                    $goods_id = $goods['_id'];
+                    $is_group = array_key_exists('group', $goods);
+                    if ($is_group) {
+                        $goods['is_group'] = true;
+                        $goods['name'] = $group_name[$goods_id]['group'];
+                        $goods['quantity'] = $group_name[$goods_id]['quantity'];
+                        if ($player_id !== false) {
+                            $goods['amount'] = isset($m[$goods['name']]) ? $m[$goods['name']]['amount'] : 0;
+                        }
+                    } else {
+                        if ($player_id !== false) {
+                            $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
+                        }
+                    }
+                    unset($goods['_id']);
+                    $goods['code'] = null;
                 }
-                unset($goods['_id']);
-                $goods['code'] = null;
             }
             $this->response($this->resp->setRespond($goodsList), 200);
         }
     }
 
-    public function personalizedSponsor_get() {
+    public function personalizedSponsor_get()
+    {
         $validToken_ad = array('client_id' => null, 'site_id' => null);
         /* check required 'player_id' */
         $required = $this->input->checkParam(array(
             'player_id',
         ));
-        if($required)
+        if ($required) {
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
         $cl_player_id = $this->input->get('player_id');
         $validToken = array_merge($this->validToken, array(
             'cl_player_id' => $cl_player_id
         ));
         $pb_player_id = $this->player_model->getPlaybasisId($validToken);
-        if(!$pb_player_id)
+        if (!$pb_player_id) {
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
         /* process group */
         $results = $this->goods_model->getGroupsAggregate($validToken_ad['site_id']);
         $ids = array();
@@ -240,23 +271,31 @@ class Goods extends REST2_Controller
         $this->response($this->resp->setRespond($goods), 200);
     }
 
-    private function recommend($pb_player_id, $goodsList) {
-        if (!$goodsList) return array();
+    private function recommend($pb_player_id, $goodsList)
+    {
+        if (!$goodsList) {
+            return array();
+        }
         /* TODO: integrate machine learning algorithm instead of randomly picking a goods */
-        $idx = rand(0, count($goodsList)-1);
+        $idx = rand(0, count($goodsList) - 1);
         return $this->goods_model->getGoods(array_merge(array('client_id' => null, 'site_id' => null), array(
             'goods_id' => new MongoId($goodsList[$idx]['goods_id'])
         )));
     }
 
-    private function mapByGoodsId($goodsList) {
+    private function mapByGoodsId($goodsList)
+    {
         $ret = array();
         foreach ($goodsList as $goods) {
             $key = isset($goods['group']) ? $goods['group'] : $goods['goods_id'];
-            if (!isset($ret[$key])) $ret[$key] = $goods;
-            else $ret[$key]['amount'] += $goods['amount'];
+            if (!isset($ret[$key])) {
+                $ret[$key] = $goods;
+            } else {
+                $ret[$key]['amount'] += $goods['amount'];
+            }
         }
         return $ret;
     }
 }
+
 ?>
