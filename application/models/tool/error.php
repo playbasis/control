@@ -13,7 +13,7 @@ class Error extends CI_Model
     {
         $errorData = array();
         $errorData['success'] = false;
-        $errorData['response'] = array();
+        $errorData['response'] = null;
         $errorData['error_code'] = '';
         switch ($code) {
             case 'INVALID_TOKEN':
