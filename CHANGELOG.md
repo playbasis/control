@@ -1,7 +1,21 @@
 # Change Log
 
-## [2.5.0](https://github.com/playbasis/control/tree/2.5.0) (2016-02-12)
+## [2.6.0](https://github.com/playbasis/control/tree/2.6.0) (2016-02-29)
 
+[Full Changelog](https://github.com/playbasis/control/compare/2.5.0...2.6.0)
+
+**Implemented enhancements:**
+
+- Fix tab to space and change code style to standard [\#131](https://github.com/playbasis/control/pull/131) ([niti-playbasis](https://github.com/niti-playbasis))
+- Add\_support\_for\_level\_condition [\#130](https://github.com/playbasis/control/pull/130) ([niti-playbasis](https://github.com/niti-playbasis))
+- Feature/media manager enhancements [\#127](https://github.com/playbasis/control/pull/127) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+**Fixed bugs:**
+
+- Fix internal error return [\#129](https://github.com/playbasis/control/pull/129) ([niti-playbasis](https://github.com/niti-playbasis))
+- Fix\_invalid\_api\_key\_in\_engine\_rule [\#128](https://github.com/playbasis/control/pull/128) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.5.0](https://github.com/playbasis/control/tree/2.5.0) (2016-02-12)
 [Full Changelog](https://github.com/playbasis/control/compare/2.4.0...2.5.0)
 
 **Implemented enhancements:**
