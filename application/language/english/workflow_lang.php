@@ -19,7 +19,8 @@ $lang['text_success_edit']              = 'The account has been updated';
 $lang['text_success_create']            = 'The account has been created';
 $lang['text_success_create_without_org_setting']  = 'The account has been created without organization setting ';
 $lang['text_success_create_without_role_setting'] = 'The account has been created and added to node without setting role of player';
-$lang['text_fail_confirm_password']	    = 'Your password and confirm password do not match';
+$lang['text_fail_confirm_password']     = 'Your password and confirm password do not match';
+$lang["text_fail_internal"]             = "Internal error, Please try again later.";
 
 
 // Button

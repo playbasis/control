@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class Statistic extends CI_Controller
 {
     public function __construct()
@@ -9,7 +10,7 @@ class Statistic extends CI_Controller
         $this->load->model('Client_model');
         $this->load->model('Plan_model');
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -20,7 +21,8 @@ class Statistic extends CI_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
-    public function getStatisticData(){
+    public function getStatisticData()
+    {
 
         if ($this->input->get('date_start')) {
             $date_start = strtotime($this->input->get('date_start'));
@@ -91,7 +93,8 @@ class Statistic extends CI_Controller
         $this->output->set_output(json_encode($json));
     }
 
-    public function getDailyActionmeaturement(){
+    public function getDailyActionmeaturement()
+    {
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -112,7 +115,8 @@ class Statistic extends CI_Controller
         $this->load->view('carousel');
     }
 
-    public function getWeeklyActionmeaturement(){
+    public function getWeeklyActionmeaturement()
+    {
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -133,7 +137,8 @@ class Statistic extends CI_Controller
         $this->load->view('carousel');
     }
 
-    public function getMonthlyActionmeaturement(){
+    public function getMonthlyActionmeaturement()
+    {
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -154,7 +159,8 @@ class Statistic extends CI_Controller
         $this->load->view('carousel');
     }
 
-    public function isotope(){
+    public function isotope()
+    {
 
         include('action_data_log.php');
 
@@ -187,9 +193,9 @@ class Statistic extends CI_Controller
         $total_players = $iso_data['total'];
         $results = $iso_data['result'];
 
-        if(isset($data['limit'])){
+        if (isset($data['limit'])) {
             $limit = $data['limit'];
-        }else{
+        } else {
             $limit = 100;
         }
 
@@ -233,17 +239,18 @@ class Statistic extends CI_Controller
                             $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
                         }*/
 
-                        if ($badge_info && isset($badge_info['image'])){
+                        if ($badge_info && isset($badge_info['image'])) {
                             $info = pathinfo($badge_info['image']);
-                            if(isset($info['extension'])){
+                            if (isset($info['extension'])) {
                                 $extension = $info['extension'];
-                                $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-40x40.'.$extension;
-                                $thumb = S3_IMAGE.$new_image;
-                            }else{
-                                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+                                $new_image = 'cache/' . utf8_substr($badge_info['image'], 0,
+                                        utf8_strrpos($badge_info['image'], '.')) . '-40x40.' . $extension;
+                                $thumb = S3_IMAGE . $new_image;
+                            } else {
+                                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
                             }
-                        }else{
-                            $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+                        } else {
+                            $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
                         }
 
                         $badges[] = array(
@@ -260,7 +267,7 @@ class Statistic extends CI_Controller
                 $point = $this->Player_model->getPlayerPoint($data_player, $reward_id);
 
                 $players[] = array(
-                    'pb_player_id' => $result['_id']."",
+                    'pb_player_id' => $result['_id'] . "",
                     'firstname' => $result['first_name'],
                     'lastname' => $result['last_name'],
                     'nickname' => $result['nickname'],
@@ -271,8 +278,10 @@ class Statistic extends CI_Controller
                     'status' => $result['status'],
                     'email' => $result['email'],
                     'gender' => $result['gender'],
-                    'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_added']))),
-                    'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_modified']))),
+                    'date_added' => date($this->lang->line('date_format_short'),
+                        strtotime($this->datetimeMongotoReadable($result['date_added']))),
+                    'last_active' => date($this->lang->line('date_format_short'),
+                        strtotime($this->datetimeMongotoReadable($result['date_modified']))),
                     'action' => $player_action,
                     'badges' => $badges
                 );
@@ -293,19 +302,26 @@ class Statistic extends CI_Controller
         $this->data['reset_quest'] = array_key_exists('reset_quest', $plan) && $plan['reset_quest'];
 
         $this->load->library('parser');
-        $html = $this->parser->parse('player_isotope', $this->data, TRUE);
+        $html = $this->parser->parse('player_isotope', $this->data, true);
 
-        $data_html = array('html' => $html , 'current_page' => $this->current_page, 'total_page' => $total_pages, 'limit' => $this->limit, 'total_players' => $total_players);
+        $data_html = array(
+            'html' => $html,
+            'current_page' => $this->current_page,
+            'total_page' => $total_pages,
+            'limit' => $this->limit,
+            'total_players' => $total_players
+        );
 
         $this->output->set_output(json_encode($data_html));
     }
 
-    private function filterData() {
+    private function filterData()
+    {
         include('action_data_log.php');
 
-        if($this->input->get('limit')){
+        if ($this->input->get('limit')) {
             $limit = $this->input->get('limit');
-        }else{
+        } else {
             $limit = 100;
         }
 
@@ -321,8 +337,8 @@ class Statistic extends CI_Controller
 
                     if (is_array($sort_explode)) {
                         $sort_data[] = array(
-                            'name' => (!empty($sort_explode[0]))? $sort_explode[0] : '',
-                            'value' => (!empty($sort_explode[1]))? $sort_explode[1] : ''
+                            'name' => (!empty($sort_explode[0])) ? $sort_explode[0] : '',
+                            'value' => (!empty($sort_explode[1])) ? $sort_explode[1] : ''
                         );
                     }
                 }

@@ -432,14 +432,14 @@ class Content extends MY_Controller
                                 //     prep notification message
                                 if (array_key_exists('category', $content_info)) {
                                     $content_cat = ucfirst($content_info['category']['name']);
-                                }else{
+                                } else {
                                     $content_cat = 'content!';
                                 }
 
                                 $notificationData = array(
                                     'title' => "Checkout new " . $content_cat,
                                     // android only
-                                    'message' => "Checkout new " . $content_cat  . ", '" . ucfirst($content_info['title']) . "' is available.",
+                                    'message' => "Checkout new " . $content_cat . ", '" . ucfirst($content_info['title']) . "' is available.",
                                     // message in iOS, body in android
                                     'badge_number' => 1,
                                 );

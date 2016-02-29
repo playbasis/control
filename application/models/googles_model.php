@@ -1,9 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Googles_model extends MY_Model {
+class Googles_model extends MY_Model
+{
 
-    public function getRegistration() {
+    public function getRegistration()
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->select(array('google_client_id', 'google_client_secret', 'google_url', 'token'));
         $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
@@ -13,7 +15,8 @@ class Googles_model extends MY_Model {
         return $results ? $results[0] : null;
     }
 
-    public function insertRegistration($google_url, $google_client_id, $google_client_secret) {
+    public function insertRegistration($google_url, $google_client_id, $google_client_secret)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         return $this->mongo_db->insert('playbasis_google_to_client', array(
@@ -27,7 +30,8 @@ class Googles_model extends MY_Model {
         ));
     }
 
-    public function updateToken($site_id, $token) {
+    public function updateToken($site_id, $token)
+    {
         $this->set_site_mongodb($site_id);
         $d = new MongoDate(time());
         $token['date_start'] = $d;
@@ -39,7 +43,8 @@ class Googles_model extends MY_Model {
         $this->mongo_db->update("playbasis_google_to_client");
     }
 
-    public function getSubscription($resource_id) {
+    public function getSubscription($resource_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $this->session->userdata('client_id'));
         $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
@@ -49,7 +54,8 @@ class Googles_model extends MY_Model {
         return $results ? $results[0] : null;
     }
 
-    public function insertWebhook($calendar_id, $channel_id, $callback_url) {
+    public function insertWebhook($calendar_id, $channel_id, $callback_url)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         return $this->mongo_db->insert('playbasis_google_subscription', array(
@@ -63,15 +69,22 @@ class Googles_model extends MY_Model {
         ));
     }
 
-    public function listWebhooks() {
+    public function listWebhooks()
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $this->session->userdata('client_id'));
         $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
-        $this->mongo_db->where(array('$or' => array(array('date_expire' => array('$gt' => new MongoDate(time()))), array('date_expire' => null))));
+        $this->mongo_db->where(array(
+            '$or' => array(
+                array('date_expire' => array('$gt' => new MongoDate(time()))),
+                array('date_expire' => null)
+            )
+        ));
         return $this->mongo_db->get("playbasis_google_subscription");
     }
 
-    public function removeWebhook($channel_id, $resource_id) {
+    public function removeWebhook($channel_id, $resource_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $this->session->userdata('client_id'));
         $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
@@ -80,4 +93,5 @@ class Googles_model extends MY_Model {
         $this->mongo_db->delete_all('playbasis_google_subscription');
     }
 }
+
 ?>

@@ -1,11 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function utf8_strlen($string) {
+function utf8_strlen($string)
+{
     return strlen(utf8_decode($string));
 }
 
-function utf8_strpos($string, $needle, $offset = NULL) {
+function utf8_strpos($string, $needle, $offset = null)
+{
     if (is_null($offset)) {
         $data = explode($needle, $string, 2);
 
@@ -31,7 +33,8 @@ function utf8_strpos($string, $needle, $offset = NULL) {
     }
 }
 
-function utf8_strrpos($string, $needle, $offset = NULL) {
+function utf8_strrpos($string, $needle, $offset = null)
+{
     if (is_null($offset)) {
         $data = explode($needle, $string);
 
@@ -61,7 +64,8 @@ function utf8_strrpos($string, $needle, $offset = NULL) {
     }
 }
 
-function utf8_substr($string, $offset, $length = null) {
+function utf8_substr($string, $offset, $length = null)
+{
     // generates E_NOTICE
     // for PHP4 objects, but not PHP5 objects
     $string = (string)$string;
@@ -98,7 +102,7 @@ function utf8_substr($string, $offset, $length = null) {
     // non-captured group equal in length to offset
     if ($offset > 0) {
         $Ox = (int)($offset / 65535);
-        $Oy = $offset%65535;
+        $Oy = $offset % 65535;
 
         if ($Ox) {
             $Op = '(?:.{65535}){' . $Ox . '}';
@@ -141,7 +145,7 @@ function utf8_substr($string, $offset, $length = null) {
             }
 
             $Lx = (int)((-$length) / 65535);
-            $Ly = (-$length)%65535;
+            $Ly = (-$length) % 65535;
 
             // negative length requires ... capture everything
             // except a group of  -length characters
@@ -154,7 +158,7 @@ function utf8_substr($string, $offset, $length = null) {
         }
     }
 
-    if (!preg_match( '#' . $Op . $Lp . '#us', $string, $match)) {
+    if (!preg_match('#' . $Op . $Lp . '#us', $string, $match)) {
         return '';
     }
 
@@ -162,8 +166,9 @@ function utf8_substr($string, $offset, $length = null) {
 
 }
 
-function utf8_strtolower($string) {
-    static $UTF8_UPPER_TO_LOWER = NULL;
+function utf8_strtolower($string)
+{
+    static $UTF8_UPPER_TO_LOWER = null;
 
     if (is_null($UTF8_UPPER_TO_LOWER)) {
         $UTF8_UPPER_TO_LOWER = array(
@@ -391,8 +396,8 @@ function utf8_strtolower($string) {
 
     $count = count($unicode);
 
-    for ($i = 0; $i < $count; $i++){
-        if (isset($UTF8_UPPER_TO_LOWER[$unicode[$i]]) ) {
+    for ($i = 0; $i < $count; $i++) {
+        if (isset($UTF8_UPPER_TO_LOWER[$unicode[$i]])) {
             $unicode[$i] = $UTF8_UPPER_TO_LOWER[$unicode[$i]];
         }
     }
@@ -400,8 +405,9 @@ function utf8_strtolower($string) {
     return utf8_from_unicode($unicode);
 }
 
-function utf8_strtoupper($string) {
-    static $UTF8_LOWER_TO_UPPER = NULL;
+function utf8_strtoupper($string)
+{
+    static $UTF8_LOWER_TO_UPPER = null;
 
     if (is_null($UTF8_LOWER_TO_UPPER)) {
         $UTF8_LOWER_TO_UPPER = array(
@@ -629,8 +635,8 @@ function utf8_strtoupper($string) {
 
     $count = count($unicode);
 
-    for ($i = 0; $i < $count; $i++){
-        if (isset($UTF8_LOWER_TO_UPPER[$unicode[$i]]) ) {
+    for ($i = 0; $i < $count; $i++) {
+        if (isset($UTF8_LOWER_TO_UPPER[$unicode[$i]])) {
             $unicode[$i] = $UTF8_LOWER_TO_UPPER[$unicode[$i]];
         }
     }
@@ -638,17 +644,18 @@ function utf8_strtoupper($string) {
     return utf8_from_unicode($unicode);
 }
 
-function utf8_to_unicode($str) {
+function utf8_to_unicode($str)
+{
     $mState = 0;     // cached expected number of octets after the current octet
     // until the beginning of the next UTF8 character sequence
-    $mUcs4  = 0;     // cached Unicode character
+    $mUcs4 = 0;     // cached Unicode character
     $mBytes = 1;     // cached expected number of octets in the current sequence
 
     $out = array();
 
     $len = strlen($str);
 
-    for($i = 0; $i < $len; $i++) {
+    for ($i = 0; $i < $len; $i++) {
         $in = ord($str{$i});
 
         if ($mState == 0) {
@@ -674,41 +681,48 @@ function utf8_to_unicode($str) {
                 $mState = 2;
                 $mBytes = 3;
 
-            } else if (0xF0 == (0xF8 & ($in))) {
-                // First octet of 4 octet sequence
-                $mUcs4 = ($in);
-                $mUcs4 = ($mUcs4 & 0x07) << 18;
-                $mState = 3;
-                $mBytes = 4;
-
-            } else if (0xF8 == (0xFC & ($in))) {
-                /* First octet of 5 octet sequence.
-                *
-                * This is illegal because the encoded codepoint must be either
-                * (a) not the shortest form or
-                * (b) outside the Unicode range of 0-0x10FFFF.
-                * Rather than trying to resynchronize, we will carry on until the end
-                * of the sequence and let the later error handling code catch it.
-                */
-                $mUcs4 = ($in);
-                $mUcs4 = ($mUcs4 & 0x03) << 24;
-                $mState = 4;
-                $mBytes = 5;
-
-            } else if (0xFC == (0xFE & ($in))) {
-                // First octet of 6 octet sequence, see comments for 5 octet sequence.
-                $mUcs4 = ($in);
-                $mUcs4 = ($mUcs4 & 1) << 30;
-                $mState = 5;
-                $mBytes = 6;
-
             } else {
-                /* Current octet is neither in the US-ASCII range nor a legal first
-                 * octet of a multi-octet sequence.
-                 */
-                trigger_error('utf8_to_unicode: Illegal sequence identifier ' . 'in UTF-8 at byte ' . $i, E_USER_WARNING);
+                if (0xF0 == (0xF8 & ($in))) {
+                    // First octet of 4 octet sequence
+                    $mUcs4 = ($in);
+                    $mUcs4 = ($mUcs4 & 0x07) << 18;
+                    $mState = 3;
+                    $mBytes = 4;
 
-                return FALSE;
+                } else {
+                    if (0xF8 == (0xFC & ($in))) {
+                        /* First octet of 5 octet sequence.
+                        *
+                        * This is illegal because the encoded codepoint must be either
+                        * (a) not the shortest form or
+                        * (b) outside the Unicode range of 0-0x10FFFF.
+                        * Rather than trying to resynchronize, we will carry on until the end
+                        * of the sequence and let the later error handling code catch it.
+                        */
+                        $mUcs4 = ($in);
+                        $mUcs4 = ($mUcs4 & 0x03) << 24;
+                        $mState = 4;
+                        $mBytes = 5;
+
+                    } else {
+                        if (0xFC == (0xFE & ($in))) {
+                            // First octet of 6 octet sequence, see comments for 5 octet sequence.
+                            $mUcs4 = ($in);
+                            $mUcs4 = ($mUcs4 & 1) << 30;
+                            $mState = 5;
+                            $mBytes = 6;
+
+                        } else {
+                            /* Current octet is neither in the US-ASCII range nor a legal first
+                             * octet of a multi-octet sequence.
+                             */
+                            trigger_error('utf8_to_unicode: Illegal sequence identifier ' . 'in UTF-8 at byte ' . $i,
+                                E_USER_WARNING);
+
+                            return false;
+                        }
+                    }
+                }
             }
 
         } else {
@@ -740,9 +754,11 @@ function utf8_to_unicode($str) {
                         // From Unicode 3.2, surrogate characters are illegal
                         (($mUcs4 & 0xFFFFF800) == 0xD800) ||
                         // Codepoints outside the Unicode range are illegal
-                        ($mUcs4 > 0x10FFFF)) {
+                        ($mUcs4 > 0x10FFFF)
+                    ) {
 
-                        trigger_error('utf8_to_unicode: Illegal sequence or codepoint in UTF-8 at byte ' . $i, E_USER_WARNING);
+                        trigger_error('utf8_to_unicode: Illegal sequence or codepoint in UTF-8 at byte ' . $i,
+                            E_USER_WARNING);
 
                         return false;
 
@@ -755,7 +771,7 @@ function utf8_to_unicode($str) {
 
                     //initialize UTF8 cache
                     $mState = 0;
-                    $mUcs4  = 0;
+                    $mUcs4 = 0;
                     $mBytes = 1;
                 }
 
@@ -764,7 +780,8 @@ function utf8_to_unicode($str) {
                  *((0xC0 & (*in) != 0x80) && (mState != 0))
                  * Incomplete multi-octet sequence.
                  */
-                trigger_error('utf8_to_unicode: Incomplete multi-octet sequence in UTF-8 at byte ' . $i, E_USER_WARNING);
+                trigger_error('utf8_to_unicode: Incomplete multi-octet sequence in UTF-8 at byte ' . $i,
+                    E_USER_WARNING);
 
                 return false;
             }
@@ -774,7 +791,8 @@ function utf8_to_unicode($str) {
     return $out;
 }
 
-function utf8_from_unicode($data) {
+function utf8_from_unicode($data)
+{
     ob_start();
 
     foreach (array_keys($data) as $key) {
@@ -788,7 +806,8 @@ function utf8_from_unicode($data) {
 
             # Test for illegal surrogates
         } elseif ($data[$key] >= 0xD800 && $data[$key] <= 0xDFFF) {
-            trigger_error('utf8_from_unicode: Illegal surrogate at index: ' . $key . ', value: ' . $data[$key], E_USER_WARNING);
+            trigger_error('utf8_from_unicode: Illegal surrogate at index: ' . $key . ', value: ' . $data[$key],
+                E_USER_WARNING);
 
             return false;
         } elseif ($data[$key] <= 0xffff) {
@@ -801,7 +820,8 @@ function utf8_from_unicode($data) {
             echo chr(0x80 | (($data[$key] >> 6) & 0x3f));
             echo chr(0x80 | ($data[$key] & 0x3f));
         } else {
-            trigger_error('utf8_from_unicode: Codepoint out of Unicode range at index: ' . $key . ', value: ' . $data[$key], E_USER_WARNING);
+            trigger_error('utf8_from_unicode: Codepoint out of Unicode range at index: ' . $key . ', value: ' . $data[$key],
+                E_USER_WARNING);
 
             return false;
         }

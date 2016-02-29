@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Push extends MY_Controller
 {
     public function __construct()
@@ -9,7 +10,7 @@ class Push extends MY_Controller
 
         $this->load->model('User_model');
         $this->load->model('User_group_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -21,9 +22,10 @@ class Push extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
-    public function index() {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function index()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -35,9 +37,10 @@ class Push extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function page($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -49,16 +52,20 @@ class Push extends MY_Controller
         $this->getList($offset);
     }
 
-    public function insert() {
+    public function insert()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'push/insert';
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|required|xss_clean|max_length[160]');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('body', $this->lang->line('entry_body'),
+            'trim|required|xss_clean|max_length[160]');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->data['message'] = null;
@@ -92,16 +99,20 @@ class Push extends MY_Controller
         $this->getForm();
     }
 
-    public function update($template_id) {
+    public function update($template_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'push/update/'.$template_id;
+        $this->data['form'] = 'push/update/' . $template_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|required|xss_clean|max_length[160]');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('body', $this->lang->line('entry_body'),
+            'trim|required|xss_clean|max_length[160]');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
             $this->data['message'] = null;
@@ -137,7 +148,8 @@ class Push extends MY_Controller
         $this->getForm($template_id);
     }
 
-    public function delete() {
+    public function delete()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -145,7 +157,7 @@ class Push extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
@@ -160,7 +172,8 @@ class Push extends MY_Controller
         $this->getList(0);
     }
 
-    private function getList($offset, $ajax=false) {
+    private function getList($offset, $ajax = false)
+    {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
@@ -250,11 +263,13 @@ class Push extends MY_Controller
         $this->render_page($ajax ? 'push_ajax' : 'template');
     }
 
-    public function getListForAjax($offset) {
+    public function getListForAjax($offset)
+    {
         $this->getList($offset, true);
     }
 
-    private function getForm($template_id=null) {
+    private function getForm($template_id = null)
+    {
         $info = null;
         if (isset($template_id) && $template_id) {
             $info = $this->Push_model->getTemplate($template_id);
@@ -307,35 +322,43 @@ class Push extends MY_Controller
         $this->render_page('template');
     }
 
-    public function increase_order($template_id){
+    public function increase_order($template_id)
+    {
         $success = $this->Push_model->increaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
-    public function decrease_order($template_id){
+    public function decrease_order($template_id)
+    {
         $success = $this->Push_model->decreaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
-    public function ios() {
+    public function ios()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
         $this->form_validation->set_rules('push-env', $this->lang->line('push-env'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('push-certificate', $this->lang->line('push-certificate'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('push-password', $this->lang->line('push-password'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('push-certificate', $this->lang->line('push-certificate'),
+            'trim|required|xss_clean');
+        $this->form_validation->set_rules('push-password', $this->lang->line('push-password'),
+            'trim|required|xss_clean');
         $this->form_validation->set_rules('push-ca', $this->lang->line('push-ca'), 'trim|required|xss_clean');
 
         $setting_group_id = $this->User_model->getAdminGroupID();
         $this->data['push'] = $this->Push_model->getIosSetup($this->User_model->getUserGroupId() != $setting_group_id ? $this->User_model->getClientId() : null);
 
 
-        if($this->input->post()){
-            if($this->form_validation->run()){
+        if ($this->input->post()) {
+            if ($this->form_validation->run()) {
                 $postData = $this->input->post();
 
-                $data = $this->User_model->getClientId() ? array_merge($postData, array('client_id' => $this->User_model->getClientId(), 'site_id' => $this->User_model->getSiteId())) : $postData;
+                $data = $this->User_model->getClientId() ? array_merge($postData, array(
+                    'client_id' => $this->User_model->getClientId(),
+                    'site_id' => $this->User_model->getSiteId()
+                )) : $postData;
                 $this->Push_model->updateIos($data);
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
             }
@@ -345,7 +368,9 @@ class Push extends MY_Controller
         $this->load->vars($this->data);
         $this->render_page('template');
     }
-    public function android() {
+
+    public function android()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -358,10 +383,13 @@ class Push extends MY_Controller
         $site_id = $this->User_model->getSiteId();
         $this->data['push'] = $this->Push_model->getAndroidSetup($client_id, $site_id);
 
-        if($this->input->post()){
-            if($this->form_validation->run()){
+        if ($this->input->post()) {
+            if ($this->form_validation->run()) {
                 $postData = $this->input->post();
-                $data = $this->User_model->getClientId() ? array_merge($postData, array('client_id' => $this->User_model->getClientId(), 'site_id' => $this->User_model->getSiteId())) : $postData;
+                $data = $this->User_model->getClientId() ? array_merge($postData, array(
+                    'client_id' => $this->User_model->getClientId(),
+                    'site_id' => $this->User_model->getSiteId()
+                )) : $postData;
                 $this->Push_model->updateAndroid($data);
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
             }
@@ -372,7 +400,8 @@ class Push extends MY_Controller
         $this->render_page('template');
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
         if ($this->User_model->hasPermission('modify', 'push')) {
             return true;
         } else {
@@ -380,18 +409,22 @@ class Push extends MY_Controller
         }
     }
 
-    private function validateAccess() {
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'push') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'push')) {
+        if ($this->User_model->hasPermission('access',
+                'push') && $this->Feature_model->getFeatureExistByClientId($client_id, 'push')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 }
+
 ?>

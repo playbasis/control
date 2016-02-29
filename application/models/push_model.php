@@ -1,8 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class Push_model extends MY_Model
 {
-    public function getTemplate($template_id){
+    public function getTemplate($template_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($template_id));
@@ -10,7 +12,8 @@ class Push_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function getTemplateByName($site_id, $name){
+    public function getTemplateByName($site_id, $name)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('site_id', $site_id);
@@ -19,7 +22,8 @@ class Push_model extends MY_Model
         return $this->mongo_db->count("playbasis_push_to_client");
     }
 
-    public function listTemplatesBySiteId($site_id, $data = array()) {
+    public function listTemplatesBySiteId($site_id, $data = array())
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $sort_data = array(
@@ -33,7 +37,7 @@ class Push_model extends MY_Model
             $order = -1;
         }
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -46,8 +50,12 @@ class Push_model extends MY_Model
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
-            if ($data['start'] < 0) $data['start'] = 0;
-            if ($data['limit'] < 1) $data['limit'] = 20;
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
@@ -57,11 +65,12 @@ class Push_model extends MY_Model
         return $this->mongo_db->get("playbasis_push_to_client");
     }
 
-    public function getTotalTemplatesBySiteId($site_id, $data) {
+    public function getTotalTemplatesBySiteId($site_id, $data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -72,7 +81,8 @@ class Push_model extends MY_Model
         return $this->mongo_db->count("playbasis_push_to_client");
     }
 
-    public function addTemplate($data) {
+    public function addTemplate($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $dt = new MongoDate(strtotime(date("Y-m-d H:i:s")));
@@ -80,21 +90,24 @@ class Push_model extends MY_Model
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
             'status' => (bool)$data['status'],
-            'sort_order' => (int)$data['sort_order']|1,
+            'sort_order' => (int)$data['sort_order'] | 1,
             'date_modified' => $dt,
             'date_added' => $dt,
-            'name' => $data['name']|'' ,
-            'body' => $data['body']|'',
+            'name' => $data['name'] | '',
+            'body' => $data['body'] | '',
             'deleted' => false,
         ));
     }
 
-    public function editTemplate($template_id, $data) {
+    public function editTemplate($template_id, $data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $templates = $this->mongo_db->get("playbasis_push_to_client");
-        if (!$templates) return false;
+        if (!$templates) {
+            return false;
+        }
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $this->mongo_db->set("name", $data["name"]);
@@ -108,12 +121,15 @@ class Push_model extends MY_Model
         return true;
     }
 
-    public function deleteTemplate($template_id) {
+    public function deleteTemplate($template_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $templates = $this->mongo_db->get("playbasis_push_to_client");
-        if (!$templates) return false;
+        if (!$templates) {
+            return false;
+        }
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
@@ -123,12 +139,15 @@ class Push_model extends MY_Model
         return true;
     }
 
-    public function increaseSortOrder($template_id){
+    public function increaseSortOrder($template_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $templates = $this->mongo_db->get('playbasis_push_to_client');
-        if (!$templates) return false;
+        if (!$templates) {
+            return false;
+        }
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $this->mongo_db->set('sort_order', $templates[0]['sort_order'] + 1);
@@ -136,12 +155,15 @@ class Push_model extends MY_Model
         return true;
     }
 
-    public function decreaseSortOrder($template_id){
+    public function decreaseSortOrder($template_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $templates = $this->mongo_db->get('playbasis_push_to_client');
-        if (!$templates || $templates[0]['sort_order'] <= 0) return false;
+        if (!$templates || $templates[0]['sort_order'] <= 0) {
+            return false;
+        }
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $this->mongo_db->set('sort_order', $templates[0]['sort_order'] - 1);
@@ -149,7 +171,8 @@ class Push_model extends MY_Model
         return true;
     }
 
-    public function getIosSetup($client_id=null,$site_id=null) {
+    public function getIosSetup($client_id = null, $site_id = null)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
@@ -158,14 +181,15 @@ class Push_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function updateIos($data) {
+    public function updateIos($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $client_id = isset($data['client_id']) && !empty($data['client_id']) ? new MongoId($data['client_id']) : null;
         $site_id = isset($data['site_id']) && !empty($data['site_id']) ? new MongoId($data['site_id']) : null;
         $env = isset($data['env']) && !empty($data['env']) ? $data['env'] : null;
         $d = new MongoDate();
-        if ($this->getIosSetup($client_id,$site_id)) {
+        if ($this->getIosSetup($client_id, $site_id)) {
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('env', $data['push-env']);
@@ -180,7 +204,7 @@ class Push_model extends MY_Model
                 'site_id' => $site_id,
                 'env' => $data['push-env'],
                 'certificate' => $data['push-certificate'],
-                'password' => $data['push-password'] ,
+                'password' => $data['push-password'],
                 'ca' => $data['push-ca'],
                 'date_modified' => $d,
                 'date_added' => $d
@@ -188,7 +212,7 @@ class Push_model extends MY_Model
         }
     }
 
-    public function getAndroidSetup($client_id=null, $site_id=null)
+    public function getAndroidSetup($client_id = null, $site_id = null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $client_id);
@@ -205,7 +229,7 @@ class Push_model extends MY_Model
         $client_id = isset($data['client_id']) && !empty($data['client_id']) ? new MongoId($data['client_id']) : null;
         $site_id = isset($data['site_id']) && !empty($data['site_id']) ? new MongoId($data['site_id']) : null;
         $d = new MongoDate();
-        if ($this->getAndroidSetup($client_id,$site_id)) {
+        if ($this->getAndroidSetup($client_id, $site_id)) {
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->set('api_key', $data['push-key']);

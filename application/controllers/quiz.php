@@ -12,7 +12,7 @@ class Quiz extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -25,10 +25,11 @@ class Quiz extends MY_Controller
         $this->lang->load("quiz", $lang['folder']);
     }
 
-    public function index(){
+    public function index()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -39,10 +40,11 @@ class Quiz extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -53,7 +55,8 @@ class Quiz extends MY_Controller
         $this->getList($offset);
     }
 
-    public function getList($offset){
+    public function getList($offset)
+    {
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
@@ -64,26 +67,27 @@ class Quiz extends MY_Controller
         $filter = array(
             'limit' => $config['per_page'],
             'start' => $offset,
-            'client_id'=>$client_id,
-            'site_id'=>$site_id,
-            'sort'=>'sort_order'
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'sort' => 'sort_order'
         );
 
-        if(isset($_GET['filter_name'])){
+        if (isset($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
         $config['base_url'] = site_url('quiz/page');
         $config["uri_segment"] = 3;
         $config['total_rows'] = 0;
-        
-        if($client_id){
+
+        if ($client_id) {
             $this->data['quizs'] = $this->Quiz_model->getQuizs($filter);
             $badge_list = $this->Badge_model->getBadgeBySiteId(array("site_id" => $site_id));
             $point_list = $this->Reward_model->getAnotherRewardBySiteId($site_id);
             foreach ($this->data['quizs'] as &$quiz) {
                 $error = $this->checkQuizError($quiz, $badge_list, $point_list);
-                $quiz['error'] = !empty($error) ? 'The following rewards are not available: '.implode(',', $error) : null;
+                $quiz['error'] = !empty($error) ? 'The following rewards are not available: ' . implode(',',
+                        $error) : null;
             }
             $config['total_rows'] = $this->Quiz_model->getTotalQuizs($filter);
         }
@@ -122,7 +126,8 @@ class Quiz extends MY_Controller
         $this->render_page('template');
     }
 
-    public function insert(){
+    public function insert()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -130,7 +135,8 @@ class Quiz extends MY_Controller
         $this->getForm(0);
     }
 
-    public function edit($quiz_id){
+    public function edit($quiz_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -138,7 +144,8 @@ class Quiz extends MY_Controller
         $this->getForm($quiz_id);
     }
 
-    private function getForm($quiz_id=null) {
+    private function getForm($quiz_id = null)
+    {
 
         $this->load->model('Image_model');
         $this->load->model('Badge_model');
@@ -147,9 +154,9 @@ class Quiz extends MY_Controller
         $quiz_info = array();
 
         if (isset($quiz_id) && ($quiz_id != 0)) {
-            if($this->User_model->getClientId()){
+            if ($this->User_model->getClientId()) {
                 $quiz_info = $this->Quiz_model->getQuiz($quiz_id);
-            }else{
+            } else {
                 $quiz_info = $this->Quiz_model->getQuiz($quiz_id);
             }
         }
@@ -171,7 +178,7 @@ class Quiz extends MY_Controller
             $this->data['message'] = $this->lang->line('error_quiz_limit');
         }
 
-        if($this->input->post()){
+        if ($this->input->post()) {
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
             }
@@ -180,60 +187,60 @@ class Quiz extends MY_Controller
 
             $quiz = array();
 
-            foreach($data as $key => $value){
-                if($key == "quiz"){
-                    foreach($value as $qkey => $qvalue){
-                        if($qkey == "grades"){
-                            foreach($qvalue as $ggkey => $ggvalue){
+            foreach ($data as $key => $value) {
+                if ($key == "quiz") {
+                    foreach ($value as $qkey => $qvalue) {
+                        if ($qkey == "grades") {
+                            foreach ($qvalue as $ggkey => $ggvalue) {
                                 $grades = array();
                                 $grades['grade_id'] = new MongoId($ggkey);
-                                foreach($ggvalue as $gggkey => $gggvalue){
+                                foreach ($ggvalue as $gggkey => $gggvalue) {
 
-                                    if($gggkey == "rewards"){
+                                    if ($gggkey == "rewards") {
 
-                                        foreach($gggvalue as $rkey => $rvalue){
-                                            if($rkey == "badge"){
+                                        foreach ($gggvalue as $rkey => $rvalue) {
+                                            if ($rkey == "badge") {
 
                                                 $badge = array();
 
-                                                foreach($rvalue as $bkey => $bvalue){
-                                                    if(!empty($bvalue)){
+                                                foreach ($rvalue as $bkey => $bvalue) {
+                                                    if (!empty($bvalue)) {
                                                         $b["badge_id"] = new MongoId($bkey);
                                                         $b["badge_value"] = $bvalue;
 
                                                         $badge[] = $b;
                                                     }
                                                 }
-                                                if($badge){
+                                                if ($badge) {
                                                     $grades[$gggkey]["badge"] = $badge;
                                                 }
 
                                             }
-                                            if($rkey == "exp" && !empty($rvalue)){
+                                            if ($rkey == "exp" && !empty($rvalue)) {
                                                 $grades[$gggkey]["exp"] = $rvalue;
                                             }
-                                            if($rkey == "point" && !empty($rvalue)){
+                                            if ($rkey == "point" && !empty($rvalue)) {
                                                 $grades[$gggkey]["point"] = $rvalue;
                                             }
-                                            if($rkey == "custom"){
+                                            if ($rkey == "custom") {
                                                 $custom = array();
 
-                                                foreach($rvalue as $ckey => $cvalue){
-                                                    if(!empty($cvalue)){
+                                                foreach ($rvalue as $ckey => $cvalue) {
+                                                    if (!empty($cvalue)) {
                                                         $c["custom_id"] = new MongoId($ckey);
                                                         $c["custom_value"] = $cvalue;
 
                                                         $custom[] = $c;
                                                     }
                                                 }
-                                                if($custom){
+                                                if ($custom) {
                                                     $grades[$gggkey]["custom"] = $custom;
                                                 }
 
                                             }
                                         }
 
-                                    }else{
+                                    } else {
                                         $grades[$gggkey] = $gggvalue;
                                     }
 
@@ -241,62 +248,67 @@ class Quiz extends MY_Controller
                                 $quiz["grades"][] = $grades;
                             }
 
-                        }else if($qkey == "questions"){
-                            foreach($qvalue as $qqkey => $qqvalue){
-                                $questions = array();
-                                $questions['question_id'] = new MongoId($qqkey);
+                        } else {
+                            if ($qkey == "questions") {
+                                foreach ($qvalue as $qqkey => $qqvalue) {
+                                    $questions = array();
+                                    $questions['question_id'] = new MongoId($qqkey);
 
-                                foreach($qqvalue as $qqqkey => $qqqvalue){
+                                    foreach ($qqvalue as $qqqkey => $qqqvalue) {
 
-                                    if($qqqkey == "options"){
+                                        if ($qqqkey == "options") {
 
-                                        $options = array();
+                                            $options = array();
 
-                                        foreach($qqqvalue as $okey => $ovalue){
-                                            $option = $ovalue;
-                                            $option['option_id'] = new MongoId($okey);
+                                            foreach ($qqqvalue as $okey => $ovalue) {
+                                                $option = $ovalue;
+                                                $option['option_id'] = new MongoId($okey);
 
-                                            $options[] = $option;
+                                                $options[] = $option;
+                                            }
+                                            if ($options) {
+                                                $questions["options"] = $options;
+                                            }
+                                        } else {
+                                            $questions[$qqqkey] = $qqqvalue;
                                         }
-                                        if($options){
-                                            $questions["options"] = $options;
-                                        }
-                                    }else{
-                                        $questions[$qqqkey] = $qqqvalue;
                                     }
+                                    $quiz["questions"][] = $questions;
                                 }
-                                $quiz["questions"][] = $questions;
                             }
                         }
                     }
-                }else{
+                } else {
                     switch ($key) {
-                    case 'status':
-                        $value = ('true' === $value);
-                        break;
-                    case 'weight':
-                        $value = $value ? intval($value) : 1;
-                        break;
-                    case 'type':
-                        if (!$value) $value = 'quiz';
-                        break;
-                    default:
-                        break;
+                        case 'status':
+                            $value = ('true' === $value);
+                            break;
+                        case 'weight':
+                            $value = $value ? intval($value) : 1;
+                            break;
+                        case 'type':
+                            if (!$value) {
+                                $value = 'quiz';
+                            }
+                            break;
+                        default:
+                            break;
                     }
                     $quiz[$key] = $value;
                 }
             }
 
             $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
-            $this->form_validation->set_rules('description', $this->lang->line('description'), 'trim|required|xss_clean');
+            $this->form_validation->set_rules('description', $this->lang->line('description'),
+                'trim|required|xss_clean');
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
                 $quiz['client_id'] = $this->User_model->getClientId();
                 $quiz['site_id'] = $this->User_model->getSiteId();
-                $quiz['question_order'] = (isset($data['question_order']) && ($data['question_order'] == 'on'))?true:false;
-                if($quiz_info){
+                $quiz['question_order'] = (isset($data['question_order']) && ($data['question_order'] == 'on')) ? true : false;
+                if ($quiz_info) {
                     $this->Quiz_model->editQuizToClient($quiz_id, $quiz);
-                }else{
+                } else {
                     $this->Quiz_model->addQuizToClient($quiz);
                 }
                 redirect('/quiz', 'refresh');
@@ -311,7 +323,7 @@ class Quiz extends MY_Controller
         $data['site_id'] = $this->User_model->getSiteId();
 
         $this->data['badge_list'] = array();
-        $this->data['badge_list'] = $this->Badge_model->getBadgeBySiteId(array("site_id" => $data['site_id'] ));
+        $this->data['badge_list'] = $this->Badge_model->getBadgeBySiteId(array("site_id" => $data['site_id']));
 
         $this->data['point_list'] = array();
         $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($data['site_id']);
@@ -320,9 +332,12 @@ class Quiz extends MY_Controller
         $this->load->model('Email_model');
         $this->load->model('Sms_model');
         $this->load->model('Push_model');
-        $this->data['emails'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'email') ? $this->Email_model->listTemplatesBySiteId($data['site_id']) : null;
-        $this->data['smses'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'sms') ? $this->Sms_model->listTemplatesBySiteId($data['site_id']) : null;
-        $this->data['pushes'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'push') ? $this->Push_model->listTemplatesBySiteId($data['site_id']) : null;
+        $this->data['emails'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'],
+            'email') ? $this->Email_model->listTemplatesBySiteId($data['site_id']) : null;
+        $this->data['smses'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'],
+            'sms') ? $this->Sms_model->listTemplatesBySiteId($data['site_id']) : null;
+        $this->data['pushes'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'],
+            'push') ? $this->Push_model->listTemplatesBySiteId($data['site_id']) : null;
         $this->data['client_id'] = $data['client_id'];
         $this->data['site_id'] = $data['site_id'];
 
@@ -332,7 +347,8 @@ class Quiz extends MY_Controller
         $this->render_page('template');
     }
 
-    public function delete() {
+    public function delete()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -340,7 +356,7 @@ class Quiz extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
@@ -358,19 +374,20 @@ class Quiz extends MY_Controller
         $this->getList(0);
     }
 
-    private function checkQuizError($quiz, $badge_list, $point_list) {
+    private function checkQuizError($quiz, $badge_list, $point_list)
+    {
         $badges = array();
         $customs = array();
         if (!empty($quiz['grades'])) {
-            foreach($quiz['grades'] as $grade){
-                if(isset($grade["rewards"])){
-                    foreach($grade["rewards"] as $rk=>$rv){
-                        if($rk == "custom"){
+            foreach ($quiz['grades'] as $grade) {
+                if (isset($grade["rewards"])) {
+                    foreach ($grade["rewards"] as $rk => $rv) {
+                        if ($rk == "custom") {
                             foreach ($rv as $b) {
                                 array_push($customs, $b['custom_id']);
                             }
                         }
-                        if($rk == "badge"){
+                        if ($rk == "badge") {
                             foreach ($rv as $b) {
                                 array_push($badges, $b['badge_id']);
                             }
@@ -384,7 +401,8 @@ class Quiz extends MY_Controller
         return array_merge(array_diff($badges, $badges_avail), array_diff($customs, $customs_avail));
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
         if ($this->User_model->hasPermission('modify', 'quiz')) {
             return true;
         } else {
@@ -392,14 +410,17 @@ class Quiz extends MY_Controller
         }
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'quiz') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'quiz')) {
+        if ($this->User_model->hasPermission('access',
+                'quiz') && $this->Feature_model->getFeatureExistByClientId($client_id, 'quiz')
+        ) {
             return true;
         } else {
             return false;
@@ -407,11 +428,14 @@ class Quiz extends MY_Controller
     }
 }
 
-function index_badge_id($obj) {
+function index_badge_id($obj)
+{
     return $obj['badge_id'];
 }
 
-function index_reward_id($obj) {
+function index_reward_id($obj)
+{
     return $obj['reward_id'];
 }
+
 ?>

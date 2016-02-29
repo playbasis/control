@@ -1,38 +1,42 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
-class Report_registration extends MY_Controller{
+class Report_registration extends MY_Controller
+{
 
-	public function __construct(){
+    public function __construct()
+    {
 
-		parent::__construct();
-		$this->load->model('User_model');
-		if(!$this->User_model->isLogged()){
-			redirect('/login','refresh');
-		}
+        parent::__construct();
+        $this->load->model('User_model');
+        if (!$this->User_model->isLogged()) {
+            redirect('/login', 'refresh');
+        }
 
-		$lang = get_lang($this->session, $this->config);
-		$this->lang->load($lang['name'], $lang['folder']);
-		$this->lang->load("report", $lang['folder']);
-	}
+        $lang = get_lang($this->session, $this->config);
+        $this->lang->load($lang['name'], $lang['folder']);
+        $this->lang->load("report", $lang['folder']);
+    }
 
-	public function index(){
-		if(!$this->validateAccess()){
-			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function index()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
-		}
-		$this->data['meta_description'] = $this->lang->line('meta_description');
+        }
+        $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->getRegisteredPlayers(0, site_url('report_registration/page'));
-		
-	}
 
-	public function page($offset = 0){
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    }
+
+    public function page($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -44,9 +48,10 @@ class Report_registration extends MY_Controller{
         $this->getRegisteredPlayers($offset, site_url('report_registration/page'));
     }
 
-    public function registration_filter(){
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function registration_filter()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -58,34 +63,35 @@ class Report_registration extends MY_Controller{
         $this->getRegisteredPlayers(0, site_url('report_registration/page'));
     }
 
-	public function getRegisteredPlayers($offset, $url){
-		$offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
+    public function getRegisteredPlayers($offset, $url)
+    {
+        $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
-		$per_page = NUMBER_OF_RECORDS_PER_PAGE;
-		$parameter_url = "?t=".rand();
+        $per_page = NUMBER_OF_RECORDS_PER_PAGE;
+        $parameter_url = "?t=" . rand();
 
-		$this->load->library('pagination');
+        $this->load->library('pagination');
 
-		// $this->load->model('Report_goods_model');
-		$this->load->model('Image_model');
-		$this->load->model('Player_model');
+        // $this->load->model('Report_goods_model');
+        $this->load->model('Image_model');
+        $this->load->model('Player_model');
 
-		
-		if ($this->input->get('date_start')) {
+
+        if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
-            $parameter_url .= "&date_start=".$filter_date_start;
+            $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $filter_date_start = date("Y-m-d", strtotime("-30 days")); ;
+            $filter_date_start = date("Y-m-d", strtotime("-30 days"));;
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=".$filter_date_end;
+            $parameter_url .= "&date_expire=" . $filter_date_end;
 
             //--> This will enable to search on the day until the time 23:59:59
             $date = $this->input->get('date_expire');
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         } else {
@@ -94,50 +100,50 @@ class Report_registration extends MY_Controller{
             //--> This will enable to search on the current day until the time 23:59:59
             $date = date("Y-m-d");
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         }
 
         if ($this->input->get('username')) {
             $filter_username = $this->input->get('username');
-            $parameter_url .= "&username=".$filter_username;
+            $parameter_url .= "&username=" . $filter_username;
         } else {
             $filter_username = '';
         }
 
         // --> NEW INPUT!
 
-        if($this->input->get('filter_site_id')){
+        if ($this->input->get('filter_site_id')) {
             $filter_site_id = $this->input->get('filter_site_id');
-            $parameter_url .= "&site_id=".$filter_site_id;
-        }else{
+            $parameter_url .= "&site_id=" . $filter_site_id;
+        } else {
             $filter_site_id = $this->User_model->getSiteId();
         }
 
         // --> END NEW INPUT!
 
-        $limit =($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
+        $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
         $data = array(
-            'client_id'              => $client_id,
-            'site_id'                => $site_id,
-            'date_start'             => $filter_date_start,
-            'date_expire'            => $filter_date_end,
-            'username'               => $filter_username,
-            'filter_site_id'         => $filter_site_id,
-            'start'                  => $offset,
-            'limit'                  => $limit
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date_start' => $filter_date_start,
+            'date_expire' => $filter_date_end,
+            'username' => $filter_username,
+            'filter_site_id' => $filter_site_id,
+            'start' => $offset,
+            'limit' => $limit
         );
 
         $report_total = 0;
 
         $result = array();
 
-        if($client_id){
+        if ($client_id) {
 
             $this->load->model('Report_player_model');
 
@@ -149,30 +155,30 @@ class Report_registration extends MY_Controller{
 
         $this->data['reports'] = array();
 
-        foreach($results as $result){
+        foreach ($results as $result) {
 
-        	$goods_name = null;
+            $goods_name = null;
 
 
-            if (!empty($result['image'])){
+            if (!empty($result['image'])) {
                 $thumb = $result['image'];
-            }else{
-                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+            } else {
+                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
 
             $this->data['reports'][] = array(
-                'cl_player_id'      => $result['cl_player_id'],
-                'username'          => $result['username'],
-                'image'             => $thumb,
-                'email'             => $result['email'],
-                'date_added'        => datetimeMongotoReadable($result['date_added']),
+                'cl_player_id' => $result['cl_player_id'],
+                'username' => $result['username'],
+                'image' => $thumb,
+                'email' => $result['email'],
+                'date_added' => datetimeMongotoReadable($result['date_added']),
             );
         }
 
         $this->data['sites_available'] = $this->Report_player_model->getAllSitesFromClient($client_id);
 
 
-        $config['base_url'] = $url.$parameter_url;
+        $config['base_url'] = $url . $parameter_url;
 
         $config['total_rows'] = $report_total;
         $config['per_page'] = $per_page;
@@ -211,7 +217,7 @@ class Report_registration extends MY_Controller{
 
         $this->data['filter_date_start'] = $filter_date_start;
         // --> This will show only the date, not including the time
-        $filter_date_end_exploded = explode(" ",$filter_date_end);
+        $filter_date_end_exploded = explode(" ", $filter_date_end);
         $this->data['filter_date_end'] = $filter_date_end_exploded[0];
         // --> end
         $this->data['filter_username'] = $filter_username;
@@ -222,56 +228,60 @@ class Report_registration extends MY_Controller{
         $this->render_page('template');
 
 
-	}
+    }
 
-	private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'report/action') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')) {
+        if ($this->User_model->hasPermission('access',
+                'report/action') && $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function actionDownload() {
+    public function actionDownload()
+    {
 
-        $parameter_url = "?t=".rand();
+        $parameter_url = "?t=" . rand();
         $this->load->model('Report_goods_model');
         $this->load->model('Image_model');
         $this->load->model('Player_model');
 
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
-            $parameter_url .= "&date_start=".$filter_date_start;
+            $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $filter_date_start = date("Y-m-d", strtotime("-30 days")); ;
+            $filter_date_start = date("Y-m-d", strtotime("-30 days"));;
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=".$filter_date_end;
+            $parameter_url .= "&date_expire=" . $filter_date_end;
 
             $date = $this->input->get('date_expire');
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
         } else {
             $filter_date_end = date("Y-m-d");
 
             $date = date("Y-m-d");
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
         }
 
         if ($this->input->get('username')) {
             $filter_username = $this->input->get('username');
-            $parameter_url .= "&username=".$filter_username;
+            $parameter_url .= "&username=" . $filter_username;
         } else {
             $filter_username = '';
         }
@@ -280,16 +290,16 @@ class Report_registration extends MY_Controller{
         $site_id = $this->User_model->getSiteId();
 
         $data = array(
-            'client_id'              => $client_id,
-            'site_id'                => $site_id,
-            'date_start'             => $filter_date_start,
-            'date_expire'            => $filter_date_end,
-            'username'               => $filter_username,
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date_start' => $filter_date_start,
+            'date_expire' => $filter_date_end,
+            'username' => $filter_username,
         );
 
         $results = array();
 
-        if($client_id){
+        if ($client_id) {
 
             $this->load->model('Report_player_model');
 
@@ -301,10 +311,10 @@ class Report_registration extends MY_Controller{
         foreach ($results as $result) {
 
             $this->data['reports'][] = array(
-                'cl_player_id'      => $result['cl_player_id'],
-                'username'          => $result['username'],
-                'email'             => $result['email'],
-                'date_added'        => datetimeMongotoReadable($result['date_added']),
+                'cl_player_id' => $result['cl_player_id'],
+                'username' => $result['username'],
+                'email' => $result['email'],
+                'date_added' => datetimeMongotoReadable($result['date_added']),
             );
         }
         $results = $this->data['reports'];
@@ -323,8 +333,7 @@ class Report_registration extends MY_Controller{
             )
         );
 
-        foreach($results as $row)
-        {
+        foreach ($results as $row) {
             $exporter->addRow(array(
                     $row['cl_player_id'],
                     $row['username'],

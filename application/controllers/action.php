@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Action extends MY_Controller
 {
     public function __construct()
@@ -8,7 +9,7 @@ class Action extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -20,10 +21,11 @@ class Action extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
-    public function index() {
+    public function index()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -34,10 +36,11 @@ class Action extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -48,7 +51,8 @@ class Action extends MY_Controller
         $this->getList($offset);
     }
 
-    public function insert() {
+    public function insert()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -56,11 +60,16 @@ class Action extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'action/insert';
 
-        $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
-        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
-        $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
-        $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('name', $this->lang->line('form_action_name'),
+            'trim|required|xss_clean|max_length[100]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'),
+            'trim|xss_clean|max_length[1000]');
+        $this->form_validation->set_rules('icon', $this->lang->line('form_icon'),
+            'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('color', $this->lang->line('form_color'),
+            'trim|required|xss_clean|check_space');
         $this->form_validation->set_rules('status', "", '');
 
         $data_set = $this->input->post('init_dataset');
@@ -83,34 +92,34 @@ class Action extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 $data = $this->input->post();
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
 
-                if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+                if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
 
                     $exists = $this->Action_model->checkActionExists($data);
-                    if($exists){
+                    if ($exists) {
                         $data['action_id'] = $exists['_id'];
 
-                        if($this->Action_model->checkActionClientExists($data)){
+                        if ($this->Action_model->checkActionClientExists($data)) {
                             $this->Action_model->editActionToClient($data['action_id'], $data);
-                        }else{
+                        } else {
                             $this->Action_model->addActionToClient($data);
                         }
-                    }else{
+                    } else {
                         $data['action_id'] = $this->Action_model->addAction($data);
                         $this->Action_model->addActionToClient($data);
                     }
 
-                }else{
+                } else {
 
                     $exists = $this->Action_model->checkActionExists($data);
-                    if(!$exists){
-                        
-                        if($this->input->post('client_id') != 'admin_only'){
+                    if (!$exists) {
+
+                        if ($this->input->post('client_id') != 'admin_only') {
 //                            $this->load->model('Domain_model');
                             $this->load->model('App_model');
 
@@ -119,14 +128,14 @@ class Action extends MY_Controller
                             $data_admin['site_id'] = $data['site_id'];
                             $domains = $this->App_model->getAppsByClientId($data_admin);
 
-                            foreach($domains as $domain){
+                            foreach ($domains as $domain) {
                                 $data_admin['site_id'] = $domain['_id'];
                                 $this->Action_model->addActionToClient($data_admin);
                             }
-                        }else{
+                        } else {
                             $this->Action_model->addAction($data);
                         }
-                    }else{
+                    } else {
                         //Tell them that the action already exists
                     }
 
@@ -141,18 +150,24 @@ class Action extends MY_Controller
         $this->getForm();
     }
 
-    public function update($action_id) {
+    public function update($action_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'action/update/'.$action_id;
+        $this->data['form'] = 'action/update/' . $action_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
-        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
-        $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
-        $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('name', $this->lang->line('form_action_name'),
+            'trim|required|xss_clean|max_length[100]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'),
+            'trim|xss_clean|max_length[1000]');
+        $this->form_validation->set_rules('icon', $this->lang->line('form_icon'),
+            'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('color', $this->lang->line('form_color'),
+            'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('status', "", '');
 
         $data_set = $this->input->post('init_dataset');
@@ -167,25 +182,25 @@ class Action extends MY_Controller
                 }
             }
         }
-        if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $this->data['message'] = null;
 
-             if (!$this->validateModify()) {
-                 $this->data['message'] = $this->lang->line('error_permission');
-             }
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 $data = $this->input->post();
 
-                if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+                if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
                     $client_id = $this->User_model->getClientId();
                     $data['client_id'] = $client_id;
                     $site_id = $this->User_model->getSiteId();
                     $data['site_id'] = $site_id;
                     $this->Action_model->editActionToClient($action_id, $data);
-                }else{
+                } else {
                     $this->Action_model->editAction($action_id, $data);
                     $this->Action_model->editActionToClient($action_id, $data);
                 }
@@ -198,7 +213,8 @@ class Action extends MY_Controller
         $this->getForm($action_id);
     }
 
-    public function delete() {
+    public function delete()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -207,17 +223,17 @@ class Action extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
 
-            if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
                 foreach ($this->input->post('selected') as $action_id) {
                     $this->Action_model->deleteActionClient($action_id);
                 }
-            }else{
+            } else {
                 foreach ($this->input->post('selected') as $action_id) {
                     $this->Action_model->delete($action_id);
                 }
@@ -231,23 +247,24 @@ class Action extends MY_Controller
         $this->getList(0);
     }
 
-    private function getList($offset) {
+    private function getList($offset)
+    {
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
-        
+
         $this->load->library('pagination');
 
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
         $filter = array(
-                'limit' => $config['per_page'],
-                'start' => $offset,
-                'client_id'=>$client_id,
-                'site_id'=>$site_id,
-                'sort'=>'name'
-            );
-        if(isset($_GET['filter_name'])){
+            'limit' => $config['per_page'],
+            'start' => $offset,
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'sort' => 'name'
+        );
+        if (isset($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
@@ -255,10 +272,10 @@ class Action extends MY_Controller
         $config["uri_segment"] = 3;
 
 
-        if($client_id){
+        if ($client_id) {
             $this->data['actions'] = $this->Action_model->getActionsSite($filter);
             $config['total_rows'] = $this->Action_model->getTotalActionsSite($filter);
-        }else{
+        } else {
             $this->data['actions'] = $this->Action_model->getActions($filter);
             $config['total_rows'] = $this->Action_model->getTotalActions();
         }
@@ -298,33 +315,34 @@ class Action extends MY_Controller
         $this->render_page('template');
     }
 
-    public function getListForAjax($offset) {
+    public function getListForAjax($offset)
+    {
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
-        
+
         $this->load->library('pagination');
 
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
         $filter = array(
-                'limit' => $config['per_page'],
-                'start' => $offset,
-                'client_id'=>$client_id,
-                'site_id'=>$site_id,
-                'sort'=>'sort_order'
-            );
-        if(isset($_GET['filter_name'])){
+            'limit' => $config['per_page'],
+            'start' => $offset,
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'sort' => 'sort_order'
+        );
+        if (isset($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
         $config['base_url'] = site_url('action/page');
         $config["uri_segment"] = 3;
 
-        if($client_id){
+        if ($client_id) {
             $this->data['actions'] = $this->Action_model->getActionsSite($filter);
             $config['total_rows'] = $this->Action_model->getTotalActionsSite($filter);
-        }else{
+        } else {
             $this->data['actions'] = $this->Action_model->getActions($filter);
             $config['total_rows'] = $this->Action_model->getTotalActions();
         }
@@ -362,7 +380,8 @@ class Action extends MY_Controller
         $this->render_page('action_ajax');
     }
 
-    private function getForm($action_id=null) {
+    private function getForm($action_id = null)
+    {
 
         $this->load->model('Image_model');
 
@@ -390,7 +409,7 @@ class Action extends MY_Controller
             $this->data['error_warning'] = array();
         }
 
-        if(isset($action_id)){
+        if (isset($action_id)) {
             $this->data['action_id'] = $action_id;
         } else {
             $this->data['action_id'] = null;
@@ -398,16 +417,16 @@ class Action extends MY_Controller
 
         $site_id = $this->User_model->getSiteId();
 
-        if($site_id){
+        if ($site_id) {
             $this->data['action'] = $this->Action_model->getActionSiteInfo($action_id, $site_id);
-        }else{
+        } else {
             $this->data['action'] = $this->Action_model->getAction($action_id);
         }
 
         $this->load->model('Client_model');
 
         $this->data['icons'] = $this->Action_model->getAllIcons();
-        $this->data['colors'] = array('blue', 'orange','red', 'green', 'yellow','pink');
+        $this->data['colors'] = array('blue', 'orange', 'red', 'green', 'yellow', 'pink');
         $this->data['clients'] = $this->Client_model->getClients(array());
 
         $this->data['main'] = 'action_form';
@@ -417,7 +436,8 @@ class Action extends MY_Controller
         $this->render_page('template');
     }
 
-    public function autocomplete(){
+    public function autocomplete()
+    {
         $json = array();
 
         $client_id = $this->User_model->getClientId();
@@ -435,11 +455,11 @@ class Action extends MY_Controller
                 'filter_name' => $filter_name
             );
 
-            if($client_id){
+            if ($client_id) {
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
                 $results_action = $this->Action_model->getActionsSite($data);
-            }else{
+            } else {
                 $results_action = $this->Action_model->getActions($data);
             }
 
@@ -457,7 +477,8 @@ class Action extends MY_Controller
         $this->output->set_output(json_encode($json));
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
 
         if ($this->User_model->hasPermission('modify', 'action')) {
             return true;
@@ -466,52 +487,57 @@ class Action extends MY_Controller
         }
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'action') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'action')) {
+        if ($this->User_model->hasPermission('access',
+                'action') && $this->Feature_model->getFeatureExistByClientId($client_id, 'action')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function increase_order($action_id){
+    public function increase_order($action_id)
+    {
 
-        if($this->User_model->getClientId()){
+        if ($this->User_model->getClientId()) {
             $client_id = $this->User_model->getClientId();
             $this->Action_model->increaseOrderByOneClient($action_id, $client_id);
-        }else{
-            $this->Action_model->increaseOrderByOne($action_id);    
+        } else {
+            $this->Action_model->increaseOrderByOne($action_id);
         }
 
         // redirect('action', 'refresh');
 
-        $json = array('success'=>'Okay!');
+        $json = array('success' => 'Okay!');
 
         $this->output->set_output(json_encode($json));
 
     }
 
 
+    public function decrease_order($action_id)
+    {
 
-    public function decrease_order($action_id){
-
-        if($this->User_model->getClientId()){
+        if ($this->User_model->getClientId()) {
             $client_id = $this->User_model->getClientId();
             $this->Action_model->decreaseOrderByOneClient($action_id, $client_id);
-        }else{
-            $this->Action_model->decreaseOrderByOne($action_id);    
+        } else {
+            $this->Action_model->decreaseOrderByOne($action_id);
         }
         // redirect('action', 'refresh');
 
-        $json = array('success'=>'Okay!');
+        $json = array('success' => 'Okay!');
 
         $this->output->set_output(json_encode($json));
     }
 }
+
 ?>

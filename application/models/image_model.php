@@ -1,22 +1,25 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class Image_model extends MY_Model
 {
-    public function resize($filename, $width, $height) {
+    public function resize($filename, $width, $height)
+    {
 
-        $filename = urldecode($filename );
+        $filename = urldecode($filename);
 
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $filecopy = str_replace("/","\\",$filename);
-        }else{
-            $filecopy = str_replace("\\","/",$filename);
+            $filecopy = str_replace("/", "\\", $filename);
+        } else {
+            $filecopy = str_replace("\\", "/", $filename);
         }
 
         $info = pathinfo($filename);
         $extension = $info['extension'];
 
         $old_image = $filename;
-        $new_image = 'cache/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
+        $new_image = 'cache/' . utf8_substr($filename, 0,
+                utf8_strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
 
 //        $headers = get_headers(S3_IMAGE.$new_image, 1);
 
@@ -25,10 +28,10 @@ class Image_model extends MY_Model
 //        }
 
         if (!file_exists(DIR_IMAGE . $filename) || !is_file(DIR_IMAGE . $filename)) {
-            if(@fopen(S3_IMAGE . $filename,"r")){
+            if (@fopen(S3_IMAGE . $filename, "r")) {
                 @copy(S3_IMAGE . $filename, DIR_IMAGE . $filecopy);
-            }else{
-                return S3_IMAGE."cache/no_image-".$width.'x'.$height.".jpg";
+            } else {
+                return S3_IMAGE . "cache/no_image-" . $width . 'x' . $height . ".jpg";
             }
         }
 
@@ -60,7 +63,8 @@ class Image_model extends MY_Model
         return S3_IMAGE . $new_image;
     }
 
-    public function getTotalSize ($client_id){
+    public function getTotalSize($client_id)
+    {
 
         $match = array(
             'client_id' => $client_id
@@ -70,13 +74,13 @@ class Image_model extends MY_Model
                 '$match' => $match,
             ),
             array(
-                '$group' => array('_id' => null,'size' => array('$sum' => '$file_size'))
+                '$group' => array('_id' => null, 'size' => array('$sum' => '$file_size'))
             ),
         ));
 
-        if (isset($result['result'][0])){
+        if (isset($result['result'][0])) {
             $result = $result['result'][0]['size'];
-        }else{
+        } else {
             $result = 0;
         }
         return $result;
@@ -115,9 +119,9 @@ class Image_model extends MY_Model
             $data['date_added'] = $mongoDate;
             $data['date_modified'] = $mongoDate;
 
-            try{
+            try {
                 $result = $this->mongo_db->insert('playbasis_file', $data);
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 $result = false;
             }
         }
@@ -126,20 +130,23 @@ class Image_model extends MY_Model
 
     }
 
-    public function getImageUrl ($client_id,$site_id,$filename,$directory=null,$pb_player_id=null){
+    public function getImageUrl($client_id, $site_id, $filename, $directory = null, $pb_player_id = null)
+    {
 
-        $this->mongo_db->select(array ('url'));
-        $this->mongo_db->select(array (),array('_id'));
-        $this->mongo_db->where('client_id',$client_id);
-        $this->mongo_db->where('site_id',$site_id);
-        $this->mongo_db->where('file_name',$filename);
-        $this->mongo_db->where('directory',$directory);
+        $this->mongo_db->select(array('url'));
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('file_name', $filename);
+        $this->mongo_db->where('directory', $directory);
 
-        if ($pb_player_id)$this->mongo_db->where('pb_player_id',$pb_player_id);
+        if ($pb_player_id) {
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+        }
 
         $result = $this->mongo_db->get('playbasis_file');
 
-        return $result? $result[0]['url']:null;
+        return $result ? $result[0]['url'] : null;
 
     }
 

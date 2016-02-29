@@ -1,39 +1,43 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
-class Report_goods extends MY_Controller{
+class Report_goods extends MY_Controller
+{
 
-	public function __construct(){
+    public function __construct()
+    {
 
-		parent::__construct();
-		$this->load->model('User_model');
+        parent::__construct();
+        $this->load->model('User_model');
         $this->load->model('Goods_model');
-		if(!$this->User_model->isLogged()){
-			redirect('/login','refresh');
-		}
+        if (!$this->User_model->isLogged()) {
+            redirect('/login', 'refresh');
+        }
 
-		$lang = get_lang($this->session, $this->config);
-		$this->lang->load($lang['name'], $lang['folder']);
-		$this->lang->load("report", $lang['folder']);
-	}
+        $lang = get_lang($this->session, $this->config);
+        $this->lang->load($lang['name'], $lang['folder']);
+        $this->lang->load("report", $lang['folder']);
+    }
 
-	public function index(){
-		if(!$this->validateAccess()){
-			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function index()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
-		}
-		$this->data['meta_description'] = $this->lang->line('meta_description');
+        }
+        $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->getGoodsList(0, site_url('report_goods/page'));
-		
-	}
 
-	public function page($offset = 0){
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    }
+
+    public function page($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -45,9 +49,10 @@ class Report_goods extends MY_Controller{
         $this->getGoodsList($offset, site_url('report_goods/page'));
     }
 
-    public function goods_filter(){
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function goods_filter()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -59,34 +64,35 @@ class Report_goods extends MY_Controller{
         $this->getGoodsList(0, site_url('report_goods/page'));
     }
 
-	public function getGoodsList($offset, $url){
-		$offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
+    public function getGoodsList($offset, $url)
+    {
+        $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
-		$per_page = NUMBER_OF_RECORDS_PER_PAGE;
-		$parameter_url = "?t=".rand();
+        $per_page = NUMBER_OF_RECORDS_PER_PAGE;
+        $parameter_url = "?t=" . rand();
 
-		$this->load->library('pagination');
+        $this->load->library('pagination');
 
-		$this->load->model('Report_goods_model');
-		$this->load->model('Image_model');
-		$this->load->model('Player_model');
+        $this->load->model('Report_goods_model');
+        $this->load->model('Image_model');
+        $this->load->model('Player_model');
 
-		
-		if ($this->input->get('date_start')) {
+
+        if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
-            $parameter_url .= "&date_start=".$filter_date_start;
+            $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $filter_date_start = date("Y-m-d", strtotime("-30 days")); ;
+            $filter_date_start = date("Y-m-d", strtotime("-30 days"));;
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=".$filter_date_end;
+            $parameter_url .= "&date_expire=" . $filter_date_end;
 
             //--> This will enable to search on the day until the time 23:59:59
             $date = $this->input->get('date_expire');
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         } else {
@@ -95,14 +101,14 @@ class Report_goods extends MY_Controller{
             //--> This will enable to search on the current day until the time 23:59:59
             $date = date("Y-m-d");
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         }
 
         if ($this->input->get('username')) {
             $filter_username = $this->input->get('username');
-            $parameter_url .= "&username=".$filter_username;
+            $parameter_url .= "&username=" . $filter_username;
         } else {
             $filter_username = '';
         }
@@ -113,82 +119,85 @@ class Report_goods extends MY_Controller{
             $filter_goods_id = $this->input->get('goods_id');
             $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
             $is_group = array_key_exists('group', $goods);
-            $parameter_url .= "&goods_id=".$filter_goods_id;
+            $parameter_url .= "&goods_id=" . $filter_goods_id;
         } else {
             $filter_goods_id = '';
         }
 
-        $limit =($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
+        $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
         $data = array(
-            'client_id'              => $client_id,
-            'site_id'                => $site_id,
-            'date_start'             => $filter_date_start,
-            'date_expire'            => $filter_date_end,
-            'username'               => $filter_username,
-            'goods_id'               => ($is_group ? $goods['group'] : $filter_goods_id),
-            'is_group'               => $is_group,
-            'start'                  => $offset,
-            'limit'                  => $limit
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date_start' => $filter_date_start,
+            'date_expire' => $filter_date_end,
+            'username' => $filter_username,
+            'goods_id' => ($is_group ? $goods['group'] : $filter_goods_id),
+            'is_group' => $is_group,
+            'start' => $offset,
+            'limit' => $limit
         );
 
         $report_total = 0;
 
         $results = array();
 
-        if($client_id){
-        	$report_total = $this->Report_goods_model->getTotalReportGoods($data);
-        	$results = $this->Report_goods_model->getReportGoods($data);
+        if ($client_id) {
+            $report_total = $this->Report_goods_model->getTotalReportGoods($data);
+            $results = $this->Report_goods_model->getReportGoods($data);
         }
 
         $this->data['reports'] = array();
 
-        foreach($results as $result){
+        foreach ($results as $result) {
 
-        	$goods_name = null;
+            $goods_name = null;
 
-        	$player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
+            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
-            if (!empty($player['image'])){
+            if (!empty($player['image'])) {
                 $thumb = $player['image'];
-            }else{
-                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+            } else {
+                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
-        	/*if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
+            /*if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
                 $thumb = $player['image'];
             } else {
                 $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
             }*/
 
             $this->data['reports'][] = array(
-                'cl_player_id'      => $player['cl_player_id'],
-                'username'          => $player['username'],
-                'image'             => $thumb,
-                'email'             => $player['email'],
-                'date_added'        => datetimeMongotoReadable($result['date_added']),
-                'goods_name'       => $result['goods_name'],
+                'cl_player_id' => $player['cl_player_id'],
+                'username' => $player['username'],
+                'image' => $thumb,
+                'email' => $player['email'],
+                'date_added' => datetimeMongotoReadable($result['date_added']),
+                'goods_name' => $result['goods_name'],
                 // 'value'             => $result['value']
-                'value'             => $result['amount'],
+                'value' => $result['amount'],
                 // 'redeem'            => $result['redeem']
             );
         }
 
         $this->data['goods_available'] = array();
 
-        if($client_id){
+        if ($client_id) {
             $allGoodsAvailable = $this->getList($site_id);
             $all_goods = array();
-            foreach($allGoodsAvailable as $goods){
+            foreach ($allGoodsAvailable as $goods) {
                 $is_group = array_key_exists('group', $goods);
-                $all_goods[] = array('_id' => $goods['goods_id']->{'$id'}, 'name' => $goods[$is_group ? 'group' : 'name']);
+                $all_goods[] = array(
+                    '_id' => $goods['goods_id']->{'$id'},
+                    'name' => $goods[$is_group ? 'group' : 'name']
+                );
             }
             $this->data['goods_available'] = $all_goods;
         }
 
-        $config['base_url'] = $url.$parameter_url;
+        $config['base_url'] = $url . $parameter_url;
 
         $config['total_rows'] = $report_total;
         $config['per_page'] = $per_page;
@@ -227,7 +236,7 @@ class Report_goods extends MY_Controller{
 
         $this->data['filter_date_start'] = $filter_date_start;
         // --> This will show only the date, not including the time
-        $filter_date_end_exploded = explode(" ",$filter_date_end);
+        $filter_date_end_exploded = explode(" ", $filter_date_end);
         $this->data['filter_date_end'] = $filter_date_end_exploded[0];
         // --> end
         $this->data['filter_username'] = $filter_username;
@@ -236,40 +245,49 @@ class Report_goods extends MY_Controller{
         $this->data['main'] = 'report_goods';
         $this->load->vars($this->data);
         $this->render_page('template');
-	}
+    }
 
-	private function getList($site_id) {
-		$results = $this->Goods_model->getGroupsAggregate($site_id);
-		$ids = array();
-		$group_name = array();
-		foreach ($results as $i => $result) {
-			$group = $result['_id']['group'];
-			$quantity = $result['quantity'];
-			$list = $result['list'];
-			$first = array_shift($list); // skip first one
-			$group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
-			$ids = array_merge($ids, $list);
-		}
-		return $this->Goods_model->getGoodsBySiteId(array('site_id' => $site_id, 'sort' => 'sort_order', '$nin' => $ids));
-	}
+    private function getList($site_id)
+    {
+        $results = $this->Goods_model->getGroupsAggregate($site_id);
+        $ids = array();
+        $group_name = array();
+        foreach ($results as $i => $result) {
+            $group = $result['_id']['group'];
+            $quantity = $result['quantity'];
+            $list = $result['list'];
+            $first = array_shift($list); // skip first one
+            $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
+            $ids = array_merge($ids, $list);
+        }
+        return $this->Goods_model->getGoodsBySiteId(array(
+            'site_id' => $site_id,
+            'sort' => 'sort_order',
+            '$nin' => $ids
+        ));
+    }
 
-	private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'report/action') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')) {
+        if ($this->User_model->hasPermission('access',
+                'report/action') && $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function actionDownload() {
+    public function actionDownload()
+    {
 
-        $parameter_url = "?t=".rand();
+        $parameter_url = "?t=" . rand();
         $this->load->model('Report_goods_model');
         $this->load->model('Image_model');
         $this->load->model('Player_model');
@@ -277,19 +295,19 @@ class Report_goods extends MY_Controller{
 
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
-            $parameter_url .= "&date_start=".$filter_date_start;
+            $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $filter_date_start = date("Y-m-d", strtotime("-30 days")); ;
+            $filter_date_start = date("Y-m-d", strtotime("-30 days"));;
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=".$filter_date_end;
+            $parameter_url .= "&date_expire=" . $filter_date_end;
 
             //--> This will enable to search on the day until the time 23:59:59
             $date = $this->input->get('date_expire');
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         } else {
@@ -298,14 +316,14 @@ class Report_goods extends MY_Controller{
             //--> This will enable to search on the current day until the time 23:59:59
             $date = date("Y-m-d");
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         }
 
         if ($this->input->get('username')) {
             $filter_username = $this->input->get('username');
-            $parameter_url .= "&username=".$filter_username;
+            $parameter_url .= "&username=" . $filter_username;
         } else {
             $filter_username = '';
         }
@@ -316,7 +334,7 @@ class Report_goods extends MY_Controller{
             $filter_goods_id = $this->input->get('goods_id');
             $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
             $is_group = array_key_exists('group', $goods);
-            $parameter_url .= "&goods_id=".$filter_goods_id;
+            $parameter_url .= "&goods_id=" . $filter_goods_id;
         } else {
             $filter_goods_id = '';
         }
@@ -325,44 +343,44 @@ class Report_goods extends MY_Controller{
         $site_id = $this->User_model->getSiteId();
 
         $data = array(
-            'client_id'              => $client_id,
-            'site_id'                => $site_id,
-            'date_start'             => $filter_date_start,
-            'date_expire'            => $filter_date_end,
-            'username'               => $filter_username,
-            'goods_id'               => ($is_group ? $goods['group'] : $filter_goods_id),
-            'is_group'               => $is_group
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date_start' => $filter_date_start,
+            'date_expire' => $filter_date_end,
+            'username' => $filter_username,
+            'goods_id' => ($is_group ? $goods['group'] : $filter_goods_id),
+            'is_group' => $is_group
         );
 
         $results = array();
 
-        if($client_id){
+        if ($client_id) {
             $results = $this->Report_goods_model->getReportGoods($data);
         }
 
         $this->data['reports'] = array();
 
-        foreach($results as $result){
+        foreach ($results as $result) {
 
             $goods_name = null;
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
-            if (!empty($player['image'])){
+            if (!empty($player['image'])) {
                 $thumb = $player['image'];
-            }else{
-                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+            } else {
+                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
 
             $this->data['reports'][] = array(
-                'cl_player_id'      => $player['cl_player_id'],
-                'username'          => $player['username'],
-                'image'             => $thumb,
-                'email'             => $player['email'],
-                'date_added'        => datetimeMongotoReadable($result['date_added']),
-                'goods_name'       => $result['goods_name'],
+                'cl_player_id' => $player['cl_player_id'],
+                'username' => $player['username'],
+                'image' => $thumb,
+                'email' => $player['email'],
+                'date_added' => datetimeMongotoReadable($result['date_added']),
+                'goods_name' => $result['goods_name'],
                 // 'value'             => $result['value']
-                'amount'             => $result['amount'],
+                'amount' => $result['amount'],
                 // 'redeem'            => $result['redeem']
             );
         }
@@ -376,17 +394,16 @@ class Report_goods extends MY_Controller{
         $exporter->initialize(); // starts streaming data to web browser
 
         $exporter->addRow(array(
-            $this->lang->line('column_player_id'),
-            $this->lang->line('column_username'),
-            $this->lang->line('column_email'),
-            $this->lang->line('column_goods_name'),
-            $this->lang->line('column_goods_amount'),
-            $this->lang->line('column_date_added')
+                $this->lang->line('column_player_id'),
+                $this->lang->line('column_username'),
+                $this->lang->line('column_email'),
+                $this->lang->line('column_goods_name'),
+                $this->lang->line('column_goods_amount'),
+                $this->lang->line('column_date_added')
             )
         );
-        
-        foreach($results as $row)
-        {
+
+        foreach ($results as $row) {
             $exporter->addRow(array(
                     $row['cl_player_id'],
                     $row['username'],

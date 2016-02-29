@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
 class Email extends MY_Controller
 {
     public function __construct()
@@ -8,7 +9,7 @@ class Email extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -20,9 +21,10 @@ class Email extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
-    public function index() {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function index()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -34,9 +36,10 @@ class Email extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function page($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -48,16 +51,19 @@ class Email extends MY_Controller
         $this->getList($offset);
     }
 
-    public function insert() {
+    public function insert()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'email/insert';
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|required|max_length[30000]');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->data['message'] = null;
@@ -68,7 +74,9 @@ class Email extends MY_Controller
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
-                if (!$this->Email_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'))) {
+                if (!$this->Email_model->getTemplateByName($this->User_model->getSiteId(),
+                    $this->input->post('name'))
+                ) {
                     $data = $this->input->post();
                     $data['body'] = $this->purify($this->input->post('body'));
                     $template_id = $this->Email_model->addTemplate(array_merge($data, array(
@@ -89,20 +97,23 @@ class Email extends MY_Controller
                 }
             }
         }
-       
+
         $this->getForm();
     }
 
-    public function update($template_id) {
+    public function update($template_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'email/update/'.$template_id;
+        $this->data['form'] = 'email/update/' . $template_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|required|max_length[30000]');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
             $this->data['message'] = null;
@@ -140,7 +151,8 @@ class Email extends MY_Controller
         $this->getForm($template_id);
     }
 
-    public function delete() {
+    public function delete()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -148,7 +160,7 @@ class Email extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
@@ -163,7 +175,8 @@ class Email extends MY_Controller
         $this->getList(0);
     }
 
-    private function getList($offset, $ajax=false) {
+    private function getList($offset, $ajax = false)
+    {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
@@ -183,14 +196,15 @@ class Email extends MY_Controller
         $total = $this->Email_model->getTotalTemplatesBySiteId($site_id, $paging_data);
 
         foreach ($templates as $template) {
-            if(!$template['deleted']){
+            if (!$template['deleted']) {
                 $this->data['templates'][] = array(
                     '_id' => $template['_id'],
                     'name' => $template['name'],
                     'body' => $template['body'],
                     'status' => $template['status'],
-                    'sort_order'  => $template['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($template['_id'], $this->input->post('selected'))),
+                    'sort_order' => $template['sort_order'],
+                    'selected' => ($this->input->post('selected') && in_array($template['_id'],
+                            $this->input->post('selected'))),
                 );
             }
         }
@@ -250,11 +264,13 @@ class Email extends MY_Controller
         $this->render_page($ajax ? 'email_ajax' : 'template');
     }
 
-    public function getListForAjax($offset) {
+    public function getListForAjax($offset)
+    {
         $this->getList($offset, true);
     }
 
-    private function getForm($template_id=null) {
+    private function getForm($template_id = null)
+    {
         $info = null;
         if (isset($template_id) && $template_id) {
             $info = $this->Email_model->getTemplate($template_id);
@@ -307,17 +323,20 @@ class Email extends MY_Controller
         $this->render_page('template');
     }
 
-    public function increase_order($template_id){
+    public function increase_order($template_id)
+    {
         $success = $this->Email_model->increaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
-    public function decrease_order($template_id){
+    public function decrease_order($template_id)
+    {
         $success = $this->Email_model->decreaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
         if ($this->User_model->hasPermission('modify', 'email')) {
             return true;
         } else {
@@ -325,21 +344,25 @@ class Email extends MY_Controller
         }
     }
 
-    private function validateAccess() {
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'email') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'email')) {
+        if ($this->User_model->hasPermission('access',
+                'email') && $this->Feature_model->getFeatureExistByClientId($client_id, 'email')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 
-    private function purify($html) {
+    private function purify($html)
+    {
         include_once('application/libraries/HTMLPurifier.auto.php');
         $config = HTMLPurifier_Config::createDefault();
         $filter = new HTMLPurifier($config);

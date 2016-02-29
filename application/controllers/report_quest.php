@@ -1,7 +1,8 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
-class Report_quest extends MY_Controller{
+class Report_quest extends MY_Controller
+{
 
     public function __construct()
     {
@@ -9,7 +10,7 @@ class Report_quest extends MY_Controller{
 
         $this->load->model('User_model');
         $this->load->model('Quest_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -18,9 +19,10 @@ class Report_quest extends MY_Controller{
         $this->lang->load("report", $lang['folder']);
     }
 
-    public function index(){
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function index()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -31,9 +33,10 @@ class Report_quest extends MY_Controller{
         $this->getQuestsList(0, site_url('report_quest/page'));
     }
 
-    public function page($offset = 0){
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+    public function page($offset = 0)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -45,10 +48,11 @@ class Report_quest extends MY_Controller{
         $this->getQuestsList($offset, site_url('report_quest/page'));
     }
 
-    public function quest() {
+    public function quest()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -60,10 +64,11 @@ class Report_quest extends MY_Controller{
         $this->getQuestsList(0, site_url('report_quest/page'));
     }
 
-    public function quest_page($offset=0) {
+    public function quest_page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -75,11 +80,12 @@ class Report_quest extends MY_Controller{
         $this->getQuestsList($offset, site_url('report_quest/page'));
     }
 
-    public function getQuestsList($offset, $url){
+    public function getQuestsList($offset, $url)
+    {
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
-        $parameter_url = "?t=".rand();
+        $parameter_url = "?t=" . rand();
 
         $this->load->library('pagination');
 
@@ -92,19 +98,19 @@ class Report_quest extends MY_Controller{
 
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
-            $parameter_url .= "&date_start=".$filter_date_start;
+            $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $filter_date_start = date("Y-m-d", strtotime("-30 days")); ;
+            $filter_date_start = date("Y-m-d", strtotime("-30 days"));;
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=".$filter_date_end;
+            $parameter_url .= "&date_expire=" . $filter_date_end;
 
             //--> This will enable to search on the day until the time 23:59:59
             $date = $this->input->get('date_expire');
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         } else {
@@ -113,47 +119,46 @@ class Report_quest extends MY_Controller{
             //--> This will enable to search on the current day until the time 23:59:59
             $date = date("Y-m-d");
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         }
 
         if ($this->input->get('username')) {
             $filter_username = $this->input->get('username');
-            $parameter_url .= "&username=".$filter_username;
+            $parameter_url .= "&username=" . $filter_username;
         } else {
             $filter_username = '';
         }
 
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
-            $parameter_url .= "&action_id=".$filter_action_id;
+            $parameter_url .= "&action_id=" . $filter_action_id;
         } else {
             $filter_action_id = '';
         }
 
-        $limit =($this->input->get('limit')) ? $this->input->get('limit') : $per_page ;
-
+        $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
 
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
         $data = array(
-            'client_id'              => $client_id,
-            'site_id'                => $site_id,
-            'date_start'             => $filter_date_start,
-            'date_expire'            => $filter_date_end,
-            'username'               => $filter_username,
-            'quest_id'              => $filter_action_id,
-            'start'                  => $offset,
-            'limit'                  => $limit
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date_start' => $filter_date_start,
+            'date_expire' => $filter_date_end,
+            'username' => $filter_username,
+            'quest_id' => $filter_action_id,
+            'start' => $offset,
+            'limit' => $limit
         );
 
         $report_total = 0;
 
         $results = array();
-        if($client_id){
+        if ($client_id) {
             $report_total = $this->Report_quest_model->getTotalReportQuest($data);
 
             $results = $this->Report_quest_model->getReportQuest($data);
@@ -169,44 +174,46 @@ class Report_quest extends MY_Controller{
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
-            if (!empty($player['image'])){
+            if (!empty($player['image'])) {
                 $thumb = $player['image'];
-            }else{
-                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+            } else {
+                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
 
             $quest = $this->Report_quest_model->getQuestName($result['quest_id']);
             $quest_name = $quest['quest_name'];
             $missions = $quest['missions'];
-            if( isset($result['mission_id']) && is_array($missions))foreach ($missions as $mission){
-                if ($mission['mission_id'] == $result['mission_id']){
-                    $mission_name = $mission['mission_name'];
-                    $mission_number = $mission['mission_number'];
+            if (isset($result['mission_id']) && is_array($missions)) {
+                foreach ($missions as $mission) {
+                    if ($mission['mission_id'] == $result['mission_id']) {
+                        $mission_name = $mission['mission_name'];
+                        $mission_number = $mission['mission_number'];
+                    }
                 }
             }
 
             $this->data['reports'][] = array(
-                'cl_player_id'      => $player['cl_player_id'],
-                'username'          => $player['username'],
-                'image'             => $thumb,
-                'email'             => $player['email'],
-                'date_added'        => datetimeMongotoReadable($result['date_added']),
-                'quest_name'        => isset($quest_name)?$quest_name:null,
-                'mission_name'      => isset($mission_name)?$mission_name:null,
-                'mission_number'    => isset($mission_number)?$mission_number:null,
+                'cl_player_id' => $player['cl_player_id'],
+                'username' => $player['username'],
+                'image' => $thumb,
+                'email' => $player['email'],
+                'date_added' => datetimeMongotoReadable($result['date_added']),
+                'quest_name' => isset($quest_name) ? $quest_name : null,
+                'mission_name' => isset($mission_name) ? $mission_name : null,
+                'mission_number' => isset($mission_number) ? $mission_number : null,
             );
         }
 
         $this->data['quest_list'] = $this->Quest_model->getQuestsByClientSiteId($data);
 
-        if($client_id){
+        if ($client_id) {
             $data_filter['client_id'] = $client_id;
             $data_filter['site_id'] = $site_id;
             // $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
 
         }
 
-        $config['base_url'] = $url.$parameter_url;
+        $config['base_url'] = $url . $parameter_url;
 
         $config['total_rows'] = $report_total;
         $config['per_page'] = $per_page;
@@ -245,7 +252,7 @@ class Report_quest extends MY_Controller{
 
         $this->data['filter_date_start'] = $filter_date_start;
         // --> This will show only the date, not including the time
-        $filter_date_end_exploded = explode(" ",$filter_date_end);
+        $filter_date_end_exploded = explode(" ", $filter_date_end);
         $this->data['filter_date_end'] = $filter_date_end_exploded[0];
         // --> end
         $this->data['filter_username'] = $filter_username;
@@ -257,23 +264,27 @@ class Report_quest extends MY_Controller{
 
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'report/action') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')) {
+        if ($this->User_model->hasPermission('access',
+                'report/action') && $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')
+        ) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function actionDownload() {
+    public function actionDownload()
+    {
 
-        $parameter_url = "?t=".rand();
+        $parameter_url = "?t=" . rand();
 
         $this->load->library('pagination');
 
@@ -286,19 +297,19 @@ class Report_quest extends MY_Controller{
 
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
-            $parameter_url .= "&date_start=".$filter_date_start;
+            $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $filter_date_start = date("Y-m-d", strtotime("-30 days")); ;
+            $filter_date_start = date("Y-m-d", strtotime("-30 days"));;
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=".$filter_date_end;
+            $parameter_url .= "&date_expire=" . $filter_date_end;
 
             //--> This will enable to search on the day until the time 23:59:59
             $date = $this->input->get('date_expire');
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         } else {
@@ -307,21 +318,21 @@ class Report_quest extends MY_Controller{
             //--> This will enable to search on the current day until the time 23:59:59
             $date = date("Y-m-d");
             $currentDate = strtotime($date);
-            $futureDate = $currentDate+("86399");
+            $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         }
 
         if ($this->input->get('username')) {
             $filter_username = $this->input->get('username');
-            $parameter_url .= "&username=".$filter_username;
+            $parameter_url .= "&username=" . $filter_username;
         } else {
             $filter_username = '';
         }
 
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
-            $parameter_url .= "&action_id=".$filter_action_id;
+            $parameter_url .= "&action_id=" . $filter_action_id;
         } else {
             $filter_action_id = '';
         }
@@ -330,16 +341,16 @@ class Report_quest extends MY_Controller{
         $site_id = $this->User_model->getSiteId();
 
         $data = array(
-            'client_id'              => $client_id,
-            'site_id'                => $site_id,
-            'date_start'             => $filter_date_start,
-            'date_expire'            => $filter_date_end,
-            'username'               => $filter_username,
-            'quest_id'              => $filter_action_id
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date_start' => $filter_date_start,
+            'date_expire' => $filter_date_end,
+            'username' => $filter_username,
+            'quest_id' => $filter_action_id
         );
 
         $results = array();
-        if($client_id){
+        if ($client_id) {
             $results = $this->Report_quest_model->getReportQuest($data);
         }
 
@@ -348,36 +359,38 @@ class Report_quest extends MY_Controller{
         foreach ($results as $result) {
 
             $quest_name = null;
-            $mission_name=null;
-            $mission_number=null;
+            $mission_name = null;
+            $mission_number = null;
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id']);
 
-            if (!empty($player['image'])){
+            if (!empty($player['image'])) {
                 $thumb = $player['image'];
-            }else{
-                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+            } else {
+                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
 
             $quest = $this->Report_quest_model->getQuestName($result['quest_id']);
             $quest_name = $quest['quest_name'];
             $missions = $quest['missions'];
-            if( isset($result['mission_id']) && is_array($missions))foreach ($missions as $mission){
-                if ($mission['mission_id'] == $result['mission_id']){
-                    $mission_name = $mission['mission_name'];
-                    $mission_number = $mission['mission_number'];
+            if (isset($result['mission_id']) && is_array($missions)) {
+                foreach ($missions as $mission) {
+                    if ($mission['mission_id'] == $result['mission_id']) {
+                        $mission_name = $mission['mission_name'];
+                        $mission_number = $mission['mission_number'];
+                    }
                 }
             }
 
             $this->data['reports'][] = array(
-                'cl_player_id'      => $player['cl_player_id'],
-                'username'          => $player['username'],
-                'image'             => $thumb,
-                'email'             => $player['email'],
-                'date_added'        => datetimeMongotoReadable($result['date_added']),
-                'quest_name'        => isset($quest_name)?$quest_name:null,
-                'mission_name'      => isset($mission_name)?$mission_name:null,
-                'mission_number'    => isset($mission_number)?$mission_number:null,
+                'cl_player_id' => $player['cl_player_id'],
+                'username' => $player['username'],
+                'image' => $thumb,
+                'email' => $player['email'],
+                'date_added' => datetimeMongotoReadable($result['date_added']),
+                'quest_name' => isset($quest_name) ? $quest_name : null,
+                'mission_name' => isset($mission_name) ? $mission_name : null,
+                'mission_number' => isset($mission_number) ? $mission_number : null,
             );
         }
 
@@ -400,8 +413,7 @@ class Report_quest extends MY_Controller{
             )
         );
 
-        foreach($results as $row)
-        {
+        foreach ($results as $row) {
             $exporter->addRow(array(
                     $row['cl_player_id'],
                     $row['username'],
