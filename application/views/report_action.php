@@ -56,8 +56,8 @@
                     <!-- <td class="left"><?php //echo $this->lang->line('column_level'); ?></td>
                     <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
                     <td class="right"><?php echo $this->lang->line('column_action_name'); ?></td>
-                    <?php if (isset($reports[0]) && is_array($reports[0]['parameters'])) foreach ($reports[0]['parameters'] as $key => $parameter){ ?>
-                        <td class="right"><?php echo $key; ?></td>
+                    <?php if (isset($init_dataset) && is_array($init_dataset)) foreach ($init_dataset as $key => $parameter){ ?>
+                        <td class="right"><?php echo $parameter['param_name']; ?></td>
                     <?php }?>
                     <td class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
                 </tr>
@@ -73,8 +73,8 @@
                         <!-- <td class="left"><?php //echo $report['level']; ?></td>
                         <td class="left"><?php //echo $report['exp']; ?></td> -->
                         <td class="right"><?php echo $report['action_name']; ?></td>
-                        <?php if (is_array($report['parameters'])) foreach ($report['parameters'] as $parameter){ ?>
-                            <td class="right"><?php echo $parameter; ?></td>
+                        <?php if (isset($init_dataset) && is_array($init_dataset)) foreach ($init_dataset as $key => $parameter){ ?>
+                            <td class="right"><?php echo isset($report['parameters'][$parameter['param_name']])?$report['parameters'][$parameter['param_name']]:null; ?></td>
                         <?php }?>
 
                         <td class="right"><?php echo $report['date_added']; ?></td>
