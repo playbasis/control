@@ -165,6 +165,13 @@ class Report extends MY_Controller
             $report_total = $this->Action_model->getTotalActionReport($data);
 
             $results = $this->Action_model->getActionReport($data);
+
+            if ($filter_action_id != 0){
+                $action = $this->Action_model->getAction($filter_action_id);
+                $init_dataset = isset($action['init_dataset']) ? $action['init_dataset']:null;
+                $this->data['init_dataset'] = $init_dataset;
+            }
+
         }
 
         foreach ($results as $result) {
@@ -314,11 +321,15 @@ class Report extends MY_Controller
             $this->lang->line('column_action_name'),
         );
 
-        if ($filter_action_id != 0 && is_array($results[0]['parameters'])) {
-            foreach ($results[0]['parameters'] as $key => $param) {
-                array_push($row_to_add, $key);
+        $init_dataset = array();
+        if ($filter_action_id != 0) foreach ($results as $result){
+            foreach ($result['parameters'] as $key => $param){
+                if (!in_array($key,$init_dataset)){
+                    array_push($init_dataset,$key);
+                }
             }
         }
+        if (!empty($init_dataset)) $row_to_add = array_merge($row_to_add,$init_dataset);
 
         array_push($row_to_add, $this->lang->line('column_date_added'));
         $exporter->addRow($row_to_add);
@@ -333,9 +344,14 @@ class Report extends MY_Controller
                 $player['exp'],
                 $row['action_name']
             );
-            if ($filter_action_id != 0 && is_array($row['parameters'])) {
-                foreach ($row['parameters'] as $param) {
-                    array_push($row_to_add, $param);
+            if ($filter_action_id != 0 && is_array($init_dataset)) {
+                foreach ($init_dataset as $dataset) {
+                    if (isset($row['parameters'][$dataset])){
+                        array_push($row_to_add, $row['parameters'][$dataset]);
+                    }else{
+                        array_push($row_to_add, '');
+                    }
+
                 }
             }
             array_push($row_to_add, $this->datetimeMongotoReadable($row['date_added']));
