@@ -386,19 +386,15 @@ class jigsaw extends MY_Model
         }
         $lastTime = $result['date_added'];
         $timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
-        $datediff = date_diff(new DateTime("@$timeNow"), new DateTime(datetimeMongotoReadable($lastTime)));
-        //if more than 2 day
-        if ($datediff->d > 1) {
-            return true;
-        }
-        //if same day
-        if ($datediff->d <= 0) {
+        $currentYMD = date("Y-m-d");
+
+        $settingTime = $config['time_of_day'];
+        $settingTime = strtotime("$currentYMD $settingTime:00");
+        $currentTime = strtotime($currentYMD." " . date('H:i', $timeNow) . ":00");
+
+        if ($settingTime < $lastTime->sec){ // action has been processed for today !
             return false;
         }
-        //if more than 1 day, according to current time
-        $settingTime = $config['time_of_day'];
-        $settingTime = strtotime("1970-01-01 $settingTime:00");
-        $currentTime = strtotime("1970-01-01 " . date('H:i', $timeNow) . ":00");
         return $currentTime > $settingTime;
     }
 
