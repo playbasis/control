@@ -3712,6 +3712,13 @@
                         "Default": "20",
                         "Type": "integer",
                         "Description": "number of results to return"
+                      },
+                      {
+                        "Name": "full_html",
+                        "Required": "N",
+                        "Default": "false",
+                        "Type": "string",
+                        "Description": "true, will return full html"
                       }
                     ]
                 },
