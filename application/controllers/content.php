@@ -32,6 +32,14 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
 
+        if (isset($query_data['full_html']) && $query_data['full_html'] == "true"){
+            if(is_array($contents))foreach ($contents as &$content){
+                $content['detail'] = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">'.
+                    '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">'.
+                    '<style>img{ max-width: 100%}</style>'.
+                    '</head><title></title><body>'.$content['detail'].'</body></html>';
+            }
+        }
         array_walk_recursive($contents, array($this, "convert_mongo_object_and_category"));
 
         $this->benchmark->mark('end');
