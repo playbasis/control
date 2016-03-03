@@ -3681,7 +3681,7 @@
                       {
                         "Name": "date_check",
                         "Required": "N",
-                        "Default": "false",
+                        "Default": "true",
                         "Type": "string",
                         "Description": "Return content that available in this date range"
                       },
