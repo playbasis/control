@@ -75,6 +75,9 @@ class Content_model extends MY_Model
                 $this->mongo_db->where_gte('date_end', new MongoDate());
                 $this->mongo_db->where_lt('date_start', new MongoDate());
             }
+        } else {
+            $this->mongo_db->where_gte('date_end', new MongoDate());
+            $this->mongo_db->where_lt('date_start', new MongoDate());
         }
 
         $this->mongo_db->select(array('title', 'summary', 'detail', 'image', 'category', 'date_start', 'date_end'));
