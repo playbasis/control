@@ -89,6 +89,7 @@ $route['Player/'.ANY_STRING.'/custom'] = 'player/custom/$1';
 
 $route['Player/'.ANY_STRING.'/register'] = 'player/register/$1';
 $route['Player/register'] = 'player/register';
+$route['Player/registerBatch'] = 'player/registerBatch';
 
 $route['Player/'.ANY_STRING.'/update'] = 'player/update/$1';
 $route['Player/update'] = 'player/update';
@@ -335,6 +336,12 @@ $route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 //File API
 $route['File/upload'] = 'file/upload';
 $route['File/delete'] = 'file/delete';
+
+//Import API
+$route['Import/setting'] = 'import/importSetting';
+$route['Import/retrieveUrl'] = 'import/retrieveUrl';
+$route['Import/processImport'] = 'import/processImport';
+
 
 //misc
 //$route['test']	= 'playbasis/test';

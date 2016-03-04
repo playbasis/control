@@ -582,6 +582,28 @@ class Player extends REST2_Controller
         }
     }
 
+    public function registerBatch_post()
+    {
+        $batch_data = json_decode($this->input->post()['batch'],true);
+
+        try {
+            $player_limit = $this->client_model->getPlanLimitById(
+                $this->client_plan,
+                "others",
+                "player");
+        } catch (Exception $e) {
+            $this->response($this->error->setError('INTERNAL_ERROR'), 200);
+        }
+
+        $return = $this->player_model->bulkRegisterPlayer($batch_data, $this->validToken, $player_limit);
+
+        if ($return) {
+            $this->response($this->resp->setRespond(), 200);
+        } else {
+            $this->response($this->error->setError('LIMIT_EXCEED'), 200);
+        }
+    }
+
     public function update_post($player_id = '')
     {
         if (!$player_id) {

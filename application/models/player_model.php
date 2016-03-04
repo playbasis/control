@@ -73,6 +73,62 @@ class Player_model extends MY_Model
         ));
     }
 
+    public function bulkRegisterPlayer($batch_data, $data, $limit = null)
+    {
+
+        try {
+            $this->checkClientUserLimitWarning(
+                $data['client_id'], $data['site_id'], $limit);
+        } catch (Exception $e) {
+            if ($e->getMessage() == "USER_EXCEED") {
+                return false;
+            } else {
+                throw new Exception($e->getMessage());
+            }
+        }
+        $this->set_site_mongodb($data['site_id']);
+        $mongoDate = new MongoDate(time());
+
+        foreach ($batch_data as &$dataAdded){
+            $dataAdded['client_id']      = $data['client_id'];
+            $dataAdded['site_id']        = $data['site_id'];
+            $dataAdded['cl_player_id']   = (isset($dataAdded['cl_player_id'])) ? $dataAdded['cl_player_id'] : null;
+            $dataAdded['image']          = (isset($dataAdded['image'])) ? $dataAdded['image'] : null;
+            $dataAdded['email']          = (isset($dataAdded['email'])) ? $dataAdded['email'] : null;
+            $dataAdded['username']       = (isset($dataAdded['username'])) ? $dataAdded['username'] : null;
+            $dataAdded['exp']            = (isset($dataAdded['exp'])) ? $dataAdded['exp'] : null;
+            $dataAdded['level']          = (isset($dataAdded['level'])) ? $dataAdded['level'] : null;
+            $dataAdded['status']         = (isset($dataAdded['status'])) ? $dataAdded['status'] : null;
+            $dataAdded['phone_number']   = (isset($dataAdded['phone_number'])) ? $dataAdded['phone_number'] : null;
+            $dataAdded['first_name']     = (isset($dataAdded['first_name'])) ? $dataAdded['first_name'] : null;
+            $dataAdded['last_name']      = (isset($dataAdded['last_name'])) ? $dataAdded['last_name'] : null;
+            $dataAdded['nickname']       = (isset($dataAdded['nickname'])) ? $dataAdded['nickname'] : null;
+            $dataAdded['facebook_id']    = (isset($dataAdded['facebook_id'])) ? $dataAdded['facebook_id'] : null;
+            $dataAdded['twitter_id']     = (isset($dataAdded['twitter_id'])) ? $dataAdded['twitter_id'] : null;
+            $dataAdded['instagram_id']   = (isset($dataAdded['instagram_id'])) ? $dataAdded['instagram_id'] : null;
+            $dataAdded['device_id']      = (isset($dataAdded['device_id'])) ? $dataAdded['device_id'] : null;
+            $dataAdded['password']       = (isset($dataAdded['password'])) ? $dataAdded['password'] : null;
+            $dataAdded['gender']         = (isset($dataAdded['gender'])) ? $dataAdded['gender'] : null;
+            $dataAdded['birth_date']     = (isset($dataAdded['birth_date'])) ? $dataAdded['birth_date'] : null;
+            $dataAdded['approve_status'] = (isset($dataAdded['approve_status'])) ? $dataAdded['approve_status'] : null;
+            $dataAdded['date_added']     = $mongoDate;
+            $dataAdded['date_modified']  = $mongoDate;
+            $dataAdded['anonymous']      = (isset($dataAdded['anonymous'])) ? $dataAdded['anonymous'] : null;
+        }
+
+        if (!empty($batch_data) && is_array($batch_data)) {
+            try {
+                return $this->mongo_db->batch_insert('playbasis_player', $batch_data,
+                    array("w" => 0, "j" => false));
+
+            } catch (Exception $e) {
+                var_dump($e);
+            }
+
+        }
+        return false;
+    }
+
     public function readPlayer($id, $site_id, $fields = null)
     {
         if (!$id) {
