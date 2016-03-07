@@ -348,7 +348,9 @@ class Push extends MY_Controller
         $this->form_validation->set_rules('push-ca', $this->lang->line('push-ca'), 'trim|required|xss_clean');
 
         $setting_group_id = $this->User_model->getAdminGroupID();
-        $this->data['push'] = $this->Push_model->getIosSetup($this->User_model->getUserGroupId() != $setting_group_id ? $this->User_model->getClientId() : null);
+        $client_id = $this->User_model->getUserGroupId() != $setting_group_id ? $this->User_model->getClientId() : null;
+        $site_id = $this->User_model->getSiteId();
+        $this->data['push'] = $this->Push_model->getIosSetup($client_id, $site_id);
 
 
         if ($this->input->post()) {
