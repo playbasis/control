@@ -313,16 +313,3 @@ class Push_model extends MY_Model
         return $this->mongo_db->insert('playbasis_push_log', $data);
     }
 }
-
-class ApnsPHP_Log_Hidden implements ApnsPHP_Log_Interface
-{
-    /**
-     * Logs a message.
-     *
-     * @param  $sMessage @type string The message.
-     */
-    public function log($sMessage)
-    {
-        return;
-    }
-}
