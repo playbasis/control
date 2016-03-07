@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
-
+require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
 
 class Content extends MY_Controller
 {
@@ -515,8 +515,8 @@ class Content extends MY_Controller
 
                 $push = new ApnsPHP_Push($environment, $certificate);
 
-//                $logger = new ApnsPHP_Log_Hidden();
-//                $push->setLogger($logger);
+                $logger = new ApnsPHP_Log_Hidden();
+                $push->setLogger($logger);
 
                 // Set the Provider Certificate passphrase
                 $push->setProviderCertificatePassphrase($password);
@@ -527,30 +527,32 @@ class Content extends MY_Controller
                 // Connect to the Apple Push Notification Service
                 $push->connect();
 
-                // Instantiate a new Message with a single recipient
-                $message = new ApnsPHP_Message($deviceTokens);
+                foreach ($deviceTokens as $deviceToken) {
+                    // Instantiate a new Message with a single recipient
+                    $message = new ApnsPHP_Message($deviceToken);
 
-                // Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
-                // over a ApnsPHP_Message object retrieved with the getErrors() message.
-//                $message->setCustomIdentifier("Playbasis-Notification");
+                    // Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
+                    // over a ApnsPHP_Message object retrieved with the getErrors() message.
+//                    $message->setCustomIdentifier("Playbasis-Notification");
 
-                // Set badge icon
-                $message->setBadge($notificationData['badge_number']);
+                    // Set badge icon
+                    $message->setBadge($notificationData['badge_number']);
 
-                // Set a message
-                $message->setText($notificationData['message']);
+                    // Set a message
+                    $message->setText($notificationData['message']);
 
-                // Play the default sound
-                $message->setSound();
+                    // Play the default sound
+                    $message->setSound();
 
-                // Set a custom property
-//                $message->setCustomProperty('DataInfo', $notificationData['dataInfo']);
+                    // Set a custom property
+//                    $message->setCustomProperty('DataInfo', $notificationData['dataInfo']);
 
-                // Set the expiry value to 30 seconds
-                $message->setExpiry(30);
+                    // Set the expiry value to 30 seconds
+                    $message->setExpiry(30);
 
-                // Add the message to the message queue
-                $push->add($message);
+                    // Add the message to the message queue
+                    $push->add($message);
+                }
 
                 // Send all messages in the message queue
                 $push->send();
@@ -776,4 +778,17 @@ class Content extends MY_Controller
         }
     }
 
+}
+
+class ApnsPHP_Log_Hidden implements ApnsPHP_Log_Interface
+{
+    /**
+     * Logs a message.
+     *
+     * @param  $sMessage @type string The message.
+     */
+    public function log($sMessage)
+    {
+        return;
+    }
 }
