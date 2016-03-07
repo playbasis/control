@@ -192,7 +192,7 @@ class Push_model extends MY_Model
         if ($this->getIosSetup($client_id, $site_id)) {
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('site_id', $site_id);
-            $this->mongo_db->where('env', $data['push-env']);
+            $this->mongo_db->set('env', $data['push-env']);
             $this->mongo_db->set('certificate', $data['push-certificate']);
             $this->mongo_db->set('password', $data['push-password']);
             $this->mongo_db->set('ca', $data['push-ca']);
