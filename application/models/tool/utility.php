@@ -314,7 +314,8 @@ class Utility extends CI_Model
 
     public function request($class, $method, $arg)
     {
-        $cmd = "curl 'http://localhost/$class/$method?$arg'";
+        $base_url = $this->config->base_url();
+        $cmd = "curl -k '$base_url$class/$method?$arg'";
         if (EXEC_BACKGROUND) {
             $cmd .= ' > /dev/null 2>&1 &';
         }
