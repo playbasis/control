@@ -322,15 +322,18 @@ class Engine extends Quest
         $this->benchmark->mark('engine_rule_start');
 
         if (!$json) {
-            $this->response($this->resp->setRespond('Missing JSON string parameter'), 200);
-        }
-        $json = urldecode($json);
-        $data = json_decode($json, true);
-        if (!$data) {
-            $this->response($this->resp->setRespond('Cannot convert JSON to data'), 200);
+            $data = $this->input->get();
+        }else{
+            $json = urldecode($json);
+            $data = json_decode($json, true);
+            if (!$data) {
+                $this->response($this->resp->setRespond('Cannot convert JSON to data'), 200);
+            }
         }
 
-        $test = $data['test'];
+
+
+        $test = isset($data['test'])?$data['test']:false;
 
         $required = array();
         if (!isset($data['api_key'])) {

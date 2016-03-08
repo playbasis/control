@@ -174,11 +174,11 @@ class Quest extends REST2_Controller
                                         $pb_player_id
                                     );
                                     /* fire complete-mission action */
-                                    $this->utility->request('engine', 'json', urlencode(json_encode(array(
+                                    $this->utility->request('engine', 'json', http_build_query(array(
                                         'api_key' => $platform['api_key'],
                                         'pb_player_id' => $pb_player_id . '',
                                         'action' => ACTION_COMPLETE_MISSION,
-                                    ))));
+                                    )));
                                 }
 
                                 //for check total mission finish
@@ -255,11 +255,11 @@ class Quest extends REST2_Controller
                                     );
                                     /* fire complete-mission action */
 
-                                    $this->utility->request('engine', 'json', urlencode(json_encode(array(
+                                    $this->utility->request('engine', 'json', http_build_query(array(
                                         'api_key' => $platform['api_key'],
                                         'pb_player_id' => $pb_player_id . '',
                                         'action' => ACTION_COMPLETE_MISSION,
-                                    ))));
+                                    )));
                                 }
                                 //for check total mission finish
                                 $player_finish_count++;
@@ -309,11 +309,11 @@ class Quest extends REST2_Controller
                     );
                     /* fire complete-quest action */
 
-                    $this->utility->request('engine', 'json', urlencode(json_encode(array(
+                    $this->utility->request('engine', 'json', http_build_query(array(
                         'api_key' => $platform['api_key'],
                         'pb_player_id' => $pb_player_id . '',
                         'action' => ACTION_COMPLETE_QUEST,
-                    ))));
+                    )));
                     try {
                         $this->client_model->permissionProcess(
                             $this->client_data,
