@@ -515,29 +515,29 @@ class Player extends REST2_Controller
         if ($playerA) {
 
             // [rule] A invite B
-            $this->utility->request('engine', 'json', urlencode(json_encode(array(
+            $this->utility->request('engine', 'json', http_build_query(array(
                 'api_key' => $platform['api_key'],
                 'pb_player_id' => $playerA['_id'] . '',
                 'action' => ACTION_INVITE,
                 'pb_player_id-2' => $pb_player_id . ''
-            ))));
+            )));
 
 
             // [rule] B invited by A
-            $this->utility->request('engine', 'json', urlencode(json_encode(array(
+            $this->utility->request('engine', 'json', http_build_query(array(
                 'api_key' => $platform['api_key'],
                 'pb_player_id' => $pb_player_id . '',
                 'action' => ACTION_INVITED,
                 'pb_player_id-2' => $playerA['_id'] . ''
-            ))));
+            )));
         }
 
 
-        $this->utility->request('engine', 'json', urlencode(json_encode(array(
+        $this->utility->request('engine', 'json', http_build_query(array(
             'api_key' => $platform['api_key'],
             'pb_player_id' => $pb_player_id . '',
             'action' => ACTION_REGISTER
-        ))));
+        )));
 
         /* Automatically energy initialization after creating a new player*/
         foreach ($this->energy_model->findActiveEnergyRewardsById($this->validToken['client_id'],
@@ -841,11 +841,11 @@ class Player extends REST2_Controller
 
         // [rule] login
         $platform = $this->auth_model->getOnePlatform($this->client_id, $this->site_id);
-        $this->utility->request('engine', 'json', urlencode(json_encode(array(
+        $this->utility->request('engine', 'json', http_build_query(array(
             'api_key' => $platform['api_key'],
             'pb_player_id' => $pb_player_id . '',
             'action' => ACTION_LOGIN,
-        ))));
+        )));
 
         $this->response($this->resp->setRespond(), 200);
     }
@@ -888,11 +888,11 @@ class Player extends REST2_Controller
 
         // [rule] logout
         $platform = $this->auth_model->getOnePlatform($this->client_id, $this->site_id);
-        $this->utility->request('engine', 'json', urlencode(json_encode(array(
+        $this->utility->request('engine', 'json', http_build_query(array(
             'api_key' => $platform['api_key'],
             'pb_player_id' => $pb_player_id . '',
             'action' => ACTION_LOGOUT,
-        ))));
+        )));
 
         $this->response($this->resp->setRespond(), 200);
     }
@@ -1027,11 +1027,11 @@ class Player extends REST2_Controller
         }
 
         $platform = $this->auth_model->getOnePlatform($this->client_id, $this->site_id);
-        $this->utility->request('engine', 'json', urlencode(json_encode(array(
+        $this->utility->request('engine', 'json', http_build_query(array(
             'api_key' => $platform['api_key'],
             'pb_player_id' => $player['_id'] . '',
             'action' => ACTION_LOGIN,
-        ))));
+        )));
 
         $this->response($this->resp->setRespond(array(
             'cl_player_id' => $player['cl_player_id'],

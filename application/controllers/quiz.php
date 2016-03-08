@@ -442,11 +442,11 @@ class Quiz extends REST2_Controller
             ));
 
             $platform = $this->auth_model->getOnePlatform($this->client_id, $this->site_id);
-            $this->utility->request('engine', 'json', urlencode(json_encode(array(
+            $this->utility->request('engine', 'json', http_build_query(array(
                 'api_key' => $platform['api_key'],
                 'pb_player_id' => $pb_player_id . '',
                 'action' => ACTION_COMPLETE_QUIZ,
-            ))));
+            )));
         }
 
         /* check to see if grade has any reward associated with it */
