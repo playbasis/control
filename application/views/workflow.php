@@ -1,3 +1,7 @@
+<link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
+<script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
+        src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
+<div class="cover"></div>
 <div id="content" class="span10">
 
 
@@ -57,20 +61,45 @@
                 <thead>
                 <tr>
 
-                    <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                    <td class="left" style="width:80px;"><?php echo $this->lang->line('column_player_id'); ?></td>
-                    <td class="left" style="width:200px;"><?php echo $this->lang->line('column_name'); ?></td>
-                    <td class="left" style="width:200px;"><?php echo $this->lang->line('column_email'); ?></td>
-                    <td class="left" style="width:100px;"><?php echo $this->lang->line('column_phone'); ?></td>
+                    <td rowspan="2" width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                    <td rowspan="2" class="left" style="width:100px;"><?php echo $this->lang->line('column_player_id'); ?></td>
+                    <td rowspan="2" class="left" style="width:180px;"><?php echo $this->lang->line('column_name'); ?></td>
+                    <td rowspan="2" class="left" style="width:180px;"><?php echo $this->lang->line('column_email'); ?></td>
+                    <td rowspan="2" class="left" style="width:100px;"><?php echo $this->lang->line('column_phone'); ?></td>
                     <?php if($org_status){?>
-                    <td class="left" ><?php echo $this->lang->line('column_organization'); ?></td>
+                    <td colspan="3" class="center" style="width:200px;"><?php echo $this->lang->line('column_organization'); ?></td>
                     <?php }?>
-                    <td class="right app-col-action" "><?php echo $this->lang->line('column_action'); ?></td>
+                    <td rowspan="2" class="right app-col-action" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
 
                 </tr>
+                <?php if($org_status){?>
+                <tr>
+                    <td style="text-align: center;"><?php echo $this->lang->line('column_node'); ?></td>
+                    <td style="text-align: center;"><?php echo $this->lang->line('column_type'); ?></td>
+                    <td style="text-align: center;"><?php echo $this->lang->line('column_role'); ?></td>
+                </tr>
+                <?php }?>
+
                 </thead>
 
                 <tbody>
+                <tr class="filter">
+                    <td></td>
+                    <td><input type="text" name="filter_id" placeholder="by ID" value="" style="width:80%;" /></td>
+                    <td><input type="text" name="filter_name" placeholder="by name" value="" style="width:80%;" /></td>
+                    <td><input type="text" name="filter_email" placeholder="by email" value="" style="width:80%;" /></td>
+                    <td></td>
+                    <?php if($org_status){?>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <?php }?>
+                    <td class="right">
+                        <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
+                        <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                    </td>
+                </tr>
+
                 <?php if (isset($player_list) && $player_list) { ?>
                     <?php foreach ($player_list as $player) { ?>
                     <tr>
@@ -84,7 +113,9 @@
                         <td class="left"><?php echo $player['email']; ?></td>
                         <td class="left"><?php echo $player['phone_number']; ?></td>
                         <?php if($org_status){?>
-                        <td class="left"><?php echo (isset($player['organization']) && !is_null($player['organization']))?$player['organization']:''; ?></td>
+                        <td class="left"><?php echo (isset($player['organization_node']) && !is_null($player['organization_node']))?$player['organization_node']:''; ?></td>
+                        <td class="left"><?php echo (isset($player['organization_type']) && !is_null($player['organization_type']))?$player['organization_type']:''; ?></td>
+                        <td class="left"><?php echo (isset($player['organization_role']) && !is_null($player['organization_role']))?$player['organization_role']:''; ?></td>
                         <?php }?>
                         <td class="right app-col-action">
                             <?php if ($tab_status != "locked") { ?>
@@ -112,6 +143,13 @@
             <?php
             echo form_close();
             ?>
+            <div class="pagination">
+                <ul class='ul_rule_pagination_container'>
+                    <li class="page_index_number active"><a>Total Records:</a></li> <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
+                    <li class="page_index_number active"><a>(<?php echo number_format($pagination_total_pages); ?> Pages)</a></li>
+                    <?php echo $pagination_links; ?>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -218,6 +256,55 @@
             //alert($("#action").val());
             $("#form").submit();
         }
+    }
+
+    Pace.on("done", function () {
+        $(".cover").fadeOut(1000);
+    });
+</script>
+
+<script type="text/javascript"><!--
+    function filter() {
+
+        url = baseUrlPath+'workflow';
+
+        <?php if($tab_status == "rejected"){?>
+            url += '/rejected';
+        <?php }elseif($tab_status == "pending"){?>
+            url += '/pending';
+        <?php }elseif($tab_status == "locked"){?>
+            url += '/locked';
+        <?php }?>
+
+        var filter_name = $('input[name=\'filter_name\']').attr('value');
+        var filter_id = $('input[name=\'filter_id\']').attr('value');
+        var filter_email = $('input[name=\'filter_email\']').attr('value');
+
+        url += '?filter_id=' + encodeURIComponent(filter_id)+'&filter_name=' + encodeURIComponent(filter_name)+'&filter_email=' + encodeURIComponent(filter_email);
+
+        location = url;
+    }
+    //-->
+</script>
+
+<script type="text/javascript">
+    <?php if (!isset($_GET['filter_name'])&&!isset($_GET['filter_id'])){?>
+    $("#clear_filter").hide();
+    <?php }else{?>
+    $("#clear_filter").show();
+    <?php }?>
+
+    function clear_filter(){
+        <?php if($tab_status == "rejected"){?>
+        window.location.replace(baseUrlPath+'workflow/rejected');
+        <?php }elseif($tab_status == "pending"){?>
+        window.location.replace(baseUrlPath+'workflow/pending');
+        <?php }elseif($tab_status == "locked"){?>
+        window.location.replace(baseUrlPath+'workflow/locked');
+        <?php }elseif($tab_status == "approved"){?>
+        window.location.replace(baseUrlPath+'workflow');
+        <?php }?>
+
     }
 </script>
 
