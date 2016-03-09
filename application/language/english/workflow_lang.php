@@ -28,6 +28,7 @@ $lang['button_create']           = 'Create';
 $lang['button_approve']          = 'Approve';
 $lang['button_reject']           = 'Reject';
 $lang['button_unlock']           = 'Unlock';
+$lang['button_clear_filter']     = 'Clear';
 
 // Form
 $lang['form_username']            = 'Username';
@@ -58,6 +59,9 @@ $lang['column_name']            		= 'Name';
 $lang['column_email']            		= 'Email';
 $lang['column_phone']            		= 'Phone number';
 $lang['column_organization']      		= 'Organization';
+$lang['column_node']                    = 'Node';
+$lang['column_type']                    = 'Type';
+$lang['column_role']                    = 'Role';
 $lang['column_action']          		= 'Action';
 
 ?>
