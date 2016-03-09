@@ -89,11 +89,11 @@ class Workflow extends MY_Controller
             $this->data['error_warning'] = '';
         }
 
-        $this->getPlayerList("approved");
+        $this->getPlayerList("approved", 0);
 
     }
 
-    public function rejected()
+    public function rejected($offset =0)
     {
 
         if (!$this->validateAccess()) {
@@ -151,11 +151,11 @@ class Workflow extends MY_Controller
             $this->data['error_warning'] = '';
         }
 
-        $this->getPlayerList("rejected");
+        $this->getPlayerList("rejected", $offset);
 
     }
 
-    public function pending()
+    public function pending($offset=0)
     {
 
         if (!$this->validateAccess()) {
@@ -227,11 +227,11 @@ class Workflow extends MY_Controller
             $this->data['error_warning'] = '';
         }
 
-        $this->getPlayerList("pending");
+        $this->getPlayerList("pending",$offset);
 
     }
 
-    public function locked()
+    public function locked($offset =0)
     {
 
         if (!$this->validateAccess()) {
@@ -296,12 +296,74 @@ class Workflow extends MY_Controller
             $this->data['error_warning'] = '';
         }
 
-        $this->getPlayerList("approved", true);
+        $this->getPlayerList("approved", $offset, true);
 
     }
 
-    private function getPlayerList($status, $locked = false)
+    public function page($offset = 0)
     {
+
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'workflow/page/';
+
+        $this->getPlayerList("approved", $offset);
+    }
+
+    private function getPlayerList($status, $offset, $locked = false)
+    {
+        $per_page = 2 * NUMBER_OF_RECORDS_PER_PAGE;
+
+        $this->load->library('pagination');
+
+        if($locked){
+            $config['base_url'] = site_url('workflow/locked');
+        }elseif($status=="approved"){
+            $config['base_url'] = site_url('workflow/page');
+        }else{
+            $config['base_url'] = site_url('workflow/'.$status);
+        }
+
+        if ($this->input->get('sort')) {
+            $sort = $this->input->get('sort');
+        } else {
+            $sort = 'cl_player_id';
+        }
+
+        if ($this->input->get('order')) {
+            $order = $this->input->get('order');
+        } else {
+            $order = 'ASC';
+        }
+
+        $limit = isset($params['limit']) ? $params['limit'] : $per_page;
+
+        $data = array(
+            'sort' => $sort,
+            'order' => $order,
+            'start' => $offset,
+            'limit' => $limit
+        );
+
+        if (isset($_GET['filter_name'])) {
+            $data['filter_name'] = $_GET['filter_name'];
+        }
+
+        if (isset($_GET['filter_id'])) {
+            $data['filter_id'] = $_GET['filter_id'];
+        }
+
+        if (isset($_GET['filter_email'])) {
+            $data['filter_email'] = $_GET['filter_email'];
+        }
+
         $this->data['player_list'] = array();
 
         $client_id = $this->User_model->getClientId();
@@ -309,12 +371,11 @@ class Workflow extends MY_Controller
 
         $this->data['tab_status'] = $locked ? "locked" : $status;
         if ($locked) {
-            $this->data['player_list'] = $this->Workflow_model->getLockedPlayer($client_id, $site_id, $status);
+            $this->data['player_list'] = $this->Workflow_model->getLockedPlayer($client_id, $site_id, $data);
         } elseif ($status == 'pending') {
-            $this->data['player_list'] = $this->Workflow_model->getPendingPlayer($client_id, $site_id);
+            $this->data['player_list'] = $this->Workflow_model->getPendingPlayer($client_id, $site_id, $data);
         } else {
-            $this->data['player_list'] = $this->Workflow_model->getPlayerByApprovalStatus($client_id, $site_id,
-                $status);
+            $this->data['player_list'] = $this->Workflow_model->getPlayerByApprovalStatus($client_id, $site_id, $status, $data);
         }
 
 
@@ -323,8 +384,8 @@ class Workflow extends MY_Controller
         ) {
             $this->data['org_status'] = true;
             foreach ($this->data['player_list'] as &$player) {
-                $org_info = $this->Workflow_model->getOrganizationToPlayer($client_id, $site_id, $player['_id']);
-                foreach ($org_info as $org) {
+                $orgs = $this->Workflow_model->getOrganizationToPlayer($client_id, $site_id, $player['_id']);
+                foreach ($orgs as $org) {
                     $role_string = '';
                     if (isset($org['roles']) && !empty($org['roles'])) {
                         $array = array_keys($org['roles']);
@@ -338,21 +399,24 @@ class Workflow extends MY_Controller
                     }
 
                     $node_info = $this->Store_org_model->retrieveNodeById($org['node_id']);
+                    $org_info = $this->Store_org_model->retrieveOrganizeById($node_info['organize']);
 
-                    if (!isset($player['organization'])) {
-                        $player['organization'] = $node_info['name'] . ' (' . $role_string . ')';
+                    if (!isset($player['organization_node'])) {
+                        $player['organization_node'] = $node_info['name'];
+                        $player['organization_type'] = $org_info['name'];
+                        $player['organization_role'] = $role_string;
                     } else {
-                        $player['organization'] = $player['organization'] . '<br>' . $node_info['name'] . ' (' . $role_string . ')';
+                        $player['organization_node'] = $player['organization_node'] . '<hr>' . $node_info['name'];
+                        $player['organization_type'] = $player['organization_type'] . '<hr>' . $org_info['name'];
+                        $player['organization_role'] = $player['organization_role'] . '<hr>' . $role_string;
                     }
                 }
             }
         } else {
             $this->data['org_status'] = false;
         }
-
-        $pending_count = count($this->Workflow_model->getPendingPlayer($client_id, $site_id));
-        $this->data['pending_count'] = $pending_count;
-        $this->data['locked_count'] = count($this->Workflow_model->getLockedPlayer($client_id, $site_id, $status));
+        $this->data['pending_count'] = $this->Workflow_model->getTotalPendingPlayer($client_id, $site_id);
+        $this->data['locked_count'] = $this->Workflow_model->getTotalLockedPlayer($client_id, $site_id);
 
 
         if (isset($this->error['warning'])) {
@@ -368,6 +432,46 @@ class Workflow extends MY_Controller
         } else {
             $this->data['success'] = '';
         }
+
+        if(($locked)){
+            $config['total_rows'] = $this->Workflow_model->getTotalLockedPlayer($client_id, $site_id);
+        }elseif($status == "pending") {
+            $config['total_rows'] = $this->Workflow_model->getTotalPendingPlayer($client_id, $site_id);
+        }else{
+            $config['total_rows'] = $this->Workflow_model->getTotalPlayerByApprovalStatus($client_id, $site_id, $status);
+        }
+        $config['per_page'] = $per_page;
+        $config["uri_segment"] = 3;
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
+
 
         $this->data['main'] = 'workflow';
 
