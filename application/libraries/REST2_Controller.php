@@ -270,7 +270,8 @@ abstract class REST2_Controller extends REST_Controller
 
 		header('HTTP/1.1: ' . $http_code);
 		header('Status: ' . $http_code);
-		//header('Access-Control-Allow-Origin: *'); // allow cross domain
+		header('Access-Control-Allow-Origin: *'); // allow cross domain
+		header_remove('Set-Cookie');
 
 		// If zlib.output_compression is enabled it will compress the output,
 		// but it will not modify the content-length header to compensate for
