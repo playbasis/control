@@ -31,6 +31,7 @@ class Cron extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('auth_model');
         $this->load->model('client_model');
         $this->load->model('player_model');
         $this->load->model('email_model');
@@ -48,6 +49,7 @@ class Cron extends CI_Controller
         $this->load->model('engine/jigsaw', 'jigsaw_model');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/node_stream', 'node');
+        $this->load->model('import_model');
         $this->load->library('parser');
     }
 
@@ -1320,6 +1322,162 @@ class Cron extends CI_Controller
 
         }
         echo "Result of leaderboard = " . json_encode($result) . PHP_EOL;
+    }
+
+    public function testEcho()
+    {
+        $this->load->library('RestClient');
+        $today = time();
+        $refDate = strtotime("-" . ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS . " day", $today);
+        $clients = $this->client_model->listAllActiveClients($refDate);
+     /*   if ($clients) {
+            foreach ($clients as $client) {
+                $client_id = $client['_id'];
+                $latest_activity = $this->service_model->findLatestAPIactivity($client_id);
+            }
+        }*/
+        $data = array(
+            'api_key' => "2243319922",
+            'token' => "6346371bc2039882931a1f67507fada7193d4c31",
+            'importaction' => "player"
+        );
+        $result = $this->restclient->post("http://localhost/api/import/processImport", $data);
+        echo 'TEST12345'.PHP_EOL;
+    }
+
+    public function testEngine()
+    {
+        $this->load->library('RestClient');
+        $today = time();
+        $refDate = strtotime("-" . ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS . " day", $today);
+        $clients = $this->client_model->listAllActiveClients($refDate);
+     /*      if ($clients) {
+               foreach ($clients as $client) {
+                   $client_id = $client['_id'];
+                   $latest_activity = $this->service_model->findLatestAPIactivity($client_id);
+               }
+           }*/
+        $data = array(
+            'api_key' => "2243319922",
+            'token' => "6346371bc2039882931a1f67507fada7193d4c31",
+            'action' => "click",
+            'player_id' => "balm2"
+        );
+        $result = $this->restclient->post("http://localhost/api/Engine/rule", $data);
+        echo 'TEST12345'.PHP_EOL;
+    }
+
+    public function processImportTransaction()
+    {
+        $this->load->library('RestClient');
+
+        $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
+        if ($clients) {
+            foreach ($clients as $client) {
+                $platformData = $this->auth_model->getOnePlatform($client['client_id'], $client['site_id']);
+                //$site_id   = $client['site_id'];
+                //$latest_activity = $this->service_model->findLatestAPIactivity($client_id);
+                $data = array(
+                    'api_key'    => $platformData['api_key'],
+                    'api_secret' => $platformData['api_secret']
+                );
+                $token = json_decode(json_encode($this->restclient->post("http://localhost/api/Auth", $data)->response),true)['token'];
+
+                $data = array(
+                    'api_key'      => $platformData['api_key'],
+                    'token'        => $token,
+                    'client_id'    => json_decode(json_encode($client['client_id']), True)['$id'],
+                    'site_id'      => json_decode(json_encode($client['site_id']), True)['$id'],
+                    'importaction' => "transaction"
+                );
+
+                $result = array($this->restclient->get("http://localhost/api/import/importSetting", $data));
+                if (isset($result[0]->response->url)) {
+
+                    $array = json_decode(json_encode($result[0]), true);
+                    $importData = $array['response'];
+
+                    // CURL
+                    $url = $importData['url'];
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    $result = curl_exec($ch);
+                    curl_close($ch);
+                    $jsonData = json_decode($result, true);
+
+                    foreach ($jsonData as $key => $val) {
+                        $data = array(
+                            'api_key' => $platformData['api_key'],
+                            'token' => $token,
+                            //'client_id' => json_decode(json_encode($client['client_id']), True)['$id'],
+                            //'site_id' => json_decode(json_encode($client['site_id']), True)['$id'],
+                            'action' => $val['action'],
+                            'player_id' => $val['cl_player_id']
+                        );
+                        $result = $this->restclient->post('http://localhost/api/Engine/rule', $data);
+                    }
+                }
+            }
+        }
+
+    }
+
+    public function processImportPlayer()
+    {
+        $this->load->library('RestClient');
+
+        $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
+        if ($clients) {
+            foreach ($clients as $client) {
+                $platformData = $this->auth_model->getOnePlatform($client['client_id'], $client['site_id']);
+                $data = array(
+                    'api_key'    => $platformData['api_key'],
+                    'api_secret' => $platformData['api_secret']
+                );
+                $token = json_decode(json_encode($this->restclient->post("http://localhost/api/Auth", $data)->response),true)['token'];
+
+                $data = array(
+                    'api_key'      => $platformData['api_key'],
+                    'token'        => $token,
+                    'client_id'    => json_decode(json_encode($client['client_id']), True)['$id'],
+                    'site_id'      => json_decode(json_encode($client['site_id']), True)['$id'],
+                    'importaction' => "player"
+                );
+
+                $result = array($this->restclient->get("http://localhost/api/import/importSetting", $data));
+                if (isset($result[0]->response->url)) {
+
+                    $array = json_decode(json_encode($result[0]), true);
+                    $importData = $array['response'];
+
+                    // CURL
+                    $url = $importData['url'];
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    $result = curl_exec($ch);
+                    curl_close($ch);
+                    $jsonData = json_decode($result, true);
+
+                    foreach ($jsonData as $key => $val) {
+                        $data = array(
+                            'api_key' => $platformData['api_key'],
+                            'token' => $token,
+                            'player_id' => $val['player_id'],
+                            'username' => $val['username'],
+                            'password' => $val['password'],
+                            'email' => $val['email'],
+                            'image' => $val['image']
+                        );
+                        $result = $this->restclient->post('http://localhost/api/Player/'.$val['player_id'].'/register', $data);
+                    }
+                }
+            }
+        }
+
     }
 
     private function processRanks($ranks, $config)

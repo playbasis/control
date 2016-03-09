@@ -57,9 +57,9 @@ class import extends REST2_Controller
             $playerInfo['password'] = $password;
         }
 
-        $date = $this->input->post('action');
-        if ($date) {
-            $playerInfo['action'] = $date;
+        $importaction = $this->input->post('importaction');
+        if ($importaction) {
+            $playerInfo['importaction'] = $importaction;
         }
 
         $date = $this->input->post('routine');
@@ -93,12 +93,30 @@ class import extends REST2_Controller
         return $bank;
     }
 
+    public function importSetting_get()
+    {
+        $data = $this->input->get();
+
+        if ((!isset($data['client_id'])) || (!isset($data['site_id'])) || (!isset($data['importaction']))){
+            $this->response($this->error->setError('PARAMETER_MISSING',200));
+        }
+
+        $importData = $this->import_model->readLatestDataAction($data['client_id'], $data['site_id'], $data['importaction']);
+        $this->response(array($this->resp->setRespond($importData))[0], 200);
+
+    }
+
     public function processImport_post()
     {
-        $action = $this->input->post('action');
-        $importData = $this->import_model->readLatestDataAction($this->validToken['client_id'], $this->validToken['site_id'], $action);
+        $importaction = $this->input->post('importaction');
+        $importData = $this->import_model->readLatestDataAction($importaction);
 
-        if ($importData['action'] == ('player')){
+        $data = array(
+            'client_id' => $importData['client_id'],
+            'site_id' => $importData['site_id'],
+        );
+
+        if ($importData['importaction'] == ('player')){
             $url = $importData['url'];
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -107,10 +125,10 @@ class import extends REST2_Controller
             $result = curl_exec($ch);
             curl_close($ch);
             $jsonData = json_decode($result, true);
-            $return = $this->player_model->bulkRegisterPlayer($jsonData, $this->validToken, null);
-        } elseif ($importData['action'] == ('transaction')){
+            $return = $this->player_model->bulkRegisterPlayer($jsonData, $data, null);
+        } elseif ($importData['importaction'] == ('transaction')){
 
-        } elseif ($importData['action'] == ('store_org')){
+        } elseif ($importData['importaction'] == ('store_org')){
 
         } else {
             $this->response($this->error->setError('PARAMETER_MISSING'), 200);

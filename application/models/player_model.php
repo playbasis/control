@@ -90,14 +90,15 @@ class Player_model extends MY_Model
         $mongoDate = new MongoDate(time());
 
         foreach ($batch_data as &$dataAdded){
+
             $dataAdded['client_id']      = $data['client_id'];
             $dataAdded['site_id']        = $data['site_id'];
             $dataAdded['cl_player_id']   = (isset($dataAdded['cl_player_id'])) ? $dataAdded['cl_player_id'] : null;
             $dataAdded['image']          = (isset($dataAdded['image'])) ? $dataAdded['image'] : null;
             $dataAdded['email']          = (isset($dataAdded['email'])) ? $dataAdded['email'] : null;
             $dataAdded['username']       = (isset($dataAdded['username'])) ? $dataAdded['username'] : null;
-            $dataAdded['exp']            = (isset($dataAdded['exp'])) ? $dataAdded['exp'] : null;
-            $dataAdded['level']          = (isset($dataAdded['level'])) ? $dataAdded['level'] : null;
+            $dataAdded['exp']            = (isset($dataAdded['exp'])) ? $dataAdded['exp'] : intval(0);
+            $dataAdded['level']          = (isset($dataAdded['level'])) ? $dataAdded['level'] : intval(0);
             $dataAdded['status']         = (isset($dataAdded['status'])) ? $dataAdded['status'] : null;
             $dataAdded['phone_number']   = (isset($dataAdded['phone_number'])) ? $dataAdded['phone_number'] : null;
             $dataAdded['first_name']     = (isset($dataAdded['first_name'])) ? $dataAdded['first_name'] : null;

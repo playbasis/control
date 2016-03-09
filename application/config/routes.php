@@ -341,7 +341,7 @@ $route['File/delete'] = 'file/delete';
 $route['Import/setting'] = 'import/importSetting';
 $route['Import/retrieveUrl'] = 'import/retrieveUrl';
 $route['Import/processImport'] = 'import/processImport';
-
+$route['Import/importSetting'] = 'import/importSetting';
 
 //misc
 //$route['test']	= 'playbasis/test';

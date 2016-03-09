@@ -31,7 +31,7 @@ class Import_model extends MY_Model
             'port' => $data['port'],
             'username' => $data['username'],
             'password' => $data['password'],
-            'action' => $data['action'],
+            'importaction' => $data['importaction'],
             'routine' => $data['routine'],
             'date_added' => $mongoDate
         ));
@@ -51,15 +51,15 @@ class Import_model extends MY_Model
         return $url ? $url[0]:null;
     }
 
-    public function readLatestDataAction($client_id, $site_id, $action)
+    public function readLatestDataAction($client_id, $site_id, $importaction)
     {
-        if (!$client_id) {
-            return null;
-        }
-        $this->set_site_mongodb($site_id);
+        //$this->set_site_mongodb($site_id);
         //$this->mongo_db->select(array($action));
         $this->mongo_db->where(array(
-            'action' => $action));
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'importaction' => $importaction)
+        );
         $this->mongo_db->order_by(array('date_added' => 'desc'));
         $this->mongo_db->limit(1);
         $data = $this->mongo_db->get('playbasis_import');
