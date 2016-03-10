@@ -1324,49 +1324,6 @@ class Cron extends CI_Controller
         echo "Result of leaderboard = " . json_encode($result) . PHP_EOL;
     }
 
-    public function testEcho()
-    {
-        $this->load->library('RestClient');
-        $today = time();
-        $refDate = strtotime("-" . ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS . " day", $today);
-        $clients = $this->client_model->listAllActiveClients($refDate);
-     /*   if ($clients) {
-            foreach ($clients as $client) {
-                $client_id = $client['_id'];
-                $latest_activity = $this->service_model->findLatestAPIactivity($client_id);
-            }
-        }*/
-        $data = array(
-            'api_key' => "2243319922",
-            'token' => "6346371bc2039882931a1f67507fada7193d4c31",
-            'importaction' => "player"
-        );
-        $result = $this->restclient->post("http://localhost/api/import/processImport", $data);
-        echo 'TEST12345'.PHP_EOL;
-    }
-
-    public function testEngine()
-    {
-        $this->load->library('RestClient');
-        $today = time();
-        $refDate = strtotime("-" . ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS . " day", $today);
-        $clients = $this->client_model->listAllActiveClients($refDate);
-     /*      if ($clients) {
-               foreach ($clients as $client) {
-                   $client_id = $client['_id'];
-                   $latest_activity = $this->service_model->findLatestAPIactivity($client_id);
-               }
-           }*/
-        $data = array(
-            'api_key' => "2243319922",
-            'token' => "6346371bc2039882931a1f67507fada7193d4c31",
-            'action' => "click",
-            'player_id' => "balm2"
-        );
-        $result = $this->restclient->post("http://localhost/api/Engine/rule", $data);
-        echo 'TEST12345'.PHP_EOL;
-    }
-
     public function processImportTransaction()
     {
         $this->load->library('RestClient');
@@ -1374,24 +1331,24 @@ class Cron extends CI_Controller
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
         if ($clients) {
             foreach ($clients as $client) {
+
                 $platformData = $this->auth_model->getOnePlatform($client['client_id'], $client['site_id']);
-                //$site_id   = $client['site_id'];
-                //$latest_activity = $this->service_model->findLatestAPIactivity($client_id);
-                $data = array(
-                    'api_key'    => $platformData['api_key'],
-                    'api_secret' => $platformData['api_secret']
-                );
-                $token = json_decode(json_encode($this->restclient->post("http://localhost/api/Auth", $data)->response),true)['token'];
 
                 $data = array(
-                    'api_key'      => $platformData['api_key'],
+                    'api_key'    => isset($platformData['api_key'])?$platformData['api_key']:null,
+                    'api_secret' => isset($platformData['api_secret'])?$platformData['api_secret']:null
+                );
+                $token = json_decode(json_encode($this->restclient->post($this->config->base_url().'Auth', $data)->response),true)['token'];
+
+                $data = array(
+                    'api_key'      => isset($platformData['api_key'])?$platformData['api_key']:null,
                     'token'        => $token,
                     'client_id'    => json_decode(json_encode($client['client_id']), True)['$id'],
                     'site_id'      => json_decode(json_encode($client['site_id']), True)['$id'],
                     'importaction' => "transaction"
                 );
+                $result = array($this->restclient->get($this->config->base_url().'Import/importSetting', $data));
 
-                $result = array($this->restclient->get("http://localhost/api/import/importSetting", $data));
                 if (isset($result[0]->response->url)) {
 
                     $array = json_decode(json_encode($result[0]), true);
@@ -1409,14 +1366,14 @@ class Cron extends CI_Controller
 
                     foreach ($jsonData as $key => $val) {
                         $data = array(
-                            'api_key' => $platformData['api_key'],
-                            'token' => $token,
+                            'api_key'   => $platformData['api_key'],
+                            'token'     => $token,
                             //'client_id' => json_decode(json_encode($client['client_id']), True)['$id'],
                             //'site_id' => json_decode(json_encode($client['site_id']), True)['$id'],
-                            'action' => $val['action'],
+                            'action'    => $val['action'],
                             'player_id' => $val['cl_player_id']
                         );
-                        $result = $this->restclient->post('http://localhost/api/Engine/rule', $data);
+                        $result = $this->restclient->post($this->config->base_url().'Engine/rule', $data);
                     }
                 }
             }
@@ -1431,22 +1388,24 @@ class Cron extends CI_Controller
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
         if ($clients) {
             foreach ($clients as $client) {
+
                 $platformData = $this->auth_model->getOnePlatform($client['client_id'], $client['site_id']);
-                $data = array(
-                    'api_key'    => $platformData['api_key'],
-                    'api_secret' => $platformData['api_secret']
-                );
-                $token = json_decode(json_encode($this->restclient->post("http://localhost/api/Auth", $data)->response),true)['token'];
 
                 $data = array(
-                    'api_key'      => $platformData['api_key'],
+                    'api_key'    => isset($platformData['api_key'])?$platformData['api_key']:null,
+                    'api_secret' => isset($platformData['api_secret'])?$platformData['api_secret']:null
+                );
+                $token = json_decode(json_encode($this->restclient->post($this->config->base_url().'Auth', $data)->response),true)['token'];
+
+                $data = array(
+                    'api_key'      => isset($platformData['api_key'])?$platformData['api_key']:null,
                     'token'        => $token,
                     'client_id'    => json_decode(json_encode($client['client_id']), True)['$id'],
                     'site_id'      => json_decode(json_encode($client['site_id']), True)['$id'],
                     'importaction' => "player"
                 );
+                $result = array($this->restclient->get($this->config->base_url().'Import/importSetting', $data));
 
-                $result = array($this->restclient->get("http://localhost/api/import/importSetting", $data));
                 if (isset($result[0]->response->url)) {
 
                     $array = json_decode(json_encode($result[0]), true);
@@ -1464,20 +1423,86 @@ class Cron extends CI_Controller
 
                     foreach ($jsonData as $key => $val) {
                         $data = array(
-                            'api_key' => $platformData['api_key'],
-                            'token' => $token,
+                            'api_key'   => $platformData['api_key'],
+                            'token'     => $token,
                             'player_id' => $val['player_id'],
-                            'username' => $val['username'],
-                            'password' => $val['password'],
-                            'email' => $val['email'],
-                            'image' => $val['image']
+                            'username'  => $val['username'],
+                            'password'  => $val['password'],
+                            'email'     => $val['email'],
+                            'image'     => $val['image']
                         );
-                        $result = $this->restclient->post('http://localhost/api/Player/'.$val['player_id'].'/register', $data);
+                        $result = $this->restclient->post($this->config->base_url().'Player/'.$val['player_id'].'/register', $data);
                     }
                 }
             }
         }
+    }
 
+    public function processImportStoreOrg()
+    {
+        $this->load->library('RestClient');
+
+        $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
+        if ($clients) {
+            foreach ($clients as $client) {
+
+                $platformData = $this->auth_model->getOnePlatform($client['client_id'], $client['site_id']);
+
+                $data = array(
+                    'api_key'    => isset($platformData['api_key'])?$platformData['api_key']:null,
+                    'api_secret' => isset($platformData['api_secret'])?$platformData['api_secret']:null
+                );
+                $token = json_decode(json_encode($this->restclient->post($this->config->base_url().'Auth', $data)->response),true)['token'];
+
+                $data = array(
+                    'api_key'      => isset($platformData['api_key'])?$platformData['api_key']:null,
+                    'token'        => $token,
+                    'client_id'    => json_decode(json_encode($client['client_id']), True)['$id'],
+                    'site_id'      => json_decode(json_encode($client['site_id']), True)['$id'],
+                    'importaction' => "storeorg"
+                );
+                $result = array($this->restclient->get($this->config->base_url().'Import/importSetting', $data));
+
+                if (isset($result[0]->response->url)) {
+
+                    $array = json_decode(json_encode($result[0]), true);
+                    $importData = $array['response'];
+
+                    // CURL
+                    $url = $importData['url'];
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    $result = curl_exec($ch);
+                    curl_close($ch);
+                    $jsonData = json_decode($result, true);
+
+                    foreach ($jsonData as $key => $val) {
+                        $data = array(
+                            'api_key'   => $platformData['api_key'],
+                            'token'     => $token,
+                            'player_id' => $val['player_id'],
+                            'name'      => $val['node_name'],
+                        );
+
+                        // Insert player to store_org
+                        $result = $this->restclient->post($this->config->base_url().'StoreOrg/nodes/name/'.$val['node_name'].'/addPlayer/'.$val['player_id'], $data);
+                        //$result = json_decode(json_encode($result->response), true);
+
+                        if ((isset($val['roles'])) && (isset($result->response->node_id))){
+                            $node_id = json_decode(json_encode($result->response->node_id), true)['$id'];
+
+                            // Insert role to player
+                            foreach ($val['roles'] as $key => $role){
+                                $data['role'] = $role;
+                                $result = $this->restclient->post($this->config->base_url().'StoreOrg/nodes/'.$node_id.'/setPlayerRole/'.$val['player_id'], $data);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private function processRanks($ranks, $config)

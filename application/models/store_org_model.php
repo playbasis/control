@@ -164,6 +164,23 @@ class Store_org_model extends MY_Model
         }
     }
 
+    public function retrieveNodeByName($site_id, $name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->where('deleted', false);
+        $c = $this->mongo_db->get("playbasis_store_organize_to_client");
+
+        if ($c) {
+            return $c[0];
+        } else {
+            return null;
+        }
+    }
+
     public function retrieveOrganizeById($client_id, $site_id, $id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
