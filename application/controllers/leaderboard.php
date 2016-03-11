@@ -297,8 +297,6 @@ class Leaderboard extends MY_Controller
                             } else {
                                 $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
                             }
-                        } else {
-                            $this->data['rewards'][$rank][$type][$id]['reward_data']['image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
                         }
                     }
                 }
