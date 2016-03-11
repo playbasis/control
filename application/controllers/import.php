@@ -10,6 +10,7 @@ class import extends MY_Controller
 
         $this->load->model('User_model');
         $this->load->model('App_model');
+        $this->load->model('import_model');
         if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
@@ -28,6 +29,7 @@ class import extends MY_Controller
 
     public function index()
     {
+
         if (!$this->validateAccess()) {
             echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
@@ -37,9 +39,22 @@ class import extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['main'] = 'import';
-        $this->data['form'] = 'import/import';
-        $this->getList();
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
+
+        if (isset($this->session->data['success'])) {
+            $this->data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $this->data['success'] = '';
+        }
+
+        $this->getList(0);
     }
 
     public function insert()
@@ -74,13 +89,17 @@ class import extends MY_Controller
             if ($this->form_validation->run()) {
                 $data = $this->input->post();
 
-                $data['client_id'] = $this->User_model->getClientId();
-                $data['site_id'] = $this->User_model->getSiteId();
-                $data['month'] = (isset($data['month']) && $data['month']) ? new MongoDate(strtotime($data['month'])) : "";
-                $data['status'] = $data['status'] == 'enable' ? true : false;
-                $data['occur_once'] = $data['occur_once'] == 'true' ? true : false;
+                $data['client_id']    = $this->User_model->getClientId();
+                $data['site_id']      = $this->User_model->getSiteId();
+                $data['name']         = isset($data['name'])? $data['name']: null;
+                $data['url']          = isset($data['url'])? $data['url']: null;
+                $data['port']         = isset($data['port'])? $data['port'] : "80";
+                $data['username']     = isset($data['user_name'])? $data['user_name'] : null;
+                $data['password']     = isset($data['password'])? $data['password'] : null;
+                $data['import_type']  = isset($data['import_type'])? $data['import_type'] : null;
+                $data['routine']      = isset($data['routine'])? $data['routine'] : null;
 
-                $insert = $this->Leaderboard_model->createLeaderBoard($data);
+                $insert = $this->import_model->addImportData($data);
                 if ($insert) {
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
                     redirect('/import', 'refresh');
@@ -90,127 +109,161 @@ class import extends MY_Controller
         $this->getForm();
     }
 
-    public function getForm($leaderboard_id = null)
+    public function getForm($import_id = null)
     {
         $this->data['main'] = 'import_form';
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
+        if ($import_id) {
+            $this->data = array_merge($this->data, $this->import_model->retrieveSingleImportData($import_id));
+            $this->data['user_name'] = $this->data['username'];
+        }
 
         $this->load->vars($this->data);
         $this->render_page('template');
     }
 
-    public function update()
-    {
-
-    }
-
-    public function delete()
-    {
-
-    }
-
-    public function import()
+    public function update($import_id)
     {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-
-        $this->data['main'] = 'data';
-        $this->data['form'] = 'data/import/';
-        $this->error['warning'] = null;
+        $this->data['form'] = 'import/update/' . $import_id;
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
-            'trim|min_length[2]|max_length[255]|xss_clean');
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->data['message'] = null;
+
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if (empty($_FILES) || !isset($_FILES['file']['tmp_name'])) {
-                $this->data['message'] = $this->lang->line('error_file');
-            }
+            if ($this->form_validation->run()) {
 
-            if (isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
+                $data = $this->input->post();
 
-                $maxsize = 2097152;
-                $csv_mimetypes = array(
-                    'text/csv',
-                    'text/plain',
-                    'application/csv',
-                    'text/comma-separated-values',
-                    'application/excel',
-                    'application/vnd.ms-excel',
-                    'application/vnd.msexcel',
-                    'text/anytext',
-                    'application/octet-stream',
-                    'application/txt',
-                );
+                $data['client_id']    = $this->User_model->getClientId();
+                $data['site_id']      = $this->User_model->getSiteId();
+                $data['name']         = isset($data['name'])? $data['name']: null;
+                $data['url']          = isset($data['url'])? $data['url']: null;
+                $data['port']         = isset($data['port'])? $data['port'] : "80";
+                $data['username']     = isset($data['user_name'])? $data['user_name'] : null;
+                $data['password']     = isset($data['password'])? $data['password'] : null;
+                $data['import_type']  = isset($data['import_type'])? $data['import_type'] : null;
+                $data['routine']      = isset($data['routine'])? $data['routine'] : null;
 
-                if (($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
-                    $this->data['message'] = $this->lang->line('error_file_too_large');
-                }
-
-                if (!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
-                    $this->data['message'] = $this->lang->line('error_type_accepted');
-                }
-
-                $handle = fopen($_FILES['file']['tmp_name'], "r");
-                if (!$handle) {
-                    $this->data['message'] = $this->lang->line('error_upload');
-                }
-            }
-            if ($this->form_validation->run() && $this->data['message'] == null) {
-
-                while (($line = fgets($handle)) !== false) {
-                    $line = trim($line);
-
-                    $data = array();
-                    $params = explode(',', $line);
-                    $date = "now";
-                    foreach ($params as $param) {
-                        $keyAndValue = explode(':', $param);
-                        $key = $keyAndValue[0];
-                        $value = $keyAndValue[1];
-                        if (strtolower($key) == "player_id") {
-                            $player_id = $value;
-                        } elseif (strtolower($key) == "action") {
-                            $action = $value;
-                        } elseif (strtolower($key) == "date") {
-                            $date = $value;
-                        } else {
-                            $data = array_merge($data, array($key => $value));
-                        }
-                    }
-                    $result = $this->postEngineRule($player_id, $action, $data, $date);
-                    if ($result !== "Success") {
-                        $this->data['message'] = $result;
-                        break;
-                    }
-                }
-                if ($result == "Success") {
-                    $this->data['success'] = $this->lang->line('text_success');
-                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                    redirect('/data', 'refresh');
+                $update = $this->import_model->updateCustompoints($data);
+                if ($update) {
+                    redirect('/import', 'refresh');
                 }
             }
         }
 
-        $this->getList();
+        $this->getForm($import_id);
     }
 
-    private function getList()
+    public function delete()
     {
 
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $config['base_url'] = site_url('data');
-        if (!isset($this->data['success'])) {
+        $this->error['message'] = null;
+
+        if ($this->input->post('selected') && $this->error['message'] == null) {
+            foreach ($this->input->post('selected') as $import_id) {
+                $this->import_model->deleteImportData($import_id);
+            }
+
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            redirect('/import', 'refresh');
+        }
+
+        $this->getList(0);
+    }
+
+    private function getList($offset)
+    {
+
+        $site_id = $this->User_model->getSiteId();
+        $client_id = $this->User_model->getClientId();
+
+        $this->load->library('pagination');
+
+        $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
+
+        $filter = array(
+            'limit' => $config['per_page'],
+            'start' => $offset,
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'sort' => 'date_added'
+        );
+        if (isset($_GET['filter_name'])) {
+            $filter['filter_name'] = $_GET['filter_name'];
+        }
+
+        $config['base_url'] = site_url('import/page');
+
+        if ($client_id) {
+            $this->data['client_id'] = $client_id;
+
+            $importData = $this->import_model->retrieveImportData($filter);
+
+            $this->data['importData'] = $importData;
+            $config['total_rows'] = $this->import_model->countImportData($client_id, $site_id);
+        }
+
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
+
+        if (isset($this->session->data['success'])) {
+            $this->data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
             $this->data['success'] = '';
         }
+
+        $this->data['main'] = 'import';
 
         $this->load->vars($this->data);
         $this->render_page('template');

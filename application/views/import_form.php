@@ -56,7 +56,7 @@
                             <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_url'); ?>&nbsp;:
                         </td>
                         <td>
-                            <input type="text" name="name" size="100"
+                            <input type="text" name="url" size="100"
                                    placeholder="<?php echo $this->lang->line('entry_url'); ?>"
                                    value="<?php echo isset($url) ? $url : set_value('url'); ?>"/>
                         </td>
@@ -66,7 +66,7 @@
                             <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_port'); ?>&nbsp;:
                         </td>
                         <td>
-                            <input type="text" name="name" size="100"
+                            <input type="text" name="port" size="100"
                                    placeholder="<?php echo $this->lang->line('entry_port'); ?>"
                                    value="<?php echo isset($port) ? $port : set_value('port'); ?>"/>
                         </td>
@@ -76,9 +76,9 @@
                             <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_username'); ?>&nbsp;:
                         </td>
                         <td>
-                            <input type="text" name="name" size="100"
+                            <input type="text" name="user_name" size="100"
                                    placeholder="<?php echo $this->lang->line('entry_username'); ?>"
-                                   value="<?php echo isset($username) ? $username : set_value('username'); ?>"/>
+                                   value="<?php echo isset($user_name) ? $user_name : set_value('user_name'); ?>"/>
                         </td>
                     </tr>
                     <tr>
@@ -86,39 +86,31 @@
                             <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_password'); ?>&nbsp;:
                         </td>
                         <td>
-                            <input type="text" name="name" size="100"
+                            <input type="text" name="password" size="100"
                                    placeholder="<?php echo $this->lang->line('entry_password'); ?>"
                                    value="<?php echo isset($password) ? $password : set_value('password'); ?>"/>
                         </td>
                     </tr>
                     <tr>
-                        <td><?php echo $this->lang->line('entry_action'); ?>&nbsp;:</td>
+                        <td><?php echo $this->lang->line('entry_import_type'); ?>&nbsp;:</td>
                         <td>
-                            <select id="org_list" class="span3"  name ="selected_org" onchange="org_change(this)">
-                                <option label="None" value="" <?php echo isset($selected_org)?"":"selected"?>>
-                                    <?php foreach ($org_lists as $key => $org){?>
-                                <option label="<?php echo $org['name'] ?> " value="<?php echo $org['_id'] ?>" <?php echo $selected_org==$org['_id']?"selected":""?>>
-                                    <?php } ?>
-
-                            </select>
+                            <span class="dropdown">
+                                <select id="importType" class="span3"  name ="import_type">
+                                    <option label="Player"         value="player"      <?php echo $importType =="player"?"selected":""?>>
+                                    <option label="Transaction"    value="transaction" <?php echo $importType =="transaction"?"selected":""?>>
+                                    <option label="Store organize" value="storeorg"    <?php echo $importType =="storeorg"?"selected":""?>>
+                                </select>
+                            </span>
                         </td>
                     </tr>
                     <tr>
-                        <td><?php echo $this->lang->line('entry_occur'); ?>:</td>
                         <td>
-                            <div class="control-group">
-                                <div class="btn-group" data-toggle="buttons-radio" >
-                                    <button type="button" class="btn btn-primary <?php echo (isset($occur_once) && $occur_once)?"active":"" ?>" onclick="occurence_change(this)" value="once">Once at</button>
-                                    <button type="button" class="btn btn-primary <?php echo (isset($occur_once) && $occur_once)?"":"active" ?>" onclick="occurence_change(this)" value="repeat">Repeat Until</button>
-                                    <input type="hidden" id="occurence_id" name="occur_once" value="<?php echo (isset($occur_once) && $occur_once)?"true":"false" ?>">
-                                </div>
-                            </div>
-                            <span>
-                                <input type="text" class="date" name="month" id="monthpicker" size="50"
-                                       placeholder="<?php echo $this->lang->line('entry_month'); ?>"
-                                       value="<?php echo isset($month) && $month ? date('Y-m',
-                                           strtotime(datetimeMongotoReadable($month))) : ''; ?>"/>
-                            </span>
+                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_occur'); ?>&nbsp;:
+                        </td>
+                        <td>
+                            <input type="text" name="routine" size="100"
+                                   placeholder="<?php echo $this->lang->line('entry_occur'); ?>"
+                                   value="<?php echo isset($routine) ? $routine : set_value('routine'); ?>"/>
                         </td>
                     </tr>
                     </tbody>
@@ -131,11 +123,3 @@
     </div>
 </div>
 
-
-<link id="base-style" rel="stylesheet" type="text/css"
-      href="<?php echo base_url(); ?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css"/>
-<script type="text/javascript"
-        src="<?php echo base_url(); ?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
-<script type="text/javascript">
-
-</script>
