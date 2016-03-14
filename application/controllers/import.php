@@ -37,6 +37,12 @@ class import extends REST2_Controller
             $playerInfo['site_id'] = $site_id;
         }
         */
+
+        $name = $this->input->post('name');
+        if ($name) {
+            $playerInfo['name'] = $name;
+        }
+
         $url = $this->input->post('url');
         if ($url) {
             $playerInfo['url'] = $url;
@@ -47,9 +53,9 @@ class import extends REST2_Controller
             $playerInfo['port'] = $port;
         }
 
-        $username = $this->input->post('username');
+        $username = $this->input->post('user_name');
         if ($username) {
-            $playerInfo['username'] = $username;
+            $playerInfo['user_name'] = $username;
         }
 
         $password = $this->input->post('password');
@@ -57,9 +63,9 @@ class import extends REST2_Controller
             $playerInfo['password'] = $password;
         }
 
-        $importaction = $this->input->post('importaction');
-        if ($importaction) {
-            $playerInfo['importaction'] = $importaction;
+        $importType = $this->input->post('import_type');
+        if ($importType) {
+            $playerInfo['import_type'] = $importType;
         }
 
         $date = $this->input->post('routine');
@@ -97,26 +103,26 @@ class import extends REST2_Controller
     {
         $data = $this->input->get();
 
-        if ((!isset($data['client_id'])) || (!isset($data['site_id'])) || (!isset($data['importaction']))){
+        if ((!isset($data['client_id'])) || (!isset($data['site_id'])) || (!isset($data['import_type']))){
             $this->response($this->error->setError('PARAMETER_MISSING',200));
         }
 
-        $importData = $this->import_model->readLatestDataAction($data['client_id'], $data['site_id'], $data['importaction']);
+        $importData = $this->import_model->readLatestDataByImportType($data['client_id'], $data['site_id'], $data['import_type']);
         $this->response(array($this->resp->setRespond($importData))[0], 200);
 
     }
 
     public function processImport_post()
     {
-        $importaction = $this->input->post('importaction');
-        $importData = $this->import_model->readLatestDataAction($importaction);
+        $importType = $this->input->post('import_type');
+        $importData = $this->import_model->readLatestDataByImportType($importType);
 
         $data = array(
             'client_id' => $importData['client_id'],
             'site_id' => $importData['site_id'],
         );
 
-        if ($importData['importaction'] == ('player')){
+        if ($importData['import_type'] == ('player')){
             $url = $importData['url'];
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -126,9 +132,9 @@ class import extends REST2_Controller
             curl_close($ch);
             $jsonData = json_decode($result, true);
             $return = $this->player_model->bulkRegisterPlayer($jsonData, $data, null);
-        } elseif ($importData['importaction'] == ('transaction')){
+        } elseif ($importData['import_type'] == ('transaction')){
 
-        } elseif ($importData['importaction'] == ('store_org')){
+        } elseif ($importData['import_type'] == ('store_org')){
 
         } else {
             $this->response($this->error->setError('PARAMETER_MISSING'), 200);
