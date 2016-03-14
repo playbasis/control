@@ -1449,20 +1449,30 @@ class Cron extends CI_Controller
 
             $array = json_decode(json_encode($result[0]), true);
             $importData = $array['response'];
+            $url = $importData['url'];
 
             // CURL
-            $url = $importData['url'];
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_USERPWD, $importData['user_name'].':'.$importData['password']);
             curl_setopt($ch, CURLOPT_URL, $url);
             $result = curl_exec($ch);
             curl_close($ch);
             $jsonData = json_decode($result, true);
 
+            // Add import data to return
             $data['importData'] = $jsonData;
 
-            return $data;
+            // Get MD5 hashing to verify is the new import file
+            $CurrentMD5_id = md5($result);
+
+            // If there there is no MD5 was generated in DB or it is not same as current, update MD5 to DB
+            if ( (!isset($importData['md5_id'])) || ( $CurrentMD5_id != ($importData['md5_id']) ) ){
+                $this->import_model->insertMD5($importData['_id']['$id'], $client['site_id'], $CurrentMD5_id );
+                return $data;
+            }
+
         }
         return null;
     }
