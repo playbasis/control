@@ -65,20 +65,13 @@ class import extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'import/insert';
 
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-
-
         $this->load->model('Permission_model');
         $this->load->model('Plan_model');
 
         $this->data['message'] = null;
 
-
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('description', $this->lang->line('entry_description'),
-            'trim|max_length[255]|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -91,13 +84,13 @@ class import extends MY_Controller
 
                 $data['client_id']    = $this->User_model->getClientId();
                 $data['site_id']      = $this->User_model->getSiteId();
-                $data['name']         = isset($data['name'])? $data['name']: null;
-                $data['url']          = isset($data['url'])? $data['url']: null;
-                $data['port']         = isset($data['port'])? $data['port'] : "80";
-                $data['username']     = isset($data['user_name'])? $data['user_name'] : null;
-                $data['password']     = isset($data['password'])? $data['password'] : null;
-                $data['import_type']  = isset($data['import_type'])? $data['import_type'] : null;
-                $data['routine']      = isset($data['routine'])? $data['routine'] : null;
+                $data['name']         = $data['name'] != "" ? $data['name']: null;
+                $data['url']          = $data['url'] != "" ? $data['url']: null;
+                $data['port']         = $data['port'] != "" ? $data['port'] : "80";
+                $data['user_name']    = $data['user_name'] != "" ? $data['user_name'] : null;
+                $data['password']     = $data['password'] != "" ? $data['password'] : null;
+                $data['import_type']  = $data['import_type'] != "" ? $data['import_type'] : null;
+                $data['routine']      = $data['routine'] != "" ? $data['routine'] : null;
 
                 $insert = $this->import_model->addImportData($data);
                 if ($insert) {
@@ -117,7 +110,6 @@ class import extends MY_Controller
 
         if ($import_id) {
             $this->data = array_merge($this->data, $this->import_model->retrieveSingleImportData($import_id));
-            $this->data['user_name'] = $this->data['username'];
         }
 
         $this->load->vars($this->data);
@@ -147,15 +139,16 @@ class import extends MY_Controller
 
                 $data['client_id']    = $this->User_model->getClientId();
                 $data['site_id']      = $this->User_model->getSiteId();
-                $data['name']         = isset($data['name'])? $data['name']: null;
-                $data['url']          = isset($data['url'])? $data['url']: null;
-                $data['port']         = isset($data['port'])? $data['port'] : "80";
-                $data['username']     = isset($data['user_name'])? $data['user_name'] : null;
-                $data['password']     = isset($data['password'])? $data['password'] : null;
-                $data['import_type']  = isset($data['import_type'])? $data['import_type'] : null;
-                $data['routine']      = isset($data['routine'])? $data['routine'] : null;
+                $data['_id']      = $import_id;
+                $data['name']         = $data['name'] != "" ? $data['name']: null;
+                $data['url']          = $data['url'] != "" ? $data['url']: null;
+                $data['port']         = $data['port'] != "" ? $data['port'] : "80";
+                $data['user_name']    = $data['user_name'] != "" ? $data['user_name'] : null;
+                $data['password']     = $data['password'] != "" ? $data['password'] : null;
+                $data['import_type']  = $data['import_type'] != "" ? $data['import_type'] : null;
+                $data['routine']      = $data['routine'] != "" ? $data['routine'] : null;
 
-                $update = $this->import_model->updateCustompoints($data);
+                $update = $this->import_model->updateImportData($data);
                 if ($update) {
                     redirect('/import', 'refresh');
                 }
@@ -294,32 +287,6 @@ class import extends MY_Controller
         } else {
             return false;
         }
-    }
-
-    private function getToken()
-    {
-        // get api key and secret
-
-        $platforms = $this->App_model->getPlatFormByAppId(array(
-            'site_id' => $this->User_model->getSiteId()
-        ));
-        $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
-        $this->_api->set_api_key($platform['api_key']);
-        $this->_api->set_api_secret($platform['api_secret']);
-
-        $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
-        $result = $this->_api->auth($pkg_name);
-        return $result->response->token;
-    }
-
-    private function postEngineRule($player_id, $action, $param, $date = "now")
-    {
-        $this->getToken();
-        if ($date != "now") {
-            $this->_api->setHeader('Date', $date);
-        }
-        $result = $this->_api->engine($player_id, $action, $param);
-        return $result->message;
     }
 
 }

@@ -63,7 +63,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_port'); ?>&nbsp;:
+                            <span>&nbsp;</span><?php echo $this->lang->line('entry_port'); ?>&nbsp;:
                         </td>
                         <td>
                             <input type="text" name="port" size="100"
@@ -73,7 +73,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_username'); ?>&nbsp;:
+                            <span&nbsp;</span><?php echo $this->lang->line('entry_username'); ?>&nbsp;:
                         </td>
                         <td>
                             <input type="text" name="user_name" size="100"
@@ -83,7 +83,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_password'); ?>&nbsp;:
+                            <span>&nbsp;</span><?php echo $this->lang->line('entry_password'); ?>&nbsp;:
                         </td>
                         <td>
                             <input type="text" name="password" size="100"

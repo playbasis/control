@@ -67,4 +67,26 @@ class import_model extends MY_Model
 
         return $this->mongo_db->delete('playbasis_import');
     }
+
+    public function updateImportData($data)
+    {
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('_id', new MongoID($data['_id']));
+
+        $date = new MongoDate();
+        $date_array = array(
+            'date_modified' => $date
+        );
+
+        $update_data = array_merge($data, $date_array);
+
+        unset($update_data['_id']);
+        foreach ($update_data as $key => $value) {
+            $this->mongo_db->set($key, $value);
+        }
+        $update = $this->mongo_db->update('playbasis_import');
+
+        return $update;
+    }
 }

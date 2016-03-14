@@ -70,7 +70,7 @@
                                 <td class="center"><?php echo $cs['name']; ?></td>
                                 <td class="left"><?php echo $cs['url']; ?></td>
                                 <td class="center"><?php echo $cs['port']; ?></td>
-                                <td class="center"><?php echo $cs['username']; ?></td>
+                                <td class="center"><?php echo $cs['user_name']; ?></td>
                                 <td class="center"><?php echo $cs['import_type']; ?></td>
                                 <td class="center"><?php echo $cs['routine']; ?></td>
                                 <td class="center">
