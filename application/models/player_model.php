@@ -982,7 +982,6 @@ class Player_model extends MY_Model
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('cl_player_id', 'first_name', 'last_name', 'username', 'image', 'exp', 'level'));
         $this->mongo_db->where(array(
-            'status' => true,
             'site_id' => $site_id,
             'client_id' => $client_id
         ));
