@@ -65,7 +65,6 @@ class Report extends CI_Controller
             'devteam@playbasis.com',
             'notjiam@gmail.com',
             'pascal@playbasis.com',
-            'sanit.l@playbasis.com',
             'mariya.v@playbasis.com'
         );
         $conf = array(
