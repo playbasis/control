@@ -202,7 +202,6 @@ class Report extends CI_Controller
             log_message('debug', 'Elapsed time = ' . $this->utility->elapsed_time('email') . ' sec (email)');
         }
 
-        $msg['elapsed_time'] = $this->utility->elapsed_time('report');
         log_message('debug', 'Elapsed time = ' . $this->utility->elapsed_time('report') . ' sec (report)');
     }
 
