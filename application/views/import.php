@@ -16,6 +16,10 @@
             <?php //}?>
         </div>
         <div class="content">
+            <div id="tabs" class="htabs">
+                <a href="<?php echo site_url('import');?>"          <?php if (1) { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_import'); ?></a>
+                <a href="<?php echo site_url('import');?>" <?php if (1) { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_log'); ?></a>
+            </div>
             <?php if($this->session->flashdata('success')){ ?>
                 <div class="content messages half-width">
                     <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
@@ -38,9 +42,10 @@
                             ><?php echo $this->lang->line('entry_url'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_port'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_username'); ?></td>
-                        <td class="center"
-                            ><?php echo $this->lang->line('entry_import_type'); ?></td>
+                        <td class="center" ><?php echo $this->lang->line('entry_import_type'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_occur'); ?></td>
+                        <td class="center" ><?php echo $this->lang->line('entry_date_execute'); ?></td>
+                        <td class="center" ><?php echo $this->lang->line('entry_results'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
@@ -53,7 +58,9 @@
                         <td></td>
                         <td class="center"><input type="text" name="filter_name" value="" style="width:50%;"/></td>
                         <td></td>
-                        <td class="right">
+                        <td></td>
+                        <td class="center" ><?php echo $this->lang->line('entry_results_type'); ?></td>
+                        <td class="center">
                             <a onclick="clear_filter();" class="button"
                                id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
                             <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
@@ -73,6 +80,34 @@
                                 <td class="center"><?php echo $cs['user_name']; ?></td>
                                 <td class="center"><?php echo $cs['import_type']; ?></td>
                                 <td class="center"><?php echo $cs['routine']; ?></td>
+                                <td class="center"><?php
+                                    if ($cs['logs'] != null) {
+                                        echo datetimeMongotoReadable($cs['logs'][0]['date_added']);
+                                    }else{
+                                        echo null;
+                                    }
+                                    ?>
+                                </td>
+                                <td class="center"><?php
+                                    if ($cs['logs'] != null) {
+                                        if ($cs['logs'][0]['results'] == 'Duplicate'){
+                                            echo $this->lang->line('entry_duplicate');
+                                        }else {
+                                            $totalEvent = count($cs['logs'][0]['results']);
+                                            $successEvent = 0;
+                                            foreach ($cs['logs'][0]['results'] as $key => $val) {
+                                                if ($val === 'Success') {
+                                                    $successEvent += 1;
+                                                }
+                                            }
+                                            echo $successEvent . '/' . ($totalEvent - $successEvent);
+                                        }
+                                    }else{
+                                        echo null;
+                                    }
+
+                                    ?>
+                                </td>
                                 <td class="center">
                                     <?php if(!$client_id){?>
                                         [ <?php echo anchor('import/update/'.$cs['_id'], 'Edit'); ?> ]

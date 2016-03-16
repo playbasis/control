@@ -208,6 +208,16 @@ class import extends MY_Controller
 
             $importData = $this->import_model->retrieveImportData($filter);
 
+            foreach ( $importData as $key => $val){
+                $inputForResult = array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id,
+                    'import_id' => $val['_id'].""
+                );
+                $importResults = $this->import_model->retrieveImportResults($inputForResult);
+                $importData[$key] = array_merge($importData[$key], array('logs'=>$importResults));
+            }
+
             $this->data['importData'] = $importData;
             $config['total_rows'] = $this->import_model->countImportData($client_id, $site_id);
         }

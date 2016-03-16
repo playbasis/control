@@ -10,7 +10,8 @@ class import_model extends MY_Model
 
         $date = new MongoDate();
         $date_array = array(
-            'date_added' => $date,
+            'md5_id'        => null,
+            'date_added'    => $date,
             'date_modified' => $date
         );
         $insert_data = array_merge($data, $date_array);
@@ -34,6 +35,18 @@ class import_model extends MY_Model
         $this->mongo_db->order_by(array('date_added' => 'desc'));
 
         return $this->mongo_db->get("playbasis_import");
+    }
+
+    public function retrieveImportResults($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', $data['client_id']);
+        $this->mongo_db->where('site_id', $data['site_id']);
+        $this->mongo_db->where('import_id', $data['import_id']);
+        $this->mongo_db->order_by(array('date_added' => 'desc'));
+
+        return $this->mongo_db->get("playbasis_import_log");
     }
 
     public function retrieveSingleImportData($import_id)
