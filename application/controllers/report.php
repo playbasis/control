@@ -65,7 +65,6 @@ class Report extends CI_Controller
             'devteam@playbasis.com',
             'notjiam@gmail.com',
             'pascal@playbasis.com',
-            'sanit.l@playbasis.com',
             'mariya.v@playbasis.com'
         );
         $conf = array(
@@ -203,8 +202,7 @@ class Report extends CI_Controller
             log_message('debug', 'Elapsed time = ' . $this->utility->elapsed_time('email') . ' sec (email)');
         }
 
-        $msg['elapsed_time'] = $this->utility->elapsed_time('report');
-        $this->response($this->resp->setRespond($msg), 200);
+        log_message('debug', 'Elapsed time = ' . $this->utility->elapsed_time('report') . ' sec (report)');
     }
 
     private function build_data($conf, $client, $site, $to, $from, $from2)
