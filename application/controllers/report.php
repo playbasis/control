@@ -203,7 +203,7 @@ class Report extends CI_Controller
         }
 
         $msg['elapsed_time'] = $this->utility->elapsed_time('report');
-        $this->response($this->resp->setRespond($msg), 200);
+        log_message('debug', 'Elapsed time = ' . $this->utility->elapsed_time('report') . ' sec (report)');
     }
 
     private function build_data($conf, $client, $site, $to, $from, $from2)
