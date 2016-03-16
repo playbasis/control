@@ -577,6 +577,10 @@ class jigsaw extends MY_Model
     {
         return $this->feedback('sms', $config, $input, $exInfo);
     }
+    public function push($config, $input, &$exInfo = array())
+    {
+        return $this->feedback('push', $config, $input, $exInfo);
+    }
 
     private function feedback($type, $config, $input, &$exInfo = array())
     {
