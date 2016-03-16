@@ -1333,18 +1333,46 @@ class Cron extends CI_Controller
         if ($clients) {
 
             foreach ($clients as $client) {
-                $returnData = $this->getDataFromURL($client, 'transaction');
 
-                if (isset($returnData)) {
+                $returnImportData = $this->getImportData($client, 'transaction');
 
-                    foreach ($returnData['importData'] as $key => $val) {
-                        $data = array(
-                            'api_key' => $returnData['api_key'],
-                            'token' => $returnData['token'],
-                            'action' => $val['action'],
-                            'player_id' => $val['cl_player_id']
-                        );
-                        $result = $this->restclient->post($this->config->base_url() . 'Engine/rule', $data);
+                if(isset($returnImportData['response'])) {
+
+                    foreach ($returnImportData['response'] as $importData) {
+
+                        $returnData = $this->getDataFromURL($importData);
+
+                        if (isset($returnData)) {
+
+                            $returnImportActivities = array();
+
+                            if ($returnData['duplicate_flag']) {
+
+                                // Add 'Duplicate' to import log
+                                $returnImportActivities = 'Duplicate';
+
+                            } else {
+
+                                foreach ($returnData['importData'] as $key => $val) {
+                                    $data = array(
+                                        'api_key' => $returnImportData['api_key'],
+                                        'token' => $returnImportData['token'],
+                                        'action' => $val['action'],
+                                        'player_id' => $val['cl_player_id']
+                                    );
+                                    $result = $this->restclient->post($this->config->base_url() . 'Engine/rule', $data);
+
+                                    $returnImportActivities = array_merge($returnImportActivities, array(
+                                        $val['name'] => $result->message
+                                    ));
+                                }
+
+                            }
+
+                            // Update import log
+                            $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
+                                $returnData['import_id'], array('results' => $returnImportActivities));
+                        }
                     }
                 }
             }
@@ -1356,30 +1384,57 @@ class Cron extends CI_Controller
         $this->load->library('RestClient');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
+
         if ($clients) {
+
             foreach ($clients as $client) {
 
-                $returnData = $this->getDataFromURL($client, 'player');
+                $returnImportData = $this->getImportData($client, 'player');
 
-                if (isset($returnData)) {
+                if(isset($returnImportData['response'])) {
 
-                    foreach ($returnData['importData'] as $key => $val) {
-                        $data = array(
-                            'api_key' => $returnData['api_key'],
-                            'token' => $returnData['token'],
-                            'player_id' => $val['player_id'],
-                            'username' => $val['username'],
-                            'password' => $val['password'],
-                            'email' => $val['email'],
-                            'image' => $val['image']
-                        );
-                        $result = $this->restclient->post($this->config->base_url() . 'Player/' . $val['player_id'] . '/register',
-                            $data);
+                    foreach ($returnImportData['response'] as $importData) {
+
+                        $returnData = $this->getDataFromURL($importData);
+
+                        if (isset($returnData)) {
+
+                            $returnImportActivities = array();
+
+                            if ($returnData['duplicate_flag']) {
+
+                                // Add 'Duplicate' to import log
+                                $returnImportActivities = 'Duplicate';
+
+                            } else {
+
+                                foreach ($returnData['importData'] as $key => $val) {
+                                    $data = array(
+                                        'api_key' => $returnImportData['api_key'],
+                                        'token' => $returnImportData['token'],
+                                        'player_id' => $val['player_id'],
+                                        'username' => $val['username'],
+                                        'password' => $val['password'],
+                                        'email' => $val['email'],
+                                        'image' => $val['image']
+                                    );
+                                    $result = $this->restclient->post($this->config->base_url() . 'Player/' . $val['player_id'] . '/register',
+                                        $data);
+
+                                    $returnImportActivities = array_merge($returnImportActivities, array(
+                                        $val['player_id'] => $result->message
+                                    ));
+                                }
+                            }
+
+                            // Update import log
+                            $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
+                                $returnData['import_id'], array('results' => $returnImportActivities));
+                        }
                     }
                 }
             }
         }
-
     }
 
     public function processImportStoreOrg()
@@ -1391,32 +1446,57 @@ class Cron extends CI_Controller
 
             foreach ($clients as $client) {
 
-                $returnData = $this->getDataFromURL($client, 'storeorg');
+                $returnImportData = $this->getImportData($client, 'storeorg');
 
-                if(isset($returnData)) {
+                if(isset($returnImportData['response'])) {
 
-                    foreach ($returnData['importData'] as $key => $val) {
+                    foreach ($returnImportData['response'] as $importData) {
 
-                        $data = array(
-                            'api_key' => $returnData['api_key'],
-                            'token' => $returnData['token'],
-                            'player_id' => $val['player_id'],
-                            'name' => $val['node_name'],
-                        );
+                        $returnData = $this->getDataFromURL($importData);
 
-                        // Insert player to store_org
-                        $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/name/' . $val['node_name'] . '/addPlayer/' . $val['player_id'],
-                            $data);
+                        if (isset($returnData)) {
 
-                        if ((isset($val['roles'])) && (isset($result->response->node_id))) {
-                            $node_id = json_decode(json_encode($result->response->node_id), true)['$id'];
+                            $returnImportActivities = array();
 
-                            // Insert role to player
-                            foreach ($val['roles'] as $key => $role) {
-                                $data['role'] = $role;
-                                $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/' . $node_id . '/setPlayerRole/' . $val['player_id'],
-                                    $data);
+                            if ($returnData['duplicate_flag']) {
+
+                                // Add 'Duplicate' to import log
+                                $returnImportActivities = 'Duplicate';
+
+                            } else {
+
+                                foreach ($returnData['importData'] as $key => $val) {
+
+                                    $data = array(
+                                        'api_key' => $returnImportData['api_key'],
+                                        'token' => $returnImportData['token'],
+                                        'player_id' => $val['player_id'],
+                                        'name' => $val['node_name'],
+                                    );
+
+                                    // Insert player to store_org
+                                    $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/name/' . $val['node_name'] . '/addPlayer/' . $val['player_id'],
+                                        $data);
+
+                                    if ((isset($val['roles'])) && (isset($result->response->node_id))) {
+                                        $node_id = json_decode(json_encode($result->response->node_id), true)['$id'];
+
+                                        // Insert role to player
+                                        foreach ($val['roles'] as $key => $role) {
+                                            $data['role'] = $role;
+                                            $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/' . $node_id . '/setPlayerRole/' . $val['player_id'],
+                                                $data);
+                                        }
+                                    }
+                                    $returnImportActivities = array_merge($returnImportActivities, array(
+                                        $val['player_id'] => $result->message
+                                    ));
+                                }
                             }
+
+                            // Update import log
+                            $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
+                                $returnData['import_id'], array('results' => $returnImportActivities));
                         }
                     }
                 }
@@ -1424,7 +1504,7 @@ class Cron extends CI_Controller
         }
     }
 
-    private function getDataFromURL($client, $importType)
+    private function getImportData($client, $importType)
     {
         $this->load->library('RestClient');
 
@@ -1443,12 +1523,15 @@ class Cron extends CI_Controller
             'site_id'     => json_decode(json_encode($client['site_id']), True)['$id'],
             'import_type' => $importType
         );
-        $result = array($this->restclient->get($this->config->base_url().'Import/importSetting', $data));
+        return $data = array_merge($data, json_decode(json_encode($this->restclient->get($this->config->base_url().'Import/importSetting', $data)), true));
+    }
 
-        if (isset($result[0]->response->url)) {
+    private function getDataFromURL($importData)
+    {
 
-            $array = json_decode(json_encode($result[0]), true);
-            $importData = $array['response'];
+        if (isset($importData['url'])) {
+
+            $data['import_id'] = $importData['_id']['$id'];
             $url = $importData['url'];
 
             // CURL
@@ -1469,10 +1552,12 @@ class Cron extends CI_Controller
 
             // If there there is no MD5 was generated in DB or it is not same as current, update MD5 to DB
             if ( (!isset($importData['md5_id'])) || ( $CurrentMD5_id != ($importData['md5_id']) ) ){
-                $this->import_model->insertMD5($importData['_id']['$id'], $client['site_id'], $CurrentMD5_id );
-                return $data;
+                $this->import_model->insertMD5($importData['_id']['$id'], $importData['site_id'], $CurrentMD5_id );
+                $data['duplicate_flag'] = false;
+            }else {
+                $data['duplicate_flag'] = true;
             }
-
+            return $data;
         }
         return null;
     }

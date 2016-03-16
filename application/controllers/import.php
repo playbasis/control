@@ -107,15 +107,15 @@ class import extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING',200));
         }
 
-        $importData = $this->import_model->retrieveLatestDataByImportType($data['client_id'], $data['site_id'], $data['import_type']);
-        $this->response(array($this->resp->setRespond($importData))[0], 200);
+        $importData = $this->import_model->retrieveDataByImportType($data['client_id'], $data['site_id'], $data['import_type']);
+        $this->response($this->resp->setRespond($importData), 200);
 
     }
 
     public function processImport_post()
     {
         $importType = $this->input->post('import_type');
-        $importData = $this->import_model->retrieveLatestDataByImportType($importType);
+        $importData = $this->import_model->retrieveDataByImportType($importType);
 
         $data = array(
             'client_id' => $importData['client_id'],
