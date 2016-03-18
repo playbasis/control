@@ -18,7 +18,6 @@
         <div class="content">
             <div id="tabs" class="htabs">
                 <a href="<?php echo site_url('import');?>"          <?php if (1) { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_import'); ?></a>
-                <a href="<?php echo site_url('import');?>" <?php if (1) { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_log'); ?></a>
             </div>
             <?php if($this->session->flashdata('success')){ ?>
                 <div class="content messages half-width">
@@ -45,7 +44,7 @@
                         <td class="center" ><?php echo $this->lang->line('entry_import_type'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_occur'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_date_execute'); ?></td>
-                        <td class="center" ><?php echo $this->lang->line('entry_results'); ?></td>
+                        <td class="center" ><?php echo $this->lang->line('entry_latest_result'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
@@ -109,11 +108,18 @@
                                     ?>
                                 </td>
                                 <td class="center">
-                                    <?php if(!$client_id){?>
-                                        [ <?php echo anchor('import/update/'.$cs['_id'], 'Edit'); ?> ]
-                                    <?php }else{?>
-                                        [ <?php echo anchor('import/update/'.$cs['_id'], 'Edit'); ?> ]
-                                    <?php }?>
+                                    <a>
+                                        <?php if(!$client_id){?>
+                                            [ <?php echo anchor('import/update/'.$cs['_id'], 'Edit'); ?> ]
+                                        <?php }else{?>
+                                            [ <?php echo anchor('import/update/'.$cs['_id'], 'Edit'); ?> ]
+                                        <?php }?>
+                                    </a>
+                                    <a href="<?php echo site_url("import/displayLog/".$cs['_id']) ?>" title="Log" class="tooltips" data-placement="top">
+                                        <i
+                                            class="fa fa-file-text-o">
+                                        </i>
+                                    </a>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -187,4 +193,5 @@
         window.location.replace(baseUrlPath + 'import');
     }
 </script>
+
 

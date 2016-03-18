@@ -41,6 +41,18 @@ class import_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
+            $this->mongo_db->where('import_type', $regex);
+        }
+
+        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
+            $this->mongo_db->where('date_added', array(
+                '$gt' => new MongoDate(strtotime($data['date_start'])),
+                '$lte' => new MongoDate(strtotime($data['date_expire']))
+            ));
+        }
+
         $this->mongo_db->where('client_id', $data['client_id']);
         $this->mongo_db->where('site_id', $data['site_id']);
         $this->mongo_db->where('import_id', $data['import_id']);

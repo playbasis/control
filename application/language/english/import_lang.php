@@ -15,8 +15,10 @@ $lang['entry_import_type']  = 'Import type';
 $lang['entry_occur']        = 'Occurrence (day)';
 $lang['column_action']      = 'Action';
 $lang['entry_results']      = 'Result(s)';
+$lang['entry_latest_result']      = 'Result';
 $lang['entry_date_execute'] = 'Date execute';
 $lang['entry_results_type'] = 'Success/Fail';
+$lang['entry_results_name'] = 'Name => Status';
 $lang['entry_duplicate']    = 'Data duplicate with previous';
 
 $lang['tab_import']    = 'Import';
@@ -25,4 +27,12 @@ $lang['tab_log']    = 'Log';
 // Button
 $lang['button_filter'] = 'Filter';
 $lang['button_clear_filter'] = 'Clear filter';
+$lang['button_back'] = 'Back';
+$lang['button_download'] = 'Download';
+
+$lang['filter_date_start'] = 'Date start';
+$lang['filter_date_end'] = 'Date end';
+
+
+
 
