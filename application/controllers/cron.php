@@ -1547,17 +1547,35 @@ class Cron extends CI_Controller
             // Add import data to return
             $data['importData'] = $jsonData;
 
-            // Get MD5 hashing to verify is the new import file
-            $CurrentMD5_id = md5($result);
+            // Get latest import result from import log
+            $latestImportLog = $this->import_model->retrieveLatestImportResult($data['import_id']);
 
-            // If there there is no MD5 was generated in DB or it is not same as current, update MD5 to DB
-            if ( (!isset($importData['md5_id'])) || ( $CurrentMD5_id != ($importData['md5_id']) ) ){
-                $this->import_model->insertMD5($importData['_id']['$id'], $importData['site_id'], $CurrentMD5_id );
-                $data['duplicate_flag'] = false;
-            }else {
-                $data['duplicate_flag'] = true;
+            if (isset($latestImportLog['date_added'])){
+                // Get latest execute date
+                $latestExecute = strtotime(datetimeMongotoReadable($latestImportLog['date_added']));
+            } else{
+                $latestExecute = time();
             }
-            return $data;
+
+            // Get next execute date from latest execute + routine occurrence, given execution time to 1AM at the day
+            $dateNextExecute = strtotime(date ('Y-m-d 01:00:00', strtotime('+'.$importData['routine'].'days', $latestExecute)));
+            $today = time();
+
+            // If current date is reaching execution time will proceed the action, otherwise will return null with do nothing
+            if ($today >= $dateNextExecute) {
+
+                // Get MD5 hashing to verify is the new import file
+                $CurrentMD5_id = md5($result);
+
+                // If there there is no MD5 was generated in DB or it is not same as current, update MD5 to DB
+                if ((!isset($importData['md5_id'])) || ($CurrentMD5_id != ($importData['md5_id']))) {
+                    $this->import_model->insertMD5($importData['_id']['$id'], $importData['site_id'], $CurrentMD5_id);
+                    $data['duplicate_flag'] = false;
+                } else {
+                    $data['duplicate_flag'] = true;
+                }
+                return $data;
+            }
         }
         return null;
     }

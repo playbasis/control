@@ -89,4 +89,13 @@ class Import_model extends MY_Model
         ));
         return $this->mongo_db->insert('playbasis_import_log', $importResult);
     }
+
+    public function retrieveLatestImportResult($import_id)
+    {
+        $this->mongo_db->where('import_id', $import_id);
+        $this->mongo_db->order_by(array('date_added' => 'desc'));
+        $this->mongo_db->limit(1);
+        $return = $this->mongo_db->get("playbasis_import_log");
+        return $return ? $return[0] : null;
+    }
 }
