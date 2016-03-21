@@ -108,7 +108,7 @@
                             <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_occur'); ?>&nbsp;:
                         </td>
                         <td>
-                            <input type="text" name="routine" size="100"
+                            <input type="number" name="routine" size="100"
                                    placeholder="<?php echo $this->lang->line('entry_occur'); ?>"
                                    value="<?php echo isset($routine) ? $routine : set_value('routine'); ?>"/>
                         </td>

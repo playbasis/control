@@ -84,7 +84,7 @@
                                                     echo $this->lang->line('entry_duplicate');
                                                 }else {
                                                     foreach ($cs['results'] as $key => $val) {
-                                                        echo $key.' => '.$val; ?><br><?php echo'HELLO'?><br><?php echo'HELLO'?><br><?php echo'HELLO'?><br><?php echo'HELLO'?><br><?php echo'HELLO'?><br><?php
+                                                        echo $key.' => '.$val; ?><br><?php
                                                     }
                                                 }
                                             }else{

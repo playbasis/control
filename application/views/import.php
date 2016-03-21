@@ -17,7 +17,7 @@
         </div>
         <div class="content">
             <div id="tabs" class="htabs">
-                <a href="<?php echo site_url('import');?>"          <?php if (1) { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_import'); ?></a>
+                <a href="<?php echo site_url('import');?>"<?php if (1) { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_import'); ?></a>
             </div>
             <?php if($this->session->flashdata('success')){ ?>
                 <div class="content messages half-width">
