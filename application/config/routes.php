@@ -89,6 +89,7 @@ $route['Player/'.ANY_STRING.'/custom'] = 'player/custom/$1';
 
 $route['Player/'.ANY_STRING.'/register'] = 'player/register/$1';
 $route['Player/register'] = 'player/register';
+$route['Player/registerBatch'] = 'player/registerBatch';
 
 $route['Player/'.ANY_STRING.'/update'] = 'player/update/$1';
 $route['Player/update'] = 'player/update';
@@ -301,6 +302,7 @@ $route['Push/template'] = 'push/template';
 
 //Store Organize API
 $route['StoreOrg/nodes/'.ANY_STRING.'/addPlayer/'.ANY_STRING] = 'store_org/playerRegister/$1/$2'; // ANY_STRING = node_id/pb_player_id
+$route['StoreOrg/nodes/name/'.ANY_STRING.'/addPlayer/'.ANY_STRING] = 'store_org/playerRegisterByNodeName/$1/$2'; // ANY_STRING = node_name/pb_player_id
 $route['StoreOrg/nodes/'.ANY_STRING.'/removePlayer/'.ANY_STRING] = 'store_org/playerRemove/$1/$2'; // ANY_STRING = node_id/pb_player_id
 $route['StoreOrg/nodes/'.ANY_STRING.'/setPlayerRole/'.ANY_STRING] = 'store_org/playerRoleSet/$1/$2'; // ANY_STRING = node_id/pb_player_id
 $route['StoreOrg/nodes/'.ANY_STRING.'/unsetPlayerRole/'.ANY_STRING] = 'store_org/playerRoleUnset/$1/$2'; // ANY_STRING = node_id/pb_player_id
@@ -335,6 +337,9 @@ $route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 //File API
 $route['File/upload'] = 'file/upload';
 $route['File/delete'] = 'file/delete';
+
+//Import API
+$route['Import/importSetting'] = 'import/importSetting';
 
 //misc
 //$route['test']	= 'playbasis/test';
