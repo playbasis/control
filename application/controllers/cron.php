@@ -1552,9 +1552,10 @@ class Cron extends CI_Controller
 
             if (isset($latestImportLog['date_added'])){
                 // Get latest execute date
-                $latestExecute = strtotime(datetimeMongotoReadable($latestImportLog['date_added']));
+                $latestExecute = $latestImportLog['date_added']->sec;
             } else{
-                $latestExecute = time();
+                // Get latest date modified from import data in case no import log
+                $latestExecute = $importData['date_added']['sec'];
             }
 
             // Get next execute date from latest execute + routine occurrence, given execution time to 1AM at the day
@@ -1620,7 +1621,7 @@ class Cron extends CI_Controller
                 'site_id' => $site_id,
                 'domain_name' => $client_info['domain_name'],
                 'leaderboard_id' => $config['_id'],
-//						'node_id' => $node_id,
+                //'node_id' => $node_id,
             ));
             $result = array_merge($result, array('Rank No ' . $rank_no => $event));
             if ($feedbacks) {
