@@ -80,25 +80,6 @@ class import extends REST2_Controller
 
     }
 
-    public function retrieveUrl_get()
-    {
-        $url = $this->import_model->readUrl($this->validToken['client_id'], $this->validToken['site_id']);
-        $url = $url['url'];
-
-        //$result = file_get_contents($url);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        $jsonData = json_decode($result, true);
-
-        $bank = $this->player_model->bulkRegisterPlayer($jsonData, $this->validToken, null);
-
-        return $bank;
-    }
-
     public function importSetting_get()
     {
         $data = $this->input->get();

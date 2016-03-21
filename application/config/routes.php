@@ -339,9 +339,6 @@ $route['File/upload'] = 'file/upload';
 $route['File/delete'] = 'file/delete';
 
 //Import API
-$route['Import/setting'] = 'import/importSetting';
-$route['Import/retrieveUrl'] = 'import/retrieveUrl';
-$route['Import/processImport'] = 'import/processImport';
 $route['Import/importSetting'] = 'import/importSetting';
 
 //misc
