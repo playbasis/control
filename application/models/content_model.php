@@ -80,8 +80,8 @@ class Content_model extends MY_Model
             $this->mongo_db->where_lt('date_start', new MongoDate());
         }
 
-        $this->mongo_db->select(array('title', 'summary', 'detail', 'image', 'category', 'date_start', 'date_end'));
-        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->select(array('_id', 'title', 'summary', 'detail', 'image', 'category', 'date_start', 'date_end'));
+        //$this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $client_id,
             'site_id' => $site_id,
@@ -158,4 +158,104 @@ class Content_model extends MY_Model
         $result = $this->mongo_db->get("playbasis_content_category_to_client");
         return $result ? $result[0]['name'] : null;
     }
+
+    public function createContent($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $insert_data = array(
+            'client_id' => new MongoId($data['client_id']),
+            'site_id' => new MongoId($data['site_id']),
+            'title' => $data['title'],
+            'summary' => $data['summary'],
+            'detail' => $data['detail'],
+            'date_start' => new MongoDate(strtotime($data['date_start'])),
+            'date_end' => new MongoDate(strtotime($data['date_end'])),
+            'image' => (isset($data['image'])) ? $data['image'] : null,
+            'status' => $data['status']=='true',
+            'deleted' => false,
+            'date_added' => new MongoDate(),
+            'date_modified' => new MongoDate()
+        );
+        if(isset($data['category'])) {
+            $insert_data['category'] = new MongoId($data['category']);
+        }
+        if(isset($data['pb_player_id'])){
+            $insert_data['pb_player_id'] = new MongoId($data['pb_player_id']);
+        }
+        $insert = $this->mongo_db->insert('playbasis_content_to_client', $insert_data);
+
+        return $insert;
+    }
+
+    public function updateContent($client_id, $site_id, $content_id, $data)
+    {
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('_id', new MongoID($content_id));
+
+        $this->mongo_db->set($data);
+
+        if (isset($data['category'])) {
+            if (empty($data['category'])) {
+                $this->mongo_db->unset_field('category');
+            } else {
+                $this->mongo_db->set('category', new MongoId($data['category']));
+            }
+        }
+        $this->mongo_db->set('date_modified', new MongoDate());
+        $update = $this->mongo_db->update('playbasis_content_to_client');
+        return $update;
+    }
+
+    public function addPlayerAction($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $insert_data = array(
+            'client_id' => new MongoId($data['client_id']),
+            'site_id' => new MongoId($data['site_id']),
+            'content_id' => new MongoId($data['content_id']),
+            'pb_player_id' => new MongoId($data['pb_player_id']),
+            'action' => $data['action'],
+            'stars' => isset($data['stars'])?$data['stars']:null,
+            //'feedback' => (isset($data['feedback'])) ? $data['feedback'] : null,
+            'date_added' => new MongoDate(),
+            'date_modified' => new MongoDate()
+        );
+        $action = $this->mongo_db->insert('playbasis_content_to_player', $insert_data);
+
+        return $action;
+    }
+
+    public function retrieveExistingPlayerContent($data)
+    {
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('content_id', new MongoID($data['content_id']));
+        $this->mongo_db->where('pb_player_id', new MongoID($data['pb_player_id']));
+        $result = $this->mongo_db->get("playbasis_content_to_player");
+        return $result;
+    }
+
+    public function updatePlayerContent($data)
+    {
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('content_id', new MongoID($data['content_id']));
+        $this->mongo_db->where('pb_player_id', new MongoID($data['pb_player_id']));
+
+        // Make sure critical key would not changed
+        unset($data['client_id']);
+        unset($data['site_id']);
+        unset($data['content_id']);
+        unset($data['pb_player_id']);
+
+        $this->mongo_db->set($data);
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+        $update = $this->mongo_db->update('playbasis_content_to_player');
+        return $update;
+    }
+
 }

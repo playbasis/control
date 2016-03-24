@@ -328,6 +328,11 @@ $route['StoreOrg/rankPeerByAccAction'] = 'store_org/rankPeerByAccumulateAction/0
 //content API
 $route['Content'] = 'content/list';
 $route['Category'] = 'content/category';
+$route['Content/addContent'] = 'content/insert';
+$route['Content/addContent/'.ANY_STRING.'/player'] = 'content/insert/$1';
+$route['Content/'.ANY_STRING.'/update'] = 'content/update/$1';
+$route['Content/'.ANY_STRING.'/id/'.ANY_STRING.'/player/like'] = 'content/action/like/$1/$2';
+$route['Content/'.ANY_STRING.'/id/'.ANY_STRING.'/player/dislike'] = 'content/action/dislike/$1/$2';
 
 //CMS API
 $route['CMS/getArticles'] = 'cms/getArticles';

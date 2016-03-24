@@ -9,6 +9,7 @@ class Content extends REST2_Controller
         parent::__construct();
         $this->load->model('auth_model');
         $this->load->model('content_model');
+        $this->load->model('player_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -32,14 +33,14 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
 
-        if (isset($query_data['full_html']) && $query_data['full_html'] == "true"){
+        if (isset($query_data['full_html']) && $query_data['full_html'] == "true") {
             if(is_array($contents))foreach ($contents as &$content){
-                $content['detail'] = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">'.
-                    '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">'.
-                    '<style>img{ max-width: 100%}</style>'.
-                    '</head><title></title><body>'.$content['detail'].'</body></html>';
+                $content['detail'] = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">' .
+                        '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">' .
+                        '<style>img{ max-width: 100%}</style>' .
+                        '</head><title></title><body>' . $content['detail'] . '</body></html>';
+                }
             }
-        }
         array_walk_recursive($contents, array($this, "convert_mongo_object_and_category"));
 
         $this->benchmark->mark('end');
@@ -79,6 +80,253 @@ class Content extends REST2_Controller
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
+    }
+
+    public function insert_post($player_id = null)
+    {
+        $this->benchmark->mark('start');
+        $contentInfo['client_id'] = $this->validToken['client_id'];
+        $contentInfo['site_id'] = $this->validToken['site_id'];
+
+        $required = $this->input->checkParam(array(
+            'title',
+            'summary',
+            'detail',
+            'category'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        try {
+            $query_category['id'] = new MongoId($this->input->post('category'));
+        } catch (Exception $e) {
+            $this->response($this->error->setError('PARAMETER_INVALID', array('category')), 200);
+        }
+
+        $category = $this->content_model->retrieveContentCategory($this->client_id, $this->site_id, $query_category);
+        if (empty($category)) {
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
+
+        $contentInfo['title']    = $this->input->post('title');
+        $contentInfo['summary']  = $this->input->post('summary');
+        $contentInfo['detail']   = $this->input->post('detail');
+        $contentInfo['category'] = $category[0]['_id'];
+
+        if (isset($player_id)) {
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id'    => $this->validToken['client_id'],
+                'site_id'      => $this->validToken['site_id'],
+                'cl_player_id' => $player_id
+            ));
+            if (empty($pb_player_id)) {
+                $this->response($this->error->setError('USER_ID_INVALID'), 200);
+            }
+            $contentInfo['pb_player_id'] = $pb_player_id;
+            $contentInfo['status']       = false;
+            $contentInfo['date_start']   = null;
+            $contentInfo['date_end']     = null;
+        } else {
+            $contentInfo['date_start'] = $this->input->post('date_start');
+            $contentInfo['date_end']   = $this->input->post('date_end');
+            $contentInfo['image']      = $this->input->post('image');
+            $contentInfo['status']     = $this->input->post('status');
+        }
+
+        $insert = $this->content_model->createContent($contentInfo);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $insert, 'processing_time' => $t)), 200);
+    }
+
+    public function update_post($content_id = null)
+    {
+        $this->benchmark->mark('start');
+
+        try {
+            new MongoId($content_id);
+        } catch (Exception $e) {
+            $this->response($this->error->setError('PARAMETER_INVALID', array('_id')), 200);
+        }
+
+        if($this->input->post('category')) {
+            try {
+                $query_category['id'] = new MongoId($this->input->post('category'));
+            } catch (Exception $e) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('category')), 200);
+            }
+
+            $category = $this->content_model->retrieveContentCategory($this->client_id, $this->site_id, $query_category);
+            if (empty($category)) {
+                $this->response($this->error->setError('CONTENT_NOT_FOUND', array('category')), 200);
+            }
+            $contentInfo['category'] = $category[0]['_id'];
+        }
+
+        if($this->input->post('title')){
+            $contentInfo['title'] = $this->input->post('title');
+        }
+
+        if($this->input->post('summary')){
+            $contentInfo['summary'] = $this->input->post('summary');
+        }
+
+        if($this->input->post('detail')){
+            $contentInfo['detail'] = $this->input->post('detail');
+        }
+
+        if($this->input->post('date_start')){
+            $contentInfo['date_start'] = new MongoDate(strtotime($this->input->post('date_start')));
+        }
+
+        if($this->input->post('date_end')){
+            $contentInfo['date_end'] = new MongoDate(strtotime($this->input->post('date_end')));
+        }
+
+        if($this->input->post('image')){
+            $contentInfo['image'] = $this->input->post('image');
+        }
+
+        if($this->input->post('status')){
+            $contentInfo['status'] = $this->input->post('status')=='true';
+        }
+
+        $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'],
+            $content_id, $contentInfo);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $update, 'processing_time' => $t)), 200);
+    }
+
+    public function action1_post($player_id = null)
+    {
+        $actionInfo['client_id'] = $this->validToken['client_id'];
+        $actionInfo['site_id'] = $this->validToken['site_id'];
+
+        $required = $this->input->checkParam(array(
+            'content_id',
+            'action',
+            'star'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        if($this->input->post('content_id')) {
+            try {
+                $query_data['id'] = new MongoId($this->input->post('content_id'));
+            } catch (Exception $e) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('content_id')), 200);
+            }
+        }
+        $contents = $this->content_model->retrieveContent($this->validToken['client_id'], $this->validToken['site_id'], $query_data);
+
+        $actionInfo['content_id'] = $contents;
+        if(!isset($contents[0]['_id'])){
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
+
+        $actionInfo['content_id'] = $contents[0]['_id'];
+        $actionInfo['action']     = $this->input->post('action');
+        $actionInfo['star']       = $this->input->post('star');
+
+         if($this->input->post('feedback')){
+             $actionInfo['feedback'] = $this->input->post('feedback');
+         }
+
+        $pb_player_id = $this->player_model->getPlaybasisId(array(
+            'client_id'    => $this->validToken['client_id'],
+            'site_id'      => $this->validToken['site_id'],
+            'cl_player_id' => $player_id
+        ));
+        if (empty($pb_player_id)) {
+            $this->response($this->error->setError('USER_ID_INVALID'), 200);
+        }
+
+        $actionInfo['pb_player_id'] = $pb_player_id;
+
+        $action = $this->content_model->addPlayerAction($actionInfo);
+        $this->response($this->resp->setRespond(), 200);
+    }
+
+    public function action_post($action = null, $content_id = null, $player_id = null)
+    {
+        $this->load->library('RestClient');
+
+        $this->benchmark->mark('start');
+
+        $actionInfo['client_id'] = $this->validToken['client_id'];
+        $actionInfo['site_id']   = $this->validToken['site_id'];
+        $actionInfo['action']    = $action;
+/*
+        $required = $this->input->checkParam(array(
+            'content_id',
+            'action',
+            'star'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+*/
+        $pb_player_id = $this->player_model->getPlaybasisId(array(
+            'client_id'    => $this->validToken['client_id'],
+            'site_id'      => $this->validToken['site_id'],
+            'cl_player_id' => $player_id
+        ));
+        if (empty($pb_player_id)) {
+            $this->response($this->error->setError('USER_ID_INVALID'), 200);
+        }
+        $actionInfo['pb_player_id'] = $pb_player_id;
+
+        try {
+            $query_data['id'] = new MongoId($content_id);
+        } catch (Exception $e) {
+            $this->response($this->error->setError('PARAMETER_INVALID', array('content_id')), 200);
+        }
+        $contents = $this->content_model->retrieveContent($this->validToken['client_id'], $this->validToken['site_id'], $query_data);
+        if(!isset($contents[0]['_id'])){
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
+        $actionInfo['content_id'] = $contents[0]['_id'];
+
+        if($this->input->post('stars')){
+            $actionInfo['stars'] = $this->input->post('stars');
+        }
+
+        $playerContent = $this->content_model->retrieveExistingPlayerContent(array(
+            'client_id'    => $this->validToken['client_id'],
+            'site_id'      => $this->validToken['site_id'],
+            'content_id'   => $contents[0]['_id'],
+            'pb_player_id' => $pb_player_id
+        ));
+
+        if(empty($playerContent)) {
+            $action = json_decode(json_encode($this->content_model->addPlayerAction($actionInfo)), true);
+        }else{
+            $action = json_decode(json_encode($this->content_model->updatePlayerContent($actionInfo)), true);
+        }
+
+        if(isset($action['$id'])) {
+
+            // Sent action to action log
+            $result = $this->restclient->post($this->config->base_url() . 'Engine/rule', array(
+                'token'      => $this->input->post('token'),
+                'api_key'    => $this->input->post('api_key'),
+                'action'     => $actionInfo['action'],
+                'player_id'  => $player_id,
+                'content_id' => json_decode(json_encode($actionInfo['content_id']), true)['$id']
+            ));
+            if($result->success == false){
+                $this->response($this->error->setError('INTERNAL_ERROR', $result->message), 200);
+            }
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $action, 'processing_time' => $t)), 200);
     }
 
     /**
