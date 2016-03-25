@@ -70,7 +70,12 @@ class Content extends REST2_Controller
         $result = array();
         if (is_array($categories)) {
             foreach ($categories as $category) {
-                array_push($result, $category['name']);
+
+                array_push($result, array(
+                    "_id" => $category['_id']."",
+                    "name" => $category['name']
+                ));
+                //array_push($result, $category['name']);
             }
         }
 
@@ -130,8 +135,10 @@ class Content extends REST2_Controller
         } else {
             $contentInfo['date_start'] = $this->input->post('date_start');
             $contentInfo['date_end']   = $this->input->post('date_end');
-            $contentInfo['image']      = $this->input->post('image');
             $contentInfo['status']     = $this->input->post('status');
+        }
+        if($this->input->post('image')){
+            $contentInfo['image'] = $this->input->post('image');
         }
 
         $insert = $this->content_model->createContent($contentInfo);
@@ -144,6 +151,8 @@ class Content extends REST2_Controller
     public function update_post($content_id = null)
     {
         $this->benchmark->mark('start');
+
+        $contentInfo = array();
 
         try {
             new MongoId($content_id);
@@ -193,63 +202,11 @@ class Content extends REST2_Controller
             $contentInfo['status'] = $this->input->post('status')=='true';
         }
 
-        $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'],
-            $content_id, $contentInfo);
+        $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'], $content_id, $contentInfo);
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $update, 'processing_time' => $t)), 200);
-    }
-
-    public function action1_post($player_id = null)
-    {
-        $actionInfo['client_id'] = $this->validToken['client_id'];
-        $actionInfo['site_id'] = $this->validToken['site_id'];
-
-        $required = $this->input->checkParam(array(
-            'content_id',
-            'action',
-            'star'
-        ));
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-
-        if($this->input->post('content_id')) {
-            try {
-                $query_data['id'] = new MongoId($this->input->post('content_id'));
-            } catch (Exception $e) {
-                $this->response($this->error->setError('PARAMETER_INVALID', array('content_id')), 200);
-            }
-        }
-        $contents = $this->content_model->retrieveContent($this->validToken['client_id'], $this->validToken['site_id'], $query_data);
-
-        $actionInfo['content_id'] = $contents;
-        if(!isset($contents[0]['_id'])){
-            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
-        }
-
-        $actionInfo['content_id'] = $contents[0]['_id'];
-        $actionInfo['action']     = $this->input->post('action');
-        $actionInfo['star']       = $this->input->post('star');
-
-         if($this->input->post('feedback')){
-             $actionInfo['feedback'] = $this->input->post('feedback');
-         }
-
-        $pb_player_id = $this->player_model->getPlaybasisId(array(
-            'client_id'    => $this->validToken['client_id'],
-            'site_id'      => $this->validToken['site_id'],
-            'cl_player_id' => $player_id
-        ));
-        if (empty($pb_player_id)) {
-            $this->response($this->error->setError('USER_ID_INVALID'), 200);
-        }
-
-        $actionInfo['pb_player_id'] = $pb_player_id;
-
-        $action = $this->content_model->addPlayerAction($actionInfo);
-        $this->response($this->resp->setRespond(), 200);
+        $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
     public function action_post($action = null, $content_id = null, $player_id = null)
@@ -261,16 +218,7 @@ class Content extends REST2_Controller
         $actionInfo['client_id'] = $this->validToken['client_id'];
         $actionInfo['site_id']   = $this->validToken['site_id'];
         $actionInfo['action']    = $action;
-/*
-        $required = $this->input->checkParam(array(
-            'content_id',
-            'action',
-            'star'
-        ));
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-*/
+
         $pb_player_id = $this->player_model->getPlaybasisId(array(
             'client_id'    => $this->validToken['client_id'],
             'site_id'      => $this->validToken['site_id'],
@@ -305,11 +253,12 @@ class Content extends REST2_Controller
 
         if(empty($playerContent)) {
             $action = json_decode(json_encode($this->content_model->addPlayerAction($actionInfo)), true);
+            $action = (isset($action['$id']));
         }else{
             $action = json_decode(json_encode($this->content_model->updatePlayerContent($actionInfo)), true);
         }
 
-        if(isset($action['$id'])) {
+        if($action) {
 
             // Sent action to action log
             $result = $this->restclient->post($this->config->base_url() . 'Engine/rule', array(

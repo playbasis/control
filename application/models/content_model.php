@@ -171,7 +171,7 @@ class Content_model extends MY_Model
             'detail' => $data['detail'],
             'date_start' => new MongoDate(strtotime($data['date_start'])),
             'date_end' => new MongoDate(strtotime($data['date_end'])),
-            'image' => (isset($data['image'])) ? $data['image'] : null,
+            'image' => (isset($data['image'])) ? $data['image'] : "no_image.jpg",
             'status' => $data['status']=='true',
             'deleted' => false,
             'date_added' => new MongoDate(),
