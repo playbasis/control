@@ -3640,6 +3640,140 @@
               "Description": "limit per page to be reported [default = \"20\"]"
             }
           ]
+        },
+        {
+          "MethodName": "Add Content to Node",
+          "Synopsis": "Add Content to specific Node",
+          "HTTPMethod": "POST",
+          "URI": "/StoreOrg/nodes/:node_id/addContent/:content_id",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "node_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Node Id to add player"
+            },
+            {
+              "Name": "content_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Content Id to add to Node"
+            }
+          ]
+        },
+        {
+          "MethodName": "Remove Content from Node",
+          "Synopsis": "Remove Content from specific Node",
+          "HTTPMethod": "POST",
+          "URI": "/StoreOrg/nodes/:node_id/removeContent/:content_id",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "node_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Node Id to add player"
+            },
+            {
+              "Name": "content_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Content Id to add to Node"
+            }
+          ]
+        },
+        {
+          "MethodName": "Set Content role",
+          "Synopsis": "Set Content's organization role to specific Node",
+          "HTTPMethod": "POST",
+          "URI": "/StoreOrg/nodes/:node_id/setContentRole/:content_id",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "node_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Node Id to set player's role"
+            },
+            {
+              "Name": "content_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Content Id to set content's role"
+            },
+            {
+              "Name": "role",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Role name to set content's role"
+            }
+          ]
+        },
+        {
+          "MethodName": "Unset Content role",
+          "Synopsis": "Unset Content's organization role from specific Node",
+          "HTTPMethod": "POST",
+          "URI": "/StoreOrg/nodes/:node_id/unsetContentRole/:content_id",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "node_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Node Id to unset player's role"
+            },
+            {
+              "Name": "content_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Content Id to unset content's role"
+            },
+            {
+              "Name": "role",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Role name to unset content's role"
+            }
+          ]
         }
       ]
     },
@@ -3842,7 +3976,7 @@
           ]
         },
         {
-          "MethodName": "Create content",
+          "MethodName": "Create content by player",
           "Synopsis": "Create content by player ID",
           "HTTPMethod": "POST",
           "URI": "/Content/addContent/player/:player_id",
@@ -4005,6 +4139,13 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "stars",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "star(s) for player given to content"
             }
           ]
         },
@@ -4035,6 +4176,43 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "stars",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "star(s) for player given to content"
+            }
+          ]
+        },
+        {
+          "MethodName": "Generate content PIN",
+          "Synopsis": "Create PIN to existing content",
+          "HTTPMethod": "POST",
+          "URI": "/Content/:content_id/setPin",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "content_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "content id as used in client's content"
+            },
+            {
+              "Name": "content_pin",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Secret PIN given to content"
             }
           ]
         }

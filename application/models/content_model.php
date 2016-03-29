@@ -258,4 +258,19 @@ class Content_model extends MY_Model
         return $update;
     }
 
+    public function setPinToContent($client_id, $site_id, $content_id, $pin_data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('_id', new MongoId($content_id));
+
+        $this->mongo_db->set('content_pin', $pin_data);
+
+        $update = $this->mongo_db->update('playbasis_content_to_client');
+
+        return $update;
+    }
+
 }

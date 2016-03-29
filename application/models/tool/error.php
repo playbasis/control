@@ -438,6 +438,18 @@ class Error extends CI_Model
                 $errorData['message'] = "File deletion is failed";
                 $errorData['error_code'] = '2419';
                 break;
+            case 'STORE_ORG_CONTENT_ALREADY_EXISTS_WITH_NODE':
+                $errorData['message'] = "Content already exists with current node";
+                $errorData['error_code'] = '2420';
+                break;
+            case 'STORE_ORG_CONTENT_NOT_EXISTS_WITH_NODE':
+                $errorData['message'] = "Content is not exists with current node";
+                $errorData['error_code'] = '2421';
+                break;
+            case 'STORE_ORG_CONTENT_ROLE_NOT_EXISTS':
+                $errorData['message'] = "This role is not set for this Content";
+                $errorData['error_code'] = '2422';
+                break;
             default:
                 $errorData['message'] = "Unknown";
                 $errorData['error_code'] = '9999';

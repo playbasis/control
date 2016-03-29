@@ -229,15 +229,7 @@ class Content extends REST2_Controller
         }
         $actionInfo['pb_player_id'] = $pb_player_id;
 
-        try {
-            $query_data['id'] = new MongoId($content_id);
-        } catch (Exception $e) {
-            $this->response($this->error->setError('PARAMETER_INVALID', array('content_id')), 200);
-        }
-        $contents = $this->content_model->retrieveContent($this->validToken['client_id'], $this->validToken['site_id'], $query_data);
-        if(!isset($contents[0]['_id'])){
-            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
-        }
+        $contents = $this->checkValidContent($content_id);
         $actionInfo['content_id'] = $contents[0]['_id'];
 
         if($this->input->post('stars')){
@@ -278,6 +270,30 @@ class Content extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $action, 'processing_time' => $t)), 200);
     }
 
+    public function generatePin_post($content_id)
+    {
+        $this->benchmark->mark('start');
+
+        $content_pin = $this->input->post('content_pin');
+        if (empty($content_pin)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('content_pin')), 200);
+            die();
+        }
+
+        if (empty($content_id)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('content_id')), 200);
+        }
+        $this->checkValidContent($content_id);
+
+        $pin_data = $this->generatePinDict($content_pin);
+
+        $is_updated = $this->content_model->setPinToContent($this->client_id, $this->site_id, $content_id, $pin_data);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
+    }
+
     /**
      * Use with array_walk and array_walk_recursive.
      * Recursive iterable items to modify array's value
@@ -300,5 +316,33 @@ class Content extends REST2_Controller
             }
         }
 
+    }
+
+    /**
+     * @param $content_id
+     */
+    private function checkValidContent($content_id)
+    {
+        try {
+            $query_data['id'] = new MongoId($content_id);
+        } catch (Exception $e) {
+            $this->response($this->error->setError('PARAMETER_INVALID', array('content_id')), 200);
+        }
+        $contents = $this->content_model->retrieveContent($this->validToken['client_id'], $this->validToken['site_id'], $query_data);
+        if(!isset($contents[0]['_id'])){
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
+        return $contents;
+    }
+
+    /**
+     * @param $pin
+     * @return array
+     */
+    private function generatePinDict($pin)
+    {
+        return array(
+            'pin' => $pin,
+            'date_added' => new MongoDate());
     }
 }
