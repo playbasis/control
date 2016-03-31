@@ -33,7 +33,7 @@ class File extends REST2_Controller
         }
 
         if ($image && $image['tmp_name']) {
-            $input = $this->input->get();
+            $input = $this->input->post();
             $pb_player_id = isset($input['player_id']) ? $this->player_model->getPlaybasisId(array_merge($this->validToken,
                 array(
                     'cl_player_id' => $input['player_id']
@@ -54,7 +54,7 @@ class File extends REST2_Controller
             $type = end($t);
 
 
-            $filename = md5($client_id . $site_id . $filename) . "." . $type;
+            $filename = md5($client_id . $site_id . $filename.$pb_player_id) . "." . $type;
 
             if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
                 $this->response($this->error->setError('FILE_NAME_IS_INVALID'), 200);
