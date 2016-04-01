@@ -11,7 +11,7 @@ class Image_model extends MY_Model
         $this->load->library('image');
     }
 
-    public function uploadImage($client_id, $site_id, $image, $filename, $directory = null, $pb_player_id = null)
+    public function uploadImage($client_id, $site_id, $image, $filename, $directory = null, $pb_player_id = null, $username = null)
     {
         $result = $this->s3->putObjectFile($image['tmp_name'], S3_BUCKET,
             rtrim(S3_CONTENT_FOLDER . $directory, '/') . "/" . $filename, S3::ACL_PUBLIC_READ);
@@ -19,7 +19,7 @@ class Image_model extends MY_Model
 
         if ($result) {
 
-            if ($this->getImageUrl($client_id, $site_id, $filename, $directory, $pb_player_id)) {
+            if ($this->getImageUrl($client_id, $site_id, $filename, $directory, $pb_player_id, $username)) {
                 $mongoDate = new MongoDate(time());
 
                 $this->mongo_db->set('date_modified', $mongoDate);
@@ -36,17 +36,23 @@ class Image_model extends MY_Model
                 $data = array(
                     'client_id' => $client_id,
                     'site_id' => $site_id,
-                    'pb_player_id' => $pb_player_id,
                     'file_name' => $filename,
                     'directory' => $directory,
                     'url' => $url,
                     'file_size' => $image['size']
                 );
 
+                if ($pb_player_id){
+                    $data['pb_player_id'] = $pb_player_id;
+                }
+                if($username){
+                    $data['username'] = $username;
+                }
+
                 $data['date_added'] = $mongoDate;
                 $data['date_modified'] = $mongoDate;
 
-                $this->mongo_db->insert('playbasis_file', $data);
+                $result = $this->mongo_db->insert('playbasis_file', $data);
             }
         }
 
@@ -54,7 +60,7 @@ class Image_model extends MY_Model
 
     }
 
-    public function deleteImage($client_id, $site_id, $filename, $directory = null, $pb_player_id = null)
+    public function deleteImage($client_id, $site_id, $filename, $directory = null, $pb_player_id = null, $username = null)
     {
         $uri = rtrim(S3_CONTENT_FOLDER . $directory, '/') . "/" . $filename;
         $result = $this->s3->deleteObject(S3_BUCKET, $uri);
@@ -72,6 +78,9 @@ class Image_model extends MY_Model
             if ($pb_player_id) {
                 $this->mongo_db->where('pb_player_id', $pb_player_id);
             }
+            if ($username) {
+                $this->mongo_db->where('username', $username);
+            }
 
             $this->mongo_db->delete('playbasis_file');
         }
@@ -80,7 +89,7 @@ class Image_model extends MY_Model
 
     }
 
-    public function getImageUrl($client_id, $site_id, $filename, $directory = null, $pb_player_id = null)
+    public function getImageUrl($client_id, $site_id, $filename, $directory = null, $pb_player_id = null, $username = null)
     {
 
         $this->mongo_db->select(array('url'));
@@ -92,6 +101,10 @@ class Image_model extends MY_Model
 
         if ($pb_player_id) {
             $this->mongo_db->where('pb_player_id', $pb_player_id);
+        }
+
+        if ($username) {
+            $this->mongo_db->where('username', $username);
         }
 
         $result = $this->mongo_db->get('playbasis_file');

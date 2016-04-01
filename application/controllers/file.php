@@ -13,6 +13,7 @@ class File extends REST2_Controller
         $this->load->model('image_model');
         $this->load->model('player_model');
         $this->load->model('plan_model');
+        $this->load->model('user_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
         $this->load->model('tool/utility', 'utility');
@@ -34,10 +35,21 @@ class File extends REST2_Controller
 
         if ($image && $image['tmp_name']) {
             $input = $this->input->post();
+
+            if (isset($input['player_id']) && isset($input['username'])){
+                $this->response($this->error->setError('PARAMETER_INVALID', array('player_id','username')), 200);
+            }
+
+            // Find pb_player_id
             $pb_player_id = isset($input['player_id']) ? $this->player_model->getPlaybasisId(array_merge($this->validToken,
                 array(
                     'cl_player_id' => $input['player_id']
                 ))) : null;
+
+            // Find username
+            $user = isset($input['username']) ? $this->user_model->getByUsername($input['username']):null;
+            $username = isset($user) ? $user['username'] : null;
+
             $client_id = $this->validToken['client_id'];
             $site_id = $this->validToken['site_id'];
 
@@ -53,8 +65,7 @@ class File extends REST2_Controller
             $t = explode('.', $filename);
             $type = end($t);
 
-
-            $filename = md5($client_id . $site_id . $filename.$pb_player_id) . "." . $type;
+            $filename = md5(rtrim($client_id . $site_id . $filename.$pb_player_id.$username)) . "." . $type;
 
             if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
                 $this->response($this->error->setError('FILE_NAME_IS_INVALID'), 200);
@@ -91,6 +102,7 @@ class File extends REST2_Controller
                 'image/png',
                 'image/x-png',
                 'image/gif',
+                'image/tiff',
                 'application/x-shockwave-flash',
                 'application/octet-stream'
             );
@@ -104,6 +116,7 @@ class File extends REST2_Controller
                 '.jpeg',
                 '.gif',
                 '.png',
+                '.tiff',
                 '.flv'
             );
 
@@ -118,8 +131,7 @@ class File extends REST2_Controller
             $this->response($this->error->setError('FILE_NOT_FOUND'), 200);
         }
 
-
-        if ($this->image_model->uploadImage($client_id, $site_id, $image, $filename, $directory, $pb_player_id)) {
+        if ($this->image_model->uploadImage($client_id, $site_id, $image, $filename, $directory, $pb_player_id, $user['username'])) {
 
 
             $json['url'] = rtrim(S3_IMAGE . S3_CONTENT_FOLDER . $directory, '/') . "/" . urlencode($filename);
