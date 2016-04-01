@@ -65,7 +65,11 @@ class File extends REST2_Controller
             $t = explode('.', $filename);
             $type = end($t);
 
-            $filename = md5(rtrim($client_id . $site_id . $filename.$pb_player_id.$username)) . "." . $type;
+            if ($username){
+                $filename = md5(rtrim($client_id . $site_id . $filename.'dashboard'))."." . $type;
+            }else{
+                $filename = md5(rtrim($client_id . $site_id . $filename.$pb_player_id))."." . $type;
+            }
 
             if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
                 $this->response($this->error->setError('FILE_NAME_IS_INVALID'), 200);
@@ -131,7 +135,7 @@ class File extends REST2_Controller
             $this->response($this->error->setError('FILE_NOT_FOUND'), 200);
         }
 
-        if ($this->image_model->uploadImage($client_id, $site_id, $image, $filename, $directory, $pb_player_id, $user['username'])) {
+        if ($this->image_model->uploadImage($client_id, $site_id, $image, $filename, $directory, $pb_player_id, $username)) {
 
 
             $json['url'] = rtrim(S3_IMAGE . S3_CONTENT_FOLDER . $directory, '/') . "/" . urlencode($filename);

@@ -19,12 +19,15 @@ class Image_model extends MY_Model
 
         if ($result) {
 
-            if ($this->getImageUrl($client_id, $site_id, $filename, $directory, $pb_player_id, $username)) {
+            if ($this->getImageUrl($client_id, $site_id, $filename, $directory, $pb_player_id)) {
                 $mongoDate = new MongoDate(time());
 
                 $this->mongo_db->set('date_modified', $mongoDate);
                 $this->mongo_db->set('file_size', $image['size']);
                 $this->mongo_db->set('url', $url);
+                if($username){
+                    $this->mongo_db->set('username', $username);
+                }
                 $this->mongo_db->where('client_id', $client_id);
                 $this->mongo_db->where('site_id', $site_id);
                 $this->mongo_db->where('file_name', $filename);
@@ -55,12 +58,10 @@ class Image_model extends MY_Model
                 $result = $this->mongo_db->insert('playbasis_file', $data);
             }
         }
-
         return $result;
-
     }
 
-    public function deleteImage($client_id, $site_id, $filename, $directory = null, $pb_player_id = null, $username = null)
+    public function deleteImage($client_id, $site_id, $filename, $directory = null, $pb_player_id = null)
     {
         $uri = rtrim(S3_CONTENT_FOLDER . $directory, '/') . "/" . $filename;
         $result = $this->s3->deleteObject(S3_BUCKET, $uri);
@@ -78,9 +79,6 @@ class Image_model extends MY_Model
             if ($pb_player_id) {
                 $this->mongo_db->where('pb_player_id', $pb_player_id);
             }
-            if ($username) {
-                $this->mongo_db->where('username', $username);
-            }
 
             $this->mongo_db->delete('playbasis_file');
         }
@@ -89,7 +87,7 @@ class Image_model extends MY_Model
 
     }
 
-    public function getImageUrl($client_id, $site_id, $filename, $directory = null, $pb_player_id = null, $username = null)
+    public function getImageUrl($client_id, $site_id, $filename, $directory = null, $pb_player_id = null)
     {
 
         $this->mongo_db->select(array('url'));
@@ -101,10 +99,6 @@ class Image_model extends MY_Model
 
         if ($pb_player_id) {
             $this->mongo_db->where('pb_player_id', $pb_player_id);
-        }
-
-        if ($username) {
-            $this->mongo_db->where('username', $username);
         }
 
         $result = $this->mongo_db->get('playbasis_file');
