@@ -233,7 +233,7 @@ class Content extends REST2_Controller
         $actionInfo['content_id'] = $contents[0]['_id'];
 
         if($this->input->post('stars')){
-            $actionInfo['stars'] = $this->input->post('stars');
+            $actionInfo['stars'] = intval($this->input->post('stars'));
         }
 
         $playerContent = $this->content_model->retrieveExistingPlayerContent(array(

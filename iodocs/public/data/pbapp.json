@@ -4144,7 +4144,7 @@
               "Name": "stars",
               "Required": "N",
               "Default": "",
-              "Type": "string",
+              "Type": "integer",
               "Description": "star(s) for player given to content"
             }
           ]
@@ -4181,7 +4181,7 @@
               "Name": "stars",
               "Required": "N",
               "Default": "",
-              "Type": "string",
+              "Type": "integer",
               "Description": "star(s) for player given to content"
             }
           ]
