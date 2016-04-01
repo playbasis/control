@@ -149,6 +149,7 @@ define('RETURN_LIMIT_FOR_RANK', 20);
 
 define('S3_IMAGE', 'http://elasticbeanstalk-ap-southeast-1-007834438823.s3.amazonaws.com/');
 define('S3_CONTENT_FOLDER','user_content/');
+define('S3_DATA_FOLDER','data/');
 define('DIR_IMAGE', FCPATH.'images/');
 define('THUMBNAIL_FOLDER','thumb/');
 define('POSTFIX_NUMERIC_PARAM','_numeric');

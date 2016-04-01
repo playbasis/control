@@ -13,9 +13,11 @@ class Image_model extends MY_Model
 
     public function uploadImage($client_id, $site_id, $image, $filename, $directory = null, $pb_player_id = null, $username = null)
     {
+        $content_folder = isset($pb_player_id) ? S3_CONTENT_FOLDER : S3_DATA_FOLDER;
+
         $result = $this->s3->putObjectFile($image['tmp_name'], S3_BUCKET,
-            rtrim(S3_CONTENT_FOLDER . $directory, '/') . "/" . $filename, S3::ACL_PUBLIC_READ);
-        $url = rtrim(S3_CONTENT_FOLDER . $directory, '/') . "/" . urlencode($filename);
+            rtrim($content_folder . $directory, '/') . "/" . $filename, S3::ACL_PUBLIC_READ);
+        $url = rtrim($content_folder . $directory, '/') . "/" . urlencode($filename);
 
         if ($result) {
 
@@ -63,10 +65,12 @@ class Image_model extends MY_Model
 
     public function deleteImage($client_id, $site_id, $filename, $directory = null, $pb_player_id = null)
     {
-        $uri = rtrim(S3_CONTENT_FOLDER . $directory, '/') . "/" . $filename;
+        $content_folder = isset($pb_player_id) ? S3_CONTENT_FOLDER : S3_DATA_FOLDER;
+
+        $uri = rtrim($content_folder . $directory, '/') . "/" . $filename;
         $result = $this->s3->deleteObject(S3_BUCKET, $uri);
         if ($result) {
-            $uri = rtrim(S3_CONTENT_FOLDER . THUMBNAIL_FOLDER . $directory, '/') . "/" . $filename;
+            $uri = rtrim($content_folder . THUMBNAIL_FOLDER . $directory, '/') . "/" . $filename;
             $result = $this->s3->deleteObject(S3_BUCKET, $uri);
         }
         if ($result) {
@@ -131,7 +135,7 @@ class Image_model extends MY_Model
 
     }
 
-    public function resize($filename, $width, $height, $cache_folder = 'cache/')
+    public function resize($filename, $width, $height, $cache_folder = 'cache/', $content_folder)
     {
 
         $filename = urldecode($filename);
@@ -149,8 +153,8 @@ class Image_model extends MY_Model
 
 
         if (!file_exists(DIR_IMAGE . $filename) || !is_file(DIR_IMAGE . $filename)) {
-            if (@fopen(S3_IMAGE . S3_CONTENT_FOLDER . $filename, "r")) {
-                @copy(S3_IMAGE . S3_CONTENT_FOLDER . $filename, DIR_IMAGE . $filecopy);
+            if (@fopen(S3_IMAGE . $content_folder . $filename, "r")) {
+                @copy(S3_IMAGE . $content_folder . $filename, DIR_IMAGE . $filecopy);
             } else {
                 return S3_IMAGE . $cache_folder . "no_image.jpg";
             }
@@ -177,15 +181,15 @@ class Image_model extends MY_Model
             $data_image = @file_get_contents(DIR_IMAGE . $new_image);
 
             //move the file
-            $this->s3->putObject($data_image, S3_BUCKET, S3_CONTENT_FOLDER . $new_image, S3::ACL_PUBLIC_READ);
+            $this->s3->putObject($data_image, S3_BUCKET, $content_folder . $new_image, S3::ACL_PUBLIC_READ);
         }
 
-        return S3_IMAGE . S3_CONTENT_FOLDER . $new_image;
+        return S3_IMAGE . $content_folder . $new_image;
     }
 
-    public function createThumbnail($filename)
+    public function createThumbnail($filename, $content_folder)
     {
-        return $this->resize($filename, 80, 80, THUMBNAIL_FOLDER);
+        return $this->resize($filename, 80, 80, THUMBNAIL_FOLDER, $content_folder);
     }
 }
 

@@ -65,10 +65,10 @@ class File extends REST2_Controller
             $t = explode('.', $filename);
             $type = end($t);
 
-            if ($username){
-                $filename = md5(rtrim($client_id . $site_id . $filename.'dashboard'))."." . $type;
-            }else{
+            if ($pb_player_id){
                 $filename = md5(rtrim($client_id . $site_id . $filename.$pb_player_id))."." . $type;
+            }else{
+                $filename = md5(rtrim($client_id . $site_id . $filename.'dashboard'))."." . $type;
             }
 
             if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
@@ -137,16 +137,17 @@ class File extends REST2_Controller
 
         if ($this->image_model->uploadImage($client_id, $site_id, $image, $filename, $directory, $pb_player_id, $username)) {
 
+            $content_folder = isset($pb_player_id) ? S3_CONTENT_FOLDER : S3_DATA_FOLDER;
 
-            $json['url'] = rtrim(S3_IMAGE . S3_CONTENT_FOLDER . $directory, '/') . "/" . urlencode($filename);
-            @copy(rtrim(S3_IMAGE . S3_CONTENT_FOLDER . $directory, '/') . "/" . urlencode($filename),
+            $json['url'] = rtrim(S3_IMAGE . $content_folder . $directory, '/') . "/" . urlencode($filename);
+            @copy(rtrim(S3_IMAGE . $content_folder . $directory, '/') . "/" . urlencode($filename),
                 $directory . '/' . $filename);
             if ($directory) {
                 $uri = $directory . "/" . $filename;
             } else {
                 $uri = $filename;
             }
-            $json['thumb_url'] = $this->image_model->createThumbnail($uri);
+            $json['thumb_url'] = $this->image_model->createThumbnail($uri, $content_folder);
             @unlink($local_directory . '/' . $filename);
             @unlink($local_directory . '/' . THUMBNAIL_FOLDER . $filename);
 
