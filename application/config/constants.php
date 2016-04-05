@@ -151,7 +151,13 @@ define('S3_IMAGE', 'http://elasticbeanstalk-ap-southeast-1-007834438823.s3.amazo
 define('S3_CONTENT_FOLDER','user_content/');
 define('S3_DATA_FOLDER','data/');
 define('DIR_IMAGE', FCPATH.'images/');
-define('THUMBNAIL_FOLDER','thumb/');
+define('THUMBNAIL_FOLDER','cache/');
 define('POSTFIX_NUMERIC_PARAM','_numeric');
+
+define('MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH', 80);
+define('MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT', 80);
+define('MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH', 240);
+define('MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT', 240);
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

@@ -337,6 +337,7 @@ $route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 //File API
 $route['File/upload'] = 'file/upload';
 $route['File/delete'] = 'file/delete';
+$route['File/list']   = 'file/list';
 
 //Import API
 $route['Import/importSetting'] = 'import/importSetting';

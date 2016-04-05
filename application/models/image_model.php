@@ -11,13 +11,13 @@ class Image_model extends MY_Model
         $this->load->library('image');
     }
 
-    public function uploadImage($client_id, $site_id, $image, $filename, $directory = null, $pb_player_id = null, $username = null)
+    public function uploadImage($client_id, $site_id, $image, $filename, $directory = null, $pb_player_id = null, $user_id = null)
     {
-        $content_folder = isset($pb_player_id) ? S3_CONTENT_FOLDER : S3_DATA_FOLDER;
+        $this->s3->setEndpoint("s3-ap-southeast-1.amazonaws.com");
 
         $result = $this->s3->putObjectFile($image['tmp_name'], S3_BUCKET,
-            rtrim($content_folder . $directory, '/') . "/" . $filename, S3::ACL_PUBLIC_READ);
-        $url = rtrim($content_folder . $directory, '/') . "/" . urlencode($filename);
+                    rtrim(S3_DATA_FOLDER . $directory, '/') . "/" . $filename, S3::ACL_PUBLIC_READ);
+        $url = rtrim(S3_DATA_FOLDER . $directory, '/') . "/" . urlencode($filename);
 
         if ($result) {
 
@@ -27,9 +27,6 @@ class Image_model extends MY_Model
                 $this->mongo_db->set('date_modified', $mongoDate);
                 $this->mongo_db->set('file_size', $image['size']);
                 $this->mongo_db->set('url', $url);
-                if($username){
-                    $this->mongo_db->set('username', $username);
-                }
                 $this->mongo_db->where('client_id', $client_id);
                 $this->mongo_db->where('site_id', $site_id);
                 $this->mongo_db->where('file_name', $filename);
@@ -44,14 +41,19 @@ class Image_model extends MY_Model
                     'file_name' => $filename,
                     'directory' => $directory,
                     'url' => $url,
-                    'file_size' => $image['size']
+                    'type' => $image['type'],
+                    'file_size' => $image['size'],
+                    'width' => $image['width'],
+                    'height' => $image['height']
                 );
 
+                // Assign pb_player_id to null if not assign pb_player_id or user_id
                 if ($pb_player_id){
-                    $data['pb_player_id'] = $pb_player_id;
-                }
-                if($username){
-                    $data['username'] = $username;
+                    $data['pb_player_id'] = new MongoId($pb_player_id);
+                }elseif($user_id){
+                    $data['user_id'] = new MongoId($user_id);
+                }else{
+                    $data['pb_player_id'] = null;
                 }
 
                 $data['date_added'] = $mongoDate;
@@ -63,15 +65,23 @@ class Image_model extends MY_Model
         return $result;
     }
 
-    public function deleteImage($client_id, $site_id, $filename, $directory = null, $pb_player_id = null)
+    public function deleteImage($client_id, $site_id, $filename, $directory = null)
     {
-        $content_folder = isset($pb_player_id) ? S3_CONTENT_FOLDER : S3_DATA_FOLDER;
 
-        $uri = rtrim($content_folder . $directory, '/') . "/" . $filename;
+        $uri = rtrim(S3_DATA_FOLDER . $directory, '/') . "/" . $filename;
         $result = $this->s3->deleteObject(S3_BUCKET, $uri);
         if ($result) {
-            $uri = rtrim($content_folder . THUMBNAIL_FOLDER . $directory, '/') . "/" . $filename;
+            $extension = substr(strrchr($filename,'.'), 0);
+            $name = basename($filename, $extension);
+            $uri = rtrim(THUMBNAIL_FOLDER . S3_DATA_FOLDER . $directory, '/') . "/" . $name . '-' .
+                MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT . $extension;
             $result = $this->s3->deleteObject(S3_BUCKET, $uri);
+
+            if ($result){
+                $uri = rtrim(THUMBNAIL_FOLDER . S3_DATA_FOLDER . $directory, '/') . "/" . $name . '-' .
+                    MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT . $extension;
+                $result = $this->s3->deleteObject(S3_BUCKET, $uri);
+            }
         }
         if ($result) {
             $this->mongo_db->where('client_id', $client_id);
@@ -80,11 +90,8 @@ class Image_model extends MY_Model
             if ($directory) {
                 $this->mongo_db->where('directory', $directory);
             }
-            if ($pb_player_id) {
-                $this->mongo_db->where('pb_player_id', $pb_player_id);
-            }
 
-            $this->mongo_db->delete('playbasis_file');
+            $result = $this->mongo_db->delete('playbasis_file');
         }
 
         return $result;
@@ -135,7 +142,7 @@ class Image_model extends MY_Model
 
     }
 
-    public function resize($filename, $width, $height, $cache_folder = 'cache/', $content_folder)
+    private function resize($filename, $width, $height, $cache_folder = 'thumb/')
     {
 
         $filename = urldecode($filename);
@@ -147,14 +154,16 @@ class Image_model extends MY_Model
         }
 
         $info = pathinfo($filename);
+        $extension = $info['extension'];
 
         $old_image = $filename;
-        $new_image = $cache_folder . $filename;
+        $new_image = $cache_folder . S3_DATA_FOLDER . utf8_substr($filename, 0,
+                utf8_strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
 
 
         if (!file_exists(DIR_IMAGE . $filename) || !is_file(DIR_IMAGE . $filename)) {
-            if (@fopen(S3_IMAGE . $content_folder . $filename, "r")) {
-                @copy(S3_IMAGE . $content_folder . $filename, DIR_IMAGE . $filecopy);
+            if (@fopen(S3_IMAGE . S3_DATA_FOLDER . $filename, "r")) {
+                @copy(S3_IMAGE . S3_DATA_FOLDER . $filename, DIR_IMAGE . $filecopy);
             } else {
                 return S3_IMAGE . $cache_folder . "no_image.jpg";
             }
@@ -181,15 +190,70 @@ class Image_model extends MY_Model
             $data_image = @file_get_contents(DIR_IMAGE . $new_image);
 
             //move the file
-            $this->s3->putObject($data_image, S3_BUCKET, $content_folder . $new_image, S3::ACL_PUBLIC_READ);
+            $this->s3->putObject($data_image, S3_BUCKET, $new_image, S3::ACL_PUBLIC_READ);
+
+            @unlink(DIR_IMAGE . $new_image);
+
         }
 
-        return S3_IMAGE . $content_folder . $new_image;
+        return S3_IMAGE . $new_image;
     }
 
-    public function createThumbnail($filename, $content_folder)
+    public function retrieveData($client_id, $site_id, $optionalParams = array())
     {
-        return $this->resize($filename, 80, 80, THUMBNAIL_FOLDER, $content_folder);
+        $this->set_site_mongodb($site_id);
+
+        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+            try {
+                $id = new MongoId($optionalParams['id']);
+                $this->mongo_db->where('_id', $id);
+            } catch (Exception $e) {
+                return null;
+            }
+        }
+
+        if (isset($optionalParams['pb_player_id']) && !is_null($optionalParams['pb_player_id'])) {
+            try {
+                $pb_player_id = new MongoId($optionalParams['pb_player_id']);
+                $this->mongo_db->where('pb_player_id', $pb_player_id);
+            } catch (Exception $e) {
+                return null;
+            }
+        }
+
+        // Sorting
+        $sort_data = array('_id', 'date_added', 'date_modified', 'type', 'file_size');
+
+        if (isset($optionalParams['order']) && (mb_strtolower($optionalParams['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('date_added' => $order));
+        }
+
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id
+        ));
+
+        $result = $this->mongo_db->get('playbasis_file');
+
+        return $result;
+    }
+
+    public function createThumbnailSmall($filename)
+    {
+        return $this->resize($filename, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH, MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT, THUMBNAIL_FOLDER);
+    }
+
+    public function createThumbnailLarge($filename)
+    {
+        return $this->resize($filename, MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH, MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT, THUMBNAIL_FOLDER);
     }
 }
 
