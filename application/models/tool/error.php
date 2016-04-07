@@ -359,7 +359,13 @@ class Error extends CI_Model
                 $errorData['error_code'] = '2301';
                 break;
             case 'PARAMETER_INVALID':
-                $errorData['message'] = "Parameter is invalid";
+                if (is_array($dataArray)) // array
+                {
+                    $errorData['message'] = "Invalid parameter , [ " . implode(' , ',
+                            $dataArray) . " ]";
+                } else {
+                    $errorData['message'] = "Parameter is invalid";
+                }
                 $errorData['error_code'] = '2302';
                 break;
             case 'STORE_ORG_NODE_NOT_FOUND':
