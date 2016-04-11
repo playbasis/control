@@ -86,7 +86,7 @@ class Googles_model extends MY_Model
                 'date_modified' => $d,
             ));
         }
-        return $this->mongo_db->batch_insert('playbasis_calendar_events', $l, array("w" => 0, "j" => false));
+        return $this->mongo_db->batch_insert('playbasis_calendar_events', $l, array("w" => 0, "j" => false, "continueOnError" => true));
     }
 
     public function getEvent($site_id, $calendar_id, $event_id)
