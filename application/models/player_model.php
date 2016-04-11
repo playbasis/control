@@ -1505,6 +1505,38 @@ class Player_model extends MY_Model
         return $this->mongo_db->get('playbasis_action_log', true);
     }
 
+    public function streamActionLog($last, $limit=1000000, $return_cursor=false)
+    {
+        $this->mongo_db->select(array(
+            'pb_player_id',
+            'client_id',
+            'site_id',
+            'action_id',
+            'date_added',
+        ));
+        if ($last) {
+            $this->mongo_db->where_gt('_id', $last);
+        }
+        $this->mongo_db->limit($limit); // https://scalegrid.io/blog/fast-paging-with-mongodb/
+        $this->mongo_db->order_by(array('date_added' => 'ASC'));
+        return $this->mongo_db->get('playbasis_action_log', $return_cursor);
+    }
+
+    public function countActionLog($last=null)
+    {
+        $this->mongo_db->select(array(
+            'pb_player_id',
+            'client_id',
+            'site_id',
+            'action_id',
+            'date_added',
+        ));
+        if ($last) {
+            $this->mongo_db->where_gt('_id', $last);
+        }
+        return $this->mongo_db->count('playbasis_action_log');
+    }
+
     public function computeDau($action, $d)
     {
         $this->mongo_db->select(array());
