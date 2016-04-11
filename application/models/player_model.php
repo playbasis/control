@@ -1637,7 +1637,7 @@ class Player_model extends MY_Model
             );
             $cur = strtotime(date('Y-m-d', strtotime('+1 day', $cur)));
         }
-        return $this->mongo_db->batch_insert('playbasis_player_mau', $data, array("w" => 0, "j" => false));
+        return $this->mongo_db->batch_insert('playbasis_player_mau', $data, array("w" => 0, "j" => false, "continueOnError" => true));
     }
 
     private function checkClientUserLimitWarning($client_id, $site_id, $limit)
