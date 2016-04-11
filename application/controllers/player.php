@@ -1109,12 +1109,22 @@ class Player extends REST2_Controller
         if (!$player) {
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
-        $player['pwd_reset_code'] = $this->player_model->generatePasswordResetCode($player['_id']);
 
-        $this->response($this->resp->setRespond(array(
-                'url' => $this->config->item('CONTROL_DASHBOARD_URL') . 'player/password/reset/' . $player['pwd_reset_code']
-            )
-        ), 200);
+        // generate password key
+        $random_key = $this->player_model->generatePasswordResetCode($player['_id']);
+
+        // send email
+        $from = EMAIL_FROM;
+        $to = $email;
+        $subject = 'Reset Your Password';
+        $html = $this->parser->parse('player_forgotpassword.html', array(
+            'firstname' => $player['first_name'],
+            'lastname' => $player['last_name'],
+            'url' => $this->config->item('CONTROL_DASHBOARD_URL') . 'player/password/reset/'.$random_key
+        ), true);
+        $response = $this->utility->email($from, $to, $subject, $html);
+        $this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response, $from, $to,
+            $subject, $html);
     }
 
     public function points_get($player_id = '')
