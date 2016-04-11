@@ -2,6 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 define('MAX_EXECUTION_TIME', 0);
+define('MAX_MEMORY', '512M');
+define('MAX_RETRIES', 3);
+define('DATABASE_TIMEOUT_IN_MS', 5*60*1000);
+//define('PAGE_SIZE', 1000000);
+define('PAGE_SIZE', 500000);
+//define('BACTH_SIZE', 32*1024);
+define('BACTH_SIZE', 128*1024);
 
 define('EMAIL_MAX_SENT', 3);
 define('DAYS_TO_BECOME_INACTIVE', 30);
@@ -45,6 +52,7 @@ class Cron extends CI_Controller
         $this->load->model('push_model');
         $this->load->model('tracker_model');
         $this->load->model('store_org_model');
+        $this->load->model('stat_model');
         $this->load->model('engine/jigsaw', 'jigsaw_model');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/node_stream', 'node');
@@ -401,6 +409,131 @@ class Cron extends CI_Controller
                 break;
             }
         }
+    }
+
+    public function processActionLogStat()
+    {
+        set_time_limit(MAX_EXECUTION_TIME);
+        ini_set('memory_limit', MAX_MEMORY);
+
+        $m_action = null;
+        $m_dau = null;
+
+        // get last processed action_id
+        $last = $this->stat_model->getLastProcessedAction();
+
+        $total_record = $this->player_model->countActionLog($last);
+        $record_per_page = PAGE_SIZE;
+        $total_page = ceil($total_record/(1.0*$record_per_page));
+        print("records = ".$total_record."\n");
+        print("records/page = ".$record_per_page."\n");
+        print("pages = ".$total_page."\n");
+        $c = 0;
+        $dt = new DateTime();
+
+        for ($page=0; $page < $total_page; $page++) {
+            print("- page (".$page.")\n");
+
+            // process action log, building $m_action and $m_dau data structure
+            $_c = 0;
+            for ($i = 1; ;) { // retry loop
+                $_c = 0;
+                print("- processing action log... (".$i.")\n");
+                $m_action = array();
+                $m_dau = array();
+                $cursor = $this->player_model->streamActionLog($last, $record_per_page, true);
+                $cursor->timeout(DATABASE_TIMEOUT_IN_MS); // default is 120 seconds
+                try {
+                    $_last = $last;
+                    while ($cursor->hasNext()) {
+                        $log = $cursor->getNext();
+                        $dt->setTimestamp($log['date_added']->sec); // http://stackoverflow.com/questions/20775300/date-from-negative-float, unfortunately it does not apply in this case as the value of "$log['date_added']->sec" would have integer overflow problem already
+                        $Ymd = $dt->format('Y-m-d'); // instead of $Ymd = date('Y-m-d', $log['date_added']->sec);
+                        $client_id = $log['client_id'];
+                        $site_id = $log['site_id'];
+                        $pb_player_id = $log['pb_player_id'];
+                        $action_id = $log['action_id'];
+                        // action
+                        $key = implode('|', array($Ymd, $client_id, $site_id, $action_id));
+                        if (!isset($m_action[$key])) $m_action[$key] = 0;
+                        $m_action[$key]++;
+                        // dau
+                        $key = implode('|', array($Ymd, $client_id, $site_id, $pb_player_id));
+                        $m_dau[$key] = true;
+                        // set last processed action_id
+                        $_last = $log['_id'];
+                        $_c++;
+                    }
+                    $last = $_last;
+                    break; // success, break out of retry loop
+                } catch (MongoCursorException $e) {
+                    log_message('error', 'MongoDB cursor exception: ' . $e->getMessage() . " (" . $e->getCode() . ")\n");
+                    if ($i++ >= MAX_RETRIES) throw $e;
+                    $m_action = null; unset($m_action);
+                    $m_dau = null; unset($m_dau);
+                } catch (MongoConnectionException $e) {
+                    log_message('error', 'MongoDB connection exception: ' . $e->getMessage() . " (" . $e->getCode() . ")\n");
+                    if ($i++ >= MAX_RETRIES) throw $e;
+                    $m_action = null; unset($m_action);
+                    $m_dau = null; unset($m_dau);
+                }
+            }
+            $c += $_c;
+            print("- current = " . $_c . ", accumulate = ".$c."\n");
+            print("> count(m_action) = " . count($m_action) . "\n");
+            print("> count(m_dau) = " . count($m_dau) . "\n");
+
+            print("- calculating DAU...\n");
+            $this->insertStatActiveUser($m_dau, array('d', 'client_id', 'site_id', 'pb_player_id'), $this->stat_model->insertDAUs);
+
+            print("- calculating MAU...\n");
+            $this->insertStatActiveUser($m_dau, array('d', 'client_id', 'site_id', 'pb_player_id'), $this->stat_model->insertMAUs, 30);
+            $m_dau = null; unset($m_dau);
+
+            print("- calculating action...\n");
+            $this->insertStatAction($m_action, array('d', 'client_id', 'site_id', 'action_id', 'c'));
+            $m_action = null; unset($m_action);
+
+            // save last processed action_id
+            print("- saving last processed action...\n");
+            $this->stat_model->setLastProcessedAction($last);
+
+            print("\n");
+        }
+
+        print("records (processed) = " . $c . "\n");
+    }
+
+    public function insertStatAction($m, $keys)
+    {
+        foreach ($m as $key => $value) {
+            $data = explode('|', $key);
+            $data[] = $value;
+            $this->stat_model->upsertAction(array_combine($keys, $data));
+        }
+    }
+
+    public function insertStatActiveUser($m, $keys, $handler, $days=0, $batch_size=BACTH_SIZE)
+    {
+        $h = array();
+        foreach ($m as $key => $value) {
+            $data = explode('|', $key);
+            $d = $data[0];
+            $h[md5($key)] = array_combine($keys, $data);
+            for ($i=0; $i < $days-1; $i++) {
+                $d = date('Y-m-d', strtotime($d .' +1 day'));
+                $data = array($d, $data[1], $data[2], $data[3]);
+                $h[md5(implode('|', $data))] = array_combine($keys, $data);
+            }
+            if (count($h) > $batch_size) {
+                print("mem usage = ".memory_get_usage().", real usage = ".memory_get_usage(true)."\n");
+                $handler(array_values($h));
+                $h = null; unset($h);
+                $h = array();
+            }
+        }
+        $handler(array_values($h));
+        $h = null; unset($h);
     }
 
     public function pullFullContact()
