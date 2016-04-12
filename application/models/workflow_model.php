@@ -262,8 +262,15 @@ class Workflow_model extends MY_Model
     public function approvePlayer($client_id, $site_id, $user_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        $player_id = $this->findPlayerId($client_id, $site_id, new MongoID($user_id));
+        if ($player_id) {
+            $site_name = $this->findSiteName($client_id, $site_id);
+            $ret = $this->_api->emailPlayer($player_id, 'Your Account is Approved', 'Dear {{first_name}} {{last_name}}<br><br>This email is to notify you that your account is approved on '.($site_name ? $site_name : '???'));
+        }
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('_id', new MongoID($user_id));
 
         $this->mongo_db->set('approve_status', "approved");
@@ -382,5 +389,22 @@ class Workflow_model extends MY_Model
         }
 
         return $this->mongo_db->get('playbasis_player');
+    }
+
+    private function findSiteName($client_id, $site_id) {
+        $this->mongo_db->where(array(
+            '_id' => $site_id,
+            'client_id' => $client_id
+        ));
+        $results = $this->mongo_db->get("playbasis_client_site");
+        return $results && isset($results[0]['site_name']) ? $results[0]['site_name'] : null;
+    }
+
+    private function findPlayerId($client_id, $site_id, $pb_player_id) {
+        $this->mongo_db->where(array(
+            '_id' => $pb_player_id
+        ));
+        $results = $this->mongo_db->get("playbasis_player");
+        return $results && isset($results[0]['cl_player_id']) ? $results[0]['cl_player_id'] : null;
     }
 }
