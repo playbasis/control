@@ -219,7 +219,7 @@ class Workflow_model extends MY_Model
     {
         $status = $this->_api->register($data['cl_player_id'], $data['username'], $data['email'], $data);
 
-        if ($data && isset($data['approve_status']) && $data['approve_status'] == 'approved') {
+        if (isset($status->success) && $status->success && $data && isset($data['approve_status']) && $data['approve_status'] == 'approved') {
             $player = $this->findPlayerByClPlayerId($client_id, $site_id, $data['cl_player_id']);
             if ($player) {
                 /* system automatically send an email to notify the player that account is approved */
