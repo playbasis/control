@@ -343,7 +343,7 @@ class Workflow_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($user_id));
 
         $this->mongo_db->set('approve_status', "approved");
-        $this->mongo_db->set('date_approved', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->set('date_approved', new MongoDate());
         return $this->mongo_db->update('playbasis_player');
     }
 
@@ -355,7 +355,7 @@ class Workflow_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($user_id));
 
         $this->mongo_db->set('approve_status', "rejected");
-        $this->mongo_db->set('date_approved', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->set('date_approved', new MongoDate());
         return $this->mongo_db->update('playbasis_player');
     }
 
