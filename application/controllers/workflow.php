@@ -25,6 +25,21 @@ class Workflow extends MY_Controller
         $this->lang->load("workflow", $lang['folder']);
         $this->load->model('Store_org_model');
         $this->load->model('Feature_model');
+
+        /* initialize $this->api */
+        $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(),
+            $this->User_model->getSiteId());
+        $this->_api = $this->playbasisapi;
+        $platforms = $this->App_model->getPlatFormByAppId(array(
+            'site_id' => $this->User_model->getSiteId(),
+        ));
+        $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
+        if ($platform) {
+            $this->_api->set_api_key($result['api_key']);
+            $this->_api->set_api_secret($result['api_secret']);
+            $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
+            $this->_api->auth($pkg_name);
+        }
     }
 
     public function index()
@@ -53,7 +68,7 @@ class Workflow extends MY_Controller
         // incase: click delete direct player
         if ($this->input->post('user_id')) {
             $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
-            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+            $result = $this->Workflow_model->deletePlayer($this->_api, $player['cl_player_id']);
             if (isset($result->success)) {
                 if ($result->success) {
                     $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
@@ -71,7 +86,7 @@ class Workflow extends MY_Controller
             if ($this->input->post('action') == "delete") {
                 foreach ($selectedUsers as $selectedUser) {
                     $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
-                    $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+                    $result = $this->Workflow_model->deletePlayer($this->_api, $player['cl_player_id']);
                     if (!$result->success) {
                         $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
                         redirect('/workflow', 'refresh');
@@ -119,7 +134,7 @@ class Workflow extends MY_Controller
         // incase: click delete direct player
         if ($this->input->post('user_id')) {
             $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
-            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+            $result = $this->Workflow_model->deletePlayer($this->_api, $player['cl_player_id']);
             if ($result->success) {
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             } else {
@@ -133,7 +148,7 @@ class Workflow extends MY_Controller
             if ($this->input->post('action') == "delete") {
                 foreach ($selectedUsers as $selectedUser) {
                     $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
-                    $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+                    $result = $this->Workflow_model->deletePlayer($this->_api, $player['cl_player_id']);
                     if (!$result->success) {
                         $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
                         redirect('/workflow', 'refresh');
@@ -181,7 +196,7 @@ class Workflow extends MY_Controller
         // incase: click delete direct player
         if ($this->input->post('user_id')) {
             $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
-            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+            $result = $this->Workflow_model->deletePlayer($this->_api, $player['cl_player_id']);
             if ($result->success) {
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             } else {
@@ -209,7 +224,7 @@ class Workflow extends MY_Controller
             } elseif ($this->input->post('action') == "delete") {
                 foreach ($selectedUsers as $selectedUser) {
                     $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
-                    $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+                    $result = $this->Workflow_model->deletePlayer($this->_api, $player['cl_player_id']);
                     if (!$result->success) {
                         $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
                         redirect('/workflow', 'refresh');
@@ -257,7 +272,7 @@ class Workflow extends MY_Controller
         // incase: click delete direct player
         if ($this->input->post('user_id')) {
             $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
-            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+            $result = $this->Workflow_model->deletePlayer($this->_api, $player['cl_player_id']);
             if ($result->success) {
                 $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             } else {
@@ -278,7 +293,7 @@ class Workflow extends MY_Controller
             } elseif ($this->input->post('action') == "delete") {
                 foreach ($selectedUsers as $selectedUser) {
                     $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
-                    $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+                    $result = $this->Workflow_model->deletePlayer($this->_api, $player['cl_player_id']);
                     if (!$result->success) {
                         $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
                         redirect('/workflow', 'refresh');
@@ -526,7 +541,7 @@ class Workflow extends MY_Controller
             }
 
             if ($check_status == true) {
-                $status = $this->Workflow_model->editPlayer($data['cl_player_id'], $data);
+                $status = $this->Workflow_model->editPlayer($this->_api, $data['cl_player_id'], $data);
                 if (isset($status->success)) {
                     if ($status->success) {
                         if ($this->User_model->hasPermission('access', 'store_org') &&
@@ -539,7 +554,7 @@ class Workflow extends MY_Controller
 
                                     $pb_player_id = $this->findPbPlayerId($data['cl_player_id']);
                                     if ($org_id == "") {// this player has never been added to any node
-                                        $this->Workflow_model->addPlayerToNode($data['cl_player_id'],
+                                        $this->Workflow_model->addPlayerToNode($this->_api, $data['cl_player_id'],
                                             $data['organize_node'][$i]);
                                     } else { //this player has been added to some node
                                         $this->Workflow_model->editOrganizationOfPlayer($client_id, $site_id,
@@ -559,7 +574,7 @@ class Workflow extends MY_Controller
                                         $role_array = explode(",", $data['organize_role'][$i]);
                                         foreach ($role_array as $role) {
                                             $role = str_replace(' ', '', $role);
-                                            $status = $this->Workflow_model->setPlayerRole($data['cl_player_id'],
+                                            $status = $this->Workflow_model->setPlayerRole($this->_api, $data['cl_player_id'],
                                                 $data['organize_node'][$i], $role);
                                             if (!$status->success) {
                                                 break;
@@ -623,7 +638,7 @@ class Workflow extends MY_Controller
                 $this->data['message'] = $this->lang->line('text_fail_set_role');
 
             } else {
-                $status = $this->Workflow_model->createPlayer($data);
+                $status = $this->Workflow_model->createPlayer($this->_api, $data);
                 if (isset($status->success)) {
                     if ($status->success) {
                         if ($this->User_model->hasPermission('access', 'store_org') &&
@@ -632,7 +647,7 @@ class Workflow extends MY_Controller
                         ) {
                             //Add player to node
                             if (isset($data['organize_node'][0]) && !empty($data['organize_node'][0])) {
-                                $status = $this->Workflow_model->addPlayerToNode($data['cl_player_id'],
+                                $status = $this->Workflow_model->addPlayerToNode($this->_api, $data['cl_player_id'],
                                     $data['organize_node'][0]);
                                 if ($status->success) {
                                     //set role of player
@@ -641,7 +656,7 @@ class Workflow extends MY_Controller
                                         $status1 = null;
                                         foreach ($role_array as $role) {
                                             $role = str_replace(' ', '', $role);
-                                            $status1 = $this->Workflow_model->setPlayerRole($data['cl_player_id'],
+                                            $status1 = $this->Workflow_model->setPlayerRole($this->_api, $data['cl_player_id'],
                                                 $data['organize_node'][0], $role);
                                             if (!$status1->success) {
                                                 break;
