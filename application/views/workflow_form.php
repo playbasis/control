@@ -81,9 +81,9 @@
 
                         <td>
                             <select name="approve_status"  >
-                                <option value="approved" <?php if ($requester['approve_status'] == "approved") { ?>selected<?php }?>>Approved</option>
-                                <option value="rejected" <?php if ($requester['approve_status'] == "rejected") { ?>selected<?php }?>>Rejected</option>
-                                <option value="pending"  <?php if ($requester['approve_status'] == "pending")  { ?>selected<?php }?>>Pending</option>
+                                <option value="approved" <?php if (isset($requester['approve_status']) && $requester['approve_status'] == "approved") { ?>selected<?php }?>>Approved</option>
+                                <option value="rejected" <?php if (isset($requester['approve_status']) && $requester['approve_status'] == "rejected") { ?>selected<?php }?>>Rejected</option>
+                                <option value="pending"  <?php if (!isset($requester['approve_status']) || $requester['approve_status'] == "pending")  { ?>selected<?php }?>>Pending</option>
                             </select>
                         </td>
                     </tr>
