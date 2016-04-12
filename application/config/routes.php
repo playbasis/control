@@ -334,12 +334,13 @@ $route['StoreOrg/nodes/'.ANY_STRING.'/unsetContentRole/'.ANY_STRING] = 'store_or
 $route['Content'] = 'content/list';
 $route['Category'] = 'content/category';
 $route['Content/addContent'] = 'content/insert';
-$route['Content/addContent/player/'.ANY_STRING] = 'content/insert/$1';                              // ANY_STRING = content_id
-$route['Content/'.ANY_STRING.'/update'] = 'content/update/$1';                                      // ANY_STRING = content_id/cl_player_id
-$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/like'] = 'content/action/like/$1/$2';          // ANY_STRING = content_id/cl_player_id
-$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/dislike'] = 'content/action/dislike/$1/$2';    // ANY_STRING = content_id/cl_player_id
-$route['Content/'.ANY_STRING.'/setPin'] = 'content/generatePin/$1';                                 // ANY_STRING = content_id
-
+$route['Content/addContent/player/'.ANY_STRING] = 'content/insert/$1';                           // ANY_STRING = content_id
+$route['Content/'.ANY_STRING.'/update'] = 'content/update/$1';                                   // ANY_STRING = content_id/cl_player_id
+$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/like'] = 'content/action/like/$1/$2';       // ANY_STRING = content_id/cl_player_id
+$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/dislike'] = 'content/action/dislike/$1/$2'; // ANY_STRING = content_id/cl_player_id
+$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/feedback'] = 'content/giveFeedback/$1/$2';  // ANY_STRING = content_id/cl_player_id
+$route['Content/'.ANY_STRING.'/setPin'] = 'content/generatePin/$1';                              // ANY_STRING = content_id
+$route['Content/'.ANY_STRING.'/delete'] = 'content/deleteContent/$1';                            // ANY_STRING = content_id
 
 //CMS API
 $route['CMS/getArticles'] = 'cms/getArticles';

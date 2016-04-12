@@ -334,6 +334,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Content not found";
                 $errorData['error_code'] = '2001';
                 break;
+            case 'CONTENT_CATEGORY_NOT_FOUND':
+                $errorData['message'] = "Content category not found";
+                $errorData['error_code'] = '2002';
+                break;
             case 'PIN_CODE_INVALID':
                 $errorData['message'] = "PIN code is invalid";
                 $errorData['error_code'] = '2101';

@@ -3940,7 +3940,7 @@
             },
             {
               "Name": "category",
-              "Required": "Y",
+              "Required": "N",
               "Default": "",
               "Type": "string",
               "Description": "Specific category name of content"
@@ -4019,7 +4019,7 @@
             },
             {
               "Name": "category",
-              "Required": "Y",
+              "Required": "N",
               "Default": "",
               "Type": "string",
               "Description": "Specific category name of content"
@@ -4139,13 +4139,6 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
-            },
-            {
-              "Name": "stars",
-              "Required": "N",
-              "Default": "",
-              "Type": "integer",
-              "Description": "star(s) for player given to content"
             }
           ]
         },
@@ -4176,21 +4169,14 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
-            },
-            {
-              "Name": "stars",
-              "Required": "N",
-              "Default": "",
-              "Type": "integer",
-              "Description": "star(s) for player given to content"
             }
           ]
         },
         {
-          "MethodName": "Generate content PIN",
-          "Synopsis": "Create PIN to existing content",
+          "MethodName": "Give feedback",
+          "Synopsis": "Player give any feedback(s) to content",
           "HTTPMethod": "POST",
-          "URI": "/Content/:content_id/setPin",
+          "URI": "/Content/:content_id/player/:player_id/feedback",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -4208,12 +4194,86 @@
               "Description": "content id as used in client's content"
             },
             {
-              "Name": "content_pin",
+              "Name": "player_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Secret PIN given to content"
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "feedback",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "feedback for player given to content"
+            },
+            {
+                "Name": "key",
+                "Required": "N",
+                "Default": "",
+                "Type": "string",
+                "Description": "custom field keys separated by comma"
+            },
+            {
+                "Name": "value",
+                "Required": "N",
+                "Default": "",
+                "Type": "string",
+                "Description": "custom field values separated by comma"
             }
+          ]
+        },
+        {
+          "MethodName": "Delete content",
+          "Synopsis": "Delete existing content",
+          "HTTPMethod": "POST",
+          "URI": "/Content/:content_id/delete",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "content_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "content id as used in client's content"
+            }
+          ]
+        },
+        {
+          "MethodName": "Generate content PIN",
+          "Synopsis": "Create PIN to existing content",
+          "HTTPMethod": "POST",
+          "URI": "/Content/:content_id/setPin",
+          "RequiresOAuth": "N",
+          "parameters": [
+              {
+                  "Name": "token",
+                  "Required": "Y",
+                  "Default": "",
+                  "Type": "string",
+                  "Description": "access token returned from Auth"
+              },
+              {
+                  "Name": "content_id",
+                  "Required": "Y",
+                  "Default": "",
+                  "Type": "string",
+                  "Description": "content id as used in client's content"
+              },
+              {
+                  "Name": "content_pin",
+                  "Required": "Y",
+                  "Default": "",
+                  "Type": "string",
+                  "Description": "Secret PIN given to content"
+              }
           ]
         }
       ]
