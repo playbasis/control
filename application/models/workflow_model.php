@@ -14,7 +14,6 @@ class Workflow_model extends MY_Model
         ));
 
         $results = $this->mongo_db->count("playbasis_player");
-
         return $results;
     }
 
@@ -90,8 +89,8 @@ class Workflow_model extends MY_Model
     {
         $this->set_site_mongodb($site_id);
         //$this->mongo_db->select(array('email','first_name','last_name','username','image','exp','level','date_added','date_modified'));
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
 
         $or_where = array(
             array('approve_status' => 'pending'),
@@ -101,7 +100,6 @@ class Workflow_model extends MY_Model
         $this->mongo_db->where(array('$or' => $or_where));
 
         $results = $this->mongo_db->count("playbasis_player");
-
         return $results;
     }
 
@@ -109,8 +107,8 @@ class Workflow_model extends MY_Model
     {
         $this->set_site_mongodb($site_id);
         //$this->mongo_db->select(array('email','first_name','last_name','username','image','exp','level','date_added','date_modified'));
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
 
         $or_where = array(
             array('approve_status' => 'pending'),
@@ -187,7 +185,6 @@ class Workflow_model extends MY_Model
             'client_id' => $client_id
         ));
         $results = $this->mongo_db->get("playbasis_store_organize_to_player");
-
         return $results;
     }
 
@@ -197,21 +194,20 @@ class Workflow_model extends MY_Model
 
         $this->mongo_db->select(array('roles'));
 
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('pb_player_id', new MongoId($player_id));
         $this->mongo_db->where('node_id', new MongoId($node_id));
 
         $results = $this->mongo_db->get("playbasis_store_organize_to_player");
-
         return $results;
     }
 
     public function editOrganizationOfPlayer($client_id, $site_id, $org_id, $user_id, $node_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('_id', new MongoID($org_id));
 
         $this->mongo_db->set('pb_player_id', new MongoID($user_id));
@@ -247,8 +243,8 @@ class Workflow_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('pb_player_id', new MongoId($player_id));
         $this->mongo_db->where('node_id', new MongoId($node_id));
 
@@ -262,27 +258,29 @@ class Workflow_model extends MY_Model
     public function approvePlayer($client_id, $site_id, $user_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $player_id = $this->findPlayerId($client_id, $site_id, new MongoID($user_id));
-        if ($player_id) {
-            $site_name = $this->findSiteName($client_id, $site_id);
-            $ret = $this->_api->emailPlayer($player_id, 'Your Account is Approved', 'Dear {{first_name}} {{last_name}}<br><br>This email is to notify you that your account is approved on '.($site_name ? $site_name : '???'));
-        }
-
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('_id', new MongoID($user_id));
 
         $this->mongo_db->set('approve_status', "approved");
         $this->mongo_db->set('date_approved', new MongoDate());
-        return $this->mongo_db->update('playbasis_player');
+        $ret = $this->mongo_db->update('playbasis_player');
+
+        /* system automatically send an email to notify the player that account is already approved */
+        $player_id = $this->findPlayerId($client_id, $site_id, new MongoID($user_id));
+        if ($player_id) {
+            $site_name = $this->findSiteName($client_id, $site_id);
+            $result = $this->_api->emailPlayer($player_id, 'Your Account is Approved', 'Dear {{first_name}} {{last_name}}<br><br>This email is to notify you that your account is approved on '.($site_name ? $site_name : '???'));
+        }
+
+        return $ret;
     }
 
     public function rejectPlayer($client_id, $site_id, $user_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('_id', new MongoID($user_id));
 
         $this->mongo_db->set('approve_status', "rejected");
@@ -299,8 +297,8 @@ class Workflow_model extends MY_Model
     public function unlockPlayer($client_id, $site_id, $user_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('_id', new MongoID($user_id));
 
         $this->mongo_db->set('locked', false);
