@@ -82,6 +82,24 @@ class PlaybasisApi
         return $result;
     }
 
+    public function emailPlayer($player_id, $subject, $message) {
+        $result = $this->_post('Email/send', array(
+            'player_id' => $player_id,
+            'subject' => $subject,
+            'message' => $message,
+        ));
+        return $result;
+    }
+
+    public function emailPlayerTemplate($player_id, $subject, $template_id) {
+        $result = $this->_post('Email/send', array(
+            'player_id' => $player_id,
+            'subject' => $subject,
+            'template_id' => $template_id,
+        ));
+        return $result;
+    }
+
     public function getAction() {
         $result = $this->_get('Action');
         return $result;
