@@ -1,7 +1,60 @@
 # Change Log
 
-## [2.6.0](https://github.com/playbasis/api/tree/2.6.0) (2016-03-21)
-[Full Changelog](https://github.com/playbasis/api/compare/2.5.12...2.6.0)
+## [2.7.0-alpha.4](https://github.com/playbasis/api/tree/2.7.0-alpha.4) (2016-04-12)
+[Full Changelog](https://github.com/playbasis/api/compare/2.6.3...2.7.0-alpha.4)
+
+**Merged pull requests:**
+
+- Feature/unilever [\#187](https://github.com/playbasis/api/pull/187) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.6.3](https://github.com/playbasis/api/tree/2.6.3) (2016-04-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.0-alpha.3...2.6.3)
+
+**Fixed bugs:**
+
+- Hotfix/2.6.3 [\#185](https://github.com/playbasis/api/pull/185) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Instead of returning URL enabling player to reset password of any pla… [\#184](https://github.com/playbasis/api/pull/184) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.7.0-alpha.3](https://github.com/playbasis/api/tree/2.7.0-alpha.3) (2016-04-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.5.13...2.7.0-alpha.3)
+
+## [2.5.13](https://github.com/playbasis/api/tree/2.5.13) (2016-04-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.0-alpha.2...2.5.13)
+
+**Implemented enhancements:**
+
+- Impl new processActionLogStat [\#183](https://github.com/playbasis/api/pull/183) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.7.0-alpha.2](https://github.com/playbasis/api/tree/2.7.0-alpha.2) (2016-04-07)
+[Full Changelog](https://github.com/playbasis/api/compare/2.6.2...2.7.0-alpha.2)
+
+**Implemented enhancements:**
+
+- New request to add username into plabasis\_file if required [\#182](https://github.com/playbasis/api/pull/182) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.6.2](https://github.com/playbasis/api/tree/2.6.2) (2016-03-31)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.6.1...2.6.2)
+
+**Fixed bugs:**
+
+- Hotfix/2.6.2 [\#181](https://github.com/playbasis/api/pull/181) ([narut-playbasis](https://github.com/narut-playbasis))
+
+## [v2.6.1](https://github.com/playbasis/api/tree/v2.6.1) (2016-03-23)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.0-alpha.1...v2.6.1)
+
+**Implemented enhancements:**
+
+- Add `"continueOnError" =\> true` to energy model. [\#180](https://github.com/playbasis/api/pull/180) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+## [2.7.0-alpha.1](https://github.com/playbasis/api/tree/2.7.0-alpha.1) (2016-03-21)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.6.0...2.7.0-alpha.1)
+
+**Merged pull requests:**
+
+- Feature/import feature [\#179](https://github.com/playbasis/api/pull/179) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [v2.6.0](https://github.com/playbasis/api/tree/v2.6.0) (2016-03-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.5.12...v2.6.0)
 
 ## [2.5.12](https://github.com/playbasis/api/tree/2.5.12) (2016-03-16)
 [Full Changelog](https://github.com/playbasis/api/compare/2.5.11...2.5.12)
@@ -21,17 +74,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.5.10...2.6.0-alpha.6)
 
 ## [2.5.10](https://github.com/playbasis/api/tree/2.5.10) (2016-03-15)
-[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.5...2.5.10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.4...2.5.10)
 
 **Fixed bugs:**
 
 - Hotfix/2.5.10 [\#176](https://github.com/playbasis/api/pull/176) ([narut-playbasis](https://github.com/narut-playbasis))
 
-## [2.6.0-alpha.5](https://github.com/playbasis/api/tree/2.6.0-alpha.5) (2016-03-09)
-[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.4...2.6.0-alpha.5)
-
 ## [2.6.0-alpha.4](https://github.com/playbasis/api/tree/2.6.0-alpha.4) (2016-03-09)
-[Full Changelog](https://github.com/playbasis/api/compare/2.5.9...2.6.0-alpha.4)
+[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.5...2.6.0-alpha.4)
+
+## [2.6.0-alpha.5](https://github.com/playbasis/api/tree/2.6.0-alpha.5) (2016-03-09)
+[Full Changelog](https://github.com/playbasis/api/compare/2.5.9...2.6.0-alpha.5)
 
 ## [2.5.9](https://github.com/playbasis/api/tree/2.5.9) (2016-03-09)
 [Full Changelog](https://github.com/playbasis/api/compare/2.5.8...2.5.9)
@@ -378,17 +431,17 @@
 - Hotfix/hotfix php error in engine [\#125](https://github.com/playbasis/api/pull/125) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [Optimize_saleBoard_to_calculate_faster](https://github.com/playbasis/api/tree/Optimize_saleBoard_to_calculate_faster) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...Optimize_saleBoard_to_calculate_faster)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...Optimize_saleBoard_to_calculate_faster)
 
 **Implemented enhancements:**
 
 - Hotfix/optimize sale board to calculate faster [\#124](https://github.com/playbasis/api/pull/124) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
-## [2.1.43-alpha.11](https://github.com/playbasis/api/tree/2.1.43-alpha.11) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...2.1.43-alpha.11)
-
 ## [2.1.43-alpha.12](https://github.com/playbasis/api/tree/2.1.43-alpha.12) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.12)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...2.1.43-alpha.12)
+
+## [2.1.43-alpha.11](https://github.com/playbasis/api/tree/2.1.43-alpha.11) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.11)
 
 **Implemented enhancements:**
 
@@ -1565,16 +1618,16 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.2-alpha.1...2.1.2-alpha.20)
 
 ## [2.1.2-alpha.1](https://github.com/playbasis/api/tree/2.1.2-alpha.1) (2014-06-20)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.3...2.1.2-alpha.1)
-
-## [2.1.1-beta.3](https://github.com/playbasis/api/tree/2.1.1-beta.3) (2014-06-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.3...2.1.1-beta.3)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.3...2.1.2-alpha.1)
 
 ## [2.1.1-rc.3](https://github.com/playbasis/api/tree/2.1.1-rc.3) (2014-06-18)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.2...2.1.1-rc.3)
 
 ## [2.1.1-alpha.2](https://github.com/playbasis/api/tree/2.1.1-alpha.2) (2014-06-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.1...2.1.1-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.3...2.1.1-alpha.2)
+
+## [2.1.1-beta.3](https://github.com/playbasis/api/tree/2.1.1-beta.3) (2014-06-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.1...2.1.1-beta.3)
 
 ## [2.1.1-beta.1](https://github.com/playbasis/api/tree/2.1.1-beta.1) (2014-06-06)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.1...2.1.1-beta.1)
