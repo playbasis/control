@@ -224,18 +224,23 @@ class Workflow_model extends MY_Model
             if ($player) {
                 /* system automatically send an email to notify the player that account is approved */
                 $site_name = $this->findSiteName($client_id, $site_id);
-                $random_key = $this->generatePasswordResetCode($player['_id']);
                 $this->load->library('parser');
                 $vars = array(
                     'sitename' => $site_name,
                     'firstname' => $player['first_name'],
                     'lastname' => $player['last_name'],
                     'username' => $player['username'],
-                    'key' => $random_key,
-                    'url' => site_url('player/password/reset/'),
+                    'password' => $data['password'],
                     'base_url' => site_url()
                 );
-                $htmlMessage = $this->parser->parse('emails/player_activated.html', $vars, true);
+                if (!$data['password']) { // if password is input, we have a chance to send email with password
+                    $random_key = $this->generatePasswordResetCode($player['_id']);
+                    $vars = array_merge($vars, array(
+                        'key' => $random_key,
+                        'url' => site_url('player/password/reset/'),
+                    ));
+                }
+                $htmlMessage = $this->parser->parse($data['password'] ? 'emails/player_activatedwithpassword.html' : 'emails/player_activated.html', $vars, true);
                 $result = $this->_api->emailPlayer($data['cl_player_id'], 'Your Account is Activated', $htmlMessage);
             }
         }
