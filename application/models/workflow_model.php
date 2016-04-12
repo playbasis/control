@@ -238,11 +238,24 @@ class Workflow_model extends MY_Model
         if ($data && isset($data['approve_status']) && $data['approve_status'] == 'approved') {
             $player = $this->findPlayerByClPlayerId($client_id, $site_id, $player_id);
             if ($player && (!isset($player['approve_status']) || $player['approve_status'] != 'approved')) { // detect approve_status changed
-                /* system automatically send an email to notify the player that account is already approved */
+                /* system automatically send an email to notify the player that account is approved */
                 $site_name = $this->findSiteName($client_id, $site_id);
-                $result = $this->_api->emailPlayer($player_id, 'Your Account is Approved', 'Dear {{first_name}} {{last_name}}<br><br>This email is to notify you that your account is approved on '.($site_name ? $site_name : '???').'.');
+                $random_key = $this->generatePasswordResetCode($player['_id']);
+                $this->load->library('parser');
+                $vars = array(
+                    'sitename' => $site_name,
+                    'firstname' => $player['first_name'],
+                    'lastname' => $player['last_name'],
+                    'username' => $player['username'],
+                    'key' => $random_key,
+                    'url' => site_url('player/password/reset/'),
+                    'base_url' => site_url()
+                );
+                $htmlMessage = $this->parser->parse('emails/player_activated.html', $vars, true);
+                $result = $this->_api->emailPlayer($player_id, 'Your Account is Activated', $htmlMessage);
             }
         }
+
         $status = $this->_api->updatePlayer($player_id, $data);
         return $status;
     }
@@ -274,11 +287,23 @@ class Workflow_model extends MY_Model
         $this->mongo_db->set('date_approved', new MongoDate());
         $ret = $this->mongo_db->update('playbasis_player');
 
-        /* system automatically send an email to notify the player that account is already approved */
-        $player_id = $this->findPlayerId($client_id, $site_id, new MongoID($user_id));
-        if ($player_id) {
+        /* system automatically send an email to notify the player that account is approved */
+        $player = $this->findPlayerById($client_id, $site_id, new MongoID($user_id));
+        if ($player) {
             $site_name = $this->findSiteName($client_id, $site_id);
-            $result = $this->_api->emailPlayer($player_id, 'Your Account is Approved', 'Dear {{first_name}} {{last_name}}<br><br>This email is to notify you that your account is approved on '.($site_name ? $site_name : '???').'.');
+            $random_key = $this->generatePasswordResetCode($player['_id']);
+            $this->load->library('parser');
+            $vars = array(
+                'sitename' => $site_name,
+                'firstname' => $player['first_name'],
+                'lastname' => $player['last_name'],
+                'username' => $player['username'],
+                'key' => $random_key,
+                'url' => site_url('player/password/reset/'),
+                'base_url' => site_url()
+            );
+            $htmlMessage = $this->parser->parse('emails/player_activated.html', $vars, true);
+            $result = $this->_api->emailPlayer($player['cl_player_id'], 'Your Account is Activated', $htmlMessage);
         }
 
         return $ret;
@@ -406,12 +431,12 @@ class Workflow_model extends MY_Model
         return $results && isset($results[0]['site_name']) ? $results[0]['site_name'] : null;
     }
 
-    private function findPlayerId($client_id, $site_id, $pb_player_id) {
+    private function findPlayerById($client_id, $site_id, $pb_player_id) {
         $this->mongo_db->where(array(
             '_id' => $pb_player_id
         ));
         $results = $this->mongo_db->get("playbasis_player");
-        return $results && isset($results[0]['cl_player_id']) ? $results[0]['cl_player_id'] : null;
+        return $results && isset($results[0]) ? $results[0] : null;
     }
 
     private function findPlayerByClPlayerId($client_id, $site_id, $cl_player_id) {
@@ -421,6 +446,44 @@ class Workflow_model extends MY_Model
             'cl_player_id' => $cl_player_id
         ));
         $this->mongo_db->limit(1);
-        return $this->mongo_db->get("playbasis_player");
+        $results = $this->mongo_db->get("playbasis_player");
+        return $results && isset($results[0]) ? $results[0] : null;
+    }
+
+    private function existsPasswordResetCode($code)
+    {
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->count('playbasis_player_password_reset') > 0;
+    }
+
+    private function generatePasswordResetCode($pb_player_id)
+    {
+        $code = null;
+        for ($i = 0; $i < 2; $i++) {
+            $code = get_random_code(8, false, true, true);
+            if (!$this->existsPasswordResetCode($code)) {
+                break;
+            }
+        }
+        if (!$code) {
+            throw new Exception('Cannot generate unique player code');
+        }
+
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $records = $this->mongo_db->get('playbasis_player_password_reset');
+        if (!$records) {
+            $this->mongo_db->insert('playbasis_player_password_reset', array(
+                'pb_player_id' => $pb_player_id,
+                'code' => $code,
+                'date_expire' => new MongoDate(strtotime("+1 day")),
+            ));
+        } else {
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+            $this->mongo_db->set('code', $code);
+            $this->mongo_db->set('date_expire', new MongoDate(strtotime("+1 day")));
+            $this->mongo_db->update('playbasis_player_password_reset');
+        }
+        return $code;
     }
 }
