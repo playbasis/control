@@ -334,6 +334,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Content not found";
                 $errorData['error_code'] = '2001';
                 break;
+            case 'CONTENT_CATEGORY_NOT_FOUND':
+                $errorData['message'] = "Content category not found";
+                $errorData['error_code'] = '2002';
+                break;
             case 'PIN_CODE_INVALID':
                 $errorData['message'] = "PIN code is invalid";
                 $errorData['error_code'] = '2101';
@@ -359,7 +363,13 @@ class Error extends CI_Model
                 $errorData['error_code'] = '2301';
                 break;
             case 'PARAMETER_INVALID':
-                $errorData['message'] = "Parameter is invalid";
+                if (is_array($dataArray)) // array
+                {
+                    $errorData['message'] = "Invalid parameter , [ " . implode(' , ',
+                            $dataArray) . " ]";
+                } else {
+                    $errorData['message'] = "Parameter is invalid";
+                }
                 $errorData['error_code'] = '2302';
                 break;
             case 'STORE_ORG_NODE_NOT_FOUND':
@@ -437,6 +447,18 @@ class Error extends CI_Model
             case 'DELETE_FILE_FAILED':
                 $errorData['message'] = "File deletion is failed";
                 $errorData['error_code'] = '2419';
+                break;
+            case 'STORE_ORG_CONTENT_ALREADY_EXISTS_WITH_NODE':
+                $errorData['message'] = "Content already exists with current node";
+                $errorData['error_code'] = '2420';
+                break;
+            case 'STORE_ORG_CONTENT_NOT_EXISTS_WITH_NODE':
+                $errorData['message'] = "Content is not exists with current node";
+                $errorData['error_code'] = '2421';
+                break;
+            case 'STORE_ORG_CONTENT_ROLE_NOT_EXISTS':
+                $errorData['message'] = "This role is not set for this Content";
+                $errorData['error_code'] = '2422';
                 break;
             default:
                 $errorData['message'] = "Unknown";

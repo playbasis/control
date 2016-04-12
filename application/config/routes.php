@@ -89,6 +89,7 @@ $route['Player/'.ANY_STRING.'/custom'] = 'player/custom/$1';
 
 $route['Player/'.ANY_STRING.'/register'] = 'player/register/$1';
 $route['Player/register'] = 'player/register';
+$route['Player/registerBatch'] = 'player/registerBatch';
 
 $route['Player/'.ANY_STRING.'/update'] = 'player/update/$1';
 $route['Player/update'] = 'player/update';
@@ -301,6 +302,7 @@ $route['Push/template'] = 'push/template';
 
 //Store Organize API
 $route['StoreOrg/nodes/'.ANY_STRING.'/addPlayer/'.ANY_STRING] = 'store_org/playerRegister/$1/$2'; // ANY_STRING = node_id/pb_player_id
+$route['StoreOrg/nodes/name/'.ANY_STRING.'/addPlayer/'.ANY_STRING] = 'store_org/playerRegisterByNodeName/$1/$2'; // ANY_STRING = node_name/pb_player_id
 $route['StoreOrg/nodes/'.ANY_STRING.'/removePlayer/'.ANY_STRING] = 'store_org/playerRemove/$1/$2'; // ANY_STRING = node_id/pb_player_id
 $route['StoreOrg/nodes/'.ANY_STRING.'/setPlayerRole/'.ANY_STRING] = 'store_org/playerRoleSet/$1/$2'; // ANY_STRING = node_id/pb_player_id
 $route['StoreOrg/nodes/'.ANY_STRING.'/unsetPlayerRole/'.ANY_STRING] = 'store_org/playerRoleUnset/$1/$2'; // ANY_STRING = node_id/pb_player_id
@@ -323,9 +325,22 @@ $route['StoreOrg/rankPeerByAccAction/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/r
 $route['StoreOrg/rankPeerByAccAction/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/0/0';
 $route['StoreOrg/rankPeerByAccAction'] = 'store_org/rankPeerByAccumulateAction/0/0/0';
 
+$route['StoreOrg/nodes/'.ANY_STRING.'/addContent/'.ANY_STRING] = 'store_org/contentRegister/$1/$2'; // ANY_STRING = node_id/content_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/removeContent/'.ANY_STRING] = 'store_org/contentRemove/$1/$2'; // ANY_STRING = node_id/content_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/setContentRole/'.ANY_STRING] = 'store_org/contentRoleSet/$1/$2'; // ANY_STRING = node_id/content_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/unsetContentRole/'.ANY_STRING] = 'store_org/contentRoleUnset/$1/$2'; // ANY_STRING = node_id/content_id
+
 //content API
 $route['Content'] = 'content/list';
 $route['Category'] = 'content/category';
+$route['Content/addContent'] = 'content/insert';
+$route['Content/addContent/player/'.ANY_STRING] = 'content/insert/$1';                           // ANY_STRING = content_id
+$route['Content/'.ANY_STRING.'/update'] = 'content/update/$1';                                   // ANY_STRING = content_id/cl_player_id
+$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/like'] = 'content/action/like/$1/$2';       // ANY_STRING = content_id/cl_player_id
+$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/dislike'] = 'content/action/dislike/$1/$2'; // ANY_STRING = content_id/cl_player_id
+$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/feedback'] = 'content/giveFeedback/$1/$2';  // ANY_STRING = content_id/cl_player_id
+$route['Content/'.ANY_STRING.'/setPin'] = 'content/generatePin/$1';                              // ANY_STRING = content_id
+$route['Content/'.ANY_STRING.'/delete'] = 'content/deleteContent/$1';                            // ANY_STRING = content_id
 
 //CMS API
 $route['CMS/getArticles'] = 'cms/getArticles';
@@ -335,6 +350,10 @@ $route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 //File API
 $route['File/upload'] = 'file/upload';
 $route['File/delete'] = 'file/delete';
+$route['File/list']   = 'file/list';
+
+//Import API
+$route['Import/importSetting'] = 'import/importSetting';
 
 //misc
 //$route['test']	= 'playbasis/test';

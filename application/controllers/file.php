@@ -13,6 +13,7 @@ class File extends REST2_Controller
         $this->load->model('image_model');
         $this->load->model('player_model');
         $this->load->model('plan_model');
+        $this->load->model('user_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
         $this->load->model('tool/utility', 'utility');
@@ -34,10 +35,42 @@ class File extends REST2_Controller
 
         if ($image && $image['tmp_name']) {
             $input = $this->input->post();
-            $pb_player_id = isset($input['player_id']) ? $this->player_model->getPlaybasisId(array_merge($this->validToken,
-                array(
-                    'cl_player_id' => $input['player_id']
-                ))) : null;
+
+            if (isset($input['player_id'])) {
+
+                if (isset($input['username'])){
+                    $this->response($this->error->setError('PARAMETER_INVALID', array('username', 'player_id')), 200);
+                }
+
+                // Find pb_player_id
+                $pb_player_id = isset($input['player_id']) ? $this->player_model->getPlaybasisId(array_merge($this->validToken,
+                    array(
+                        'cl_player_id' => $input['player_id']
+                    ))) : null;
+
+                if (!$pb_player_id) {
+                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+                }
+
+            }
+
+            if (isset($input['username'])) {
+
+                if (isset($input['player_id'])){
+                    $this->response($this->error->setError('PARAMETER_INVALID', array('player_id', 'username')), 200);
+                }
+
+                // Find username
+                $user = isset($input['username']) ? $this->user_model->getByUsername($input['username']) : null;
+
+                if (!$user) {
+                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+                }
+
+                $user_id = isset($user) ? $user['_id'] : null;
+
+            }
+
             $client_id = $this->validToken['client_id'];
             $site_id = $this->validToken['site_id'];
 
@@ -53,8 +86,8 @@ class File extends REST2_Controller
             $t = explode('.', $filename);
             $type = end($t);
 
-
-            $filename = md5($client_id . $site_id . $filename.$pb_player_id) . "." . $type;
+            // Save as unique file ID with current datetime
+            $filename = md5(rtrim($client_id . $site_id . $filename.strtotime('now')))."." . $type;
 
             if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
                 $this->response($this->error->setError('FILE_NAME_IS_INVALID'), 200);
@@ -74,6 +107,10 @@ class File extends REST2_Controller
             $image_width = $image_info[0];
             $image_height = $image_info[1];
 
+            $image['width'] = $image_width;
+            $image['height'] = $image_height;
+            $image['type'] = $image_info['mime'];
+
             //if($image_width < 500 || $image_width >1000){
             if ($image_width > 2000) {
                 $this->response($this->error->setError('IMAGE_WIDTH_IS_INVALID'), 200);
@@ -91,6 +128,7 @@ class File extends REST2_Controller
                 'image/png',
                 'image/x-png',
                 'image/gif',
+                'image/tiff',
                 'application/x-shockwave-flash',
                 'application/octet-stream'
             );
@@ -104,6 +142,7 @@ class File extends REST2_Controller
                 '.jpeg',
                 '.gif',
                 '.png',
+                '.tiff',
                 '.flv'
             );
 
@@ -118,21 +157,21 @@ class File extends REST2_Controller
             $this->response($this->error->setError('FILE_NOT_FOUND'), 200);
         }
 
+        $result = $this->image_model->uploadImage($client_id, $site_id, $image, $filename, $directory, $pb_player_id, $user_id);
 
-        if ($this->image_model->uploadImage($client_id, $site_id, $image, $filename, $directory, $pb_player_id)) {
+        if ($result) {
 
-
-            $json['url'] = rtrim(S3_IMAGE . S3_CONTENT_FOLDER . $directory, '/') . "/" . urlencode($filename);
-            @copy(rtrim(S3_IMAGE . S3_CONTENT_FOLDER . $directory, '/') . "/" . urlencode($filename),
+            $json['url'] = rtrim(S3_IMAGE . S3_DATA_FOLDER . $directory, '/') . "/" . urlencode($filename);
+            @copy(rtrim(S3_IMAGE . S3_DATA_FOLDER . $directory, '/') . "/" . urlencode($filename),
                 $directory . '/' . $filename);
             if ($directory) {
                 $uri = $directory . "/" . $filename;
             } else {
                 $uri = $filename;
             }
-            $json['thumb_url'] = $this->image_model->createThumbnail($uri);
+            $json['thumb_small'] = $this->image_model->createThumbnailSmall($uri);
+            $json['thumb_large'] = $this->image_model->createThumbnailLarge($uri);
             @unlink($local_directory . '/' . $filename);
-            @unlink($local_directory . '/' . THUMBNAIL_FOLDER . $filename);
 
         } else {
             $this->response($this->error->setError('UPLOAD_FILE_ERROR', "S3 fail"), 200);
@@ -152,14 +191,17 @@ class File extends REST2_Controller
         $client_id = $this->validToken['client_id'];
         $site_id = $this->validToken['site_id'];
 
-        $filename = $input['file_name'];
-        $directory = isset($input['directory']) ? str_replace('../', '', $input['directory']) : null;
-        if (!$filename) {
+        if (!isset($input['file_name'])) {
+            $this->response($this->error->setError('PARAMETER_INVALID', array('file_name')), 200);
+        }
+
+        if (!$this->image_model->getImageUrl($client_id, $site_id, $input['file_name'])) {
             $this->response($this->error->setError('FILE_NOT_FOUND'), 200);
         }
 
-        if (!$this->image_model->deleteImage($client_id, $site_id, $filename, $directory)) {
+        $directory = isset($input['directory']) ? str_replace('../', '', $input['directory']) : null;
 
+        if (!$this->image_model->deleteImage($client_id, $site_id, $input['file_name'], $directory)) {
             $this->response($this->error->setError('DELETE_FILE_FAILED'), 200);
         }
 
@@ -168,5 +210,48 @@ class File extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
+    public function list_get()
+    {
+        $this->benchmark->mark('start');
+
+        $query_data = $this->input->get(null, true);
+
+        if (isset($query_data['id'])) {
+            try {
+                $query_data['id'] = new MongoId($query_data['id']);
+            } catch (Exception $e) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+            }
+        }
+
+        if (isset($query_data['player_id'])){
+
+            // Find pb_player_id
+            $query_data['pb_player_id'] = new MongoId($this->player_model->getPlaybasisId(array_merge($this->validToken,
+                array(
+                    'cl_player_id' => $query_data['player_id']
+                ))));
+        }
+
+        $files = $this->image_model->retrieveData($this->client_id, $this->site_id, $query_data);
+        if (empty($files)) {
+            $this->response($this->error->setError('FILE_NOT_FOUND'), 200);
+        }
+
+        foreach ( $files as &$file ){
+            $extension = substr(strrchr($file['url'],'.'), 0);
+            $name = basename($file['url'], $extension);
+            $file['thumb_small'] = 'cache/' . S3_DATA_FOLDER . $name . '-' .
+                MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT . $extension;
+            $file['thumb_large'] = 'cache/' . S3_DATA_FOLDER . $name . '-' .
+                MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT . $extension;
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+
+        $files['processing_time'] = $t;
+        $this->response($this->resp->setRespond($files), 200);
+    }
 
 }

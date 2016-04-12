@@ -164,6 +164,23 @@ class Store_org_model extends MY_Model
         }
     }
 
+    public function retrieveNodeByName($site_id, $name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->where('deleted', false);
+        $c = $this->mongo_db->get("playbasis_store_organize_to_client");
+
+        if ($c) {
+            return $c[0];
+        } else {
+            return null;
+        }
+    }
+
     public function retrieveOrganizeById($client_id, $site_id, $id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -199,6 +216,22 @@ class Store_org_model extends MY_Model
         return $insert;
     }
 
+    public function createContentToNode($client_id, $site_id, $content_id, $node_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $insert_data = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'content_id' => new MongoId($content_id),
+            'node_id' => new MongoId($node_id)
+        );
+
+        $insert = $this->mongo_db->insert('playbasis_store_organize_to_content', $insert_data);
+
+        return $insert;
+    }
+
     public function retrievePlayerToNode($client_id, $site_id, $pb_player_id, $node_id, $role_name = null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -222,6 +255,29 @@ class Store_org_model extends MY_Model
         }
     }
 
+    public function retrieveContentToNode($client_id, $site_id, $content_id, $node_id, $role_name = null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        $this->mongo_db->where('content_id', new MongoId($content_id));
+        $this->mongo_db->where('node_id', new MongoId($node_id));
+
+        if (isset($role_name)) {
+            $this->mongo_db->where_exists('roles.' . $role_name, true);
+        }
+
+        $c = $this->mongo_db->get("playbasis_store_organize_to_content");
+
+        if ($c) {
+            return $c[0];
+        } else {
+            return null;
+        }
+    }
+
     public function deletePlayerToNode($client_id, $site_id, $pb_player_id, $node_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -232,6 +288,24 @@ class Store_org_model extends MY_Model
         $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
         $this->mongo_db->where('node_id', new MongoId($node_id));
         $c = $this->mongo_db->delete("playbasis_store_organize_to_player");
+
+        if ($c) {
+            return $c[0];
+        } else {
+            return null;
+        }
+    }
+
+    public function deleteContentToNode($client_id, $site_id, $content_id, $node_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        $this->mongo_db->where('content_id', new MongoId($content_id));
+        $this->mongo_db->where('node_id', new MongoId($node_id));
+        $c = $this->mongo_db->delete("playbasis_store_organize_to_content");
 
         if ($c) {
             return $c[0];
@@ -268,6 +342,38 @@ class Store_org_model extends MY_Model
         $this->mongo_db->unset_field('roles.' . $role_name_to_unset);
 
         $update = $this->mongo_db->update('playbasis_store_organize_to_player');
+
+        return $update;
+    }
+
+    public function setContentRoleToNode($client_id, $site_id, $content_id, $node_id, $role)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('content_id', new MongoId($content_id));
+        $this->mongo_db->where('node_id', new MongoId($node_id));
+
+        $this->mongo_db->set('roles.' . $role['name'], $role['value']);
+
+        $update = $this->mongo_db->update('playbasis_store_organize_to_content');
+
+        return $update;
+    }
+
+    public function unsetContentRoleToNode($client_id, $site_id, $content_id, $node_id, $role_name_to_unset)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('content_id', new MongoId($content_id));
+        $this->mongo_db->where('node_id', new MongoId($node_id));
+
+        $this->mongo_db->unset_field('roles.' . $role_name_to_unset);
+
+        $update = $this->mongo_db->update('playbasis_store_organize_to_content');
 
         return $update;
     }

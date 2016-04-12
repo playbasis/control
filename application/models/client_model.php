@@ -1079,6 +1079,16 @@ class Client_model extends MY_Model
             return false;
         }
     }
+
+    public function listClientActiveFeatureByFeatureName($featureName)
+    {
+        $this->mongo_db->where(array(
+            'name' => $featureName
+        ));
+        //$id = $this->mongo_db->get('playbasis_feature_to_client');
+
+        return $this->mongo_db->get('playbasis_feature_to_client');
+    }
 }
 
 ?>

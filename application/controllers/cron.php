@@ -38,6 +38,7 @@ class Cron extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('auth_model');
         $this->load->model('client_model');
         $this->load->model('player_model');
         $this->load->model('email_model');
@@ -56,6 +57,7 @@ class Cron extends CI_Controller
         $this->load->model('engine/jigsaw', 'jigsaw_model');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/node_stream', 'node');
+        $this->load->model('import_model');
         $this->load->library('parser');
     }
 
@@ -1455,6 +1457,263 @@ class Cron extends CI_Controller
         echo "Result of leaderboard = " . json_encode($result) . PHP_EOL;
     }
 
+    public function processImportTransaction()
+    {
+        $this->load->library('RestClient');
+
+        $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
+
+        if ($clients) {
+
+            foreach ($clients as $client) {
+
+                $returnImportData = $this->getImportData($client, 'transaction');
+
+                if(isset($returnImportData['response'])) {
+
+                    foreach ($returnImportData['response'] as $importData) {
+
+                        $returnData = $this->getDataFromURL($importData);
+
+                        if (isset($returnData)) {
+
+                            $returnImportActivities = array();
+
+                            if ($returnData['duplicate_flag']) {
+
+                                // Add 'Duplicate' to import log
+                                $returnImportActivities = 'Duplicate';
+
+                            } else {
+
+                                foreach ($returnData['importData'] as $key => $val) {
+                                    $data = array(
+                                        'api_key' => $returnImportData['api_key'],
+                                        'token' => $returnImportData['token'],
+                                        'action' => $val['action'],
+                                        'player_id' => $val['cl_player_id']
+                                    );
+                                    $result = $this->restclient->post($this->config->base_url() . 'Engine/rule', $data);
+
+                                    $returnImportActivities = array_merge($returnImportActivities, array(
+                                        $val['name'] => $result->message
+                                    ));
+                                }
+
+                            }
+
+                            // Update import log
+                            $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
+                                $returnData['import_id'], array('results' => $returnImportActivities));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function processImportPlayer()
+    {
+        $this->load->library('RestClient');
+
+        $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
+
+        if ($clients) {
+
+            foreach ($clients as $client) {
+
+                $returnImportData = $this->getImportData($client, 'player');
+
+                if(isset($returnImportData['response'])) {
+
+                    foreach ($returnImportData['response'] as $importData) {
+
+                        $returnData = $this->getDataFromURL($importData);
+
+                        if (isset($returnData)) {
+
+                            $returnImportActivities = array();
+
+                            if ($returnData['duplicate_flag']) {
+
+                                // Add 'Duplicate' to import log
+                                $returnImportActivities = 'Duplicate';
+
+                            } else {
+
+                                foreach ($returnData['importData'] as $key => $val) {
+                                    $data = array(
+                                        'api_key' => $returnImportData['api_key'],
+                                        'token' => $returnImportData['token'],
+                                        'player_id' => $val['player_id'],
+                                        'username' => $val['username'],
+                                        'password' => $val['password'],
+                                        'email' => $val['email'],
+                                        'image' => $val['image']
+                                    );
+                                    $result = $this->restclient->post($this->config->base_url() . 'Player/' . $val['player_id'] . '/register',
+                                        $data);
+
+                                    $returnImportActivities = array_merge($returnImportActivities, array(
+                                        $val['player_id'] => $result->message
+                                    ));
+                                }
+                            }
+
+                            // Update import log
+                            $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
+                                $returnData['import_id'], array('results' => $returnImportActivities));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function processImportStoreOrg()
+    {
+        $this->load->library('RestClient');
+        $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
+
+        if ($clients) {
+
+            foreach ($clients as $client) {
+
+                $returnImportData = $this->getImportData($client, 'storeorg');
+
+                if(isset($returnImportData['response'])) {
+
+                    foreach ($returnImportData['response'] as $importData) {
+
+                        $returnData = $this->getDataFromURL($importData);
+
+                        if (isset($returnData)) {
+
+                            $returnImportActivities = array();
+
+                            if ($returnData['duplicate_flag']) {
+
+                                // Add 'Duplicate' to import log
+                                $returnImportActivities = 'Duplicate';
+
+                            } else {
+
+                                foreach ($returnData['importData'] as $key => $val) {
+
+                                    $data = array(
+                                        'api_key' => $returnImportData['api_key'],
+                                        'token' => $returnImportData['token'],
+                                        'player_id' => $val['player_id'],
+                                        'name' => $val['node_name'],
+                                    );
+
+                                    // Insert player to store_org
+                                    $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/name/' . $val['node_name'] . '/addPlayer/' . $val['player_id'],
+                                        $data);
+
+                                    if ((isset($val['roles'])) && (isset($result->response->node_id))) {
+                                        $node_id = json_decode(json_encode($result->response->node_id), true)['$id'];
+
+                                        // Insert role to player
+                                        foreach ($val['roles'] as $key => $role) {
+                                            $data['role'] = $role;
+                                            $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/' . $node_id . '/setPlayerRole/' . $val['player_id'],
+                                                $data);
+                                        }
+                                    }
+                                    $returnImportActivities = array_merge($returnImportActivities, array(
+                                        $val['player_id'] => $result->message
+                                    ));
+                                }
+                            }
+
+                            // Update import log
+                            $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
+                                $returnData['import_id'], array('results' => $returnImportActivities));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function getImportData($client, $importType)
+    {
+        $this->load->library('RestClient');
+
+        $platformData = $this->auth_model->getOnePlatform($client['client_id'], $client['site_id']);
+
+        $data = array(
+            'api_key'    => isset($platformData['api_key'])?$platformData['api_key']:null,
+            'api_secret' => isset($platformData['api_secret'])?$platformData['api_secret']:null
+        );
+        $token = json_decode(json_encode($this->restclient->post($this->config->base_url().'Auth', $data)->response),true)['token'];
+
+        $data = array(
+            'api_key'     => isset($platformData['api_key'])?$platformData['api_key']:null,
+            'token'       => $token,
+            'client_id'   => json_decode(json_encode($client['client_id']), True)['$id'],
+            'site_id'     => json_decode(json_encode($client['site_id']), True)['$id'],
+            'import_type' => $importType
+        );
+        return $data = array_merge($data, json_decode(json_encode($this->restclient->get($this->config->base_url().'Import/importSetting', $data)), true));
+    }
+
+    private function getDataFromURL($importData)
+    {
+
+        if (isset($importData['url'])) {
+
+            $data['import_id'] = $importData['_id']['$id'];
+            $url = $importData['url'];
+
+            // CURL
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_USERPWD, $importData['user_name'].':'.$importData['password']);
+            curl_setopt($ch, CURLOPT_URL, $url);
+            $result = curl_exec($ch);
+            curl_close($ch);
+            $jsonData = json_decode($result, true);
+
+            // Add import data to return
+            $data['importData'] = $jsonData;
+
+            // Get latest import result from import log
+            $latestImportLog = $this->import_model->retrieveLatestImportResult($data['import_id']);
+
+            if (isset($latestImportLog['date_added'])){
+                // Get latest execute date
+                $latestExecute = $latestImportLog['date_added']->sec;
+            } else{
+                // Get latest date modified from import data in case no import log
+                $latestExecute = $importData['date_added']['sec'];
+            }
+
+            // Get next execute date from latest execute + routine occurrence, given execution time to 1AM at the day
+            $dateNextExecute = strtotime(date ('Y-m-d 01:00:00', strtotime('+'.$importData['routine'].'days', $latestExecute)));
+            $today = time();
+
+            // If current date is reaching execution time will proceed the action, otherwise will return null with do nothing
+            if ($today >= $dateNextExecute) {
+
+                // Get MD5 hashing to verify is the new import file
+                $CurrentMD5_id = md5($result);
+
+                // If there there is no MD5 was generated in DB or it is not same as current, update MD5 to DB
+                if ((!isset($importData['md5_id'])) || ($CurrentMD5_id != ($importData['md5_id']))) {
+                    $this->import_model->insertMD5($importData['_id']['$id'], $importData['site_id'], $CurrentMD5_id);
+                    $data['duplicate_flag'] = false;
+                } else {
+                    $data['duplicate_flag'] = true;
+                }
+                return $data;
+            }
+        }
+        return null;
+    }
+
     private function processRanks($ranks, $config)
     {
 
@@ -1495,7 +1754,7 @@ class Cron extends CI_Controller
                 'site_id' => $site_id,
                 'domain_name' => $client_info['domain_name'],
                 'leaderboard_id' => $config['_id'],
-//						'node_id' => $node_id,
+                //'node_id' => $node_id,
             ));
             $result = array_merge($result, array('Rank No ' . $rank_no => $event));
             if ($feedbacks) {
