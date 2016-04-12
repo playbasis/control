@@ -541,7 +541,7 @@ class Workflow extends MY_Controller
             }
 
             if ($check_status == true) {
-                $status = $this->Workflow_model->editPlayer($data['cl_player_id'], $data);
+                $status = $this->Workflow_model->editPlayer($client_id, $site_id, $data['cl_player_id'], $data);
                 if (isset($status->success)) {
                     if ($status->success) {
                         if ($this->User_model->hasPermission('access', 'store_org') &&

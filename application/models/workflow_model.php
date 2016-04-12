@@ -233,8 +233,16 @@ class Workflow_model extends MY_Model
         return $status;
     }
 
-    public function editPlayer($player_id, $data)
+    public function editPlayer($client_id, $site_id, $player_id, $data)
     {
+        if ($data && isset($data['approve_status']) && $data['approve_status'] == 'approved') {
+            $player = $this->findPlayerByClPlayerId($client_id, $site_id, $player_id);
+            if ($player && (!isset($player['approve_status']) || $player['approve_status'] != 'approved')) { // detect approve_status changed
+                /* system automatically send an email to notify the player that account is already approved */
+                $site_name = $this->findSiteName($client_id, $site_id);
+                $result = $this->_api->emailPlayer($player_id, 'Your Account is Approved', 'Dear {{first_name}} {{last_name}}<br><br>This email is to notify you that your account is approved on '.($site_name ? $site_name : '???').'.');
+            }
+        }
         $status = $this->_api->updatePlayer($player_id, $data);
         return $status;
     }
@@ -270,7 +278,7 @@ class Workflow_model extends MY_Model
         $player_id = $this->findPlayerId($client_id, $site_id, new MongoID($user_id));
         if ($player_id) {
             $site_name = $this->findSiteName($client_id, $site_id);
-            $result = $this->_api->emailPlayer($player_id, 'Your Account is Approved', 'Dear {{first_name}} {{last_name}}<br><br>This email is to notify you that your account is approved on '.($site_name ? $site_name : '???'));
+            $result = $this->_api->emailPlayer($player_id, 'Your Account is Approved', 'Dear {{first_name}} {{last_name}}<br><br>This email is to notify you that your account is approved on '.($site_name ? $site_name : '???').'.');
         }
 
         return $ret;
@@ -404,5 +412,15 @@ class Workflow_model extends MY_Model
         ));
         $results = $this->mongo_db->get("playbasis_player");
         return $results && isset($results[0]['cl_player_id']) ? $results[0]['cl_player_id'] : null;
+    }
+
+    private function findPlayerByClPlayerId($client_id, $site_id, $cl_player_id) {
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'cl_player_id' => $cl_player_id
+        ));
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->get("playbasis_player");
     }
 }
