@@ -219,27 +219,27 @@ class Workflow_model extends MY_Model
         return $this->mongo_db->update('playbasis_store_organize_to_player');
     }
 
-    public function createPlayer($api, $data)
+    public function createPlayer($data)
     {
-        $status = $api->register($data['cl_player_id'], $data['username'], $data['email'], $data);
+        $status = $this->_api->register($data['cl_player_id'], $data['username'], $data['email'], $data);
         return $status;
     }
 
-    public function addPlayerToNode($api, $player_id, $node_id)
+    public function addPlayerToNode($player_id, $node_id)
     {
-        $status = $api->addPlayerToNode($player_id, $node_id);
+        $status = $this->_api->addPlayerToNode($player_id, $node_id);
         return $status;
     }
 
-    public function setPlayerRole($api, $player_id, $node_id, $role)
+    public function setPlayerRole($player_id, $node_id, $role)
     {
-        $status = $api->setPlayerRole($player_id, $node_id, array('role' => $role));
+        $status = $this->_api->setPlayerRole($player_id, $node_id, array('role' => $role));
         return $status;
     }
 
-    public function editPlayer($api, $player_id, $data)
+    public function editPlayer($player_id, $data)
     {
-        $status = $api->updatePlayer($player_id, $data);
+        $status = $this->_api->updatePlayer($player_id, $data);
         return $status;
     }
 
@@ -283,9 +283,9 @@ class Workflow_model extends MY_Model
         return $this->mongo_db->update('playbasis_player');
     }
 
-    public function deletePlayer($api, $player_id)
+    public function deletePlayer($player_id)
     {
-        $status = $api->deletePlayer($player_id);
+        $status = $this->_api->deletePlayer($player_id);
         return $status;
     }
 

@@ -26,6 +26,7 @@ class MY_Model extends CI_Model
 	public function __construct()
 	{
 		parent::__construct();
+		$this->_api = $this->playbasisapi;
 	}
 	public function set_read_preference($readPreference, $tags=array())
 	{
