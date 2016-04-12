@@ -619,6 +619,9 @@ class Workflow extends MY_Controller
         $this->data['form'] = 'workflow/create_account/';
         $this->data['action'] = 'create';
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
             //set value of username to equal to cl_player_id
@@ -638,7 +641,7 @@ class Workflow extends MY_Controller
                 $this->data['message'] = $this->lang->line('text_fail_set_role');
 
             } else {
-                $status = $this->Workflow_model->createPlayer($data);
+                $status = $this->Workflow_model->createPlayer($client_id, $site_id, $data);
                 if (isset($status->success)) {
                     if ($status->success) {
                         if ($this->User_model->hasPermission('access', 'store_org') &&

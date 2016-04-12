@@ -215,9 +215,31 @@ class Workflow_model extends MY_Model
         return $this->mongo_db->update('playbasis_store_organize_to_player');
     }
 
-    public function createPlayer($data)
+    public function createPlayer($client_id, $site_id, $data)
     {
         $status = $this->_api->register($data['cl_player_id'], $data['username'], $data['email'], $data);
+
+        if ($data && isset($data['approve_status']) && $data['approve_status'] == 'approved') {
+            $player = $this->findPlayerByClPlayerId($client_id, $site_id, $data['cl_player_id']);
+            if ($player) {
+                /* system automatically send an email to notify the player that account is approved */
+                $site_name = $this->findSiteName($client_id, $site_id);
+                $random_key = $this->generatePasswordResetCode($player['_id']);
+                $this->load->library('parser');
+                $vars = array(
+                    'sitename' => $site_name,
+                    'firstname' => $player['first_name'],
+                    'lastname' => $player['last_name'],
+                    'username' => $player['username'],
+                    'key' => $random_key,
+                    'url' => site_url('player/password/reset/'),
+                    'base_url' => site_url()
+                );
+                $htmlMessage = $this->parser->parse('emails/player_activated.html', $vars, true);
+                $result = $this->_api->emailPlayer($data['cl_player_id'], 'Your Account is Activated', $htmlMessage);
+            }
+        }
+
         return $status;
     }
 
