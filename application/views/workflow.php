@@ -111,7 +111,7 @@
                         <td class="left"><?php echo $player['cl_player_id']; ?></td>
                         <td class="left"><?php echo $player['first_name']."  ".$player['last_name']; ?></td>
                         <td class="left"><?php echo $player['email']; ?></td>
-                        <td class="left"><?php echo $player['phone_number']; ?></td>
+                        <td class="left"><?php echo isset($player['phone_number']) ? $player['phone_number'] : ''; ?></td>
                         <?php if($org_status){?>
                         <td class="left"><?php echo (isset($player['organization_node']) && !is_null($player['organization_node']))?$player['organization_node']:''; ?></td>
                         <td class="left"><?php echo (isset($player['organization_type']) && !is_null($player['organization_type']))?$player['organization_type']:''; ?></td>

@@ -1,48 +1,38 @@
 # Change Log
 
-## [v2.7.0](https://github.com/playbasis/control/tree/v2.7.0) (2016-03-21)
-[Full Changelog](https://github.com/playbasis/control/compare/2.6.0...v2.7.0)
-
-[Full Changelog](https://github.com/playbasis/control/compare/Workflow_to_support_pagintion_and_search...2.7.0)
-
-**Fixed bugs:**
-
-- - Fix bug while edit leaderboard in view. [\#137](https://github.com/playbasis/control/pull/137) ([niti-playbasis](https://github.com/niti-playbasis))
-
-## [Workflow_to_support_pagintion_and_search](https://github.com/playbasis/control/tree/Workflow_to_support_pagintion_and_search) (2016-03-09)
-[Full Changelog](https://github.com/playbasis/control/compare/v2.6.4...Workflow_to_support_pagintion_and_search)
+## [2.8.0](https://github.com/playbasis/control/tree/2.8.0) (2016-03-21)
+[Full Changelog](https://github.com/playbasis/control/compare/Workflow_to_support_pagintion_and_search...2.8.0)
 
 **Implemented enhancements:**
 
 - Hotfix/workflow to support pagintion and search [\#136](https://github.com/playbasis/control/pull/136) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
-## [v2.6.4](https://github.com/playbasis/control/tree/v2.6.4) (2016-03-07)
-[Full Changelog](https://github.com/playbasis/control/compare/v2.6.3...v2.6.4)
-
 **Fixed bugs:**
 
+- - Fix bug while edit leaderboard in view. [\#137](https://github.com/playbasis/control/pull/137) ([niti-playbasis](https://github.com/niti-playbasis))
 - Move `ApnsPHP\_Log\_Hidden` class to another file instead. [\#135](https://github.com/playbasis/control/pull/135) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Fixed iOS push setup is not properly display and not save [\#134](https://github.com/playbasis/control/pull/134) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Implement Push Log\_Hidden and fix multiple recipients. [\#133](https://github.com/playbasis/control/pull/133) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Hotfix/2.6.1 [\#132](https://github.com/playbasis/control/pull/132) ([narut-playbasis](https://github.com/narut-playbasis))
+
+**Merged pull requests:**
+
+- Feature/import feature [\#138](https://github.com/playbasis/control/pull/138) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [Workflow_to_support_pagintion_and_search](https://github.com/playbasis/control/tree/Workflow_to_support_pagintion_and_search) (2016-03-09)
+[Full Changelog](https://github.com/playbasis/control/compare/v2.6.4...Workflow_to_support_pagintion_and_search)
+
+## [v2.6.4](https://github.com/playbasis/control/tree/v2.6.4) (2016-03-07)
+[Full Changelog](https://github.com/playbasis/control/compare/v2.6.3...v2.6.4)
 
 ## [v2.6.3](https://github.com/playbasis/control/tree/v2.6.3) (2016-03-07)
 [Full Changelog](https://github.com/playbasis/control/compare/v2.6.2...v2.6.3)
 
-**Fixed bugs:**
-
-- Fixed iOS push setup is not properly display and not save [\#134](https://github.com/playbasis/control/pull/134) ([burachit-playbasis](https://github.com/burachit-playbasis))
-
 ## [v2.6.2](https://github.com/playbasis/control/tree/v2.6.2) (2016-03-07)
 [Full Changelog](https://github.com/playbasis/control/compare/2.6.1...v2.6.2)
 
-**Fixed bugs:**
-
-- Implement Push Log\_Hidden and fix multiple recipients. [\#133](https://github.com/playbasis/control/pull/133) ([burachit-playbasis](https://github.com/burachit-playbasis))
-
 ## [2.6.1](https://github.com/playbasis/control/tree/2.6.1) (2016-03-01)
 [Full Changelog](https://github.com/playbasis/control/compare/v2.6.0...2.6.1)
-
-**Fixed bugs:**
-
-- Hotfix/2.6.1 [\#132](https://github.com/playbasis/control/pull/132) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [v2.6.0](https://github.com/playbasis/control/tree/v2.6.0) (2016-02-29)
 [Full Changelog](https://github.com/playbasis/control/compare/2.5.0...v2.6.0)

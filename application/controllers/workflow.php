@@ -25,6 +25,21 @@ class Workflow extends MY_Controller
         $this->lang->load("workflow", $lang['folder']);
         $this->load->model('Store_org_model');
         $this->load->model('Feature_model');
+
+        /* initialize $this->api */
+        $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(),
+            $this->User_model->getSiteId());
+        $this->_api = $this->playbasisapi;
+        $platforms = $this->App_model->getPlatFormByAppId(array(
+            'site_id' => $this->User_model->getSiteId(),
+        ));
+        $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
+        if ($platform) {
+            $this->_api->set_api_key($result['api_key']);
+            $this->_api->set_api_secret($result['api_secret']);
+            $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
+            $this->_api->auth($pkg_name);
+        }
     }
 
     public function index()
@@ -526,7 +541,7 @@ class Workflow extends MY_Controller
             }
 
             if ($check_status == true) {
-                $status = $this->Workflow_model->editPlayer($data['cl_player_id'], $data);
+                $status = $this->Workflow_model->editPlayer($client_id, $site_id, $data['cl_player_id'], $data);
                 if (isset($status->success)) {
                     if ($status->success) {
                         if ($this->User_model->hasPermission('access', 'store_org') &&
@@ -604,6 +619,9 @@ class Workflow extends MY_Controller
         $this->data['form'] = 'workflow/create_account/';
         $this->data['action'] = 'create';
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
             //set value of username to equal to cl_player_id
@@ -623,7 +641,7 @@ class Workflow extends MY_Controller
                 $this->data['message'] = $this->lang->line('text_fail_set_role');
 
             } else {
-                $status = $this->Workflow_model->createPlayer($data);
+                $status = $this->Workflow_model->createPlayer($client_id, $site_id, $data);
                 if (isset($status->success)) {
                     if ($status->success) {
                         if ($this->User_model->hasPermission('access', 'store_org') &&

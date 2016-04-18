@@ -1,5 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+if (!defined('CURL_SSLVERSION_TLSv1')) define('CURL_SSLVERSION_TLSv1', 1);
+
 /*
 |--------------------------------------------------------------------------
 | File and Directory Modes

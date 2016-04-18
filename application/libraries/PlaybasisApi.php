@@ -1,19 +1,19 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Created by PhpStorm.
  * User: thanayuthanakitworawat
  * Date: 3/28/2014 AD
  * Time: 10:48 PM
  */
-class PlaybasisApi{
-
+class PlaybasisApi
+{
     private $_restClient;
     private $_cacheClient;
     private $api_key;
     private $api_secret;
     private $token;
 
-    public function __construct(){
+    public function __construct() {
 
         $ci =& get_instance();
 
@@ -31,7 +31,7 @@ class PlaybasisApi{
         $this->api_secret = $api_secret;
     }
 
-    public function auth($pkg_name=null){
+    public function auth($pkg_name=null) {
         $result = $this->_post('Auth', array(
             'api_key' => $this->api_key,
             'api_secret' => $this->api_secret,
@@ -41,7 +41,7 @@ class PlaybasisApi{
         return $result;
     }
 
-    public function register($player_id, $username, $email, $optionalParams=array()){
+    public function register($player_id, $username, $email, $optionalParams=array()) {
         $result = $this->_post('Player/'.$player_id.'/register/', array_merge(array(
             'username' => $username,
             'email' => $email,
@@ -49,32 +49,32 @@ class PlaybasisApi{
         return $result;
     }
 
-    public function addPlayerToNode($player_id, $node_id){
+    public function addPlayerToNode($player_id, $node_id) {
         $result = $this->_post('StoreOrg/nodes/'.$node_id.'/addPlayer/'.$player_id);
         return $result;
     }
 
-    public function setPlayerRole($player_id, $node_id, $role){
+    public function setPlayerRole($player_id, $node_id, $role) {
         $result = $this->_post('StoreOrg/nodes/'.$node_id.'/setPlayerRole/'.$player_id,$role);
         return $result;
     }
 
-    public function updatePlayer($player_id, $Params=array()){
+    public function updatePlayer($player_id, $Params=array()) {
         $result = $this->_post('Player/'.$player_id.'/update/', $Params);
         return $result;
     }
 
-    public function deletePlayer($player_id){
+    public function deletePlayer($player_id) {
         $result = $this->_post('Player/'.$player_id.'/delete/');
         return $result;
     }
 
-    public function testRule($data){
+    public function testRule($data) {
         $result = $this->_get('Engine/json/'.urlencode(json_encode($data)), $data);
         return $result;
     }
 
-    public function engine($player_id, $action, $optionalParams=array()){
+    public function engine($player_id, $action, $optionalParams=array()) {
         $result = $this->_post('Engine/rule', array_merge(array(
             'player_id' => $player_id,
             'action' => $action,
@@ -82,90 +82,108 @@ class PlaybasisApi{
         return $result;
     }
 
-    public function getAction(){
+    public function emailPlayer($player_id, $subject, $message) {
+        $result = $this->_post('Email/send', array(
+            'player_id' => $player_id,
+            'subject' => $subject,
+            'message' => $message,
+        ));
+        return $result;
+    }
+
+    public function emailPlayerTemplate($player_id, $subject, $template_id) {
+        $result = $this->_post('Email/send', array(
+            'player_id' => $player_id,
+            'subject' => $subject,
+            'template_id' => $template_id,
+        ));
+        return $result;
+    }
+
+    public function getAction() {
         $result = $this->_get('Action');
         return $result;
     }
 
-    public function getActionUsedonly(){
+    public function getActionUsedonly() {
         $result = $this->_get('Action/usedonly');
         return $result;
     }
 
-    public function getActionLog($startDate,$endDate){
+    public function getActionLog($startDate,$endDate) {
         $param = array(
             'from' => $startDate,
             'to' => $endDate
         );
-        $result = $this->_get('Action/log',$param);
+        $result = $this->_get('Action/log', $param);
         return $result;
     }
 
-    public function getReward(){
+    public function getReward() {
         $result = $this->_get('Reward');
         return $result;
     }
 
-    public function getRewardBadge(){
+    public function getRewardBadge() {
         $result = $this->_get('Reward/badge');
         return $result;
     }
 
-    public function getRewardBadgeLog($startDate,$endDate){
+    public function getRewardBadgeLog($startDate, $endDate) {
         $param = array(
             'from' => $startDate,
             'to' => $endDate
         );
-        $result = $this->_get('Reward/badge/log',$param);
+        $result = $this->_get('Reward/badge/log', $param);
         return $result;
     }
 
-    public function getRewardPointLog($startDate,$endDate){
+    public function getRewardPointLog($startDate, $endDate) {
         $param = array(
             'from' => $startDate,
             'to' => $endDate
         );
-        $result = $this->_get('Reward/point/log',$param);
+        $result = $this->_get('Reward/point/log', $param);
         return $result;
     }
 
-    public function getRewardExpLog($startDate,$endDate){
+    public function getRewardExpLog($startDate, $endDate) {
         $param = array(
             'from' => $startDate,
             'to' => $endDate
         );
-        $result = $this->_get('Reward/exp/log',$param);
+        $result = $this->_get('Reward/exp/log', $param);
         return $result;
     }
 
-    public function getRewardLevelLog($startDate,$endDate){
+    public function getRewardLevelLog($startDate, $endDate) {
         $param = array(
             'from' => $startDate,
             'to' => $endDate
         );
-        $result = $this->_get('Reward/level/log',$param);
+        $result = $this->_get('Reward/level/log', $param);
         return $result;
     }
 
-    public function getUserRegLog($startDate,$endDate){
+    public function getUserRegLog($startDate, $endDate) {
         $param = array(
             'from' => $startDate,
             'to' => $endDate
         );
-        $result = $this->_get('Player/new',$param);
+        $result = $this->_get('Player/new', $param);
         return $result;
     }
 
-    public function getUserDAULog($startDate,$endDate){
+    public function getUserDAULog($startDate, $endDate) {
         $param = array(
             'from' => $startDate,
             'to' => $endDate
         );
-        $result = $this->_get('Player/dau_per_day',$param);
+        $result = $this->_get('Player/dau_per_day', $param);
         return $result;
     }
 
-    public function getUserMAULog($startDate,$endDate, $userUnitType){
+    public function getUserMAULog($startDate, $endDate, $userUnitType) {
         $param = array(
             'from' => $startDate,
             'to' => $endDate
@@ -173,37 +191,38 @@ class PlaybasisApi{
 
         switch($userUnitType){
             case 'day':
-                $result = $this->_get('Player/mau_per_day',$param);
+                $result = $this->_get('Player/mau_per_day', $param);
                 break;
             case 'week':
-                $result = $this->_get('Player/mau_per_week',$param);
+                $result = $this->_get('Player/mau_per_week', $param);
                 break;
             case 'month':
-                $result = $this->_get('Player/mau_per_month',$param);
+                $result = $this->_get('Player/mau_per_month', $param);
                 break;
         }
         return $result;
     }
 
-    private function _get($uri,$params = array()){
+    private function _get($uri,$params = array()) {
         $defaultParam = array('api_key' => $this->api_key);
         $sendParam = array_merge($defaultParam, $params);
         $result = $this->_restClient->get($uri, $sendParam);
         return $result;
     }
 
-    private function _post($uri,$params = array()){
+    private function _post($uri,$params = array()) {
         $defaultParam = array('token' => $this->token);
         $sendParam = array_merge($defaultParam, $params);
         $result = $this->_restClient->post($uri, $sendParam);
         return $result;
     }
-    public function setHeader($header, $content = NULL){
+
+    public function setHeader($header, $content = NULL) {
         $this->_restClient->http_header($header,$content);
     }
 }
 
-function handleError($errno, $errstr, $errfile, $errline, array $errcontext){
+function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
     // error was suppressed with the @-operator
     if (0 === error_reporting()) {
         return false;
