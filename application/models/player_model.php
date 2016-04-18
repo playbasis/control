@@ -120,7 +120,7 @@ class Player_model extends MY_Model
         if (!empty($batch_data) && is_array($batch_data)) {
             try {
                 return $this->mongo_db->batch_insert('playbasis_player', $batch_data,
-                    array("w" => 0, "j" => false));
+                    array("w" => 0, "j" => false, "continueOnError" => true));
 
             } catch (Exception $e) {
                 var_dump($e);
