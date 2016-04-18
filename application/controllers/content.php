@@ -113,7 +113,7 @@ class Content extends REST2_Controller
             if (empty($category)) {
                 $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
             }
-            $contentInfo['category_id'] = $category[0]['_id'];
+            $contentInfo['category'] = $category[0]['_id'];
         }
 
         if (isset($player_id)) {
@@ -164,7 +164,7 @@ class Content extends REST2_Controller
             if (empty($category)) {
                 $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
             }
-            $contentInfo['category_id'] = $category[0]['_id'];
+            $contentInfo['category'] = $category[0]['_id'];
         }
 
         if($this->input->post('title')){

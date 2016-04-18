@@ -80,7 +80,7 @@ class Content_model extends MY_Model
             $this->mongo_db->where_lt('date_start', new MongoDate());
         }
 
-        $this->mongo_db->select(array('_id', 'title', 'summary', 'detail', 'image','pb_player_id', 'category_id', 'date_start', 'date_end'));
+        $this->mongo_db->select(array('_id', 'title', 'summary', 'detail', 'image','pb_player_id', 'category', 'date_start', 'date_end'));
         //$this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $client_id,
@@ -177,8 +177,8 @@ class Content_model extends MY_Model
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
         );
-        if(isset($data['category_id'])) {
-            $insert_data['category_id'] = new MongoId($data['category_id']);
+        if(isset($data['category'])) {
+            $insert_data['category'] = new MongoId($data['category']);
         }
         if(isset($data['pb_player_id'])){
             $insert_data['pb_player_id'] = new MongoId($data['pb_player_id']);
@@ -196,13 +196,6 @@ class Content_model extends MY_Model
 
         $this->mongo_db->set($data);
 
-        if (isset($data['category_id'])) {
-            if (empty($data['category_id'])) {
-                $this->mongo_db->unset_field('category_id');
-            } else {
-                $this->mongo_db->set('category_id', new MongoId($data['category_id']));
-            }
-        }
         $this->mongo_db->set('date_modified', new MongoDate());
         $update = $this->mongo_db->update('playbasis_content_to_client');
         return $update;
