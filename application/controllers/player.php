@@ -25,6 +25,7 @@ class Player extends REST2_Controller
         $this->load->model('tool/node_stream', 'node');
         $this->load->model('store_org_model');
         $this->load->library('form_validation');
+        $this->load->library('parser');
     }
 
     public function index_get($player_id = '')
