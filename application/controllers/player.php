@@ -1125,9 +1125,9 @@ class Player extends REST2_Controller
             'url' => $this->config->item('CONTROL_DASHBOARD_URL') . 'player/password/reset/'.$random_key
         ), true);
         $response = $this->utility->email($from, $to, $subject, $html);
-        $this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response, $from, $to,
-            $subject, $html);
-        $this->response($this->resp->setRespond('Email has been sent successfully'), 200);
+        $this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response,
+            $from, $to, $subject, $html);
+        $this->response($this->resp->setRespond(array('success' => true)), 200);
     }
 
     public function points_get($player_id = '')
