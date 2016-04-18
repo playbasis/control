@@ -1,7 +1,20 @@
 # Change Log
 
 ## [2.8.0](https://github.com/playbasis/control/tree/2.8.0) (2016-03-21)
-[Full Changelog](https://github.com/playbasis/control/compare/Workflow_to_support_pagintion_and_search...2.8.0)
+[Full Changelog](https://github.com/playbasis/control/compare/2.7.0...2.8.0)
+
+**Implemented enhancements:**
+- Feature/import feature  (https://github.com/playbasis/control/pull/138)
+- Feature/send email when approve or reject (https://github.com/playbasis/control/pull/142)
+- Feature/email when approve should set password  (https://github.com/playbasis/control/pull/143)
+
+**Fixed bugs:**
+-Fix bug missing CURL_SSLVERSION_TLSv1 for PHP < 5.5 (https://github.com/playbasis/control/pull/139)
+- Feature/fix bug undefined index phone number (https://github.com/playbasis/control/pull/140)
+- Feature/fix bug undefined approve status (https://github.com/playbasis/control/pull/141)
+
+## [2.7.0](https://github.com/playbasis/control/tree/2.7.0) (2016-03-21)
+[Full Changelog](https://github.com/playbasis/control/compare/Workflow_to_support_pagintion_and_search...2.7.0)
 
 **Implemented enhancements:**
 
