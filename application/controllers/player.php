@@ -19,6 +19,7 @@ class Player extends REST2_Controller
         $this->load->model('quest_model');
         $this->load->model('badge_model');
         $this->load->model('energy_model');
+        $this->load->model('email_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
