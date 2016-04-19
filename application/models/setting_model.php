@@ -39,9 +39,6 @@ class Setting_model extends MY_Model
 
     public function updateSetting($data)
     {
-        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-
         if ($this->retrieveSetting($data)) {
             $date = new MongoDate();
             $date_array = array(
@@ -53,6 +50,8 @@ class Setting_model extends MY_Model
             foreach ($update_data as $key => $value) {
                 $this->mongo_db->set($key, $value);
             }
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
             $update = $this->mongo_db->update('playbasis_setting');
 
             return $update;
