@@ -27,6 +27,7 @@ $lang['entry_user_in_password']         = 'Disallow logon ID in password';
 $lang['entry_blank_password']           = 'Disallow blank password';
 $lang['entry_max_retries']              = 'Max login attempts ';
 $lang['entry_timeout']                  = 'Timeout for inactivity';
+$lang['entry_email_verification']       = 'Allow only verified email to login';
 $lang['placeholder_min_char']           = 'Numeric, if blank or 0 mean no minimum';
 $lang['placeholder_max_retries']        = 'Numeric, if blank or 0 mean no limit';
 
