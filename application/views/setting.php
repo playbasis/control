@@ -92,6 +92,10 @@
                                     placeholder="<?php echo $this->lang->line('placeholder_max_retries'); ?>"
                                     value="<?php echo (isset($max_retries) && $max_retries > 0) ? $max_retries : ''; ?>"/></td>
                     </tr>
+                    <tr>
+                        <td><?php echo $this->lang->line('entry_email_verification'); ?>:</td>
+                        <td><input type="checkbox" id="email_verification_enable" name="email_verification_enable" <?php echo (isset($email_verification_enable) && $email_verification_enable) ? "checked" : ''; ?>></td>
+                    </tr>
 
                 </table>
                 <?php
