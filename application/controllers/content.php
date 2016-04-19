@@ -87,7 +87,7 @@ class Content extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
-    public function insert_post($player_id = null)
+    public function insert_post()
     {
         $this->benchmark->mark('start');
         $contentInfo['client_id'] = $this->validToken['client_id'];
@@ -96,7 +96,9 @@ class Content extends REST2_Controller
         $required = $this->input->checkParam(array(
             'title',
             'summary',
-            'detail'
+            'detail',
+            'date_start',
+            'date_end'
         ));
         if ($required) {
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
@@ -113,29 +115,27 @@ class Content extends REST2_Controller
             if (empty($category)) {
                 $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
             }
-            $contentInfo['category'] = $category[0]['_id'];
+            $contentInfo['category'] = new MongoId($category[0]['_id']);
         }
 
-        if (isset($player_id)) {
+        if ($this->input->post('player_id')) {
             $pb_player_id = $this->player_model->getPlaybasisId(array(
                 'client_id'    => $this->validToken['client_id'],
                 'site_id'      => $this->validToken['site_id'],
-                'cl_player_id' => $player_id
+                'cl_player_id' => $this->input->post('player_id')
             ));
             if (empty($pb_player_id)) {
                 $this->response($this->error->setError('USER_ID_INVALID'), 200);
             }
             $contentInfo['pb_player_id'] = $pb_player_id;
-            $contentInfo['status']       = false;
-            $contentInfo['date_start']   = null;
-            $contentInfo['date_end']     = null;
-        } else {
-            $contentInfo['date_start'] = $this->input->post('date_start');
-            $contentInfo['date_end']   = $this->input->post('date_end');
-            $contentInfo['status']     = $this->input->post('status');
         }
-        if($this->input->post('image')){
-            $contentInfo['image'] = $this->input->post('image');
+        $contentInfo['image']      = ($this->input->post('image')) ? $this->input->post('image') : "no_image.jpg";
+        $contentInfo['date_start'] = new MongoDate(strtotime($this->input->post('date_start')));
+        $contentInfo['date_end']   = new MongoDate(strtotime($this->input->post('date_end')));
+        $contentInfo['status']     = strtolower($this->input->post('status')) == 'true';
+
+        if ($this->input->post('content_pin')){
+            $contentInfo['content_pin'] = $this->input->post('content_pin');
         }
 
         $insert = $this->content_model->createContent($contentInfo);
@@ -148,23 +148,12 @@ class Content extends REST2_Controller
     public function update_post($content_id = null)
     {
         $this->benchmark->mark('start');
-
         $contentInfo = array();
 
         try {
             new MongoId($content_id);
         } catch (Exception $e) {
             $this->response($this->error->setError('PARAMETER_INVALID', array('_id')), 200);
-        }
-
-        if($this->input->post('category')) {
-            $category = $this->content_model->retrieveContentCategory($this->client_id, $this->site_id, array(
-                'name' => $this->input->post('category')
-            ));
-            if (empty($category)) {
-                $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
-            }
-            $contentInfo['category'] = $category[0]['_id'];
         }
 
         if($this->input->post('title')){
@@ -177,6 +166,16 @@ class Content extends REST2_Controller
 
         if($this->input->post('detail')){
             $contentInfo['detail'] = $this->input->post('detail');
+        }
+
+        if($this->input->post('category')) {
+            $category = $this->content_model->retrieveContentCategory($this->client_id, $this->site_id, array(
+                'name' => $this->input->post('category')
+            ));
+            if (empty($category)) {
+                $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
+            }
+            $contentInfo['category'] = $category[0]['_id'];
         }
 
         if($this->input->post('date_start')){
@@ -192,7 +191,11 @@ class Content extends REST2_Controller
         }
 
         if($this->input->post('status')){
-            $contentInfo['status'] = $this->input->post('status')=='true';
+            $contentInfo['status'] = strtolower($this->input->post('status'))=='true';
+        }
+
+        if ($this->input->post('content_pin')){
+            $contentInfo['content_pin'] = $this->input->post('content_pin');
         }
 
         $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'], $content_id, $contentInfo);
@@ -211,8 +214,6 @@ class Content extends REST2_Controller
         $actionInfo['client_id'] = $this->validToken['client_id'];
         $actionInfo['site_id']   = $this->validToken['site_id'];
         $actionInfo['action']    = $action;
-
-        $postData = $this->input->post();
 
         $pb_player_id = $this->player_model->getPlaybasisId(array(
             'client_id'    => $this->validToken['client_id'],
@@ -339,6 +340,7 @@ class Content extends REST2_Controller
         $this->benchmark->mark('start');
         $client_id = $this->validToken['client_id'];
         $site_id = $this->validToken['site_id'];
+        $this->checkValidContent($content_id);
 
         if(!$content_id){
             $this->response($this->error->setError('PARAMETER_MISSING', array('content_id')), 200);
@@ -390,16 +392,5 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
         return $contents;
-    }
-
-    /**
-     * @param $pin
-     * @return array
-     */
-    private function generatePinDict($pin)
-    {
-        return array(
-            'pin' => $pin,
-            'date_added' => new MongoDate());
     }
 }

@@ -163,28 +163,12 @@ class Content_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $insert_data = array(
-            'client_id' => new MongoId($data['client_id']),
-            'site_id' => new MongoId($data['site_id']),
-            'title' => $data['title'],
-            'summary' => $data['summary'],
-            'detail' => $data['detail'],
-            'date_start' => new MongoDate(strtotime($data['date_start'])),
-            'date_end' => new MongoDate(strtotime($data['date_end'])),
-            'image' => (isset($data['image'])) ? $data['image'] : "no_image.jpg",
-            'status' => $data['status']=='true',
+        $data = array_merge($data, array(
             'deleted' => false,
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
-        );
-        if(isset($data['category'])) {
-            $insert_data['category'] = new MongoId($data['category']);
-        }
-        if(isset($data['pb_player_id'])){
-            $insert_data['pb_player_id'] = new MongoId($data['pb_player_id']);
-        }
-        $insert = $this->mongo_db->insert('playbasis_content_to_client', $insert_data);
-
+        ));
+        $insert = $this->mongo_db->insert('playbasis_content_to_client', $data);
         return $insert;
     }
 

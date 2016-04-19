@@ -3946,6 +3946,20 @@
               "Description": "Specific category name of content"
             },
             {
+              "Name": "image",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "url to the content profile image"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "false",
+              "Type": "string",
+              "Description": "content available status"
+            },
+            {
               "Name": "date_start",
               "Required": "N",
               "Default": "1970-01-01",
@@ -3960,76 +3974,18 @@
               "Description": "date end in the format YYYY-MM-DD (ex.1982-09-29)"
             },
             {
-              "Name": "image",
-              "Required": "N",
-              "Default": "",
-              "Type": "string",
-              "Description": "url to the content profile image"
-            },
-            {
-              "Name": "status",
-              "Required": "N",
-              "Default": "false",
-              "Type": "string",
-              "Description": "content available status"
-            }
-          ]
-        },
-        {
-          "MethodName": "Create content by player",
-          "Synopsis": "Create content by player ID",
-          "HTTPMethod": "POST",
-          "URI": "/Content/addContent/player/:player_id",
-          "RequiresOAuth": "N",
-          "parameters": [
-            {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
-            },
-            {
               "Name": "player_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "player id as used in client's website"
-            },
-            {
-              "Name": "title",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "Specific title of content"
-            },
-            {
-              "Name": "summary",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "Specific summary of content"
-            },
-            {
-              "Name": "detail",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "Specific detail of content"
-            },
-            {
-              "Name": "category",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Specific category name of content"
+              "Description": "player id who generate this content"
             },
             {
-              "Name": "image",
+              "Name": "content_pin",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "url to the content profile image"
+              "Description": "Secret PIN given to content"
             }
           ]
         },
@@ -4056,7 +4012,7 @@
             },
             {
               "Name": "title",
-              "Required": "n",
+              "Required": "N",
               "Default": "",
               "Type": "string",
               "Description": "Specific title of content"
@@ -4083,6 +4039,20 @@
               "Description": "Specific category name of content"
             },
             {
+              "Name": "image",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "url to the content profile image"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "content available status"
+            },
+            {
               "Name": "date_start",
               "Required": "N",
               "Default": "",
@@ -4097,18 +4067,11 @@
               "Description": "date end in the format YYYY-MM-DD (ex.1982-09-29)"
             },
             {
-              "Name": "image",
+              "Name": "content_pin",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "url to the content profile image"
-            },
-            {
-              "Name": "status",
-              "Required": "N",
-              "Default": "",
-              "Type": "string",
-              "Description": "content available status"
+              "Description": "Secret PIN given to content"
             }
           ]
         },
@@ -4244,36 +4207,6 @@
               "Type": "string",
               "Description": "content id as used in client's content"
             }
-          ]
-        },
-        {
-          "MethodName": "Generate content PIN",
-          "Synopsis": "Create PIN to existing content",
-          "HTTPMethod": "POST",
-          "URI": "/Content/:content_id/setPin",
-          "RequiresOAuth": "N",
-          "parameters": [
-              {
-                  "Name": "token",
-                  "Required": "Y",
-                  "Default": "",
-                  "Type": "string",
-                  "Description": "access token returned from Auth"
-              },
-              {
-                  "Name": "content_id",
-                  "Required": "Y",
-                  "Default": "",
-                  "Type": "string",
-                  "Description": "content id as used in client's content"
-              },
-              {
-                  "Name": "content_pin",
-                  "Required": "Y",
-                  "Default": "",
-                  "Type": "string",
-                  "Description": "Secret PIN given to content"
-              }
           ]
         }
       ]
