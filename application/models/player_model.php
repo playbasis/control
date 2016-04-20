@@ -3132,18 +3132,24 @@ class Player_model extends MY_Model
         return $this->mongo_db->count('playbasis_player_otp_to_player') > 0;
     }
 
-    public function generateOTPCode($pb_player_id)
-    {
+    private function genCode(){
         $code = null;
         for ($i = 0; $i < 2; $i++) {
-            $code = get_random_code(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
-            if (!$this->existsOTPCode($code)) {
+            $random_code = get_random_code(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
+            if (!$this->existsOTPCode($random_code)) {
+                $code = $random_code;
                 break;
             }
         }
         if (!$code) {
             throw new Exception('Cannot generate unique player code');
         }
+        return $code;
+    }
+
+    public function generateOTPCode($pb_player_id)
+    {
+        $code = $this->genCode();
 
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $records = $this->mongo_db->get('playbasis_player_otp_to_player');
@@ -3164,16 +3170,7 @@ class Player_model extends MY_Model
 
     public function generateOTPCodeForSetupPhone($pb_player_id,$deviceInfo)
     {
-        $code = null;
-        for ($i = 0; $i < 2; $i++) {
-            $code = get_random_code(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
-            if (!$this->existsOTPCode($code)) {
-                break;
-            }
-        }
-        if (!$code) {
-            throw new Exception('Cannot generate unique player code');
-        }
+        $code = $this->genCode();
 
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $records = $this->mongo_db->get('playbasis_player_otp_to_player');
