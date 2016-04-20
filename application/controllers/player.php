@@ -1011,11 +1011,20 @@ class Player extends REST2_Controller
             $this->player_model->increaseLoginAttempt($this->site_id, $player['_id']);
             $this->response($this->error->setError('AUTHENTICATION_FAIL'), 200);
         } else {
+            $devices_token = array_map('index_device_token', $this->player_model->listDevices(
+                $this->client_id, $this->site_id, $player['_id']));
+
             $device_id = $this->input->post('device_id');
-            if (!empty($device_id) && isset($player['device_id'])) {
-                //Change new device
-                if (($device_id !== $player['device_id']) && !empty($player['phone_number'])) {
+
+            if (!empty($device_id) && ($devices_token)) {
+
+                // Change new device
+                // Send SMS verification if device_id is not equal to existing device_token
+                if (!in_array($device_id,$devices_token, true) && !empty($player['phone_number'])) {
+
                     $this->response($this->error->setError('SMS_VERIFICATION_REQUIRED'), 200);
+
+                    // Otherwise, sent warning if phone number not found
                 } elseif (empty($player['phone_number'])) {
                     $this->response($this->error->setError('SMS_VERIFICATION_PHONE_NUMBER_NOT_FOUND'), 200);
                 }
@@ -2404,6 +2413,11 @@ class Player extends REST2_Controller
 function index_cl_player_id($obj)
 {
     return $obj['cl_player_id'];
+}
+
+function index_device_token($obj)
+{
+    return $obj['device_token'];
 }
 
 ?>
