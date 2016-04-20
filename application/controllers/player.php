@@ -1101,6 +1101,26 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('SMS_VERIFICATION_CODE_EXPIRED'), 200);
         }
 
+        if(isset($result['phone_number'])){
+            $this->player_model->updatePlayer($player['_id'], $this->validToken['site_id'], array(
+                'phone_number' => $result['phone_number']
+            ));
+        }
+
+        if(isset($result['device_token'])){
+            $result1 = $this->player_model->storeDeviceToken(array(
+                'client_id' => $this->client_id,
+                'site_id' => $this->site_id,
+                'pb_player_id' => $player['_id'],
+                'device_token' => $result['device_token'],
+                'device_description' => $result['device_description'],
+                'device_name' =>$result['device_name'],
+                'os_type' => $result['os_type']
+            ));
+            if (!$result1) {
+                $this->response($this->error->setError('INTERNAL_ERROR'), 200);
+            }
+        }
         $this->player_model->deleteOTPCode($result['code']);
 
         $this->response($this->resp->setRespond(), 200);
@@ -1706,6 +1726,47 @@ class Player extends REST2_Controller
         }
 
         $code = $this->player_model->generateOTPCode($player['_id']);
+
+        $this->response($this->resp->setRespond(array('code' => $code)), 200);
+    }
+
+    public function setupPhone_post($player_id = '')
+    {
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        }
+
+        $required = $this->input->checkParam(array(
+            'phone_number',
+            'device_token',
+            'device_description',
+            'device_name',
+            'os_type'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        if (!$this->validTelephonewithCountry($this->input->post('phone_number'))) {
+            $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
+        }
+
+        $deviceInfo = array(
+            'phone_number'=>$this->input->post('phone_number'),
+            'device_token'=>$this->input->post('device_token'),
+            'device_description'=>$this->input->post('device_description'),
+            'device_name'=>$this->input->post('device_name'),
+            'os_type'=>$this->input->post('os_type')
+        );
+
+        $player = $this->player_model->getPlayerByPlayerId($this->site_id, $player_id);
+        if (!$player) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $code = $this->player_model->generateOTPCodeForSetupPhone($player['_id'],$deviceInfo);
 
         $this->response($this->resp->setRespond(array('code' => $code)), 200);
     }

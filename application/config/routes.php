@@ -108,6 +108,7 @@ $route['Player/session'] = 'player/session';
 $route['Player/auth'] = 'player/auth';
 $route['Player/auth/' . ANY_STRING . '/requestOTPCode'] = 'player/requestOTPCode/$1';
 $route['Player/auth/requestOTPCode'] = 'player/requestOTPCode';
+$route['Player/auth/' . ANY_STRING . '/setupPhone'] = 'player/setupPhone/$1';
 $route['Player/auth/' . ANY_STRING . '/verifyOTPCode'] = 'player/verifyOTPCode/$1';
 $route['Player/auth/verifyOTPCode'] = 'player/verifyOTPCode';
 $route['Player/password/email'] = 'player/forgotPasswordEmail';
