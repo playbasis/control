@@ -4277,6 +4277,71 @@
           ]
         }
       ]
+    },
+    {
+      "name": "File API",
+      "methods": [
+        {
+          "MethodName": "Retrieve file data",
+          "Synopsis": "Retrieve image(s) content by specified filter fields",
+          "HTTPMethod": "GET",
+          "URI": "/File/list",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific id of file data"
+            },
+            {
+              "Name": "player_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific player_id of file data"
+            },
+            {
+              "Name": "sort",
+              "Required": "N",
+              "Default": "date_added",
+              "Type": "string",
+              "Description": "Specific field to sort ('date_added', 'date_modified', 'type', 'file_size')"
+            },
+            {
+              "Name": "order",
+              "Required": "N",
+              "Default": "asc",
+              "Type": "string",
+              "Description": "Direction to order ('desc', 'asc')"
+            }
+          ]
+        },
+        {
+          "MethodName": "Delete",
+          "Synopsis": "Permenently delete a Image File from Playbasis database.",
+          "HTTPMethod": "POST",
+          "URI": "/File/delete",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "file_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "image file name"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
