@@ -637,6 +637,68 @@
           ]
         },
         {
+          "MethodName": "Request OTP for setup phone",
+          "Synopsis": "Request One time password for setup phone.",
+          "HTTPMethod": "POST",
+          "URI": "/Player/auth/:id/setupPhone",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "phone_number",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "+66xxyyyzzzz"
+            },
+            {
+              "Name": "device_token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Device"
+            },
+            {
+              "Name": "device_description",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Device model description"
+            },
+            {
+              "Name": "device_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Device model name"
+            },
+            {
+              "Name": "os_type",
+              "Required": "Y",
+              "Default": "",
+              "Type": "enumerated",
+              "Description": "Choose os type",
+              "EnumeratedList": [
+                "IOS",
+                "Android"
+              ]
+            }
+          ]
+        },
+        {
           "MethodName": "Perform OTP verification",
           "Synopsis": "Perform OTP verification from code that has sent to player SMS.",
           "HTTPMethod": "POST",
