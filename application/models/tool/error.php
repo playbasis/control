@@ -230,6 +230,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Badge not available.";
                 $errorData['error_code'] = '0217';
                 break;
+            case 'PHONE_NUMBER_NOT_SET':
+                $errorData['message'] = "Phone number of this player is not set.";
+                $errorData['error_code'] = '0218';
+                break;
             case 'ACTION_NOT_FOUND':
                 $errorData['message'] = "Action not available";
                 $errorData['error_code'] = '0301';

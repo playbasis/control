@@ -77,7 +77,7 @@ class Pb_sms extends REST2_Controller
             $from = $this->input->post('from');
         } else {
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
-            $from = isset($sms_data['name']) ? $sms_data['name'] : $sms_data['number'];
+            $from = $sms_data['number']; // this should be optimized to set config in twilio for sending from name not number
         }
 
         $this->sendEngine('user', $from, $this->input->post('phone_number'), $this->input->post('message'));
@@ -114,7 +114,7 @@ class Pb_sms extends REST2_Controller
                 $from = $this->input->post('from');
             } else {
                 $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
-                $from = isset($sms_data['name']) ? $sms_data['name'] : $sms_data['number'];
+                $from = $sms_data['number']; // this should be optimized to set config in twilio for sending from name not number
             }
 
             /* check valid template_id */
@@ -193,7 +193,7 @@ class Pb_sms extends REST2_Controller
 
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
 
-            $this->sendEngine('goods', isset($sms_data['name']) ? $sms_data['name'] : $sms_data['number'],
+            $this->sendEngine('goods',  $sms_data['number'], // this should be optimized to set config in twilio for sending from name not number
                 $player['phone_number'], $message);
 
         } else {

@@ -27,6 +27,7 @@ class Player extends REST2_Controller
         $this->load->model('store_org_model');
         $this->load->library('form_validation');
         $this->load->library('parser');
+        $this->load->model('sms_model');
     }
 
     public function index_get($player_id = '')
@@ -1712,6 +1713,52 @@ class Player extends REST2_Controller
         $this->response($this->resp->setRespond(array('code' => $player['code'])), 200);
     }
 
+    private function sendEngine($type, $from, $to, $message)
+    {
+        $access = false;
+        try {
+            $this->client_model->permissionProcess(
+                $this->client_data,
+                $this->client_id,
+                $this->site_id,
+                "notifications",
+                "sms"
+            );
+            $access = true;
+        } catch (Exception $e) {
+            log_message('error', 'Error = ' . $e->getMessage());
+        }
+
+        if ($access) {
+            $this->benchmark->mark('send_start');
+            $validToken = $this->validToken;
+
+            // send SMS
+            $this->config->load("twilio", true);
+            $config = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
+            $twilio = $this->config->item('twilio');
+            $config['api_version'] = $twilio['api_version'];
+            $this->load->library('twilio/twiliomini', $config);
+
+            $response = $this->twiliomini->sms($from, $to, $message);
+            $this->sms_model->log($validToken['client_id'], $validToken['site_id'], $type, $from, $to, $message,
+                $response);
+            if ($response->IsError) {
+                log_message('error', 'Error sending SMS using Twilio, response = ' . print_r($response, true));
+                $this->response($this->error->setError('INTERNAL_ERROR', $response), 200);
+            }
+            $this->benchmark->mark('send_end');
+            $processing_time = $this->benchmark->elapsed_time('send_start', 'send_end');
+            $this->response($this->resp->setRespond(array(
+                'to' => $to,
+                'from' => $from,
+                'message' => $message,
+                'processing_time' => $processing_time
+            )), 200);
+        }
+        $this->response($this->error->setError('LIMIT_EXCEED'), 200);
+    }
+
     public function requestOTPCode_post($player_id = '')
     {
         if (!$player_id) {
@@ -1725,7 +1772,19 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
 
+        if (!isset($player['phone_number'])||!$player['phone_number']) {
+            $this->response($this->error->setError('PHONE_NUMBER_NOT_SET'), 200);
+        }
+
         $code = $this->player_model->generateOTPCode($player['_id']);
+
+        $validToken = $this->validToken;
+
+        $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
+        $from = $sms_data['number'];// this should be optimized to set config in twilio for sending from name not number
+        $message = "Your OTP is ".$code;
+
+        $this->sendEngine('user', $from, $player['phone_number'], $message);
 
         $this->response($this->resp->setRespond(array('code' => $code)), 200);
     }
@@ -1767,6 +1826,14 @@ class Player extends REST2_Controller
         }
 
         $code = $this->player_model->generateOTPCodeForSetupPhone($player['_id'],$deviceInfo);
+
+        $validToken = $this->validToken;
+
+        $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
+        $from = $sms_data['number']; // this should be optimized to set config in twilio for sending from name not number
+        $message = "Setup your device by OTP : ".$code;
+
+        $this->sendEngine('user', $from,$this->input->post('phone_number'), $message);
 
         $this->response($this->resp->setRespond(array('code' => $code)), 200);
     }
