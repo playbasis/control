@@ -1782,7 +1782,7 @@ class Player extends REST2_Controller
 
         $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
         $from = $sms_data['number'];// this should be optimized to set config in twilio for sending from name not number
-        $message = "Your OTP is ".$code;
+        $message = $code." is your verification code";
 
         $this->sendEngine('user', $from, $player['phone_number'], $message);
 
@@ -1831,7 +1831,7 @@ class Player extends REST2_Controller
 
         $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
         $from = $sms_data['number']; // this should be optimized to set config in twilio for sending from name not number
-        $message = "Setup your device by OTP : ".$code;
+        $message = $code." is your verification code";
 
         $this->sendEngine('user', $from,$this->input->post('phone_number'), $message);
 
