@@ -1773,7 +1773,7 @@ class Player extends REST2_Controller
         }
 
         if (!isset($player['phone_number'])||!$player['phone_number']) {
-            $this->response($this->error->setError('PHONE_NUMBER_NOT_SET'), 200);
+            $this->response($this->error->setError('SMS_VERIFICATION_PHONE_NUMBER_NOT_FOUND'), 200);
         }
 
         $code = $this->player_model->generateOTPCode($player['_id']);
