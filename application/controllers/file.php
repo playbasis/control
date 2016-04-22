@@ -251,7 +251,30 @@ class File extends REST2_Controller
         $t = $this->benchmark->elapsed_time('start', 'end');
 
         $files['processing_time'] = $t;
+        array_walk_recursive($files, array($this, "convert_mongo_object_and_category"));
+
         $this->response($this->resp->setRespond($files), 200);
+    }
+
+    /**
+     * Use with array_walk and array_walk_recursive.
+     * Recursive iterable items to modify array's value
+     * from MongoId to string and MongoDate to readable date
+     * @param mixed $item this is reference
+     * @param string $key
+     */
+    private function convert_mongo_object_and_category(&$item, $key)
+    {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else {
+                if (get_class($item) === 'MongoDate') {
+                    $item = datetimeMongotoReadable($item);
+                }
+            }
+        }
+
     }
 
 }
