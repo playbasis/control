@@ -3947,7 +3947,30 @@
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Find content which not actioned by player"
+              "Description": "Find content which no activity with player"
+            }
+          ]
+        },
+        {
+          "MethodName": "Count Content",
+          "Synopsis": "Count content(s) by specified filter fields",
+          "HTTPMethod": "GET",
+          "URI": "/Content/count",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "category",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific category name of content"
+            },
+            {
+              "Name": "player_exclude",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Find content which no activity with player"
             }
           ]
         },

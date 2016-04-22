@@ -454,6 +454,37 @@ class Content extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
+    public function countContent_get()
+    {
+        $this->benchmark->mark('start');
+        $getData = $this->input->get();
+        $query_data = array();
+
+        if (isset($getData['player_exclude'])){
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id'    => $this->validToken['client_id'],
+                'site_id'      => $this->validToken['site_id'],
+                'cl_player_id' => $getData['player_exclude']
+            ));
+            if (empty($pb_player_id)) {
+                $this->response($this->error->setError('USER_ID_INVALID'), 200);
+            }
+            $query_data['player_exclude'] = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
+        }
+
+        if (isset($getData['category']) && !is_null($getData['category'])) {
+            $category_result = $this->content_model->retrieveContentCategory($this->validToken['client_id'], $this->validToken['site_id'],
+                array('name' => $getData['category']));
+            $query_data['category'] = $category_result;
+        }
+
+        $count_value = $this->content_model->countContent($this->validToken['client_id'], $this->validToken['site_id'], $query_data);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $count_value, 'processing_time' => $t)), 200);
+    }
+
     /**
      * Use with array_walk and array_walk_recursive.
      * Recursive iterable items to modify array's value
