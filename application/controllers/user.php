@@ -1368,6 +1368,85 @@ class User extends MY_Controller
         $this->render_page('template_beforelogin');
     }
 
+    public function player_verify_email($code = '')
+    {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = 'Verify Email';
+
+        if (!$code) {
+            // TODO(Rook): This should render form for user to reset password manually by input username/email and reset code then redirect to change pwd form page
+
+            $this->data['topic_message'] = 'Email verification code is required to access this page';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+
+        $player = $this->Player_model->getPlayerByEmailVerifyCode($code);
+        if (!$player) {
+            $this->data['topic_message'] = 'Your email verification code is invalid.';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+
+        $sess_data = array(
+            'player' => $player
+        );
+        $this->session->set_userdata($sess_data);
+
+        if ($this->session->userdata('player')) {
+
+            $player_info = $this->Player_model->getPlayerById($player['pb_player_id']);
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+                $this->Player_model->verifyEmailByPlayerId($player['pb_player_id']);
+                $this->Player_model->deleteEmailVerifyCode($code);
+                $this->session->unset_userdata('user');
+
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array(
+                        'status' => 'success',
+                        'message' => 'You email address has been verified.'
+                    ));
+                    exit();
+                }
+
+                $this->data['topic_message'] = 'Completed Verify Your Email';
+                $this->data['message'] = 'You email address has been verified. Let\'s have fun.';
+                $this->data['main'] = 'partial/something_wrong';
+                $this->render_page('template_beforelogin');
+            }
+
+            if ($player) {
+                $player_info = $this->Player_model->getPlayerById($player['pb_player_id']);
+                $this->data['player_info'] = $player_info;
+                $this->data['password_recovery_code'] = $code;
+            }
+            $this->data['main'] = 'partial/playerverifyemail_partial';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+        }
+    }
+
+    public function player_verify_email_complete()
+    {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = 'Verify Email';
+        $this->data['topic_message'] = 'Completed Verify Your Email';
+        $this->data['message'] = 'You email address has been verified. Let\'s have fun.';
+        $this->data['main'] = 'partial/something_wrong';
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
+    }
+
     private function findGoodsToPlayerByGoodsId($goods_id, $goods_list)
     {
         foreach ($goods_list as $goods) {
