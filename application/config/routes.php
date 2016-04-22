@@ -333,16 +333,16 @@ $route['StoreOrg/nodes/'.ANY_STRING.'/unsetContentRole/'.ANY_STRING] = 'store_or
 
 //content API
 $route['Content'] = 'content/list';
-$route['Content/Category'] = 'content/listCategory';
 $route['Content/addContent'] = 'content/insert';
 $route['Content/'.ANY_STRING.'/update'] = 'content/update/$1';                                   // ANY_STRING = content_id
 $route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/like'] = 'content/action/like/$1/$2';       // ANY_STRING = content_id/cl_player_id
 $route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/dislike'] = 'content/action/dislike/$1/$2'; // ANY_STRING = content_id/cl_player_id
 $route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/feedback'] = 'content/giveFeedback/$1/$2';  // ANY_STRING = content_id/cl_player_id
 $route['Content/'.ANY_STRING.'/delete'] = 'content/deleteContent/$1';                            // ANY_STRING = content_id
-$route['Content/Category/create'] = 'content/createContentCategory';
-$route['Content/Category/update'] = 'content/updateContentCategory';
-$route['Content/Category/delete'] = 'content/deleteContentCategory';
+$route['Content/category'] = 'content/listCategory';
+$route['Content/category/create'] = 'content/createContentCategory';
+$route['Content/category/update'] = 'content/updateContentCategory';
+$route['Content/category/delete'] = 'content/deleteContentCategory';
 
 //CMS API
 $route['CMS/getArticles'] = 'cms/getArticles';
