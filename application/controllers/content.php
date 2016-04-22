@@ -17,8 +17,8 @@ class Content extends REST2_Controller
     public function list_get()
     {
         $this->benchmark->mark('start');
-
         $query_data = $this->input->get(null, true);
+        $content_id = null;
 
         if (isset($query_data['id'])) {
             try {
@@ -28,7 +28,19 @@ class Content extends REST2_Controller
             }
         }
 
-        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data);
+        if (isset($query_data['player_exclude'])){
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id'    => $this->validToken['client_id'],
+                'site_id'      => $this->validToken['site_id'],
+                'cl_player_id' => $query_data['player_exclude']
+            ));
+            if (empty($pb_player_id)) {
+                $this->response($this->error->setError('USER_ID_INVALID'), 200);
+            }
+            $content_id = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
+        }
+
+        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, $content_id);
         if (empty($contents)) {
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
@@ -48,7 +60,7 @@ class Content extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $contents, 'processing_time' => $t)), 200);
     }
 
-    public function category_get()
+    public function listCategory_get()
     {
         $this->benchmark->mark('start');
 
@@ -134,8 +146,8 @@ class Content extends REST2_Controller
         $contentInfo['date_end']   = new MongoDate(strtotime($this->input->post('date_end')));
         $contentInfo['status']     = strtolower($this->input->post('status')) == 'true';
 
-        if ($this->input->post('content_pin')){
-            $contentInfo['content_pin'] = $this->input->post('content_pin');
+        if ($this->input->post('pin')){
+            $contentInfo['pin'] = $this->input->post('pin');
         }
 
         $insert = $this->content_model->createContent($contentInfo);
@@ -194,8 +206,8 @@ class Content extends REST2_Controller
             $contentInfo['status'] = strtolower($this->input->post('status'))=='true';
         }
 
-        if ($this->input->post('content_pin')){
-            $contentInfo['content_pin'] = $this->input->post('content_pin');
+        if ($this->input->post('pin')){
+            $contentInfo['pin'] = $this->input->post('pin');
         }
 
         $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'], $content_id, $contentInfo);
@@ -266,9 +278,9 @@ class Content extends REST2_Controller
     {
         $this->benchmark->mark('start');
 
-        $content_pin = $this->input->post('content_pin');
-        if (empty($content_pin)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('content_pin')), 200);
+        $pin = $this->input->post('pin');
+        if (empty($pin)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('pin')), 200);
             die();
         }
 
@@ -277,7 +289,7 @@ class Content extends REST2_Controller
         }
         $this->checkValidContent($content_id);
 
-        $pin_data = $this->generatePinDict($content_pin);
+        $pin_data = $this->generatePinDict($pin);
 
         $is_updated = $this->content_model->setPinToContent($this->client_id, $this->site_id, $content_id, $pin_data);
 
@@ -347,6 +359,95 @@ class Content extends REST2_Controller
         }
 
         $this->content_model->deleteContent($client_id, $site_id, $content_id);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
+    }
+
+    public function createContentCategory_post()
+    {
+        $this->benchmark->mark('start');
+        $client_id = $this->validToken['client_id'];
+        $site_id = $this->validToken['site_id'];
+
+        if(!$this->input->post('name')){
+            $this->response($this->error->setError('PARAMETER_MISSING', array('name')), 200);
+        }
+
+        $this->content_model->createContentCategory($client_id, $site_id, $this->input->post('name'));
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
+    }
+
+    public function updateContentCategory_post()
+    {
+        $this->benchmark->mark('start');
+        $client_id = $this->validToken['client_id'];
+        $site_id = $this->validToken['site_id'];
+        $postData = $this->input->post();
+
+        $required = $this->input->checkParam(array(
+            'id',
+            'name'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        if (isset($postData['id'])) {
+            try {
+                $postData['id'] = new MongoId($postData['id']);
+            } catch (Exception $e) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+            }
+        }
+
+        $categories = $this->content_model->retrieveContentCategory($client_id, $site_id, array(
+            'id' => $postData['id']
+        ));
+        if (empty($categories)) {
+            $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
+        }
+
+        $this->content_model->updateContentCategory($postData['id'], array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'name' => $postData['name']
+        ));
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
+    }
+
+    public function deleteContentCategory_post()
+    {
+        $this->benchmark->mark('start');
+        $client_id = $this->validToken['client_id'];
+        $site_id = $this->validToken['site_id'];
+        $postData = $this->input->post();
+
+        if(!isset($postData['id'])){
+            $this->response($this->error->setError('PARAMETER_MISSING', array('id')), 200);
+        }else {
+            try {
+                $postData['id'] = new MongoId($postData['id']);
+            } catch (Exception $e) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+            }
+
+            $categories = $this->content_model->retrieveContentCategory($client_id, $site_id, array(
+                'id' => $postData['id']
+            ));
+            if (empty($categories)) {
+                $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
+            }
+        }
+
+        $this->content_model->deleteContentCategory($postData['id']);
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
