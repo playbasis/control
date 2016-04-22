@@ -510,6 +510,29 @@
           ]
         },
         {
+          "MethodName": "Verify player email",
+          "Synopsis": "Verify player email that store in Playbasis system.",
+          "HTTPMethod": "POST",
+          "URI": "/Player/:id/email/verify",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            }
+          ]
+        },
+        {
           "MethodName": "Delete",
           "Synopsis": "Permenently delete a player from Playbasis database.",
           "HTTPMethod": "POST",

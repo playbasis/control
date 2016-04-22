@@ -3097,16 +3097,7 @@ class Player_model extends MY_Model
 
     public function generatePasswordResetCode($pb_player_id)
     {
-        $code = null;
-        for ($i = 0; $i < 2; $i++) {
-            $code = get_random_code(8, false, true, true);
-            if (!$this->existsPasswordResetCode($code)) {
-                break;
-            }
-        }
-        if (!$code) {
-            throw new Exception('Cannot generate unique player code');
-        }
+        $code = $this->genCode(8, false, true, true);
 
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $records = $this->mongo_db->get('playbasis_player_password_reset');
@@ -3125,6 +3116,27 @@ class Player_model extends MY_Model
         return $code;
     }
 
+    public function generateEmailVerifyCode($pb_player_id)
+    {
+        $code = $this->genCode(8, false, true, true);
+
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $records = $this->mongo_db->get('playbasis_player_email_verify');
+        if (!$records) {
+            $this->mongo_db->insert('playbasis_player_email_verify', array(
+                'pb_player_id' => $pb_player_id,
+                'code' => $code,
+                'date_expire' => new MongoDate(strtotime("+1 day")),
+            ));
+        } else {
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+            $this->mongo_db->set('code', $code);
+            $this->mongo_db->set('date_expire', new MongoDate(strtotime("+1 day")));
+            $this->mongo_db->update('playbasis_player_email_verify');
+        }
+        return $code;
+    }
+
     public function existsOTPCode($code)
     {
         $this->mongo_db->where('code', $code);
@@ -3132,10 +3144,10 @@ class Player_model extends MY_Model
         return $this->mongo_db->count('playbasis_player_otp_to_player') > 0;
     }
 
-    private function genCode(){
+    private function genCode($length, $use_lower_case, $use_upper_case,  $use_numbers ){
         $code = null;
         for ($i = 0; $i < 2; $i++) {
-            $random_code = get_random_code(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
+            $random_code = get_random_code($length, $use_lower_case, $use_upper_case, $use_numbers);
             if (!$this->existsOTPCode($random_code)) {
                 $code = $random_code;
                 break;
@@ -3149,7 +3161,7 @@ class Player_model extends MY_Model
 
     public function generateOTPCode($pb_player_id)
     {
-        $code = $this->genCode();
+        $code = $this->genCode(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
 
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $records = $this->mongo_db->get('playbasis_player_otp_to_player');
@@ -3168,7 +3180,7 @@ class Player_model extends MY_Model
 
     public function generateOTPCodeForSetupPhone($pb_player_id,$deviceInfo)
     {
-        $code = $this->genCode();
+        $code = $this->genCode(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
 
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $records = $this->mongo_db->get('playbasis_player_otp_to_player');

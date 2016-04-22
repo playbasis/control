@@ -1160,6 +1160,37 @@ class Player extends REST2_Controller
         $this->response($this->resp->setRespond(array('success' => true)), 200);
     }
 
+    public function emailVerify_post($player_id = '')
+    {
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        }
+
+        $player = $this->player_model->getPlayerByPlayerId($this->site_id, $player_id);
+        if (!$player) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        // generate password key
+        $random_key = $this->player_model->generateEmailVerifyCode($player['_id']);
+
+        // send email
+        $from = EMAIL_FROM;
+        $to = $player['email'];
+        $subject = 'Verify Your Email';
+        $html = $this->parser->parse('player_verifyemail.html', array(
+            'firstname' => $player['first_name'],
+            'lastname' => $player['last_name'],
+            'url' => $this->config->item('CONTROL_DASHBOARD_URL') . 'player/email/verify/'.$random_key
+        ), true);
+        $response = $this->utility->email($from, $to, $subject, $html);
+        $this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response,
+            $from, $to, $subject, $html);
+        $this->response($this->resp->setRespond(array('success' => true)), 200);
+    }
+
     public function points_get($player_id = '')
     {
         if (!$player_id) {

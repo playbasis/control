@@ -112,6 +112,7 @@ $route['Player/auth/' . ANY_STRING . '/setupPhone'] = 'player/setupPhone/$1';
 $route['Player/auth/' . ANY_STRING . '/verifyOTPCode'] = 'player/verifyOTPCode/$1';
 $route['Player/auth/verifyOTPCode'] = 'player/verifyOTPCode';
 $route['Player/password/email'] = 'player/forgotPasswordEmail';
+$route['Player/'.ANY_STRING.'/email/verify'] = 'player/emailVerify/$1';
 
 $route['Player/rank/'.ANY_STRING.'/'.ANY_NUMBER] = 'player/rank/$1/$2';
 $route['Player/rank/'.ANY_STRING] = 'player/rank/$1/20';
