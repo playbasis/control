@@ -4127,7 +4127,7 @@
           "MethodName": "Retrieve Category",
           "Synopsis": "Retrieve category by specified filter fields",
           "HTTPMethod": "GET",
-          "URI": "/Content/Category",
+          "URI": "/Content/category",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -4178,7 +4178,7 @@
           "MethodName": "Create Category",
           "Synopsis": "Create content category",
           "HTTPMethod": "POST",
-          "URI": "/Content/Category/create",
+          "URI": "/Content/category/create",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -4201,7 +4201,7 @@
           "MethodName": "Update Category",
           "Synopsis": "Update content category",
           "HTTPMethod": "POST",
-          "URI": "/Content/Category/update",
+          "URI": "/Content/category/update",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -4231,7 +4231,7 @@
           "MethodName": "Delete Category",
           "Synopsis": "Delete content category",
           "HTTPMethod": "POST",
-          "URI": "/Content/Category/delete",
+          "URI": "/Content/category/delete",
           "RequiresOAuth": "N",
           "parameters": [
             {
