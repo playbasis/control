@@ -255,54 +255,6 @@ jQuery(document).ready( function($) {
         }
     });
 
-    //==== Validate Reset Player Password form=======//
-    $('#playerverifyemail_form').validate({
-        submitHandler: function (form) {
-            $.ajax({
-                    type: 'post',
-                    url: baseUrlPath + "player/email/verify/" + $('#password-recovery-code').val(),
-                    data: $(form).serialize() + '&format=json',
-                    cache: false,
-                    dataType: 'json'
-                })
-                .done(function (data) {
-                    if (before_debug)console.log(data);
-                    if (data.message) {
-                        var messageAlert = data.message;
-                    } else {
-                        var messageAlert = message_error_default;
-                    }
-                    if (data.status == 'error') {
-                        $('.registration-verifyemail').pbAlert({
-                            content: messageAlert,
-                            type: 'error'
-                        });
-                    } else {
-                        $('.registration-verifyemail').pbAlert({
-                            content: messageAlert,
-                            type: 'success'
-                        });
-                        $('#playerverifyemail_form').find('input').attr('disabled',true);
-                        setTimeout(function () {
-                            window.location = baseUrlPath + "player/email/verify/completed";
-                        }, 5000);
-                    }
-                })
-                .fail(function (data) {
-                    $('.registration-verifyemail').pbAlert({
-                        content: message_error_default
-                    });
-                })
-                .always(function (data) {
-                    $(form).find('input').attr('disabled', false);
-                });
-
-            $(form).find('input').attr('disabled', true);
-            return false;
-
-        }
-    });
-
   //==== Validate Forgot Password form=======//
   $('#forgotpassword_form').validate({
     submitHandler: function(form) {
