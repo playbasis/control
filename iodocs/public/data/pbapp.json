@@ -3911,57 +3911,20 @@
               "Default": "false",
               "Type": "string",
               "Description": "true, will return full html"
-            }
-          ]
-        },
-        {
-          "MethodName": "Retrieve Category",
-          "Synopsis": "Retrieve category by specified filter fields",
-          "HTTPMethod": "GET",
-          "URI": "/Category",
-          "RequiresOAuth": "N",
-          "parameters": [
+            },
             {
-              "Name": "id",
+              "Name": "pin",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Specific id of category"
+              "Description": "Secret PIN given to content"
             },
             {
-              "Name": "date_check",
+              "Name": "player_exclude",
               "Required": "N",
-              "Default": "false",
+              "Default": "",
               "Type": "string",
-              "Description": "Return category that available in this date range"
-            },
-            {
-              "Name": "sort",
-              "Required": "N",
-              "Default": "title",
-              "Type": "string",
-              "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified')"
-            },
-            {
-              "Name": "order",
-              "Required": "N",
-              "Default": "asc",
-              "Type": "string",
-              "Description": "Direction to order ('desc', 'asc')"
-            },
-            {
-              "Name": "offset",
-              "Required": "N",
-              "Default": "0",
-              "Type": "integer",
-              "Description": "number of records starting"
-            },
-            {
-              "Name": "limit",
-              "Required": "N",
-              "Default": "20",
-              "Type": "integer",
-              "Description": "number of results to return"
+              "Description": "Find content which not actioned by player"
             }
           ]
         },
@@ -4043,7 +4006,7 @@
               "Description": "player id who generate this content"
             },
             {
-              "Name": "content_pin",
+              "Name": "pin",
               "Required": "N",
               "Default": "",
               "Type": "string",
@@ -4129,11 +4092,161 @@
               "Description": "date end in the format YYYY-MM-DD (ex.1982-09-29)"
             },
             {
-              "Name": "content_pin",
+              "Name": "pin",
               "Required": "N",
               "Default": "",
               "Type": "string",
               "Description": "Secret PIN given to content"
+            }
+          ]
+        },
+        {
+          "MethodName": "Delete content",
+          "Synopsis": "Delete existing content",
+          "HTTPMethod": "POST",
+          "URI": "/Content/:content_id/delete",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "content_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "content id as used in client's content"
+            }
+          ]
+        },
+        {
+          "MethodName": "Retrieve Category",
+          "Synopsis": "Retrieve category by specified filter fields",
+          "HTTPMethod": "GET",
+          "URI": "/Content/category",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific id of category"
+            },
+            {
+              "Name": "name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific name of category"
+            },
+            {
+              "Name": "sort",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific field to sort ('_id', 'name', 'date_added', 'date_modified')"
+            },
+            {
+              "Name": "order",
+              "Required": "N",
+              "Default": "asc",
+              "Type": "string",
+              "Description": "Direction to order ('desc', 'asc')"
+            },
+            {
+              "Name": "offset",
+              "Required": "N",
+              "Default": "0",
+              "Type": "integer",
+              "Description": "number of records starting"
+            },
+            {
+              "Name": "limit",
+              "Required": "N",
+              "Default": "20",
+              "Type": "integer",
+              "Description": "number of results to return"
+            }
+          ]
+        },
+        {
+          "MethodName": "Create Category",
+          "Synopsis": "Create content category",
+          "HTTPMethod": "POST",
+          "URI": "/Content/category/create",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific name of category"
+            }
+          ]
+        },
+        {
+          "MethodName": "Update Category",
+          "Synopsis": "Update content category",
+          "HTTPMethod": "POST",
+          "URI": "/Content/category/update",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific id of category"
+            },
+            {
+              "Name": "name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific new name of category"
+            }
+          ]
+        },
+        {
+          "MethodName": "Delete Category",
+          "Synopsis": "Delete content category",
+          "HTTPMethod": "POST",
+          "URI": "/Content/category/delete",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific id of category"
             }
           ]
         },
@@ -4245,29 +4358,6 @@
                 "Default": "",
                 "Type": "string",
                 "Description": "custom field values separated by comma"
-            }
-          ]
-        },
-        {
-          "MethodName": "Delete content",
-          "Synopsis": "Delete existing content",
-          "HTTPMethod": "POST",
-          "URI": "/Content/:content_id/delete",
-          "RequiresOAuth": "N",
-          "parameters": [
-            {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
-            },
-            {
-              "Name": "content_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "content id as used in client's content"
             }
           ]
         }
