@@ -32,6 +32,7 @@ $lang['entry_status_enable'] = 'Enable';
 $lang['entry_status_disable'] = 'Disable';
 $lang['entry_category_name'] = 'Category name';
 $lang['entry_add_category'] = 'Add new category?';
+$lang['entry_pin'] = 'PIN';
 
 // Text
 $lang['text_success'] = 'You have successfully created!';

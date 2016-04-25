@@ -143,6 +143,16 @@
                                         <input type="checkbox" name="status" id="status" data-handle-width="40" <?php echo isset($status) ? ( $status ? "checked" : '') : set_checkbox('status','',true); ?>>
                                     </div>
                                 </div>
+
+                                <div class="control-group">
+                                    <label class="control-label"
+                                           for="inputPin"><?php echo $this->lang->line('entry_pin'); ?></label>
+                                    <div class="controls">
+                                        <input type="text" name="pin" size="100" id="inputPin"
+                                               placeholder="<?php echo $this->lang->line('entry_pin'); ?>"
+                                               value="<?php echo isset($pin) ? $pin : set_value('$pin'); ?>"/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
