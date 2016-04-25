@@ -1321,6 +1321,7 @@ class User extends MY_Controller
                 if ($this->form_validation->run()) {
                     $new_password = $this->input->post('password');
 
+                    $this->Player_model->verifyEmailByPlayerId($player['pb_player_id']);
                     $this->Player_model->setPlayerPasswordByPlayerId($player['pb_player_id'], $new_password);
                     $this->Player_model->deletePasswordResetCode($code);
                     $this->session->unset_userdata('user');
