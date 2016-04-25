@@ -1152,6 +1152,7 @@ class Player extends REST2_Controller
         $html = $this->parser->parse('player_forgotpassword.html', array(
             'firstname' => $player['first_name'],
             'lastname' => $player['last_name'],
+            'username' => $player['username'],
             'url' => $this->config->item('CONTROL_DASHBOARD_URL') . 'player/password/reset/'.$random_key
         ), true);
         $response = $this->utility->email($from, $to, $subject, $html);

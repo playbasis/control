@@ -3022,6 +3022,7 @@ class Player_model extends MY_Model
             'cl_player_id',
             'first_name',
             'last_name',
+            'username',
             'device_id',
             'phone_number',
             'approve_status',
