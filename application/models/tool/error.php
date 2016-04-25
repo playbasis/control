@@ -460,6 +460,10 @@ class Error extends CI_Model
                 $errorData['message'] = "This role is not set for this Content";
                 $errorData['error_code'] = '2422';
                 break;
+            case 'EMAIL_NOT_VERIFIED':
+                $errorData['message'] = "Your account need to verify email address";
+                $errorData['error_code'] = '2423';
+                break;
             default:
                 $errorData['message'] = "Unknown";
                 $errorData['error_code'] = '9999';

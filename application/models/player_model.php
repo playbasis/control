@@ -3007,7 +3007,8 @@ class Player_model extends MY_Model
             'phone_number',
             'approve_status',
             'login_attempt',
-            'locked'
+            'locked',
+            'email_verify'
         ));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('username', $username);
@@ -3027,7 +3028,8 @@ class Player_model extends MY_Model
             'phone_number',
             'approve_status',
             'login_attempt',
-            'locked'
+            'locked',
+            'email_verify'
         ));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('email', $email);

@@ -1007,6 +1007,12 @@ class Player extends REST2_Controller
             $this->player_model->lockPlayer($this->site_id, $player['_id']);
             $this->response($this->error->setError('ACCOUNT_IS_LOCKED'), 200);
         }
+        if (isset($setting['email_verification_enable']) && ($setting['email_verification_enable'])){
+            if(!isset($player['email_verify']) || $player['email_verify'] != true){
+                $this->response($this->error->setError('EMAIL_NOT_VERIFIED'), 200);
+            }
+        }
+
         $auth = $this->player_model->authPlayer($this->site_id, $player['_id'], $password);
         if (!$auth) {
             $this->player_model->increaseLoginAttempt($this->site_id, $player['_id']);
