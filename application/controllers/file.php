@@ -24,7 +24,6 @@ class File extends REST2_Controller
     {
         $this->benchmark->mark('start');
 
-
         if (empty($_FILES)) {
             $this->response($this->error->setError('FILE_NOT_FOUND'), 200);
         } else {
@@ -33,42 +32,36 @@ class File extends REST2_Controller
             $image = $_FILES[key($array)];
         }
 
+        $pb_player_id = null;
+        $user_id = null;
+
         if ($image && $image['tmp_name']) {
             $input = $this->input->post();
 
             if (isset($input['player_id'])) {
-
                 if (isset($input['username'])){
                     $this->response($this->error->setError('PARAMETER_INVALID', array('username', 'player_id')), 200);
                 }
-
                 // Find pb_player_id
                 $pb_player_id = isset($input['player_id']) ? $this->player_model->getPlaybasisId(array_merge($this->validToken,
                     array(
                         'cl_player_id' => $input['player_id']
                     ))) : null;
-
                 if (!$pb_player_id) {
                     $this->response($this->error->setError('USER_NOT_EXIST'), 200);
                 }
-
             }
 
             if (isset($input['username'])) {
-
                 if (isset($input['player_id'])){
                     $this->response($this->error->setError('PARAMETER_INVALID', array('player_id', 'username')), 200);
                 }
-
                 // Find username
                 $user = isset($input['username']) ? $this->user_model->getByUsername($input['username']) : null;
-
                 if (!$user) {
                     $this->response($this->error->setError('USER_NOT_EXIST'), 200);
                 }
-
                 $user_id = isset($user) ? $user['_id'] : null;
-
             }
 
             $client_id = $this->validToken['client_id'];
@@ -132,7 +125,6 @@ class File extends REST2_Controller
                 'application/x-shockwave-flash',
                 'application/octet-stream'
             );
-
             if (!in_array($image['type'], $allowed)) {
                 $this->response($this->error->setError('FILE_TYPE_NOT_ALLOWED'), 200);
             }
@@ -145,7 +137,6 @@ class File extends REST2_Controller
                 '.tiff',
                 '.flv'
             );
-
             if (!in_array(strtolower(strrchr($filename, '.')), $allowed)) {
                 $this->response($this->error->setError('FILE_TYPE_NOT_ALLOWED'), 200);
             }
@@ -160,7 +151,6 @@ class File extends REST2_Controller
         $result = $this->image_model->uploadImage($client_id, $site_id, $image, $filename, $directory, $pb_player_id, $user_id);
 
         if ($result) {
-
             $json['url'] = rtrim(S3_IMAGE . S3_DATA_FOLDER . $directory, '/') . "/" . urlencode($filename);
             @copy(rtrim(S3_IMAGE . S3_DATA_FOLDER . $directory, '/') . "/" . urlencode($filename),
                 $directory . '/' . $filename);
@@ -172,7 +162,6 @@ class File extends REST2_Controller
             $json['thumb_small'] = $this->image_model->createThumbnailSmall($uri);
             $json['thumb_large'] = $this->image_model->createThumbnailLarge($uri);
             @unlink($local_directory . '/' . $filename);
-
         } else {
             $this->response($this->error->setError('UPLOAD_FILE_ERROR', "S3 fail"), 200);
         }
