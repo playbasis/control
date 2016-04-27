@@ -55,9 +55,48 @@ class Content extends REST2_Controller
             }
         array_walk_recursive($contents, array($this, "convert_mongo_object_and_category"));
 
+        $result = array();
+        if (isset($query_data['sort']) && $query_data['sort'] == "random") {
+            if (isset($query_data['order'])) {
+                if (is_numeric($query_data['order'])) {
+                    srand(intval($query_data['order']));
+                }
+            }
+            $content_count =  count($contents);
+            $numbers = range(0, $content_count-1);
+            shuffle($numbers);
+
+            if ( isset($query_data['offset']) && is_numeric($query_data['offset']) ) {
+                if ($query_data['offset'] < 0) {
+                    $query_data['offset'] = 0;
+                }elseif($query_data['offset'] >= $content_count){
+                    $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+                }
+            }else {
+                $query_data['offset'] = 0;
+            }
+
+            if( isset($query_data['limit']) && is_numeric($query_data['limit'])){
+                if ($query_data['limit'] < 1) {
+                    $query_data['limit'] = $content_count;
+                }else if($query_data['offset'] + $query_data['limit'] > $content_count){
+                    $query_data['limit'] = $content_count - $query_data['offset'];
+                }
+            } else {
+                $query_data['limit'] = $content_count;
+            }
+
+            for($i=0;$i<$query_data['limit'];$i++){
+                $result[$i] = $contents[$numbers[$i+$query_data['offset']]];
+            }
+
+        }else{
+            $result = $contents;
+        }
+
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $contents, 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
     public function listCategory_get()
