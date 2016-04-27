@@ -52,12 +52,14 @@ class Content_model extends MY_Model
 
         if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
             $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
+        } else if(isset($optionalParams['sort']) && $optionalParams['sort'] == "random") {
+            $this->mongo_db->order_by(array('date_added' => 1));
         } else {
             $this->mongo_db->order_by(array('title' => $order));
         }
 
         // Paging
-        if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
+        if ((isset($optionalParams['offset']) || isset($optionalParams['limit'])) && !(isset($optionalParams['sort']) && $optionalParams['sort'] == "random")) {
             if (isset($optionalParams['offset'])) {
                 if ($optionalParams['offset'] < 0) {
                     $optionalParams['offset'] = 0;
