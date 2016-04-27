@@ -3905,14 +3905,14 @@
               "Required": "N",
               "Default": "title",
               "Type": "string",
-              "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified')"
+              "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified', 'random')"
             },
             {
               "Name": "order",
               "Required": "N",
               "Default": "asc",
               "Type": "string",
-              "Description": "Direction to order ('desc', 'asc')"
+              "Description": "Direction to order ('desc', 'asc'), but if sort is 'random' then this field will be seed number"
             },
             {
               "Name": "offset",
