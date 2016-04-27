@@ -85,8 +85,10 @@ class import extends MY_Controller
                 $data['client_id']    = $this->User_model->getClientId();
                 $data['site_id']      = $this->User_model->getSiteId();
                 $data['name']         = $data['name'] != "" ? $data['name']: null;
-                $data['url']          = $data['url'] != "" ? $data['url']: null;
-                $data['port']         = $data['port'] != "" ? $data['port'] : "80";
+                $data['host_type']    = $data['host_type'] != "" ? $data['host_type']: null;
+                $data['host_name']    = $data['host_name'] != "" ? $data['host_name']: null;
+                $data['file_name']    = $data['file_name'] != "" ? $data['file_name']: null;
+                $data['port']         = $data['port'] != "" ? $data['port'] : null;
                 $data['user_name']    = $data['user_name'] != "" ? $data['user_name'] : null;
                 $data['password']     = $data['password'] != "" ? $data['password'] : null;
                 $data['import_type']  = $data['import_type'] != "" ? $data['import_type'] : null;
@@ -139,10 +141,12 @@ class import extends MY_Controller
 
                 $data['client_id']    = $this->User_model->getClientId();
                 $data['site_id']      = $this->User_model->getSiteId();
-                $data['_id']      = $import_id;
+                $data['_id']          = $import_id;
                 $data['name']         = $data['name'] != "" ? $data['name']: null;
-                $data['url']          = $data['url'] != "" ? $data['url']: null;
-                $data['port']         = $data['port'] != "" ? $data['port'] : "80";
+                $data['host_type']    = $data['host_type'] != "" ? $data['host_type']: null;
+                $data['host_name']    = $data['host_name'] != "" ? $data['host_name']: null;
+                $data['file_name']    = $data['file_name'] != "" ? $data['file_name']: null;
+                $data['port']         = $data['port'] != "" ? $data['port'] : null;
                 $data['user_name']    = $data['user_name'] != "" ? $data['user_name'] : null;
                 $data['password']     = $data['password'] != "" ? $data['password'] : null;
                 $data['import_type']  = $data['import_type'] != "" ? $data['import_type'] : null;

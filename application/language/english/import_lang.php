@@ -6,8 +6,11 @@
  * Time: 10:58 AM
  */
 $lang['heading_title']      = 'Import';
-$lang['entry_name']         = 'Import name';
+$lang['entry_name']         = 'Name';
 $lang['entry_url']          = 'URL';
+$lang['entry_hostname']     = 'Host name';
+$lang['entry_hosttype']     = 'Host type';
+$lang['entry_filename']     = 'File name';
 $lang['entry_port']         = 'Port';
 $lang['entry_username']     = 'Username';
 $lang['entry_password']     = 'Password';
