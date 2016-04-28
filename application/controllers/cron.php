@@ -1487,16 +1487,39 @@ class Cron extends CI_Controller
                             } else {
 
                                 foreach ($returnData['importData'] as $key => $val) {
+
+                                    $f = function($v) {
+                                        return explode("=", $v[0]);
+                                    };
+                                    $f2 = function($v) {
+                                        return array($v[0] => $v[1]);
+                                    };
+
                                     $data = array(
                                         'api_key' => $returnImportData['api_key'],
                                         'token' => $returnImportData['token'],
                                         'action' => $val['action'],
                                         'player_id' => $val['cl_player_id']
                                     );
+
+                                    // Set custom parameters if required
+                                    if (!empty(strtolower($val['customs']))) {
+                                        $arrays = array_map($f2, array_map($f, array_map('str_getcsv', explode("|", $val['customs']))));
+
+                                        foreach ($arrays as $arr) {
+                                            $data = array_merge($data, $arr);
+                                        }
+                                    }
+
+                                    // Set Date at HTTP header
+                                    if (!empty(strtolower($val['date']))){
+                                        $this->restclient->http_header('Date', $val['date']);
+                                    }
+
                                     $result = $this->restclient->post($this->config->base_url() . 'Engine/rule', $data);
 
                                     $returnImportActivities = array_merge($returnImportActivities, array(
-                                        $val['name'] => $result->message
+                                        $key => $result->message
                                     ));
                                 }
 
@@ -1614,13 +1637,16 @@ class Cron extends CI_Controller
                                     if ((isset($val['roles'])) && (isset($result->response->node_id))) {
                                         $node_id = json_decode(json_encode($result->response->node_id), true)['$id'];
 
+                                        $roles = explode("|",$val['roles']);
+
                                         // Insert role to player
-                                        foreach ($val['roles'] as $key => $role) {
+                                        foreach ($roles as $key => $role) {
                                             $data['role'] = $role;
                                             $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/' . $node_id . '/setPlayerRole/' . $val['player_id'],
                                                 $data);
                                         }
                                     }
+
                                     $returnImportActivities = array_merge($returnImportActivities, array(
                                         $val['player_id'] => $result->message
                                     ));
@@ -1662,6 +1688,7 @@ class Cron extends CI_Controller
     private function getDataFromURL($importData)
     {
         $data['import_id'] = $importData['_id']['$id'];
+        $file_extension = strtolower(end(explode('.', $importData['file_name'])));
 
         if ($importData['host_type'] === 'FTP') {
 
@@ -1691,6 +1718,17 @@ class Cron extends CI_Controller
             // try to download $remote_file and save it to $handle
             if ($login_result && $ftp_get_result) {
                 $result = file_get_contents($local_file);
+
+                // Convert CSV to JSON
+                if ($file_extension === 'csv') {
+                    $result = rtrim($result,"\n");
+                    $array = array_map('str_getcsv', explode("\n", $result));
+                    array_walk($array, function (&$a) use ($array) {
+                        $a = array_combine($array[0], $a);
+                    });
+                    array_shift($array);
+                    $result = json_encode($array);
+                }
                 $jsonData = json_decode($result, true);
             }
 
@@ -1709,6 +1747,18 @@ class Cron extends CI_Controller
             curl_setopt($ch, CURLOPT_URL, $url);
             $result = curl_exec($ch);
             curl_close($ch);
+
+            // Convert CSV to JSON
+            if ($file_extension === 'csv') {
+                $result = rtrim($result,"\n");
+                $array = array_map('str_getcsv', explode("\n", $result));
+                array_walk($array, function (&$a) use ($array) {
+                    $a = array_combine($array[0], $a);
+                });
+                array_shift($array);
+                $result = json_encode($array);
+            }
+
             $jsonData = json_decode($result, true);
         }
 
