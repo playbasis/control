@@ -223,7 +223,7 @@ class Error extends CI_Model
                 $errorData['error_code'] = '0215';
                 break;
             case 'EMAIL_ALREADY_EXIST':
-                $errorData['message'] = "Email already exist.";
+                $errorData['message'] = "Email is already used.";
                 $errorData['error_code'] = '0216';
                 break;
             case 'BADGE_NOT_FOUND':

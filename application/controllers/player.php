@@ -623,8 +623,14 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
         $playerInfo = array();
+        $is_email_changed = false;
         $email = $this->input->post('email');
         if ($email) {
+            // check whether the email is changed
+            if($email != $this->player_model->getEmail($this->site_id, $pb_player_id)){
+                $is_email_changed = true;
+            }
+
             //check if new email is already exist in this site
             $player = $this->player_model->getPlayerByEmailButNotID($this->site_id, $email, $pb_player_id);
             if ($player) {
@@ -715,6 +721,10 @@ class Player extends REST2_Controller
         $approve_status = $this->input->post('approve_status');
         if ($approve_status) {
             $playerInfo['approve_status'] = $approve_status;
+        }
+        // unset email_verify flag if player's email is changed
+        if($is_email_changed){
+            $playerInfo['email_verify'] = false;
         }
 
         $this->player_model->updatePlayer($pb_player_id, $this->validToken['site_id'], $playerInfo);
@@ -1195,7 +1205,7 @@ class Player extends REST2_Controller
         $response = $this->utility->email($from, $to, $subject, $html);
         $this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response,
             $from, $to, $subject, $html);
-        $this->response($this->resp->setRespond(array('success' => true)), 200);
+        $this->response($this->resp->setRespond(array('success' => true,'message' => 'Verification message was sent to your email. Please check it.')), 200);
     }
 
     public function points_get($player_id = '')
