@@ -1,5 +1,46 @@
 # Change Log
 
+## [2.9.0](https://github.com/playbasis/control/tree/2.9.0)
+
+[Full Changelog](https://github.com/playbasis/control/compare/2.8.3...2.9.0)
+
+**Implemented enhancements:**
+
+- Moved category into main tab under Content menu [\#153](https://github.com/playbasis/control/pull/153) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.8.3](https://github.com/playbasis/control/tree/2.8.3) (2016-04-28)
+[Full Changelog](https://github.com/playbasis/control/compare/wrongly_update_setting...2.8.3)
+
+**Implemented enhancements:**
+
+- \[Dashboard\] [\#150](https://github.com/playbasis/control/pull/150) ([niti-playbasis](https://github.com/niti-playbasis))
+- Added PIN field into content create/update page [\#149](https://github.com/playbasis/control/pull/149) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Reset password should imply email is verified [\#148](https://github.com/playbasis/control/pull/148) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- immediately verify player's email when click on verification link [\#147](https://github.com/playbasis/control/pull/147) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- New page for email verification [\#146](https://github.com/playbasis/control/pull/146) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Add flag "allow only verified email to login" into setting [\#145](https://github.com/playbasis/control/pull/145) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.8.3 [\#152](https://github.com/playbasis/control/pull/152) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Fix bug PHP error in import module after splitting URL into scheme, h… [\#151](https://github.com/playbasis/control/pull/151) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [wrongly_update_setting](https://github.com/playbasis/control/tree/wrongly_update_setting) (2016-04-19)
+[Full Changelog](https://github.com/playbasis/control/compare/2.8.1...wrongly_update_setting)
+
+**Fixed bugs:**
+
+- Hotfix/wrongly update setting [\#144](https://github.com/playbasis/control/pull/144) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.8.1](https://github.com/playbasis/control/tree/2.8.1) (2016-04-18)
+[Full Changelog](https://github.com/playbasis/control/compare/2.8.2...2.8.1)
+
+## [2.8.2](https://github.com/playbasis/control/tree/2.8.2) (2016-04-18)
+[Full Changelog](https://github.com/playbasis/control/compare/2.8.0...2.8.2)
+
+## [2.8.0](https://github.com/playbasis/control/tree/2.8.0) (2016-04-18)
+[Full Changelog](https://github.com/playbasis/control/compare/2.7.0...2.8.0)
+
 ## [2.8.0](https://github.com/playbasis/control/tree/2.8.0) (2016-03-21)
 [Full Changelog](https://github.com/playbasis/control/compare/2.7.0...2.8.0)
 
