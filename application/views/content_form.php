@@ -39,149 +39,105 @@
             $attributes = array('id' => 'form', 'class' => 'form-horizontal content-form');
             echo form_open($form, $attributes);
             ?>
-            <div class="tabbable">
-                <ul class="nav nav-tabs" id="mainTab">
-                    <li class="active">
-                        <a href="#generalContentTab"
-                           data-toggle="tab"><?php echo $this->lang->line('tab_general'); ?></a>
-                    </li>
-                    <li>
-                        <a href="#categoryContentTab"
-                           data-toggle="tab"><?php echo $this->lang->line('tab_category'); ?></a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane fade active in" id="generalContentTab">
-                        <div class="container-fluid">
-                            <div class="row-fluid">
-                                <div class="control-group">
-                                    <label class="control-label"
-                                           for="inputTitle"><?php echo $this->lang->line('entry_title'); ?><span
-                                            class="required">&nbsp;*</span></label>
-                                    <div class="controls">
-                                        <input type="text" name="title" size="100" id="inputTitle"
-                                               placeholder="<?php echo $this->lang->line('entry_title'); ?>"
-                                               value="<?php echo isset($title) ? $title : set_value('$title'); ?>"/>
-                                    </div>
-                                </div>
 
-                                <div class="control-group">
-                                    <label class="control-label" for="inputSummary">
-                                        <?php echo $this->lang->line('entry_summary'); ?><span
-                                            class="required">&nbsp;*</span>
-                                    </label>
-                                    <div class="controls">
-                                        <textarea name="summary" id="inputSummary" cols="80" rows="5" style="width: 70%;"
-                                                  placeholder="<?php echo $this->lang->line('entry_summary'); ?>"><?php echo isset($summary) ? $summary : set_value('summary'); ?></textarea>
-                                    </div>
-                                </div>
+            <div class="control-group">
+                <label class="control-label"
+                       for="inputTitle"><?php echo $this->lang->line('entry_title'); ?><span
+                        class="required">&nbsp;*</span></label>
+                <div class="controls">
+                    <input type="text" name="title" size="100" id="inputTitle"
+                           placeholder="<?php echo $this->lang->line('entry_title'); ?>"
+                           value="<?php echo isset($title) ? $title : set_value('$title'); ?>"/>
+                </div>
+            </div>
 
-                                <div class="control-group">
-                                    <label class="control-label" for="inputDetail">
-                                        <?php echo $this->lang->line('entry_detail'); ?><span
-                                            class="required">&nbsp;*</span>
-                                    </label>
-                                    <div class="controls">
-                                        <textarea name="detail" id="inputDetail" cols="80" rows="20"
-                                                  placeholder="<?php echo $this->lang->line('entry_detail'); ?>"><?php echo isset($detail) ? $detail : set_value('detail'); ?></textarea>
-                                    </div>
-                                </div>
+            <div class="control-group">
+                <label class="control-label" for="inputSummary">
+                    <?php echo $this->lang->line('entry_summary'); ?><span
+                        class="required">&nbsp;*</span>
+                </label>
+                <div class="controls">
+                    <textarea name="summary" id="inputSummary" cols="80" rows="5" style="width: 70%;"
+                              placeholder="<?php echo $this->lang->line('entry_summary'); ?>"><?php echo isset($summary) ? $summary : set_value('summary'); ?></textarea>
+                </div>
+            </div>
 
-                                <div class="control-group">
-                                    <label class="control-label"><?php echo $this->lang->line('entry_date_range'); ?><span
-                                            class="required">&nbsp;*</span>
-                                    </label>
-                                    <div class="controls">
-                                        <span>
-                                            <input type="text" class="date" name="date_start" id="date_start" size="50"
-                                                   placeholder="<?php echo $this->lang->line('entry_date_start'); ?>"
-                                                   value="<?php echo isset($date_start) && $date_start ? date('Y-m-d', strtotime(datetimeMongotoReadable($date_start))) : ''; ?>"/>
-                                        </span>
-                                        <span>&nbsp;-&nbsp;</span>
-                                        <span>
-                                            <input type="text" class="date" name="date_end" id="date_end" size="50"
-                                                   placeholder="<?php echo $this->lang->line('entry_date_end'); ?>"
-                                                   value="<?php echo isset($date_end) && $date_end ? date('Y-m-d', strtotime(datetimeMongotoReadable($date_end))) : ''; ?>"/>
-                                        </span>
-                                    </div>
-                                </div>
+            <div class="control-group">
+                <label class="control-label" for="inputDetail">
+                    <?php echo $this->lang->line('entry_detail'); ?><span
+                        class="required">&nbsp;*</span>
+                </label>
+                <div class="controls">
+                    <textarea name="detail" id="inputDetail" cols="80" rows="20"
+                              placeholder="<?php echo $this->lang->line('entry_detail'); ?>"><?php echo isset($detail) ? $detail : set_value('detail'); ?></textarea>
+                </div>
+            </div>
 
-                                <div class="control-group">
-                                    <label class="control-label"
-                                           for="image"><?php echo $this->lang->line('entry_image'); ?>
-                                    </label>
-                                    <div class="controls">
-                                        <div class="image">
-                                            <img src="<?php echo $thumb; ?>" alt="" id="thumb"
-                                                 onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
-                                            <input type="hidden" name="image" value="<?php echo $image; ?>"
-                                                   id="image"/>
-                                            <br/><a
-                                                onclick="image_upload('#image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                            <a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
-                                        </div>
-                                    </div>
-                                </div>
+            <div class="control-group">
+                <label class="control-label"><?php echo $this->lang->line('entry_date_range'); ?><span
+                        class="required">&nbsp;*</span>
+                </label>
+                <div class="controls">
+                    <span>
+                        <input type="text" class="date" name="date_start" id="date_start" size="50"
+                               placeholder="<?php echo $this->lang->line('entry_date_start'); ?>"
+                               value="<?php echo isset($date_start) && $date_start ? date('Y-m-d', strtotime(datetimeMongotoReadable($date_start))) : ''; ?>"/>
+                    </span>
+                    <span>&nbsp;-&nbsp;</span>
+                    <span>
+                        <input type="text" class="date" name="date_end" id="date_end" size="50"
+                               placeholder="<?php echo $this->lang->line('entry_date_end'); ?>"
+                               value="<?php echo isset($date_end) && $date_end ? date('Y-m-d', strtotime(datetimeMongotoReadable($date_end))) : ''; ?>"/>
+                    </span>
+                </div>
+            </div>
 
-                                <div class="control-group">
-                                    <label class="control-label"
-                                           for="inputCategory"><?php echo $this->lang->line('entry_category'); ?></label>
-                                    <div class="controls">
-                                        <span><input type='hidden' name="category" id="inputCategory" style="width:50%;"
-                                                     value="<?php echo isset($category) ? $category : set_value('category'); ?>"></span>
-
-                                        <span style="padding-left: 10px"><a href="#categoryContentTab" data-toggle="tab" data-dismiss="modal"
-                                              id="addNewCategoryLink"><?php echo $this->lang->line('entry_add_category'); ?></a>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="control-group">
-                                    <label class="control-label"
-                                           for="status"><?php echo $this->lang->line('entry_status'); ?></label>
-                                    <div class="controls">
-                                        <input type="checkbox" name="status" id="status" data-handle-width="40" <?php echo isset($status) ? ( $status ? "checked" : '') : set_checkbox('status','',true); ?>>
-                                    </div>
-                                </div>
-
-                                <div class="control-group">
-                                    <label class="control-label"
-                                           for="inputPin"><?php echo $this->lang->line('entry_pin'); ?></label>
-                                    <div class="controls">
-                                        <input type="text" name="pin" size="100" id="inputPin"
-                                               placeholder="<?php echo $this->lang->line('entry_pin'); ?>"
-                                               value="<?php echo isset($pin) ? $pin : set_value('$pin'); ?>"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade in" id="categoryContentTab">
-                        <div class="container-fluid">
-                            <div class="row-fluid">
-                                <div id="categoryContentToolbar">
-                                    <button id="remove" class="btn btn-danger" disabled>
-                                        <i class="fa fa-remove"></i> Delete
-                                    </button>
-                                    <a href="#formCategoryModal" id="add" role="button"
-                                       class="btn btn-info add-category" data-toggle="modal"><i class="fa fa-plus"></i>
-                                        Add</a>
-                                </div>
-                                <table id="categoryContentTable"
-                                       data-height="600"
-                                       data-toolbar="#categoryContentToolbar"
-                                       data-search="true"
-                                       data-show-refresh="true"
-                                       data-id-field="_id"
-                                       data-pagination="true"
-                                       data-side-pagination="server"
-                                       data-url="<?php echo site_url(); ?>/content/category/"
-                                       data-response-handler="categoryResponseHandler">
-                                </table>
-                            </div>
-                        </div>
+            <div class="control-group">
+                <label class="control-label"
+                       for="image"><?php echo $this->lang->line('entry_image'); ?>
+                </label>
+                <div class="controls">
+                    <div class="image">
+                        <img src="<?php echo $thumb; ?>" alt="" id="thumb"
+                             onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
+                        <input type="hidden" name="image" value="<?php echo $image; ?>"
+                               id="image"/>
+                        <br/><a
+                            onclick="image_upload('#image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                        <a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
                     </div>
                 </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label"
+                       for="inputCategory"><?php echo $this->lang->line('entry_category'); ?></label>
+                <div class="controls">
+                    <span><input type='hidden' name="category" id="inputCategory" style="width:50%;"
+                                 value="<?php echo isset($category) ? $category : set_value('category'); ?>"></span>
+
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label"
+                       for="status"><?php echo $this->lang->line('entry_status'); ?></label>
+                <div class="controls">
+                    <input type="checkbox" name="status" id="status" data-handle-width="40" <?php echo isset($status) ? ( $status ? "checked" : '') : set_checkbox('status','',true); ?>>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label"
+                       for="inputPin"><?php echo $this->lang->line('entry_pin'); ?></label>
+                <div class="controls">
+                    <input type="text" name="pin" size="100" id="inputPin"
+                           placeholder="<?php echo $this->lang->line('entry_pin'); ?>"
+                           value="<?php echo isset($pin) ? $pin : set_value('$pin'); ?>"/>
+                </div>
+            </div>
+
+
             </div>
             <?php
             echo form_close();
@@ -563,22 +519,6 @@
 
         preventEnterKeyDown();
     });
-
-    $("[data-toggle]")
-        .filter("[href='#formCategoryModal'],[data-target='#formCategoryModal']")
-        .on('click', function (e) {
-            resetModalForm();
-            if ($(this).hasClass('add-category'))
-                $('#formCategoryModalLabel').html("Add new category");
-        });
-
-    $('#page-render')
-        .on('click', 'button#category-modal-submit', submitModalForm)
-        .on('click', '#addNewCategoryLink', function () {
-            $('#mainTab').find('a[href="#categoryContentTab"]').tab('show');
-            resetModalForm();
-            $formCategoryModal.modal('show');
-        });
 
     Pace.on("done", function(){
         $(".cover").fadeOut(1000);

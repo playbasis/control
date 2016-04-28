@@ -15,7 +15,7 @@ $lang['button_clear_filter'] = 'Clear filter';
 $lang['button_back_to_list'] = 'Back to list';
 
 // Tab
-$lang['tab_general'] = 'General';
+$lang['tab_content'] = 'Content';
 $lang['tab_category'] = 'Category';
 
 // Entry

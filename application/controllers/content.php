@@ -109,7 +109,7 @@ class Content extends MY_Controller
                 if (isset($content_data['category']) && !empty($content_data['category'])) {
                     $data['category'] = $content_data['category'];
                 }
-                $data['status'] = $content_data['status'] == 'on' ? true : false;
+                $data['status'] = isset($content_data['status']) && $content_data['status'] == 'on' ? true : false;
                 $data['pin'] = $content_data['pin'];
 
                 $insert = $this->Content_model->createContent($data);
