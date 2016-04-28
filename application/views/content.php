@@ -84,7 +84,7 @@
                                                                                  data-toggle="tooltip"><i class="icon-warning-sign"></i></a>
                                                             </span><?php } ?></td>
                                                     <td class="right"><?php echo isset($content['category']['name']) ? $content['category']['name'] : ""; ?></td>
-                                                    <td class="right"><?php echo dateMongotoReadable($content['date_start']); ?>&nbsp;-&nbsp;<?php echo dateMongotoReadable($content['date_end']); ?></td>
+                                                    <td class="right"><?php echo isset($content['date_start']) ? dateMongotoReadable($content['date_start']) : "N/A"; ?>&nbsp;-&nbsp;<?php echo isset($content['date_end']) ? dateMongotoReadable($content['date_end']) : "N/A"; ?></td>
                                                     <td class="right"><?php echo isset($content['status']) ? ( $content['status'] ? "Enable" : "Disabled") : "N/A"; ?></td>
                                                     <td class="right">
                                                         <?php if ($push_feature_existed) { ?>
