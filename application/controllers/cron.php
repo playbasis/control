@@ -1487,16 +1487,39 @@ class Cron extends CI_Controller
                             } else {
 
                                 foreach ($returnData['importData'] as $key => $val) {
+
+                                    $f = function($v) {
+                                        return explode("=", $v[0]);
+                                    };
+                                    $f2 = function($v) {
+                                        return array($v[0] => $v[1]);
+                                    };
+
                                     $data = array(
                                         'api_key' => $returnImportData['api_key'],
                                         'token' => $returnImportData['token'],
                                         'action' => $val['action'],
                                         'player_id' => $val['cl_player_id']
                                     );
+
+                                    // Set custom parameters if required
+                                    if (!empty(strtolower($val['customs']))) {
+                                        $arrays = array_map($f2, array_map($f, array_map('str_getcsv', explode("|", $val['customs']))));
+
+                                        foreach ($arrays as $arr) {
+                                            $data = array_merge($data, $arr);
+                                        }
+                                    }
+
+                                    // Set Date at HTTP header
+                                    if (!empty(strtolower($val['date']))){
+                                        $this->restclient->http_header('Date', $val['date']);
+                                    }
+
                                     $result = $this->restclient->post($this->config->base_url() . 'Engine/rule', $data);
 
                                     $returnImportActivities = array_merge($returnImportActivities, array(
-                                        $val['name'] => $result->message
+                                        $key => $result->message
                                     ));
                                 }
 
@@ -1614,13 +1637,16 @@ class Cron extends CI_Controller
                                     if ((isset($val['roles'])) && (isset($result->response->node_id))) {
                                         $node_id = json_decode(json_encode($result->response->node_id), true)['$id'];
 
+                                        $roles = explode("|",$val['roles']);
+
                                         // Insert role to player
-                                        foreach ($val['roles'] as $key => $role) {
+                                        foreach ($roles as $key => $role) {
                                             $data['role'] = $role;
                                             $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/' . $node_id . '/setPlayerRole/' . $val['player_id'],
                                                 $data);
                                         }
                                     }
+
                                     $returnImportActivities = array_merge($returnImportActivities, array(
                                         $val['player_id'] => $result->message
                                     ));
@@ -1661,21 +1687,82 @@ class Cron extends CI_Controller
 
     private function getDataFromURL($importData)
     {
+        $data['import_id'] = $importData['_id']['$id'];
+        $file_extension = strtolower(end(explode('.', $importData['file_name'])));
 
-        if (isset($importData['url'])) {
+        if ($importData['host_type'] === 'FTP') {
 
-            $data['import_id'] = $importData['_id']['$id'];
-            $url = $importData['url'];
+            $remote_file = $importData['file_name'];
+            $local_file = 'ftplocal.json';
+            $ftp_server = $importData['host_name'];
+            $ftp_port = $importData['port'];
+            $ftp_user_name = $importData['user_name'];
+            $ftp_user_pass = $importData['password'];
+
+            // open some file to write to
+            $handle = fopen($local_file, 'w');
+
+            // set up basic connection
+            $conn_id = ftp_connect($ftp_server, $ftp_port);
+
+            // login with username and password
+            $login_result = ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
+
+            // login with username and password
+            $ftp_get_result = ftp_fget($conn_id, $handle, $remote_file, FTP_ASCII, 0);
+
+            // close the connection and the file handler
+            ftp_close($conn_id);
+            fclose($handle);
+
+            // try to download $remote_file and save it to $handle
+            if ($login_result && $ftp_get_result) {
+                $result = file_get_contents($local_file);
+
+                // Convert CSV to JSON
+                if ($file_extension === 'csv') {
+                    $result = rtrim($result,"\n");
+                    $array = array_map('str_getcsv', explode("\n", $result));
+                    array_walk($array, function (&$a) use ($array) {
+                        $a = array_combine($array[0], $a);
+                    });
+                    array_shift($array);
+                    $result = json_encode($array);
+                }
+                $jsonData = json_decode($result, true);
+            }
+
+            // Remove the local file created
+            unlink($local_file);
+
+        } else {
+            $url = 'https://'.rtrim($importData['host_name'],'/').'/'.$importData['file_name'];
 
             // CURL
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_USERPWD, $importData['user_name'].':'.$importData['password']);
+            curl_setopt($ch, CURLOPT_USERPWD, $importData['user_name'] . ':' . $importData['password']);
+            isset($importData['port'])?curl_setopt($ch, CURLOPT_PORT, $importData['port']):null;
             curl_setopt($ch, CURLOPT_URL, $url);
             $result = curl_exec($ch);
             curl_close($ch);
+
+            // Convert CSV to JSON
+            if ($file_extension === 'csv') {
+                $result = rtrim($result,"\n");
+                $array = array_map('str_getcsv', explode("\n", $result));
+                array_walk($array, function (&$a) use ($array) {
+                    $a = array_combine($array[0], $a);
+                });
+                array_shift($array);
+                $result = json_encode($array);
+            }
+
             $jsonData = json_decode($result, true);
+        }
+
+        if (isset($jsonData)) {
 
             // Add import data to return
             $data['importData'] = $jsonData;
@@ -1683,16 +1770,17 @@ class Cron extends CI_Controller
             // Get latest import result from import log
             $latestImportLog = $this->import_model->retrieveLatestImportResult($data['import_id']);
 
-            if (isset($latestImportLog['date_added'])){
+            if (isset($latestImportLog['date_added'])) {
                 // Get latest execute date
                 $latestExecute = $latestImportLog['date_added']->sec;
-            } else{
+            } else {
                 // Get latest date modified from import data in case no import log
-                $latestExecute = $importData['date_added']['sec'];
+                $latestExecute = $importData['date_modified']['sec'];
             }
 
             // Get next execute date from latest execute + routine occurrence, given execution time to 1AM at the day
-            $dateNextExecute = strtotime(date ('Y-m-d 01:00:00', strtotime('+'.$importData['routine'].'days', $latestExecute)));
+            $dateNextExecute = strtotime(date('Y-m-d 01:00:00',
+                strtotime('+' . $importData['routine'] . 'days', $latestExecute)));
             $today = time();
 
             // If current date is reaching execution time will proceed the action, otherwise will return null with do nothing
@@ -1703,7 +1791,8 @@ class Cron extends CI_Controller
 
                 // If there there is no MD5 was generated in DB or it is not same as current, update MD5 to DB
                 if ((!isset($importData['md5_id'])) || ($CurrentMD5_id != ($importData['md5_id']))) {
-                    $this->import_model->insertMD5($importData['_id']['$id'], $importData['site_id'], $CurrentMD5_id);
+                    $this->import_model->insertMD5($importData['_id']['$id'], $importData['site_id'],
+                        $CurrentMD5_id);
                     $data['duplicate_flag'] = false;
                 } else {
                     $data['duplicate_flag'] = true;

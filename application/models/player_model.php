@@ -120,7 +120,7 @@ class Player_model extends MY_Model
         if (!empty($batch_data) && is_array($batch_data)) {
             try {
                 return $this->mongo_db->batch_insert('playbasis_player', $batch_data,
-                    array("w" => 0, "j" => false));
+                    array("w" => 0, "j" => false, "continueOnError" => true));
 
             } catch (Exception $e) {
                 var_dump($e);
@@ -3007,7 +3007,8 @@ class Player_model extends MY_Model
             'phone_number',
             'approve_status',
             'login_attempt',
-            'locked'
+            'locked',
+            'email_verify'
         ));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('username', $username);
@@ -3027,7 +3028,8 @@ class Player_model extends MY_Model
             'phone_number',
             'approve_status',
             'login_attempt',
-            'locked'
+            'locked',
+            'email_verify'
         ));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('email', $email);
@@ -3098,16 +3100,7 @@ class Player_model extends MY_Model
 
     public function generatePasswordResetCode($pb_player_id)
     {
-        $code = null;
-        for ($i = 0; $i < 2; $i++) {
-            $code = get_random_code(8, false, true, true);
-            if (!$this->existsPasswordResetCode($code)) {
-                break;
-            }
-        }
-        if (!$code) {
-            throw new Exception('Cannot generate unique player code');
-        }
+        $code = $this->genCode(8, false, true, true);
 
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $records = $this->mongo_db->get('playbasis_player_password_reset');
@@ -3126,6 +3119,27 @@ class Player_model extends MY_Model
         return $code;
     }
 
+    public function generateEmailVerifyCode($pb_player_id)
+    {
+        $code = $this->genCode(8, false, true, true);
+
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $records = $this->mongo_db->get('playbasis_player_email_verify');
+        if (!$records) {
+            $this->mongo_db->insert('playbasis_player_email_verify', array(
+                'pb_player_id' => $pb_player_id,
+                'code' => $code,
+                'date_expire' => new MongoDate(strtotime("+1 day")),
+            ));
+        } else {
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+            $this->mongo_db->set('code', $code);
+            $this->mongo_db->set('date_expire', new MongoDate(strtotime("+1 day")));
+            $this->mongo_db->update('playbasis_player_email_verify');
+        }
+        return $code;
+    }
+
     public function existsOTPCode($code)
     {
         $this->mongo_db->where('code', $code);
@@ -3133,18 +3147,43 @@ class Player_model extends MY_Model
         return $this->mongo_db->count('playbasis_player_otp_to_player') > 0;
     }
 
-    public function generateOTPCode($pb_player_id)
-    {
+    private function genCode($length, $use_lower_case, $use_upper_case,  $use_numbers ){
         $code = null;
         for ($i = 0; $i < 2; $i++) {
-            $code = get_random_code(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
-            if (!$this->existsOTPCode($code)) {
+            $random_code = get_random_code($length, $use_lower_case, $use_upper_case, $use_numbers);
+            if (!$this->existsOTPCode($random_code)) {
+                $code = $random_code;
                 break;
             }
         }
         if (!$code) {
             throw new Exception('Cannot generate unique player code');
         }
+        return $code;
+    }
+
+    public function generateOTPCode($pb_player_id)
+    {
+        $code = $this->genCode(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
+
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $records = $this->mongo_db->get('playbasis_player_otp_to_player');
+        if ($records) {
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+            $this->mongo_db->delete('playbasis_player_otp_to_player');
+        }
+
+        $this->mongo_db->insert('playbasis_player_otp_to_player', array(
+            'pb_player_id' => $pb_player_id,
+            'code' => $code,
+            'date_expire' => new MongoDate(time() + SMS_VERIFICATION_TIMEOUT_IN_SECONDS),
+        ));
+        return $code;
+    }
+
+    public function generateOTPCodeForSetupPhone($pb_player_id,$deviceInfo)
+    {
+        $code = $this->genCode(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
 
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $records = $this->mongo_db->get('playbasis_player_otp_to_player');
@@ -3152,11 +3191,21 @@ class Player_model extends MY_Model
             $this->mongo_db->insert('playbasis_player_otp_to_player', array(
                 'pb_player_id' => $pb_player_id,
                 'code' => $code,
+                'phone_number'=>$deviceInfo['phone_number'],
+                'device_token'=>$deviceInfo['device_token'],
+                'device_description'=>$deviceInfo['device_description'],
+                'device_name'=>$deviceInfo['device_name'],
+                'os_type'=>$deviceInfo['os_type'],
                 'date_expire' => new MongoDate(time() + SMS_VERIFICATION_TIMEOUT_IN_SECONDS),
             ));
         } else {
             $this->mongo_db->where('pb_player_id', $pb_player_id);
             $this->mongo_db->set('code', $code);
+            $this->mongo_db->set('phone_number', $deviceInfo['phone_number']);
+            $this->mongo_db->set('device_token', $deviceInfo['device_token']);
+            $this->mongo_db->set('device_description', $deviceInfo['device_description']);
+            $this->mongo_db->set('device_name', $deviceInfo['device_name']);
+            $this->mongo_db->set('os_type', $deviceInfo['os_type']);
             $this->mongo_db->set('date_expire', new MongoDate(time() + SMS_VERIFICATION_TIMEOUT_IN_SECONDS));
             $this->mongo_db->update('playbasis_player_otp_to_player');
         }
@@ -3211,8 +3260,8 @@ class Player_model extends MY_Model
             $this->mongo_db->where('client_id', new MongoId($data['client_id']));
             $this->mongo_db->where('site_id', new MongoId($data['site_id']));
             $this->mongo_db->where('pb_player_id', new MongoId($data['pb_player_id']));
+            $this->mongo_db->where('device_token', $data['device_token']);
 
-            $this->mongo_db->set('device_token', $data['device_token']);
             $this->mongo_db->set('device_description', $data['device_description']);
             $this->mongo_db->set('device_name', $data['device_name']);
             $this->mongo_db->set('os_type', $data['os_type']);

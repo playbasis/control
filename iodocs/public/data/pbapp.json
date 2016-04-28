@@ -510,6 +510,29 @@
           ]
         },
         {
+          "MethodName": "Verify player email",
+          "Synopsis": "Verify player email that store in Playbasis system.",
+          "HTTPMethod": "POST",
+          "URI": "/Player/:id/email/verify",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            }
+          ]
+        },
+        {
           "MethodName": "Delete",
           "Synopsis": "Permenently delete a player from Playbasis database.",
           "HTTPMethod": "POST",
@@ -633,6 +656,68 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            }
+          ]
+        },
+        {
+          "MethodName": "Request OTP for setup phone",
+          "Synopsis": "Request One time password for setup phone.",
+          "HTTPMethod": "POST",
+          "URI": "/Player/auth/:id/setupPhone",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "phone_number",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "+66xxyyyzzzz"
+            },
+            {
+              "Name": "device_token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Device"
+            },
+            {
+              "Name": "device_description",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Device model description"
+            },
+            {
+              "Name": "device_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Device model name"
+            },
+            {
+              "Name": "os_type",
+              "Required": "Y",
+              "Default": "",
+              "Type": "enumerated",
+              "Description": "Choose os type",
+              "EnumeratedList": [
+                "IOS",
+                "Android"
+              ]
             }
           ]
         },
@@ -3820,14 +3905,14 @@
               "Required": "N",
               "Default": "title",
               "Type": "string",
-              "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified')"
+              "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified', 'random')"
             },
             {
               "Name": "order",
               "Required": "N",
               "Default": "asc",
               "Type": "string",
-              "Description": "Direction to order ('desc', 'asc')"
+              "Description": "Direction to order ('desc', 'asc'), but if sort is 'random' then this field will be seed number"
             },
             {
               "Name": "offset",
@@ -3849,57 +3934,43 @@
               "Default": "false",
               "Type": "string",
               "Description": "true, will return full html"
+            },
+            {
+              "Name": "pin",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Secret PIN given to content"
+            },
+            {
+              "Name": "player_exclude",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Find content which no activity with player"
             }
           ]
         },
         {
-          "MethodName": "Retrieve Category",
-          "Synopsis": "Retrieve category by specified filter fields",
+          "MethodName": "Count Content",
+          "Synopsis": "Count content(s) by specified filter fields",
           "HTTPMethod": "GET",
-          "URI": "/Category",
+          "URI": "/Content/count",
           "RequiresOAuth": "N",
           "parameters": [
             {
-              "Name": "id",
+              "Name": "category",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Specific id of category"
+              "Description": "Specific category name of content"
             },
             {
-              "Name": "date_check",
+              "Name": "player_exclude",
               "Required": "N",
-              "Default": "false",
+              "Default": "",
               "Type": "string",
-              "Description": "Return category that available in this date range"
-            },
-            {
-              "Name": "sort",
-              "Required": "N",
-              "Default": "title",
-              "Type": "string",
-              "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified')"
-            },
-            {
-              "Name": "order",
-              "Required": "N",
-              "Default": "asc",
-              "Type": "string",
-              "Description": "Direction to order ('desc', 'asc')"
-            },
-            {
-              "Name": "offset",
-              "Required": "N",
-              "Default": "0",
-              "Type": "integer",
-              "Description": "number of records starting"
-            },
-            {
-              "Name": "limit",
-              "Required": "N",
-              "Default": "20",
-              "Type": "integer",
-              "Description": "number of results to return"
+              "Description": "Find content which no activity with player"
             }
           ]
         },
@@ -3946,6 +4017,20 @@
               "Description": "Specific category name of content"
             },
             {
+              "Name": "image",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "url to the content profile image"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "false",
+              "Type": "string",
+              "Description": "content available status"
+            },
+            {
               "Name": "date_start",
               "Required": "N",
               "Default": "1970-01-01",
@@ -3960,76 +4045,18 @@
               "Description": "date end in the format YYYY-MM-DD (ex.1982-09-29)"
             },
             {
-              "Name": "image",
-              "Required": "N",
-              "Default": "",
-              "Type": "string",
-              "Description": "url to the content profile image"
-            },
-            {
-              "Name": "status",
-              "Required": "N",
-              "Default": "false",
-              "Type": "string",
-              "Description": "content available status"
-            }
-          ]
-        },
-        {
-          "MethodName": "Create content by player",
-          "Synopsis": "Create content by player ID",
-          "HTTPMethod": "POST",
-          "URI": "/Content/addContent/player/:player_id",
-          "RequiresOAuth": "N",
-          "parameters": [
-            {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
-            },
-            {
               "Name": "player_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "player id as used in client's website"
-            },
-            {
-              "Name": "title",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "Specific title of content"
-            },
-            {
-              "Name": "summary",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "Specific summary of content"
-            },
-            {
-              "Name": "detail",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "Specific detail of content"
-            },
-            {
-              "Name": "category",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Specific category name of content"
+              "Description": "player id who generate this content"
             },
             {
-              "Name": "image",
+              "Name": "pin",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "url to the content profile image"
+              "Description": "Secret PIN given to content"
             }
           ]
         },
@@ -4056,7 +4083,7 @@
             },
             {
               "Name": "title",
-              "Required": "n",
+              "Required": "N",
               "Default": "",
               "Type": "string",
               "Description": "Specific title of content"
@@ -4083,6 +4110,20 @@
               "Description": "Specific category name of content"
             },
             {
+              "Name": "image",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "url to the content profile image"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "content available status"
+            },
+            {
               "Name": "date_start",
               "Required": "N",
               "Default": "",
@@ -4097,18 +4138,161 @@
               "Description": "date end in the format YYYY-MM-DD (ex.1982-09-29)"
             },
             {
-              "Name": "image",
+              "Name": "pin",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "url to the content profile image"
+              "Description": "Secret PIN given to content"
+            }
+          ]
+        },
+        {
+          "MethodName": "Delete content",
+          "Synopsis": "Delete existing content",
+          "HTTPMethod": "POST",
+          "URI": "/Content/:content_id/delete",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
             },
             {
-              "Name": "status",
+              "Name": "content_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "content id as used in client's content"
+            }
+          ]
+        },
+        {
+          "MethodName": "Retrieve Category",
+          "Synopsis": "Retrieve category by specified filter fields",
+          "HTTPMethod": "GET",
+          "URI": "/Content/category",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "id",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "content available status"
+              "Description": "Specific id of category"
+            },
+            {
+              "Name": "name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific name of category"
+            },
+            {
+              "Name": "sort",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific field to sort ('_id', 'name', 'date_added', 'date_modified')"
+            },
+            {
+              "Name": "order",
+              "Required": "N",
+              "Default": "asc",
+              "Type": "string",
+              "Description": "Direction to order ('desc', 'asc')"
+            },
+            {
+              "Name": "offset",
+              "Required": "N",
+              "Default": "0",
+              "Type": "integer",
+              "Description": "number of records starting"
+            },
+            {
+              "Name": "limit",
+              "Required": "N",
+              "Default": "20",
+              "Type": "integer",
+              "Description": "number of results to return"
+            }
+          ]
+        },
+        {
+          "MethodName": "Create Category",
+          "Synopsis": "Create content category",
+          "HTTPMethod": "POST",
+          "URI": "/Content/category/create",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific name of category"
+            }
+          ]
+        },
+        {
+          "MethodName": "Update Category",
+          "Synopsis": "Update content category",
+          "HTTPMethod": "POST",
+          "URI": "/Content/category/update",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific id of category"
+            },
+            {
+              "Name": "name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific new name of category"
+            }
+          ]
+        },
+        {
+          "MethodName": "Delete Category",
+          "Synopsis": "Delete content category",
+          "HTTPMethod": "POST",
+          "URI": "/Content/category/delete",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific id of category"
             }
           ]
         },
@@ -4221,59 +4405,6 @@
                 "Type": "string",
                 "Description": "custom field values separated by comma"
             }
-          ]
-        },
-        {
-          "MethodName": "Delete content",
-          "Synopsis": "Delete existing content",
-          "HTTPMethod": "POST",
-          "URI": "/Content/:content_id/delete",
-          "RequiresOAuth": "N",
-          "parameters": [
-            {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
-            },
-            {
-              "Name": "content_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "content id as used in client's content"
-            }
-          ]
-        },
-        {
-          "MethodName": "Generate content PIN",
-          "Synopsis": "Create PIN to existing content",
-          "HTTPMethod": "POST",
-          "URI": "/Content/:content_id/setPin",
-          "RequiresOAuth": "N",
-          "parameters": [
-              {
-                  "Name": "token",
-                  "Required": "Y",
-                  "Default": "",
-                  "Type": "string",
-                  "Description": "access token returned from Auth"
-              },
-              {
-                  "Name": "content_id",
-                  "Required": "Y",
-                  "Default": "",
-                  "Type": "string",
-                  "Description": "content id as used in client's content"
-              },
-              {
-                  "Name": "content_pin",
-                  "Required": "Y",
-                  "Default": "",
-                  "Type": "string",
-                  "Description": "Secret PIN given to content"
-              }
           ]
         }
       ]

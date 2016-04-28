@@ -108,9 +108,11 @@ $route['Player/session'] = 'player/session';
 $route['Player/auth'] = 'player/auth';
 $route['Player/auth/' . ANY_STRING . '/requestOTPCode'] = 'player/requestOTPCode/$1';
 $route['Player/auth/requestOTPCode'] = 'player/requestOTPCode';
+$route['Player/auth/' . ANY_STRING . '/setupPhone'] = 'player/setupPhone/$1';
 $route['Player/auth/' . ANY_STRING . '/verifyOTPCode'] = 'player/verifyOTPCode/$1';
 $route['Player/auth/verifyOTPCode'] = 'player/verifyOTPCode';
 $route['Player/password/email'] = 'player/forgotPasswordEmail';
+$route['Player/'.ANY_STRING.'/email/verify'] = 'player/emailVerify/$1';
 
 $route['Player/rank/'.ANY_STRING.'/'.ANY_NUMBER] = 'player/rank/$1/$2';
 $route['Player/rank/'.ANY_STRING] = 'player/rank/$1/20';
@@ -332,15 +334,17 @@ $route['StoreOrg/nodes/'.ANY_STRING.'/unsetContentRole/'.ANY_STRING] = 'store_or
 
 //content API
 $route['Content'] = 'content/list';
-$route['Category'] = 'content/category';
 $route['Content/addContent'] = 'content/insert';
-$route['Content/addContent/player/'.ANY_STRING] = 'content/insert/$1';                           // ANY_STRING = content_id
-$route['Content/'.ANY_STRING.'/update'] = 'content/update/$1';                                   // ANY_STRING = content_id/cl_player_id
+$route['Content/'.ANY_STRING.'/update'] = 'content/update/$1';                                   // ANY_STRING = content_id
 $route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/like'] = 'content/action/like/$1/$2';       // ANY_STRING = content_id/cl_player_id
 $route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/dislike'] = 'content/action/dislike/$1/$2'; // ANY_STRING = content_id/cl_player_id
 $route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/feedback'] = 'content/giveFeedback/$1/$2';  // ANY_STRING = content_id/cl_player_id
-$route['Content/'.ANY_STRING.'/setPin'] = 'content/generatePin/$1';                              // ANY_STRING = content_id
 $route['Content/'.ANY_STRING.'/delete'] = 'content/deleteContent/$1';                            // ANY_STRING = content_id
+$route['Content/count'] = 'content/countContent';
+$route['Content/category'] = 'content/listCategory';
+$route['Content/category/create'] = 'content/createContentCategory';
+$route['Content/category/update'] = 'content/updateContentCategory';
+$route['Content/category/delete'] = 'content/deleteContentCategory';
 
 //CMS API
 $route['CMS/getArticles'] = 'cms/getArticles';
@@ -362,7 +366,7 @@ $route['fb'] = 'playbasis/fb';
 $route['login'] = 'playbasis/login';
 $route['memtest'] = 'playbasis/memtest';
 
-//dummy 
+//dummy
 //$route['dummy/dummyPlayer/'.ANY_NUMBER.'/'.ANY_NUMBER]	= 'dummy/dummyPlayer/$1/$2/$3';
 //$route['dummy/'.ANY_NUMBER.'/'.ANY_NUMBER.'/'.ANY_NUMBER]	= 'dummy/index/$1/$2/$3';
 //$route['dummy/:any']	= 'dummy/error';

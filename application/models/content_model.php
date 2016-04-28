@@ -9,18 +9,24 @@ class Content_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
-    public function retrieveContent($client_id, $site_id, $optionalParams = array())
+    public function retrieveContent($client_id, $site_id, $optionalParams = array(), $exclude_id = null)
     {
         $this->set_site_mongodb($site_id);
+        log_message('error',print_r($exclude_id, true));
 
         // Searching
+        if (isset($optionalParams['category']) && !is_null($optionalParams['category'])) {
+            $category_result = $this->retrieveContentCategory($client_id, $site_id,
+                array('name' => $optionalParams['category']));
+        }
         if (isset($optionalParams['title']) && !is_null($optionalParams['title'])) {
             $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['title'])) . "/i");
             $this->mongo_db->where('title', $regex);
         }
+        if ($exclude_id){
+            $this->mongo_db->where_not_in('_id', $exclude_id);
+        }
         if (isset($optionalParams['category']) && !is_null($optionalParams['category'])) {
-            $category_result = $this->retrieveContentCategory($client_id, $site_id,
-                array('name' => $optionalParams['category']));
             $this->mongo_db->where('category', $category_result[0]['_id']);
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
@@ -30,6 +36,9 @@ class Content_model extends MY_Model
             } catch (Exception $e) {
                 return null;
             }
+        }
+        if (isset($optionalParams['pin'])){
+            $this->mongo_db->where('pin', $optionalParams['pin']);
         }
 
         // Sorting
@@ -43,12 +52,14 @@ class Content_model extends MY_Model
 
         if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
             $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
+        } else if(isset($optionalParams['sort']) && $optionalParams['sort'] == "random") {
+            $this->mongo_db->order_by(array('date_added' => 1));
         } else {
             $this->mongo_db->order_by(array('title' => $order));
         }
 
         // Paging
-        if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
+        if ((isset($optionalParams['offset']) || isset($optionalParams['limit'])) && !(isset($optionalParams['sort']) && $optionalParams['sort'] == "random")) {
             if (isset($optionalParams['offset'])) {
                 if ($optionalParams['offset'] < 0) {
                     $optionalParams['offset'] = 0;
@@ -80,7 +91,7 @@ class Content_model extends MY_Model
             $this->mongo_db->where_lt('date_start', new MongoDate());
         }
 
-        $this->mongo_db->select(array('_id', 'title', 'summary', 'detail', 'image','pb_player_id', 'category', 'date_start', 'date_end'));
+        $this->mongo_db->select(array('_id', 'title', 'summary', 'detail', 'image','pb_player_id', 'category', 'date_start', 'date_end', 'pin'));
         //$this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $client_id,
@@ -113,7 +124,7 @@ class Content_model extends MY_Model
         }
 
         // Sorting
-        $sort_data = array('_id', 'name', 'sort_order');
+        $sort_data = array('_id', 'name', 'date_added', 'date_modified');
 
         if (isset($optionalParams['order']) && (mb_strtolower($optionalParams['order']) == 'desc')) {
             $order = -1;
@@ -124,7 +135,7 @@ class Content_model extends MY_Model
         if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
             $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
         } else {
-            $this->mongo_db->order_by(array('name' => $order));
+            $this->mongo_db->order_by(array('_id' => $order));
         }
 
         // Paging
@@ -163,28 +174,12 @@ class Content_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $insert_data = array(
-            'client_id' => new MongoId($data['client_id']),
-            'site_id' => new MongoId($data['site_id']),
-            'title' => $data['title'],
-            'summary' => $data['summary'],
-            'detail' => $data['detail'],
-            'date_start' => new MongoDate(strtotime($data['date_start'])),
-            'date_end' => new MongoDate(strtotime($data['date_end'])),
-            'image' => (isset($data['image'])) ? $data['image'] : "no_image.jpg",
-            'status' => $data['status']=='true',
+        $data = array_merge($data, array(
             'deleted' => false,
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
-        );
-        if(isset($data['category'])) {
-            $insert_data['category'] = new MongoId($data['category']);
-        }
-        if(isset($data['pb_player_id'])){
-            $insert_data['pb_player_id'] = new MongoId($data['pb_player_id']);
-        }
-        $insert = $this->mongo_db->insert('playbasis_content_to_client', $insert_data);
-
+        ));
+        $insert = $this->mongo_db->insert('playbasis_content_to_client', $data);
         return $insert;
     }
 
@@ -254,7 +249,7 @@ class Content_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('_id', new MongoId($content_id));
 
-        $this->mongo_db->set('content_pin', $pin_data);
+        $this->mongo_db->set('pin', $pin_data);
 
         $update = $this->mongo_db->update('playbasis_content_to_client');
 
@@ -294,4 +289,91 @@ class Content_model extends MY_Model
         return $result;
     }
 
+    public function createContentCategory($client_id, $site_id, $name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $insert_data = array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'name' => $name,
+            'deleted' => false,
+            'date_added' => new MongoDate(),
+            'date_modified' => new MongoDate()
+        );
+        $insert = $this->mongo_db->insert('playbasis_content_category_to_client', $insert_data);
+
+        return $insert;
+    }
+
+    public function updateContentCategory($category_id, $data)
+    {
+        try {
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+            $this->mongo_db->where('_id', new MongoID($category_id));
+        } catch (Exception $e) {
+            return false;
+        };
+
+        $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_content_category_to_client');
+
+        return $update;
+    }
+
+    public function deleteContentCategory($category_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        try {
+            $this->mongo_db->where('_id', new MongoID($category_id));
+        } catch (Exception $e) {
+            return false;
+        };
+
+        $this->mongo_db->set('deleted', true);
+        return $this->mongo_db->update('playbasis_content_category_to_client');
+    }
+
+    public function getContentIDToPlayer($client_id, $site_id, $pb_player_id)
+    {
+        try {
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('pb_player_id', new MongoID($pb_player_id));
+        } catch (Exception $e) {
+            return false;
+        };
+
+        $player_content = $this->mongo_db->get('playbasis_content_to_player');
+
+        $return = array();
+        foreach ($player_content as $key => $val){
+            array_push($return, $val['content_id']);
+        }
+        return $return;
+    }
+
+    public function countContent($client_id, $site_id, $query_data)
+    {
+        if (isset($query_data['player_exclude']) && !is_null($query_data['player_exclude'])) {
+            $this->mongo_db->where_not_in('_id', $query_data['player_exclude']);
+        }
+        if (isset($query_data['category']) && !is_null($query_data['category'])) {
+            $this->mongo_db->where('category', $query_data['category'][0]['_id']);
+        }
+
+        try {
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+        } catch (Exception $e) {
+            return false;
+        };
+
+        $result = $this->mongo_db->count('playbasis_content_to_client');
+        return $result;
+    }
 }

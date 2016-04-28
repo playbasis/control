@@ -17,8 +17,8 @@ class Content extends REST2_Controller
     public function list_get()
     {
         $this->benchmark->mark('start');
-
         $query_data = $this->input->get(null, true);
+        $content_id = null;
 
         if (isset($query_data['id'])) {
             try {
@@ -28,7 +28,19 @@ class Content extends REST2_Controller
             }
         }
 
-        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data);
+        if (isset($query_data['player_exclude'])){
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id'    => $this->validToken['client_id'],
+                'site_id'      => $this->validToken['site_id'],
+                'cl_player_id' => $query_data['player_exclude']
+            ));
+            if (empty($pb_player_id)) {
+                $this->response($this->error->setError('USER_ID_INVALID'), 200);
+            }
+            $content_id = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
+        }
+
+        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, $content_id);
         if (empty($contents)) {
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
@@ -43,12 +55,51 @@ class Content extends REST2_Controller
             }
         array_walk_recursive($contents, array($this, "convert_mongo_object_and_category"));
 
+        $result = array();
+        if (isset($query_data['sort']) && $query_data['sort'] == "random") {
+            if (isset($query_data['order'])) {
+                if (is_numeric($query_data['order'])) {
+                    srand(intval($query_data['order']));
+                }
+            }
+            $content_count =  count($contents);
+            $numbers = range(0, $content_count-1);
+            shuffle($numbers);
+
+            if ( isset($query_data['offset']) && is_numeric($query_data['offset']) ) {
+                if ($query_data['offset'] < 0) {
+                    $query_data['offset'] = 0;
+                }elseif($query_data['offset'] >= $content_count){
+                    $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+                }
+            }else {
+                $query_data['offset'] = 0;
+            }
+
+            if( isset($query_data['limit']) && is_numeric($query_data['limit'])){
+                if ($query_data['limit'] < 1) {
+                    $query_data['limit'] = $content_count;
+                }else if($query_data['offset'] + $query_data['limit'] > $content_count){
+                    $query_data['limit'] = $content_count - $query_data['offset'];
+                }
+            } else {
+                $query_data['limit'] = $content_count;
+            }
+
+            for($i=0;$i<$query_data['limit'];$i++){
+                $result[$i] = $contents[$numbers[$i+$query_data['offset']]];
+            }
+
+        }else{
+            $result = $contents;
+        }
+
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $contents, 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
-    public function category_get()
+    public function listCategory_get()
     {
         $this->benchmark->mark('start');
 
@@ -87,7 +138,7 @@ class Content extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
-    public function insert_post($player_id = null)
+    public function insert_post()
     {
         $this->benchmark->mark('start');
         $contentInfo['client_id'] = $this->validToken['client_id'];
@@ -96,7 +147,9 @@ class Content extends REST2_Controller
         $required = $this->input->checkParam(array(
             'title',
             'summary',
-            'detail'
+            'detail',
+            'date_start',
+            'date_end'
         ));
         if ($required) {
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
@@ -113,29 +166,27 @@ class Content extends REST2_Controller
             if (empty($category)) {
                 $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
             }
-            $contentInfo['category'] = $category[0]['_id'];
+            $contentInfo['category'] = new MongoId($category[0]['_id']);
         }
 
-        if (isset($player_id)) {
+        if ($this->input->post('player_id')) {
             $pb_player_id = $this->player_model->getPlaybasisId(array(
                 'client_id'    => $this->validToken['client_id'],
                 'site_id'      => $this->validToken['site_id'],
-                'cl_player_id' => $player_id
+                'cl_player_id' => $this->input->post('player_id')
             ));
             if (empty($pb_player_id)) {
                 $this->response($this->error->setError('USER_ID_INVALID'), 200);
             }
             $contentInfo['pb_player_id'] = $pb_player_id;
-            $contentInfo['status']       = false;
-            $contentInfo['date_start']   = null;
-            $contentInfo['date_end']     = null;
-        } else {
-            $contentInfo['date_start'] = $this->input->post('date_start');
-            $contentInfo['date_end']   = $this->input->post('date_end');
-            $contentInfo['status']     = $this->input->post('status');
         }
-        if($this->input->post('image')){
-            $contentInfo['image'] = $this->input->post('image');
+        $contentInfo['image']      = ($this->input->post('image')) ? $this->input->post('image') : "no_image.jpg";
+        $contentInfo['date_start'] = new MongoDate(strtotime($this->input->post('date_start')));
+        $contentInfo['date_end']   = new MongoDate(strtotime($this->input->post('date_end')));
+        $contentInfo['status']     = strtolower($this->input->post('status')) == 'true';
+
+        if ($this->input->post('pin')){
+            $contentInfo['pin'] = $this->input->post('pin');
         }
 
         $insert = $this->content_model->createContent($contentInfo);
@@ -148,23 +199,12 @@ class Content extends REST2_Controller
     public function update_post($content_id = null)
     {
         $this->benchmark->mark('start');
-
         $contentInfo = array();
 
         try {
             new MongoId($content_id);
         } catch (Exception $e) {
             $this->response($this->error->setError('PARAMETER_INVALID', array('_id')), 200);
-        }
-
-        if($this->input->post('category')) {
-            $category = $this->content_model->retrieveContentCategory($this->client_id, $this->site_id, array(
-                'name' => $this->input->post('category')
-            ));
-            if (empty($category)) {
-                $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
-            }
-            $contentInfo['category'] = $category[0]['_id'];
         }
 
         if($this->input->post('title')){
@@ -177,6 +217,16 @@ class Content extends REST2_Controller
 
         if($this->input->post('detail')){
             $contentInfo['detail'] = $this->input->post('detail');
+        }
+
+        if($this->input->post('category')) {
+            $category = $this->content_model->retrieveContentCategory($this->client_id, $this->site_id, array(
+                'name' => $this->input->post('category')
+            ));
+            if (empty($category)) {
+                $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
+            }
+            $contentInfo['category'] = $category[0]['_id'];
         }
 
         if($this->input->post('date_start')){
@@ -192,7 +242,11 @@ class Content extends REST2_Controller
         }
 
         if($this->input->post('status')){
-            $contentInfo['status'] = $this->input->post('status')=='true';
+            $contentInfo['status'] = strtolower($this->input->post('status'))=='true';
+        }
+
+        if ($this->input->post('pin')){
+            $contentInfo['pin'] = $this->input->post('pin');
         }
 
         $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'], $content_id, $contentInfo);
@@ -211,8 +265,6 @@ class Content extends REST2_Controller
         $actionInfo['client_id'] = $this->validToken['client_id'];
         $actionInfo['site_id']   = $this->validToken['site_id'];
         $actionInfo['action']    = $action;
-
-        $postData = $this->input->post();
 
         $pb_player_id = $this->player_model->getPlaybasisId(array(
             'client_id'    => $this->validToken['client_id'],
@@ -265,9 +317,9 @@ class Content extends REST2_Controller
     {
         $this->benchmark->mark('start');
 
-        $content_pin = $this->input->post('content_pin');
-        if (empty($content_pin)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('content_pin')), 200);
+        $pin = $this->input->post('pin');
+        if (empty($pin)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('pin')), 200);
             die();
         }
 
@@ -276,7 +328,7 @@ class Content extends REST2_Controller
         }
         $this->checkValidContent($content_id);
 
-        $pin_data = $this->generatePinDict($content_pin);
+        $pin_data = $this->generatePinDict($pin);
 
         $is_updated = $this->content_model->setPinToContent($this->client_id, $this->site_id, $content_id, $pin_data);
 
@@ -339,6 +391,7 @@ class Content extends REST2_Controller
         $this->benchmark->mark('start');
         $client_id = $this->validToken['client_id'];
         $site_id = $this->validToken['site_id'];
+        $this->checkValidContent($content_id);
 
         if(!$content_id){
             $this->response($this->error->setError('PARAMETER_MISSING', array('content_id')), 200);
@@ -349,6 +402,126 @@ class Content extends REST2_Controller
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
+    }
+
+    public function createContentCategory_post()
+    {
+        $this->benchmark->mark('start');
+        $client_id = $this->validToken['client_id'];
+        $site_id = $this->validToken['site_id'];
+
+        if(!$this->input->post('name')){
+            $this->response($this->error->setError('PARAMETER_MISSING', array('name')), 200);
+        }
+
+        $this->content_model->createContentCategory($client_id, $site_id, $this->input->post('name'));
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
+    }
+
+    public function updateContentCategory_post()
+    {
+        $this->benchmark->mark('start');
+        $client_id = $this->validToken['client_id'];
+        $site_id = $this->validToken['site_id'];
+        $postData = $this->input->post();
+
+        $required = $this->input->checkParam(array(
+            'id',
+            'name'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        if (isset($postData['id'])) {
+            try {
+                $postData['id'] = new MongoId($postData['id']);
+            } catch (Exception $e) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+            }
+        }
+
+        $categories = $this->content_model->retrieveContentCategory($client_id, $site_id, array(
+            'id' => $postData['id']
+        ));
+        if (empty($categories)) {
+            $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
+        }
+
+        $this->content_model->updateContentCategory($postData['id'], array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'name' => $postData['name']
+        ));
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
+    }
+
+    public function deleteContentCategory_post()
+    {
+        $this->benchmark->mark('start');
+        $client_id = $this->validToken['client_id'];
+        $site_id = $this->validToken['site_id'];
+        $postData = $this->input->post();
+
+        if(!isset($postData['id'])){
+            $this->response($this->error->setError('PARAMETER_MISSING', array('id')), 200);
+        }else {
+            try {
+                $postData['id'] = new MongoId($postData['id']);
+            } catch (Exception $e) {
+                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+            }
+
+            $categories = $this->content_model->retrieveContentCategory($client_id, $site_id, array(
+                'id' => $postData['id']
+            ));
+            if (empty($categories)) {
+                $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
+            }
+        }
+
+        $this->content_model->deleteContentCategory($postData['id']);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
+    }
+
+    public function countContent_get()
+    {
+        $this->benchmark->mark('start');
+        $getData = $this->input->get();
+        $query_data = array();
+
+        if (isset($getData['player_exclude'])){
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id'    => $this->validToken['client_id'],
+                'site_id'      => $this->validToken['site_id'],
+                'cl_player_id' => $getData['player_exclude']
+            ));
+            if (empty($pb_player_id)) {
+                $this->response($this->error->setError('USER_ID_INVALID'), 200);
+            }
+            $query_data['player_exclude'] = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
+        }
+
+        if (isset($getData['category']) && !is_null($getData['category'])) {
+            $category_result = $this->content_model->retrieveContentCategory($this->validToken['client_id'], $this->validToken['site_id'],
+                array('name' => $getData['category']));
+            $query_data['category'] = $category_result;
+        }
+
+        $count_value = $this->content_model->countContent($this->validToken['client_id'], $this->validToken['site_id'], $query_data);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $count_value, 'processing_time' => $t)), 200);
     }
 
     /**
@@ -390,16 +563,5 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
         return $contents;
-    }
-
-    /**
-     * @param $pin
-     * @return array
-     */
-    private function generatePinDict($pin)
-    {
-        return array(
-            'pin' => $pin,
-            'date_added' => new MongoDate());
     }
 }

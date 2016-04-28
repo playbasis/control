@@ -158,19 +158,28 @@ class Push extends REST2_Controller
     {
         $this->benchmark->mark('start');
 
-        $player_id = $this->input->post('player_id');
-        if (!$player_id) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array(
-                'player_id'
-            )), 200);
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'device_token',
+            'device_description',
+            'device_name',
+            'os_type'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         }
+
         //get playbasis player id
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
-            'cl_player_id' => $player_id
+            'cl_player_id' => $this->input->post('player_id')
         )));
 
         if (!$pb_player_id) {
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        if(strtolower($this->input->post('os_type')) != "ios" && strtolower($this->input->post('os_type')) != "android"){
+            $this->response($this->error->setError('OS_TYPE_INVALID'), 200);
         }
 
         $result = $this->player_model->storeDeviceToken(array(
@@ -180,7 +189,7 @@ class Push extends REST2_Controller
             'device_token' => $this->input->post('device_token'),
             'device_description' => $this->input->post('device_description'),
             'device_name' => $this->input->post('device_name'),
-            'os_type' => $this->input->post('os_type')
+            'os_type' => strtolower($this->input->post('os_type'))
         ));
         if (!$result) {
             $this->response($this->error->setError('INTERNAL_ERROR'), 200);

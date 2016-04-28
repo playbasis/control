@@ -223,12 +223,16 @@ class Error extends CI_Model
                 $errorData['error_code'] = '0215';
                 break;
             case 'EMAIL_ALREADY_EXIST':
-                $errorData['message'] = "Email already exist.";
+                $errorData['message'] = "Email is already used.";
                 $errorData['error_code'] = '0216';
                 break;
             case 'BADGE_NOT_FOUND':
                 $errorData['message'] = "Badge not available.";
                 $errorData['error_code'] = '0217';
+                break;
+            case 'OS_TYPE_INVALID':
+                $errorData['message'] = "OS type is invalid.";
+                $errorData['error_code'] = '0218';
                 break;
             case 'ACTION_NOT_FOUND':
                 $errorData['message'] = "Action not available";
@@ -459,6 +463,10 @@ class Error extends CI_Model
             case 'STORE_ORG_CONTENT_ROLE_NOT_EXISTS':
                 $errorData['message'] = "This role is not set for this Content";
                 $errorData['error_code'] = '2422';
+                break;
+            case 'EMAIL_NOT_VERIFIED':
+                $errorData['message'] = "Your account need to verify email address";
+                $errorData['error_code'] = '2423';
                 break;
             default:
                 $errorData['message'] = "Unknown";
