@@ -37,8 +37,9 @@
                                    onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                         </td>
                         <td class="center" ><?php echo $this->lang->line('entry_name'); ?></td>
-                        <td class="center"
-                            ><?php echo $this->lang->line('entry_url'); ?></td>
+                        <td class="center" ><?php echo $this->lang->line('entry_hosttype'); ?></td>
+                        <td class="center" ><?php echo $this->lang->line('entry_hostname'); ?></td>
+                        <td class="center" ><?php echo $this->lang->line('entry_filename'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_port'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_username'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_import_type'); ?></td>
@@ -50,6 +51,8 @@
                     </thead>
                     <tbody>
                     <tr class="filter">
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -74,7 +77,9 @@
                                     <?php }?>
                                 </td>
                                 <td class="center"><?php echo $cs['name']; ?></td>
-                                <td class="left"><?php echo $cs['url']; ?></td>
+                                <td class="center"><?php echo $cs['host_type']; ?></td>
+                                <td class="left"><?php echo $cs['host_name']; ?></td>
+                                <td class="center"><?php echo $cs['file_name']; ?></td>
                                 <td class="center"><?php echo $cs['port']; ?></td>
                                 <td class="center"><?php echo $cs['user_name']; ?></td>
                                 <td class="center"><?php echo $cs['import_type']; ?></td>
@@ -125,7 +130,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="3"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="12"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>

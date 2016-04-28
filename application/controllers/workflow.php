@@ -622,8 +622,12 @@ class Workflow extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
+        // Check special characters for player_id
+        $this->form_validation->set_rules('cl_player_id', 'hello', 'trim|required|xss_clean|alpha_dash');
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
+
             //set value of username to equal to cl_player_id
             $data['username'] = $data['cl_player_id'];
 
@@ -640,7 +644,12 @@ class Workflow extends MY_Controller
                 $_POST['organize_node'][0] = "";
                 $this->data['message'] = $this->lang->line('text_fail_set_role');
 
-            } else {
+            } elseif (!$this->form_validation->run()){
+                $this->data['message'] = $this->lang->line('text_fail_username');
+                if (!isset($_POST['organize_node'][0])) {
+                    $_POST['organize_node'][0] = "";
+                }
+            }else {
                 $status = $this->Workflow_model->createPlayer($client_id, $site_id, $data);
                 if (isset($status->success)) {
                     if ($status->success) {

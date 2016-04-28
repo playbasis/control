@@ -15,7 +15,7 @@ $lang['button_clear_filter'] = 'Clear filter';
 $lang['button_back_to_list'] = 'Back to list';
 
 // Tab
-$lang['tab_general'] = 'General';
+$lang['tab_content'] = 'Content';
 $lang['tab_category'] = 'Category';
 
 // Entry
@@ -32,6 +32,7 @@ $lang['entry_status_enable'] = 'Enable';
 $lang['entry_status_disable'] = 'Disable';
 $lang['entry_category_name'] = 'Category name';
 $lang['entry_add_category'] = 'Add new category?';
+$lang['entry_pin'] = 'PIN';
 
 // Text
 $lang['text_success'] = 'You have successfully created!';

@@ -21,7 +21,7 @@ $lang['text_success_create_without_org_setting']  = 'The account has been create
 $lang['text_success_create_without_role_setting'] = 'The account has been created and added to node without setting role of player';
 $lang['text_fail_confirm_password']     = 'Your password and confirm password do not match';
 $lang["text_fail_internal"]             = "Internal error, Please try again later.";
-
+$lang["text_fail_username"]             = "Username must not be blank or special characters";
 
 // Button
 $lang['button_create']           = 'Create';

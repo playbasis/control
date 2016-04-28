@@ -1321,6 +1321,7 @@ class User extends MY_Controller
                 if ($this->form_validation->run()) {
                     $new_password = $this->input->post('password');
 
+                    $this->Player_model->verifyEmailByPlayerId($player['pb_player_id']);
                     $this->Player_model->setPlayerPasswordByPlayerId($player['pb_player_id'], $new_password);
                     $this->Player_model->deletePasswordResetCode($code);
                     $this->session->unset_userdata('user');
@@ -1366,6 +1367,43 @@ class User extends MY_Controller
         $this->data['main'] = 'partial/something_wrong';
         $this->load->vars($this->data);
         $this->render_page('template_beforelogin');
+    }
+
+    public function player_verify_email($code = '')
+    {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = 'Verify Email';
+
+        if (!$code) {
+            // TODO(Rook): This should render form for user to reset password manually by input username/email and reset code then redirect to change pwd form page
+
+            $this->data['topic_message'] = 'Email verification code is required to access this page';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+
+        $player = $this->Player_model->getPlayerByEmailVerifyCode($code);
+        if (!$player) {
+            $this->data['topic_message'] = 'Your email verification code is invalid.';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }else{
+            $this->Player_model->verifyEmailByPlayerId($player['pb_player_id']);
+            $this->Player_model->deleteEmailVerifyCode($code);
+            $this->data['topic_message'] = 'Thanks. You have completed to verify your email.';
+            $this->data['message'] = 'You email address has been verified. Let\'s have fun .';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
     }
 
     private function findGoodsToPlayerByGoodsId($goods_id, $goods_list)

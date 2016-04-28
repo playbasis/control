@@ -106,6 +106,9 @@ class Content_model extends MY_Model
         if (isset($data['category'])) {
             $insert_data['category'] = new MongoId($data['category']);
         }
+        if (isset($data['pin'])) {
+            $insert_data['pin'] = $data['pin'];
+        }
         $insert = $this->mongo_db->insert('playbasis_content_to_client', $insert_data);
 
         return $insert;
@@ -132,6 +135,13 @@ class Content_model extends MY_Model
         $this->mongo_db->set('date_end', new MongoDate(strtotime($data['date_end'])));
         $this->mongo_db->set('date_modified', new MongoDate());
         $this->mongo_db->set('status', $data['status']);
+        if (isset($data['pin'])) {
+            if (empty($data['pin'])) {
+                $this->mongo_db->unset_field('pin');
+            } else {
+                $this->mongo_db->set('pin', $data['pin']);
+            }
+        }
 
         $update = $this->mongo_db->update('playbasis_content_to_client');
 

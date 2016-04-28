@@ -74,10 +74,11 @@ class setting extends MY_Controller
                 $data['password_policy_enable'] = (isset($data['password_policy_enable']) && $data['password_policy_enable'] == "true") ? true : false;
 
                 $data['password_policy']['alphabet'] = (isset($data['password_policy']['alphabet']) && $data['password_policy']['alphabet'] == "on") ? true : false;
-                $data['password_policy']['numeric'] = (isset($data['password_policy']['numeric']) && $data['password_policy']['numeric'] == "on") == "on" ? true : false;
+                $data['password_policy']['numeric'] = (isset($data['password_policy']['numeric']) && $data['password_policy']['numeric'] == "on") ? true : false;
                 $data['password_policy']['user_in_password'] = (isset($data['password_policy']['user_in_password']) && $data['password_policy']['user_in_password'] == "on") ? true : false;
                 $data['password_policy']['min_char'] = isset($data['password_policy']['min_char']) ? intval($data['password_policy']['min_char']) : 0;
                 $data['max_retries'] = isset($data['max_retries']) ? intval($data['max_retries']) : 0;
+                $data['email_verification_enable'] = (isset($data['email_verification_enable']) && $data['email_verification_enable'] == "on") ? true : false;
 
                 $data['timeout'] = $this->wordToTime($data['timeout']);
 

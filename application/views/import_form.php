@@ -52,13 +52,34 @@
                         </td>
                     </tr>
                     <tr>
+                        <td><?php echo $this->lang->line('entry_hosttype'); ?>&nbsp;:</td>
                         <td>
-                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_url'); ?>&nbsp;:
+                            <span class="dropdown">
+                                <select id="hostType" class="span3"  name ="host_type">
+                                    <option label="HTTPS" value="HTTPS" <?php echo $host_type == "HTTPS"?"selected":""?>>
+                                    <option label="FTP"   value="FTP"   <?php echo $host_type == "FTP"?"selected":""?>>
+                                </select>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_hostname'); ?>&nbsp;:
                         </td>
                         <td>
-                            <input type="text" name="url" size="100"
-                                   placeholder="<?php echo $this->lang->line('entry_url'); ?>"
-                                   value="<?php echo isset($url) ? $url : set_value('url'); ?>"/>
+                            <input type="text" name="host_name" size="100"
+                                   placeholder="<?php echo $this->lang->line('entry_hostname'); ?>"
+                                   value="<?php echo isset($host_name) ? $host_name : set_value('host_name'); ?>"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_filename'); ?>&nbsp;:
+                        </td>
+                        <td>
+                            <input type="text" name="file_name" size="100"
+                                   placeholder="<?php echo $this->lang->line('entry_filename'); ?>"
+                                   value="<?php echo isset($file_name) ? $file_name : set_value('file_name'); ?>"/>
                         </td>
                     </tr>
                     <tr>
@@ -96,9 +117,9 @@
                         <td>
                             <span class="dropdown">
                                 <select id="importType" class="span3"  name ="import_type">
-                                    <option label="Player"         value="player"      <?php echo $importType =="player"?"selected":""?>>
-                                    <option label="Transaction"    value="transaction" <?php echo $importType =="transaction"?"selected":""?>>
-                                    <option label="Store organize" value="storeorg"    <?php echo $importType =="storeorg"?"selected":""?>>
+                                    <option label="Player"         value="player"      <?php echo $import_type =="player"?"selected":""?>>
+                                    <option label="Transaction"    value="transaction" <?php echo $import_type =="transaction"?"selected":""?>>
+                                    <option label="Store organize" value="storeorg"    <?php echo $import_type =="storeorg"?"selected":""?>>
                                 </select>
                             </span>
                         </td>

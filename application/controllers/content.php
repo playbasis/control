@@ -109,7 +109,8 @@ class Content extends MY_Controller
                 if (isset($content_data['category']) && !empty($content_data['category'])) {
                     $data['category'] = $content_data['category'];
                 }
-                $data['status'] = $content_data['status'] == 'on' ? true : false;
+                $data['status'] = isset($content_data['status']) && $content_data['status'] == 'on' ? true : false;
+                $data['pin'] = $content_data['pin'];
 
                 $insert = $this->Content_model->createContent($data);
                 if ($insert) {
@@ -160,6 +161,7 @@ class Content extends MY_Controller
                 $data['image'] = $content_data['image'];
                 $data['category'] = $content_data['category'];
                 $data['status'] = isset($content_data['status']) ? true : false;
+                $data['pin'] = $content_data['pin'];
 
                 $update = $this->Content_model->updateContent($data);
                 if ($update) {
@@ -348,6 +350,14 @@ class Content extends MY_Controller
             $this->data['status'] = $content_info['status'];
         } else {
             $this->data['status'] = true;
+        }
+
+        if ($this->input->post('pin')) {
+            $this->data['pin'] = $this->input->post('pin');
+        } elseif (isset($content_info['pin'])) {
+            $this->data['pin'] = $content_info['pin'];
+        } else {
+            $this->data['pin'] = '';
         }
 
         $this->load->vars($this->data);
