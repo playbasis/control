@@ -393,7 +393,7 @@ class Action_model extends MY_Model
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
-        $init_dataset = $this->processActionDataSet($data['init_dataset']);
+        $init_dataset = $this->processActionDataSet(isset($data['init_dataset']) ? $data['init_dataset'] : null);
 
         $data_insert = array(
             'name' => utf8_strtolower($data['name']),
@@ -418,7 +418,7 @@ class Action_model extends MY_Model
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
-        $init_dataset = $this->processActionDataSet($data['init_dataset']);
+        $init_dataset = $this->processActionDataSet(isset($data['init_dataset']) ? $data['init_dataset'] : null);
 
         $data_insert = array(
             'action_id' => new MongoID($data['action_id']),
