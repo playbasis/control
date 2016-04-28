@@ -230,6 +230,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Badge not available.";
                 $errorData['error_code'] = '0217';
                 break;
+            case 'OS_TYPE_INVALID':
+                $errorData['message'] = "OS type is invalid.";
+                $errorData['error_code'] = '0218';
+                break;
             case 'ACTION_NOT_FOUND':
                 $errorData['message'] = "Action not available";
                 $errorData['error_code'] = '0301';
