@@ -1850,12 +1850,16 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
         }
 
+        if(strtolower($this->input->post('os_type')) != "ios" && strtolower($this->input->post('os_type')) != "android"){
+            $this->response($this->error->setError('OS_TYPE_INVALID'), 200);
+        }
+
         $deviceInfo = array(
             'phone_number'=>$this->input->post('phone_number'),
             'device_token'=>$this->input->post('device_token'),
             'device_description'=>$this->input->post('device_description'),
             'device_name'=>$this->input->post('device_name'),
-            'os_type'=>$this->input->post('os_type')
+            'os_type'=>strtolower(strtolower($this->input->post('os_type')))
         );
 
         $player = $this->player_model->getPlayerByPlayerId($this->site_id, $player_id);

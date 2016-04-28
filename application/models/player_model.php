@@ -3260,8 +3260,8 @@ class Player_model extends MY_Model
             $this->mongo_db->where('client_id', new MongoId($data['client_id']));
             $this->mongo_db->where('site_id', new MongoId($data['site_id']));
             $this->mongo_db->where('pb_player_id', new MongoId($data['pb_player_id']));
+            $this->mongo_db->where('device_token', $data['device_token']);
 
-            $this->mongo_db->set('device_token', $data['device_token']);
             $this->mongo_db->set('device_description', $data['device_description']);
             $this->mongo_db->set('device_name', $data['device_name']);
             $this->mongo_db->set('os_type', $data['os_type']);
