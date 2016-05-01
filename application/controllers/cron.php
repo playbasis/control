@@ -875,7 +875,6 @@ class Cron extends CI_Controller
             'pechpras@playbasis.com',
             'pascal@playbasis.com',
             'napada.w@playbasis.com',
-            'sanit.l@playbasis.com',
             'mariya.v@playbasis.com'
         );
         $subject = '[Playbasis] Dashboard User Registration';
