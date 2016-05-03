@@ -189,6 +189,16 @@ class Content extends REST2_Controller
             $contentInfo['pin'] = $this->input->post('pin');
         }
 
+        if ($this->input->post('key')) {
+            $data['custom'] = array();
+            $keys = explode(',', $this->input->post('key'));
+            $value = $this->input->post('value');
+            $values = explode(',', $value);
+            foreach ($keys as $i => $key) {
+                $contentInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
+            }
+        }
+
         $insert = $this->content_model->createContent($contentInfo);
 
         $this->benchmark->mark('end');
@@ -247,6 +257,16 @@ class Content extends REST2_Controller
 
         if ($this->input->post('pin')){
             $contentInfo['pin'] = $this->input->post('pin');
+        }
+
+        if ($this->input->post('key')) {
+            $data['custom'] = array();
+            $keys = explode(',', $this->input->post('key'));
+            $value = $this->input->post('value');
+            $values = explode(',', $value);
+            foreach ($keys as $i => $key) {
+                $contentInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
+            }
         }
 
         $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'], $content_id, $contentInfo);
