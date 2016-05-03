@@ -223,9 +223,6 @@ class File extends REST2_Controller
         }
 
         $files = $this->image_model->retrieveData($this->client_id, $this->site_id, $query_data);
-        if (empty($files)) {
-            $this->response($this->error->setError('FILE_NOT_FOUND'), 200);
-        }
 
         foreach ( $files as &$file ){
             $extension = substr(strrchr($file['url'],'.'), 0);
