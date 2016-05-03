@@ -4057,6 +4057,20 @@
               "Default": "",
               "Type": "string",
               "Description": "Secret PIN given to content"
+            },
+            {
+              "Name": "key",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field keys separated by comma"
+            },
+            {
+              "Name": "value",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field values separated by comma"
             }
           ]
         },
@@ -4143,6 +4157,20 @@
               "Default": "",
               "Type": "string",
               "Description": "Secret PIN given to content"
+            },
+            {
+              "Name": "key",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field keys separated by comma"
+            },
+            {
+              "Name": "value",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field values separated by comma"
             }
           ]
         },
