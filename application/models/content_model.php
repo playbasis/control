@@ -15,10 +15,6 @@ class Content_model extends MY_Model
         log_message('error',print_r($exclude_id, true));
 
         // Searching
-        if (isset($optionalParams['category']) && !is_null($optionalParams['category'])) {
-            $category_result = $this->retrieveContentCategory($client_id, $site_id,
-                array('name' => $optionalParams['category']));
-        }
         if (isset($optionalParams['title']) && !is_null($optionalParams['title'])) {
             $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['title'])) . "/i");
             $this->mongo_db->where('title', $regex);
@@ -27,7 +23,7 @@ class Content_model extends MY_Model
             $this->mongo_db->where_not_in('_id', $exclude_id);
         }
         if (isset($optionalParams['category']) && !is_null($optionalParams['category'])) {
-            $this->mongo_db->where('category', $category_result[0]['_id']);
+            $this->mongo_db->where('category', $optionalParams['category']);
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
             try {
@@ -111,8 +107,7 @@ class Content_model extends MY_Model
 
         // Searching
         if (isset($optionalParams['name']) && !is_null($optionalParams['name'])) {
-            $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['name'])) . "/i");
-            $this->mongo_db->where('name', $regex);
+            $this->mongo_db->where('name', $optionalParams['name']);
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
@@ -363,7 +358,7 @@ class Content_model extends MY_Model
             $this->mongo_db->where_not_in('_id', $query_data['player_exclude']);
         }
         if (isset($query_data['category']) && !is_null($query_data['category'])) {
-            $this->mongo_db->where('category', $query_data['category'][0]['_id']);
+            $this->mongo_db->where('category', $query_data['category']['_id']);
         }
 
         try {
@@ -372,6 +367,9 @@ class Content_model extends MY_Model
         } catch (Exception $e) {
             return false;
         };
+
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('deleted', false);
 
         $result = $this->mongo_db->count('playbasis_content_to_client');
         return $result;

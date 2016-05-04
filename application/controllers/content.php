@@ -35,9 +35,20 @@ class Content extends REST2_Controller
                 'cl_player_id' => $query_data['player_exclude']
             ));
             if (empty($pb_player_id)) {
-                $this->response($this->error->setError('USER_ID_INVALID'), 200);
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
             }
             $content_id = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
+        }
+
+        if (isset($query_data['category']) && !is_null($query_data['category'])) {
+            $category_result = $this->content_model->retrieveContentCategory($this->validToken['client_id'], $this->validToken['site_id'],
+                array('name' => $query_data['category']));
+            if($category_result){
+                $query_data['category'] = new MongoId($category_result[0]['_id']);
+            }else{
+                $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
+            }
+
         }
 
         $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, $content_id);
@@ -525,16 +536,23 @@ class Content extends REST2_Controller
                 'site_id'      => $this->validToken['site_id'],
                 'cl_player_id' => $getData['player_exclude']
             ));
-            if (empty($pb_player_id)) {
-                $this->response($this->error->setError('USER_ID_INVALID'), 200);
+            if ($pb_player_id) {
+                $query_data['player_exclude'] = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
+            }else{
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
             }
-            $query_data['player_exclude'] = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
+
         }
 
         if (isset($getData['category']) && !is_null($getData['category'])) {
             $category_result = $this->content_model->retrieveContentCategory($this->validToken['client_id'], $this->validToken['site_id'],
                 array('name' => $getData['category']));
-            $query_data['category'] = $category_result;
+            if($category_result){
+                $query_data['category'] = $category_result[0];
+            }else{
+                $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
+            }
+
         }
 
         $count_value = $this->content_model->countContent($this->validToken['client_id'], $this->validToken['site_id'], $query_data);
