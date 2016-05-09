@@ -21,6 +21,7 @@ class Goods_model extends MY_Model
             'quantity',
             'redeem',
             'group',
+            'tags',
             'date_start',
             'date_expire',
             'sponsor',
@@ -121,6 +122,7 @@ class Goods_model extends MY_Model
             'sort_order',
             'group',
             'code',
+            'tags',
             'organize_id',
             'organize_role'
         ));
