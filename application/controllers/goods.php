@@ -870,6 +870,14 @@ class Goods extends MY_Controller
             $this->data['code'] = '';
         }
 
+        if ($this->input->post('tags')) {
+            $this->data['tags'] = $this->input->post('tags');
+        } elseif (!empty($goods_info) && isset($goods_info['tags'])) {
+            $this->data['tags'] = $goods_info['tags'];
+        } else {
+            $this->data['tags'] = '';
+        }
+
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
         } elseif (!empty($goods_info)) {
@@ -1270,6 +1278,7 @@ class Goods extends MY_Controller
             'sort_order' => (int)$data['sort_order'] | 1,
             'language_id' => 1,
             'redeem' => $redeem,
+            'tags' => $data['tags'],
             'date_start' => null,
             'date_expire' => null,
             'date_added' => $d,
