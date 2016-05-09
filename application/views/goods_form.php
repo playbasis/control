@@ -92,7 +92,7 @@
                             <tr>
                                 <td><?php echo $this->lang->line('entry_tags'); ?>:</td>
                                 <td>
-                                    <input type="text" class="tags" name="tags" value="<?php echo isset($tags) ? $tags : set_value('tags'); ?>" size="5" class="tooltips" data-placement="right" title="Tag(s) input"/>
+                                    <input type="text" class="tags" name="tags" value="<?php echo isset($tags) ? implode($tags,',') : set_value('tags'); ?>" size="5" class="tooltips" data-placement="right" title="Tag(s) input"/>
                                 </td>
                             </tr>
                             <tr>

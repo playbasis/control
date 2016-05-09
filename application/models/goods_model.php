@@ -430,7 +430,6 @@ class Goods_model extends MY_Model
             'description' => $data['description'] | '',
             'language_id' => (int)1,
             'redeem' => $data['redeem'],
-            'tags' => $data['tags'] | '',
             'deleted' => false,
             'sponsor' => isset($data['sponsor']) ? $data['sponsor'] : false,
             'date_start' => null,
@@ -463,6 +462,10 @@ class Goods_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
@@ -480,7 +483,7 @@ class Goods_model extends MY_Model
             'language_id' => (int)1,
             'redeem' => $data['redeem'],
             'code' => $data['code'] | '',
-            'tags' => $data['tags'] | '',
+            'tags' => isset($tags) ? $tags : null,
             'deleted' => false,
             'sponsor' => isset($data['sponsor']) ? $data['sponsor'] : false,
             'date_start' => null,
@@ -532,6 +535,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
+
         if (isset($data['sponsor'])) {
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
         } else {
@@ -576,6 +580,10 @@ class Goods_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $this->mongo_db->where('_id', new MongoID($goods_id));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
@@ -593,7 +601,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
         $this->mongo_db->set('code', isset($data['code']) ? $data['code'] : '');
-        $this->mongo_db->set('tags', isset($data['tags']) ? $data['tags'] : '');
+        $this->mongo_db->set('tags', isset($tags) ? $tags : null);
         if (isset($data['sponsor'])) {
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
         } else {
@@ -636,6 +644,10 @@ class Goods_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $this->mongo_db->where('group', $group);
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
@@ -646,7 +658,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
-        $this->mongo_db->set('tags', isset($data['tags']) ? $data['tags'] : '');
+        $this->mongo_db->set('tags', isset($tags) ? $tags : null);
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
 
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
