@@ -1114,13 +1114,13 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('SMS_VERIFICATION_CODE_EXPIRED'), 200);
         }
 
-        if(isset($result['phone_number'])){
+        if(isset($result['phone_number']) && !empty($result['phone_number'])){ // there is pending phone_number
             $this->player_model->updatePlayer($player['_id'], $this->validToken['site_id'], array(
                 'phone_number' => $result['phone_number']
             ));
         }
 
-        if(isset($result['device_token'])){
+        if(isset($result['device_token']) && !empty($result['device_token'])){ // there is pending device_token
             $result1 = $this->player_model->storeDeviceToken(array(
                 'client_id' => $this->client_id,
                 'site_id' => $this->site_id,
@@ -1820,7 +1820,19 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('SMS_VERIFICATION_PHONE_NUMBER_NOT_FOUND'), 200);
         }
 
-        $code = $this->player_model->generateOTPCode($player['_id']);
+        if($this->input->post('os_type') && strtolower($this->input->post('os_type')) != "ios" && strtolower($this->input->post('os_type')) != "android"){
+            $this->response($this->error->setError('OS_TYPE_INVALID'), 200);
+        }
+
+        $deviceInfo = array(
+            'phone_number'=>null,
+            'device_token'=>$this->input->post('device_token'),
+            'device_description'=>$this->input->post('device_description'),
+            'device_name'=>$this->input->post('device_name'),
+            'os_type'=>strtolower($this->input->post('os_type'))
+        );
+
+        $code = $this->player_model->generateOTPCode($player['_id'], $deviceInfo);
 
         $validToken = $this->validToken;
 
@@ -1873,7 +1885,7 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
 
-        $code = $this->player_model->generateOTPCodeForSetupPhone($player['_id'],$deviceInfo);
+        $code = $this->player_model->generateOTPCode($player['_id'], $deviceInfo);
 
         $validToken = $this->validToken;
 
