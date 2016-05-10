@@ -1842,7 +1842,7 @@ class Player extends REST2_Controller
 
         $this->sendEngine('user', $from, $player['phone_number'], $message);
 
-        $this->response($this->resp->setRespond(array('code' => $code)), 200);
+        $this->response($this->resp->setRespond(array('success' => true)), 200);
     }
 
     public function setupPhone_post($player_id = '')
@@ -1895,7 +1895,7 @@ class Player extends REST2_Controller
 
         $this->sendEngine('user', $from,$this->input->post('phone_number'), $message);
 
-        $this->response($this->resp->setRespond(array('code' => $code)), 200);
+        $this->response($this->resp->setRespond(array('success' => true)), 200);
     }
 
     public function contact_get($player_id = 0, $N = 10)
