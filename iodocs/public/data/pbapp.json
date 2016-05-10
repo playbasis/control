@@ -656,6 +656,38 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "device_token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Device"
+            },
+            {
+              "Name": "device_description",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Device model description"
+            },
+            {
+              "Name": "device_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Device model name"
+            },
+            {
+              "Name": "os_type",
+              "Required": "Y",
+              "Default": "",
+              "Type": "enumerated",
+              "Description": "Choose os type",
+              "EnumeratedList": [
+                "IOS",
+                "Android"
+              ]
             }
           ]
         },

@@ -3162,26 +3162,7 @@ class Player_model extends MY_Model
         return $code;
     }
 
-    public function generateOTPCode($pb_player_id)
-    {
-        $code = $this->genCode(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
-
-        $this->mongo_db->where('pb_player_id', $pb_player_id);
-        $records = $this->mongo_db->get('playbasis_player_otp_to_player');
-        if ($records) {
-            $this->mongo_db->where('pb_player_id', $pb_player_id);
-            $this->mongo_db->delete('playbasis_player_otp_to_player');
-        }
-
-        $this->mongo_db->insert('playbasis_player_otp_to_player', array(
-            'pb_player_id' => $pb_player_id,
-            'code' => $code,
-            'date_expire' => new MongoDate(time() + SMS_VERIFICATION_TIMEOUT_IN_SECONDS),
-        ));
-        return $code;
-    }
-
-    public function generateOTPCodeForSetupPhone($pb_player_id,$deviceInfo)
+    public function generateOTPCode($pb_player_id, $deviceInfo)
     {
         $code = $this->genCode(SMS_VERIFICATION_CODE_LENGTH, false, false, true);
 
