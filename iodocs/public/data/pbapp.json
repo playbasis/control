@@ -628,11 +628,11 @@
               "Description": "password of the player"
             },
             {
-              "Name": "device_id",
+              "Name": "device_token",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "device id to verify with SMS verification process"
+              "Description": "device token to verify with SMS verification process"
             }
           ]
         },
