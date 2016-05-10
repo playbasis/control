@@ -72,6 +72,7 @@ $lang['entry_node_name']               = 'Node Name';
 $lang['entry_node_type']               = 'Node Type';
 $lang['entry_store_id']                = 'Store Id';
 $lang['entry_operate']                 = 'Operate';
+$lang['entry_tags']                    = 'Tags';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';
