@@ -3943,11 +3943,22 @@
               "Description": "Secret PIN given to content"
             },
             {
-              "Name": "player_exclude",
+              "Name": "player_id",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Find content which no activity with player"
+              "Description": "display content with given player id"
+            },
+            {
+              "Name": "only_new_content",
+              "Required": "N",
+              "Default": "false",
+              "Type": "enumerated",
+              "Description": "true = display new content with [player_id]",
+              "EnumeratedList": [
+                "true",
+                "false"
+              ]
             }
           ]
         },
