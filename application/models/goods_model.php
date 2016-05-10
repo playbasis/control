@@ -39,6 +39,9 @@ class Goods_model extends MY_Model
         if (!empty($nin)) {
             $this->mongo_db->where_not_in('_id', $nin);
         }
+        if (!empty($data['tags'])){
+            $this->mongo_db->where_in('tags', $data['tags']);
+        }
         $goods = $this->mongo_db->get('playbasis_goods_to_client');
         if ($goods) {
             foreach ($goods as &$g) {
