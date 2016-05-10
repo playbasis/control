@@ -28,16 +28,22 @@ class Content extends REST2_Controller
             }
         }
 
-        if (isset($query_data['player_exclude'])){
-            $pb_player_id = $this->player_model->getPlaybasisId(array(
-                'client_id'    => $this->validToken['client_id'],
-                'site_id'      => $this->validToken['site_id'],
-                'cl_player_id' => $query_data['player_exclude']
-            ));
-            if (empty($pb_player_id)) {
-                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        if ((isset($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true") ) {
+
+            if (isset($query_data['player_id'])) {
+                $pb_player_id = $this->player_model->getPlaybasisId(array(
+                    'client_id' => $this->validToken['client_id'],
+                    'site_id' => $this->validToken['site_id'],
+                    'cl_player_id' => $query_data['player_id']
+                ));
+                if (empty($pb_player_id)) {
+                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+                }
+                $content_id = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
+                    $this->validToken['site_id'], $pb_player_id);
+            }else{
+                $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
             }
-            $content_id = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
         }
 
         if (isset($query_data['category']) && !is_null($query_data['category'])) {
