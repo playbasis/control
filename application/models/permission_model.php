@@ -7,7 +7,7 @@ class Permission_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('site_id', $site_id ? new MongoID($site_id) : null);
 
         $this->mongo_db->limit(1);
 

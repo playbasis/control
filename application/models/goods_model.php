@@ -179,7 +179,7 @@ class Goods_model extends MY_Model
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('site_id', $data['site_id'] ? new MongoID($data['site_id']) : null);
         if (array_key_exists('$nin', $data)) {
             $this->mongo_db->where_not_in('_id', $data['$nin']);
         }
