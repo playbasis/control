@@ -38,6 +38,7 @@ $lang['column_status']          		= 'Status';
 $lang['column_action']          		= 'Action';
 $lang['column_owner']	          		= 'Owner';
 $lang['column_is_group']          		= 'Group';
+$lang['column_tags']                    = 'Tag(s)';
 
 // Entry
 $lang['entry_system_id']             		= 'System Generated ID';
