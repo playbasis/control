@@ -291,6 +291,9 @@ class Quiz extends MY_Controller
                                 $value = 'quiz';
                             }
                             break;
+                        case 'tags':
+                            $value = explode(',', $value);
+                            break;
                         default:
                             break;
                     }

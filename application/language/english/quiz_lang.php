@@ -34,6 +34,7 @@ $lang['entry_subject']				= 'Subject';
 $lang['entry_sms']				= 'Sms';
 $lang['entry_push']				= 'Push';
 $lang['entry_question_order']				= 'Sort Question in Order';
+$lang['entry_tags'] = 'Tag(s)';
 
 $lang['column_date_added']          			= 'Date Added';
 $lang['column_action']							= 'Action';
