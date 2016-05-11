@@ -325,6 +325,7 @@ class App extends MY_Controller
                     $insert_data = array(
                         "app_name" => $this->input->post('app_name'),
                         "client_id" => $client_id,
+                        "image" => $this->input->post('image'),
                         "platform" => strtolower($this->input->post('platform')),
                         "data" => $data_platform
                     );
@@ -605,6 +606,30 @@ class App extends MY_Controller
         } else {
             $this->data['app_name'] = '';
         }
+
+        if ($this->input->post('image')) {
+            $this->data['image'] = $this->input->post('image');
+        } elseif (!empty($domain_info)) {
+            $this->data['image'] = $domain_info['image'];
+        } else {
+            $this->data['image'] = 'no_image.jpg';
+        }
+
+        if ($this->data['image']) {
+            $info = pathinfo($this->data['image']);
+            if (isset($info['extension'])) {
+                $extension = $info['extension'];
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0,
+                        utf8_strrpos($this->data['image'], '.')) . '-100x100.' . $extension;
+                $this->data['thumb'] = S3_IMAGE . $new_image;
+            } elsE {
+                $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+            }
+        } else {
+            $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+        }
+
+        $this->data['no_image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
 
         if ($this->input->post('platform')) {
             $this->data['platform'] = $this->input->post('platform');

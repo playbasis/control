@@ -14,6 +14,7 @@ $lang['text_browse']            				= 'Browse Files';
 $lang['text_clear']             				= 'Clear Image';
 $lang['text_criteria']          				= 'App View';
 $lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
+$lang['no_image']                               = 'No Image';
 
 // Gender
 $lang['text_male']								= 'Male';
@@ -69,6 +70,7 @@ $lang['entry_new_password']					    = 'New Password';
 $lang['entry_group']							= 'Group';
 
 $lang['entry_app_name']						    = 'App Name';
+$lang['entry_logo']						        = 'Logo';
 $lang['entry_site_name']						= 'Site';
 $lang['entry_platform']						    = 'Platform';
 $lang['entry_key']								= 'API Keys:';
