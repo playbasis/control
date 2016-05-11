@@ -70,7 +70,7 @@ class Stat_model extends MY_Model
         return $f($arr, $async);
     }
 
-    public function countPlayer($client_id, $site_id, $from, $to)
+    public function countPlayerTotal($client_id, $site_id, $from, $to)
     {
         if ($client_id) $this->mongo_db->where('client_id', $client_id);
         if ($site_id) $this->mongo_db->where('site_id', $site_id);
@@ -79,24 +79,44 @@ class Stat_model extends MY_Model
         return $this->mongo_db->count('playbasis_player');
     }
 
+    public function countPlayer($client_id, $site_id, $from, $to)
+    {
+        $match = array('date_added' => array('$gte' => $from, '$lt' => $to));
+        if ($client_id) $match['client_id'] = $client_id;
+        if ($site_id) $match['site_id'] = $site_id;
+        return $this->summarize('playbasis_player', $match, null, null, array('d' => array('$dayOfMonth' => '$date_added'), 'm' => array('$month' => '$date_added'), 'y' => array('$year' => '$date_added')));
+    }
+
     public function countAction($client_id, $site_id, $action_id, $from, $to)
     {
-        return $this->summarize('playbasis_stat_action', array('client_id' => $client_id, 'site_id' => $site_id, 'action_id' => $action_id), $from, $to, '$d', '$c');
+        $match = array('action_id' => $action_id);
+        if ($client_id) $match['client_id'] = $client_id;
+        if ($site_id) $match['site_id'] = $site_id;
+        return $this->summarize('playbasis_stat_action', $match, $from, $to, '$d', '$c');
     }
 
     public function countActions($client_id, $site_id, $from, $to)
     {
-        return $this->summarize('playbasis_stat_action', array('client_id' => $client_id, 'site_id' => $site_id), $from, $to, '$action_id', '$c');
+        $match = array();
+        if ($client_id) $match['client_id'] = $client_id;
+        if ($site_id) $match['site_id'] = $site_id;
+        return $this->summarize('playbasis_stat_action', $match, $from, $to, '$action_id', '$c');
     }
 
     public function countDAU($client_id, $site_id, $from, $to)
     {
-        return $this->summarize('playbasis_stat_dau', $site_id ? array('client_id' => $client_id, 'site_id' => $site_id) : null, $from, $to);
+        $match = array();
+        if ($client_id) $match['client_id'] = $client_id;
+        if ($site_id) $match['site_id'] = $site_id;
+        return $this->summarize('playbasis_stat_dau', $match, $from, $to);
     }
 
     public function countMAU($client_id, $site_id, $from, $to)
     {
-        return $this->summarize('playbasis_stat_mau', $site_id ? array('client_id' => $client_id, 'site_id' => $site_id) : null, $from, $to);
+        $match = array();
+        if ($client_id) $match['client_id'] = $client_id;
+        if ($site_id) $match['site_id'] = $site_id;
+        return $this->summarize('playbasis_stat_mau', $match, $from, $to);
     }
 
     protected function summarize($collection, $match, $from, $to, $group_by='$d', $sum_val=1)
@@ -126,7 +146,7 @@ class Stat_model extends MY_Model
             $min = null;
             $max = null;
             foreach ($result['result'] as $data) {
-                $ret['data'][$data['_id']] = $data['c'];
+                $ret['data'][json_encode($data['_id'])] = $data['c'];
                 $sum += $data['c'];
                 if (!isset($ret['n'])) $ret['n'] = 0;
                 $ret['n']++;
