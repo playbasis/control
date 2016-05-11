@@ -1032,7 +1032,7 @@ class Player extends REST2_Controller
                 $this->client_id, $this->site_id, $player['_id']));
 
             $device_token = $this->input->post('device_token');
-            if (!empty($device_token) && $list_device_tokens) {
+            if (!empty($device_token)) {
                 // Change new device
                 // Send SMS verification if device_token is a new one (not in a list of existing device tokens)
                 if (!in_array($device_token, $list_device_tokens, true) && !empty($player['phone_number'])) {
