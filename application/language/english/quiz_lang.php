@@ -41,6 +41,7 @@ $lang['column_action']							= 'Action';
 $lang['column_name']							= 'Quiz Name';
 $lang['column_status']							= 'Status';
 $lang['column_order']							= 'Order';
+$lang['column_tags']							= 'Tag(s)';
 
 $lang['button_filter']							= 'Filter';
 $lang['button_clear_filter']					= 'Clear filter';

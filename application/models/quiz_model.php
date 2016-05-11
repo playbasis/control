@@ -164,6 +164,10 @@ class Quiz_model extends MY_Model
             $this->mongo_db->set('question_order', $data['question_order']);
         }
 
+        if (isset($data['tags']) && !is_null($data['tags'])) {
+            $this->mongo_db->set('tags', $data['tags']);
+        }
+
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
         $this->mongo_db->update('playbasis_quiz_to_client');

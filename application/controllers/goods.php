@@ -747,7 +747,8 @@ class Goods extends MY_Controller
                             $this->input->post('selected'))),
                     'sponsor' => isset($goods['sponsor']) ? $goods['sponsor'] : null,
                     'is_group' => $is_group,
-                    'organize_name' => $org_name
+                    'organize_name' => $org_name,
+                    'tags' => isset($goods['tags']) ? $goods['tags'] : null
                 );
             }
         }
