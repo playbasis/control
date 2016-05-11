@@ -2056,6 +2056,13 @@
               "Default": "",
               "Type": "string",
               "Description": "quiz, poll"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
             }
           ]
         },
@@ -2102,6 +2109,13 @@
               "Default": "",
               "Type": "string",
               "Description": "quiz, poll"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
             }
           ]
         },

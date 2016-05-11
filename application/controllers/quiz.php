@@ -90,7 +90,8 @@ class Quiz extends REST2_Controller
         }
 
         $type = $this->input->get('type');
-        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin, $type);
+        $tags = $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null;
+        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin, $type, $tags);
         $results = array_map('convert_MongoId_id', $results);
         array_walk_recursive($results, array($this, "convert_mongo_object_and_image_path"));
 
@@ -179,7 +180,8 @@ class Quiz extends REST2_Controller
         $arr = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id);
         $nin = array_map('index_quiz_id', $arr);
         $type = $this->input->get('type');
-        $results = $this->quiz_model->find($this->client_id, $this->site_id, $type != 'poll' ? $nin : null, $type);
+        $tags = $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null;
+        $results = $this->quiz_model->find($this->client_id, $this->site_id, $type != 'poll' ? $nin : null, $type, $tags);
         $results = array_map('convert_MongoId_id', $results);
 
         $result = null;
