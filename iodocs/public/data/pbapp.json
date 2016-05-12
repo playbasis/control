@@ -918,6 +918,13 @@
               "Default": "20",
               "Type": "integer",
               "Description": "number of results to return"
+            },
+            {
+              "Name": "order",
+              "Required": "N",
+              "Default": "desc",
+              "Type": "string",
+              "Description": "Specify sorted direction [desc, *asc*]"
             }
           ]
         },

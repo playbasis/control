@@ -1745,7 +1745,7 @@ class Player_model extends MY_Model
         return $mongoDate;
     }
 
-    public function getPointHistoryFromPlayerID($pb_player_id, $site_id, $reward_id, $offset, $limit)
+    public function getPointHistoryFromPlayerID($pb_player_id, $site_id, $reward_id, $offset, $limit, $order = null)
     {
 
         $this->set_site_mongodb($site_id);
@@ -1799,6 +1799,14 @@ class Player_model extends MY_Model
             'quiz_id'
         ));
         $this->mongo_db->select(array(), array('_id'));
+
+        if (mb_strtolower($order) == 'asc') {
+            $order = 1;
+        } else {
+            $order = -1;
+        }
+        $this->mongo_db->order_by(array('date_added' => $order));
+
         $event_log = $this->mongo_db->get('playbasis_event_log');
 
         foreach ($event_log as &$event) {
