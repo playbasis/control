@@ -129,34 +129,6 @@
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_claim'); ?></td>
-                            <td>
-                                <select name="claim">
-                                    <?php if ($claim || set_value('claim')==1) { ?>
-                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } else { ?>
-                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } ?>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_redeem'); ?></td>
-                            <td>
-                                <select name="redeem">
-                                    <?php if ($redeem || set_value('redeem')==1) { ?>
-                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } else { ?>
-                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } ?>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?></td>
                             <td><select name="status">
                                 <?php if ($status) { ?>

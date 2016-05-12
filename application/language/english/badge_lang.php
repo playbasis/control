@@ -41,8 +41,6 @@ $lang['entry_substract']           		= 'Substract';
 $lang['entry_status']         			= 'Status';
 $lang['entry_image']          			= 'Image';
 $lang['entry_sponsor']					= 'Sponsor';
-$lang['entry_claim']					= 'Claim';
-$lang['entry_redeem']					= 'Redeem';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';
