@@ -96,6 +96,10 @@
                             <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" /></td>
                         </tr>
                         <tr>
+                            <td><?php echo $this->lang->line('entry_per_user'); ?>:</td>
+                            <td><input type="text" name="per_user" value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>" size="5" class="tooltips" data-placement="right" title="Number of reward that a user can get, if left blank it is unlimited"/></td>
+                        </tr>
+                        <tr>
                             <td><?php echo $this->lang->line('entry_stackable'); ?>:</td>
                             <td><select name="stackable">
                                 <?php if ($stackable || set_value('stackable')==1) { ?>

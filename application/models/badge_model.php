@@ -306,6 +306,7 @@ class Badge_model extends MY_Model
             'stackable' => (int)$data['stackable'] | 0,
             'substract' => (int)$data['substract'] | 0,
             'quantity' => (int)$data['quantity'] | 0,
+            'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
             'sort_order' => (int)$data['sort_order'] | 1,
@@ -339,6 +340,7 @@ class Badge_model extends MY_Model
             'stackable' => (int)$data['stackable'] | 0,
             'substract' => (int)$data['substract'] | 0,
             'quantity' => (int)$data['quantity'] | 0,
+            'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
             'sort_order' => (int)$data['sort_order'] | 1,
@@ -364,6 +366,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('stackable', (int)$data['stackable']);
         $this->mongo_db->set('substract', (int)$data['substract']);
         $this->mongo_db->set('quantity', (int)$data['quantity']);
+        $this->mongo_db->set('per_user', (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate());
@@ -410,6 +413,7 @@ class Badge_model extends MY_Model
                 $this->mongo_db->set('stackable', (int)$data['stackable']);
                 $this->mongo_db->set('substract', (int)$data['substract']);
                 $this->mongo_db->set('quantity', (int)$data['quantity']);
+                $this->mongo_db->set('per_user', (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
                 $this->mongo_db->set('status', (bool)$data['status']);
                 $this->mongo_db->set('sort_order', (int)$data['sort_order']);
                 $this->mongo_db->set('description', $data['description']);
@@ -441,6 +445,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('stackable', (int)$data['stackable']);
         $this->mongo_db->set('substract', (int)$data['substract']);
         $this->mongo_db->set('quantity', (int)$data['quantity']);
+        $this->mongo_db->set('per_user', (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate());
@@ -666,6 +671,8 @@ class Badge_model extends MY_Model
         return ($badge1["stackable"] == (int)$badge2["stackable"] &&
             $badge1["substract"] == (int)$badge2["substract"] &&
             $badge1["quantity"] == (int)$badge2["quantity"] &&
+            ((isset($badge1['per_user']) && !empty($badge1['per_user'])) ? $badge1['per_user'] : null) ==
+            ((isset($badge2['per_user']) && !empty($badge2['per_user'])) ? (int)$badge2["per_user"] : null) &&
             $badge1["sort_order"] == (int)$badge2["sort_order"] &&
             $badge1["name"] == $badge2["name"] &&
             $badge1["description"] == $badge2["description"] &&
