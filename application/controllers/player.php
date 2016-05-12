@@ -1353,7 +1353,6 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
 
-
         $offset = ($this->input->get('offset')) ? $this->input->get('offset') : 0;
         $limit = ($this->input->get('limit')) ? $this->input->get('limit') : RETURN_LIMIT_FOR_RANK;
         if ($limit > 500) {
@@ -1374,7 +1373,7 @@ class Player extends REST2_Controller
         }
 
         $respondThis['points'] = $this->player_model->getPointHistoryFromPlayerID($pb_player_id, $this->site_id,
-            $reward_id, $offset, $limit);
+            $reward_id, $offset, $limit, $this->input->get('order'));
 
         $this->response($this->resp->setRespond($respondThis), 200);
     }
