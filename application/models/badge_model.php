@@ -302,6 +302,10 @@ class Badge_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $d = new MongoDate();
 
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $newData = array(
             'stackable' => (int)$data['stackable'] | 0,
             'substract' => (int)$data['substract'] | 0,
@@ -313,6 +317,7 @@ class Badge_model extends MY_Model
             'date_added' => $d,
             'name' => $data['name'] | '',
             'description' => $data['description'] | '',
+            'tags' => isset($tags) ? $tags : null,
             'hint' => $data['hint'] | '',
             'language_id' => (int)1,
             'deleted' => false,
@@ -332,6 +337,10 @@ class Badge_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $d = new MongoDate();
 
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $this->mongo_db->insert('playbasis_badge_to_client', array(
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
@@ -346,6 +355,7 @@ class Badge_model extends MY_Model
             'date_added' => $d,
             'name' => $data['name'] | '',
             'description' => $data['description'] | '',
+            'tags' => isset($tags) ? $tags : null,
             'hint' => $data['hint'] | '',
             'language_id' => (int)1,
             'deleted' => false,
@@ -360,6 +370,10 @@ class Badge_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $this->mongo_db->where('_id', new MongoID($badge_id));
         $this->mongo_db->set('stackable', (int)$data['stackable']);
         $this->mongo_db->set('substract', (int)$data['substract']);
@@ -369,6 +383,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('date_modified', new MongoDate());
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('tags', isset($tags) ? $tags : null);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
@@ -387,6 +402,10 @@ class Badge_model extends MY_Model
     public function editBadgeToClient($badge_id, $data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        if (!empty($data['tags'])){
+            $data['tags'] = explode(',', $data['tags']);
+        }
 
         $this->mongo_db->where('_id', new MongoID($badge_id));
         $badge = $this->mongo_db->get("playbasis_badge_to_client");
@@ -413,6 +432,7 @@ class Badge_model extends MY_Model
                 $this->mongo_db->set('status', (bool)$data['status']);
                 $this->mongo_db->set('sort_order', (int)$data['sort_order']);
                 $this->mongo_db->set('description', $data['description']);
+                $this->mongo_db->set('tags', isset($data['tags']) ? $data['tags'] : null);
                 $this->mongo_db->set('hint', $data['hint']);
                 $this->mongo_db->set('language_id', (int)1);
                 $this->mongo_db->set('sponsor',
@@ -437,6 +457,10 @@ class Badge_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $this->mongo_db->where('badge_id', new MongoID($badge_id));
         $this->mongo_db->set('stackable', (int)$data['stackable']);
         $this->mongo_db->set('substract', (int)$data['substract']);
@@ -446,6 +470,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('date_modified', new MongoDate());
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('tags', isset($tags) ? $tags : null);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
@@ -637,6 +662,7 @@ class Badge_model extends MY_Model
                 $badge["status"] = false;
                 $badge["client_id"] = $client_id;
                 $badge["site_id"] = $site_id;
+                isset($badge["tags"])? $badge["tags"] = implode($badge['tags'],',') : null;
 
                 $this->addBadgeToClient($badge);
             }
@@ -669,6 +695,7 @@ class Badge_model extends MY_Model
             $badge1["sort_order"] == (int)$badge2["sort_order"] &&
             $badge1["name"] == $badge2["name"] &&
             $badge1["description"] == $badge2["description"] &&
+            (($badge1["tags"] == $badge2["tags"]) || ( !$badge1['tags'] && (!$badge2['tags']) ) ) &&
             $badge1["hint"] == $badge2["hint"] &&
             $badge1["claim"] == $badge2["claim"] &&
             $badge1["redeem"] == $badge2["redeem"] &&

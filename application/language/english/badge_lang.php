@@ -25,6 +25,7 @@ $lang['column_quantity']          		= 'Quantity';
 $lang['column_status']          		= 'Status';
 $lang['column_action']          		= 'Action';
 $lang['column_owner']	          		= 'Owner';
+$lang['column_tags']                    = 'Tag(s)';
 
 // Entry
 $lang['entry_name']             		= 'Name';
@@ -42,6 +43,7 @@ $lang['entry_image']          			= 'Image';
 $lang['entry_sponsor']					= 'Sponsor';
 $lang['entry_claim']					= 'Claim';
 $lang['entry_redeem']					= 'Redeem';
+$lang['entry_tags']                    = 'Tag(s)';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';
