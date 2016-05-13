@@ -44,7 +44,6 @@ class Workflow extends MY_Controller
 
     public function index()
     {
-
         if (!$this->validateAccess()) {
             echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
@@ -105,12 +104,10 @@ class Workflow extends MY_Controller
         }
 
         $this->getPlayerList("approved", 0);
-
     }
 
     public function rejected($offset =0)
     {
-
         if (!$this->validateAccess()) {
             echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
@@ -167,12 +164,10 @@ class Workflow extends MY_Controller
         }
 
         $this->getPlayerList("rejected", $offset);
-
     }
 
     public function pending($offset=0)
     {
-
         if (!$this->validateAccess()) {
             echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
@@ -243,12 +238,10 @@ class Workflow extends MY_Controller
         }
 
         $this->getPlayerList("pending",$offset);
-
     }
 
     public function locked($offset =0)
     {
-
         if (!$this->validateAccess()) {
             echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
@@ -312,12 +305,10 @@ class Workflow extends MY_Controller
         }
 
         $this->getPlayerList("approved", $offset, true);
-
     }
 
     public function page($offset = 0)
     {
-
         if (!$this->validateAccess()) {
             echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
@@ -520,7 +511,9 @@ class Workflow extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|xss_clean|alpha_dash');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $this->form_validation->run()) {
             $data = $this->input->post();
             $check_status = true;
 
@@ -623,13 +616,11 @@ class Workflow extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         // Check special characters for player_id
-        $this->form_validation->set_rules('cl_player_id', 'hello', 'trim|required|xss_clean|alpha_dash');
+        $this->form_validation->set_rules('cl_player_id', $this->lang->line('form_id'), 'trim|required|xss_clean|alpha_dash');
+        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|xss_clean|alpha_dash');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
-
-            //set value of username to equal to cl_player_id
-            $data['username'] = $data['cl_player_id'];
 
             if ($data['password'] != $data['confirm_password']) {
                 $this->data['message'] = $this->lang->line('text_fail_confirm_password');
@@ -649,7 +640,7 @@ class Workflow extends MY_Controller
                 if (!isset($_POST['organize_node'][0])) {
                     $_POST['organize_node'][0] = "";
                 }
-            }else {
+            } else {
                 $status = $this->Workflow_model->createPlayer($client_id, $site_id, $data);
                 if (isset($status->success)) {
                     if ($status->success) {
@@ -723,7 +714,6 @@ class Workflow extends MY_Controller
 
     public function getForm($user_id = 0)
     {
-
         if ($this->User_model->hasPermission('access', 'store_org') &&
             $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
         ) {
@@ -801,12 +791,10 @@ class Workflow extends MY_Controller
 
         $this->data['main'] = 'workflow_form';
         $this->render_page('template');
-
     }
 
     private function validateModify()
     {
-
         if ($this->User_model->hasPermission('modify', 'user')) {
             return true;
         } else {
@@ -830,6 +818,4 @@ class Workflow extends MY_Controller
             return false;
         }
     }
-
-
 }
