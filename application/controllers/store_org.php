@@ -146,8 +146,20 @@ class Store_org extends MY_Controller
                         }
                         $result = $this->Store_org_model->deleteOrganizeByIdArray($organize_data['id']);
                     } else {
-                        $result = $this->Store_org_model->createOrganize($client_id, $site_id, $name, $desc, $parent,
-                            $status);
+
+                        if(!$name){
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'name require'));
+                            die;
+                        }
+                        $org_chk =$this->Store_org_model->retrieveOrganizeByName($client_id, $site_id, $name);
+                        if($org_chk){
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'organize duplicate'));
+                            die;
+                        }else {
+                            $result = $this->Store_org_model->createOrganize($client_id, $site_id, $name, $desc, $parent, $status);
+                        }
                     }
                 } else {
                     try {

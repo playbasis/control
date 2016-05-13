@@ -301,6 +301,17 @@ class Store_org_model extends MY_Model
         return $this->mongo_db->get("playbasis_store_organize");
     }
 
+    public function retrieveOrganizeByName($client_id, $site_id, $name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('name', $name);
+        return $this->mongo_db->get("playbasis_store_organize");
+    }
+
     public function retrieveOrganizeById($id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));

@@ -186,7 +186,7 @@
 
                     <div class="control-group">
                         <label for="store-organize-name"
-                               class="control-label"><?php echo $this->lang->line('entry_organize_name'); ?></label>
+                               class="control-label "><span class="required">*</span><?php echo $this->lang->line('entry_organize_name'); ?></label>
 
                         <div class="controls">
                             <input type="text" name="store-organize-name" id="store-organize-name"
@@ -257,6 +257,36 @@
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<div class="modal hide" id="orgDuplicateDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
+        <h1>Error</h1>
+    </div>
+    <div class="modal-body">
+        <div>
+            <i class="fa fa-times"></i>&nbsp;<span>Organize name is already exist!</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" id="org-dup-close">Close</button>
+    </div>
+</div>
+
+<div class="modal hide" id="orgNameRequireDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
+        <h1>Error</h1>
+    </div>
+    <div class="modal-body">
+        <div>
+            <i class="fa fa-times"></i>&nbsp;<span>Organize name is require!</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" id="org-name-require-close">Close</button>
     </div>
 </div>
 
