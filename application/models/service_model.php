@@ -223,9 +223,7 @@ class Service_model extends MY_Model
                     'name',
                     'description',
                     'hint',
-                    'sponsor',
-                    'claim',
-                    'redeem'
+                    'sponsor'
                 ));
                 $this->mongo_db->select(array(), array('_id'));
                 $this->mongo_db->where(array(
@@ -508,9 +506,7 @@ class Service_model extends MY_Model
                     'name',
                     'description',
                     'hint',
-                    'sponsor',
-                    'claim',
-                    'redeem'
+                    'sponsor'
                 ));
                 $this->mongo_db->select(array(), array('_id'));
                 $this->mongo_db->where(array(
@@ -626,8 +622,6 @@ class Service_model extends MY_Model
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('reward_id', $reward_id);
         $this->mongo_db->set('value', 0);
-        $this->mongo_db->set('claimed', 0);
-        $this->mongo_db->set('redeemed', 0);
         $reward = $this->mongo_db->update_all('playbasis_reward_to_player');
 
         $mongoDate = new MongoDate(time());

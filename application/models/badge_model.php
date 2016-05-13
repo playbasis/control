@@ -20,8 +20,6 @@ class Badge_model extends MY_Model
             'description',
             'hint',
             'sponsor',
-            'claim',
-            'redeem',
             'sort_order'
         ));
         $this->mongo_db->select(array(), array('_id'));
@@ -51,8 +49,6 @@ class Badge_model extends MY_Model
             'description',
             'hint',
             'sponsor',
-            'claim',
-            'redeem',
             'sort_order'
         ));
         $this->mongo_db->select(array(), array('_id'));

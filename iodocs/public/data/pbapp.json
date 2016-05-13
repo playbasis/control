@@ -1048,66 +1048,6 @@
           ]
         },
         {
-          "MethodName": "Claim Badge",
-          "Synopsis": "Claim a badge that a player has earned.",
-          "HTTPMethod": "POST",
-          "URI": "/Player/:id/badge/:badge_id/claim",
-          "RequiresOAuth": "N",
-          "parameters": [
-            {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
-            },
-            {
-              "Name": "id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "player id as used in client's website"
-            },
-            {
-              "Name": "badge_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "id for the badge to change the state."
-            }
-          ]
-        },
-        {
-          "MethodName": "Redeem Badge",
-          "Synopsis": "Redeem a badge that a player has claimed.",
-          "HTTPMethod": "POST",
-          "URI": "/Player/:id/badge/:badge_id/redeem",
-          "RequiresOAuth": "N",
-          "parameters": [
-            {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
-            },
-            {
-              "Name": "id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "player id as used in client's website"
-            },
-            {
-              "Name": "badge_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "id for the badge to change the state."
-            }
-          ]
-        },
-        {
           "MethodName": "Rank",
           "Synopsis": "Returns list of players sorted by the specified point type.",
           "HTTPMethod": "GET",

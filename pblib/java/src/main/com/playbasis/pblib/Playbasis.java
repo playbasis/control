@@ -367,21 +367,7 @@ public class Playbasis
 	{
 		return getPlaybasisAnswer("Player/"+playerId+"/badge"+apiKeyParam, null);
 	}
-	
-	public Request claimBadge(String playerId, String badgeId){
-		StringBuilder param = new StringBuilder();
-		param.append("token=");
-		param.append(token);
-		
-		return getPlaybasisAnswer("Player/"+playerId+"/badge/"+badgeId+"/claim"+apiKeyParam, param.toString());	
-	}
-	public Request redeemBadge(String playerId, String badgeId){
-		StringBuilder param = new StringBuilder();
-		param.append("token=");
-		param.append(token);
-		
-		return getPlaybasisAnswer("Player/"+playerId+"/badge/"+badgeId+"/redeem"+apiKeyParam, param.toString());	
-	}
+
 	/**
 	 * Returns list of top players according to specified point type.
 	 * @param rankedBy

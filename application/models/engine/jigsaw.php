@@ -1046,9 +1046,7 @@ class jigsaw extends MY_Model
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
             'substract',
-            'quantity',
-            'claim',
-            'redeem'
+            'quantity'
         ));
         $this->mongo_db->where(array(
             'client_id' => $client_id,
@@ -1089,11 +1087,7 @@ class jigsaw extends MY_Model
                 'badge_id' => $badgeId
             ));
             $this->mongo_db->set('date_modified', $mongoDate);
-            if (isset($badgeInfo['claim']) && $badgeInfo['claim']) {
-                $this->mongo_db->inc('claimed', intval($quantity));
-            } else {
-                $this->mongo_db->inc('value', intval($quantity));
-            }
+            $this->mongo_db->inc('value', intval($quantity));
             $this->mongo_db->update('playbasis_reward_to_player');
         } else {
             $data = array(
@@ -1102,17 +1096,10 @@ class jigsaw extends MY_Model
                 'client_id' => $client_id,
                 'site_id' => $site_id,
                 'badge_id' => $badgeId,
-                'redeemed' => 0,
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate
             );
-            if (isset($badgeInfo['claim']) && $badgeInfo['claim']) {
-                $data['value'] = 0;
-                $data['claimed'] = intval($quantity);
-            } else {
-                $data['value'] = intval($quantity);
-                $data['claimed'] = 0;
-            }
+            $data['value'] = intval($quantity);
             $this->mongo_db->insert('playbasis_reward_to_player', $data);
         }
     }
