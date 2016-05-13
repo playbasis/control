@@ -19,7 +19,7 @@ class Badge_model extends MY_Model
 
         $this->mongo_db->where('_id', new MongoID($badge_id));
         $results = $this->mongo_db->get("playbasis_badge_to_client");
-        if (!isset($results[0]['tags'])){
+        if ((isset($results[0])) && (!isset($results[0]['tags']))){
             $results[0] = array_merge($results[0], array(
                'tags' => null
             ));
