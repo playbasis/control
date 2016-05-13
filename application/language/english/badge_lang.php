@@ -37,6 +37,7 @@ $lang['entry_parent']           		= 'Parent';
 $lang['entry_collection']         		= 'Collection';
 $lang['entry_stackable']        	   	= 'Stackable';
 $lang['entry_quantity']           		= 'Quantity';
+$lang['entry_per_user']                 = 'Per User';
 $lang['entry_substract']           		= 'Substract';
 $lang['entry_status']         			= 'Status';
 $lang['entry_image']          			= 'Image';

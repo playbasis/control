@@ -69,13 +69,12 @@ class Badge extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'),
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('per_user', $this->lang->line('entry_per_user'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('description', $this->lang->line('form_description'),
             'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('stackable', "", '');
         $this->form_validation->set_rules('substract', "", '');
-        $this->form_validation->set_rules('claim', "", '');
-        $this->form_validation->set_rules('redeem', "", '');
-
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -170,12 +169,12 @@ class Badge extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'),
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('per_user', $this->lang->line('entry_per_user'),
+            'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('description', $this->lang->line('form_description'),
             'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('stackable', "", '');
         $this->form_validation->set_rules('substract', "", '');
-        $this->form_validation->set_rules('claim', "", '');
-        $this->form_validation->set_rules('redeem', "", '');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
 
@@ -327,6 +326,7 @@ class Badge extends MY_Controller
                     'name' => $result['name'],
                     'hint' => $result['hint'],
                     'quantity' => $result['quantity'],
+                    'per_user' => (isset($result['per_user']) && !empty($result['per_user'])) ? $result['per_user']: null ,
                     'status' => $result['status'],
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
@@ -398,6 +398,7 @@ class Badge extends MY_Controller
                                 'hint' => $badge_info['hint'],
                                 'quantity' => $badge_info['quantity'],
                                 'tags' => isset($badge_info['tags']) ? $badge_info['tags'] : null,
+                                'per_user' => (isset($badge_info['per_user']) && !empty($badge_info['per_user'])) ? $badge_info['per_user']: null ,
                                 'status' => $badge_info['status'],
                                 'image' => $image,
                                 'sort_order' => $badge_info['sort_order'],
@@ -525,6 +526,7 @@ class Badge extends MY_Controller
                     'name' => $result['name'],
                     'hint' => $result['hint'],
                     'quantity' => $result['quantity'],
+                    'per_user' => (isset($result['per_user']) && !empty($result['per_user'])) ? $result['per_user']: null ,
                     'status' => $result['status'],
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
@@ -591,6 +593,7 @@ class Badge extends MY_Controller
                                 'name' => $badge_info['name'],
                                 'hint' => $badge_info['hint'],
                                 'quantity' => $badge_info['quantity'],
+                                'per_user' => (isset($badge_info['per_user']) && !empty($badge_info['per_user'])) ? $badge_info['per_user']: null,
                                 'status' => $badge_info['status'],
                                 'image' => $image,
                                 'sort_order' => $badge_info['sort_order'],
@@ -771,28 +774,20 @@ class Badge extends MY_Controller
             $this->data['substract'] = 1;
         }
 
-        if ($this->input->post('claim')) {
-            $this->data['claim'] = $this->input->post('claim');
-        } elseif (!empty($badge_info) && isset($badge_info['claim'])) {
-            $this->data['claim'] = $badge_info['claim'];
-        } else {
-            $this->data['claim'] = 0;
-        }
-
-        if ($this->input->post('redeem')) {
-            $this->data['redeem'] = $this->input->post('redeem');
-        } elseif (!empty($badge_info) && isset($badge_info['redeem'])) {
-            $this->data['redeem'] = $badge_info['redeem'];
-        } else {
-            $this->data['redeem'] = 0;
-        }
-
         if ($this->input->post('quantity')) {
             $this->data['quantity'] = $this->input->post('quantity');
         } elseif (!empty($badge_info)) {
             $this->data['quantity'] = $badge_info['quantity'];
         } else {
             $this->data['quantity'] = 1;
+        }
+
+        if ($this->input->post('per_user')) {
+            $this->data['per_user'] = $this->input->post('per_user');
+        } elseif (!empty($badge_info)) {
+            $this->data['per_user'] = (isset($badge_info['per_user']) && !empty($badge_info['per_user'])) ? $badge_info['per_user']: null;
+        } else {
+            $this->data['per_user'] = null;
         }
 
         if ($this->input->post('sponsor')) {

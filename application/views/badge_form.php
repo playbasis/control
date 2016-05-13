@@ -102,6 +102,10 @@
                             <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" /></td>
                         </tr>
                         <tr>
+                            <td><?php echo $this->lang->line('entry_per_user'); ?>:</td>
+                            <td><input type="text" name="per_user" value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>" size="5" class="tooltips" data-placement="right" title="Number of reward that a user can get, if left blank it is unlimited"/></td>
+                        </tr>
+                        <tr>
                             <td><?php echo $this->lang->line('entry_stackable'); ?>:</td>
                             <td><select name="stackable">
                                 <?php if ($stackable || set_value('stackable')==1) { ?>
@@ -129,34 +133,6 @@
                         <tr>
                             <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_claim'); ?></td>
-                            <td>
-                                <select name="claim">
-                                    <?php if ($claim || set_value('claim')==1) { ?>
-                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } else { ?>
-                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } ?>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_redeem'); ?></td>
-                            <td>
-                                <select name="redeem">
-                                    <?php if ($redeem || set_value('redeem')==1) { ?>
-                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } else { ?>
-                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } ?>
-                                </select>
-                            </td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?></td>
