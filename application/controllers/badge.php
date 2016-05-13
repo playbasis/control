@@ -330,6 +330,7 @@ class Badge extends MY_Controller
                     'status' => $result['status'],
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
+                    'tags' => isset($result['tags']) ? $result['tags'] : null,
                     'selected' => ($this->input->post('selected') && in_array($result['_id'],
                             $this->input->post('selected'))),
                     'is_public' => $badgeIsPublic,
@@ -397,6 +398,7 @@ class Badge extends MY_Controller
                                 'hint' => $badge_info['hint'],
                                 'quantity' => $badge_info['quantity'],
                                 'per_user' => (isset($badge_info['per_user']) && !empty($badge_info['per_user'])) ? $badge_info['per_user']: null ,
+                                'tags' => isset($badge_info['tags']) ? $badge_info['tags'] : null,
                                 'status' => $badge_info['status'],
                                 'image' => $image,
                                 'sort_order' => $badge_info['sort_order'],
@@ -692,6 +694,14 @@ class Badge extends MY_Controller
             $this->data['description'] = '';
         }
 
+        if ($this->input->post('tags')) {
+            $this->data['tags'] = $this->input->post('tags');
+        } elseif (isset($badge_id) && ($badge_id != 0)) {
+            $this->data['tags'] = $badge_info['tags'];
+        } else {
+            $this->data['tags'] = null;
+        }
+
         if ($this->input->post('hint')) {
             $this->data['hint'] = $this->input->post('hint');
         } elseif (isset($badge_id) && ($badge_id != 0)) {
@@ -715,7 +725,7 @@ class Badge extends MY_Controller
                 $new_image = 'cache/' . utf8_substr($this->data['image'], 0,
                         utf8_strrpos($this->data['image'], '.')) . '-100x100.' . $extension;
                 $this->data['thumb'] = S3_IMAGE . $new_image;
-            } elsE {
+            } else {
                 $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
             }
         } else {
