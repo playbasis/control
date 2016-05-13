@@ -696,7 +696,7 @@ class Badge extends MY_Controller
 
         if ($this->input->post('tags')) {
             $this->data['tags'] = $this->input->post('tags');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
+        } elseif (isset($badge_id) && ($badge_id != 0) && (isset($badge_info['tags']))) {
             $this->data['tags'] = $badge_info['tags'];
         } else {
             $this->data['tags'] = null;
