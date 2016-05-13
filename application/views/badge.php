@@ -71,7 +71,7 @@
                                 <td class="right"><?php echo $badge['quantity']; ?></td>
                                 <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $badge['sort_order']; ?></td>
-                                <td class="right"><?php echo (isset($badge['tags'])? implode($badge['tags'],',') : null); ?></td>
+                                <td class="right"><?php echo (!empty($badge['tags'])? implode($badge['tags'],',') : null); ?></td>
                                 <td class="right">
                                     <?php if(!$client_id){?>
                                         [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
