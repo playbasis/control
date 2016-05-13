@@ -714,13 +714,13 @@ class jigsaw extends MY_Model
                     if ($conf['reward_name'] == 'exp') {
                         continue;
                     } // "exp" should not be decreasing
-                    $this->updatePlayerPointReward($input['client_id'], $input['site_id'],
+                    $this->updatePlayerRedeemPointReward($input['client_id'], $input['site_id'],
                         new MongoId($conf['reward_id']), $input['pb_player_id'], $input['player_id'],
                         -1 * (int)$conf['quantity']);
                 } else {
                     switch ($conf['reward_name']) {
                         case 'badge':
-                            $this->updateplayerBadge($input['client_id'], $input['site_id'],
+                            $this->updateplayerRedeemBadge($input['client_id'], $input['site_id'],
                                 new MongoId($conf['item_id']), $input['pb_player_id'], $input['player_id'],
                                 -1 * (int)$conf['quantity']);
                             break;
@@ -1074,6 +1074,80 @@ class jigsaw extends MY_Model
             $this->mongo_db->where('badge_id', $badgeId);
             $this->mongo_db->update('playbasis_badge_to_client');
         }
+
+        // update player badge table
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pb_player_id,
+            'badge_id' => $badgeId
+        ));
+        $hasBadge = $this->mongo_db->count('playbasis_reward_to_player');
+        if ($hasBadge) {
+            $this->mongo_db->where(array(
+                'pb_player_id' => $pb_player_id,
+                'badge_id' => $badgeId
+            ));
+            $this->mongo_db->set('date_modified', $mongoDate);
+            $this->mongo_db->inc('value', intval($quantity));
+            $this->mongo_db->update('playbasis_reward_to_player');
+        } else {
+            $data = array(
+                'pb_player_id' => $pb_player_id,
+                'cl_player_id' => $cl_player_id,
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'badge_id' => $badgeId,
+                'date_added' => $mongoDate,
+                'date_modified' => $mongoDate
+            );
+            $data['value'] = intval($quantity);
+            $this->mongo_db->insert('playbasis_reward_to_player', $data);
+        }
+    }
+
+    /* copied over from client_model */
+    private function updatePlayerRedeemPointReward(
+        $client_id,
+        $site_id,
+        $rewardId,
+        $pb_player_id,
+        $cl_player_id,
+        $quantity = 0
+    ) {
+        $this->set_site_mongodb($site_id);
+        // update player reward table
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pb_player_id,
+            'reward_id' => $rewardId
+        ));
+        $hasReward = $this->mongo_db->count('playbasis_reward_to_player');
+        if ($hasReward) {
+            $this->mongo_db->where(array(
+                'pb_player_id' => $pb_player_id,
+                'reward_id' => $rewardId
+            ));
+            $this->mongo_db->set('date_modified', new MongoDate(time()));
+            $this->mongo_db->inc('value', intval($quantity));
+            $this->mongo_db->update('playbasis_reward_to_player');
+        } else {
+            $mongoDate = new MongoDate(time());
+            $this->mongo_db->insert('playbasis_reward_to_player', array(
+                'pb_player_id' => $pb_player_id,
+                'cl_player_id' => $cl_player_id,
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'reward_id' => $rewardId,
+                'value' => intval($quantity),
+                'date_added' => $mongoDate,
+                'date_modified' => $mongoDate
+            ));
+        }
+    }
+
+    /* copied over from client_model */
+    private function updateplayerRedeemBadge($client_id, $site_id, $badgeId, $pb_player_id, $cl_player_id, $quantity = 0)
+    {
+        $this->set_site_mongodb($site_id);
+        $mongoDate = new MongoDate(time());
 
         // update player badge table
         $this->mongo_db->where(array(
