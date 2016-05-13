@@ -18,13 +18,9 @@ class import extends MY_Controller
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
-        $this->lang->load("data", $lang['folder']);
+        $this->lang->load("import", $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
 
-
-        $lang = get_lang($this->session, $this->config);
-        $this->lang->load($lang['name'], $lang['folder']);
-        $this->lang->load("import", $lang['folder']);
     }
 
     public function index()
@@ -398,36 +394,105 @@ class import extends MY_Controller
 
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
+                $import_type = $this->input->post('import_type');
                 $returnImportActivities = array();
-                $row = 0;
-                while (($line = fgets($handle)) !== false) {
-                    $line = trim($line);
 
-                    $data = array();
-                    $params = explode(',', $line);
-                    $date = "now";
-                    foreach ($params as $param) {
-                        $keyAndValue = explode(':', $param);
-                        $key = $keyAndValue[0];
-                        $value = $keyAndValue[1];
-                        if (strtolower($key) == "player_id") {
-                            $player_id = $value;
-                        } elseif (strtolower($key) == "action") {
-                            $action = $value;
-                        } elseif (strtolower($key) == "date") {
-                            $date = $value;
-                        } else {
-                            $data = array_merge($data, array($key => $value));
+                if($import_type == "player") {
+                    $first_line = true;
+                    while (($line = fgets($handle)) !== false ) {
+                        if($first_line){
+                            $first_line = false;
+                            continue;
+                        }
+                        $line = trim($line);
+
+                        $params = explode(',', $line);
+                        if(count($params)<5){
+                            $returnImportActivities[] = array( "input" => $line,"result" => $this->lang->line('error_format'));
+                        }else {
+
+                            $player_id = $params[0];
+                            $image = $params[1];
+                            $email = $params[2];
+                            $username = $params[3];
+                            $password = $params[4];
+
+                            $data = array('image' => $image,
+                                'password' => $password);
+
+                            $result = $this->postRegisterPlayer($player_id, $username, $email, $data);
+
+                            $returnImportActivities[] = array( "input" => $line,"result" => $result);
                         }
                     }
-
-                    $result = $this->postEngineRule($player_id, $action, $data, $date);
-
-                    $returnImportActivities = array_merge($returnImportActivities, array($row => $result));
-                    $row++;
                 }
-                $this->import_model->updateCompleteImport($this->User_model->getClientId(), $this->User_model->getSiteId(), array('results' => $returnImportActivities));
+                elseif($import_type == "transaction") {
+                    $first_line = true;
+                    while (($line = fgets($handle)) !== false ) {
+                        if($first_line){
+                            $first_line = false;
+                            continue;
+                        }
+                        $line = trim($line);
 
+                        $data = array();
+                        $params = explode(',', $line);
+
+                        if(count($params)<4){
+                            $returnImportActivities[] = array( "input" => $line, "result" => $this->lang->line('error_format'));
+                        }else {
+
+                            $date = "now";
+                            if ($params[0]) {
+                                $date = $params[0];
+                            }
+                            $player_id = $params[1];
+                            $action = $params[2];
+                            $custom_params = explode('|', $params[3]);
+                            foreach ($custom_params as $param) {
+                                $keyAndValue = explode('=', $param);
+                                $key = $keyAndValue[0];
+                                $value = $keyAndValue[1];
+                                $data = array_merge($data, array($key => $value));
+                            }
+
+                            $result = $this->postEngineRule($player_id, $action, $data, $date);
+
+                            $returnImportActivities[] = array( "input" => $line,"result" => $result);
+                        }
+                    }
+                }
+                elseif($import_type == "storeorg") {
+                    $first_line = true;
+                    while (($line = fgets($handle)) !== false ) {
+                        if($first_line){
+                            $first_line = false;
+                            continue;
+                        }
+                        $line = trim($line);
+
+                        $params = explode(',', $line);
+                        if(count($params)<4){
+                            $returnImportActivities[] = array( "input" => $line,"result" => $this->lang->line('error_format'));
+                        }else {
+
+                            $player_id = $params[0];
+                            $node_type = $params[1];
+                            $node_name = $params[2];
+                            $role = $params[3];
+
+                            $node_id = 0;
+
+                            $result = $this->postPlayerToNode($player_id,$node_id);
+
+                            $returnImportActivities[] = array( "input" => $line,"result" => $result);
+                        }
+                    }
+                }
+
+                $this->import_model->updateCompleteImport($this->User_model->getClientId(), $this->User_model->getSiteId(), array('results' => $returnImportActivities));
+                $this->session->set_flashdata('success', $this->lang->line('text_success_import'));
+                redirect('/import/adhoc', 'refresh');
             }
         }
 
@@ -458,6 +523,21 @@ class import extends MY_Controller
             $this->_api->setHeader('Date', $date);
         }
         $result = $this->_api->engine($player_id, $action, $param);
+        return $result->message;
+    }
+
+    private function postRegisterPlayer($player_id, $username, $email,  $param)
+    {
+        $this->getToken();
+
+        $result = $this->_api->register($player_id, $username, $email,  $param);
+        return $result->message;
+    }
+
+    private function postPlayerToNode($player_id, $node_id) {
+        $this->getToken();
+
+        $result = $this->_api->addPlayerToNode($player_id, $node_id);
         return $result->message;
     }
 
@@ -518,7 +598,7 @@ class import extends MY_Controller
             'sort' => 'date_added',
             //'import_id' => $import_id,
             'date_start' => $filter_date_start,
-            'date_expire' => $filter_date_end
+            'date_end' => $filter_date_end
         );
         if (isset($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
