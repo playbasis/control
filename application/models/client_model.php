@@ -347,7 +347,8 @@ class Client_model extends MY_Model
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
             'substract',
-            'quantity'
+            'quantity',
+            'per_user'
         ));
         $this->mongo_db->where(array(
             'client_id' => $client_id,
@@ -360,14 +361,39 @@ class Client_model extends MY_Model
         if (!$result) {
             return;
         }
+
+        $this->mongo_db->select(array(
+            'value'
+        ));
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pbPlayerId,
+            'badge_id' => $badgeId
+        ));
+        $this->mongo_db->limit(1);
+        $rewardInfo = $this->mongo_db->get('playbasis_reward_to_player');
+
         $badgeInfo = $result[0];
         $mongoDate = new MongoDate(time());
         if (isset($badgeInfo['substract']) && $badgeInfo['substract']) {
+            //Adjust quantity with per_user
+            if ($rewardInfo[0]) {
+                $rewardInfo = $rewardInfo[0];
+                if(($rewardInfo['value'] + $quantity) > $badgeInfo['per_user']){
+                    $quantity = $badgeInfo['per_user'] - $rewardInfo['value'];
+                }
+            }
+            else{
+                if($quantity > $badgeInfo['per_user']){
+                    $quantity = $badgeInfo['per_user'];
+                }
+            }
+
             $remainingQuantity = (int)$badgeInfo['quantity'] - (int)$quantity;
             if ($remainingQuantity < 0) {
                 $remainingQuantity = 0;
                 $quantity = $badgeInfo['quantity'];
             }
+
             $this->mongo_db->set('quantity', $remainingQuantity);
             $this->mongo_db->set('date_modified', $mongoDate);
             $this->mongo_db->where('client_id', $client_id);
@@ -377,12 +403,7 @@ class Client_model extends MY_Model
         }
 
         //update player badge table
-        $this->mongo_db->where(array(
-            'pb_player_id' => $pbPlayerId,
-            'badge_id' => $badgeId
-        ));
-        $hasBadge = $this->mongo_db->count('playbasis_reward_to_player');
-        if ($hasBadge) {
+        if ($rewardInfo) {
             $this->mongo_db->where(array(
                 'pb_player_id' => $pbPlayerId,
                 'badge_id' => $badgeId

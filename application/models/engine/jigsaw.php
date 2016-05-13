@@ -806,19 +806,16 @@ class jigsaw extends MY_Model
         if (!$badgeInfo['quantity']) {
             return false;
         }
+        /* will handle quantity in client model updateplayerBadge()
         if ($badgeInfo['quantity'] < $quantity) {
             return false;
         }
+        */
         if ($badgeInfo['stackable']) {
             if($max){
                 if($rewardInfo[0]){
                     $rewardInfo = $rewardInfo[0];
-                    if (($rewardInfo['value'] + $quantity) > $max) {
-                        return false;
-                    }
-                }
-                else{
-                    if($quantity > $max){
+                    if ($rewardInfo['value'] > $max){
                         return false;
                     }
                 }
