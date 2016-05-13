@@ -172,16 +172,16 @@ class Image_model extends MY_Model
             'sort_order'
         );
 
-        if (isset($optionalParams['order']) && (utf8_strtolower($optionalParams['order']) == 'desc')) {
-            $order = -1;
-        } else {
+        if (isset($optionalParams['order']) && (utf8_strtolower($optionalParams['order']) == 'asc')) {
             $order = 1;
+        } else {
+            $order = -1;
         }
 
         if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
             $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
         } else {
-            $this->mongo_db->order_by(array('_id' => $order));
+            $this->mongo_db->order_by(array('date_added' => $order));
         }
 
         if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
