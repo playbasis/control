@@ -690,7 +690,7 @@ class Player_model extends MY_Model
         return $result;
     }
 
-    public function getBadge($pb_player_id, $site_id)
+    public function getBadge($pb_player_id, $site_id, $tags = null)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
@@ -713,6 +713,7 @@ class Player_model extends MY_Model
                 'name',
                 'description',
                 'hint',
+                'tags'
             ));
             $this->mongo_db->select(array(), array('_id'));
             $this->mongo_db->where(array(
@@ -720,6 +721,9 @@ class Player_model extends MY_Model
                 'site_id' => $site_id,
 //                'deleted' => false
             ));
+            if ($tags){
+                $this->mongo_db->where_in('tags', $tags);
+            }
             $this->mongo_db->limit(1);
             $result = $this->mongo_db->get('playbasis_badge_to_client');
             if (!$result) {
@@ -733,6 +737,7 @@ class Player_model extends MY_Model
             $badge['description'] = $result['description'];
             $badge['amount'] = $badge['value'];
             $badge['hint'] = $result['hint'];
+            $badge['tags'] = $result['tags'];
             unset($badge['value']);
             array_push($playerBadges, $badge);
         }

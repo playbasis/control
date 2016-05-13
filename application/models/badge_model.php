@@ -20,6 +20,7 @@ class Badge_model extends MY_Model
             'description',
             'hint',
             'sponsor',
+            'tags',
             'sort_order'
         ));
         $this->mongo_db->select(array(), array('_id'));
@@ -28,6 +29,9 @@ class Badge_model extends MY_Model
             'site_id' => $data['site_id'],
             'deleted' => false
         ));
+        if (isset($data['tags'])) {
+            $this->mongo_db->where_in('tags', $data['tags']);
+        }
         $badges = $this->mongo_db->get('playbasis_badge_to_client');
         if ($badges) {
             foreach ($badges as &$badge) {
@@ -49,6 +53,7 @@ class Badge_model extends MY_Model
             'description',
             'hint',
             'sponsor',
+            'tags',
             'sort_order'
         ));
         $this->mongo_db->select(array(), array('_id'));
@@ -58,6 +63,9 @@ class Badge_model extends MY_Model
             'badge_id' => $data['badge_id'],
             'deleted' => false
         ));
+        if (isset($data['tags'])) {
+            $this->mongo_db->where_in('tags', $data['tags']);
+        }
         $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_badge_to_client');
         if ($result) {

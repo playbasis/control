@@ -376,7 +376,7 @@ class Client_model extends MY_Model
         $mongoDate = new MongoDate(time());
         if (isset($badgeInfo['substract']) && $badgeInfo['substract']) {
             //Adjust quantity with per_user
-            if ($rewardInfo[0]) {
+            if (isset($rewardInfo[0])) {
                 $rewardInfo = $rewardInfo[0];
                 if(($rewardInfo['value'] + $quantity) > $badgeInfo['per_user']){
                     $quantity = $badgeInfo['per_user'] - $rewardInfo['value'];
@@ -533,7 +533,8 @@ class Client_model extends MY_Model
             'name',
             'description',
             'image',
-            'hint'
+            'hint',
+            'tags'
         ));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array(

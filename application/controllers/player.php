@@ -1459,7 +1459,7 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
         //get player badge
-        $badgeList = $this->player_model->getBadge($pb_player_id, $this->site_id);
+        $badgeList = $this->player_model->getBadge($pb_player_id, $this->site_id, $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null);
         $this->response($this->resp->setRespond($badgeList), 200);
     }
 
@@ -1474,7 +1474,9 @@ class Player extends REST2_Controller
                 $this->response($this->error->setError('USER_NOT_EXIST'), 200);
             }
         }
-        $badges = $this->badge_model->getAllBadges($this->validToken);
+        $badges = $this->badge_model->getAllBadges(array_merge($this->validToken, array(
+            'tags' => $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null
+        )));
         if ($badges && $pb_player_id) {
             foreach ($badges as &$badge) {
                 $c = $this->player_model->getBadgeCount($this->site_id, $pb_player_id, new MongoId($badge['badge_id']));
