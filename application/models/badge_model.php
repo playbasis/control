@@ -19,6 +19,11 @@ class Badge_model extends MY_Model
 
         $this->mongo_db->where('_id', new MongoID($badge_id));
         $results = $this->mongo_db->get("playbasis_badge_to_client");
+        if ((isset($results[0])) && (!isset($results[0]['tags']))){
+            $results[0] = array_merge($results[0], array(
+               'tags' => null
+            ));
+        }
 
         return $results ? $results[0] : null;
     }
@@ -397,12 +402,8 @@ class Badge_model extends MY_Model
     public function editBadgeToClient($badge_id, $data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $this->mongo_db->where('_id', new MongoID($badge_id));
-        $badge = $this->mongo_db->get("playbasis_badge_to_client");
+        $badge = $this->getBadgeToClient($badge_id);
         if ($badge) {
-            $this->mongo_db->where('_id', new MongoID($badge_id));
-            $badge = $badge[0];
             $_data = $data;
             $_data['tags'] = isset($_data['tags']) && $_data['tags'] ? explode(',', $_data['tags']) : null;
             if (!$this->isSameBadge($badge, $_data)) {
@@ -442,7 +443,7 @@ class Badge_model extends MY_Model
                     $this->mongo_db->set('image',
                         html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
                 }
-
+                $this->mongo_db->where('_id', new MongoID($badge_id));
                 $this->mongo_db->update('playbasis_badge_to_client');
             }
         }
