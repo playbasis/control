@@ -776,7 +776,8 @@ class jigsaw extends MY_Model
         $this->mongo_db->select(array(
             'stackable',
             'substract',
-            'quantity'
+            'quantity',
+            'per_user'
         ));
         $this->mongo_db->where(array(
             'site_id' => $site_id,
@@ -785,24 +786,49 @@ class jigsaw extends MY_Model
         ));
         $this->mongo_db->limit(1);
         $badgeInfo = $this->mongo_db->get('playbasis_badge_to_client');
+
+        //badge not stackable, check if player already have the badge
+        $this->mongo_db->select(array(
+            'value'
+        ));
+        $this->mongo_db->where(array(
+            'badge_id' => $badgeId,
+            'pb_player_id' => $pb_player_id,
+        ));
+        $this->mongo_db->limit(1);
+        $rewardInfo = $this->mongo_db->get('playbasis_reward_to_player');
+
         if (!$badgeInfo || !$badgeInfo[0]) {
             return false;
         }
         $badgeInfo = $badgeInfo[0];
+        $max = (isset($badgeInfo['per_user']) && !empty($badgeInfo['per_user'])) ? $badgeInfo['per_user']: null;
         if (!$badgeInfo['quantity']) {
             return false;
         }
+        if ($badgeInfo['quantity'] < $quantity) {
+            return false;
+        }
         if ($badgeInfo['stackable']) {
+            if($max){
+                if($rewardInfo[0]){
+                    $rewardInfo = $rewardInfo[0];
+                    if (($rewardInfo['value'] + $quantity) > $max) {
+                        return false;
+                    }
+                }
+                else{
+                    if($quantity > $max){
+                        return false;
+                    }
+                }
+            }
             return true;
         }
-        //badge not stackable, check if player already have the badge
-        $this->mongo_db->where(array(
-            'badge_id' => $badgeId,
-            'pb_player_id' => $pb_player_id
-        ));
-        $haveBadge = $this->mongo_db->count('playbasis_reward_to_player');
-        if ($haveBadge) {
-            return false;
+        else{
+            if($rewardInfo[0]){
+                return false;
+            }
         }
         return true;
     }
