@@ -815,7 +815,7 @@ class jigsaw extends MY_Model
             if($max){
                 if($rewardInfo[0]){
                     $rewardInfo = $rewardInfo[0];
-                    if ($rewardInfo['value'] > $max){
+                    if ($rewardInfo['value'] >= $max){
                         return false;
                     }
                 }

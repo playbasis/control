@@ -378,12 +378,12 @@ class Client_model extends MY_Model
             //Adjust quantity with per_user
             if (isset($rewardInfo[0])) {
                 $rewardInfo = $rewardInfo[0];
-                if(($rewardInfo['value'] + $quantity) > $badgeInfo['per_user']){
-                    $quantity = $badgeInfo['per_user'] - $rewardInfo['value'];
+                if(!is_null($badgeInfo['per_user']) && ($rewardInfo['value'] + $quantity) > $badgeInfo['per_user']){
+                    $quantity = abs($badgeInfo['per_user'] - $rewardInfo['value']);
                 }
             }
             else{
-                if($quantity > $badgeInfo['per_user']){
+                if(!is_null($badgeInfo['per_user']) && ($quantity > $badgeInfo['per_user'])){
                     $quantity = $badgeInfo['per_user'];
                 }
             }
