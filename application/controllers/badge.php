@@ -594,6 +594,7 @@ class Badge extends MY_Controller
                                 'hint' => $badge_info['hint'],
                                 'quantity' => $badge_info['quantity'],
                                 'per_user' => (isset($badge_info['per_user']) && !empty($badge_info['per_user'])) ? $badge_info['per_user']: null,
+                                'tags' => isset($badge_info['tags']) ? $badge_info['tags'] : null,
                                 'status' => $badge_info['status'],
                                 'image' => $image,
                                 'sort_order' => $badge_info['sort_order'],
@@ -696,7 +697,7 @@ class Badge extends MY_Controller
 
         if ($this->input->post('tags')) {
             $this->data['tags'] = $this->input->post('tags');
-        } elseif (isset($badge_id) && ($badge_id != 0) && (isset($badge_info['tags']))) {
+        } elseif (isset($badge_id) && ($badge_id != 0)) {
             $this->data['tags'] = $badge_info['tags'];
         } else {
             $this->data['tags'] = null;
