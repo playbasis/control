@@ -117,7 +117,7 @@
 
                     <div class="control-group">
                         <label for="node-name"
-                               class="control-label"><?php echo $this->lang->line('entry_node_name'); ?></label>
+                               class="control-label"><span class="required">*</span><?php echo $this->lang->line('entry_node_name'); ?></label>
 
                         <div class="controls">
                             <input type="text" name="node-name" id="node-name"
@@ -135,7 +135,7 @@
                     </div>
                     <div class="control-group">
                         <label for="node-organize"
-                               class="control-label"><?php echo $this->lang->line('entry_node_organize'); ?></label>
+                               class="control-label"><span class="required">*</span><?php echo $this->lang->line('entry_node_organize'); ?></label>
 
                         <div class="controls">
                             <p><input type='hidden' name="node-organize" id="node-organize" style="width:80%;"></p>
@@ -186,7 +186,7 @@
 
                     <div class="control-group">
                         <label for="store-organize-name"
-                               class="control-label"><?php echo $this->lang->line('entry_organize_name'); ?></label>
+                               class="control-label "><span class="required">*</span><?php echo $this->lang->line('entry_organize_name'); ?></label>
 
                         <div class="controls">
                             <input type="text" name="store-organize-name" id="store-organize-name"
@@ -257,6 +257,36 @@
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<div class="modal hide" id="orgErrorDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
+        <h1>Error</h1>
+    </div>
+    <div class="modal-body">
+        <div>
+            <i class="fa fa-times"></i>&nbsp;<span id="org_error_message"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" id="org-error-dialog-close">Close</button>
+    </div>
+</div>
+
+<div class="modal hide" id="nodeErrorDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
+        <h1>Error</h1>
+    </div>
+    <div class="modal-body">
+        <div>
+            <i class="fa fa-times"></i>&nbsp;<span id="node_error_message"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" id="node-error-dialog-close">Close</button>
     </div>
 </div>
 
