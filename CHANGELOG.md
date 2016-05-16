@@ -1,8 +1,142 @@
 # Change Log
 
-## [2.8.0](https://github.com/playbasis/api/tree/2.8.0)
+## [2.9.0](https://github.com/playbasis/api/tree/2.9.0)
 
-[Full Changelog](https://github.com/playbasis/api/compare/2.8.0-alpha.9...2.8.0)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.12...2.9.0)
+
+**Fixed bugs:**
+
+- Fix bug return invalid badge value [\#228](https://github.com/playbasis/api/pull/228) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.9.0-alpha.12](https://github.com/playbasis/api/tree/2.9.0-alpha.12) (2016-05-13)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.11...2.9.0-alpha.12)
+
+**Implemented enhancements:**
+
+- Support label in badge [\#227](https://github.com/playbasis/api/pull/227) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.9.0-alpha.11](https://github.com/playbasis/api/tree/2.9.0-alpha.11) (2016-05-13)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.10...2.9.0-alpha.11)
+
+**Implemented enhancements:**
+
+- Remove reference to any playbasis\_badge\_to\_player [\#226](https://github.com/playbasis/api/pull/226) ([piya-playbasis](https://github.com/piya-playbasis))
+- Support "per\_user" for badge in quest and quiz. [\#225](https://github.com/playbasis/api/pull/225) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.9.0-alpha.10](https://github.com/playbasis/api/tree/2.9.0-alpha.10) (2016-05-13)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.9...2.9.0-alpha.10)
+
+**Implemented enhancements:**
+
+- Support "per\_user" for badge in engine [\#224](https://github.com/playbasis/api/pull/224) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.9.0-alpha.9](https://github.com/playbasis/api/tree/2.9.0-alpha.9) (2016-05-13)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.8...2.9.0-alpha.9)
+
+**Implemented enhancements:**
+
+- remove calim and redeem [\#221](https://github.com/playbasis/api/pull/221) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- fix bug redeem increse reward value instead of decrease. [\#223](https://github.com/playbasis/api/pull/223) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.9.0-alpha.8](https://github.com/playbasis/api/tree/2.9.0-alpha.8) (2016-05-12)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.9.4...2.9.0-alpha.8)
+
+## [v2.9.4](https://github.com/playbasis/api/tree/v2.9.4) (2016-05-12)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.7...v2.9.4)
+
+**Implemented enhancements:**
+
+- Hotfix/2.9.4 [\#220](https://github.com/playbasis/api/pull/220) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.9.0-alpha.7](https://github.com/playbasis/api/tree/2.9.0-alpha.7) (2016-05-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.6...2.9.0-alpha.7)
+
+**Implemented enhancements:**
+
+- Support label in quiz [\#219](https://github.com/playbasis/api/pull/219) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.9.0-alpha.6](https://github.com/playbasis/api/tree/2.9.0-alpha.6) (2016-05-11)
+[Full Changelog](https://github.com/playbasis/api/compare/player_auth_bug...2.9.0-alpha.6)
+
+## [player_auth_bug](https://github.com/playbasis/api/tree/player_auth_bug) (2016-05-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.5...player_auth_bug)
+
+**Fixed bugs:**
+
+- Hotfix/player auth bug [\#218](https://github.com/playbasis/api/pull/218) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.9.0-alpha.5](https://github.com/playbasis/api/tree/2.9.0-alpha.5) (2016-05-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.12...2.9.0-alpha.5)
+
+## [2.7.12](https://github.com/playbasis/api/tree/2.7.12) (2016-05-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.11...2.7.12)
+
+## [2.7.11](https://github.com/playbasis/api/tree/2.7.11) (2016-05-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.4...2.7.11)
+
+**Fixed bugs:**
+
+- Hotfix/2.7.11 [\#216](https://github.com/playbasis/api/pull/216) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.9.0-alpha.4](https://github.com/playbasis/api/tree/2.9.0-alpha.4) (2016-05-10)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.9.3...2.9.0-alpha.4)
+
+## [v2.9.3](https://github.com/playbasis/api/tree/v2.9.3) (2016-05-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.10...v2.9.3)
+
+**Implemented enhancements:**
+
+- Hotfix/2.9.3 [\#215](https://github.com/playbasis/api/pull/215) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.7.10](https://github.com/playbasis/api/tree/2.7.10) (2016-05-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.3...2.7.10)
+
+**Fixed bugs:**
+
+- Hotfix/2.7.10 [\#214](https://github.com/playbasis/api/pull/214) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.9.0-alpha.3](https://github.com/playbasis/api/tree/2.9.0-alpha.3) (2016-05-10)
+[Full Changelog](https://github.com/playbasis/api/compare/content_api_error...2.9.0-alpha.3)
+
+**Implemented enhancements:**
+
+- Add support label tagging in goods [\#213](https://github.com/playbasis/api/pull/213) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [content_api_error](https://github.com/playbasis/api/tree/content_api_error) (2016-05-04)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.2...content_api_error)
+
+**Fixed bugs:**
+
+- Hotfix/content api error [\#212](https://github.com/playbasis/api/pull/212) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.9.0-alpha.2](https://github.com/playbasis/api/tree/2.9.0-alpha.2) (2016-05-03)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.9.2...2.9.0-alpha.2)
+
+## [v2.9.2](https://github.com/playbasis/api/tree/v2.9.2) (2016-05-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.1...v2.9.2)
+
+**Implemented enhancements:**
+
+- Hotfix/2.9.2 [\#211](https://github.com/playbasis/api/pull/211) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.9.0-alpha.1](https://github.com/playbasis/api/tree/2.9.0-alpha.1) (2016-05-03)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.9.1...2.9.0-alpha.1)
+
+## [v2.9.1](https://github.com/playbasis/api/tree/v2.9.1) (2016-05-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.9...v2.9.1)
+
+**Fixed bugs:**
+
+- Fix not return error when file list empty [\#210](https://github.com/playbasis/api/pull/210) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.7.9](https://github.com/playbasis/api/tree/2.7.9) (2016-05-01)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.8.0...2.7.9)
+
+## [v2.8.0](https://github.com/playbasis/api/tree/v2.8.0) (2016-04-28)
+[Full Changelog](https://github.com/playbasis/api/compare/2.8.0-alpha.9...v2.8.0)
 
 **Implemented enhancements:**
 
@@ -102,13 +236,13 @@
 - - Merge generate content PIN into create/update content [\#193](https://github.com/playbasis/api/pull/193) ([niti-playbasis](https://github.com/niti-playbasis))
 
 ## [2.8.0-alpha.1](https://github.com/playbasis/api/tree/2.8.0-alpha.1) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.8.0-alpha.1)
-
-## [v2.7.6](https://github.com/playbasis/api/tree/v2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...v2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...2.8.0-alpha.1)
 
 ## [2.7.6](https://github.com/playbasis/api/tree/2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.7.6)
+
+## [v2.7.6](https://github.com/playbasis/api/tree/v2.7.6) (2016-04-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...v2.7.6)
 
 **Implemented enhancements:**
 
@@ -219,17 +353,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.5.10...2.6.0-alpha.6)
 
 ## [2.5.10](https://github.com/playbasis/api/tree/2.5.10) (2016-03-15)
-[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.4...2.5.10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.5...2.5.10)
 
 **Fixed bugs:**
 
 - Hotfix/2.5.10 [\#176](https://github.com/playbasis/api/pull/176) ([narut-playbasis](https://github.com/narut-playbasis))
 
-## [2.6.0-alpha.4](https://github.com/playbasis/api/tree/2.6.0-alpha.4) (2016-03-09)
-[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.5...2.6.0-alpha.4)
-
 ## [2.6.0-alpha.5](https://github.com/playbasis/api/tree/2.6.0-alpha.5) (2016-03-09)
-[Full Changelog](https://github.com/playbasis/api/compare/2.5.9...2.6.0-alpha.5)
+[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.4...2.6.0-alpha.5)
+
+## [2.6.0-alpha.4](https://github.com/playbasis/api/tree/2.6.0-alpha.4) (2016-03-09)
+[Full Changelog](https://github.com/playbasis/api/compare/2.5.9...2.6.0-alpha.4)
 
 ## [2.5.9](https://github.com/playbasis/api/tree/2.5.9) (2016-03-09)
 [Full Changelog](https://github.com/playbasis/api/compare/2.5.8...2.5.9)
@@ -432,16 +566,16 @@
 - Feature/run rule in bg [\#144](https://github.com/playbasis/api/pull/144) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [2.3.0-alpha.5](https://github.com/playbasis/api/tree/2.3.0-alpha.5) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.3.4...2.3.0-alpha.5)
-
-## [2.3.4](https://github.com/playbasis/api/tree/2.3.4) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.2.4...2.3.4)
-
-## [2.2.4](https://github.com/playbasis/api/tree/2.2.4) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/Bug_rankPeerByAccAction_wrong_month_type...2.2.4)
+[Full Changelog](https://github.com/playbasis/api/compare/Bug_rankPeerByAccAction_wrong_month_type...2.3.0-alpha.5)
 
 ## [Bug_rankPeerByAccAction_wrong_month_type](https://github.com/playbasis/api/tree/Bug_rankPeerByAccAction_wrong_month_type) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.4...Bug_rankPeerByAccAction_wrong_month_type)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.4...Bug_rankPeerByAccAction_wrong_month_type)
+
+## [2.2.4](https://github.com/playbasis/api/tree/2.2.4) (2016-02-05)
+[Full Changelog](https://github.com/playbasis/api/compare/2.3.4...2.2.4)
+
+## [2.3.4](https://github.com/playbasis/api/tree/2.3.4) (2016-02-05)
+[Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.4...2.3.4)
 
 ## [2.3.0-alpha.4](https://github.com/playbasis/api/tree/2.3.0-alpha.4) (2016-02-03)
 [Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.3...2.3.0-alpha.4)
@@ -576,17 +710,17 @@
 - Hotfix/hotfix php error in engine [\#125](https://github.com/playbasis/api/pull/125) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [Optimize_saleBoard_to_calculate_faster](https://github.com/playbasis/api/tree/Optimize_saleBoard_to_calculate_faster) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...Optimize_saleBoard_to_calculate_faster)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...Optimize_saleBoard_to_calculate_faster)
 
 **Implemented enhancements:**
 
 - Hotfix/optimize sale board to calculate faster [\#124](https://github.com/playbasis/api/pull/124) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
-## [2.1.43-alpha.11](https://github.com/playbasis/api/tree/2.1.43-alpha.11) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...2.1.43-alpha.11)
-
 ## [2.1.43-alpha.12](https://github.com/playbasis/api/tree/2.1.43-alpha.12) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.12)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...2.1.43-alpha.12)
+
+## [2.1.43-alpha.11](https://github.com/playbasis/api/tree/2.1.43-alpha.11) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.11)
 
 **Implemented enhancements:**
 
