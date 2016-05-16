@@ -340,8 +340,12 @@ class Content extends REST2_Controller
                 'player_id'  => $player_id,
                 'content_id' => json_decode(json_encode($actionInfo['content_id']), true)['$id']
             ));
-            if($result->success == false){
-                $this->response($this->error->setError('INTERNAL_ERROR', $result->message), 200);
+
+            if(!isset($result->success)){
+                $this->response($this->error->setError('INTERNAL_ERROR', isset($result->error) ? $result->error :null), 200);
+            }
+            else if($result->success == false){
+                $this->response($this->error->setError('INTERNAL_ERROR', isset($result->message) ? $result->message :null ), 200);
             }
         }
 
