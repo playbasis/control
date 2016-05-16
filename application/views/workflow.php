@@ -85,9 +85,9 @@
                 <tbody>
                 <tr class="filter">
                     <td></td>
-                    <td><input type="text" name="filter_id" placeholder="by ID" value="" style="width:80%;" /></td>
-                    <td><input type="text" name="filter_name" placeholder="by name" value="" style="width:80%;" /></td>
-                    <td><input type="text" name="filter_email" placeholder="by email" value="" style="width:80%;" /></td>
+                    <td><input type="text" name="filter_id"    placeholder="by ID"    value="<?php echo (isset($_GET['filter_id']) && !is_null($_GET['filter_id']))?$_GET['filter_id']:''; ?>" style="width:80%;" /></td>
+                    <td><input type="text" name="filter_name"  placeholder="by name"  value="<?php echo (isset($_GET['filter_name']) && !is_null($_GET['filter_name']))?$_GET['filter_name']:''; ?>" style="width:80%;" /></td>
+                    <td><input type="text" name="filter_email" placeholder="by email" value="<?php echo (isset($_GET['filter_email']) && !is_null($_GET['filter_email']))?$_GET['filter_email']:''; ?>" style="width:80%;" /></td>
                     <td></td>
                     <?php if($org_status){?>
                     <td></td>

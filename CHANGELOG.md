@@ -1,7 +1,38 @@
 # Change Log
 
-## [2.9.1](https://github.com/playbasis/control/tree/2.9.1)
+## [2.10.0](https://github.com/playbasis/control/tree/2.10.0) (2016-05-16)
+[Full Changelog](https://github.com/playbasis/control/compare/media_manager_to_rearrange_photo...2.9.2)
 
+**Implemented enhancements:**
+
+- Hotfix/2.9.2 [\#167](https://github.com/playbasis/control/pull/167) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Support label in badge [\#160](https://github.com/playbasis/control/pull/160) ([niti-playbasis](https://github.com/niti-playbasis))
+
+**Fixed bugs:**
+
+- Fix getbadge to force return tags field [\#166](https://github.com/playbasis/control/pull/166) ([niti-playbasis](https://github.com/niti-playbasis))
+- Fix bug in reward form [\#165](https://github.com/playbasis/control/pull/165) ([niti-playbasis](https://github.com/niti-playbasis))
+- Fix badge view error on implode [\#164](https://github.com/playbasis/control/pull/164) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [media_manager_to_rearrange_photo](https://github.com/playbasis/control/tree/media_manager_to_rearrange_photo) (2016-05-13)
+[Full Changelog](https://github.com/playbasis/control/compare/2.9.1...media_manager_to_rearrange_photo)
+
+**Implemented enhancements:**
+
+- - Reversed the sort order of images in media manager \(from newest to older\) [\#163](https://github.com/playbasis/control/pull/163) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Remove claim and redeem [\#162](https://github.com/playbasis/control/pull/162) ([piya-playbasis](https://github.com/piya-playbasis))
+- Add per\_user for badge [\#161](https://github.com/playbasis/control/pull/161) ([piya-playbasis](https://github.com/piya-playbasis))
+- Update quiz and good view to display label tags [\#159](https://github.com/playbasis/control/pull/159) ([niti-playbasis](https://github.com/niti-playbasis))
+- Add logo field when adding a new app \(site\_id\) [\#158](https://github.com/playbasis/control/pull/158) ([piya-playbasis](https://github.com/piya-playbasis))
+- Support label in quiz [\#157](https://github.com/playbasis/control/pull/157) ([niti-playbasis](https://github.com/niti-playbasis))
+- Merged feature Data Management into Import [\#156](https://github.com/playbasis/control/pull/156) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Add support label tagging in Goods [\#155](https://github.com/playbasis/control/pull/155) ([niti-playbasis](https://github.com/niti-playbasis))
+
+**Fixed bugs:**
+
+- Add support label tagging in Goods [\#155](https://github.com/playbasis/control/pull/155) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.9.1](https://github.com/playbasis/control/tree/2.9.1) (2016-04-28)
 [Full Changelog](https://github.com/playbasis/control/compare/2.8.3...2.9.1)
 
 **Implemented enhancements:**
@@ -39,9 +70,6 @@
 [Full Changelog](https://github.com/playbasis/control/compare/2.8.0...2.8.2)
 
 ## [2.8.0](https://github.com/playbasis/control/tree/2.8.0) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/control/compare/2.7.0...2.8.0)
-
-## [2.8.0](https://github.com/playbasis/control/tree/2.8.0) (2016-03-21)
 [Full Changelog](https://github.com/playbasis/control/compare/2.7.0...2.8.0)
 
 ## [2.7.0](https://github.com/playbasis/control/tree/2.7.0) (2016-03-21)

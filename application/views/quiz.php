@@ -23,6 +23,7 @@
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_added'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
+                        <td class="right" style="width:140px;"><?php echo $this->lang->line('column_tags'); ?></td>
                         <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
@@ -30,6 +31,7 @@
                     <tr class="filter">
                         <td></td>
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td class="right">
@@ -49,6 +51,7 @@
                                 <td class="right"><?php echo $quiz['name']; ?> <?php if (!empty($quiz['error'])) { ?><span class="red"><a herf="javascript:void(0)" class="error-icon" title="<?php echo $quiz['error']; ?>" data-toggle="tooltip"><i class="icon-warning-sign" ></i></a></span><?php } ?></td>
                                 <td class="right"><?php echo datetimeMongotoReadable($quiz['date_added']); ?></td>
                                 <td class="right"><?php echo ($quiz['status'])? "Enabled" : "Disabled"; ?></td>
+                                <td class="right"><?php echo (isset($quiz['tags'])? implode($quiz['tags'],',') : null); ?></td>
                                 <td class="right">
                                     [ <?php if($client_id){
                                         echo anchor('quiz/edit/'.$quiz['_id'], 'Edit');

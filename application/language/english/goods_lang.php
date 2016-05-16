@@ -38,6 +38,7 @@ $lang['column_status']          		= 'Status';
 $lang['column_action']          		= 'Action';
 $lang['column_owner']	          		= 'Owner';
 $lang['column_is_group']          		= 'Group';
+$lang['column_tags']                    = 'Tag(s)';
 
 // Entry
 $lang['entry_system_id']             		= 'System Generated ID';
@@ -72,6 +73,7 @@ $lang['entry_node_name']               = 'Node Name';
 $lang['entry_node_type']               = 'Node Type';
 $lang['entry_store_id']                = 'Store Id';
 $lang['entry_operate']                 = 'Operate';
+$lang['entry_tags']                    = 'Tags';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';

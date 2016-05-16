@@ -25,6 +25,7 @@ $lang['column_quantity']          		= 'Quantity';
 $lang['column_status']          		= 'Status';
 $lang['column_action']          		= 'Action';
 $lang['column_owner']	          		= 'Owner';
+$lang['column_tags']                    = 'Tag(s)';
 
 // Entry
 $lang['entry_name']             		= 'Name';
@@ -36,12 +37,14 @@ $lang['entry_parent']           		= 'Parent';
 $lang['entry_collection']         		= 'Collection';
 $lang['entry_stackable']        	   	= 'Stackable';
 $lang['entry_quantity']           		= 'Quantity';
+$lang['entry_per_user']                 = 'Per User';
 $lang['entry_substract']           		= 'Substract';
 $lang['entry_status']         			= 'Status';
 $lang['entry_image']          			= 'Image';
 $lang['entry_sponsor']					= 'Sponsor';
 $lang['entry_claim']					= 'Claim';
 $lang['entry_redeem']					= 'Redeem';
+$lang['entry_tags']                    = 'Tag(s)';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';

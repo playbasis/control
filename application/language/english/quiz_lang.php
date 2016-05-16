@@ -34,12 +34,14 @@ $lang['entry_subject']				= 'Subject';
 $lang['entry_sms']				= 'Sms';
 $lang['entry_push']				= 'Push';
 $lang['entry_question_order']				= 'Sort Question in Order';
+$lang['entry_tags'] = 'Tag(s)';
 
 $lang['column_date_added']          			= 'Date Added';
 $lang['column_action']							= 'Action';
 $lang['column_name']							= 'Quiz Name';
 $lang['column_status']							= 'Status';
 $lang['column_order']							= 'Order';
+$lang['column_tags']							= 'Tag(s)';
 
 $lang['button_filter']							= 'Filter';
 $lang['button_clear_filter']					= 'Clear filter';

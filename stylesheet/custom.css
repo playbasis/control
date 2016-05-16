@@ -1948,3 +1948,8 @@ div#mmModal.modal
     font-size: 26px;
     font-weight: normal;
 }
+
+/* ====== [ Select2 ] ======= */
+.select2-container-multi .select2-choices{
+    border: 1px solid #dddddd !important;
+}

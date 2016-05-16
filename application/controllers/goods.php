@@ -747,7 +747,8 @@ class Goods extends MY_Controller
                             $this->input->post('selected'))),
                     'sponsor' => isset($goods['sponsor']) ? $goods['sponsor'] : null,
                     'is_group' => $is_group,
-                    'organize_name' => $org_name
+                    'organize_name' => $org_name,
+                    'tags' => isset($goods['tags']) ? $goods['tags'] : null
                 );
             }
         }
@@ -868,6 +869,14 @@ class Goods extends MY_Controller
             $this->data['code'] = $goods_info['code'];
         } else {
             $this->data['code'] = '';
+        }
+
+        if ($this->input->post('tags')) {
+            $this->data['tags'] = $this->input->post('tags');
+        } elseif (!empty($goods_info) && isset($goods_info['tags'])) {
+            $this->data['tags'] = $goods_info['tags'];
+        } else {
+            $this->data['tags'] = null;
         }
 
         if ($this->input->post('image')) {
@@ -1259,6 +1268,9 @@ class Goods extends MY_Controller
 
         /* build template */
         $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
         $template = array(
             'description' => $data['description'] | '',
             'quantity' => (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null,
@@ -1270,6 +1282,7 @@ class Goods extends MY_Controller
             'sort_order' => (int)$data['sort_order'] | 1,
             'language_id' => 1,
             'redeem' => $redeem,
+            'tags' => isset($tags) ? $tags : null,
             'date_start' => null,
             'date_expire' => null,
             'date_added' => $d,

@@ -89,6 +89,14 @@
                                 </td>
                             </tr>
                             <?php } ?>
+                            <?php if ($client_id) { ?>
+                            <tr>
+                                <td><?php echo $this->lang->line('entry_tags'); ?>:</td>
+                                <td>
+                                    <input type="text" class="tags" name="tags" value="<?php echo isset($tags) ? implode($tags,',') : set_value('tags'); ?>" size="5" class="tooltips" data-placement="right" title="Tag(s) input"/>
+                                </td>
+                            </tr>
+                            <?php } ?>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
                                 <td>
@@ -286,6 +294,7 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/ckeditor/ckeditor.js"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript"><!--
     Pace.on("done", function () {
@@ -508,6 +517,18 @@ $(document).ready(function(){
         });
     }
 
-
 </script>
 <?php } ?>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        $(".tags").select2({
+            width: 'resolve',
+            tags: true,
+            tokenSeparators: [',', ' ']
+        });
+    });
+
+</script>

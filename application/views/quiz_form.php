@@ -109,6 +109,13 @@ function find_template($data, $type, $template_id) {
                             </td>
                         </tr>
                         <tr>
+                            <td><?php echo $this->lang->line('entry_tags'); ?>:</td>
+                            <td>
+                                <input type="text" class="tags" name="tags" value="<?php echo isset($quiz)&&isset($quiz['tags'])&&$quiz['tags'] ? implode($quiz['tags'],',') : set_value('tags'); ?>" />
+                            </td>
+
+                        </tr>
+                        <tr>
                             <td><?php echo $this->lang->line('entry_question_order'); ?>:</td>
                             <td>
                             <input type="checkbox" name="question_order" <?php echo (isset($quiz['question_order']) && $quiz['question_order'])?'checked':'unchecked'; ?> size="1" />
@@ -1193,10 +1200,24 @@ function find_template($data, $type, $template_id) {
     
 
 </script>
+
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
     $(function(){
 
         $('.date').datepicker({dateFormat: 'yy-mm-dd'});
 
     })
+
+    $(document).ready(function(){
+
+        $(".tags").select2({
+            width: 'resolve',
+            tags: true,
+            tokenSeparators: [',', ' ']
+        });
+    });
+
 </script>

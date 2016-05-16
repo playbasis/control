@@ -80,6 +80,12 @@
                                 <td><?php echo $this->lang->line('entry_description'); ?>:</td>
                                 <td><textarea name="description" id="description"><?php echo isset($description) ? $description : set_value('description'); ?></textarea></td>
                             </tr>
+                            <tr>
+                                <td><?php echo $this->lang->line('entry_tags'); ?>:</td>
+                                <td>
+                                    <input type="text" class="tags" name="tags" value="<?php echo !empty($tags) ? implode($tags,',') : set_value('tags'); ?>" size="5" class="tooltips" data-placement="right" title="Tag(s) input"/>
+                                </td>
+                            </tr>
                         </table>
 
                 </div>
@@ -94,6 +100,10 @@
                         <tr>
                             <td><?php echo $this->lang->line('entry_quantity'); ?>:</td>
                             <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" /></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_per_user'); ?>:</td>
+                            <td><input type="text" name="per_user" value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>" size="5" class="tooltips" data-placement="right" title="Number of reward that a user can get, if left blank it is unlimited"/></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_stackable'); ?>:</td>
@@ -125,34 +135,6 @@
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_claim'); ?></td>
-                            <td>
-                                <select name="claim">
-                                    <?php if ($claim || set_value('claim')==1) { ?>
-                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } else { ?>
-                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } ?>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_redeem'); ?></td>
-                            <td>
-                                <select name="redeem">
-                                    <?php if ($redeem || set_value('redeem')==1) { ?>
-                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } else { ?>
-                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } ?>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?></td>
                             <td><select name="status">
                                 <?php if ($status) { ?>
@@ -174,6 +156,10 @@
 </div>
 
 <script type="text/javascript" src="<?php echo base_url();?>javascript/ckeditor/ckeditor.js"></script>
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
+
 <script type="text/javascript"><!--
     Pace.on("done", function () {
         $(".cover").fadeOut(1000);
@@ -214,8 +200,22 @@
             }
         });
     }
+
 //--></script>
 <script type="text/javascript"><!--
 $('#tabs a').tabs();
 $('#languages a').tabs();
 //--></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        $(".tags").select2({
+            width: 'resolve',
+            tags: true,
+            tokenSeparators: [',', ' ']
+        });
+    });
+
+</script>
