@@ -15,6 +15,14 @@ class Badge extends REST2_Controller
 
     public function index_get($badgeId = 0)
     {
+        $data = $this->validToken;
+
+        if ($this->input->get('tags')){
+            $data = array_merge($data, array(
+                'tags' => explode(',', $this->input->get('tags'))
+            ));
+        }
+
         if ($badgeId) {
             try {
                 $badgeId = new MongoId($badgeId);
@@ -22,7 +30,7 @@ class Badge extends REST2_Controller
                 $badgeId = null;
             }
             //get badge by specific id
-            $result = $this->badge_model->getBadge(array_merge($this->validToken, array(
+            $result = $this->badge_model->getBadge(array_merge($data, array(
                 'badge_id' => new MongoId($badgeId)
             )));
 
@@ -34,7 +42,9 @@ class Badge extends REST2_Controller
             $this->response($this->resp->setRespond($badge), 200);
         } else {
             //get all badge relate to  clients
-            $badgesList['badges'] = $this->badge_model->getAllBadges($this->validToken);
+            $badgesList['badges'] = $this->badge_model->getAllBadges(array_merge($data, array(
+                'tags' => $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null
+            )));
             $this->response($this->resp->setRespond($badgesList), 200);
         }
     }

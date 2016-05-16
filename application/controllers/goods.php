@@ -101,7 +101,15 @@ class Goods extends REST2_Controller
             $this->response($this->resp->setRespond($goods), 200);
         } else // list all
         {
-            $goodsList['goods_list'] = $this->goods_model->getAllGoods($this->validToken, $ids);
+            $data = $this->validToken;
+
+            if ($this->input->get('tags')){
+                $data += array(
+                    'tags' => explode(',', $this->input->get('tags'))
+                );
+            }
+
+            $goodsList['goods_list'] = $this->goods_model->getAllGoods($data, $ids);
             if (is_array($goodsList['goods_list'])) {
                 foreach ($goodsList['goods_list'] as $key => &$goods) {
                     $goods_id = $goods['_id'];

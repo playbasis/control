@@ -1028,6 +1028,13 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
             }
           ]
         },
@@ -1044,66 +1051,13 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
-            }
-          ]
-        },
-        {
-          "MethodName": "Claim Badge",
-          "Synopsis": "Claim a badge that a player has earned.",
-          "HTTPMethod": "POST",
-          "URI": "/Player/:id/badge/:badge_id/claim",
-          "RequiresOAuth": "N",
-          "parameters": [
-            {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
             },
             {
-              "Name": "id",
-              "Required": "Y",
+              "Name": "tags",
+              "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "player id as used in client's website"
-            },
-            {
-              "Name": "badge_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "id for the badge to change the state."
-            }
-          ]
-        },
-        {
-          "MethodName": "Redeem Badge",
-          "Synopsis": "Redeem a badge that a player has claimed.",
-          "HTTPMethod": "POST",
-          "URI": "/Player/:id/badge/:badge_id/redeem",
-          "RequiresOAuth": "N",
-          "parameters": [
-            {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
-            },
-            {
-              "Name": "id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "player id as used in client's website"
-            },
-            {
-              "Name": "badge_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "id for the badge to change the state."
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
             }
           ]
         },
@@ -1558,7 +1512,15 @@
           "HTTPMethod": "GET",
           "URI": "/Badges",
           "RequiresOAuth": "N",
-          "parameters": []
+          "parameters": [
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            }
+          ]
         },
         {
           "MethodName": "Badge Info",
@@ -1594,6 +1556,13 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
             }
           ]
         },
@@ -2056,6 +2025,13 @@
               "Default": "",
               "Type": "string",
               "Description": "quiz, poll"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
             }
           ]
         },
@@ -2102,6 +2078,13 @@
               "Default": "",
               "Type": "string",
               "Description": "quiz, poll"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
             }
           ]
         },

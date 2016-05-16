@@ -348,8 +348,7 @@ class Client_model extends MY_Model
         $this->mongo_db->select(array(
             'substract',
             'quantity',
-            'claim',
-            'redeem'
+            'per_user'
         ));
         $this->mongo_db->where(array(
             'client_id' => $client_id,
@@ -362,14 +361,39 @@ class Client_model extends MY_Model
         if (!$result) {
             return;
         }
+
+        $this->mongo_db->select(array(
+            'value'
+        ));
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pbPlayerId,
+            'badge_id' => $badgeId
+        ));
+        $this->mongo_db->limit(1);
+        $rewardInfo = $this->mongo_db->get('playbasis_reward_to_player');
+
         $badgeInfo = $result[0];
         $mongoDate = new MongoDate(time());
         if (isset($badgeInfo['substract']) && $badgeInfo['substract']) {
+            //Adjust quantity with per_user
+            if (isset($rewardInfo[0])) {
+                $rewardInfo = $rewardInfo[0];
+                if(!is_null($badgeInfo['per_user']) && ($rewardInfo['value'] + $quantity) > $badgeInfo['per_user']){
+                    $quantity = abs($badgeInfo['per_user'] - $rewardInfo['value']);
+                }
+            }
+            else{
+                if(!is_null($badgeInfo['per_user']) && ($quantity > $badgeInfo['per_user'])){
+                    $quantity = $badgeInfo['per_user'];
+                }
+            }
+
             $remainingQuantity = (int)$badgeInfo['quantity'] - (int)$quantity;
             if ($remainingQuantity < 0) {
                 $remainingQuantity = 0;
                 $quantity = $badgeInfo['quantity'];
             }
+
             $this->mongo_db->set('quantity', $remainingQuantity);
             $this->mongo_db->set('date_modified', $mongoDate);
             $this->mongo_db->where('client_id', $client_id);
@@ -379,22 +403,13 @@ class Client_model extends MY_Model
         }
 
         //update player badge table
-        $this->mongo_db->where(array(
-            'pb_player_id' => $pbPlayerId,
-            'badge_id' => $badgeId
-        ));
-        $hasBadge = $this->mongo_db->count('playbasis_reward_to_player');
-        if ($hasBadge) {
+        if ($rewardInfo) {
             $this->mongo_db->where(array(
                 'pb_player_id' => $pbPlayerId,
                 'badge_id' => $badgeId
             ));
             $this->mongo_db->set('date_modified', $mongoDate);
-            if (isset($badgeInfo['claim']) && $badgeInfo['claim']) {
-                $this->mongo_db->inc('claimed', intval($quantity));
-            } else {
-                $this->mongo_db->inc('value', intval($quantity));
-            }
+            $this->mongo_db->inc('value', intval($quantity));
             $this->mongo_db->update('playbasis_reward_to_player');
         } else {
             $data = array(
@@ -407,13 +422,7 @@ class Client_model extends MY_Model
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate
             );
-            if (isset($badgeInfo['claim']) && $badgeInfo['claim']) {
-                $data['value'] = 0;
-                $data['claimed'] = intval($quantity);
-            } else {
-                $data['value'] = intval($quantity);
-                $data['claimed'] = 0;
-            }
+            $data['value'] = intval($quantity);
             $this->mongo_db->insert('playbasis_reward_to_player', $data);
         }
     }
@@ -525,8 +534,7 @@ class Client_model extends MY_Model
             'description',
             'image',
             'hint',
-            'claim',
-            'redeem'
+            'tags'
         ));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array(

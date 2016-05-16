@@ -9,11 +9,11 @@ class Quiz_model extends MY_Model
         $this->config->load('playbasis');
     }
 
-    public function find($client_id, $site_id, $nin = null, $type = null)
+    public function find($client_id, $site_id, $nin = null, $type = null, $tags = null)
     {
         $d = new MongoDate(time());
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('name', 'image', 'description', 'description_image', 'weight'));
+        $this->mongo_db->select(array('name', 'image', 'description', 'description_image', 'weight', 'tags'));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where(array('status' => true, 'deleted' => false));
@@ -28,6 +28,9 @@ class Quiz_model extends MY_Model
         }
         if ($type) {
             $this->mongo_db->where('type', $type);
+        }
+        if ($tags) {
+            $this->mongo_db->where_in('tags', $tags);
         }
         $result = $this->mongo_db->get('playbasis_quiz_to_client');
 

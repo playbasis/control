@@ -21,6 +21,7 @@ class Goods_model extends MY_Model
             'quantity',
             'redeem',
             'group',
+            'tags',
             'date_start',
             'date_expire',
             'sponsor',
@@ -37,6 +38,9 @@ class Goods_model extends MY_Model
         $this->mongo_db->order_by(array('sort_order' => 'asc'));
         if (!empty($nin)) {
             $this->mongo_db->where_not_in('_id', $nin);
+        }
+        if (!empty($data['tags'])){
+            $this->mongo_db->where_in('tags', $data['tags']);
         }
         $goods = $this->mongo_db->get('playbasis_goods_to_client');
         if ($goods) {
@@ -121,6 +125,7 @@ class Goods_model extends MY_Model
             'sort_order',
             'group',
             'code',
+            'tags',
             'organize_id',
             'organize_role'
         ));

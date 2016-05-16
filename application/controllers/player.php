@@ -1459,7 +1459,7 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
         //get player badge
-        $badgeList = $this->player_model->getBadge($pb_player_id, $this->site_id);
+        $badgeList = $this->player_model->getBadge($pb_player_id, $this->site_id, $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null);
         $this->response($this->resp->setRespond($badgeList), 200);
     }
 
@@ -1474,7 +1474,9 @@ class Player extends REST2_Controller
                 $this->response($this->error->setError('USER_NOT_EXIST'), 200);
             }
         }
-        $badges = $this->badge_model->getAllBadges($this->validToken);
+        $badges = $this->badge_model->getAllBadges(array_merge($this->validToken, array(
+            'tags' => $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null
+        )));
         if ($badges && $pb_player_id) {
             foreach ($badges as &$badge) {
                 $c = $this->player_model->getBadgeCount($this->site_id, $pb_player_id, new MongoId($badge['badge_id']));
@@ -1482,62 +1484,6 @@ class Player extends REST2_Controller
             }
         }
         $this->response($this->resp->setRespond($badges), 200);
-    }
-
-    public function claimBadge_post($player_id = '', $badge_id = '')
-    {
-        if (!$player_id || !$badge_id) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array(
-                'player_id',
-                'badge_id'
-            )), 200);
-        }
-        //get playbasis player id
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
-            'cl_player_id' => $player_id
-        )));
-        if (!$pb_player_id) {
-            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
-        }
-        try {
-            $badge_id = new MongoId($badge_id);
-        } catch (Exception $e) {
-            $badge_id = $badge_id;
-        }
-        $result = $this->player_model->claimBadge($pb_player_id, $badge_id, $this->site_id, $this->client_id);
-        if ($result) {
-            $this->response($this->resp->setRespond($result), 200);
-        } else {
-            $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
-        }
-    }
-
-    public function redeemBadge_post($player_id = '', $badge_id = '')
-    {
-        if (!$player_id || !$badge_id) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array(
-                'player_id',
-                'badge_id'
-            )), 200);
-        }
-        //get playbasis player id
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
-            'cl_player_id' => $player_id
-        )));
-        if (!$pb_player_id) {
-            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
-        }
-        try {
-            $badge_id = new MongoId($badge_id);
-        } catch (Exception $e) {
-            $badge_id = $badge_id;
-        }
-        $result = $this->player_model->redeemBadge($pb_player_id, $badge_id, $this->site_id, $this->client_id);
-        if ($result) {
-            $this->response($this->resp->setRespond($result), 200);
-        } else {
-            $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
-        }
     }
 
     public function rank_get($ranked_by, $limit = RETURN_LIMIT_FOR_RANK)
