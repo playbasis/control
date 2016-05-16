@@ -4384,6 +4384,20 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "key",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field keys separated by comma"
+            },
+            {
+              "Name": "value",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field values separated by comma"
             }
           ]
         },
@@ -4414,6 +4428,20 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "key",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field keys separated by comma"
+            },
+            {
+              "Name": "value",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field values separated by comma"
             }
           ]
         },

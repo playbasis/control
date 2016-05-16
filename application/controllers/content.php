@@ -315,6 +315,19 @@ class Content extends REST2_Controller
 
         $contents = $this->checkValidContent($content_id);
         $actionInfo['content_id'] = $contents[0]['_id'];
+        $actionInfo['custom'] = null;
+        $key = $this->input->post('key');
+        if ($key) {
+            $keys = explode(',', $key);
+            $value = $this->input->post('value');
+            $values = explode(',', $value);
+            if (count($values) != count($keys)){
+                $this->response($this->error->setError('PARAMETER_INVALID', array('key','value')), 200);
+            }
+            foreach ($keys as $i => $key) {
+                $actionInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
+            }
+        }
 
         $playerContent = $this->content_model->retrieveExistingPlayerContent(array(
             'client_id'    => $this->validToken['client_id'],
@@ -404,13 +417,16 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING', array('feedback')), 200);
         }
         $data['feedback'] = $postData['feedback'];
-
+        $data['custom'] = null;
         $key = $this->input->post('key');
         if ($key) {
             $data['custom'] = array();
             $keys = explode(',', $key);
             $value = $this->input->post('value');
             $values = explode(',', $value);
+            if (count($values) != count($keys)){
+                $this->response($this->error->setError('PARAMETER_INVALID', array('key','value')), 200);
+            }
             foreach ($keys as $i => $key) {
                 $data['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
             }

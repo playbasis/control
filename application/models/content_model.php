@@ -201,8 +201,7 @@ class Content_model extends MY_Model
             'content_id' => new MongoId($data['content_id']),
             'pb_player_id' => new MongoId($data['pb_player_id']),
             'action' => $data['action'],
-            //'star' => isset($data['star'])?$data['star']:null,
-            //'feedback' => (isset($data['feedback'])) ? $data['feedback'] : null,
+            'custom' => isset($data['custom'])?$data['custom']:null,
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
         );
@@ -275,7 +274,7 @@ class Content_model extends MY_Model
             'content_id' => isset($data['content_id'])?new MongoId($data['content_id']):null,
             'pb_player_id' => isset($data['pb_player_id'])?new MongoId($data['pb_player_id']):null,
             'feedback' => isset($data['feedback'])?$data['feedback']:null,
-            'custom' => $data['custom'],
+            'custom' => isset($data['custom'])?$data['custom']:null,
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
         );
