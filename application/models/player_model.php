@@ -738,7 +738,6 @@ class Player_model extends MY_Model
             $badge['amount'] = $badge['value'];
             $badge['hint'] = $result['hint'];
             $badge['tags'] = isset($result['tags']) ? $result['tags'] : null;
-            $badge['tags'] = $result['tags'];
             unset($badge['value']);
             array_push($playerBadges, $badge);
         }
