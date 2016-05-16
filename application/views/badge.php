@@ -35,6 +35,7 @@
                             <?php if(!$client_id){?>
                                 <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
                             <?php }?>
+                            <td class="left" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
                             <td class="right" style="width:100px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
@@ -68,6 +69,7 @@
                                 <?php if(!$client_id){?>
                                     <td class="left"><?php echo ($badge['is_public'])?"Public":"Private"; ?></td>
                                 <?php }?>
+                                <td class="right"><?php echo (isset($badge['per_user']) && !is_null($badge['per_user'])) ? $badge['per_user'] : 'Unlimited'; ?></td>
                                 <td class="right"><?php echo $badge['quantity']; ?></td>
                                 <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $badge['sort_order']; ?></td>
