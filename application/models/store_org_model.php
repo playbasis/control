@@ -135,6 +135,31 @@ class Store_org_model extends MY_Model
         }
     }
 
+    public function retrieveNodeByNameAndOrganize($client_id, $site_id, $name, $organize)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->where('organize', new MongoId($organize));
+        $this->mongo_db->where('deleted', false);
+        $results = $this->mongo_db->get("playbasis_store_organize_to_client");
+
+        return $results ? $results[0] : null;
+    }
+
+    public function retrieveNodeByNameAndOrganizeButNotID($client_id, $site_id, $name, $organize, $node_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_ne('_id', $node_id);
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->where('organize', new MongoId($organize));
+        $this->mongo_db->where('deleted', false);
+        $results = $this->mongo_db->get("playbasis_store_organize_to_client");
+
+        return $results ? $results[0] : null;
+    }
+
     public function updateNodeById($nodeId, $updateData)
     {
         $parent_data = null;
@@ -310,6 +335,18 @@ class Store_org_model extends MY_Model
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('name', $name);
         return $this->mongo_db->get("playbasis_store_organize");
+    }
+
+    public function retrieveOrganizeByNameButNotID($client_id, $site_id, $name, $org_id)
+    {
+        //$this->mongo_db->select(array('_id', 'cl_player_id'));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_ne('_id', $org_id);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('name', $name);
+        $results = $this->mongo_db->get('playbasis_store_organize');
+        return $results ? $results[0] : array();
     }
 
     public function retrieveOrganizeById($id)

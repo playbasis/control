@@ -167,14 +167,26 @@ class Store_org extends MY_Controller
                         if (isset($organize_data['action']) && $organize_data['action'] == 'delete') {
                             $result = $this->Store_org_model->deleteOrganizeById($organizeId);
                         } else {
-                            $result = $this->Store_org_model->updateOrganizeById($organizeId, array(
-                                'client_id' => $client_id,
-                                'site_id' => $site_id,
-                                'name' => $name,
-                                'description' => $desc,
-                                'parent' => $parent,
-                                'status' => $status
-                            ));
+                            if(!$name){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'name require'));
+                                die;
+                            }
+                            $org_chk =$this->Store_org_model->retrieveOrganizeByNameButNotID($client_id, $site_id, $name, $organizeId);
+                            if($org_chk){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'organize duplicate'));
+                                die;
+                            }else {
+                                $result = $this->Store_org_model->updateOrganizeById($organizeId, array(
+                                    'client_id' => $client_id,
+                                    'site_id' => $site_id,
+                                    'name' => $name,
+                                    'description' => $desc,
+                                    'parent' => $parent,
+                                    'status' => $status
+                                ));
+                            }
                         }
                     } catch (Exception $e) {
                         $this->output->set_status_header('400');
@@ -318,8 +330,26 @@ class Store_org extends MY_Controller
                         }
                         $result = $this->Store_org_model->deleteNodeByIdArray($node_data['id']);
                     } else {
-                        $result = $this->Store_org_model->createNode($client_id, $site_id, $name, $desc,
-                            $organize, $parent, $status);
+                        if(!$name){
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'node name require'));
+                            die;
+                        }
+                        if(!$organize){
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'node organize require'));
+                            die;
+                        }
+
+                        $node_chk =$this->Store_org_model->retrieveNodeByNameAndOrganize($client_id, $site_id, $name, $organize);
+                        if($node_chk){
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'node duplicate'));
+                            die;
+                        }else {
+                            $result = $this->Store_org_model->createNode($client_id, $site_id, $name, $desc,
+                                $organize, $parent, $status);
+                        }
                     }
                 } else {
                     try {
@@ -327,15 +357,33 @@ class Store_org extends MY_Controller
                         if (isset($node_data['action']) && $node_data['action'] == 'delete') {
                             $result = $this->Store_org_model->deleteNodeById($nodeId);
                         } else {
-                            $result = $this->Store_org_model->updateNodeById($nodeId, array(
-                                'client_id' => $client_id,
-                                'site_id' => $site_id,
-                                'name' => $name,
-                                'description' => $desc,
-                                'organize' => $organize,
-                                'parent' => $parent,
-                                'status' => $status
-                            ));
+                            if(!$name){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'node name require'));
+                                die;
+                            }
+                            if(!$organize){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'node organize require'));
+                                die;
+                            }
+
+                            $node_chk =$this->Store_org_model->retrieveNodeByNameAndOrganizeButNotID($client_id, $site_id, $name, $organize, $nodeId);
+                            if($node_chk){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'node duplicate'));
+                                die;
+                            }else {
+                                $result = $this->Store_org_model->updateNodeById($nodeId, array(
+                                    'client_id' => $client_id,
+                                    'site_id' => $site_id,
+                                    'name' => $name,
+                                    'description' => $desc,
+                                    'organize' => $organize,
+                                    'parent' => $parent,
+                                    'status' => $status
+                                ));
+                            }
                         }
                     } catch (Exception $e) {
                         $this->output->set_status_header('400');
