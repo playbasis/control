@@ -54,6 +54,11 @@ class PlaybasisApi
         return $result;
     }
 
+    public function addPlayerToNodeByName($player_id, $node_name, $organize_type) {
+        $result = $this->_post('StoreOrg/nodes/name/'.$node_name.'/type/'.$organize_type.'/addPlayer/'.$player_id);
+        return $result;
+    }
+
     public function setPlayerRole($player_id, $node_id, $role) {
         $result = $this->_post('StoreOrg/nodes/'.$node_id.'/setPlayerRole/'.$player_id,$role);
         return $result;

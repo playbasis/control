@@ -52,5 +52,6 @@ $lang['error_upload']           = 'Our system cannot access your uploaded file.'
 $lang['error_group_exists']     = 'Group already exists.';
 $lang['error_file_too_large']   = 'File too large. File must be less than 2 megabytes.';
 $lang['error_type_accepted']    = 'Invalid file type. Only CSV types are accepted.';
-$lang['error_format']           = 'Input format error';
-
+$lang['error_format']           = 'Input format is invalid';
+$lang['error_custom_format']    = 'Custom parameter format is invalid';
+$lang['error_user_not_found']    = 'User doesn\'t exist';

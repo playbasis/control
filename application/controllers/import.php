@@ -11,6 +11,7 @@ class import extends MY_Controller
         $this->load->model('User_model');
         $this->load->model('App_model');
         $this->load->model('import_model');
+        $this->load->model('Player_model');
         if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
@@ -394,99 +395,38 @@ class import extends MY_Controller
 
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
+
                 $import_type = $this->input->post('import_type');
                 $returnImportActivities = array();
 
-                if($import_type == "player") {
-                    $first_line = true;
-                    while (($line = fgets($handle)) !== false ) {
-                        if($first_line){
-                            $first_line = false;
-                            continue;
-                        }
+                $keys = array();
+                $parameter_set = null;
+                while (($line = fgets($handle)) !== false ) {
+                    if(!$parameter_set){
+
                         $line = trim($line);
-
-                        $params = explode(',', $line);
-                        if(count($params)<5){
-                            $returnImportActivities[] = array( "input" => $line,"result" => $this->lang->line('error_format'));
-                        }else {
-
-                            $player_id = $params[0];
-                            $image = $params[1];
-                            $email = $params[2];
-                            $username = $params[3];
-                            $password = $params[4];
-
-                            $data = array('image' => $image,
-                                'password' => $password);
-
-                            $result = $this->postRegisterPlayer($player_id, $username, $email, $data);
-
-                            $returnImportActivities[] = array( "input" => $line,"result" => $result);
-                        }
+                        $parameter_set = $line;
+                        $keys = explode(',', $line);
+                        continue;
                     }
-                }
-                elseif($import_type == "transaction") {
-                    $first_line = true;
-                    while (($line = fgets($handle)) !== false ) {
-                        if($first_line){
-                            $first_line = false;
-                            continue;
-                        }
-                        $line = trim($line);
-
+                    $line = trim($line);
+                    $params = explode(',', $line);
+                    if(count($params)<count($keys)){
+                        $returnImportActivities[] = array( "input" => $line,"result" => $this->lang->line('error_format'));
+                    }else {
                         $data = array();
-                        $params = explode(',', $line);
-
-                        if(count($params)<4){
-                            $returnImportActivities[] = array( "input" => $line, "result" => $this->lang->line('error_format'));
-                        }else {
-
-                            $date = "now";
-                            if ($params[0]) {
-                                $date = $params[0];
-                            }
-                            $player_id = $params[1];
-                            $action = $params[2];
-                            $custom_params = explode('|', $params[3]);
-                            foreach ($custom_params as $param) {
-                                $keyAndValue = explode('=', $param);
-                                $key = $keyAndValue[0];
-                                $value = $keyAndValue[1];
-                                $data = array_merge($data, array($key => $value));
-                            }
-
-                            $result = $this->postEngineRule($player_id, $action, $data, $date);
-
-                            $returnImportActivities[] = array( "input" => $line,"result" => $result);
+                        foreach ($keys as $index => $key) {
+                            $data += array($key => $params[$index]);
                         }
-                    }
-                }
-                elseif($import_type == "storeorg") {
-                    $first_line = true;
-                    while (($line = fgets($handle)) !== false ) {
-                        if($first_line){
-                            $first_line = false;
-                            continue;
+
+                        if($import_type == "player") {
+                            $result = $this->postRegisterPlayer($data);
+                        }elseif($import_type == "transaction") {
+                            $result = $this->postEngineRule($data);
+                        }elseif($import_type == "storeorg") {
+                            $result = $this->postAddPlayerToNodeByName($data);
                         }
-                        $line = trim($line);
-
-                        $params = explode(',', $line);
-                        if(count($params)<4){
-                            $returnImportActivities[] = array( "input" => $line,"result" => $this->lang->line('error_format'));
-                        }else {
-
-                            $player_id = $params[0];
-                            $node_type = $params[1];
-                            $node_name = $params[2];
-                            $role = $params[3];
-
-                            $node_id = 0;
-
-                            $result = $this->postPlayerToNode($player_id,$node_id);
-
-                            $returnImportActivities[] = array( "input" => $line,"result" => $result);
-                        }
+                        $returnImportActivities[] = array( "input" => $line,"result" => $result);
                     }
                 }
 
@@ -516,30 +456,73 @@ class import extends MY_Controller
         return $result->response->token;
     }
 
-    private function postEngineRule($player_id, $action, $param, $date = "now")
+    private function postEngineRule($param)
     {
         $this->getToken();
-        if ($date != "now") {
-            $this->_api->setHeader('Date', $date);
+
+        $player_id = isset($param['player_id']) ? $param['player_id'] : null;
+        $action = isset($param['action']) ? $param['action'] : null;
+        $pb_player_id = $this->Player_model->getPlaybasisId(array(
+            'client_id' => $this->User_model->getClientId(),
+            'site_id' => $this->User_model->getSiteId(),
+            'cl_player_id' => $player_id
+        ));
+        if (!$pb_player_id) {
+            return $this->lang->line('error_user_not_found');
         }
-        $result = $this->_api->engine($player_id, $action, $param);
+        if (isset($param['date']) && !is_null($param['date'])) {
+            $this->_api->setHeader('Date', $param['date']);
+        }
+        $customs = array();
+        if (isset($param['customs']) && !is_null($param['customs'])) {
+            $custom_params = explode('|', $param['customs']);
+            foreach ($custom_params as $custom_param)  {
+                $keyAndValue = explode('=', $custom_param);
+                if(count($keyAndValue)!=2){
+                    return $this->lang->line('error_custom_format');
+                }
+
+                $customs = array_merge($customs, array($keyAndValue[0] => $keyAndValue[1]));
+            }
+        }
+        $result = $this->_api->engine($player_id, $action, $customs);
         return $result->message;
     }
 
-    private function postRegisterPlayer($player_id, $username, $email,  $param)
+    private function postRegisterPlayer( $param)
     {
         $this->getToken();
-
-        $result = $this->_api->register($player_id, $username, $email,  $param);
+        
+        $player_id = isset($param['player_id']) ? $param['player_id'] : null;
+        $username = isset($param['username']) ? $param['username'] : null;
+        $email = isset($param['email']) ? $param['email'] : null;
+        $result = $this->_api->register($player_id, $username, $email, $param);
         return $result->message;
     }
 
-    private function postPlayerToNode($player_id, $node_id) {
+    private function postAddPlayerToNodeByName($param) {
         $this->getToken();
 
-        $result = $this->_api->addPlayerToNode($player_id, $node_id);
+        $player_id = isset($param['player_id']) ? $param['player_id'] : null;
+        $node_name = isset($param['node_name']) ? $param['node_name'] : null;
+        $organize_type = isset($param['organize_type']) ? $param['organize_type'] : null;
+        $result = $this->_api->addPlayerToNodeByName($player_id, $node_name, $organize_type);
+        if($result->message == "Success" && isset($param['role']) && !is_null($param['role'])){
+            $roles = explode('|', $param['role']);
+            foreach($roles as $role) {
+                $this->postSetPlayerRole($player_id, $result->response->node_id, $role);
+            }
+        }
         return $result->message;
     }
+
+    private function postSetPlayerRole($player_id, $node_id, $role) {
+        $this->getToken();
+
+        $result = $this->_api->setPlayerRole($player_id, $node_id->{'$id'}, array('role' => $role));
+        return $result->message;
+    }
+
 
     public function log(){
         if (!$this->validateAccess()) {
