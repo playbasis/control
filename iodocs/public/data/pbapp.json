@@ -3980,6 +3980,13 @@
               "Description": "Secret PIN given to content"
             },
             {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            },
+            {
               "Name": "player_id",
               "Required": "N",
               "Default": "",
@@ -4107,6 +4114,13 @@
               "Description": "Secret PIN given to content"
             },
             {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to add (e.g. foo,bar)"
+            },
+            {
               "Name": "key",
               "Required": "N",
               "Default": "",
@@ -4205,6 +4219,13 @@
               "Default": "",
               "Type": "string",
               "Description": "Secret PIN given to content"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to update (e.g. foo,bar)"
             },
             {
               "Name": "key",

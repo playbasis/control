@@ -36,6 +36,9 @@ class Content_model extends MY_Model
         if (isset($optionalParams['pin'])){
             $this->mongo_db->where('pin', $optionalParams['pin']);
         }
+        if (isset($optionalParams['tags'])){
+            $this->mongo_db->where_in('tags', $optionalParams['tags']);
+        }
 
         // Sorting
         $sort_data = array('_id', 'title', 'date_start', 'date_end', 'date_added', 'date_modified');
@@ -87,7 +90,7 @@ class Content_model extends MY_Model
             $this->mongo_db->where_lt('date_start', new MongoDate());
         }
 
-        $this->mongo_db->select(array('_id', 'title', 'summary', 'detail', 'image','pb_player_id', 'category', 'date_start', 'date_end', 'pin', 'custom'));
+        $this->mongo_db->select(array('_id', 'title', 'summary', 'detail', 'image','pb_player_id', 'category', 'date_start', 'date_end', 'pin', 'tags', 'custom'));
         //$this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $client_id,

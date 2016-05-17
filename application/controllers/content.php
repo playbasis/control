@@ -56,6 +56,11 @@ class Content extends REST2_Controller
             }
 
         }
+        if (isset($query_data['tags']) && !is_null($query_data['tags'])) {
+            $query_data = array_merge($query_data, array(
+                'tags' => explode(',', $this->input->get('tags'))
+            ));
+        }
 
         $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, $content_id);
         if (empty($contents)) {
@@ -205,6 +210,7 @@ class Content extends REST2_Controller
         if ($this->input->post('pin')){
             $contentInfo['pin'] = $this->input->post('pin');
         }
+        $contentInfo['tags'] = $this->input->post('tags') && !is_null($this->input->post('status')) ? explode(',', $this->input->post('tags')) : null;
 
         if ($this->input->post('key')) {
             $data['custom'] = array();
@@ -274,6 +280,10 @@ class Content extends REST2_Controller
 
         if ($this->input->post('pin')){
             $contentInfo['pin'] = $this->input->post('pin');
+        }
+
+        if ($this->input->post('tags')){
+            $contentInfo['tags'] = explode(',', $this->input->post('tags'));
         }
 
         if ($this->input->post('key')) {
@@ -597,7 +607,7 @@ class Content extends REST2_Controller
      */
     private function convert_mongo_object_and_category(&$item, $key)
     {
-        if ($key == 'category') {
+        if ($key === 'category') {
             $item = $this->content_model->getContentCategoryNameById($this->client_id, $this->site_id, $item);
         }
         if (is_object($item)) {
