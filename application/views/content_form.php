@@ -121,6 +121,15 @@
 
             <div class="control-group">
                 <label class="control-label"
+                       for="inputTitle"><?php echo $this->lang->line('entry_tags'); ?></label>
+                <div class="controls">
+                    <input class="tags" type="text" name="tags" size="100"
+                           value="<?php echo isset($tags) ? implode($tags,',')  : set_value('tags'); ?>"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label"
                        for="status"><?php echo $this->lang->line('entry_status'); ?></label>
                 <div class="controls">
                     <input type="checkbox" name="status" id="status" data-handle-width="40" <?php echo isset($status) ? ( $status ? "checked" : '') : set_checkbox('status','',true); ?>>
@@ -523,4 +532,17 @@
     Pace.on("done", function(){
         $(".cover").fadeOut(1000);
     });
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        $(".tags").select2({
+            width: 'resolve',
+            tags: true,
+            tokenSeparators: [',', ' ']
+        });
+    });
+
 </script>

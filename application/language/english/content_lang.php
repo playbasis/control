@@ -8,6 +8,7 @@ $lang['column_date_range'] = "Date Range";
 $lang['column_status'] = "Status";
 $lang['column_category'] = "Category";
 $lang['column_action'] = "Action";
+$lang['column_tags'] = "Tag(s)";
 
 // Button
 $lang['button_filter'] = 'Filter';
@@ -33,6 +34,7 @@ $lang['entry_status_disable'] = 'Disable';
 $lang['entry_category_name'] = 'Category name';
 $lang['entry_add_category'] = 'Add new category?';
 $lang['entry_pin'] = 'PIN';
+$lang['entry_tags'] = 'Tag(s)';
 
 // Text
 $lang['text_success'] = 'You have successfully created!';

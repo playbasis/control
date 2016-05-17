@@ -89,27 +89,12 @@ class Content_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $insert_data = array(
-            'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
-            'title' => $data['title'],
-            'summary' => $data['summary'],
-            'detail' => $data['detail'],
-            'date_start' => new MongoDate(strtotime($data['date_start'])),
-            'date_end' => new MongoDate(strtotime($data['date_end'])),
-            'image' => $data['image'],
-            'status' => $data['status'],
+        $data = array_merge($data, array(
             'deleted' => false,
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
-        );
-        if (isset($data['category'])) {
-            $insert_data['category'] = new MongoId($data['category']);
-        }
-        if (isset($data['pin'])) {
-            $insert_data['pin'] = $data['pin'];
-        }
-        $insert = $this->mongo_db->insert('playbasis_content_to_client', $insert_data);
+        ));
+        $insert = $this->mongo_db->insert('playbasis_content_to_client', $data);
 
         return $insert;
     }
@@ -120,29 +105,7 @@ class Content_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->where('_id', new MongoID($data['_id']));
 
-        $this->mongo_db->set('title', $data['title']);
-        $this->mongo_db->set('summary', $data['summary']);
-        $this->mongo_db->set('detail', $data['detail']);
-        if (isset($data['category'])) {
-            if (empty($data['category'])) {
-                $this->mongo_db->unset_field('category');
-            } else {
-                $this->mongo_db->set('category', new MongoId($data['category']));
-            }
-        }
-        $this->mongo_db->set('image', $data['image']);
-        $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
-        $this->mongo_db->set('date_end', new MongoDate(strtotime($data['date_end'])));
-        $this->mongo_db->set('date_modified', new MongoDate());
-        $this->mongo_db->set('status', $data['status']);
-        if (isset($data['pin'])) {
-            if (empty($data['pin'])) {
-                $this->mongo_db->unset_field('pin');
-            } else {
-                $this->mongo_db->set('pin', $data['pin']);
-            }
-        }
-
+        $this->mongo_db->set($data);
         $update = $this->mongo_db->update('playbasis_content_to_client');
 
         return $update;

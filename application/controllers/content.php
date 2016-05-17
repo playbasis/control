@@ -100,17 +100,16 @@ class Content extends MY_Controller
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-                $data['title'] = $content_data['title'];
-                $data['summary'] = $content_data['summary'];
-                $data['detail'] = $content_data['detail'];
-                $data['date_start'] = $content_data['date_start'];
-                $data['date_end'] = $content_data['date_end'];
-                $data['image'] = $content_data['image'];
-                if (isset($content_data['category']) && !empty($content_data['category'])) {
-                    $data['category'] = $content_data['category'];
-                }
-                $data['status'] = isset($content_data['status']) && $content_data['status'] == 'on' ? true : false;
-                $data['pin'] = $content_data['pin'];
+                $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
+                $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
+                $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
+                $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
+                $data['date_end'] = (isset($content_data['date_end']) && $content_data['date_end']) ? new MongoDate(strtotime($content_data['date_end'])) : null;
+                $data['image'] = (isset($content_data['image']) && $content_data['image']) ? $content_data['image'] : null;
+                $data['category'] = (isset($content_data['category']) && $content_data['category']) ? $content_data['category'] : null;
+                $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
+                $data['status'] = (isset($content_data['status']) && $content_data['status'] == 'on') ? true : false;
+                $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
 
                 $insert = $this->Content_model->createContent($data);
                 if ($insert) {
@@ -150,18 +149,19 @@ class Content extends MY_Controller
             if ($this->form_validation->run()) {
                 $content_data = $this->input->post();
 
-                $data['_id'] = $content_id;
+                $data['_id'] = new MongoId($content_id);
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-                $data['title'] = $content_data['title'];
-                $data['summary'] = $content_data['summary'];
-                $data['detail'] = $content_data['detail'];
-                $data['date_start'] = $content_data['date_start'];
-                $data['date_end'] = $content_data['date_end'];
-                $data['image'] = $content_data['image'];
-                $data['category'] = $content_data['category'];
+                $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
+                $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
+                $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
+                $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? $content_data['date_start'] : null;
+                $data['date_end'] = (isset($content_data['date_end']) && $content_data['date_end']) ? $content_data['date_end'] : null;
+                $data['image'] = (isset($content_data['image']) && $content_data['image']) ? $content_data['image'] : null;
+                $data['category'] = (isset($content_data['category']) && $content_data['category']) ? $content_data['category'] : null;
                 $data['status'] = isset($content_data['status']) ? true : false;
-                $data['pin'] = $content_data['pin'];
+                $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
+                $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
 
                 $update = $this->Content_model->updateContent($data);
                 if ($update) {
@@ -349,7 +349,7 @@ class Content extends MY_Controller
         } elseif (isset($content_info['status'])) {
             $this->data['status'] = $content_info['status'];
         } else {
-            $this->data['status'] = true;
+            $this->data['status'] = false;
         }
 
         if ($this->input->post('pin')) {
@@ -357,7 +357,15 @@ class Content extends MY_Controller
         } elseif (isset($content_info['pin'])) {
             $this->data['pin'] = $content_info['pin'];
         } else {
-            $this->data['pin'] = '';
+            $this->data['pin'] = null;
+        }
+
+        if ($this->input->post('tags')) {
+            $this->data['tags'] = $this->input->post('tags');
+        } elseif (isset($content_info['tags']) && $content_info['tags']) {
+            $this->data['tags'] = $content_info['tags'];
+        } else {
+            $this->data['tags'] = null;
         }
 
         $this->load->vars($this->data);
