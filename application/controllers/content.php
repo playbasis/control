@@ -106,7 +106,7 @@ class Content extends MY_Controller
                 $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
                 $data['date_end'] = (isset($content_data['date_end']) && $content_data['date_end']) ? new MongoDate(strtotime($content_data['date_end'])) : null;
                 $data['image'] = (isset($content_data['image']) && $content_data['image']) ? $content_data['image'] : null;
-                $data['category'] = (isset($content_data['category']) && $content_data['category']) ? $content_data['category'] : null;
+                $data['category'] = (isset($content_data['category']) && $content_data['category']) ? new MongoId($content_data['category']) : null;
                 $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
                 $data['status'] = (isset($content_data['status']) && $content_data['status'] == 'on') ? true : false;
                 $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
@@ -155,10 +155,10 @@ class Content extends MY_Controller
                 $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
-                $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? $content_data['date_start'] : null;
-                $data['date_end'] = (isset($content_data['date_end']) && $content_data['date_end']) ? $content_data['date_end'] : null;
+                $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
+                $data['date_end'] = (isset($content_data['date_end']) && $content_data['date_end']) ? new MongoDate(strtotime($content_data['date_end'])) : null;
                 $data['image'] = (isset($content_data['image']) && $content_data['image']) ? $content_data['image'] : null;
-                $data['category'] = (isset($content_data['category']) && $content_data['category']) ? $content_data['category'] : null;
+                $data['category'] = (isset($content_data['category']) && $content_data['category']) ? new MongoId($content_data['category']) : null;
                 $data['status'] = isset($content_data['status']) ? true : false;
                 $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
                 $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
