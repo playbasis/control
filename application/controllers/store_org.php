@@ -66,33 +66,42 @@ class Store_org extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function playerRegisterByNodeName_post($name, $player_id)
+    public function playerRegisterByNodeName_post($name,$organize, $player_id)
     {
         $this->benchmark->mark('start');
 
-        if (empty($name) || empty($player_id)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('name', 'player_id')), 200);
+        if (empty($name) || empty($organize) || empty($player_id)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('name', 'organize_type','player_id')), 200);
         }
 
         if (!$this->validClPlayerId($player_id)) {
             $this->response($this->error->setError('USER_ID_INVALID'), 200);
         }
 
-        $node_id = $this->findNodeIdbyName($name);
+        $org_info = $this->store_org_model->retrieveOrganizeByName($this->client_id, $this->site_id, $organize);
+        if(!$org_info){
+            $this->response($this->error->setError('STORE_ORG_TYPE_NOT_FOUND'), 200);
+        }
+
+        $node_id = $this->store_org_model->retrieveNodeByNameInOrg($this->client_id, $this->site_id, $name, $org_info['_id']);
+        if (!$node_id) {
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND_IN_ORGANIZE'), 200);
+        }
+
         $pb_player_id = $this->findPbPlayerId($player_id);
 
         $existed_player_organize = $this->store_org_model->retrievePlayerToNode($this->client_id, $this->site_id,
-            $pb_player_id, $node_id);
+            $pb_player_id, $node_id['_id']);
         if (!$existed_player_organize) {
             $player_organize_id = $this->store_org_model->createPlayerToNode($this->client_id, $this->site_id,
-                $pb_player_id, $node_id);
+                $pb_player_id, $node_id['_id']);
         } else {
             $this->response($this->error->setError('STORE_ORG_PLAYER_ALREADY_EXISTS_WITH_NODE'), 200);
         }
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('processing_time' => $t, 'node_id' => $node_id)), 200);
+        $this->response($this->resp->setRespond(array('processing_time' => $t, 'node_id' => $node_id['_id'])), 200);
     }
 
     public function playerRemove_post($node_id, $player_id)
@@ -443,20 +452,6 @@ class Store_org extends REST2_Controller
             die();
         }
         return $node_id;
-    }
-
-    /**
-     * @param $name
-     * @return MongoId
-     */
-    private function findNodeIdByName($name)
-    {
-        $node_id = $this->store_org_model->retrieveNodeByName($this->site_id, $name);
-        if ($node_id === null) {
-            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
-            die();
-        }
-        return $node_id['_id'];
     }
 
     /**

@@ -1630,7 +1630,7 @@ class Cron extends CI_Controller
                                     );
 
                                     // Insert player to store_org
-                                    $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/name/' . $val['node_name'] . '/addPlayer/' . $val['player_id'],
+                                    $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/name/' . $val['node_name'] . '/type/' . $val['organize_type'] . '/addPlayer/' . $val['player_id'],
                                         $data);
 
                                     if ((isset($val['roles'])) && (isset($result->response->node_id))) {

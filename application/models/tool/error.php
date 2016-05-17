@@ -468,6 +468,14 @@ class Error extends CI_Model
                 $errorData['message'] = "Your account need to verify email address";
                 $errorData['error_code'] = '2423';
                 break;
+            case 'STORE_ORG_TYPE_NOT_FOUND':
+                $errorData['message'] = "Organize type is not found";
+                $errorData['error_code'] = '2424';
+                break;
+            case 'STORE_ORG_NODE_NOT_FOUND_IN_ORGANIZE':
+                $errorData['message'] = "Node is not found in this organize type";
+                $errorData['error_code'] = '2424';
+                break;
             default:
                 $errorData['message'] = "Unknown";
                 $errorData['error_code'] = '9999';
