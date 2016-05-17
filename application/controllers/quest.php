@@ -1123,6 +1123,13 @@ class Quest extends REST2_Controller
                 $this->response($this->error->setError("QUEST_JOIN_OR_CANCEL_NOTFOUND"), 200);
             }
         } else {
+
+            if ($this->input->get('tags')){
+                $data = array_merge($data, array(
+                    'tags' => explode(',', $this->input->get('tags'))
+                ));
+            }
+
             // get all questss related to clients
             $quest = $this->quest_model->getQuests($data);
             array_walk_recursive($quest, array($this, "convert_mongo_object"));
@@ -1472,6 +1479,13 @@ class Quest extends REST2_Controller
             $resp['quests'] = null;
             $quests = array();
             foreach ($quests_player as $q) {
+
+                if ($this->input->get('tags')){
+                    $data = array_merge($data, array(
+                        'tags' => explode(',', $this->input->get('tags'))
+                    ));
+                }
+
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
                 $quest['num_missions'] = array(
                     'total' => count($q["missions"]),

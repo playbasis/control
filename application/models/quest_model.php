@@ -23,7 +23,10 @@ class Quest_model extends MY_Model
         if (!$test) {
             $criteria["status"] = true;
         }
-
+        
+        if (isset($data['tags'])) {
+            $this->mongo_db->where_in('tags', $data['tags']);
+        }
         $this->mongo_db->where($criteria);
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->limit(1);
@@ -44,6 +47,9 @@ class Quest_model extends MY_Model
             'site_id' => $data['site_id'],
             'status' => true
         ));
+        if (isset($data['tags'])) {
+            $this->mongo_db->where_in('tags', $data['tags']);
+        }
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
 
