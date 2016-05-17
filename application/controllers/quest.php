@@ -384,7 +384,7 @@ class Quest extends MY_Controller
 
                     $data['status'] = (isset($data['status'])) ? true : false;
                     $data['mission_order'] = (isset($data['mission_order'])) ? true : false;
-
+                    $data['tags'] = (isset($data['tags']) && $data['tags']) ? explode(',', $data['tags']) : null;
                     $data['date_added'] = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
                     $data['client_id'] = $client_id;
@@ -492,6 +492,7 @@ class Quest extends MY_Controller
                     'rewards' => $this->input->post('rewards'),
                     'feedbacks' => $this->input->post('feedbacks'),
                     'missions' => $this->input->post('missions'),
+                    'tags' => $this->input->post('tags'),
                 );
             }
         }
@@ -563,6 +564,14 @@ class Quest extends MY_Controller
             $this->data['org_status'] = false;
         }
 
+        if ($this->input->post('tags')) {
+            $this->data['tags'] = $this->input->post('tags');
+        } elseif (!empty($editQuest) && isset($editQuest['tags'])) {
+            $this->data['tags'] = $editQuest['tags'];
+        } else {
+            $this->data['tags'] = null;
+        }
+
         $this->data['levels'] = $this->Level_model->getLevelsSite($data);
 
         $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($data);
@@ -602,6 +611,7 @@ class Quest extends MY_Controller
             $this->data['editQuest']['mission_order'] = isset($editQuest['mission_order']) ? $editQuest['mission_order'] : false;
             $this->data['editQuest']['sort_order'] = isset($editQuest['sort_order']) ? $editQuest['sort_order'] : false;
             $this->data['editQuest']['status'] = isset($editQuest['status']) ? $editQuest['status'] : false;
+            $this->data['editQuest']['tags'] = isset($editQuest['tags']) ? $editQuest['tags'] : null;
 
             $countQuest = 0;
             $countCustomPoints = 0;
@@ -1481,6 +1491,7 @@ class Quest extends MY_Controller
 
                     $data['status'] = (isset($data['status'])) ? true : false;
                     $data['mission_order'] = (isset($data['mission_order'])) ? true : false;
+                    $data['tags'] = (isset($data['tags']) && $data['tags']) ? explode(',', $data['tags']) : null;
                     $data['client_id'] = $client_id;
                     $data['site_id'] = $site_id;
 
