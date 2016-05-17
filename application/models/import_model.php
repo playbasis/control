@@ -81,10 +81,10 @@ class import_model extends MY_Model
             $this->mongo_db->where('import_type', $regex);
         }
 
-        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
+        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_end']) && $data['date_end'] != '') {
             $this->mongo_db->where('date_added', array(
                 '$gt' => new MongoDate(strtotime($data['date_start'])),
-                '$lte' => new MongoDate(strtotime($data['date_expire']))
+                '$lte' => new MongoDate(strtotime($data['date_end']))
             ));
         }
 

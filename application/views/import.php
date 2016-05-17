@@ -148,6 +148,19 @@
                             <td><?php echo $this->lang->line('entry_name') ?>:</td>
                             <td><input type="text" name="name" size="100" value="<?php echo set_value('group')?>" /></td>
                         </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_import_type'); ?>&nbsp;:</td>
+                            <td>
+                            <span class="dropdown">
+                                <select id="importType" class="span3"  name ="import_type">
+                                    <option label="Player"         value="player"      <?php echo $import_type =="player"?"selected":""?>>
+                                    <option label="Transaction"    value="transaction" <?php echo $import_type =="transaction"?"selected":""?>>
+                                    <option label="Store organize" value="storeorg"    <?php echo $import_type =="storeorg"?"selected":""?>>
+                                    <option label="Content"        value="content"     <?php echo $import_type =="content"?"selected":""?>>
+                                </select>
+                            </span>
+                            </td>
+                        </tr>
 
                         <tr>
                             <td><span class="required">*</span><?php echo $this->lang->line('entry_file'); ?>:</td>
@@ -211,7 +224,7 @@
                                         }
                                         ?>
                                     </td>
-                                    <td class="center">
+                                    <td class="left">
                                         <div style="width:100%; max-height:150px; overflow:auto">
                                             <?php
                                             if ($importData['results'] != null) {
