@@ -319,6 +319,16 @@ class Quiz extends REST2_Controller
             }
             array_walk_recursive($question, array($this, "convert_mongo_object_and_image_path"));
         }
+        $d = new MongoDate(time());
+        $this->mongo_db->insert('playbasis_question_to_player', array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'quiz_id' => $quiz_id,
+            'pb_player_id' => $pb_player_id,
+            'questions_id' => new MongoId($question['question_id']),
+            'questions_timestamp' => $d,
+            'type' => 'get_question'
+        ));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');

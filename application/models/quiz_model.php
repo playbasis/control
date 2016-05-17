@@ -134,6 +134,17 @@ class Quiz_model extends MY_Model
         $answers = $result ? $result['answers'] : array();
         array_push($questions, $question_id);
         array_push($answers, array('option_id' => $option_id, 'score' => $score, 'date_added' => $d));
+
+        $this->mongo_db->insert('playbasis_question_to_player', array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'quiz_id' => $quiz_id,
+            'pb_player_id' => $pb_player_id,
+            'questions_id' => $question_id,
+            'questions_timestamp' => $d,
+            'type' => 'answer'
+        ));
+
         if (!$result) {
             return $this->mongo_db->insert('playbasis_quiz_to_player', array(
                 'client_id' => $client_id,
