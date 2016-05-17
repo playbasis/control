@@ -107,9 +107,9 @@ class Content extends MY_Controller
                 $data['date_end'] = (isset($content_data['date_end']) && $content_data['date_end']) ? new MongoDate(strtotime($content_data['date_end'])) : null;
                 $data['image'] = (isset($content_data['image']) && $content_data['image']) ? $content_data['image'] : null;
                 $data['category'] = (isset($content_data['category']) && $content_data['category']) ? new MongoId($content_data['category']) : null;
-                $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
                 $data['status'] = (isset($content_data['status']) && $content_data['status'] == 'on') ? true : false;
                 $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
+                $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
 
                 $insert = $this->Content_model->createContent($data);
                 if ($insert) {
