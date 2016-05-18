@@ -3,23 +3,29 @@ class  MY_Controller  extends  CI_Controller  {
 
     function MY_Controller ()  {
         parent::__construct();
-        if ($this->session->userdata('user_id')) {
-            setcookie("client_id", $this->session->userdata('client_id'));
-            setcookie("site_id", $this->session->userdata('site_id'));
-        } else {
-            setcookie("client_id", null);
-            setcookie("site_id", null);
-        }
-    }
-
-    function render_page($view) {
-
         $this->load->model('User_model');
         $this->load->model('Client_model');
         $this->load->model('Player_model');
         $this->load->model('App_model');
         $this->load->model('Feature_model');
         $this->load->model('Plan_model');
+
+        if ($this->session->userdata('user_id')) {
+            setcookie("client_id", $this->session->userdata('client_id'));
+            setcookie("site_id", $this->session->userdata('site_id'));
+
+            if ($this->input->get('site_id')) {
+                $this->User_model->updateSiteId($this->input->get('site_id'));
+            }
+        } else {
+            setcookie("client_id", null);
+            setcookie("site_id", null);
+        }
+
+    }
+
+    function render_page($view) {
+
 
         $lang = get_lang($this->session, $this->config);
 
