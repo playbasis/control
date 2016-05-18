@@ -712,7 +712,14 @@ class Content extends MY_Controller
                         }
                         $result = $this->Content_model->deleteContentCategoryByIdArray($category_data['id']);
                     } else {
-                        $result = $this->Content_model->createContentCategory($client_id, $site_id, $name);
+                        $chk_name = $this->Content_model->retrieveContentCategoryByName($client_id, $site_id, $name);
+                        if($chk_name){
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'name duplicate'));
+                            die;
+                        }else {
+                            $result = $this->Content_model->createContentCategory($client_id, $site_id, $name);
+                        }
                     }
                 } else {
                     try {
@@ -720,11 +727,18 @@ class Content extends MY_Controller
                         if (isset($category_data['action']) && $category_data['action'] == 'delete') {
                             $result = $this->Content_model->deleteContentCategory($categoryId);
                         } else {
-                            $result = $this->Content_model->updateContentCategory($categoryId, array(
-                                'client_id' => $client_id,
-                                'site_id' => $site_id,
-                                'name' => $name
-                            ));
+                            $chk_name = $this->Content_model->retrieveContentCategoryByNameButNotID($client_id, $site_id, $name, $categoryId);
+                            if($chk_name){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'name duplicate'));
+                                die;
+                            }else {
+                                $result = $this->Content_model->updateContentCategory($categoryId, array(
+                                    'client_id' => $client_id,
+                                    'site_id' => $site_id,
+                                    'name' => $name
+                                ));
+                            }
                         }
                     } catch (Exception $e) {
                         $this->output->set_status_header('400');

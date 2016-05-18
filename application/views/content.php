@@ -225,6 +225,21 @@
     </div>
 </div>
 
+<div class="modal hide" id="categoryErrorDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
+        <h1>Error</h1>
+    </div>
+    <div class="modal-body">
+        <div>
+            <i class="fa fa-times"></i>&nbsp;<span id="category_error_message"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" id="category-error-dialog-close">Close</button>
+    </div>
+</div>
+
 <link id="base-style" rel="stylesheet" type="text/css"
       href="<?php echo base_url(); ?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css"/>
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
@@ -275,7 +290,8 @@
         $categoryContentTable = $('#categoryContentTable'),
         $categoryContentToolbarRemove = $('#categoryContentToolbar').find('#remove'),
         categorySelections = [],
-        $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
+        $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html(),
+        $categoryErrorDialog = $('#categoryErrorDialog');
 
     function initCategoryTable() {
         $categoryContentTable.bootstrapTable({
@@ -397,10 +413,17 @@
                 //$categoryContentTable.bootstrapTable('append', result);
             })
             .fail(function (xhr, textStatus, errorThrown) {
-                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+                if(JSON.parse(xhr.responseText).status == "error") {
+                    $('form.category-form').trigger("reset");
+                    alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+                }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                    $waitDialog.modal('hide');
+                    $categoryErrorDialog.find("#category_error_message").text("Category name is already exist!");
+                    $categoryErrorDialog.modal();
+                }
             })
             .always(function () {
-                $('form.category-form').trigger("reset");
+                //$('form.category-form').trigger("reset");
                 $waitDialog.modal('hide');
             });
     }
@@ -477,6 +500,10 @@
         .on('click', '#addNewCategoryLink', function () {
             $('#mainTab').find('a[href="#categoryContentTab"]').tab('show');
             resetModalForm();
+            $formCategoryModal.modal('show');
+        })
+        .on('click', 'button#category-error-dialog-close', function () {
+            $categoryErrorDialog.modal('hide');
             $formCategoryModal.modal('show');
         });
 

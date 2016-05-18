@@ -8,7 +8,6 @@
     <div class="box">
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
-            <?php //if($user_group_id != $setting_group_id){ ?>
             <div class="buttons">
                 <?php if ($tab_status == "cron") { ?>
                     <button class="btn btn-info" onclick="location = baseUrlPath+'import/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
@@ -18,7 +17,6 @@
                     <button class="btn btn-info" onclick="location = baseUrlPath+'import/data'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
                 <?php }  ?>
             </div>
-            <?php //}?>
         </div>
 
 
@@ -58,7 +56,7 @@
             }
             ?>
 
-<?php/// tab1 ?>
+    <!--tab1 -->
             <?php if ($tab_status == "cron"){ ?>
             <div id="actions">
                 <?php
@@ -136,7 +134,7 @@
                 </ul>
             </div>
 
-<?php/// tab2 ?>
+    <!--tab1 -->
             <?php }elseif($tab_status == "adhoc"){?>
             <div id="actions">
                 <?php
@@ -169,10 +167,9 @@
                     </table>
                     <?php
                     echo form_close();?>
-            </div><!-- #actions -->
-<?php/// endtab2 ?>
+            </div>
 
-<?php/// tab3 ?>
+    <!--tab3 -->
             <?php }elseif($tab_status == "log"){?>
                 <div class="report-filter">
                 <span>
@@ -253,7 +250,7 @@
                     </table>
                     <?php
                     echo form_close();?>
-                </div><!-- #actions -->
+                </div>
                 <div class="pagination">
                     <ul class='ul_rule_pagination_container'>
                         <li class="page_index_number active"><a>Total Records:</a></li> <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
@@ -262,11 +259,7 @@
                     </ul>
                 </div>
             <?php }?>
-<?php/// endtab3 ?>
-
-
-
-
+    <!-- end tab3 -->
         </div>
     </div>
 </div>
