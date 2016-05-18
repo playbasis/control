@@ -858,7 +858,7 @@ class Player extends REST2_Controller
             'action_name' => 'login',
             'action_icon' => 'fa-sign-in',
             'message' => $eventMessage
-        ), $this->validToken['domain_name'], $this->validToken['site_id']);
+        ), $this->validToken['site_name'], $this->validToken['site_id']);
 
         /* Optionally, keep track of session */
         $session_id = $this->input->post('session_id');
@@ -913,7 +913,7 @@ class Player extends REST2_Controller
             'action_name' => 'logout',
             'action_icon' => 'fa-sign-out',
             'message' => $eventMessage
-        ), $this->validToken['domain_name'], $this->validToken['site_id']);
+        ), $this->validToken['site_name'], $this->validToken['site_id']);
 
         /* Optionally, remove session */
         $session_id = $this->input->post('session_id');
@@ -1060,7 +1060,7 @@ class Player extends REST2_Controller
             'action_name' => 'login',
             'action_icon' => 'fa-sign-in',
             'message' => $eventMessage
-        ), $this->validToken['domain_name'], $this->validToken['site_id']);
+        ), $this->validToken['site_name'], $this->validToken['site_id']);
 
         /* Optionally, keep track of session */
         $session_id = get_random_code(40, true, true, true);

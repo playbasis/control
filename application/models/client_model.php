@@ -495,7 +495,7 @@ class Client_model extends MY_Model
         assert(is_string($logData['action_name']));
         assert($logData['client_id']);
         assert($logData['site_id']);
-        assert(is_string($logData['domain_name']));
+        assert(is_string($logData['site_name']));
         if (isset($logData['input'])) //			$logData['input'] = serialize(array_merge($logData['input'], $jigsawOptionData));
         {
             $logData['input'] = array_merge($logData['input'], $jigsawOptionData);
@@ -509,7 +509,7 @@ class Client_model extends MY_Model
             'input' => $logData['input'],
             'client_id' => $logData['client_id'],
             'site_id' => $logData['site_id'],
-            'domain_name' => $logData['domain_name'],
+            'site_name' => $logData['site_name'],
             'action_log_id' => (isset($logData['action_log_id'])) ? $logData['action_log_id'] : 0,
             'action_id' => (isset($logData['action_id'])) ? $logData['action_id'] : 0,
             'action_name' => (isset($logData['action_name'])) ? $logData['action_name'] : '',
@@ -1064,7 +1064,7 @@ class Client_model extends MY_Model
     public function findBySiteId($site_id)
     {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('client_id', 'domain_name'));
+        $this->mongo_db->select(array('client_id', 'site_name'));
         $this->mongo_db->where('_id', $site_id);
         $result = $this->mongo_db->get('playbasis_client_site');
         return $result ? $result[0] : array();

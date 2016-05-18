@@ -1840,7 +1840,7 @@ class Cron extends CI_Controller
                 'cl_player_id' => $cl_player_id,
                 'client_id' => $client_id,
                 'site_id' => $site_id,
-                'domain_name' => $client_info['domain_name'],
+                'site_name' => $client_info['site_name'],
                 'leaderboard_id' => $config['_id'],
                 //'node_id' => $node_id,
             ));
@@ -1865,7 +1865,7 @@ class Cron extends CI_Controller
         $cl_player_id = $input['cl_player_id'];
         $client_id = $input['client_id'];
         $site_id = $input['site_id'];
-        $domain_name = $input['domain_name'];
+        $site_name = $input['site_name'];
         $leaderboard_id = $input['leaderboard_id'];
         $node_id = isset($input['node_id']) ? $input['node_id'] : null;
         $return_event = array();
@@ -1925,7 +1925,7 @@ class Cron extends CI_Controller
                         'action_name' => $action,
                         'message' => $eventMessage,
                         'badge' => $event['reward_data'],
-                    )), $domain_name, $site_id);
+                    )), $site_name, $site_id);
                 }
             } elseif ($type == "goods") {
                 foreach ($r as $item) {
@@ -1976,7 +1976,7 @@ class Cron extends CI_Controller
                         'action_name' => $action,
                         'message' => $eventMessage,
                         'goods' => $event['reward_data'],
-                    )), $domain_name, $site_id);
+                    )), $site_name, $site_id);
                 }
             } elseif ($type == "custompoints") {
                 foreach ($r as $point) {
@@ -2028,7 +2028,7 @@ class Cron extends CI_Controller
                         'message' => $eventMessage,
                         'amount' => $point["reward_value"],
                         'point' => $reward_type_name,
-                    )), $domain_name, $site_id);
+                    )), $site_name, $site_id);
                 }
             } else {
                 // for POINT  and EXP
@@ -2046,7 +2046,7 @@ class Cron extends CI_Controller
                             'action_name' => $action,
                             'message' => $eventMessage,
                             'level' => $lv
-                        )), $domain_name, $site_id);
+                        )), $site_name, $site_id);
                     }
 
                     $reward_type_message = 'point';
@@ -2100,7 +2100,7 @@ class Cron extends CI_Controller
                     'message' => $eventMessage,
                     'amount' => $r["reward_value"],
                     'point' => $reward_type_name,
-                )), $domain_name, $site_id);
+                )), $site_name, $site_id);
             }
 
         }

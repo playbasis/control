@@ -645,7 +645,7 @@ class Redeem extends REST2_Controller
                     'action_icon' => 'fa-gift',
                     'message' => $eventMessage,
                     'goods' => $event['goods_data']
-                )), $validToken['domain_name'], $validToken['site_id']);
+                )), $validToken['site_name'], $validToken['site_id']);
             } catch (Exception $e) {
                 if ($e->getMessage() == "LIMIT_EXCEED") {
                     $this->response($this->error->setError(

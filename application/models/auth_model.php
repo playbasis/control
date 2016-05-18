@@ -29,7 +29,6 @@ class Auth_model extends MY_Model
             $this->mongo_db->select(array(
                 '_id',
                 'client_id',
-                'domain_name',
                 'site_name'
             ));
             $this->mongo_db->where(array(
@@ -148,7 +147,6 @@ class Auth_model extends MY_Model
             unset($info['site_id']);
             $this->set_site_mongodb($info['_id']);
             $this->mongo_db->select(array(
-                'domain_name',
                 'site_name'
             ));
             $this->mongo_db->where($info);
@@ -170,7 +168,6 @@ class Auth_model extends MY_Model
         );
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
-            'domain_name',
             'site_name'
         ));
         $this->mongo_db->where($info);
@@ -203,7 +200,6 @@ class Auth_model extends MY_Model
             $this->mongo_db->select(array(
                 '_id',
                 'client_id',
-                'domain_name',
                 'site_name'
             ));
             $this->mongo_db->where(array(

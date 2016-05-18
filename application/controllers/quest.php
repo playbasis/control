@@ -33,7 +33,6 @@ class Quest extends REST2_Controller
 
         $client_id = $validToken["client_id"];
         $site_id = $validToken["site_id"];
-        $domain_name = $validToken['domain_name'];
 
         if ($test_id) {
             $quests = $this->player_model->getQuestsByID($site_id, $test_id);
@@ -809,7 +808,7 @@ class Quest extends REST2_Controller
                     'badge' => $event['reward_data'],
                     'mission' => isset($sub_events["mission_id"]) ? $sub_events : null,
                     'quest' => (!isset($sub_events["mission_id"])) ? $sub_events : null
-                )), $validToken['domain_name'], $validToken['site_id']);
+                )), $validToken['site_name'], $validToken['site_id']);
             } elseif ($r["reward_type"] == "GOODS") {
                 $this->client_model->updateplayerGoods($r["reward_id"], $r["reward_value"], $player_id, $cl_player_id,
                     $validToken['client_id'], $validToken['site_id']);
@@ -847,7 +846,7 @@ class Quest extends REST2_Controller
                     'goods' => $event['reward_data'],
                     'mission' => isset($sub_events["mission_id"]) ? $sub_events : null,
                     'quest' => (!isset($sub_events["mission_id"])) ? $sub_events : null
-                )), $validToken['domain_name'], $validToken['site_id']);
+                )), $validToken['site_name'], $validToken['site_id']);
             } else {
                 // for POINT ,CUSTOM_POINT and EXP
 
@@ -865,7 +864,7 @@ class Quest extends REST2_Controller
                             'action_icon' => 'fa-trophy',
                             'message' => $eventMessage,
                             'level' => $lv
-                        )), $validToken['domain_name'], $validToken['site_id']);
+                        )), $validToken['site_name'], $validToken['site_id']);
                     }
 
                     $reward_type_message = 'point';
@@ -912,7 +911,7 @@ class Quest extends REST2_Controller
                     'point' => $reward_type_name,
                     'mission' => isset($sub_events["mission_id"]) ? $sub_events : null,
                     'quest' => (!isset($sub_events["mission_id"])) ? $sub_events : null
-                )), $validToken['domain_name'], $validToken['site_id']);
+                )), $validToken['site_name'], $validToken['site_id']);
             }
 
         }
