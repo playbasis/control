@@ -114,7 +114,6 @@ db.once('open', function callback(){
         date_modified: Date,
         date_start: Date,
         deleted: Boolean,
-        domain_name: String,
         image: String,
         last_send_limit_users: Date,
         limit_users: Number,
@@ -145,11 +144,9 @@ redisPubClient.on('error', function(err){
 });
 
 //create redis sub-client for the specified channel
-function createRedisSubClient(channel){
-
-	//assert(!redisSubClients[channel]);
+function createRedisSubClient(channel)
+{
 	redisSubClients[channel] = redis.createClient(REDIS_CLIENT_PORT, REDIS_CLIENT_ADDRESS);
-
 	redisSubClients[channel].on('error', function(err){
 		console.log('redis sub-client err: ' + err);
 	});
@@ -196,7 +193,7 @@ function verifyChannel(channel, callback)
      var str = channel;
     channel = str.replace("\\", "/");
 
-    ClientSite.findOne({$or : [{domain_name: channel}, {domain_name: 'www.' + channel}]}, function (err, data) {
+    ClientSite.findOne({$or : [{site_name: channel}, {site_name: 'www.' + channel}]}, function (err, data) {
         if(err){
             console.log(err);
             callback(err);
@@ -204,7 +201,7 @@ function verifyChannel(channel, callback)
         }
         //console.log(channel);
         //console.log(data);
-        if(data && data.domain_name){
+        if(data && data.site_name){
             //console.log('domain valid: ' + data.domain_name);
             callback(null, channel);
         }else{

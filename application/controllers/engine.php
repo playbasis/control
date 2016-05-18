@@ -309,7 +309,7 @@ class Engine extends Quest
         $token = array(
             "client_id" => $this->input->post("client_id"),
             "site_id" => $this->input->post("site_id"),
-            "domain_name" => null
+            "site_name" => null
         );
         $quest_id = $this->input->post("quest_id");
 
@@ -571,7 +571,7 @@ class Engine extends Quest
                     $validToken = array(
                         "client_id" => new MongoId($this->input->post("client_id")),
                         "site_id" => new MongoId($this->input->post("site_id")),
-                        "domain_name" => null
+                        "site_name" => null
                     );
                 }
                 if (!$validToken) {
@@ -769,7 +769,7 @@ class Engine extends Quest
 
         $client_id = $validToken['client_id'];
         $site_id = $validToken['site_id'];
-        $domain_name = $validToken['domain_name'];
+        $site_name = $validToken['site_name'];
 
         if (!$input["test"] && isset($input['session_id'])) {
             $setting = $this->player_model->getSecuritySetting($validToken['client_id'], $validToken['site_id']);
@@ -976,7 +976,7 @@ class Engine extends Quest
                                     'message' => $eventMessage,
                                     'amount' => $jigsawConfig['quantity'],
                                     'point' => $jigsawConfig['reward_name']
-                                )), $domain_name, $site_id);
+                                )), $site_name, $site_id);
 
                                 //publish to facebook notification
                                 if ($fbData) {
@@ -994,7 +994,7 @@ class Engine extends Quest
                                     $this->node->publish(array_merge($input, array(
                                         'message' => $eventMessage,
                                         'level' => $lv
-                                    )), $domain_name, $site_id);
+                                    )), $site_name, $site_id);
                                     //publish to facebook notification
                                     if ($fbData) {
                                         $this->social_model->sendFacebookNotification(
@@ -1026,7 +1026,7 @@ class Engine extends Quest
                                             $this->node->publish(array_merge($input, array(
                                                 'message' => $eventMessage,
                                                 'level' => $lv
-                                            )), $domain_name, $site_id);
+                                            )), $site_name, $site_id);
                                             //publish to facebook notification
                                             if ($fbData) {
                                                 $this->social_model->sendFacebookNotification(
@@ -1079,7 +1079,7 @@ class Engine extends Quest
                                         'message' => $eventMessage,
                                         'amount' => $jigsawConfig['quantity'],
                                         'point' => $jigsawConfig['reward_name']
-                                    )), $domain_name, $site_id);
+                                    )), $site_name, $site_id);
                                     //publish to facebook notification
                                     if ($fbData) {
                                         $this->social_model->sendFacebookNotification(
@@ -1136,7 +1136,7 @@ class Engine extends Quest
                                             $this->node->publish(array_merge($input, array(
                                                 'message' => $eventMessage,
                                                 'badge' => $event['reward_data']
-                                            )), $domain_name, $site_id);
+                                            )), $site_name, $site_id);
                                             //publish to facebook notification
                                             if ($fbData) {
                                                 $this->social_model->sendFacebookNotification(
@@ -1233,7 +1233,7 @@ class Engine extends Quest
                                         'id' => $objId,
                                         'name' => $objName
                                     )
-                                )), $domain_name, $site_id);
+                                )), $site_name, $site_id);
                                 //publish to facebook notification
                                 if($fbData)
                                     $this->social_model->sendFacebookNotification(
@@ -1314,7 +1314,7 @@ class Engine extends Quest
 
     private function giveGoods($jigsawConfig, $input, $validToken, $event, $fbData, $goodsData)
     {
-        $domain_name = $validToken['domain_name'];
+        $site_name = $validToken['site_name'];
 
         $this->client_model->updateplayerGoods($jigsawConfig['item_id'], $jigsawConfig['quantity'],
             $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
@@ -1346,7 +1346,7 @@ class Engine extends Quest
         $this->node->publish(array_merge($input, array(
             'message' => $eventMessage,
             'goods' => $event['reward_data']
-        )), $domain_name, $validToken['site_id']);
+        )), $site_name, $validToken['site_id']);
 
         // publish - facebook notification
         if ($fbData) {

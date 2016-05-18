@@ -508,7 +508,7 @@ class Quiz extends REST2_Controller
         if (is_array($rewards)) {
             foreach ($rewards as $reward) {
                 $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $quiz,
-                    $this->validToken['domain_name'], $reward);
+                    $this->validToken['site_name'], $reward);
             }
         }
 
@@ -810,7 +810,7 @@ class Quiz extends REST2_Controller
         return $events;
     }
 
-    private function publish_event($client_id, $site_id, $pb_player_id, $cl_player_id, $quiz, $domain_name, $event)
+    private function publish_event($client_id, $site_id, $pb_player_id, $cl_player_id, $quiz, $site_name, $event)
     {
         $message = null;
         if ($event['value'] == 0 || empty($event['value'])) {
@@ -885,7 +885,7 @@ class Quiz extends REST2_Controller
                     'message' => $message['message'],
                     'level' => $event['value'],
                     'quiz' => $quiz,
-                ), $domain_name, $site_id);
+                ), $site_name, $site_id);
             } else {
                 if ($event['reward_type'] == 'badge') {
                     $this->node->publish(array(
@@ -898,7 +898,7 @@ class Quiz extends REST2_Controller
                         'message' => $message['message'],
                         'badge' => $event['reward_data'],
                         'quiz' => $quiz,
-                    ), $domain_name, $site_id);
+                    ), $site_name, $site_id);
                 } else {
                     $this->node->publish(array(
                         'client_id' => $client_id,
@@ -911,7 +911,7 @@ class Quiz extends REST2_Controller
                         'amount' => $event['value'],
                         'point' => $event['reward_type'],
                         'quiz' => $quiz,
-                    ), $domain_name, $site_id);
+                    ), $site_name, $site_id);
                 }
             }
         }

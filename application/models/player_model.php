@@ -1496,7 +1496,7 @@ class Player_model extends MY_Model
 
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
-            'domain_name',
+            'site_name',
             /* 'limit_users', */  // use plan instead
             'last_send_limit_users'
         ));
@@ -1508,7 +1508,7 @@ class Player_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_client_site');
         assert($result);
         $result = $result[0];
-        $domain_name_client = $result['domain_name'];
+        $domain_name_client = $result['site_name'];
 
         $last_send = $result['last_send_limit_users'] ? $result['last_send_limit_users']->sec : null;
         $next_send = $last_send + (7 * 24 * 60 * 60); //next week from last send
