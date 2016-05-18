@@ -31,6 +31,22 @@ class App_model extends MY_Model
         return $client_data;
     }
 
+    public function getTotalPlatFormsBySiteId($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        $client_data = $this->mongo_db->count("playbasis_platform_client_site");
+
+        return $client_data;
+    }
+    
     public function getPlatFormsByClientId($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));

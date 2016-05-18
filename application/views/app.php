@@ -14,6 +14,12 @@
                 <?php }else{ ?>
                     <button class="btn btn-info" onclick="location = baseUrlPath+'app/add'" type="button"><?php echo $this->lang->line('button_add_app'); ?></button>
                 <?php } ?>
+                <?php if( $plan_limit_platform !== null && $total_platform >= $plan_limit_platform){ ?>
+                    <button class="btn btn-default disabled" disabled type="button">Add Platform</button>
+                <?php }else{ ?>
+                    <button class="btn btn-info" onclick="location='<?php echo site_url("app/add_platform/".$site_id); ?>'" type="button">Add Platform</button>
+                <?php } ?>
+                <button class="btn btn-info" onclick="location='<?php echo site_url("app/edit_app/".$site_id); ?>'" type="button">Edit App</button>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
             </div>
         </div>
@@ -33,27 +39,14 @@
             echo form_open('app/delete',$attributes);
             ?>
                 <?php if (isset($site_list)) { ?>
-                    <?php foreach ($site_list as $site) { ?>
+                    <?php foreach ($site_list as $site) {
+                    if ($site['site_id'] == $site_id) {
+                    ?>
                     <table class="list app-table">
-                        <thead>
-                        <tr>
-                            <td width="1" style="text-align: center;">
-                                <input type="checkbox" name="app_selected[]" value="<?php echo $site['site_id']; ?>" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);">
-                            </td>
-                            <td class="left" colspan="5"><h3><?php echo $site['site_name']; ?></h3>
-                                <?php if( $plan_limit_platform !== null && $total_platform >= $plan_limit_platform){ ?>
-                                    <button class="btn btn-default btn-mini disabled" disabled type="button">Add Platform</button>
-                                <?php }else{ ?>
-                                    <button class="btn btn-info btn-mini" onclick="location='<?php echo site_url("app/add_platform/".$site['site_id']); ?>'" type="button">Add Platform</button>
-                                <?php } ?>
-                                <button class="btn btn-info btn-mini" onclick="location='<?php echo site_url("app/edit_app/".$site['site_id']); ?>'" type="button">Edit App</button>
-                            </td>
-                        </tr>
-                        </thead>
                         <tbody>
                             <tr class="app-table-label">
                                 <td style="text-align: center;" width="10%">
-
+                                    <input type="checkbox" name="app_selected[]" value="<?php echo $site['site_id']; ?>" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);">
                                 </td>
                                 <td class="left" width="15%">
                                     Platform
@@ -116,7 +109,7 @@
                             <?php } ?>
                         </tbody>
                     </table>
-                    <?php } ?>
+                    <?php }} ?>
                 <?php }else{
 
                     } ?>

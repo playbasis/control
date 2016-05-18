@@ -102,7 +102,7 @@ class App extends MY_Controller
         );
 
         if ($client_id) {
-            $total = $this->App_model->getTotalAppsByClientId($data);
+            $total = $this->App_model->getTotalPlatFormsBySiteId($data);
 
             $results_site = $this->App_model->getAppsByClientId($data);
 
