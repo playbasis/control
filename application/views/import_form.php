@@ -120,6 +120,7 @@
                                     <option label="Player"         value="player"      <?php echo $import_type =="player"?"selected":""?>>
                                     <option label="Transaction"    value="transaction" <?php echo $import_type =="transaction"?"selected":""?>>
                                     <option label="Store organize" value="storeorg"    <?php echo $import_type =="storeorg"?"selected":""?>>
+                                    <option label="Content"        value="content"     <?php echo $import_type =="content"?"selected":""?>>
                                 </select>
                             </span>
                         </td>

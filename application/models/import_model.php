@@ -21,16 +21,18 @@ class import_model extends MY_Model
         return $insert;
     }
 
-    public function updateCompleteImport($client_id, $site_id, $importResult)
+    public function updateCompleteImport($client_id, $site_id, $importResult, $importKey, $import_type)
     {
         $mongoDate = new MongoDate(time());
-        $importResult = array_merge($importResult, array(
+        $result = array('import_key' => $importKey);
+        $result += array_merge($importResult, array(
             'client_id' => $client_id,
             'site_id' => $site_id,
+            'import_type' => $import_type,
             'import_id' => null,
             'date_added' => $mongoDate
         ));
-        return $this->mongo_db->insert('playbasis_import_log', $importResult);
+        return $this->mongo_db->insert('playbasis_import_log', $result);
     }
 
     public function retrieveImportData($data)

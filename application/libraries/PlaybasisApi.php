@@ -208,6 +208,11 @@ class PlaybasisApi
         return $result;
     }
 
+    public function addContent($Params=array()) {
+        $result = $this->_post('Content/addContent/', $Params);
+        return $result;
+    }
+
     private function _get($uri,$params = array()) {
         $defaultParam = array('api_key' => $this->api_key);
         $sendParam = array_merge($defaultParam, $params);

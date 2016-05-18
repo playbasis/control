@@ -14,7 +14,7 @@
                     <button class="btn btn-info" onclick="location = baseUrlPath+'import/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
                     <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
                 <?php }elseif ($tab_status == "adhoc") { ?>
-                    <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
+                    <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_execute'); ?></button>
                     <button class="btn btn-info" onclick="location = baseUrlPath+'import/data'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
                 <?php }  ?>
             </div>

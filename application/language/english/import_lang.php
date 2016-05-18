@@ -33,6 +33,7 @@ $lang['button_filter'] = 'Filter';
 $lang['button_clear_filter'] = 'Clear';
 $lang['button_back'] = 'Back';
 $lang['button_download'] = 'Download';
+$lang['button_execute'] = 'Execute';
 
 $lang['filter_date_start'] = 'Date start';
 $lang['filter_date_end'] = 'Date end';

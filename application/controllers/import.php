@@ -425,12 +425,14 @@ class import extends MY_Controller
                             $result = $this->postEngineRule($data);
                         }elseif($import_type == "storeorg") {
                             $result = $this->postAddPlayerToNodeByName($data);
+                        }elseif($import_type == "content") {
+                            $result = $this->postAddContent($data);
                         }
                         $returnImportActivities[] = array( "input" => $line,"result" => $result);
                     }
                 }
 
-                $this->import_model->updateCompleteImport($this->User_model->getClientId(), $this->User_model->getSiteId(), array('results' => $returnImportActivities));
+                $this->import_model->updateCompleteImport($this->User_model->getClientId(), $this->User_model->getSiteId(), array('results' => $returnImportActivities), $parameter_set, $import_type);
                 $this->session->set_flashdata('success', $this->lang->line('text_success_import'));
                 redirect('/import/adhoc', 'refresh');
             }
@@ -523,6 +525,12 @@ class import extends MY_Controller
         return $result->message;
     }
 
+    private function postAddContent($param) {
+        $this->getToken();
+
+        $result = $this->_api->addContent($param);
+        return $result->message;
+    }
 
     public function log(){
         if (!$this->validateAccess()) {
