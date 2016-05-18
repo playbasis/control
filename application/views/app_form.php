@@ -36,7 +36,7 @@ if(validation_errors() || isset($message)) {
 $attributes = array('id' => 'form');
 echo form_open($form ,$attributes);
 ?>
-    <div id="tab-domain">
+    <div id="tab-site">
         <table class="form">
             <tr>
                 <?php

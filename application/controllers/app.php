@@ -81,7 +81,7 @@ class App extends MY_Controller
         if ($this->input->get('sort')) {
             $sort = $this->input->get('sort');
         } else {
-            $sort = 'domain_name';
+            $sort = 'site_name';
         }
 
         if ($this->input->get('order')) {
@@ -128,12 +128,11 @@ class App extends MY_Controller
                 );
                 $app_data = $this->App_model->getPlatFormByAppId($data_filter_app);
 
-                $this->data['domain_list'][] = array(
+                $this->data['site_list'][] = array(
                     'selected' => is_array($this->input->post('selected')) && in_array($result['_id'],
                             $this->input->post('selected')),
                     'site_id' => $result['_id'],
                     'client_id' => $result['client_id'],
-                    'domain_name' => $result['domain_name'],
                     'site_name' => $result['site_name'],
                     'apps' => $app_data,
                     'status' => $result['status'],
@@ -296,11 +295,11 @@ class App extends MY_Controller
                     redirect("app");
                 }
 
-                $c_data = array('domain_name' => $this->input->post('app_name'));
+                $c_data = array('site_name' => $this->input->post('app_name'));
 
-                $domain = $this->App_model->checkAppExists($c_data);
+                $site = $this->App_model->checkAppExists($c_data);
 
-                if (!$domain) {
+                if (!$site) {
 
                     $data_platform = array();
                     if (strtolower($this->input->post('platform')) == 'ios') {
@@ -344,7 +343,7 @@ class App extends MY_Controller
                         'site_id' => $site_id . "",
                     ));
 
-                    $another_data['domain_value'] = array(
+                    $another_data['site_value'] = array(
                         'site_id' => $site_id,
                         'status' => true
                     );
@@ -592,7 +591,7 @@ class App extends MY_Controller
     {
 
         if (isset($app_id) && ($app_id != 0)) {
-            $domain_info = $this->App_model->getApp($app_id);
+            $site_info = $this->App_model->getApp($app_id);
         }
 
         if (isset($platform_id) && ($platform_id != 0)) {
@@ -602,15 +601,15 @@ class App extends MY_Controller
         if ($this->input->post('app_name')) {
             $this->data['app_name'] = $this->input->post('app_name');
         } elseif (isset($app_id) && ($app_id != 0)) {
-            $this->data['app_name'] = $domain_info['domain_name'];
+            $this->data['app_name'] = $site_info['site_name'];
         } else {
             $this->data['app_name'] = '';
         }
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-        } elseif (!empty($domain_info)) {
-            $this->data['image'] = $domain_info['image'];
+        } elseif (!empty($site_info)) {
+            $this->data['image'] = $site_info['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
         }

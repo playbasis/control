@@ -86,7 +86,7 @@ class App_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('domain_name', $regex);
+            $this->mongo_db->where('site_name', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -107,7 +107,7 @@ class App_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('domain_name', $regex);
+            $this->mongo_db->where('site_name', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -115,7 +115,7 @@ class App_model extends MY_Model
         }
 
         $sort_data = array(
-            'domain_name',
+            'site_name',
             'status',
             'sort_order',
             '_id'
@@ -171,7 +171,7 @@ class App_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('domain_name', $regex);
+            $this->mongo_db->where('site_name', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -191,7 +191,7 @@ class App_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('domain_name', $regex);
+            $this->mongo_db->where('site_name', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -199,7 +199,7 @@ class App_model extends MY_Model
         }
 
         $sort_data = array(
-            'domain_name',
+            'site_name',
             'status',
             'sort_order',
             '_id'
@@ -345,10 +345,7 @@ class App_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $domain = preg_replace("/http:\/\//", "", $data['domain_name']);
-        $domain = preg_replace("/https:\/\//", "", $domain);
-
-        $this->mongo_db->where('domain_name', strtolower($domain));
+        $this->mongo_db->where('site_name', $data['site_name']);
         $this->mongo_db->where('deleted', false);
 
         $c = $this->mongo_db->count('playbasis_client_site');
@@ -358,13 +355,9 @@ class App_model extends MY_Model
     public function addApp($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $domain = preg_replace("/http:\/\//", "", $data['app_name']);
-        $domain = preg_replace("/https:\/\//", "", $domain);
-
+        
         $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
-            'domain_name' => $domain | '',
             'site_name' => $data['app_name'] | '',
             'api_key' => '',
             'api_secret' => '',

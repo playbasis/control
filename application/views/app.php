@@ -32,19 +32,19 @@
             $attributes = array('id' => 'form');
             echo form_open('app/delete',$attributes);
             ?>
-                <?php if (isset($domain_list)) { ?>
-                    <?php foreach ($domain_list as $domain) { ?>
+                <?php if (isset($site_list)) { ?>
+                    <?php foreach ($site_list as $site) { ?>
                     <table class="list app-table">
                         <thead>
                         <tr>
                             <td width="1" style="text-align: center;">
-                                <input type="checkbox" name="app_selected[]" value="<?php echo $domain['site_id']; ?>" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);">
+                                <input type="checkbox" name="app_selected[]" value="<?php echo $site['site_id']; ?>" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);">
                             </td>
-                            <td class="left" colspan="5"><h3><?php echo $domain['domain_name']; ?></h3>
+                            <td class="left" colspan="5"><h3><?php echo $site['site_name']; ?></h3>
                                 <?php if( $plan_limit_platform !== null && $total_platform >= $plan_limit_platform){ ?>
                                     <button class="btn btn-default btn-mini disabled" disabled type="button">Add Platform</button>
                                 <?php }else{ ?>
-                                    <button class="btn btn-info btn-mini" onclick="location='<?php echo site_url("app/add_platform/".$domain['site_id']); ?>'" type="button">Add Platform</button>
+                                    <button class="btn btn-info btn-mini" onclick="location='<?php echo site_url("app/add_platform/".$site['site_id']); ?>'" type="button">Add Platform</button>
                                 <?php } ?>
                             </td>
                         </tr>
@@ -71,7 +71,7 @@
                                 </td>
                             </tr>
                             <?php
-                            foreach($domain["apps"] as $app){
+                            foreach($site["apps"] as $app){
                             ?>
                             <tr>
                                 <td style="text-align: center;">
