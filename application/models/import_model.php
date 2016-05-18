@@ -75,19 +75,21 @@ class Import_model extends MY_Model
         return $this->mongo_db->update('playbasis_import');
     }
 
-    public function updateCompleteImport($client_id, $site_id, $import_id, $importResult)
+    public function updateCompleteImport($client_id, $site_id, $import_id, $importResult, $importKey, $import_type)
     {
         if (!$import_id) {
             return null;
         }
         $mongoDate = new MongoDate(time());
-        $importResult = array_merge($importResult, array(
+        $result = array('import_key' => $importKey);
+        $result += array_merge($importResult, array(
             'client_id' => new MongoId($client_id),
             'site_id' => new MongoId($site_id),
+            'import_type' => $import_type,
             'import_id' => $import_id,
             'date_added' => $mongoDate
         ));
-        return $this->mongo_db->insert('playbasis_import_log', $importResult);
+        return $this->mongo_db->insert('playbasis_import_log', $result);
     }
 
     public function retrieveLatestImportResult($import_id)

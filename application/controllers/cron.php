@@ -1486,47 +1486,60 @@ class Cron extends CI_Controller
                             } else {
 
                                 foreach ($returnData['importData'] as $key => $val) {
-
-                                    $f = function($v) {
-                                        return explode("=", $v[0]);
-                                    };
-                                    $f2 = function($v) {
-                                        return array($v[0] => $v[1]);
-                                    };
-
-                                    $data = array(
-                                        'api_key' => $returnImportData['api_key'],
-                                        'token' => $returnImportData['token'],
-                                        'action' => $val['action'],
-                                        'player_id' => $val['cl_player_id']
-                                    );
-
-                                    // Set custom parameters if required
-                                    if (!empty(strtolower($val['customs']))) {
-                                        $arrays = array_map($f2, array_map($f, array_map('str_getcsv', explode("|", $val['customs']))));
-
-                                        foreach ($arrays as $arr) {
-                                            $data = array_merge($data, $arr);
+                                    if($val) {
+                                        $pb_player_id = $this->player_model->getPlaybasisId(array(
+                                            'client_id' => new MongoId($returnImportData['client_id']),
+                                            'site_id' => new MongoId($returnImportData['site_id']),
+                                            'cl_player_id' => $val['player_id']
+                                        ));
+                                        if (!$pb_player_id) {
+                                            $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "User doesn't exist");
+                                            continue;
                                         }
+
+                                        // Set Date at HTTP header
+                                        if (isset($val['date']) && !is_null($val['date'])) {
+                                            $this->restclient->http_header('Date', $val['date']);
+                                        }
+
+                                        // Check if custom parameter is set
+                                        $customs_valid = true;
+                                        if (isset($val['customs']) && !is_null($val['customs'])) {
+                                            $custom_params = explode('|', $val['customs']);
+                                            foreach ($custom_params as $custom_param)  {
+                                                $keyAndValue = explode('=', $custom_param);
+                                                if(count($keyAndValue)!=2){
+                                                    $customs_valid = false;
+                                                    break;
+                                                }
+                                                $val = array_merge($val, array($keyAndValue[0] => $keyAndValue[1]));
+                                            }
+                                            unset($val['customs']);
+                                        }
+
+                                        if($customs_valid){
+
+                                            $result = $this->restclient->post($this->config->base_url() . 'Engine/rule',
+                                                array_merge($val,
+                                                    array(
+                                                        'api_key' => $returnImportData['api_key'],
+                                                        'token' => $returnImportData['token']))
+                                            );
+                                            $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => $result->message);
+                                        }else{
+                                            $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "Custom parameter format is invalid");
+                                        }
+
+                                    }else{
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "Input format is invalid");
                                     }
-
-                                    // Set Date at HTTP header
-                                    if (!empty(strtolower($val['date']))){
-                                        $this->restclient->http_header('Date', $val['date']);
-                                    }
-
-                                    $result = $this->restclient->post($this->config->base_url() . 'Engine/rule', $data);
-
-                                    $returnImportActivities = array_merge($returnImportActivities, array(
-                                        $key => $result->message
-                                    ));
                                 }
 
                             }
 
                             // Update import log
                             $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
-                                $returnData['import_id'], array('results' => $returnImportActivities));
+                                $returnData['import_id'], array('results' => $returnImportActivities),$returnData['parameter_set'],$importData['import_type']);
                         }
                     }
                 }
@@ -1564,27 +1577,24 @@ class Cron extends CI_Controller
                             } else {
 
                                 foreach ($returnData['importData'] as $key => $val) {
-                                    $data = array(
-                                        'api_key' => $returnImportData['api_key'],
-                                        'token' => $returnImportData['token'],
-                                        'player_id' => $val['player_id'],
-                                        'username' => $val['username'],
-                                        'password' => $val['password'],
-                                        'email' => $val['email'],
-                                        'image' => $val['image']
-                                    );
-                                    $result = $this->restclient->post($this->config->base_url() . 'Player/' . $val['player_id'] . '/register',
-                                        $data);
 
-                                    $returnImportActivities = array_merge($returnImportActivities, array(
-                                        $val['player_id'] => $result->message
-                                    ));
+                                    if($val) {
+                                        $result = $this->restclient->post($this->config->base_url() . 'Player/' . $val['player_id'] . '/register',
+                                            array_merge($val,
+                                                array(
+                                                    'api_key' => $returnImportData['api_key'],
+                                                    'token' => $returnImportData['token']))
+                                        );
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => $result->message);
+                                    }else{
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "Input format is invalid");
+                                    }
                                 }
                             }
 
                             // Update import log
                             $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
-                                $returnData['import_id'], array('results' => $returnImportActivities));
+                                $returnData['import_id'], array('results' => $returnImportActivities),$returnData['parameter_set'],$importData['import_type']);
                         }
                     }
                 }
@@ -1622,39 +1632,35 @@ class Cron extends CI_Controller
 
                                 foreach ($returnData['importData'] as $key => $val) {
 
-                                    $data = array(
-                                        'api_key' => $returnImportData['api_key'],
-                                        'token' => $returnImportData['token'],
-                                        'player_id' => $val['player_id'],
-                                        'name' => $val['node_name'],
-                                    );
-
-                                    // Insert player to store_org
-                                    $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/name/' . $val['node_name'] . '/type/' . $val['organize_type'] . '/addPlayer/' . $val['player_id'],
-                                        $data);
-
-                                    if ((isset($val['roles'])) && (isset($result->response->node_id))) {
-                                        $node_id = json_decode(json_encode($result->response->node_id), true)['$id'];
-
-                                        $roles = explode("|",$val['roles']);
-
-                                        // Insert role to player
-                                        foreach ($roles as $key => $role) {
-                                            $data['role'] = $role;
-                                            $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/' . $node_id . '/setPlayerRole/' . $val['player_id'],
-                                                $data);
+                                    if($val) {
+                                        $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/name/' . $val['node_name'] . '/type/' . $val['organize_type'] . '/addPlayer/' . $val['player_id'],
+                                            array_merge($val,
+                                                array(
+                                                    'api_key' => $returnImportData['api_key'],
+                                                    'token' => $returnImportData['token']))
+                                        );
+                                        if($result->message == "Success" && isset($val['role']) && !is_null($val['role'])){
+                                            $roles = explode('|', $val['role']);
+                                            foreach($roles as $role) {
+                                                $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/' . $result->response->node_id->{'$id'} . '/setPlayerRole/' . $val['player_id'],
+                                                    array_merge(array('role' => $role),
+                                                        array(
+                                                            'api_key' => $returnImportData['api_key'],
+                                                            'token' => $returnImportData['token']))
+                                                );
+                                            }
                                         }
-                                    }
 
-                                    $returnImportActivities = array_merge($returnImportActivities, array(
-                                        $val['player_id'] => $result->message
-                                    ));
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => $result->message);
+                                    }else{
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "Input format is invalid");
+                                    }
                                 }
                             }
 
                             // Update import log
                             $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
-                                $returnData['import_id'], array('results' => $returnImportActivities));
+                                $returnData['import_id'], array('results' => $returnImportActivities),$returnData['parameter_set'],$importData['import_type']);
                         }
                     }
                 }
@@ -1706,6 +1712,7 @@ class Cron extends CI_Controller
 
             // login with username and password
             $login_result = ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
+            ftp_chdir ( $conn_id , 'htdocs' );
 
             // login with username and password
             $ftp_get_result = ftp_fget($conn_id, $handle, $remote_file, FTP_ASCII, 0);
@@ -1713,7 +1720,7 @@ class Cron extends CI_Controller
             // close the connection and the file handler
             ftp_close($conn_id);
             fclose($handle);
-
+            $line = array();
             // try to download $remote_file and save it to $handle
             if ($login_result && $ftp_get_result) {
                 $result = file_get_contents($local_file);
@@ -1721,9 +1728,19 @@ class Cron extends CI_Controller
                 // Convert CSV to JSON
                 if ($file_extension === 'csv') {
                     $result = rtrim($result,"\n");
+                    $line = explode("\n", $result);
                     $array = array_map('str_getcsv', explode("\n", $result));
                     array_walk($array, function (&$a) use ($array) {
-                        $a = array_combine($array[0], $a);
+                        if(count($a)<count($array[0])){
+                            $a = null;
+                        }else{
+                            $data = array();
+                            foreach ($array[0] as $index => $key) {
+                                $data += array($key => $a[$index]);
+                            }
+                            $a = $data;
+                        }
+                        //$a = array_combine($array[0], $a);
                     });
                     array_shift($array);
                     $result = json_encode($array);
@@ -1750,9 +1767,19 @@ class Cron extends CI_Controller
             // Convert CSV to JSON
             if ($file_extension === 'csv') {
                 $result = rtrim($result,"\n");
+                $line = explode("\n", $result);
                 $array = array_map('str_getcsv', explode("\n", $result));
                 array_walk($array, function (&$a) use ($array) {
-                    $a = array_combine($array[0], $a);
+                    if(count($a)<count($array[0])){
+                        $a = null;
+                    }else{
+                        $data = array();
+                        foreach ($array[0] as $index => $key) {
+                            $data += array($key => $a[$index]);
+                        }
+                        $a = $data;
+                    }
+                    //$a = array_combine($array[0], $a);
                 });
                 array_shift($array);
                 $result = json_encode($array);
@@ -1765,6 +1792,9 @@ class Cron extends CI_Controller
 
             // Add import data to return
             $data['importData'] = $jsonData;
+            $data['parameter_set'] = trim($line[0]);
+            array_shift($line);
+            $data['line'] = $line;
 
             // Get latest import result from import log
             $latestImportLog = $this->import_model->retrieveLatestImportResult($data['import_id']);
