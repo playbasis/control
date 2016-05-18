@@ -66,7 +66,7 @@
                             }else{
                         ?>
                     <tr>
-                        <td class="center" colspan="5">
+                        <td class="center" colspan="6">
                         No quiz
                         </td>
                     </tr>

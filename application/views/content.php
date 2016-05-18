@@ -107,7 +107,7 @@
                                         } else {
                                             ?>
                                             <tr>
-                                                <td colspan="6" class="center">
+                                                <td colspan="7" class="center">
                                                     <?php echo $this->lang->line('text_empty_content'); ?>
                                                 </td>
                                             </tr>
