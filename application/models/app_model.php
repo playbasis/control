@@ -397,7 +397,19 @@ class App_model extends MY_Model
         return array($data['site_id'], array('key' => $key, 'secret' => $secret));
     }
 
-    public function editApp($platform_id, $data)
+    public function editApp($app_id, $data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($app_id));
+        $this->mongo_db->set('site_name', $data['app_name']);
+        $this->mongo_db->set('image', isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '');
+
+        return $this->mongo_db->update('playbasis_client_site');
+
+    }
+
+    public function editPlatform($platform_id, $data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 

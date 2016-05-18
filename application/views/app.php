@@ -46,6 +46,7 @@
                                 <?php }else{ ?>
                                     <button class="btn btn-info btn-mini" onclick="location='<?php echo site_url("app/add_platform/".$site['site_id']); ?>'" type="button">Add Platform</button>
                                 <?php } ?>
+                                <button class="btn btn-info btn-mini" onclick="location='<?php echo site_url("app/edit_app/".$site['site_id']); ?>'" type="button">Edit App</button>
                             </td>
                         </tr>
                         </thead>

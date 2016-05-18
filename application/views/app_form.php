@@ -34,13 +34,15 @@ if(validation_errors() || isset($message)) {
 <?php
 }
 $attributes = array('id' => 'form');
+$form_data = explode('/', $form);
+$form_type = $form_data[1];
 echo form_open($form ,$attributes);
 ?>
     <div id="tab-site">
         <table class="form">
             <tr>
                 <?php
-                if($app_id){
+                if($app_id && ($form_type != "edit_app") ){
                 ?>
                     <td> <?php echo $this->lang->line('entry_app_name'); ?>:</td>
                     <td> <?php echo isset($app_name) ? $app_name : set_value('app_name'); ?></td>
@@ -53,21 +55,24 @@ echo form_open($form ,$attributes);
                 }
                 ?>
             </tr>
-                <tr>
-                    <td> <?php echo $this->lang->line('entry_logo'); ?>:</td>
-                    <td> <img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
-                        <input type="hidden" name="image" value="<?php echo $image; ?>" id="image"/>
-                        <?php
-                        if(!$app_id){
-                        ?>
+            <tr>
+                <td> <?php echo $this->lang->line('entry_logo'); ?>:</td>
+                <td> <img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
+                    <input type="hidden" name="image" value="<?php echo $image; ?>" id="image"/>
+                    <?php
+                    if(!$app_id || $form_type == "edit_app"){
+                    ?>
                         <br/>
                         <a onclick="image_upload('#image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a> &nbsp;&nbsp;|&nbsp;&nbsp;
                         <a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
-                        <?php
-                        }
-                        ?>
-                    </td>
-                </tr>
+                    <?php
+                    }
+                    ?>
+                </td>
+            </tr>
+            <?php
+            if($form_type != "edit_app"){
+            ?>
             <tr>
                 <td><span class="required">*</span> <?php echo $this->lang->line('entry_platform'); ?>:</td>
                 <td>
@@ -173,6 +178,9 @@ echo form_open($form ,$attributes);
                 <td><span class="required">*</span> Package Name:</td>
                 <td><input type="text" name="android_package_name" value="<?php echo $android_package_name; ?>" size="50" /> <span class="muted">ex. com.companyname.appname</span></td>
             </tr>
+            <?php
+            }
+            ?>
         </table>
     </div>
 <?php

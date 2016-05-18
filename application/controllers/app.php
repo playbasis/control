@@ -486,7 +486,7 @@ class App extends MY_Controller
                     "platform" => strtolower($this->input->post('platform')),
                     "data" => $data_platform
                 );
-                $this->App_model->editApp($platform_id, $edit_data);
+                $this->App_model->editPlatform($platform_id, $edit_data);
 
                 $this->session->data['success'] = $this->lang->line('text_success');
 
@@ -583,6 +583,41 @@ class App extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['form'] = 'app/add_platform/' . $app_id;
+
+        $this->getForm($app_id);
+    }
+
+    public function edit_app($app_id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $this->data['message'] = null;
+
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            $this->form_validation->set_rules('app_name', $this->lang->line('entry_app_name'),
+                'trim|required|min_length[3]|max_length[100]|check_space|alpha_dash');
+
+            if ($this->form_validation->run() && $this->data['message'] == null) {
+
+                $edit_data = array(
+                    "app_name" => $this->input->post('app_name'),
+                    "image" => $this->input->post('image')
+                );
+
+                $this->App_model->editApp($app_id, $edit_data);
+                $this->session->data['success'] = $this->lang->line('text_success');
+
+                redirect('app', 'refresh');
+            }
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['form'] = 'app/edit_app/' . $app_id;
 
         $this->getForm($app_id);
     }
