@@ -54,6 +54,11 @@ class PlaybasisApi
         return $result;
     }
 
+    public function addContentToNode($content_id, $node_id) {
+        $result = $this->_post('StoreOrg/nodes/'.$node_id.'/addContent/'.$content_id);
+        return $result;
+    }
+
     public function addPlayerToNodeByName($player_id, $node_name, $organize_type) {
         $result = $this->_post('StoreOrg/nodes/name/'.$node_name.'/type/'.$organize_type.'/addPlayer/'.$player_id);
         return $result;
@@ -61,6 +66,11 @@ class PlaybasisApi
 
     public function setPlayerRole($player_id, $node_id, $role) {
         $result = $this->_post('StoreOrg/nodes/'.$node_id.'/setPlayerRole/'.$player_id,$role);
+        return $result;
+    }
+
+    public function setContentRole($content_id, $node_id, $role) {
+        $result = $this->_post('StoreOrg/nodes/'.$node_id.'/setContentRole/'.$content_id,$role);
         return $result;
     }
 
