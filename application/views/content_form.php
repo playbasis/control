@@ -140,7 +140,7 @@
 
                                <input type='hidden' name="organize_type[]" id="<?php echo "organize_type".$i ?>" style="width:220px;" value="<?php echo isset($organize_type[$i]) ? $organize_type[$i] : set_value('organize_type'); ?>">
                                <input type='hidden' name="organize_node[]" id="<?php echo "organize_node".$i ?>" style="width:220px;" value="<?php echo isset($organize_node[$i]) ? $organize_node[$i] : set_value('organize_node'); ?>">
-                               <input type="text"   name="organize_role[]" id="<?php echo "organize_role".$i ?>" style="width:220px;" placeholder="Role" value="<?php echo isset($organize_role[$i]) ? $organize_role[$i] :  set_value('organize_role'); ?>" />
+                               <input class="tags" type="text"   name="organize_role[]" id="<?php echo "organize_role".$i ?>" style="width:220px;" placeholder="Role" value="<?php echo isset($organize_role[$i]) ? $organize_role[$i] :  set_value('organize_role'); ?>" />
                                <br>
                        </div>
                     <?php }?>
