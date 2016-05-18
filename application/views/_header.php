@@ -195,7 +195,7 @@ if (isset($username)) {
                             <ul class="dropdown-menu">
 
                                 <?php foreach($site_all as $a_site){?>
-                                    <li><a href="<?php echo site_url().'?site_id='.$a_site['_id'];?>"><i class="fa fa-hdd-o fa-lg"></i> <?php echo $a_site['site_name'];?></a></li>
+                                    <li><a href="<?php echo $_SERVER['PHP_SELF'].'?site_id='.$a_site['_id'];?>"><i class="fa fa-hdd-o fa-lg"></i> <?php echo $a_site['site_name'];?></a></li>
                                 <?php }?>
                             </ul>
                         <?php }else{echo "";} ?>
