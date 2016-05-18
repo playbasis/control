@@ -93,7 +93,7 @@
                             <?php }?>
                         <?php }else{?>
                                 <tr>
-                                    <td class="center" colspan="7">
+                                    <td class="center" colspan="8">
                                         No quest
                                     </td>
                                 </tr>
