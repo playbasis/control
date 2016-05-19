@@ -118,6 +118,57 @@ class Quiz_model extends MY_Model
         return $results['completed'];
     }
 
+    public function get_active_question_time_stamp($client_id, $site_id, $pb_player_id, $quiz_id, $question_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('quiz_id', $quiz_id);
+        $this->mongo_db->where('questions_id', $question_id);
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $this->mongo_db->where('active', true);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_question_to_player');
+        return $results;
+    }
+    public function insert_question_timestamp($client_id, $site_id, $pb_player_id, $quiz_id, $question_id, $active)
+    {
+        $this->mongo_db->insert('playbasis_question_to_player', array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'quiz_id' => $quiz_id,
+            'pb_player_id' => $pb_player_id,
+            'questions_id' => $question_id,
+            'questions_timestamp' => new MongoDate(time()),
+            'active' => $active,
+        ));
+    }
+    public function insert_answer_timestamp($client_id, $site_id, $pb_player_id, $quiz_id, $question_id, $option_id , $active)
+    {
+        $this->mongo_db->insert('playbasis_question_to_player', array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'quiz_id' => $quiz_id,
+            'pb_player_id' => $pb_player_id,
+            'questions_id' => $question_id,
+            'answers' => array('option_id' => $option_id),
+            'answer_timestamp' => new MongoDate(time()),
+            'active' => $active
+        ));
+    }
+    public function update_answer_timestamp($client_id, $site_id, $pb_player_id, $quiz_id, $question_id, $option_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('quiz_id', $quiz_id);
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $this->mongo_db->where('questions_id', $question_id);
+        $this->mongo_db->where('active', true);
+        $this->mongo_db->set('answers', array('option_id' => $option_id));
+        $this->mongo_db->set('answer_timestamp', new MongoDate(time()));
+        $results = $this->mongo_db->update('playbasis_question_to_player');
+        return $results;
+    }
+    
     public function update_player_score(
         $client_id,
         $site_id,
@@ -134,15 +185,6 @@ class Quiz_model extends MY_Model
         $answers = $result ? $result['answers'] : array();
         array_push($questions, $question_id);
         array_push($answers, array('option_id' => $option_id, 'score' => $score, 'date_added' => $d));
-
-        $this->mongo_db->where('client_id', $client_id);
-        $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('quiz_id', $quiz_id);
-        $this->mongo_db->where('pb_player_id', $pb_player_id);
-        $this->mongo_db->where('questions_id', $question_id);
-        $this->mongo_db->set('answers', array('option_id' => $option_id));
-        $this->mongo_db->set('answer_timestamp', $d);
-        $this->mongo_db->update('playbasis_question_to_player');
 
         if (!$result) {
             return $this->mongo_db->insert('playbasis_quiz_to_player', array(
@@ -245,6 +287,7 @@ class Quiz_model extends MY_Model
 
         return 'success';
     }
+
 }
 
 ?>

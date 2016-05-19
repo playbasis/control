@@ -330,6 +330,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Question is out of sequence ";
                 $errorData['error_code'] = '1006';
                 break;
+            case 'QUIZ_QUESTION_TIME_OUT':
+                $errorData['message'] = "Question is time out";
+                $errorData['error_code'] = '1007';
+                break;
             case 'RULE_NOT_FOUND':
                 $errorData['message'] = "Rule not available";
                 $errorData['error_code'] = '1101';

@@ -318,24 +318,11 @@ class Quiz extends REST2_Controller
                 unset($option['explanation']);
             }
             array_walk_recursive($question, array($this, "convert_mongo_object_and_image_path"));
-        }
 
-        $question_id = new MongoId($question['question_id']);
-        $this->mongo_db->where('questions_id', $question_id);
-        $this->mongo_db->where('pb_player_id', $pb_player_id);
-        $this->mongo_db->limit(1);
-        $results = $this->mongo_db->get('playbasis_question_to_player');
-
-        if(!$results){
-            $d = new MongoDate(time());
-            $this->mongo_db->insert('playbasis_question_to_player', array(
-                'client_id' => $this->client_id,
-                'site_id' => $this->site_id,
-                'quiz_id' => $quiz_id,
-                'pb_player_id' => $pb_player_id,
-                'questions_id' => $question_id,
-                'questions_timestamp' => $d,
-            ));
+            $question_id = new MongoId($question['question_id']);
+            $question_active = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id, $pb_player_id , $quiz_id, $question_id );
+            $active = (isset($question_active) && !empty($question_active)) ? false:true;
+            $this->quiz_model->insert_question_timestamp($this->client_id, $this->site_id, $pb_player_id , $quiz_id, $question_id, $active);
         }
 
         $this->benchmark->mark('end');
@@ -477,6 +464,24 @@ class Quiz extends REST2_Controller
         $grade['max_score'] = $max_score;
         $grade['total_score'] = $total_score;
         $grade['total_max_score'] = $total_max_score;
+
+        $active_qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id,$pb_player_id , $quiz_id,$question_id );
+        $timelimit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit']: null;
+        if($active_qustions_timestamp){
+            if($timelimit){
+                $timelimits = explode(':',$timelimit);
+                $limit = (($timelimits[0]*3600) + ($timelimits[1]*60) + ($timelimits[2]));
+                if($limit){
+                    $expect_time = new MongoDate(time() - $limit);
+                    if($expect_time > $active_qustions_timestamp[0]['questions_timestamp']){
+                        $this->response($this->error->setError('QUIZ_QUESTION_TIME_OUT'), 200);
+                    }
+                }
+            }
+            $this->quiz_model->update_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question_id, $option_id);
+        }else{
+            $this->quiz_model->insert_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question_id, $option_id , false);
+        }
 
         /* update player's score */
         $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id,
