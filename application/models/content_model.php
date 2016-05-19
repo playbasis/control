@@ -39,6 +39,9 @@ class Content_model extends MY_Model
         if (isset($optionalParams['tags'])){
             $this->mongo_db->where_in('tags', $optionalParams['tags']);
         }
+        if (isset($optionalParams['content_id_organize_assoc'])){
+            $this->mongo_db->where_in('_id', $optionalParams['content_id_organize_assoc']);
+        }
 
         // Sorting
         $sort_data = array('_id', 'title', 'date_start', 'date_end', 'date_added', 'date_modified');

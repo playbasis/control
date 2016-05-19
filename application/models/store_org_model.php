@@ -298,6 +298,20 @@ class Store_org_model extends MY_Model
         }
     }
 
+    public function retrieveAllContentToNode($client_id, $site_id, $node_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        if (isset($node_id)) {
+            $this->mongo_db->where('node_id', new MongoId($node_id));
+        }
+
+        return $c = $this->mongo_db->get("playbasis_store_organize_to_content");
+    }
+
     public function deletePlayerToNode($client_id, $site_id, $pb_player_id, $node_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -722,6 +736,22 @@ class Store_org_model extends MY_Model
             'pb_player_id' => $player_id,
         ));
         return $this->mongo_db->get('playbasis_store_organize_to_player');
+    }
+
+    public function getAssociatedNodeOfContent($client_id, $site_id, $content_id)
+    {
+
+        $this->mongo_db->select(array(
+            'node_id',
+            'roles',
+
+        ));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'content_id' => $content_id,
+        ));
+        return $this->mongo_db->get('playbasis_store_organize_to_content');
     }
 
     public function getRoleOfPlayer($client_id, $site_id, $player_id, $node_id)
