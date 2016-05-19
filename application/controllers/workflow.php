@@ -560,23 +560,35 @@ class Workflow extends MY_Controller
                                                 $data['organize_id'][$i], $pb_player_id, $data['organize_node'][$i]);
                                         }
 
-                                        //set role of player
-                                        if (isset($data['organize_role'][$i]) && !empty($data['organize_role'][$i])) {
+                                        //set role of content
+                                        if (isset($data['organize_role'][$i])) {
 
                                             $temp = $this->Workflow_model->getRole($client_id, $site_id, $pb_player_id,
                                                 $data['organize_node'][$i]);
-                                            if ($temp != null) {
-                                                $this->Workflow_model->clearPlayerRole($client_id, $site_id, $pb_player_id,
-                                                    $data['organize_node'][$i]);
-                                            }
 
                                             $role_array = explode(",", $data['organize_role'][$i]);
-                                            foreach ($role_array as $role) {
-                                                $role = str_replace(' ', '', $role);
-                                                $status = $this->Workflow_model->setPlayerRole($data['cl_player_id'],
-                                                    $data['organize_node'][$i], $role);
+
+                                            // Unset role which different from input
+                                            foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff){
+                                                $status = $this->Workflow_model->clearPlayerRole($data['cl_player_id'], $data['organize_node'][$i], $diff);
                                                 if (!$status->success) {
                                                     break;
+                                                }
+                                            }
+
+                                            // Set content role if input is not empty
+                                            if (!empty($data['organize_role'][$i])) {
+
+                                                foreach ($role_array as $role) {
+
+                                                    // Only set if input is not in existing role
+                                                    if (!in_array($role, array_keys($temp[0]['roles']))) {
+                                                        $status = $this->Workflow_model->setPlayerRole($data['cl_player_id'],
+                                                            $data['organize_node'][$i], $role);
+                                                        if (!$status->success) {
+                                                            break;
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

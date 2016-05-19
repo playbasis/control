@@ -337,20 +337,10 @@ class Content_model extends MY_Model
         return $results;
     }
 
-    public function clearPlayerRole($client_id, $site_id, $content_id, $node_id)
+    public function clearContentRole( $content_id, $node_id, $role)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
-        $this->mongo_db->where('content_id', new MongoId($content_id));
-        $this->mongo_db->where('node_id', new MongoId($node_id));
-
-        $this->mongo_db->unset_field('roles');
-
-        $update = $this->mongo_db->update('playbasis_store_organize_to_content');
-
-        return $update;
+        $status = $this->_api->unsetContentRole($content_id, $node_id, array('role' => $role));
+        return $status;
     }
 
     function makeMongoIdObj(&$value)

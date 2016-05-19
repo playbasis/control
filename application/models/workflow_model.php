@@ -287,20 +287,10 @@ class Workflow_model extends MY_Model
         return $status;
     }
 
-    public function clearPlayerRole($client_id, $site_id, $player_id, $node_id)
+    public function clearPlayerRole($player_id, $node_id, $role)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $this->mongo_db->where('client_id', $client_id);
-        $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('pb_player_id', new MongoId($player_id));
-        $this->mongo_db->where('node_id', new MongoId($node_id));
-
-        $this->mongo_db->unset_field('roles');
-
-        $update = $this->mongo_db->update('playbasis_store_organize_to_player');
-
-        return $update;
+        $status = $this->_api->unsetPlayerRole($player_id, $node_id, array('role' => $role));
+        return $status;
     }
 
     public function approvePlayer($client_id, $site_id, $user_id)

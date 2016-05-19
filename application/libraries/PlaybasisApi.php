@@ -69,8 +69,18 @@ class PlaybasisApi
         return $result;
     }
 
+    public function unsetPlayerRole($player_id, $node_id, $role) {
+        $result = $this->_post('StoreOrg/nodes/'.$node_id.'/unsetPlayerRole/'.$player_id,$role);
+        return $result;
+    }
+
     public function setContentRole($content_id, $node_id, $role) {
         $result = $this->_post('StoreOrg/nodes/'.$node_id.'/setContentRole/'.$content_id,$role);
+        return $result;
+    }
+
+    public function unsetContentRole($content_id, $node_id, $role) {
+        $result = $this->_post('StoreOrg/nodes/'.$node_id.'/unsetContentRole/'.$content_id,$role);
         return $result;
     }
 

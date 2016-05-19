@@ -252,30 +252,36 @@ class Content extends MY_Controller
                                         $content_data['organize_id'][$i], $content_id, $content_data['organize_node'][$i]);
                                 }
 
-                                //set role of player
-                                if (isset($content_data['organize_role'][$i]) && !empty($content_data['organize_role'][$i])) {
+                                //set role of content
+                                if (isset($content_data['organize_role'][$i])) {
 
                                     $temp = $this->Content_model->getRole($data['client_id'], $data['site_id'], $content_id,
                                         $content_data['organize_node'][$i]);
-                                    if ($temp != null) {
-                                        $this->Content_model->clearPlayerRole($data['client_id'], $data['site_id'], $content_id,
-                                            $content_data['organize_node'][$i]);
-                                    }
 
                                     $role_array = explode(",", $content_data['organize_role'][$i]);
-                                    foreach ($role_array as $role) {
-                                        $role = str_replace(' ', '', $role);
-                                        $status = $this->Content_model->setContentRole($content_id, $content_data['organize_node'][$i], $role)->success;
+
+                                    // Unset role which different from input
+                                    foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff){
+                                        $status = $this->Content_model->clearContentRole($content_id, $content_data['organize_node'][$i], $diff)->success;
                                         if (!$status) {
                                             break;
                                         }
                                     }
-                                }elseif (isset($content_data['organize_role'][$i]) && empty($content_data['organize_role'][$i])){
-                                    $temp = $this->Content_model->getRole($data['client_id'], $data['site_id'], $content_id,
-                                        $content_data['organize_node'][$i]);
-                                    if ($temp != null) {
-                                        $this->Content_model->clearPlayerRole($data['client_id'], $data['site_id'], $content_id,
-                                            $content_data['organize_node'][$i]);
+
+                                    // Set content role if input is not empty
+                                    if (!empty($content_data['organize_role'][$i])) {
+
+                                        foreach ($role_array as $role) {
+
+                                            // Only set if input is not in existing role
+                                            if (!in_array($role, array_keys($temp[0]['roles']))) {
+                                                $status = $this->Content_model->setContentRole($content_id,
+                                                    $content_data['organize_node'][$i], $role)->success;
+                                                if (!$status) {
+                                                    break;
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
