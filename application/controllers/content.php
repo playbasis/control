@@ -10,6 +10,7 @@ class Content extends REST2_Controller
         $this->load->model('auth_model');
         $this->load->model('content_model');
         $this->load->model('player_model');
+        $this->load->model('store_org_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -28,21 +29,40 @@ class Content extends REST2_Controller
             }
         }
 
-        if ((isset($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true") ) {
+        if (isset($query_data['player_id'])) {
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id' => $this->validToken['client_id'],
+                'site_id' => $this->validToken['site_id'],
+                'cl_player_id' => $query_data['player_id']
+            ));
+            if (empty($pb_player_id)) {
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            }
+        }
 
-            if (isset($query_data['player_id'])) {
-                $pb_player_id = $this->player_model->getPlaybasisId(array(
-                    'client_id' => $this->validToken['client_id'],
-                    'site_id' => $this->validToken['site_id'],
-                    'cl_player_id' => $query_data['player_id']
-                ));
-                if (empty($pb_player_id)) {
-                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
-                }
-                $content_id = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
-                    $this->validToken['site_id'], $pb_player_id);
-            }else{
+        if ((isset($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true")) {
+            if (!isset($query_data['player_id'])){
                 $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
+            }
+            $content_id = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
+                $this->validToken['site_id'], $pb_player_id);
+        }
+
+        // Get organize associated between player and content
+        if (!empty($pb_player_id)){
+            $nodes_list = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'],
+                $this->validToken['site_id'], $pb_player_id);
+            $query_data['content_id_organize_assoc'] = array();
+
+            foreach ($nodes_list as $val){
+                $content_to_node = $this->store_org_model->retrieveAllContentToNode($this->validToken['client_id'],
+                    $this->validToken['site_id'], $val['node_id']);
+
+                foreach ($content_to_node as $ct){
+                    if (isset($ct['content_id']) && !empty($ct['content_id'])){
+                        $query_data['content_id_organize_assoc'][] = $ct['content_id'];
+                    }
+                }
             }
         }
 
@@ -54,7 +74,6 @@ class Content extends REST2_Controller
             }else{
                 $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
             }
-
         }
         if (isset($query_data['tags']) && !is_null($query_data['tags'])) {
             $query_data = array_merge($query_data, array(
@@ -65,6 +84,38 @@ class Content extends REST2_Controller
         $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, $content_id);
         if (empty($contents)) {
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
+
+        foreach ($contents as &$content){
+            $nodes_list = $this->store_org_model->getAssociatedNodeOfContent($this->validToken['client_id'],
+                $this->validToken['site_id'], $content['_id']);
+            $organization = array();
+            if (!empty($nodes_list)) {
+                foreach ($nodes_list as $node) {
+                    $org_node = $this->store_org_model->retrieveNodeById($this->validToken['site_id'], $node['node_id']);
+                    $name = $org_node['name'];
+                    $org_info = $this->store_org_model->retrieveOrganizeById($this->validToken['client_id'],
+                        $this->validToken['site_id'], $org_node['organize']);
+                    $node_id = (String)$node['node_id'];
+                    $roles = array();
+                    if (isset($node['roles']) && is_array($node['roles'])) {
+                        foreach ($node['roles'] as $role_name => $date_join) {
+                            array_push($roles,
+                                array('role' => $role_name, 'join_date' => datetimeMongotoReadable($date_join)));
+                        }
+                    }
+                    if (empty($roles)) {
+                        $roles = null;
+                    }
+                    array_push($organization, array(
+                        'name' => $name,
+                        'node_id' => $node_id,
+                        'organize_type' => $org_info['name'],
+                        'roles' => $roles
+                    ));
+                }
+                $content['organize'] = $organization;
+            }
         }
 
         if (isset($query_data['full_html']) && $query_data['full_html'] == "true") {
