@@ -260,11 +260,14 @@ class Content extends MY_Controller
 
                                     $role_array = explode(",", $content_data['organize_role'][$i]);
 
-                                    // Unset role which different from input
-                                    foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff){
-                                        $status = $this->Content_model->clearContentRole($content_id, $content_data['organize_node'][$i], $diff)->success;
-                                        if (!$status) {
-                                            break;
+                                    if (isset($temp[0]['roles'])) {
+                                        // Unset role which different from input
+                                        foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff) {
+                                            $status = $this->Content_model->clearContentRole($content_id,
+                                                $content_data['organize_node'][$i], $diff)->success;
+                                            if (!$status) {
+                                                break;
+                                            }
                                         }
                                     }
 
@@ -274,7 +277,7 @@ class Content extends MY_Controller
                                         foreach ($role_array as $role) {
 
                                             // Only set if input is not in existing role
-                                            if (!in_array($role, array_keys($temp[0]['roles']))) {
+                                            if ((!isset($temp[0]['roles'])) || (!in_array($role, array_keys($temp[0]['roles'])))) {
                                                 $status = $this->Content_model->setContentRole($content_id,
                                                     $content_data['organize_node'][$i], $role)->success;
                                                 if (!$status) {
@@ -385,7 +388,7 @@ class Content extends MY_Controller
                         $node_info = $this->Store_org_model->retrieveNodeById($org['node_id']);
                         $org_info = $this->Store_org_model->retrieveOrganizeById($node_info['organize']);
 
-                        if (!isset($player['organization_node'])) {
+                        if (!isset($content['organization_node'])) {
                             $content['organization_node'] = $node_info['name'];
                             $content['organization_type'] = $org_info['name'];
                             $content['organization_role'] = $role_string;

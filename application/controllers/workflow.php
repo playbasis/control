@@ -568,11 +568,13 @@ class Workflow extends MY_Controller
 
                                             $role_array = explode(",", $data['organize_role'][$i]);
 
-                                            // Unset role which different from input
-                                            foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff){
-                                                $status = $this->Workflow_model->clearPlayerRole($data['cl_player_id'], $data['organize_node'][$i], $diff);
-                                                if (!$status->success) {
-                                                    break;
+                                            if (isset($temp[0]['roles'])){
+                                                // Unset role which different from input
+                                                foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff){
+                                                    $status = $this->Workflow_model->clearPlayerRole($data['cl_player_id'], $data['organize_node'][$i], $diff);
+                                                    if (!$status->success) {
+                                                        break;
+                                                    }
                                                 }
                                             }
 
