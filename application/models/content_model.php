@@ -285,6 +285,74 @@ class Content_model extends MY_Model
         return $update;
     }
 
+    public function getOrganizationToContent($client_id, $site_id, $content_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where(array(
+            'content_id' => new MongoId($content_id),
+            'site_id' => new MongoId($site_id),
+            'client_id' => new MongoId($client_id)
+        ));
+        $results = $this->mongo_db->get("playbasis_store_organize_to_content");
+        return $results;
+    }
+
+    public function addContentToNode($content_id, $node_id)
+    {
+        $status = $this->_api->addContentToNode($content_id, $node_id);
+        return $status;
+    }
+
+    public function setContentRole($content_id, $node_id, $role)
+    {
+        $status = $this->_api->setContentRole($content_id, $node_id, array('role' => $role));
+        return $status;
+    }
+
+    public function editOrganizationOfContent($client_id, $site_id, $org_id, $content_id, $node_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('_id', new MongoID($org_id));
+
+        $this->mongo_db->set('content_id', new MongoID($content_id));
+        $this->mongo_db->set('node_id', new MongoID($node_id));
+        return $this->mongo_db->update('playbasis_store_organize_to_content');
+    }
+
+    public function getRole($client_id, $site_id, $content_id, $node_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('roles'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('content_id', new MongoId($content_id));
+        $this->mongo_db->where('node_id', new MongoId($node_id));
+
+        $results = $this->mongo_db->get("playbasis_store_organize_to_content");
+        return $results;
+    }
+
+    public function clearPlayerRole($client_id, $site_id, $content_id, $node_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('content_id', new MongoId($content_id));
+        $this->mongo_db->where('node_id', new MongoId($node_id));
+
+        $this->mongo_db->unset_field('roles');
+
+        $update = $this->mongo_db->update('playbasis_store_organize_to_content');
+
+        return $update;
+    }
+
     function makeMongoIdObj(&$value)
     {
         $value = new MongoId($value);

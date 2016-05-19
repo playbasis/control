@@ -42,18 +42,30 @@
                                     <table class="list">
                                         <thead>
                                         <tr>
-                                            <td width="1" style="text-align: center;">
+                                            <td rowspan="2" width="1" style="text-align: center;">
                                                 <input type="checkbox"
                                                        onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                                             </td>
-                                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
-                                            <td class="right" style="width:80px;"><?php echo $this->lang->line('column_category'); ?></td>
-                                            <td class="right"
-                                                style="width:100px;"><?php echo $this->lang->line('column_date_range'); ?></td>
-                                            <td class="right" style="width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
-                                            <td class="right" style="width:60px;"><?php echo $this->lang->line('column_status'); ?></td>
-                                            <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
+                                            <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
+                                            <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('column_category'); ?></td>
+                                            <td rowspan="2" class="center"
+                                                style="width:150px;"><?php echo $this->lang->line('column_date_range'); ?></td>
+                                            <td rowspan="2" class="center" style="width:150px;"><?php echo $this->lang->line('column_tags'); ?></td>
+                                            <td rowspan="2" class="center" style="width:60px;"><?php echo $this->lang->line('column_status'); ?></td>
+                                            <?php if($org_status){?>
+                                                <td colspan="3" class="center" style="width:180px;"><?php echo $this->lang->line('column_organization'); ?></td>
+                                            <?php }?>
+                                            <td rowspan="2" class="center" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                                         </tr>
+
+                                        <?php if($org_status){?>
+                                            <tr>
+                                                <td style="text-align: center;"><?php echo $this->lang->line('column_node'); ?></td>
+                                                <td style="text-align: center;"><?php echo $this->lang->line('column_type'); ?></td>
+                                                <td style="text-align: center;"><?php echo $this->lang->line('column_role'); ?></td>
+                                            </tr>
+                                        <?php }?>
+
                                         </thead>
                                         <tbody>
                                         <tr class="filter">
@@ -63,6 +75,11 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
+                                            <?php if($org_status){?>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            <?php }?>
                                             <td class="right">
                                                 <a onclick="clear_filter();" class="button"
                                                    id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
@@ -89,6 +106,11 @@
                                                     <td class="right"><?php echo isset($content['date_start']) ? dateMongotoReadable($content['date_start']) : "N/A"; ?>&nbsp;-&nbsp;<?php echo isset($content['date_end']) ? dateMongotoReadable($content['date_end']) : "N/A"; ?></td>
                                                     <td class="right"><?php echo (isset($content['tags']) && $content['tags']) ? implode($content['tags'],',') : null; ?></td>
                                                     <td class="right"><?php echo isset($content['status']) ? ( $content['status'] ? "Enable" : "Disabled") : "N/A"; ?></td>
+                                                    <?php if($org_status){?>
+                                                        <td class="right"><?php echo (isset($content['organization_node']) && !is_null($content['organization_node']))?$content['organization_node']:''; ?></td>
+                                                        <td class="right"><?php echo (isset($content['organization_type']) && !is_null($content['organization_type']))?$content['organization_type']:''; ?></td>
+                                                        <td class="right"><?php echo (isset($content['organization_role']) && !is_null($content['organization_role']))?$content['organization_role']:''; ?></td>
+                                                    <?php }?>
                                                     <td class="right">
                                                         <?php if ($push_feature_existed) { ?>
                                                             <span>[ <?php echo anchor('#confirmModal', 'Send push',
