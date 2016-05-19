@@ -1668,6 +1668,61 @@ class Cron extends CI_Controller
         }
     }
 
+    public function processImportContent()
+    {
+        $this->load->library('RestClient');
+
+        $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
+
+        if ($clients) {
+
+            foreach ($clients as $client) {
+
+                $returnImportData = $this->getImportData($client, 'content');
+
+                if(isset($returnImportData['response'])) {
+
+                    foreach ($returnImportData['response'] as $importData) {
+
+                        $returnData = $this->getDataFromURL($importData);
+
+                        if (isset($returnData)) {
+
+                            $returnImportActivities = array();
+
+                            if ($returnData['duplicate_flag']) {
+
+                                // Add 'Duplicate' to import log
+                                $returnImportActivities = 'Duplicate';
+
+                            } else {
+
+                                foreach ($returnData['importData'] as $key => $val) {
+
+                                    if($val) {
+                                        $result = $this->restclient->post($this->config->base_url() . 'Content/addContent',
+                                            array_merge($val,
+                                                array(
+                                                    'api_key' => $returnImportData['api_key'],
+                                                    'token' => $returnImportData['token']))
+                                        );
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => $result->message);
+                                    }else{
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "Input format is invalid");
+                                    }
+                                }
+                            }
+
+                            // Update import log
+                            $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
+                                $returnData['import_id'], array('results' => $returnImportActivities),$returnData['parameter_set'],$importData['import_type']);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private function getImportData($client, $importType)
     {
         $this->load->library('RestClient');
