@@ -41,6 +41,10 @@ class Content extends REST2_Controller
                 }
                 $content_id = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
                     $this->validToken['site_id'], $pb_player_id);
+                if (isset($query_data['limit'])) {
+                    $query_data['_limit'] = $query_data['limit'];
+                    $query_data['limit'] += count($content_id);
+                }
             }else{
                 $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
             }
@@ -54,13 +58,9 @@ class Content extends REST2_Controller
             }else{
                 $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
             }
-
         }
 
         $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, $content_id);
-        if (empty($contents)) {
-            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
-        }
 
         if (isset($query_data['full_html']) && $query_data['full_html'] == "true") {
             if(is_array($contents))foreach ($contents as &$content){
@@ -68,8 +68,8 @@ class Content extends REST2_Controller
                         '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">' .
                         '<style>img{ max-width: 100%}</style>' .
                         '</head><title></title><body>' . $content['detail'] . '</body></html>';
-                }
             }
+        }
         array_walk_recursive($contents, array($this, "convert_mongo_object_and_category"));
 
         $result = array();
@@ -79,34 +79,23 @@ class Content extends REST2_Controller
                     srand(intval($query_data['order']));
                 }
             }
-            $content_count =  count($contents);
-            $numbers = range(0, $content_count-1);
+            if (isset($query_data['_limit'])) $query_data['limit'] = $query_data['_limit'];
+            $m = count($contents);
+            $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data, $content_id);
+            if (isset($query_data['limit']) && $query_data['limit'] < $n) $n = $query_data['limit'];
+            if (!isset($query_data['offset']) || $query_data['offset'] < 0) $query_data['offset'] = 0;
+            $numbers = range(0, $m-1);
             shuffle($numbers);
-
-            if ( isset($query_data['offset']) && is_numeric($query_data['offset']) ) {
-                if ($query_data['offset'] < 0) {
-                    $query_data['offset'] = 0;
-                }elseif($query_data['offset'] >= $content_count){
-                    $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+            $c = 0;
+            foreach ($numbers as $i) {
+                if (!isset($query_data['offset']) || $c >= $query_data['offset']) {
+                    if (!in_array($contents[$i]['_id'], $content_id)) {
+                        $result[] = $contents[$i];
+                        if (count($result) >= $n) break;
+                    }
                 }
-            }else {
-                $query_data['offset'] = 0;
+                if (!in_array($contents[$i]['_id'], $content_id)) $c++;
             }
-
-            if( isset($query_data['limit']) && is_numeric($query_data['limit'])){
-                if ($query_data['limit'] < 1) {
-                    $query_data['limit'] = $content_count;
-                }else if($query_data['offset'] + $query_data['limit'] > $content_count){
-                    $query_data['limit'] = $content_count - $query_data['offset'];
-                }
-            } else {
-                $query_data['limit'] = $content_count;
-            }
-
-            for($i=0;$i<$query_data['limit'];$i++){
-                $result[$i] = $contents[$numbers[$i+$query_data['offset']]];
-            }
-
         }else{
             $result = $contents;
         }
