@@ -17,13 +17,17 @@ $lang['entry_password']     = 'Password';
 $lang['entry_import_method']= 'Import method';
 $lang['entry_import_type']  = 'Import type';
 $lang['entry_occur']        = 'Occurrence (day)';
-$lang['column_action']      = 'Action';
 $lang['entry_results']      = 'Result';
 $lang['entry_date_execute'] = 'Date execute';
 $lang['entry_results_log']  = 'Success / Total';
 $lang['entry_results_name'] = 'Name => Status';
 $lang['entry_duplicate']    = 'Data duplicate with previous';
 $lang['entry_file']         = 'CSV File To Import';
+$lang['entry_directory']    = 'File directory';
+
+$lang['column_action']      = 'Action';
+$lang['column_directory']   = 'Directory';
+
 
 $lang['tab_cron']   = 'Cron';
 $lang['tab_adhoc']  = 'Adhoc';

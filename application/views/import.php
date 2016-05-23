@@ -72,9 +72,10 @@
                         <td class="center" ><?php echo $this->lang->line('entry_name'); ?></td>
                         <td class="center" width="60"><?php echo $this->lang->line('entry_hosttype'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_hostname'); ?></td>
-                        <td class="center" width="130"><?php echo $this->lang->line('entry_filename'); ?></td>
                         <td class="center" width="40"><?php echo $this->lang->line('entry_port'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_username'); ?></td>
+                        <td class="center" width="130"><?php echo $this->lang->line('entry_filename'); ?></td>
+                        <td class="center" width="130"><?php echo $this->lang->line('column_directory'); ?></td>
                         <td class="center" width="80"><?php echo $this->lang->line('entry_import_type'); ?></td>
                         <td class="center" width="60"><?php echo $this->lang->line('entry_occur'); ?></td>
                         <td class="center" width="130"><?php echo $this->lang->line('column_action'); ?></td>
@@ -82,6 +83,7 @@
                     </thead>
                     <tbody>
                     <tr class="filter">
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -106,9 +108,10 @@
                                 <td class="left"><?php echo $cs['name']; ?></td>
                                 <td class="center"><?php echo $cs['host_type']; ?></td>
                                 <td class="left"><?php echo $cs['host_name']; ?></td>
-                                <td class="left"><?php echo $cs['file_name']; ?></td>
                                 <td class="center"><?php echo $cs['port']; ?></td>
                                 <td class="left"><?php echo $cs['user_name']; ?></td>
+                                <td class="left"><?php echo $cs['file_name']; ?></td>
+                                <td class="left"><?php echo $cs['directory']; ?></td>
                                 <td class="left"><?php echo $cs['import_type']; ?></td>
                                 <td class="center"><?php echo $cs['routine']; ?></td>
                                 <td class="center">

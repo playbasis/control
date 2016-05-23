@@ -56,8 +56,8 @@
                         <td>
                             <span class="dropdown">
                                 <select id="hostType" class="span3"  name ="host_type">
-                                    <option label="HTTPS" value="HTTPS" <?php echo $host_type == "HTTPS"?"selected":""?>>
                                     <option label="FTP"   value="FTP"   <?php echo $host_type == "FTP"?"selected":""?>>
+                                    <option label="HTTPS" value="HTTPS" <?php echo $host_type == "HTTPS"?"selected":""?>>
                                 </select>
                             </span>
                         </td>
@@ -70,16 +70,6 @@
                             <input type="text" name="host_name" size="100"
                                    placeholder="<?php echo $this->lang->line('entry_hostname'); ?>"
                                    value="<?php echo isset($host_name) ? $host_name : set_value('host_name'); ?>"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_filename'); ?>&nbsp;:
-                        </td>
-                        <td>
-                            <input type="text" name="file_name" size="100"
-                                   placeholder="<?php echo $this->lang->line('entry_filename'); ?>"
-                                   value="<?php echo isset($file_name) ? $file_name : set_value('file_name'); ?>"/>
                         </td>
                     </tr>
                     <tr>
@@ -110,6 +100,26 @@
                             <input type="text" name="password" size="100"
                                    placeholder="<?php echo $this->lang->line('entry_password'); ?>"
                                    value="<?php echo isset($password) ? $password : set_value('password'); ?>"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_filename'); ?>&nbsp;:
+                        </td>
+                        <td>
+                            <input type="text" name="file_name" size="100"
+                                   placeholder="<?php echo $this->lang->line('entry_filename'); ?>"
+                                   value="<?php echo isset($file_name) ? $file_name : set_value('file_name'); ?>"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>&nbsp;</span><?php echo $this->lang->line('entry_directory'); ?>&nbsp;:
+                        </td>
+                        <td>
+                            <input type="text" name="directory" size="100"
+                                   placeholder="<?php echo $this->lang->line('entry_directory'); ?>"
+                                   value="<?php echo isset($directory) ? $directory : set_value('directory'); ?>"/>
                         </td>
                     </tr>
                     <tr>
