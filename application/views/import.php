@@ -134,7 +134,7 @@
                 </ul>
             </div>
 
-    <!--tab1 -->
+    <!--tab2 -->
             <?php }elseif($tab_status == "adhoc"){?>
             <div id="actions">
                 <?php
@@ -187,9 +187,10 @@
                         <thead>
                         <tr>
                             <td class="center" ><?php echo $this->lang->line('entry_name'); ?></td>
-                            <td class="center" ><?php echo $this->lang->line('entry_import_type'); ?></td>
-                            <td class="center" ><?php echo $this->lang->line('entry_occur'); ?></td>
-                            <td class="center" ><?php echo $this->lang->line('entry_date_execute'); ?></td>
+                            <td class="center" width="100"><?php echo $this->lang->line('entry_import_method'); ?></td>
+                            <td class="center" width="130"><?php echo $this->lang->line('entry_import_type'); ?></td>
+                            <td class="center" width="110"><?php echo $this->lang->line('entry_occur'); ?></td>
+                            <td class="center" width="150"><?php echo $this->lang->line('entry_date_execute'); ?></td>
                             <td class="center" ><?php echo $this->lang->line('entry_results'); ?></td>
                             <td class="center" ><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
@@ -198,47 +199,36 @@
                         <tr class="filter">
                             <td></td>
                             <td></td>
+                            <td></td>
                             <!-- <td class="center"><input type="text" name="filter_name" value="" style="width:50%;"/></td> -->
                             <td></td>
                             <td></td>
-                            <td class="center"><?php echo $this->lang->line('entry_results_name'); ?></td>
+                            <td class="center"><?php echo $this->lang->line('entry_results_log'); ?></td>
                             <td class="center">
                                 <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
                                 <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
                             </td>
                         </tr>
-                        <?php if (isset($importDatas) && $importDatas) { ?>
-                            <?php foreach ($importDatas as $importData) { ?>
+                        <?php if (isset($logDatas) && $logDatas) { ?>
+                            <?php foreach ($logDatas as $logData) { ?>
                                 <tr>
-                                    <td class="center"><?php echo $importData['name']; ?></td>
-                                    <td class="center"><?php echo $importData['import_type']; ?></td>
-                                    <td class="center"><?php echo $importData['routine']; ?></td>
-                                    <td class="center"><?php
-                                        if ($importData['date_added'] != null) {
-                                            echo datetimeMongotoReadable($importData['date_added']);
-                                        }else{
-                                            echo null;
-                                        }
-                                        ?>
+                                    <td class="center"><?php echo $logData['name']; ?></td>
+                                    <td class="center"><?php echo $logData['import_method']; ?></td>
+                                    <td class="center"><?php echo $logData['import_type']; ?></td>
+                                    <td class="center"><?php echo $logData['routine']; ?></td>
+                                    <td class="center"><?php echo $logData['date_added']; ?></td>
+                                    <td class="center"><?php echo $logData['result']; ?></td>
+                                    <td class="center">
+                                        <?php if (isset($logData['log_results']) && !is_null($logData['log_results'])) { ?>
+
+
+                                            <a href="javascript:void()" onclick="showLog('<?php echo $logData['import_key']?>',<?php echo htmlspecialchars(json_encode($logData['log_results']), ENT_QUOTES, 'UTF-8'); ?>)" title="Show full result" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>
+
+
+                                        <?php } ?>
+
+                                        <!--<a data-toggle="modal" href="#formLogModal" title="Show full result" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>-->
                                     </td>
-                                    <td class="left">
-                                        <div style="width:100%; max-height:150px; overflow:auto">
-                                            <?php
-                                            if ($importData['results'] != null) {
-                                                if ($importData['results'] == 'Duplicate'){
-                                                    echo $this->lang->line('entry_duplicate');
-                                                }else {
-                                                    foreach ($importData['results'] as $key => $val) {
-                                                        echo $key.' => '.$val; ?><br><?php
-                                                    }
-                                                }
-                                            }else{
-                                                echo null;
-                                            }
-                                            ?>
-                                        </div>
-                                    </td>
-                                    <td></td>
                                 </tr>
                             <?php } ?>
                         <?php } else { ?>
@@ -263,6 +253,56 @@
         </div>
     </div>
 </div>
+
+<div id="formLogModal" class="modal hide fade"   tabindex="-1" role="dialog" aria-labelledby="formLogModalLabel"  aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="formLogModalLabel">Imported result</h3>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+
+            <div class="row-fluid">
+                <table id="example" class="display" width="100%"></table>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+
+    </div>
+</div>
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+<link href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+
+
+<style type="text/css">
+    .modal {
+        width: 60%;
+        margin-left:-30%;
+    }
+</style>
+
+<script type="text/javascript">
+
+    function showLog(import_key,dataSet){
+
+        $('#example').DataTable( {
+            data: dataSet,
+            destroy: true,
+            columns: [
+                { title: "line" },
+                { title: import_key },
+                { title: "result" }
+            ]
+        } );
+        $('#formLogModal').modal('show');
+    }
+
+
+</script>
 
 <script type="text/javascript"><!--
     function filter() {

@@ -21,10 +21,10 @@ class import_model extends MY_Model
         return $insert;
     }
 
-    public function updateCompleteImport($client_id, $site_id, $importResult, $importKey, $import_type)
+    public function updateCompleteImport($client_id, $site_id, $name, $importResult, $importKey, $import_type)
     {
         $mongoDate = new MongoDate(time());
-        $result = array('import_key' => $importKey);
+        $result = array('import_name' => $name, 'import_key' => $importKey);
         $result += array_merge($importResult, array(
             'client_id' => $client_id,
             'site_id' => $site_id,

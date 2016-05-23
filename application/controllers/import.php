@@ -397,6 +397,7 @@ class import extends MY_Controller
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 $import_type = $this->input->post('import_type');
+                $import_name = $this->input->post('name');
                 $returnImportActivities = array();
 
                 $keys = array();
@@ -432,7 +433,7 @@ class import extends MY_Controller
                     }
                 }
 
-                $this->import_model->updateCompleteImport($this->User_model->getClientId(), $this->User_model->getSiteId(), array('results' => $returnImportActivities), $parameter_set, $import_type);
+                $this->import_model->updateCompleteImport($this->User_model->getClientId(), $this->User_model->getSiteId(), $import_name, array('results' => $returnImportActivities), $parameter_set, $import_type);
                 $this->session->set_flashdata('success', $this->lang->line('text_success_import'));
                 redirect('/import/adhoc', 'refresh');
             }
@@ -595,31 +596,60 @@ class import extends MY_Controller
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
-        $importDatas = array();
+        $logDatas = array();
         $importLogsResults = $this->import_model->retrieveImportResults($filter);
+
         foreach ($importLogsResults as $importLogsResult) {
+
+            $total_result = "";
+            $data_result = array();
+            if($importLogsResult['results'] == "Duplicate"){
+                $total_result = $this->lang->line('entry_duplicate');
+            }else{
+                $success_count = 0;
+                foreach ($importLogsResult['results'] as $index => $log_result){
+                    $temp_data = array($index+1);
+                    array_push($temp_data , array($log_result['input']));
+                    array_push($temp_data , $log_result['result']);
+
+                    $data_result[]=$temp_data;
+                    if($log_result['result']=="Success"){
+                        $success_count++;
+                    }
+                }
+                $total_result = $success_count." / ".count($importLogsResult['results']);
+            }
+
             if($importLogsResult['import_id']){
                 $importData = $this->import_model->retrieveSingleImportData($importLogsResult['import_id']);
-                $importDatas[]=array(
+                $logDatas[]=array(
+                    'log_id' => $importLogsResult['_id'],
                     'name' => $importData['name'],
-                    'import_type' => $importData['import_type'],
+                    'import_method' => "cron",
+                    'import_type' => $importLogsResult['import_type'],
                     'routine' => $importData['routine'],
-                    'date_added' => $importLogsResult['date_added'],
-                    'results' => $importLogsResult['results']
+                    'date_added' => datetimeMongotoReadable($importLogsResult['date_added']),
+                    'result' => $total_result,
+                    'import_key' => $importLogsResult['import_key'],
+                    'log_results' => $data_result
                 );
 
             }else{
-                $importDatas[]=array(
-                    'name' => null,
-                    'import_type' => null,
-                    'routine' => null,
-                    'date_added' => $importLogsResult['date_added'],
-                    'results' => $importLogsResult['results']
+                $logDatas[]=array(
+                    'log_id' => $importLogsResult['_id'],
+                    'name' => isset($importLogsResult['import_name']) ? $importLogsResult['import_name'] : "",
+                    'import_method' => "adhoc",
+                    'import_type' => $importLogsResult['import_type'],
+                    'routine' => "",
+                    'date_added' => datetimeMongotoReadable($importLogsResult['date_added']),
+                    'result' => $total_result,
+                    'import_key' => $importLogsResult['import_key'],
+                    'log_results' => $data_result
                 );
             }
         }
 
-        $this->data['importDatas'] = $importDatas;
+        $this->data['logDatas'] = $logDatas;
 
         $this->data['filter_date_start'] = $filter_date_start;
 
