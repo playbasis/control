@@ -325,6 +325,7 @@ class App extends MY_Controller
                         "app_name" => $this->input->post('app_name'),
                         "client_id" => $client_id,
                         "image" => $this->input->post('image'),
+                        "app_color" => $this->input->post('app_color'),
                         "platform" => strtolower($this->input->post('platform')),
                         "data" => $data_platform
                     );
@@ -604,7 +605,8 @@ class App extends MY_Controller
 
                 $edit_data = array(
                     "app_name" => $this->input->post('app_name'),
-                    "image" => $this->input->post('image')
+                    "image" => $this->input->post('image'),
+                    "app_color" => $this->input->post('app_color')
                 );
 
                 $this->App_model->editApp($app_id, $edit_data);
@@ -643,7 +645,7 @@ class App extends MY_Controller
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-        } elseif (!empty($site_info)) {
+        } elseif (isset($site_info['image']) && !empty($site_info['image'])) {
             $this->data['image'] = $site_info['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
@@ -664,6 +666,14 @@ class App extends MY_Controller
         }
 
         $this->data['no_image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+
+        if ($this->input->post('app_color')) {
+            $this->data['app_color'] = $this->input->post('app_color');
+        } elseif (isset($site_info['app_color']) && !empty($site_info['app_color'])) {
+            $this->data['app_color'] = $site_info['app_color'];
+        } else {
+            $this->data['app_color'] = '';
+        }
 
         if ($this->input->post('platform')) {
             $this->data['platform'] = $this->input->post('platform');

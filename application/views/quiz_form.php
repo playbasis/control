@@ -229,7 +229,7 @@ function find_template($data, $type, $template_id) {
                                             Time limit :
                                         </td>
                                         <td>
-                                            <input type="text" class="timelimit" name="quiz[questions][<?php echo $questions['question_id']; ?>][timelmit]"  data-format="HH:mm:ss" data-template="HH : mm : ss" value="<?php echo isset($questions['timelmit'])?$questions['timelmit']:""; ?>" >
+                                            <input type="text" class="timelimit" name="quiz[questions][<?php echo $questions['question_id']; ?>][timelimit]"  data-format="HH:mm:ss" data-template="HH : mm : ss" value="<?php echo isset($questions['timelimit'])?$questions['timelimit']:""; ?>" >
                                         </td>
                                     </tr>
                                     <tr>
@@ -1129,7 +1129,7 @@ function find_template($data, $type, $template_id) {
             Time limit :\
             </td>\
             <td>\
-                <input type="text" class="timelimit" name="quiz[questions]['+countQuestions+'][timelmit]"  data-format="HH:mm:ss" data-template="HH : mm : ss" value="">\
+                <input type="text" class="timelimit" name="quiz[questions]['+countQuestions+'][timelimit]"  data-format="HH:mm:ss" data-template="HH : mm : ss" value="">\
             </td>\
             </tr>\
         <tr>\

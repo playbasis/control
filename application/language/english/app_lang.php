@@ -71,6 +71,7 @@ $lang['entry_group']							= 'Group';
 
 $lang['entry_app_name']						    = 'App Name';
 $lang['entry_logo']						        = 'Logo';
+$lang['entry_color']						    = 'App Color';
 $lang['entry_site_name']						= 'Site';
 $lang['entry_platform']						    = 'Platform';
 $lang['entry_key']								= 'API Keys:';
