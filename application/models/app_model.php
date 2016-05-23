@@ -378,6 +378,7 @@ class App_model extends MY_Model
             'api_key' => '',
             'api_secret' => '',
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'app_color' => isset($data['app_color']) && !empty($data['app_color']) ? $data['app_color']: '',
             'status' => true,
             'deleted' => false,
             'last_send_limit_users' => null,
@@ -420,6 +421,7 @@ class App_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($app_id));
         $this->mongo_db->set('site_name', $data['app_name']);
         $this->mongo_db->set('image', isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '');
+        $this->mongo_db->set('app_color',  isset($data['app_color']) && !empty($data['app_color']) ? $data['app_color']: '');
 
         return $this->mongo_db->update('playbasis_client_site');
 

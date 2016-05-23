@@ -70,6 +70,15 @@ echo form_open($form ,$attributes);
                     ?>
                 </td>
             </tr>
+            <tr>
+                <td> <?php echo $this->lang->line('entry_color'); ?>:</td>
+                <td>
+                    <div class="input-prepend">
+                        <span class="colorSelectorHolder add-on"></span>
+                        <input class="span6 colorSelector wg-color" name="app_color" type="text" placeholder="<?php echo isset($app_color) && !empty($app_color) ? $app_color : ''; ?>" value="<?php echo isset($app_color) && !empty($app_color) ? $app_color : ''; ?>" readonly>
+                    </div>
+                </td>
+            </tr>
             <?php
             if($form_type != "edit_app"){
             ?>
@@ -190,7 +199,50 @@ echo form_close();
 </div>
 </div>
 
+<?php
+if($form_type == "edit_app" || $form_type == "add") {
+?>
+    <script type="text/javascript">
+        $('.colorSelectorHolder').css('backgroundColor', $('.colorSelector').val());
+        $('.colorSelector').ColorPicker({
+            onBeforeShow: function () {
+                console.log("init");
+                $(this).ColorPickerSetColor(this.value);
+            },
+            onShow: function (colpkr) {
+                $(colpkr).fadeIn(200);
+                return false;
+            },
+            onHide: function (colpkr) {
+                $(colpkr).fadeOut(200);
+                return false;
+            },
+            onChange: function (hsb, hex, rgb) {
+                $('.colorSelectorHolder').css('backgroundColor', '#' + hex);
+                $('.colorSelector').val('#' + hex);
+            },
+            onSubmit: function (hsb, hex, rgb, el) {
+                $('.colorSelectorHolder').css('backgroundColor', '#' + hex);
+                $('.colorSelectorHolder').val('#' + hex);
+                $(el).ColorPickerHide();
+            }
+        }).bind('keyup', function () {
+            $(this).ColorPickerSetColor(this.value);
+            $('.colorSelectorHolder').css('backgroundColor', this.value);
+            if (event.keyCode == 13) {
+                $(this).ColorPickerHide();
+            }
+        });
+        $('.colorSelectorHolder').click(function () {
+            $('.colorSelector').focus();
+        });
+    </script>
+<?php
+}
+?>
+
 <script type="text/javascript">
+    $('.colorSelectorHolder').css('backgroundColor', $('.colorSelector').val());
     $(document).ready(function(){
         $('.app-tab').hide();
 
