@@ -1767,7 +1767,11 @@ class Cron extends CI_Controller
 
             // login with username and password
             $login_result = ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
-            ftp_chdir ( $conn_id , 'htdocs' );
+
+            // Change directory to selected directory
+            if (isset($importData['directory']) && !empty($importData['directory'])) {
+                ftp_chdir($conn_id, $importData['directory']);
+            }
 
             // login with username and password
             $ftp_get_result = ftp_fget($conn_id, $handle, $remote_file, FTP_ASCII, 0);
