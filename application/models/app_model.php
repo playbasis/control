@@ -167,6 +167,47 @@ class App_model extends MY_Model
         return $client_data;
     }
 
+    public function getAppsByClientSiteId($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('_id', new MongoID($data['site_id']));
+
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
+            $this->mongo_db->where('site_name', $regex);
+        }
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        $sort_data = array(
+            'site_name',
+            'status',
+            'sort_order',
+            '_id'
+        );
+
+        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
+        $client_data = $this->mongo_db->get("playbasis_client_site");
+
+        return $client_data;
+    }
+
     public function getAppsBySiteId($site_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -365,6 +406,25 @@ class App_model extends MY_Model
         $this->mongo_db->where('deleted', false);
 
         $c = $this->mongo_db->count('playbasis_client_site');
+        return $c > 0;
+    }
+
+    public function checkPlatformExists($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('site_id', new MongoID($data["site_id"]));
+        $this->mongo_db->where('platform', $data['platform']);
+        if ($data['platform'] == 'ios') {
+            $this->mongo_db->where('data.ios_bundle_id', $data['data_platform']['ios_bundle_id']);
+        } elseif ($data['platform'] == 'android') {
+            $this->mongo_db->where('data.android_package_name', $data['data_platform']['android_package_name']);
+        } else {
+            $this->mongo_db->where('data.site_url', $data['data_platform']['site_url']);
+        }
+        $this->mongo_db->where('deleted', false);
+
+        $c = $this->mongo_db->count('playbasis_platform_client_site');
         return $c > 0;
     }
 

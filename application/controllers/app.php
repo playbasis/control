@@ -97,14 +97,12 @@ class App extends MY_Controller
             'site_id' => $site_id,
             'sort' => $sort,
             'order' => $order,
-            'start' => $offset,
-            'limit' => $limit
         );
 
-        if ($client_id) {
+        if ($site_id) {
             $total = $this->App_model->getTotalPlatFormsBySiteId($data);
 
-            $results_site = $this->App_model->getAppsByClientId($data);
+            $results_site = $this->App_model->getAppsByClientSiteId($data);
 
             $total_platform = $this->App_model->getTotalPlatFormsByClientId($data);
         } else {
@@ -124,7 +122,11 @@ class App extends MY_Controller
             foreach ($results_site as $result) {
 
                 $data_filter_app = array(
-                    'site_id' => $result['_id']
+                    'site_id' => $result['_id'],
+                    'sort' => $sort,
+                    'order' => $order,
+                    'start' => $offset,
+                    'limit' => $limit
                 );
                 $app_data = $this->App_model->getPlatFormByAppId($data_filter_app);
 
@@ -567,16 +569,29 @@ class App extends MY_Controller
                         $data_platform["site_url"] = $this->input->post('site_url');
                     }
                 }
+                $check_data = array('site_id' => $app_id,
+                                    'platform' => strtolower($this->input->post('platform')),
+                                    'data_platform' => $data_platform);
+                $site = $this->App_model->checkPlatformExists($check_data);
+                if(!$site){
+                    $add_data = array(
+                        "platform" => strtolower($this->input->post('platform')),
+                        "data" => $data_platform
+                    );
+                    $this->App_model->addPlatform($app_id, $add_data);
 
-                $add_data = array(
-                    "platform" => strtolower($this->input->post('platform')),
-                    "data" => $data_platform
-                );
-                $this->App_model->addPlatform($app_id, $add_data);
+                    $this->session->data['success'] = $this->lang->line('text_success');
 
-                $this->session->data['success'] = $this->lang->line('text_success');
-
-                redirect('app', 'refresh');
+                    redirect('app', 'refresh');
+                }
+                else{
+                    if ($this->input->post('format') == 'json') {
+                        echo json_encode($this->lang->line('text_fail_platform_exists'));
+                        exit();
+                    }
+                    $this->data['message'] = $this->lang->line('text_fail_platform_exists');
+                }
+                
             }
         }
 

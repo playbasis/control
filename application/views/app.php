@@ -45,22 +45,25 @@
                     <table class="list app-table">
                         <tbody>
                             <tr class="app-table-label">
-                                <td style="text-align: center;" width="10%">
+                                <td style="text-align: center;" width="5%">
                                     <input type="checkbox" name="app_selected[]" value="<?php echo $site['site_id']; ?>" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);">
                                 </td>
-                                <td class="left" width="15%">
+                                <td class="center" width="10%">
                                     Platform
                                 </td>
-                                <td width="20%">
+                                <td class="center" width="30%">
+                                    Platform Url
+                                </td>
+                                <td class="center" width="15%">
                                     Api Key
                                 </td>
-                                <td >
+                                <td class="center" width="30%">
                                     Api Secret
                                 </td>
-                                <td class="right" width="10%">
+                                <td class="center" width="5%">
                                     Status
                                 </td>
-                                <td class="right app-col-action">
+                                <td class="right app-col-action" width="5%">
                                     Action
                                 </td>
                             </tr>
@@ -85,6 +88,18 @@
                                     }
                                     ?>
                                     <i class="fa <?php echo $aicon; ?> fa-lg"></i> <?php echo $aname; ?>
+                                </td>
+                                <td >
+                                    <?php
+                                    if($app['platform'] == 'web'){
+                                        $asite = $app['data']['site_url'];
+                                    }elseif($app['platform'] == 'ios'){
+                                        $asite = $app['data']['ios_bundle_id'];
+                                    }elseif($app['platform'] == 'android'){
+                                        $asite = $app['data']['android_package_name'];
+                                    }
+                                    ?>
+                                    <?php echo $asite; ?>
                                 </td>
                                 <td >
                                     <?php echo $app['api_key']; ?>
