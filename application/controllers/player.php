@@ -1156,6 +1156,7 @@ class Player extends REST2_Controller
 
         // generate password key
         $random_key = $this->player_model->generatePasswordResetCode($player['_id']);
+        $site_data = $this->client_model->findBySiteId($this->site_id);
 
         // send email
         $from = EMAIL_FROM;
@@ -1165,6 +1166,7 @@ class Player extends REST2_Controller
             'firstname' => $player['first_name'],
             'lastname' => $player['last_name'],
             'username' => $player['username'],
+            'site_logo' => (isset($site_data['image']) && !empty($site_data['image'])) ? S3_IMAGE.$site_data['image'] : "https://www.pbapp.net/images/playbasis-logo.jpg",
             'url' => $this->config->item('CONTROL_DASHBOARD_URL') . 'player/password/reset/'.$random_key
         ), true);
         $response = $this->utility->email($from, $to, $subject, $html);
@@ -1188,6 +1190,7 @@ class Player extends REST2_Controller
 
         // generate password key
         $random_key = $this->player_model->generateEmailVerifyCode($player['_id']);
+        $site_data = $this->client_model->findBySiteId($this->site_id);
 
         // send email
         $from = EMAIL_FROM;
@@ -1196,6 +1199,7 @@ class Player extends REST2_Controller
         $html = $this->parser->parse('player_verifyemail.html', array(
             'firstname' => $player['first_name'],
             'lastname' => $player['last_name'],
+            'site_logo' => (isset($site_data['image']) && !empty($site_data['image'])) ? S3_IMAGE.$site_data['image'] : "https://www.pbapp.net/images/playbasis-logo.jpg",
             'url' => $this->config->item('CONTROL_DASHBOARD_URL') . 'player/email/verify/'.$random_key
         ), true);
         $response = $this->utility->email($from, $to, $subject, $html);
