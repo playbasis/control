@@ -145,6 +145,16 @@
                                    value="<?php echo isset($routine) ? $routine : set_value('routine'); ?>"/>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <span>&nbsp;</span><?php echo $this->lang->line('entry_execution_time'); ?>&nbsp;:
+                        </td>
+                        <td>
+                            <input type="text" id="input_execution_time" name="execution_time" size="100"
+                                   placeholder="<?php echo $this->lang->line('entry_execution_time'); ?>"
+                                   value="<?php echo isset($execution_time) ? $execution_time : set_value('execution_time'); ?>"/>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -154,4 +164,17 @@
         </div>
     </div>
 </div>
+
+<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css" />
+<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+
+        $('#input_execution_time').timepicker({
+            // Customize here
+        });
+
+    });
+</script>
 

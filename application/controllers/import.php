@@ -193,18 +193,19 @@ class import extends MY_Controller
             if ($this->form_validation->run()) {
                 $data = $this->input->post();
 
-                $data['client_id']    = $this->User_model->getClientId();
-                $data['site_id']      = $this->User_model->getSiteId();
-                $data['name']         = $data['name'] != "" ? $data['name']: null;
-                $data['host_type']    = $data['host_type'] != "" ? $data['host_type']: null;
-                $data['host_name']    = $data['host_name'] != "" ? $data['host_name']: null;
-                $data['port']         = $data['port'] != "" ? $data['port'] : null;
-                $data['user_name']    = $data['user_name'] != "" ? $data['user_name'] : null;
-                $data['password']     = $data['password'] != "" ? $data['password'] : null;
-                $data['file_name']    = $data['file_name'] != "" ? $data['file_name']: null;
-                $data['directory']    = $data['directory'] != "" ? $data['directory']: null;
-                $data['import_type']  = $data['import_type'] != "" ? $data['import_type'] : null;
-                $data['routine']      = $data['routine'] != "" ? $data['routine'] : null;
+                $data['client_id']      = $this->User_model->getClientId();
+                $data['site_id']        = $this->User_model->getSiteId();
+                $data['name']           = (isset($data['name']) && !empty($data['name'])) ? $data['name']: null;
+                $data['host_type']      = (isset($data['host_type']) && !empty($data['name'])) ? $data['host_type']: null;
+                $data['host_name']      = (isset($data['host_name']) && !empty($data['host_name'])) ? $data['host_name']: null;
+                $data['port']           = (isset($data['port']) && !empty($data['port'])) ? $data['port'] : null;
+                $data['user_name']      = (isset($data['user_name']) && !empty($data['user_name'])) ? $data['user_name'] : null;
+                $data['password']       = (isset($data['password']) && !empty($data['password'])) ? $data['password'] : null;
+                $data['file_name']      = (isset($data['file_name']) && !empty($data['file_name'])) ? $data['file_name']: null;
+                $data['directory']      = (isset($data['directory']) && !empty($data['directory'])) ? $data['directory']: null;
+                $data['import_type']    = (isset($data['import_type']) && !empty($data['import_type'])) ? $data['import_type'] : null;
+                $data['routine']        = (isset($data['routine']) && !empty($data['routine'])) ? $data['routine'] : null;
+                $data['execution_time'] = (isset($data['execution_time']) && !empty($data['execution_time'])) ? $data['execution_time'] : null;
 
                 $insert = $this->import_model->addImportData($data);
                 if ($insert) {
@@ -254,16 +255,17 @@ class import extends MY_Controller
                 $data['client_id']    = $this->User_model->getClientId();
                 $data['site_id']      = $this->User_model->getSiteId();
                 $data['_id']          = $import_id;
-                $data['name']         = $data['name'] != "" ? $data['name']: null;
-                $data['host_type']    = $data['host_type'] != "" ? $data['host_type']: null;
-                $data['host_name']    = $data['host_name'] != "" ? $data['host_name']: null;
-                $data['port']         = $data['port'] != "" ? $data['port'] : null;
-                $data['user_name']    = $data['user_name'] != "" ? $data['user_name'] : null;
-                $data['password']     = $data['password'] != "" ? $data['password'] : null;
-                $data['file_name']    = $data['file_name'] != "" ? $data['file_name']: null;
-                $data['directory']    = $data['directory'] != "" ? $data['directory']: null;
-                $data['import_type']  = $data['import_type'] != "" ? $data['import_type'] : null;
-                $data['routine']      = $data['routine'] != "" ? $data['routine'] : null;
+                $data['name']           = (isset($data['name']) && !empty($data['name'])) ? $data['name']: null;
+                $data['host_type']      = (isset($data['host_type']) && !empty($data['name'])) ? $data['host_type']: null;
+                $data['host_name']      = (isset($data['host_name']) && !empty($data['host_name'])) ? $data['host_name']: null;
+                $data['port']           = (isset($data['port']) && !empty($data['port'])) ? $data['port'] : null;
+                $data['user_name']      = (isset($data['user_name']) && !empty($data['user_name'])) ? $data['user_name'] : null;
+                $data['password']       = (isset($data['password']) && !empty($data['password'])) ? $data['password'] : null;
+                $data['file_name']      = (isset($data['file_name']) && !empty($data['file_name'])) ? $data['file_name']: null;
+                $data['directory']      = (isset($data['directory']) && !empty($data['directory'])) ? $data['directory']: null;
+                $data['import_type']    = (isset($data['import_type']) && !empty($data['import_type'])) ? $data['import_type'] : null;
+                $data['routine']        = (isset($data['routine']) && !empty($data['routine'])) ? $data['routine'] : null;
+                $data['execution_time'] = (isset($data['execution_time']) && !empty($data['execution_time'])) ? $data['execution_time'] : null;
 
                 $update = $this->import_model->updateImportData($data);
                 if ($update) {

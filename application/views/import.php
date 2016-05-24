@@ -78,6 +78,7 @@
                         <td class="center" width="130"><?php echo $this->lang->line('column_directory'); ?></td>
                         <td class="center" width="80"><?php echo $this->lang->line('entry_import_type'); ?></td>
                         <td class="center" width="60"><?php echo $this->lang->line('entry_occur'); ?></td>
+                        <td class="center" width="60"><?php echo $this->lang->line('entry_execution_time'); ?></td>
                         <td class="center" width="130"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
@@ -93,6 +94,7 @@
                         <td></td>
                         <td class="center"><input type="text" name="filter_import_type" placeholder="by Type" value="<?php echo (isset($_GET['filter_import_type']) && !is_null($_GET['filter_import_type']))?$_GET['filter_import_type']:''; ?>" style="width:70px;"/></td>
                         <td></td>
+                        <td></td>
                         <td class="center">
                             <a onclick="clear_filter();" class="button"
                                id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
@@ -105,15 +107,16 @@
                                 <td style="text-align: center;">
                                     <input type="checkbox" name="selected[]" value="<?php echo $cs['_id']; ?>" />
                                 </td>
-                                <td class="left"><?php echo $cs['name']; ?></td>
-                                <td class="center"><?php echo $cs['host_type']; ?></td>
-                                <td class="left"><?php echo $cs['host_name']; ?></td>
-                                <td class="center"><?php echo $cs['port']; ?></td>
-                                <td class="left"><?php echo $cs['user_name']; ?></td>
-                                <td class="left"><?php echo $cs['file_name']; ?></td>
-                                <td class="left"><?php echo $cs['directory']; ?></td>
-                                <td class="left"><?php echo $cs['import_type']; ?></td>
-                                <td class="center"><?php echo $cs['routine']; ?></td>
+                                <td class="left"><?php echo isset($cs['name']) ? $cs['name'] : null; ?></td>
+                                <td class="center"><?php echo isset($cs['host_type']) ? $cs['host_type'] : null; ?></td>
+                                <td class="left"><?php echo isset($cs['host_name']) ? $cs['host_name'] : null; ?></td>
+                                <td class="center"><?php echo isset($cs['port']) ? $cs['port'] : null; ?></td>
+                                <td class="left"><?php echo isset($cs['user_name']) ? $cs['user_name'] : null; ?></td>
+                                <td class="left"><?php echo isset($cs['file_name']) ? $cs['file_name'] : null; ?></td>
+                                <td class="left"><?php echo isset($cs['directory']) ? $cs['directory'] : null; ?></td>
+                                <td class="left"><?php echo isset($cs['import_type']) ? $cs['import_type'] : null; ?></td>
+                                <td class="center"><?php echo isset($cs['routine']) ? $cs['routine'] : null; ?></td>
+                                <td class="center"><?php echo isset($cs['execution_time']) ? $cs['execution_time'] : null; ?></td>
                                 <td class="center">
                                     <a href="<?php echo site_url('import/update/'.$cs['_id']) ?>" title="Edit" class="tooltips" data-placement="top"><i class="fa fa-edit fa-lg"></i></a>
                                 </td>
@@ -215,12 +218,12 @@
                         <?php if (isset($logDatas) && $logDatas) { ?>
                             <?php foreach ($logDatas as $logData) { ?>
                                 <tr>
-                                    <td class="center"><?php echo $logData['name']; ?></td>
-                                    <td class="center"><?php echo $logData['import_method']; ?></td>
-                                    <td class="center"><?php echo $logData['import_type']; ?></td>
-                                    <td class="center"><?php echo $logData['routine']; ?></td>
-                                    <td class="center"><?php echo $logData['date_added']; ?></td>
-                                    <td class="center"><?php echo $logData['result']; ?></td>
+                                    <td class="center"><?php echo isset($logData['name']) ? $logData['name'] : null; ?></td>
+                                    <td class="center"><?php echo isset($logData['import_method']) ? $logData['import_method'] : null; ?></td>
+                                    <td class="center"><?php echo isset($logData['import_type']) ? $logData['import_type'] : null; ?></td>
+                                    <td class="center"><?php echo isset($logData['routine']) ? $logData['routine'] : null; ?></td>
+                                    <td class="center"><?php echo isset($logData['date_added']) ? $logData['date_added'] : null; ?></td>
+                                    <td class="center"><?php echo isset($logData['result']) ? $logData['result'] : null; ?></td>
                                     <td class="center">
                                         <?php if (isset($logData['log_results']) && !is_null($logData['log_results'])) { ?>
 

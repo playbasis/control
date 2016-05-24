@@ -5,29 +5,29 @@
  * Date: 3/2/16
  * Time: 10:58 AM
  */
-$lang['heading_title']      = 'Import';
-$lang['entry_name']         = 'Name';
-$lang['entry_url']          = 'URL';
-$lang['entry_hostname']     = 'Host name';
-$lang['entry_hosttype']     = 'Host type';
-$lang['entry_filename']     = 'File name';
-$lang['entry_port']         = 'Port';
-$lang['entry_username']     = 'Username';
-$lang['entry_password']     = 'Password';
-$lang['entry_import_method']= 'Import method';
-$lang['entry_import_type']  = 'Import type';
-$lang['entry_occur']        = 'Occurrence (day)';
-$lang['entry_results']      = 'Result';
-$lang['entry_date_execute'] = 'Date execute';
-$lang['entry_results_log']  = 'Success / Total';
-$lang['entry_results_name'] = 'Name => Status';
-$lang['entry_duplicate']    = 'Data duplicate with previous';
-$lang['entry_file']         = 'CSV File To Import';
-$lang['entry_directory']    = 'File directory';
+$lang['heading_title']        = 'Import';
+$lang['entry_name']           = 'Name';
+$lang['entry_url']            = 'URL';
+$lang['entry_hostname']       = 'Host name';
+$lang['entry_hosttype']       = 'Host type';
+$lang['entry_filename']       = 'File name';
+$lang['entry_port']           = 'Port';
+$lang['entry_username']       = 'Username';
+$lang['entry_password']       = 'Password';
+$lang['entry_import_method']  = 'Import method';
+$lang['entry_import_type']    = 'Import type';
+$lang['entry_occur']          = 'Occurrence every (day)';
+$lang['entry_results']        = 'Result';
+$lang['entry_date_execute']   = 'Date execute';
+$lang['entry_results_log']    = 'Success / Total';
+$lang['entry_results_name']   = 'Name => Status';
+$lang['entry_duplicate']      = 'Data duplicate with previous';
+$lang['entry_file']           = 'CSV File To Import';
+$lang['entry_directory']      = 'File directory';
+$lang['entry_execution_time'] = 'Execution time';
 
-$lang['column_action']      = 'Action';
-$lang['column_directory']   = 'Directory';
-
+$lang['column_action']    = 'Action';
+$lang['column_directory'] = 'Directory';
 
 $lang['tab_cron']   = 'Cron';
 $lang['tab_adhoc']  = 'Adhoc';
