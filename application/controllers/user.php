@@ -19,7 +19,6 @@ class User extends MY_Controller
         $this->load->model('App_model');
         $this->load->model('Plan_model');
 //        $this->load->model('Domain_model');
-        $this->load->model('App_model');
         $this->load->model('Merchant_model');
         $this->load->model('Goods_model');
         $this->load->model('User_group_model');
@@ -1086,6 +1085,17 @@ class User extends MY_Controller
         if ($player) {
             $app = $this->App_model->getApp($player['site_id']);
             $this->data['app_name'] = $app['site_name'];
+            $this->data['thumb'] = "";
+            if ($app['image']) {
+                $info = pathinfo($app['image']);
+                if (isset($info['extension'])) {
+                    $extension = $info['extension'];
+                    $new_image = 'cache/' . utf8_substr($app['image'], 0,
+                            utf8_strrpos($app['image'], '.')) . '-80x80.' . $extension;
+                    $this->data['thumb'] = S3_IMAGE . $new_image;
+                }
+            }
+            $this->data['site_color'] =  isset($site_info['app_color']) ? $site_info['app_color'] : "#86559c";
             $this->data['referral_code'] = $code;
         }
         $this->data['main'] = 'partial/referral_partial';
@@ -1348,6 +1358,20 @@ class User extends MY_Controller
 
             if ($player) {
                 $player_info = $this->Player_model->getPlayerById($player['pb_player_id']);
+                if($player_info){
+                    $site_info = $this->App_model->getApp($player_info['site_id']);
+                    $this->data['thumb'] = "";
+                    if ($site_info['image']) {
+                        $info = pathinfo($site_info['image']);
+                        if (isset($info['extension'])) {
+                            $extension = $info['extension'];
+                            $new_image = 'cache/' . utf8_substr($site_info['image'], 0,
+                                    utf8_strrpos($site_info['image'], '.')) . '-80x80.' . $extension;
+                            $this->data['thumb'] = S3_IMAGE . $new_image;
+                        }
+                    }
+                    $this->data['site_color'] =  isset($site_info['app_color']) ? $site_info['app_color'] : "#86559c";
+                }
                 $this->data['player_info'] = $player_info;
                 $this->data['password_recovery_code'] = $code;
             }
@@ -1365,6 +1389,22 @@ class User extends MY_Controller
         $this->data['topic_message'] = 'Completed Reset Password';
         $this->data['message'] = 'You password has been changed. You can now login again with new password.';
         $this->data['main'] = 'partial/something_wrong';
+        $this->data['thumb'] = "";
+        if($this->session->userdata('site_id')){
+            $site_info = $this->App_model->getApp($this->session->userdata('site_id'));
+            if ($site_info['image']) {
+                $info = pathinfo($site_info['image']);
+                if (isset($info['extension'])) {
+                    $extension = $info['extension'];
+                    $new_image = 'cache/' . utf8_substr($site_info['image'], 0,
+                            utf8_strrpos($site_info['image'], '.')) . '-80x80.' . $extension;
+                    $this->data['thumb'] = S3_IMAGE . $new_image;
+                }
+            }
+            $this->data['site_color'] =  isset($site_info['app_color']) ? $site_info['app_color'] : "#86559c";
+        }
+
+
         $this->load->vars($this->data);
         $this->render_page('template_beforelogin');
     }
@@ -1397,6 +1437,21 @@ class User extends MY_Controller
         }else{
             $this->Player_model->verifyEmailByPlayerId($player['pb_player_id']);
             $this->Player_model->deleteEmailVerifyCode($code);
+            $player_info = $this->Player_model->getPlayerById($player['pb_player_id']);
+            $this->data['thumb'] = "";
+            if($player_info){
+                $site_info = $this->App_model->getApp($player_info['site_id']);
+                if ($site_info['image']) {
+                    $info = pathinfo($site_info['image']);
+                    if (isset($info['extension'])) {
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($site_info['image'], 0,
+                                utf8_strrpos($site_info['image'], '.')) . '-80x80.' . $extension;
+                        $this->data['thumb'] = S3_IMAGE . $new_image;
+                    }
+                }
+                $this->data['site_color'] =  isset($site_info['app_color']) ? $site_info['app_color'] : "#86559c";
+            }
             $this->data['topic_message'] = 'Thanks. You have completed to verify your email.';
             $this->data['message'] = 'You email address has been verified. Let\'s have fun .';
             $this->data['main'] = 'partial/something_wrong';

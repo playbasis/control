@@ -223,10 +223,13 @@ class Workflow_model extends MY_Model
             $player = $this->findPlayerByClPlayerId($client_id, $site_id, $data['cl_player_id']);
             if ($player) {
                 /* system automatically send an email to notify the player that account is approved */
-                $site_name = $this->findSiteName($client_id, $site_id);
+                $site_data = $this->findClientSite($client_id, $site_id);
                 $this->load->library('parser');
                 $vars = array(
-                    'sitename' => $site_name,
+                    'sitename' => $site_data['site_name'],
+                    'site_logo' => isset($site_data['image']) && !empty($site_data['image']) ? $site_data['image'] : "image/beforelogin/email-header-top.gif",
+                    'site_color' => ((isset($site_data['app_color']) && !empty($site_data['app_color'])) &&
+                                     (isset($site_data['image']) && !empty($site_data['image']))) ? $site_data['app_color'] : "#86559c",
                     'firstname' => $player['first_name'],
                     'lastname' => $player['last_name'],
                     'username' => $player['username'],
@@ -266,11 +269,14 @@ class Workflow_model extends MY_Model
             $player = $this->findPlayerByClPlayerId($client_id, $site_id, $player_id);
             if ($player && (!isset($player['approve_status']) || $player['approve_status'] != 'approved')) { // detect approve_status changed
                 /* system automatically send an email to notify the player that account is approved */
-                $site_name = $this->findSiteName($client_id, $site_id);
+                $site_data = $this->findClientSite($client_id, $site_id);
                 $random_key = $this->generatePasswordResetCode($player['_id']);
                 $this->load->library('parser');
                 $vars = array(
-                    'sitename' => $site_name,
+                    'sitename' => $site_data['site_name'],
+                    'site_logo' => isset($site_data['image']) && !empty($site_data['image']) ? $site_data['image'] : "image/beforelogin/email-header-top.gif",
+                    'site_color' => ((isset($site_data['app_color']) && !empty($site_data['app_color'])) &&
+                                     (isset($site_data['image']) && !empty($site_data['image']))) ? $site_data['app_color'] : "#86559c",
                     'firstname' => $player['first_name'],
                     'lastname' => $player['last_name'],
                     'username' => $player['username'],
@@ -307,11 +313,14 @@ class Workflow_model extends MY_Model
         /* system automatically send an email to notify the player that account is approved */
         $player = $this->findPlayerById($client_id, $site_id, new MongoID($user_id));
         if ($player) {
-            $site_name = $this->findSiteName($client_id, $site_id);
+            $site_data = $this->findClientSite($client_id, $site_id);
             $random_key = $this->generatePasswordResetCode($player['_id']);
             $this->load->library('parser');
             $vars = array(
-                'sitename' => $site_name,
+                'sitename' => $site_data['site_name'],
+                'site_logo' => isset($site_data['image']) && !empty($site_data['image']) ? $site_data['image'] : "image/beforelogin/email-header-top.gif",
+                'site_color' => ((isset($site_data['app_color']) && !empty($site_data['app_color'])) &&
+                                 (isset($site_data['image']) && !empty($site_data['image']))) ? $site_data['app_color'] : "#86559c",
                 'firstname' => $player['first_name'],
                 'lastname' => $player['last_name'],
                 'username' => $player['username'],
@@ -439,13 +448,13 @@ class Workflow_model extends MY_Model
         return $this->mongo_db->get('playbasis_player');
     }
 
-    private function findSiteName($client_id, $site_id) {
+    private function findClientSite($client_id, $site_id) {
         $this->mongo_db->where(array(
             '_id' => $site_id,
             'client_id' => $client_id
         ));
         $results = $this->mongo_db->get("playbasis_client_site");
-        return $results && isset($results[0]['site_name']) ? $results[0]['site_name'] : null;
+        return $results && isset($results[0]) ? $results[0] : null;
     }
 
     private function findPlayerById($client_id, $site_id, $pb_player_id) {

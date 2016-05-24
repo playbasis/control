@@ -1,12 +1,14 @@
-<header class="pbr-header" role="banner">
+<header class="pbr-header" role="banner" <?if(isset($site_color)){ ?>style="background:<?php echo $site_color?>" <?php }?>>
   <div class="row" role="navigation">
-
-              <a href="http://www.playbasis.com">
-                <svg title="Playbasis" class="pbr-header-logo">
-                  <use xlink:href="<?php echo base_url();?>image/beforelogin/logo.svg#logo"></use>
-                </svg>
-              </a>
-
+      <?php if(isset($thumb) && !empty($thumb)) {?>
+        <a><img src="<?php echo $thumb; ?>" alt="" id="thumb"/></a>
+      <?php }else{ ?>
+        <a href="http://www.playbasis.com">
+          <svg title="Playbasis" class="pbr-header-logo">
+            <use xlink:href="<?php echo base_url(); ?>image/beforelogin/logo.svg#logo"></use>
+          </svg>
+        </a>
+      <?php } ?>
   </div>
 
   <div class="row">

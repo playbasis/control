@@ -1,11 +1,15 @@
-<header class="pbr-header" role="banner">
+<header class="pbr-header" role="banner" <?if(isset($site_color)){ ?>style="background:<?php echo $site_color?>" <?php }?>>
     <div class="row" role="navigation">
 
+        <?php if(isset($thumb) && !empty($thumb)) {?>
+        <a href="<?php echo $thumb; ?>"><img src="<?php echo $thumb; ?>" alt="" id="thumb"/></a>
+        <?php }else{ ?>
         <a href="http://www.playbasis.com">
             <svg title="Playbasis" class="pbr-header-logo">
                 <use xlink:href="<?php echo base_url(); ?>image/beforelogin/logo.svg#logo"></use>
             </svg>
         </a>
+        <?php } ?>
 
     </div>
 
@@ -65,7 +69,7 @@
             <div class="registration-benefits">
 
                 <div class="benefits-block">
-                    <h4>Ensure security of your account</h4>
+                    <h4 style="color:<?php echo $site_color?>">Ensure security of your account</h4>
 
                     <p>Choose a new password for your account. This new password will replace the old one; everything
                         else about your account will remain unchanged. We recommend you to change your password
