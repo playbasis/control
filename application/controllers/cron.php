@@ -1866,8 +1866,11 @@ class Cron extends CI_Controller
                 $latestExecute = $importData['date_modified']['sec'];
             }
 
-            // Get next execute date from latest execute + routine occurrence, given execution time to 1AM at the day
-            $dateNextExecute = strtotime(date('Y-m-d 01:00:00',
+            // Get execution time, if not set then execute at 00:00 at the day
+            $execution_time = (isset($importData['execution_time']) && !empty($importData['execution_time'])) ? $importData['execution_time'] : '00:00';
+
+            // Get next execute date from latest execute + routine occurrence
+            $dateNextExecute = strtotime(date('Y-m-d ' . $execution_time,
                 strtotime('+' . $importData['routine'] . 'days', $latestExecute)));
             $today = time();
 
