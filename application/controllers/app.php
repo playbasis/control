@@ -296,10 +296,9 @@ class App extends MY_Controller
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_platform"));
                     redirect("app");
                 }
+                $app_name = $this->input->post('app_name');
 
-                $c_data = array('site_name' => $this->input->post('app_name'));
-
-                $site = $this->App_model->checkAppExists($c_data);
+                $site = $this->App_model->checkAppExists($app_name);
 
                 if (!$site) {
 
@@ -617,17 +616,27 @@ class App extends MY_Controller
                 'trim|required|min_length[3]|max_length[100]|check_space|alpha_dash');
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
+                $app_name = $this->input->post('app_name');
+                $site = $this->App_model->checkAppExists($app_name,$app_id);
 
-                $edit_data = array(
-                    "app_name" => $this->input->post('app_name'),
-                    "image" => $this->input->post('image'),
-                    "app_color" => $this->input->post('app_color')
-                );
+                if (!$site) {
+                    $edit_data = array(
+                        "app_name" => $this->input->post('app_name'),
+                        "image" => $this->input->post('image'),
+                        "app_color" => $this->input->post('app_color')
+                    );
 
-                $this->App_model->editApp($app_id, $edit_data);
-                $this->session->data['success'] = $this->lang->line('text_success');
+                    $this->App_model->editApp($app_id, $edit_data);
+                    $this->session->data['success'] = $this->lang->line('text_success');
 
-                redirect('app', 'refresh');
+                    redirect('app', 'refresh');
+                } else {
+                    if ($this->input->post('format') == 'json') {
+                        echo json_encode($this->lang->line('text_fail_app_exists'));
+                        exit();
+                    }
+                    $this->data['message'] = $this->lang->line('text_fail_app_exists');
+                }
             }
         }
 

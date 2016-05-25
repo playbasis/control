@@ -398,12 +398,15 @@ class App_model extends MY_Model
         $this->mongo_db->update_all('playbasis_client_site');
     }
 
-    public function checkAppExists($data)
+    public function checkAppExists($site_name,$app_id=null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('site_name', $data['site_name']);
+        $this->mongo_db->where('site_name', $site_name);
         $this->mongo_db->where('deleted', false);
+        if($app_id){
+            $this->mongo_db->where_ne('_id', new MongoID($app_id));
+        }
 
         $c = $this->mongo_db->count('playbasis_client_site');
         return $c > 0;
