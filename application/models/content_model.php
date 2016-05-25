@@ -99,6 +99,21 @@ class Content_model extends MY_Model
         return $insert;
     }
 
+    public function findContent($client_id, $site_id, $project_id, $content_id=null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('project_id', $project_id);
+        $this->mongo_db->where('deleted', false);
+        if($content_id){
+            $this->mongo_db->where_ne('_id', new MongoId($content_id));
+        }
+        $c = $this->mongo_db->count('playbasis_content_to_client');
+        return $c > 0;
+    }
+
     public function updateContent($data)
     {
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));

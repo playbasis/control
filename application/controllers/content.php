@@ -96,6 +96,8 @@ class Content extends MY_Controller
             $this->data['message'] = $this->lang->line('error_contents_limit');
         }
 
+        $this->form_validation->set_rules('project_id', $this->lang->line('entry_id'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('summary', $this->lang->line('entry_summary'),
@@ -118,6 +120,7 @@ class Content extends MY_Controller
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
+                $data['project_id'] = (isset($content_data['project_id']) && $content_data['project_id']) ? $content_data['project_id'] : null;
                 $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
@@ -129,63 +132,68 @@ class Content extends MY_Controller
                 $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
                 $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
 
-                $insert = $this->Content_model->createContent($data);
-                if ($insert) {
-                    if ($this->User_model->hasPermission('access', 'store_org') &&
-                        $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(),
-                            'store_org')
-                    ) {
-                        //Add player to node
-                        if (isset($content_data['organize_node'][0]) && !empty($content_data['organize_node'][0])) {
-                            $status = $this->Content_model->addContentToNode($insert."", $content_data['organize_node'][0]);
-                            if ($status->success) {
-                                //set role of player
-                                if (isset($content_data['organize_role'][0]) && !empty($content_data['organize_role'][0])) {
-                                    $role_array = explode(",", $content_data['organize_role'][0]);
-                                    $status1 = null;
-                                    foreach ($role_array as $role) {
-                                        $role = str_replace(' ', '', $role);
-                                        $status1 = $this->Content_model->setContentRole($insert."", $content_data['organize_node'][0], $role);
-                                        if (!$status1->success) {
-                                            break;
+                $check_content = $this->Content_model->findContent($client_id, $site_id, $data['project_id']);
+                if(!$check_content){
+                    $insert = $this->Content_model->createContent($data);
+                    if ($insert) {
+                        if ($this->User_model->hasPermission('access', 'store_org') &&
+                            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org'))
+                        {
+                            //Add player to node
+                            if (isset($content_data['organize_node'][0]) && !empty($content_data['organize_node'][0])) {
+                                $status = $this->Content_model->addContentToNode($insert."", $content_data['organize_node'][0]);
+                                if ($status->success) {
+                                    //set role of player
+                                    if (isset($content_data['organize_role'][0]) && !empty($content_data['organize_role'][0])) {
+                                        $role_array = explode(",", $content_data['organize_role'][0]);
+                                        $status1 = null;
+                                        foreach ($role_array as $role) {
+                                            $role = str_replace(' ', '', $role);
+                                            $status1 = $this->Content_model->setContentRole($insert."", $content_data['organize_node'][0], $role);
+                                            if (!$status1->success) {
+                                                break;
+                                            }
                                         }
-                                    }
-                                    if ($status1->success) {
-                                        // created player, added player to the node and set role of the player
-                                        $this->session->set_flashdata('success',
-                                            $this->lang->line('text_success_create'));
-                                        redirect('/content', 'refresh');
+                                        if ($status1->success) {
+                                            // created player, added player to the node and set role of the player
+                                            $this->session->set_flashdata('success',
+                                                $this->lang->line('text_success_create'));
+                                            redirect('/content', 'refresh');
+                                        } else {
+                                            // failed to set role of player
+                                            $this->data['message'] = $status1->message;
+                                        }
                                     } else {
-                                        // failed to set role of player
-                                        $this->data['message'] = $status1->message;
+                                        //created player and added player to the node but did not set role of the player
+                                        $this->session->set_flashdata('success',
+                                            $this->lang->line('text_success_create_without_role_setting'));
+                                        redirect('/content', 'refresh');
                                     }
                                 } else {
-                                    //created player and added player to the node but did not set role of the player
-                                    $this->session->set_flashdata('success',
-                                        $this->lang->line('text_success_create_without_role_setting'));
-                                    redirect('/content', 'refresh');
+                                    //failed to add player to node
+                                    $this->data['message'] = $status->message;
                                 }
                             } else {
-                                //failed to add player to node
-                                $this->data['message'] = $status->message;
+                                //created player with enabled store org feature but did not add the player to any node
+                                $this->session->set_flashdata('success',
+                                    $this->lang->line('text_success_create_without_org_setting'));
+                                redirect('/content', 'refresh');
                             }
                         } else {
-                            //created player with enabled store org feature but did not add the player to any node
-                            $this->session->set_flashdata('success',
-                                $this->lang->line('text_success_create_without_org_setting'));
+                            // created player with disabled store org feature
+                            $this->session->set_flashdata('success', $this->lang->line('text_success_create'));
                             redirect('/content', 'refresh');
                         }
-                    } else {
-                        // created player with disabled store org feature
-                        $this->session->set_flashdata('success', $this->lang->line('text_success_create'));
-                        redirect('/content', 'refresh');
+                    }else{
+                        // failed to create player
+                        if (!isset($_POST['organize_node'][0])) {
+                            $_POST['organize_node'][0] = "";
+                        }
+                        $this->data['message'] = $this->lang->line('error_create');
                     }
-                }else{
-                    // failed to create player
-                    if (!isset($_POST['organize_node'][0])) {
-                        $_POST['organize_node'][0] = "";
-                    }
-                    $this->data['message'] = $this->lang->line('error_create');
+                }
+                else{
+                    $this->data['message'] = $this->lang->line('error_ID_alrady_exist');
                 }
             }
         }
@@ -219,10 +227,12 @@ class Content extends MY_Controller
 
             if ($this->form_validation->run()) {
                 $content_data = $this->input->post();
-
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
                 $data['_id'] = new MongoId($content_id);
-                $data['client_id'] = $this->User_model->getClientId();
-                $data['site_id'] = $this->User_model->getSiteId();
+                $data['client_id'] = $client_id;
+                $data['site_id'] = $site_id;
+                $data['project_id'] = (isset($content_data['project_id']) && $content_data['project_id']) ? $content_data['project_id'] : null;
                 $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
@@ -233,80 +243,90 @@ class Content extends MY_Controller
                 $data['status'] = isset($content_data['status']) ? true : false;
                 $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
                 $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
+                
+                $check_content = $this->Content_model->findContent($data['client_id'], $site_id, $content_data['project_id'], $content_id);
+                if(!$check_content){
+                    $insert = $this->Content_model->updateContent($data);
+                    if ($insert) {
+                        if ($this->User_model->hasPermission('access', 'store_org') &&
+                            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')) 
+                        {
+                            foreach ($content_data['organize_id'] as $i => $org_id) {
+                                //Add player to node
+                                if (isset($content_data['organize_node'][$i]) && !empty($content_data['organize_node'][$i]) && $insert) {
 
-                $update = $this->Content_model->updateContent($data);
-                if ($update) {
-                    if ($this->User_model->hasPermission('access', 'store_org') &&
-                        $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(),
-                            'store_org')
-                    ) {
-                        foreach ($content_data['organize_id'] as $i => $org_id) {
-                            //Add player to node
-                            if (isset($content_data['organize_node'][$i]) && !empty($content_data['organize_node'][$i]) && $update) {
-
-                                if ($org_id == "") {// this player has never been added to any node
-                                    $status = $this->Content_model->addContentToNode($content_id,
-                                        $content_data['organize_node'][$i]);
-                                } else { //this player has been added to some node
-                                    $status = $this->Content_model->editOrganizationOfContent($data['client_id'], $data['site_id'],
-                                        $content_data['organize_id'][$i], $content_id, $content_data['organize_node'][$i]);
-                                }
-
-                                //set role of content
-                                if (isset($content_data['organize_role'][$i])) {
-
-                                    $temp = $this->Content_model->getRole($data['client_id'], $data['site_id'], $content_id,
-                                        $content_data['organize_node'][$i]);
-
-                                    $role_array = explode(",", $content_data['organize_role'][$i]);
-
-                                    if (isset($temp[0]['roles'])) {
-                                        // Unset role which different from input
-                                        foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff) {
-                                            $status = $this->Content_model->clearContentRole($content_id,
-                                                $content_data['organize_node'][$i], $diff)->success;
-                                            if (!$status) {
-                                                break;
-                                            }
-                                        }
+                                    if ($org_id == "") {// this player has never been added to any node
+                                        $status = $this->Content_model->addContentToNode($content_id, $content_data['organize_node'][$i]);
+                                    } else { //this player has been added to some node
+                                        $status = $this->Content_model->editOrganizationOfContent($data['client_id'], $data['site_id'],
+                                            $content_data['organize_id'][$i], $content_id, $content_data['organize_node'][$i]);
                                     }
 
-                                    // Set content role if input is not empty
-                                    if (!empty($content_data['organize_role'][$i])) {
+                                    //set role of content
+                                    if (isset($content_data['organize_role'][$i])) {
 
-                                        foreach ($role_array as $role) {
+                                        $temp = $this->Content_model->getRole($data['client_id'], $data['site_id'], $content_id,
+                                            $content_data['organize_node'][$i]);
 
-                                            // Only set if input is not in existing role
-                                            if ((!isset($temp[0]['roles'])) || (!in_array($role, array_keys($temp[0]['roles'])))) {
-                                                $status = $this->Content_model->setContentRole($content_id,
-                                                    $content_data['organize_node'][$i], $role)->success;
+                                        $role_array = explode(",", $content_data['organize_role'][$i]);
+
+                                        if (isset($temp[0]['roles'])) {
+                                            // Unset role which different from input
+                                            foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff) {
+                                                $status = $this->Content_model->clearContentRole($content_id,
+                                                    $content_data['organize_node'][$i], $diff)->success;
                                                 if (!$status) {
                                                     break;
+                                                }
+                                            }
+                                        }
+
+                                        // Set content role if input is not empty
+                                        if (!empty($content_data['organize_role'][$i])) {
+
+                                            foreach ($role_array as $role) {
+
+                                                // Only set if input is not in existing role
+                                                if ((!isset($temp[0]['roles'])) || (!in_array($role, array_keys($temp[0]['roles'])))) {
+                                                    $status = $this->Content_model->setContentRole($content_id,
+                                                        $content_data['organize_node'][$i], $role)->success;
+                                                    if (!$status) {
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
-                        if ($status) {
-                            // created player, added player to the node and set role of the player
+                            if (isset($status)) {
+                                if ($status->success == true) {
+                                    // created player, added player to the node and set role of the player
+                                    $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
+                                    redirect('/content', 'refresh');
+                                }
+                                else{
+                                    // failed to set role of player
+                                    $this->data['message'] = $status->message;
+                                }
+                            } else {
+                                // created player, added player to the node and set role of the player
+                                $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
+                                redirect('/content', 'refresh');
+                            }
+
+                        } else {
                             $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
                             redirect('/content', 'refresh');
-                        } else {
-                            // failed to set role of player
-                            $this->data['message'] = $status->message;
                         }
-
                     } else {
-                        $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
-                        redirect('/content', 'refresh');
+                        if (!isset($_POST['organize_node'][0])) {
+                            $_POST['organize_node'][0] = "";
+                        }
+                        $this->data['message'] = $this->lang->line('error_update');
                     }
                 } else {
-                    if (!isset($_POST['organize_node'][0])) {
-                        $_POST['organize_node'][0] = "";
-                    }
-                    $this->data['message'] = $this->lang->line('error_update');
+                    $this->data['message'] = $this->lang->line('error_ID_alrady_exist');
                 }
             }
         }
@@ -490,6 +510,13 @@ class Content extends MY_Controller
                 }
             }
 
+        }
+        if ($this->input->post('project_id')) {
+            $this->data['project_id'] = $this->input->post('project_id');
+        } elseif (isset($content_info['project_id'])) {
+            $this->data['project_id'] = $content_info['project_id'];
+        } else {
+            $this->data['project_id'] = '';
         }
 
         if ($this->input->post('title')) {

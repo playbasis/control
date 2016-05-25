@@ -42,6 +42,17 @@
 
             <div class="control-group">
                 <label class="control-label"
+                       for="project_id"><?php echo $this->lang->line('entry_id'); ?><span
+                        class="required">&nbsp;*</span></label>
+                <div class="controls">
+                    <input type="text" name="project_id" size="100" id="project_id"
+                           placeholder="<?php echo $this->lang->line('entry_id'); ?>"
+                           value="<?php echo isset($project_id) ? $project_id : set_value('$project_id'); ?>"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label"
                        for="inputTitle"><?php echo $this->lang->line('entry_title'); ?><span
                         class="required">&nbsp;*</span></label>
                 <div class="controls">
@@ -134,10 +145,7 @@
                               for="inputTitle"><?php echo $this->lang->line('entry_organization'); ?></label>
                     <?php for($i = 0;$i<count($organize_node);$i++){?>
                        <div class="controls">
-                               <?php if(isset($organize_id)){?>
-                                   <input type='hidden' name="organize_id[]"   id="<?php echo "organize_id".$i ?>"   style="width:220px;" value="<?php echo isset($organize_id[$i]) ? $organize_id[$i] : set_value('organize_id'); ?>">
-                               <?php }?>
-
+                               <input type='hidden' name="organize_id[]"   id="<?php echo "organize_id".$i ?>"   style="width:220px;" value="<?php echo isset($organize_id[$i]) ? $organize_id[$i] : set_value('organize_id'); ?>">
                                <input type='hidden' name="organize_type[]" id="<?php echo "organize_type".$i ?>" style="width:220px;" value="<?php echo isset($organize_type[$i]) ? $organize_type[$i] : set_value('organize_type'); ?>">
                                <input type='hidden' name="organize_node[]" id="<?php echo "organize_node".$i ?>" style="width:220px;" value="<?php echo isset($organize_node[$i]) ? $organize_node[$i] : set_value('organize_node'); ?>">
                                <input class="tags" type="text"   name="organize_role[]" id="<?php echo "organize_role".$i ?>" style="width:220px;" placeholder="Role" value="<?php echo isset($organize_role[$i]) ? $organize_role[$i] :  set_value('organize_role'); ?>" />
