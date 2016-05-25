@@ -19,7 +19,7 @@ class Content extends REST2_Controller
     {
         $this->benchmark->mark('start');
         $query_data = $this->input->get(null, true);
-        $content_id = null;
+        $content_id = array();
 
         if (isset($query_data['id'])) {
             try {
