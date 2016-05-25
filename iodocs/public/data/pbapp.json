@@ -3917,6 +3917,13 @@
               "Description": "Specific id of content"
             },
             {
+              "Name": "node_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific node_id of content"
+            },
+            {
               "Name": "title",
               "Required": "N",
               "Default": "",
@@ -4044,6 +4051,13 @@
               "Description": "access token returned from Auth"
             },
             {
+              "Name": "node_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific node_id of content"
+            },
+            {
               "Name": "title",
               "Required": "Y",
               "Default": "",
@@ -4156,6 +4170,13 @@
               "Default": "",
               "Type": "string",
               "Description": "content id as used in client's content"
+            },
+            {
+              "Name": "node_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific node_id of content"
             },
             {
               "Name": "title",

@@ -226,6 +226,7 @@ class Content extends REST2_Controller
         $contentInfo['site_id'] = $this->validToken['site_id'];
 
         $required = $this->input->checkParam(array(
+            'node_id',
             'title',
             'summary',
             'detail',
@@ -234,6 +235,15 @@ class Content extends REST2_Controller
         ));
         if ($required) {
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        if($this->input->post('node_id')) {
+            $check_node_id = $this->content_model->findContent($this->client_id, $this->site_id, $this->input->post('node_id'));
+            if($check_node_id)
+            {
+                $this->response($this->error->setError('CONTENT_NODE_ID__ALREADY_EXISTS'), 200);
+            }
+            $contentInfo['node_id'] = $this->input->post('node_id');
         }
 
         $contentInfo['title']    = $this->input->post('title');
@@ -297,6 +307,15 @@ class Content extends REST2_Controller
             new MongoId($content_id);
         } catch (Exception $e) {
             $this->response($this->error->setError('PARAMETER_INVALID', array('_id')), 200);
+        }
+
+        if($this->input->post('node_id')){
+            $check_node_id = $this->content_model->findContent($this->client_id, $this->site_id, $this->input->post('node_id'), $content_id);
+            if($check_node_id)
+            {
+                $this->response($this->error->setError('CONTENT_NODE_ID__ALREADY_EXISTS'), 200);
+            }
+            $contentInfo['node_id'] = $this->input->post('node_id');
         }
 
         if($this->input->post('title')){
