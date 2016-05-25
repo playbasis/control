@@ -92,16 +92,6 @@ class import extends MY_Controller
 
         $importData = $this->import_model->retrieveImportData($filter);
 
-        foreach ( $importData as $key => $val){
-            $inputForResult = array(
-                'client_id' => $client_id,
-                'site_id' => $site_id,
-                'import_id' => $val['_id'].""
-            );
-            $importResults = $this->import_model->retrieveImportResults($inputForResult);
-            $importData[$key] = array_merge($importData[$key], array('logs'=>$importResults));
-        }
-
         $this->data['importData'] = $importData;
 
         $config['total_rows'] = $this->import_model->countImportData($client_id, $site_id);
@@ -562,9 +552,11 @@ class import extends MY_Controller
         $this->load->library('pagination');
 
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
+        $parameter_url = "?";
 
         if ($this->input->get('filter_date_start')) {
             $filter_date_start = $this->input->get('filter_date_start');
+            $parameter_url .= "&filter_date_start=" . $filter_date_start;
         } else {
             $filter_date_start = date("Y-m-d", strtotime("-30 days"));
         }
@@ -573,6 +565,7 @@ class import extends MY_Controller
 
             //--> This will enable to search on the day until the time 23:59:59
             $date = $this->input->get('filter_date_end');
+            $parameter_url .= "&filter_date_end=" . $date;
             $currentDate = strtotime($date);
             $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
@@ -592,16 +585,49 @@ class import extends MY_Controller
             'client_id' => $client_id,
             'site_id' => $site_id,
             'sort' => 'date_added',
-            //'import_id' => $import_id,
             'date_start' => $filter_date_start,
             'date_end' => $filter_date_end
         );
+
+
+        $filteredImportDataByName = array();
+        $filteredImportDataByRoutine = array();
+
         if (isset($_GET['filter_name'])) {
-            $filter['filter_name'] = $_GET['filter_name'];
+            $filteredImportDataByName = $this->import_model->retrieveImportDataByName($client_id, $site_id, $_GET['filter_name']);
+            foreach($filteredImportDataByName as &$data){
+                $data = $data['_id']."";
+            }
+            $filter['import_name'] = $_GET['filter_name'];
+            $parameter_url .= "&filter_name=" . $_GET['filter_name'];
+        }
+        if (isset($_GET['filter_import_method'])) {
+            $filter['filter_import_method'] = $_GET['filter_import_method'];
+            $parameter_url .= "&filter_import_method=" . $_GET['filter_import_method'];
+        }
+        if (isset($_GET['filter_import_type'])) {
+            $filter['filter_import_type'] = $_GET['filter_import_type'];
+            $parameter_url .= "&filter_import_type=" . $_GET['filter_import_type'];
+        }
+        if (isset($_GET['filter_occur'])) {
+            $filteredImportDataByRoutine = $this->import_model->retrieveImportDataByRoutine($client_id, $site_id, $_GET['filter_occur']);
+            foreach($filteredImportDataByRoutine as &$data){
+                $data = $data['_id']."";
+            }
+            $parameter_url .= "&filter_occur=" . $_GET['filter_occur'];
+        }
+
+        if(isset($_GET['filter_occur']) && isset($_GET['filter_name']) && $_GET['filter_occur'] && $_GET['filter_name']){
+            $filter['import_id'] = array_intersect($filteredImportDataByName,$filteredImportDataByRoutine);
+        }elseif(isset($_GET['filter_name']) && $_GET['filter_name']){
+            $filter['import_id'] = $filteredImportDataByName;
+        }elseif(isset($_GET['filter_occur']) && $_GET['filter_occur']){
+            $filter['import_id'] = $filteredImportDataByRoutine;
         }
 
         $logDatas = array();
         $importLogsResults = $this->import_model->retrieveImportResults($filter);
+        $importLogsResultsCount =$this->import_model->countImportResults($filter);
 
         foreach ($importLogsResults as $importLogsResult) {
 
@@ -661,9 +687,11 @@ class import extends MY_Controller
         $filter_date_end_exploded = explode(" ", $filter_date_end);
         $this->data['filter_date_end'] = $filter_date_end_exploded[0];
 
-        $config['total_rows'] = $this->import_model->countImportResults($filter);
+        $config['total_rows'] = $importLogsResultsCount;
+        //$config['total_rows'] = count($importLogsResults);
 
-        $config['base_url'] = site_url('import/page/log'); //. $parameter_url;
+        $config['base_url'] = site_url('import/page/log');
+        $config['suffix'] =  $parameter_url;
         $config["uri_segment"] = 4;
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;

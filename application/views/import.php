@@ -198,16 +198,31 @@
                             <td class="center" width="110"><?php echo $this->lang->line('entry_occur'); ?></td>
                             <td class="center" width="150"><?php echo $this->lang->line('entry_date_execute'); ?></td>
                             <td class="center" ><?php echo $this->lang->line('entry_results'); ?></td>
-                            <td class="center" ><?php echo $this->lang->line('column_action'); ?></td>
+                            <td class="center" width="150"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>
                         <tbody>
                         <tr class="filter">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <!-- <td class="center"><input type="text" name="filter_name" value="" style="width:50%;"/></td> -->
-                            <td></td>
+                            <td class="center"><input type="text" name="filter_name" placeholder="Name" style="width:70%;"
+                                  value="<?php echo (isset($_GET['filter_name']) && !is_null($_GET['filter_name']))?$_GET['filter_name']:''; ?>" /></td>
+                            <td class="center">
+                                <select name="filter_import_method" id="filter_import_method" style="width:80%;">
+                                    <option value="" <?php if (isset($_GET['filter_import_method']) && is_null($_GET['filter_import_method']))  { ?>selected<?php }?>>    </option>
+                                    <option value="cron" <?php if (isset($_GET['filter_import_method']) && $_GET['filter_import_method'] == "cron")  { ?>selected<?php }?>>cron</option>
+                                    <option value="adhoc" <?php if (isset($_GET['filter_import_method']) && $_GET['filter_import_method'] == "adhoc")  { ?>selected<?php }?>>adhoc</option>
+                                </select>
+                            </td>
+                            <td class="center">
+                                <select name="filter_import_type" id="filter_import_type"  style="width:80%;">
+                                    <option value="" <?php if (isset($_GET['filter_import_type']) && is_null($_GET['filter_import_type']))  { ?>selected<?php }?>>    </option>
+                                    <option value="player" <?php if (isset($_GET['filter_import_type']) && $_GET['filter_import_type'] == "player")  { ?>selected<?php }?>>player</option>
+                                    <option value="transaction" <?php if (isset($_GET['filter_import_type']) && $_GET['filter_import_type'] == "transaction")  { ?>selected<?php }?>>transaction</option>
+                                    <option value="storeorg" <?php if (isset($_GET['filter_import_type']) && $_GET['filter_import_type'] == "storeorg")  { ?>selected<?php }?>>store organize</option>
+                                    <option value="content" <?php if (isset($_GET['filter_import_type']) && $_GET['filter_import_type'] == "content")  { ?>selected<?php }?>>content</option>
+                                </select>
+                            </td>
+                            <td class="center"><input type="text" name="filter_occur" placeholder="Occurrence" style="width:80%;"
+                                  value="<?php echo (isset($_GET['filter_occur']) && !is_null($_GET['filter_occur']))?$_GET['filter_occur']:''; ?>" /></td>
                             <td></td>
                             <td class="center"><?php echo $this->lang->line('entry_results_log'); ?></td>
                             <td class="center">
@@ -239,7 +254,7 @@
                             <?php } ?>
                         <?php } else { ?>
                             <tr>
-                                <td class="center" colspan="6"><?php echo $this->lang->line('text_no_results'); ?></td>
+                                <td class="center" colspan="7"><?php echo $this->lang->line('text_no_results'); ?></td>
                             </tr>
                         <?php } ?>
                         </tbody>
@@ -326,8 +341,17 @@
 
             var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
             var filter_date_end = $('input[name=\'filter_date_end\']').attr('value');
+            var filter_name = $('input[name=\'filter_name\']').attr('value');
+            var filter_import_method = document.getElementById('filter_import_method').value;//$('select[name=\'filter_import_method\']').attr('value');
+            var filter_import_type = document.getElementById('filter_import_type').value;//$('input[name=\'filter_import_type\']').attr('value');
+            var filter_occur = $('input[name=\'filter_occur\']').attr('value');
 
-            url += '?filter_date_start=' + encodeURIComponent(filter_date_start)+'&filter_date_end=' + encodeURIComponent(filter_date_end);
+            url += '?filter_date_start=' + encodeURIComponent(filter_date_start)+
+                '&filter_date_end=' + encodeURIComponent(filter_date_end)+
+                '&filter_name=' + encodeURIComponent(filter_name)+
+                '&filter_import_method=' + encodeURIComponent(filter_import_method)+
+                '&filter_import_type=' + encodeURIComponent(filter_import_type)+
+                '&filter_occur=' + encodeURIComponent(filter_occur);
         <?php }?>
 
         location = url;
@@ -345,7 +369,7 @@
         <?php }?>
 
     <?php }elseif($tab_status == "log"){?>
-        <?php if ( !isset($_GET['filter_type'])){?>
+        <?php if ( !isset($_GET['filter_date_start'])){?>
         $("#clear_filter").hide();
         <?php }else{?>
         $("#clear_filter").show();
