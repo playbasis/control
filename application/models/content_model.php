@@ -83,7 +83,10 @@ class Content_model extends MY_Model
         if (isset($optionalParams['content_id_organize_assoc'])){
             $exclude = array_merge($exclude, $optionalParams['content_id_organize_assoc']);
         }
-        $this->mongo_db->where_not_in('_id', $exclude);
+
+        if($exclude){
+            $this->mongo_db->where_not_in('_id', $exclude);
+        }
 
         if (isset($optionalParams['date_check']) && !empty($optionalParams['date_check'])) {
             $bool = filter_var($optionalParams['date_check'], FILTER_VALIDATE_BOOLEAN);
