@@ -42,12 +42,12 @@
 
             <div class="control-group">
                 <label class="control-label"
-                       for="project_id"><?php echo $this->lang->line('entry_id'); ?><span
+                       for="node_id"><?php echo $this->lang->line('entry_id'); ?><span
                         class="required">&nbsp;*</span></label>
                 <div class="controls">
-                    <input type="text" name="project_id" size="100" id="project_id"
+                    <input type="text" name="node_id" size="100" id="node_id"
                            placeholder="<?php echo $this->lang->line('entry_id'); ?>"
-                           value="<?php echo isset($project_id) ? $project_id : set_value('$project_id'); ?>"/>
+                           value="<?php echo isset($node_id) ? $node_id : set_value('$node_id'); ?>"/>
                 </div>
             </div>
 

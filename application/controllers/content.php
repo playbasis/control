@@ -96,7 +96,7 @@ class Content extends MY_Controller
             $this->data['message'] = $this->lang->line('error_contents_limit');
         }
 
-        $this->form_validation->set_rules('project_id', $this->lang->line('entry_id'),
+        $this->form_validation->set_rules('node_id', $this->lang->line('entry_id'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
@@ -120,7 +120,7 @@ class Content extends MY_Controller
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-                $data['project_id'] = (isset($content_data['project_id']) && $content_data['project_id']) ? $content_data['project_id'] : null;
+                $data['node_id'] = (isset($content_data['node_id']) && $content_data['node_id']) ? $content_data['node_id'] : null;
                 $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
@@ -132,7 +132,7 @@ class Content extends MY_Controller
                 $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
                 $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
 
-                $check_content = $this->Content_model->findContent($client_id, $site_id, $data['project_id']);
+                $check_content = $this->Content_model->findContent($client_id, $site_id, $data['node_id']);
                 if(!$check_content){
                     $insert = $this->Content_model->createContent($data);
                     if ($insert) {
@@ -232,7 +232,7 @@ class Content extends MY_Controller
                 $data['_id'] = new MongoId($content_id);
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
-                $data['project_id'] = (isset($content_data['project_id']) && $content_data['project_id']) ? $content_data['project_id'] : null;
+                $data['node_id'] = (isset($content_data['node_id']) && $content_data['node_id']) ? $content_data['node_id'] : null;
                 $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
@@ -244,7 +244,7 @@ class Content extends MY_Controller
                 $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
                 $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
                 
-                $check_content = $this->Content_model->findContent($data['client_id'], $site_id, $content_data['project_id'], $content_id);
+                $check_content = $this->Content_model->findContent($data['client_id'], $site_id, $content_data['node_id'], $content_id);
                 if(!$check_content){
                     $insert = $this->Content_model->updateContent($data);
                     if ($insert) {
@@ -511,12 +511,12 @@ class Content extends MY_Controller
             }
 
         }
-        if ($this->input->post('project_id')) {
-            $this->data['project_id'] = $this->input->post('project_id');
-        } elseif (isset($content_info['project_id'])) {
-            $this->data['project_id'] = $content_info['project_id'];
+        if ($this->input->post('node_id')) {
+            $this->data['node_id'] = $this->input->post('node_id');
+        } elseif (isset($content_info['node_id'])) {
+            $this->data['node_id'] = $content_info['node_id'];
         } else {
-            $this->data['project_id'] = '';
+            $this->data['node_id'] = '';
         }
 
         if ($this->input->post('title')) {

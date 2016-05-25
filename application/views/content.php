@@ -99,7 +99,7 @@
                                                             <input type="checkbox" name="selected[]"
                                                                    value="<?php echo $content['_id']; ?>"/>
                                                         <?php } ?></td>
-                                                    <td class="right"><?php echo isset($content['project_id']) && !empty($content['project_id']) ? $content['project_id']: ""; ?> <?php if (!empty($content['error'])) { ?>
+                                                    <td class="right"><?php echo isset($content['node_id']) && !empty($content['node_id']) ? $content['node_id']: ""; ?> <?php if (!empty($content['error'])) { ?>
                                                             <span class="red"><a herf="javascript:void(0)" class="error-icon"
                                                                                  title="<?php echo $content['error']; ?>"
                                                                                  data-toggle="tooltip"><i class="icon-warning-sign"></i></a>
