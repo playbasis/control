@@ -102,10 +102,10 @@ class Content_model extends MY_Model
     public function findContent($client_id, $site_id, $node_id, $content_id=null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
+        $regex = new MongoRegex("/" . preg_quote(mb_strtolower($node_id)) . "/i");
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
-        $this->mongo_db->where('node_id', $node_id);
+        $this->mongo_db->where('node_id', $regex);
         $this->mongo_db->where('deleted', false);
         if($content_id){
             $this->mongo_db->where_ne('_id', new MongoId($content_id));

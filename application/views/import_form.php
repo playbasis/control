@@ -150,9 +150,9 @@
                             <span>&nbsp;</span><?php echo $this->lang->line('entry_execution_time'); ?>&nbsp;:
                         </td>
                         <td>
-                            <input type="text" id="input_execution_time" name="execution_time" size="100"
-                                   placeholder="<?php echo $this->lang->line('entry_execution_time'); ?>"
-                                   value="<?php echo isset($execution_time) ? $execution_time : set_value('execution_time'); ?>"/>
+                            <input type="text" class="input_execution_time" id="input_execution_time" name="execution_time"
+                                   data-format="HH:mm" data-template="HH : mm"
+                                   value="<?php echo isset($execution_time) ? $execution_time : set_value('execution_time'); ?>" >
                         </td>
                     </tr>
                     </tbody>
@@ -165,16 +165,14 @@
     </div>
 </div>
 
-<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css" />
-<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
-
+<script src="<?php echo base_url(); ?>javascript/bootstrap/combodate.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/bootstrap/moment.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(function(){
-
-        $('#input_execution_time').timepicker({
-            // Customize here
+        $('.input_execution_time').combodate({
+            firstItem: 'name', //show 'hour' and 'minute' string at first item of dropdown
+            minuteStep: 1
         });
-
     });
 </script>
 
