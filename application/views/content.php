@@ -46,6 +46,7 @@
                                                 <input type="checkbox"
                                                        onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                                             </td>
+                                            <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_id'); ?></td>
                                             <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
                                             <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('column_category'); ?></td>
                                             <td rowspan="2" class="center"
@@ -69,6 +70,7 @@
                                         </thead>
                                         <tbody>
                                         <tr class="filter">
+                                            <td></td>
                                             <td></td>
                                             <td class="right"><input title="name" type="text" name="filter_title" value="<?php echo isset($_GET['title']) ? $_GET['title'] : "" ?>" style="width:50%;"/></td>
                                             <td></td>
@@ -97,6 +99,11 @@
                                                             <input type="checkbox" name="selected[]"
                                                                    value="<?php echo $content['_id']; ?>"/>
                                                         <?php } ?></td>
+                                                    <td class="right"><?php echo isset($content['node_id']) && !empty($content['node_id']) ? $content['node_id']: ""; ?> <?php if (!empty($content['error'])) { ?>
+                                                            <span class="red"><a herf="javascript:void(0)" class="error-icon"
+                                                                                 title="<?php echo $content['error']; ?>"
+                                                                                 data-toggle="tooltip"><i class="icon-warning-sign"></i></a>
+                                                            </span><?php } ?></td> 
                                                     <td class="right"><?php echo $content['title']; ?> <?php if (!empty($content['error'])) { ?>
                                                             <span class="red"><a herf="javascript:void(0)" class="error-icon"
                                                                                  title="<?php echo $content['error']; ?>"
@@ -129,7 +136,7 @@
                                         } else {
                                             ?>
                                             <tr>
-                                                <td colspan="7" class="center">
+                                                <td colspan="11" class="center">
                                                     <?php echo $this->lang->line('text_empty_content'); ?>
                                                 </td>
                                             </tr>
