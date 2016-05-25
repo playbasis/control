@@ -298,7 +298,7 @@ class Store_org_model extends MY_Model
         }
     }
 
-    public function retrieveAllContentToNode($client_id, $site_id, $node_id)
+    public function retrieveAllContentToNode($client_id, $site_id, $node_id = null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 

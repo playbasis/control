@@ -19,7 +19,7 @@ class Content extends REST2_Controller
     {
         $this->benchmark->mark('start');
         $query_data = $this->input->get(null, true);
-        $content_id = array();
+        $exclude_ids = array();
 
         if (isset($query_data['id'])) {
             try {
@@ -29,7 +29,7 @@ class Content extends REST2_Controller
             }
         }
 
-        if (isset($query_data['player_id'])) {
+        if (isset($query_data['player_id']) && !empty($query_data['player_id'])) {
             $pb_player_id = $this->player_model->getPlaybasisId(array(
                 'client_id' => $this->validToken['client_id'],
                 'site_id' => $this->validToken['site_id'],
@@ -40,11 +40,11 @@ class Content extends REST2_Controller
             }
         }
 
-        if ((isset($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true")) {
+        if ((isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true")) {
             if (!isset($query_data['player_id'])){
                 $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
             }
-            $content_id = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
+            $exclude_ids = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
                 $this->validToken['site_id'], $pb_player_id);
         }
 
@@ -54,23 +54,35 @@ class Content extends REST2_Controller
 
         // Get organize associated between player and content
         if (!empty($pb_player_id)){
+            $all_content_to_node = array();
+            $content_to_node_and_player = array();
+
+            // Retrieve all content_id associate to store_org
+            $content_to_node = $this->store_org_model->retrieveAllContentToNode($this->validToken['client_id'],
+                $this->validToken['site_id']);
+            foreach ($content_to_node as $ct){
+                if (isset($ct['content_id']) && !empty($ct['content_id'])){
+                    $all_content_to_node[] = $ct['content_id'];
+                }
+            }
+
+            // Retrieve content_id associate to store_org with player
             $nodes_list = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'],
                 $this->validToken['site_id'], $pb_player_id);
             $query_data['content_id_organize_assoc'] = array();
-
             foreach ($nodes_list as $val){
                 $content_to_node = $this->store_org_model->retrieveAllContentToNode($this->validToken['client_id'],
                     $this->validToken['site_id'], $val['node_id']);
-
                 foreach ($content_to_node as $ct){
                     if (isset($ct['content_id']) && !empty($ct['content_id'])){
-                        $query_data['content_id_organize_assoc'][] = $ct['content_id'];
+                        $content_to_node_and_player[] = $ct['content_id'];
                     }
                 }
             }
+            $query_data['content_id_organize_assoc'] = array_merge($query_data['content_id_organize_assoc'], array_diff($all_content_to_node, $content_to_node_and_player));
         }
 
-        if (isset($query_data['category']) && !is_null($query_data['category'])) {
+        if (isset($query_data['category']) && !empty($query_data['category'])) {
             $category_result = $this->content_model->retrieveContentCategory($this->validToken['client_id'], $this->validToken['site_id'],
                 array('name' => $query_data['category']));
             if($category_result){
@@ -79,13 +91,13 @@ class Content extends REST2_Controller
                 $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
             }
         }
-        if (isset($query_data['tags']) && !is_null($query_data['tags'])) {
+        if (isset($query_data['tags']) && !empty($query_data['tags'])) {
             $query_data = array_merge($query_data, array(
                 'tags' => explode(',', $this->input->get('tags'))
             ));
         }
 
-        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, $content_id);
+        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, $exclude_ids);
 
         foreach ($contents as &$content){
             $nodes_list = $this->store_org_model->getAssociatedNodeOfContent($this->validToken['client_id'],
@@ -138,7 +150,7 @@ class Content extends REST2_Controller
             }
             if (isset($query_data['_limit'])) $query_data['limit'] = $query_data['_limit'];
             $m = count($contents);
-            $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data, $content_id);
+            $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data, $exclude_ids);
             if (isset($query_data['limit']) && $query_data['limit'] < $n) $n = $query_data['limit'];
             if (!isset($query_data['offset']) || $query_data['offset'] < 0) $query_data['offset'] = 0;
             $numbers = range(0, $m-1);
@@ -146,12 +158,12 @@ class Content extends REST2_Controller
             $c = 0;
             foreach ($numbers as $i) {
                 if (!isset($query_data['offset']) || $c >= $query_data['offset']) {
-                    if (!in_array($contents[$i]['_id'], $content_id)) {
+                    if (!in_array($contents[$i]['_id'], $exclude_ids)) {
                         $result[] = $contents[$i];
                         if (count($result) >= $n) break;
                     }
                 }
-                if (!in_array($contents[$i]['_id'], $content_id)) $c++;
+                if (!in_array($contents[$i]['_id'], $exclude_ids)) $c++;
             }
         }else{
             $result = $contents;

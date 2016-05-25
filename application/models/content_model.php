@@ -12,16 +12,17 @@ class Content_model extends MY_Model
     public function retrieveContent($client_id, $site_id, $optionalParams = array(), $exclude_ids=array())
     {
         $this->set_site_mongodb($site_id);
+        $exclude = array();
 
         // Searching
-        if (isset($optionalParams['title']) && !is_null($optionalParams['title'])) {
+        if (isset($optionalParams['title']) && !empty($optionalParams['title'])) {
             $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['title'])) . "/i");
             $this->mongo_db->where('title', $regex);
         }
-        if (isset($optionalParams['category']) && !is_null($optionalParams['category'])) {
+        if (isset($optionalParams['category']) && !empty($optionalParams['category'])) {
             $this->mongo_db->where('category', $optionalParams['category']);
         }
-        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+        if (isset($optionalParams['id']) && !empty($optionalParams['id'])) {
             try {
                 $id = new MongoId($optionalParams['id']);
                 $this->mongo_db->where('_id', $id);
@@ -29,14 +30,11 @@ class Content_model extends MY_Model
                 return null;
             }
         }
-        if (isset($optionalParams['pin'])){
+        if (isset($optionalParams['pin']) && !empty($optionalParams['pin'])){
             $this->mongo_db->where('pin', $optionalParams['pin']);
         }
-        if (isset($optionalParams['tags'])){
+        if (isset($optionalParams['tags']) && !empty($optionalParams['tags'])){
             $this->mongo_db->where_in('tags', $optionalParams['tags']);
-        }
-        if (isset($optionalParams['content_id_organize_assoc'])){
-            $this->mongo_db->where_in('_id', $optionalParams['content_id_organize_assoc']);
         }
 
         // Sorting
@@ -58,7 +56,7 @@ class Content_model extends MY_Model
 
         // Paging
         if ((isset($optionalParams['offset']) || isset($optionalParams['limit'])) && !(isset($optionalParams['sort']) && $optionalParams['sort'] == "random")) {
-            if (isset($optionalParams['offset'])) {
+            if (isset($optionalParams['offset']) && !empty($optionalParams['offset'])) {
                 if ($optionalParams['offset'] < 0) {
                     $optionalParams['offset'] = 0;
                 }
@@ -66,7 +64,7 @@ class Content_model extends MY_Model
                 $optionalParams['offset'] = 0;
             }
 
-            if (isset($optionalParams['limit'])) {
+            if (isset($optionalParams['limit']) && !empty($optionalParams['limit'])) {
                 if ($optionalParams['limit'] < 1) {
                     $optionalParams['limit'] = 20;
                 }
@@ -75,13 +73,19 @@ class Content_model extends MY_Model
             }
 
             if ($exclude_ids){
-                $this->mongo_db->where_not_in('_id', $exclude_ids);
+                $exclude = array_merge($exclude, $exclude_ids);
             }
+
             $this->mongo_db->limit((int)$optionalParams['limit']);
             $this->mongo_db->offset((int)$optionalParams['offset']);
         }
 
-        if (isset($optionalParams['date_check']) && !is_null($optionalParams['date_check'])) {
+        if (isset($optionalParams['content_id_organize_assoc'])){
+            $exclude = array_merge($exclude, $optionalParams['content_id_organize_assoc']);
+        }
+        $this->mongo_db->where_not_in('_id', $exclude);
+
+        if (isset($optionalParams['date_check']) && !empty($optionalParams['date_check'])) {
             $bool = filter_var($optionalParams['date_check'], FILTER_VALIDATE_BOOLEAN);
             if ($bool == true) {
                 $this->mongo_db->where_gte('date_end', new MongoDate());
