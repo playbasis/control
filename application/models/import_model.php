@@ -98,13 +98,19 @@ class import_model extends MY_Model
         return $this->mongo_db->get("playbasis_import");
     }
 
-    public function countImportData($client_id, $site_id)
+    public function countImportData($data)
     {
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
-        $countImportData = $this->mongo_db->count('playbasis_import');
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        return $countImportData;
+        if (isset($data['filter_import_type']) && !is_null($data['filter_import_type'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_import_type'])) . "/i");
+            $this->mongo_db->where('import_type', $regex);
+        }
+
+        $this->mongo_db->where('client_id', $data['client_id']);
+        $this->mongo_db->where('site_id', $data['site_id']);
+
+        return $this->mongo_db->count('playbasis_import');
     }
 
     public function retrieveImportResults($data)

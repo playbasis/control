@@ -64,7 +64,6 @@ class import extends MY_Controller
             $this->data['text_no_results'] = $this->lang->line('text_no_results');
             $this->data['tab_status'] = "log";
             $this->data['main'] = 'import';
-            $this->data['form'] = 'import/log';
 
             $this->getLog($offset);
         }
@@ -78,6 +77,8 @@ class import extends MY_Controller
 
         $this->load->library('pagination');
 
+        $parameter_url = "?";
+
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
         $filter = array(
@@ -88,15 +89,18 @@ class import extends MY_Controller
         );
         if (isset($_GET['filter_import_type'])) {
             $filter['filter_import_type'] = $_GET['filter_import_type'];
+            $parameter_url .= "&filter_import_type=" . $_GET['filter_import_type'];
         }
 
         $importData = $this->import_model->retrieveImportData($filter);
 
         $this->data['importData'] = $importData;
 
-        $config['total_rows'] = $this->import_model->countImportData($client_id, $site_id);
+        $config['total_rows'] = $this->import_model->countImportData($filter);
 
         $config['base_url'] = site_url('import/page/cron');
+        $config['suffix'] =  $parameter_url;
+        $config['first_url'] = $config['base_url'].$parameter_url;
         $config["uri_segment"] = 4;
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
@@ -692,6 +696,7 @@ class import extends MY_Controller
 
         $config['base_url'] = site_url('import/page/log');
         $config['suffix'] =  $parameter_url;
+        $config['first_url'] = $config['base_url'].$parameter_url;
         $config["uri_segment"] = 4;
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;

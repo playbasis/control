@@ -92,7 +92,15 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="center"><input type="text" name="filter_import_type" placeholder="by Type" value="<?php echo (isset($_GET['filter_import_type']) && !is_null($_GET['filter_import_type']))?$_GET['filter_import_type']:''; ?>" style="width:70px;"/></td>
+                        <td class="center">
+                            <select name="filter_import_type" id="filter_import_type"  style="width:80%;">
+                                <option value="" <?php if (isset($_GET['filter_import_type']) && is_null($_GET['filter_import_type']))  { ?>selected<?php }?>>    </option>
+                                <option value="player" <?php if (isset($_GET['filter_import_type']) && $_GET['filter_import_type'] == "player")  { ?>selected<?php }?>>player</option>
+                                <option value="transaction" <?php if (isset($_GET['filter_import_type']) && $_GET['filter_import_type'] == "transaction")  { ?>selected<?php }?>>transaction</option>
+                                <option value="storeorg" <?php if (isset($_GET['filter_import_type']) && $_GET['filter_import_type'] == "storeorg")  { ?>selected<?php }?>>store organize</option>
+                                <option value="content" <?php if (isset($_GET['filter_import_type']) && $_GET['filter_import_type'] == "content")  { ?>selected<?php }?>>content</option>
+                            </select>
+                        </td>
                         <td></td>
                         <td></td>
                         <td class="center">
@@ -331,7 +339,7 @@
 
         //tab1 Cron
         <?php if($tab_status == "cron"){?>
-            var filter_import_type = $('input[name=\'filter_import_type\']').attr('value');
+            var filter_import_type = document.getElementById('filter_import_type').value;//$('input[name=\'filter_import_type\']').attr('value');
 
             url += '?filter_import_type=' + encodeURIComponent(filter_import_type);
 
