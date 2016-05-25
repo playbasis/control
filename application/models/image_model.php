@@ -203,7 +203,7 @@ class Image_model extends MY_Model
     {
         $this->set_site_mongodb($site_id);
 
-        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+        if (isset($optionalParams['id']) && !empty($optionalParams['id'])) {
             try {
                 $id = new MongoId($optionalParams['id']);
                 $this->mongo_db->where('_id', $id);
@@ -212,7 +212,7 @@ class Image_model extends MY_Model
             }
         }
 
-        if (isset($optionalParams['pb_player_id']) && !is_null($optionalParams['pb_player_id'])) {
+        if (isset($optionalParams['pb_player_id']) && !empty($optionalParams['pb_player_id'])) {
             try {
                 $pb_player_id = new MongoId($optionalParams['pb_player_id']);
                 $this->mongo_db->where('pb_player_id', $pb_player_id);

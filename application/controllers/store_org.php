@@ -297,7 +297,7 @@ class Store_org extends REST2_Controller
 
         $query_data = $this->input->get(null, true);
 
-        if (isset($query_data['id'])) {
+        if (isset($query_data['id']) && !empty($query_data['id'])) {
             try {
                 $query_data['id'] = new MongoId($query_data['id']);
             } catch (Exception $e) {
@@ -333,7 +333,7 @@ class Store_org extends REST2_Controller
 
         $query_data = $this->input->get(null, true);
 
-        if (isset($query_data['id'])) {
+        if (isset($query_data['id']) && !empty($query_data['id'])) {
             try {
                 $query_data['id'] = new MongoId($query_data['id']);
             } catch (Exception $e) {
@@ -341,7 +341,7 @@ class Store_org extends REST2_Controller
             }
         }
 
-        if (isset($query_data['organize_id'])) {
+        if (isset($query_data['organize_id']) && !empty($query_data['organize_id'])) {
             try {
                 $query_data['organize_id'] = new MongoId($query_data['organize_id']);
             } catch (Exception $e) {
@@ -349,7 +349,7 @@ class Store_org extends REST2_Controller
             }
         }
 
-        if (isset($query_data['parent_id'])) {
+        if (isset($query_data['parent_id']) && !empty($query_data['parent_id'])) {
             try {
                 $query_data['parent_id'] = new MongoId($query_data['parent_id']);
             } catch (Exception $e) {

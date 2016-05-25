@@ -14,11 +14,11 @@ class Store_org_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         // Searching
-        if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
+        if (isset($optionalParams['search']) && !empty($optionalParams['search'])) {
             $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['search'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
-        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+        if (isset($optionalParams['id']) && !empty($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
             try {
                 $id = new MongoId($optionalParams['id']);
@@ -26,7 +26,7 @@ class Store_org_model extends MY_Model
             } catch (Exception $e) {
             }
         }
-        if (isset($optionalParams['organize_id']) && !is_null($optionalParams['organize_id'])) {
+        if (isset($optionalParams['organize_id']) && !empty($optionalParams['organize_id'])) {
             //make sure 'id' is valid before passing here
             try {
                 $organize = new MongoId($optionalParams['organize_id']);
@@ -34,7 +34,7 @@ class Store_org_model extends MY_Model
             } catch (Exception $e) {
             }
         }
-        if (isset($optionalParams['parent_id']) && !is_null($optionalParams['parent_id'])) {
+        if (isset($optionalParams['parent_id']) && !empty($optionalParams['parent_id'])) {
             //make sure 'id' is valid before passing here
             try {
                 $parent_node_id = new MongoId($optionalParams['parent_id']);
@@ -60,7 +60,7 @@ class Store_org_model extends MY_Model
 
         // Paging
         if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
-            if (isset($optionalParams['offset'])) {
+            if (!empty($optionalParams['offset'])) {
                 if ($optionalParams['offset'] < 0) {
                     $optionalParams['offset'] = 0;
                 }
@@ -68,7 +68,7 @@ class Store_org_model extends MY_Model
                 $optionalParams['offset'] = 0;
             }
 
-            if (isset($optionalParams['limit'])) {
+            if (!empty($optionalParams['limit'])) {
                 if ($optionalParams['limit'] < 1) {
                     $optionalParams['limit'] = 20;
                 }
@@ -91,11 +91,11 @@ class Store_org_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         // Searching
-        if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
+        if (isset($optionalParams['search']) && !empty($optionalParams['search'])) {
             $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['search'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
-        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+        if (isset($optionalParams['id']) && !empty($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
             try {
                 $id = new MongoId($optionalParams['id']);
@@ -121,7 +121,7 @@ class Store_org_model extends MY_Model
 
         // Paging
         if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
-            if (isset($optionalParams['offset'])) {
+            if (!empty($optionalParams['offset'])) {
                 if ($optionalParams['offset'] < 0) {
                     $optionalParams['offset'] = 0;
                 }
@@ -129,7 +129,7 @@ class Store_org_model extends MY_Model
                 $optionalParams['offset'] = 0;
             }
 
-            if (isset($optionalParams['limit'])) {
+            if (!empty($optionalParams['limit'])) {
                 if ($optionalParams['limit'] < 1) {
                     $optionalParams['limit'] = 20;
                 }

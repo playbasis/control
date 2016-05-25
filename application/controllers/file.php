@@ -205,7 +205,7 @@ class File extends REST2_Controller
 
         $query_data = $this->input->get(null, true);
 
-        if (isset($query_data['id'])) {
+        if (isset($query_data['id']) && !empty($query_data['id'])) {
             try {
                 $query_data['id'] = new MongoId($query_data['id']);
             } catch (Exception $e) {
@@ -213,7 +213,7 @@ class File extends REST2_Controller
             }
         }
 
-        if (isset($query_data['player_id'])){
+        if (isset($query_data['player_id']) && !empty($query_data['player_id'])){
 
             // Find pb_player_id
             $query_data['pb_player_id'] = new MongoId($this->player_model->getPlaybasisId(array_merge($this->validToken,
