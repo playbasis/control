@@ -158,12 +158,12 @@ class Content extends REST2_Controller
             $c = 0;
             foreach ($numbers as $i) {
                 if (!isset($query_data['offset']) || $c >= $query_data['offset']) {
-                    if (!in_array($contents[$i]['_id'], $exclude_ids)) {
+                    if (!is_array($exclude_ids) || !in_array($contents[$i]['_id'], $exclude_ids)) {
                         $result[] = $contents[$i];
                         if (count($result) >= $n) break;
                     }
                 }
-                if (!in_array($contents[$i]['_id'], $exclude_ids)) $c++;
+                if (!is_array($exclude_ids) || !in_array($contents[$i]['_id'], $exclude_ids)) $c++;
             }
         }else{
             $result = $contents;
