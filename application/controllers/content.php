@@ -157,13 +157,13 @@ class Content extends REST2_Controller
             shuffle($numbers);
             $c = 0;
             foreach ($numbers as $i) {
-                if (!isset($query_data['offset']) || $c >= $query_data['offset']) {
-                    if (!is_array($exclude_ids) || !in_array($contents[$i]['_id'], $exclude_ids)) {
+                if (!is_array($exclude_ids) || !in_array($contents[$i]['_id'], $exclude_ids)) {
+                    if (!isset($query_data['offset']) || $c >= $query_data['offset']) {
                         $result[] = $contents[$i];
                         if (count($result) >= $n) break;
                     }
+                    $c++;
                 }
-                if (!is_array($exclude_ids) || !in_array($contents[$i]['_id'], $exclude_ids)) $c++;
             }
         }else{
             $result = $contents;
