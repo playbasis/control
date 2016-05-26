@@ -7,6 +7,10 @@ class Custompoints_model extends MY_Model
     public function insertCustompoints($data)
     {
 
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $field1 = array(
             "field_type" => "read_only",
             "label" => "Name",
@@ -43,6 +47,7 @@ class Custompoints_model extends MY_Model
             'limit' => null,
             'description' => null,
             'sort' => 1,
+            'tags' => isset($tags) ? $tags : null,
             'status' => true,
             'is_custom' => true,
             'init_dataset' => array($field1, $field2, $field3),
@@ -139,6 +144,9 @@ class Custompoints_model extends MY_Model
 
     public function updateCustompoints($data)
     {
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
 
         $this->mongo_db->where('reward_id', new MongoID($data['reward_id']));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -154,6 +162,8 @@ class Custompoints_model extends MY_Model
         } else {
             $this->mongo_db->unset_field('energy_props');
         }
+
+        $this->mongo_db->set('tags', isset($tags) ? $tags : null);
 
         $this->mongo_db->set('date_modified', new MongoDate());
 
