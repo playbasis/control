@@ -163,14 +163,15 @@
                         <tr>
                             <td><?php echo $this->lang->line('entry_import_type'); ?>&nbsp;:</td>
                             <td>
-                            <span class="dropdown">
-                                <select id="importType" class="span3"  name ="import_type">
-                                    <option label="Player"         value="player"      <?php echo $import_type =="player"?"selected":""?>>
-                                    <option label="Transaction"    value="transaction" <?php echo $import_type =="transaction"?"selected":""?>>
-                                    <option label="Store organize" value="storeorg"    <?php echo $import_type =="storeorg"?"selected":""?>>
-                                    <option label="Content"        value="content"     <?php echo $import_type =="content"?"selected":""?>>
-                                </select>
-                            </span>
+                                <span class="dropdown">
+                                    <select id="import_type" class="span3"  name ="import_type">
+                                        <option label="Player"         value="player"      <?php echo $import_type =="player"?"selected":""?>>
+                                        <option label="Transaction"    value="transaction" <?php echo $import_type =="transaction"?"selected":""?>>
+                                        <option label="Store organize" value="storeorg"    <?php echo $import_type =="storeorg"?"selected":""?>>
+                                        <option label="Content"        value="content"     <?php echo $import_type =="content"?"selected":""?>>
+                                    </select>
+                                </span>
+                                <a onclick="showDemo()" title="Show file example" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>
                             </td>
                         </tr>
 
@@ -251,7 +252,7 @@
                                         <?php if (isset($logData['log_results']) && !is_null($logData['log_results'])) { ?>
 
 
-                                            <a href="javascript:void()" onclick="showLog('<?php echo $logData['import_key']?>',<?php echo htmlspecialchars(json_encode($logData['log_results']), ENT_QUOTES, 'UTF-8'); ?>)" title="Show full result" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>
+                                            <a onclick="showLog('<?php echo $logData['import_key']?>',<?php echo htmlspecialchars(json_encode($logData['log_results']), ENT_QUOTES, 'UTF-8'); ?>)" title="Show full result" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>
 
 
                                         <?php } ?>
@@ -303,9 +304,31 @@
     </div>
 </div>
 
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
-<link href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+<div id="formDemoModal" class="modal hide fade"   tabindex="-1" role="dialog" aria-labelledby="formDemoModalLabel"  aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="formDemoModalLabel">File demo</h3>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row-fluid">
 
+                <table  id="example-table" border="2"></table>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary"  onclick='downloadCSV();'><i class="">&nbsp;</i>Download</button>
+
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+
+    </div>
+</div>
+
+<script type="text/javascript" charset="utf8" src="<?php echo base_url(); ?>javascript/import/jquery.dataTables.min.js"></script>
+<link href="<?php echo base_url(); ?>stylesheet/import/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/import/d3.v3.min.js"></script>
 
 <style type="text/css">
     .modal {
@@ -402,4 +425,64 @@
         $('#date-end').datepicker({dateFormat: 'yy-mm-dd'});
     });
 </script>
+
+<script type="text/javascript">
+
+    var csvData, filename;
+
+    function showDemo(){
+        var el = document.getElementById('import_type');
+        var import_type = el.options[el.selectedIndex].label;
+        $('#formDemoModalLabel').html("File demo for "+import_type.fontcolor( 'DB6A6A' )+" importing");
+        if(import_type == "Player"){
+            filename = "player-example.csv";
+        }else if(import_type == "Transaction"){
+            filename = "transaction-example.csv";
+        }else if(import_type == "Store organize"){
+            filename = "store_organize-example.csv";
+        }else if(import_type == "Content"){
+            filename = "content-example.csv";
+        }
+
+        $("#example-table").empty();
+
+        d3.text("<?php echo base_url();?>image/import/"+filename, function(data) {
+            var parsedCSV = d3.csv.parseRows(data);
+            csvData = data;
+
+            var container = d3.select('#example-table')
+
+                .selectAll("tr")
+                .data(parsedCSV).enter()
+                .append("tr")
+
+                .selectAll("td")
+                .data(function(d) { return d; }).enter()
+                .append("td")
+                .text(function(d) { return d; });
+        });
+
+
+        $('#formDemoModal').modal('show');
+    }
+
+    function downloadCSV() {
+        var data, link;
+
+        var csv = csvData;
+        if (csv == null) return;
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = 'data:text/csv;charset=utf-8,' + csv;
+        }
+        data = encodeURI(csv);
+
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+    }
+
+</script>
+
 

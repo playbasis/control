@@ -1,0 +1,5 @@
+date,player_id,action,customs
+2016-02-05,player1,like,
+2016-02-03,player2,dislike,
+2016-02-05,player3,sell,itemId=444|amount=10
+,player4,click,
