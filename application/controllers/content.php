@@ -299,7 +299,7 @@ class Content extends MY_Controller
                                     }
                                 }
                             }
-                            if (isset($status)) {
+                            if (isset($status->success)) {
                                 if ($status->success == true) {
                                     // created player, added player to the node and set role of the player
                                     $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
@@ -382,7 +382,9 @@ class Content extends MY_Controller
             $contents = $this->Content_model->retrieveContents($client_id, $site_id, $filter);
             foreach ($contents as &$content) {
                 if (array_key_exists('category', $content)) {
-                    $content['category'] = $this->Content_model->retrieveContentCategoryById($content['category']);
+                    if($content['category']){
+                        $content['category'] = $this->Content_model->retrieveContentCategoryById($content['category']);
+                    }
                 }
             }
 
@@ -691,7 +693,9 @@ class Content extends MY_Controller
 
                     if (!empty($content_info)) {
                         if (array_key_exists('category', $content_info)) {
-                            $content_info['category'] = $this->Content_model->retrieveContentCategoryById($content_info['category']);
+                            if($content_info['category']){
+                                $content_info['category'] = $this->Content_model->retrieveContentCategoryById($content_info['category']);
+                            }
                         }
 
                         $client_id = $this->User_model->getClientId();
@@ -987,7 +991,7 @@ class Content extends MY_Controller
                                 die;
                             }
                         }
-                        $result = $this->Content_model->deleteContentCategoryByIdArray($category_data['id']);
+                        $result = $this->Content_model->deleteContentCategoryByIdArray($client_id, $site_id, $category_data['id']);
                     } else {
                         $chk_name = $this->Content_model->retrieveContentCategoryByName($client_id, $site_id, $name);
                         if($chk_name){
@@ -1002,7 +1006,7 @@ class Content extends MY_Controller
                     try {
                         $categoryId = new MongoId($categoryId);
                         if (isset($category_data['action']) && $category_data['action'] == 'delete') {
-                            $result = $this->Content_model->deleteContentCategory($categoryId);
+                            $result = $this->Content_model->deleteContentCategory($client_id, $site_id, $categoryId);
                         } else {
                             $chk_name = $this->Content_model->retrieveContentCategoryByNameButNotID($client_id, $site_id, $name, $categoryId);
                             if($chk_name){

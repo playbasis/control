@@ -271,7 +271,7 @@ class Content_model extends MY_Model
         return $update;
     }
 
-    public function deleteContentCategory($category_id)
+    public function deleteContentCategory($client_id, $site_id, $category_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -282,10 +282,22 @@ class Content_model extends MY_Model
         };
 
         $this->mongo_db->set('deleted', true);
-        return $this->mongo_db->update('playbasis_content_category_to_client');
+        $result = $this->mongo_db->update('playbasis_content_category_to_client');
+
+        if($result){
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('category', new MongoID($category_id));
+            $this->mongo_db->set('category', "");
+            $this->mongo_db->set('date_modified', new MongoDate());
+
+            $this->mongo_db->update_all('playbasis_content_to_client');
+        }
+
+        return $result;
     }
 
-    public function deleteContentCategoryByIdArray($id_array)
+    public function deleteContentCategoryByIdArray($client_id, $site_id, $id_array)
     {
         if (!empty($id_array)) {
             array_walk($id_array, array($this, "makeMongoIdObj"));
@@ -295,9 +307,23 @@ class Content_model extends MY_Model
 
         $this->mongo_db->set('date_modified', new MongoDate());
 
-        $update = $this->mongo_db->update_all('playbasis_content_category_to_client');
+        $result = $this->mongo_db->update_all('playbasis_content_category_to_client');
 
-        return $update;
+        if($result){
+            if (!empty($id_array)) {
+                array_walk($id_array, array($this, "makeMongoIdObj"));
+                $this->mongo_db->where('client_id', new MongoID($client_id));
+                $this->mongo_db->where('site_id', new MongoID($site_id));
+                $this->mongo_db->where_in('category', $id_array);
+                $this->mongo_db->set('category', "");
+            }
+
+            $this->mongo_db->set('date_modified', new MongoDate());
+
+            $this->mongo_db->update_all('playbasis_content_to_client');
+        }
+
+        return $result;
     }
 
     public function getOrganizationToContent($client_id, $site_id, $content_id)
