@@ -258,6 +258,7 @@ class Badge extends MY_Controller
 
         $config['base_url'] = site_url('badge/page');
 
+        $parameter_url = "?";
 
         $this->load->model('Badge_model');
         $this->load->model('Image_model');
@@ -278,9 +279,10 @@ class Badge extends MY_Controller
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
 
-            if (isset($_GET['title'])) {
-                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['title']);
-                $badge_data['filter_category'] = $category_data;
+            if (isset($_GET['filter_category'])) {
+                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['filter_category']);
+                $parameter_url .= "&filter_category=" . $_GET['filter_category'];
+                $data['filter_category'] = $category_data;
             }
 
             $results = $this->Badge_model->getBadges($data, true);
@@ -364,8 +366,9 @@ class Badge extends MY_Controller
                 'sort' => 'sort_order'
             );
 
-            if (isset($_GET['title'])) {
-                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['title']);
+            if (isset($_GET['filter_category'])) {
+                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['filter_category']);
+                $parameter_url .= "&filter_category=" . $_GET['filter_category'];
                 $badge_data['filter_category'] = $category_data;
             }
             
@@ -447,6 +450,8 @@ class Badge extends MY_Controller
         } else {
             $this->data['success'] = '';
         }
+        $config['suffix'] =  $parameter_url;
+        $config['first_url'] = $config['base_url'].$parameter_url;
 
         $config['total_rows'] = $badge_total;
         $config['per_page'] = $per_page;
@@ -498,6 +503,7 @@ class Badge extends MY_Controller
 
         $config['base_url'] = site_url('badge/page');
 
+        $parameter_url = "?";
 
         $this->load->model('Badge_model');
         $this->load->model('Image_model');
@@ -518,8 +524,9 @@ class Badge extends MY_Controller
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
 
-            if (isset($_GET['title'])) {
-                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['title']);
+            if (isset($_GET['filter_category'])) {
+                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['filter_category']);
+                $parameter_url .= "&filter_category=" . $_GET['filter_category'];
                 $data['filter_category'] = $category_data;
             }
 
@@ -581,8 +588,9 @@ class Badge extends MY_Controller
                 'sort' => 'sort_order'
             );
 
-            if (isset($_GET['title'])) {
-                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['title']);
+            if (isset($_GET['filter_category'])) {
+                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['filter_category']);
+                $parameter_url .= "&filter_category=" . $_GET['filter_category'];
                 $badge_data['filter_category'] = $category_data;
             }
 
@@ -666,6 +674,9 @@ class Badge extends MY_Controller
         } else {
             $this->data['success'] = '';
         }
+        $config['suffix'] =  $parameter_url;
+        $config['first_url'] = $config['base_url'].$parameter_url;
+
 
         $config['total_rows'] = $badge_total;
         $config['per_page'] = $per_page;

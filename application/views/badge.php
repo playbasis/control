@@ -63,7 +63,7 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
-                                                <td class="right"><input title="category" type="text" name="filter_category" value="<?php echo isset($_GET['title']) ? $_GET['title'] : "" ?>"/></td>
+                                                <td class="right"><input title="category" type="text" name="filter_category" value="<?php echo isset($_GET['filter_category']) ? $_GET['filter_category'] : "" ?>"/></td>
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
@@ -269,7 +269,7 @@
         $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html(),
         $categoryErrorDialog = $('#categoryErrorDialog');
 
-    <?php if (!isset($_GET['title'])){?>
+    <?php if (!isset($_GET['filter_category'])){?>
     $("#clear_filter").hide();
     <?php }else{?>
     $("#clear_filter").show();
@@ -284,7 +284,7 @@
         var filter_category = $('input[name=\'filter_category\']').attr('value');
 
         if (filter_category) {
-            url += '?title=' + encodeURIComponent(filter_category);
+            url += '?filter_category=' + encodeURIComponent(filter_category);
         }
 
         location = url;
