@@ -98,6 +98,10 @@
                                 <br /><a onclick="image_upload('#image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
                         </tr>
                         <tr>
+                            <td><?php echo $this->lang->line('entry_category'); ?>:</td>
+                            <td><input type='text' name="category" id="inputCategory" value="<?php echo isset($category) ? $category : set_value('category'); ?>" size="5" style="width: 220px; height: 30px" /></td>
+                        </tr>
+                        <tr>
                             <td><?php echo $this->lang->line('entry_quantity'); ?>:</td>
                             <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" /></td>
                         </tr>
@@ -155,6 +159,67 @@
     </div>
 </div>
 
+<div id="formCategoryModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formCategoryModalLabel"
+     aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="formCategoryModalLabel">Category</h3>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <?php echo form_open(null, array('class' => 'form-horizontal category-form')); ?>
+            <div class="row-fluid">
+                <input type="hidden" name="category-id" id="category-id">
+
+                <div class="control-group">
+                    <label for="category-name"
+                           class="control-label"><?php echo $this->lang->line('entry_category_name'); ?></label>
+
+                    <div class="controls">
+                        <input type="text" name="category-name" id="category-name"
+                               placeholder="<?php echo $this->lang->line('entry_category_name'); ?>">
+                    </div>
+                </div>
+
+            </div>
+            <?php echo form_close(); ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" id="category-modal-submit"><i class="fa fa-plus">&nbsp;</i>Save</button>
+    </div>
+</div>
+
+<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <h1>Please Wait</h1>
+    </div>
+    <div class="modal-body">
+        <div class="offset5 ">
+            <i class="fa fa-spinner fa-spin fa-5x"></i>
+        </div>
+    </div>
+</div>
+
+<div id="pleaseWaitSpanDiv" class="hide">
+    <span id="pleaseWaitSpan"><i class="fa fa-spinner fa-spin"></i></span>
+</div>
+
+<div class="modal hide" id="savedDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h1>Data Saved</h1>
+    </div>
+    <div class="modal-body">
+        <div>
+            <i class="fa fa-save"></i>&nbsp;<span>Data has been saved!</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/ckeditor/ckeditor.js"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
@@ -208,7 +273,8 @@ $('#languages a').tabs();
 //--></script>
 
 <script type="text/javascript">
-
+    $inputCategory = $('#inputCategory');
+    $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
     $(document).ready(function(){
 
         $(".tags").select2({
@@ -217,5 +283,118 @@ $('#languages a').tabs();
             tokenSeparators: [',', ' ']
         });
     });
+    $inputCategory.select2({
+        allowClear: true,
+        placeholder: "Select category",
+        minimumInputLength: 0,
+        id: function (data) {
+            return data._id;
+        },
+        ajax: {
+            url: baseUrlPath + "badge/category",
+            dataType: 'json',
+            quietMillis: 250,
+            data: function (term, page) {
+                return {
+                    search: term, // search term
+                };
+            },
+            results: function (data, page) {
+                return {results: data.rows};
+            },
+            cache: true
+        },
+        initSelection: function (element, callback) {
+            var id = $(element).val();
+            if (id !== "") {
+                $.ajax(baseUrlPath + "badge/category/" + id, {
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $inputCategory.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                    }
+                }).done(function (data) {
+                    if (typeof data != "undefined")
+                        callback(data);
+                }).always(function () {
+                    $inputCategory.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                });
+            }
+        },
+        formatResult: categoryFormatResult,
+        formatSelection: categoryFormatSelection,
+    });
+    function initCategoryTable() {
+        $categoryContentTable.bootstrapTable({
+            columns: [
+                {
+                    field: 'state',
+                    checkbox: true,
+                    align: 'center',
+                    valign: 'middle'
+                }, {
+                    title: 'Category Name',
+                    field: 'name',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                }, {
+                    field: 'operate',
+                    title: 'Item Operate',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }
+            ]
+        });
+        // sometimes footer render error.
+        setTimeout(function () {
+            $categoryContentTable.bootstrapTable('resetView');
+        }, 200);
+        $categoryContentTable.on('check.bs.table uncheck.bs.table ' +
+            'check-all.bs.table uncheck-all.bs.table', function () {
+            $categoryContentToolbarRemove.prop('disabled', !$categoryContentTable.bootstrapTable('getSelections').length);
+            // save your data, here just save the current page
+            categorySelections = getIdSelections();
+            // push or splice the selections if you want to save all data selections
+        });
+        $categoryContentToolbarRemove.click(function (e) {
+            e.preventDefault();
+            var ids = getIdSelections();
+            console.log("id selected", ids);
+            $.ajax({
+                type: "POST",
+                url: baseUrlPath + 'badge/category/',
+                data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','id': ids, 'action': "delete"}
+            })
+                .done(function (msg) {
+                    //console.log("Entry removed: " + JSON.parse(msg).status);
+                    $categoryContentTable.bootstrapTable('remove', {
+                        field: '_id',
+                        values: ids
+                    });
+                    $categoryContentTable.bootstrapTable('resetView');
+                })
+                .fail(function () {
+                    console.log("Error!");
+                });
+            $categoryContentToolbarRemove.prop('disabled', true);
+        });
+    }
+    function categoryFormatResult(category) {
+        return '<div class="row-fluid">' +
+            '<div>' + category.name +
+            '</div></div>';
+    }
 
+    function categoryFormatSelection(category) {
+        return category.name;
+    }
+
+    function getIdSelections() {
+        return $.map($categoryContentTable.bootstrapTable('getSelections'), function (row) {
+            return row._id;
+        });
+    }
+
+    initCategoryTable();
 </script>

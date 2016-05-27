@@ -272,9 +272,16 @@ class Badge extends MY_Controller
         $this->data['slots'] = $slot_total;
 
         if ($this->User_model->getUserGroupId() == $setting_group_id) {
+            $data['client_id'] = $client_id;
+            $data['site_id'] = $site_id;
             $data['limit'] = $per_page;
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
+
+            if (isset($_GET['title'])) {
+                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['title']);
+                $badge_data['filter_category'] = $category_data;
+            }
 
             $results = $this->Badge_model->getBadges($data, true);
 
@@ -319,13 +326,17 @@ class Badge extends MY_Controller
                 } else {
                     $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                 }
-
+                if (array_key_exists('category', $result)) {
+                    $category = $this->Badge_model->retrieveItemCategoryById($result['category']);
+                    $result['category'] = $category['name'];
+                }
                 $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
                 $this->data['badges'][] = array(
                     'badge_id' => $result['_id'],
                     'name' => $result['name'],
                     'hint' => $result['hint'],
                     'quantity' => $result['quantity'],
+                    'category' => (isset($result['category']) && !empty($result['category'])) ? $result['category']: null ,
                     'per_user' => (isset($result['per_user']) && !empty($result['per_user'])) ? $result['per_user']: null ,
                     'status' => $result['status'],
                     'image' => $image,
@@ -346,12 +357,18 @@ class Badge extends MY_Controller
             $this->Badge_model->syncTemplate($client_badges, $client_id, $site_id);
 
             $badge_data = array(
+                'client_id' => $client_id,
                 'site_id' => $site_id,
                 'limit' => $per_page,
                 'start' => $offset,
                 'sort' => 'sort_order'
             );
 
+            if (isset($_GET['title'])) {
+                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['title']);
+                $badge_data['filter_category'] = $category_data;
+            }
+            
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
             $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
@@ -390,13 +407,17 @@ class Badge extends MY_Controller
                         }else {
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                         }*/
-
+                        if (array_key_exists('category', $badge_info)) {
+                            $category = $this->Badge_model->retrieveItemCategoryById($badge_info['category']);
+                            $badge_info['category'] = $category['name'];
+                        }
                         if (!$badge_info['deleted']) {
                             $this->data['badges'][] = array(
                                 'badge_id' => $badge_info['_id'],
                                 'name' => $badge_info['name'],
                                 'hint' => $badge_info['hint'],
                                 'quantity' => $badge_info['quantity'],
+                                'category' => (isset($badge_info['category']) && !empty($badge_info['category'])) ? $badge_info['category']: null ,
                                 'per_user' => (isset($badge_info['per_user']) && !empty($badge_info['per_user'])) ? $badge_info['per_user']: null ,
                                 'tags' => isset($badge_info['tags']) ? $badge_info['tags'] : null,
                                 'status' => $badge_info['status'],
@@ -481,6 +502,7 @@ class Badge extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Image_model');
 
+        $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
@@ -490,10 +512,16 @@ class Badge extends MY_Controller
         $this->data['slots'] = $slot_total;
 
         if ($this->User_model->getUserGroupId() == $setting_group_id) {
-
+            $data['client_id'] = $client_id;
+            $data['site_id'] = $site_id;
             $data['limit'] = $per_page;
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
+
+            if (isset($_GET['title'])) {
+                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['title']);
+                $data['filter_category'] = $category_data;
+            }
 
             $results = $this->Badge_model->getBadges($data);
 
@@ -520,12 +548,17 @@ class Badge extends MY_Controller
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }*/
+                if (array_key_exists('category', $result)) {
+                    $category = $this->Badge_model->retrieveItemCategoryById($result['category']);
+                    $result['category'] = $category['name'];
+                }
                 $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
                 $this->data['badges'][] = array(
                     'badge_id' => $result['_id'],
                     'name' => $result['name'],
                     'hint' => $result['hint'],
                     'quantity' => $result['quantity'],
+                    'category' => (isset($result['category']) && !empty($result['category'])) ? $result['category']: null ,
                     'per_user' => (isset($result['per_user']) && !empty($result['per_user'])) ? $result['per_user']: null ,
                     'status' => $result['status'],
                     'image' => $image,
@@ -541,11 +574,17 @@ class Badge extends MY_Controller
             $this->load->model('Reward_model');
 
             $badge_data = array(
+                'client_id' => $client_id,
                 'site_id' => $site_id,
                 'limit' => $per_page,
                 'start' => $offset,
                 'sort' => 'sort_order'
             );
+
+            if (isset($_GET['title'])) {
+                $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['title']);
+                $badge_data['filter_category'] = $category_data;
+            }
 
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
@@ -586,13 +625,17 @@ class Badge extends MY_Controller
                         else {
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                         }*/
-
+                        if (array_key_exists('category', $badge_info)) {
+                            $category = $this->Badge_model->retrieveItemCategoryById($badge_info['category']);
+                            $badge_info['category'] = $category['name'];
+                        }
                         if (!$badge_info['deleted']) {
                             $this->data['badges'][] = array(
                                 'badge_id' => $badge_info['_id'],
                                 'name' => $badge_info['name'],
                                 'hint' => $badge_info['hint'],
                                 'quantity' => $badge_info['quantity'],
+                                'category' => (isset($badge_info['category']) && !empty($badge_info['category'])) ? $badge_info['category']: null ,
                                 'per_user' => (isset($badge_info['per_user']) && !empty($badge_info['per_user'])) ? $badge_info['per_user']: null,
                                 'tags' => isset($badge_info['tags']) ? $badge_info['tags'] : null,
                                 'status' => $badge_info['status'],
@@ -781,6 +824,14 @@ class Badge extends MY_Controller
             $this->data['quantity'] = $badge_info['quantity'];
         } else {
             $this->data['quantity'] = 1;
+        }
+
+        if ($this->input->post('category')) {
+            $this->data['category'] = $this->input->post('category');
+        } elseif (!empty($badge_info)) {
+            $this->data['category'] = (isset($badge_info['category']) && !empty($badge_info['category'])) ? $badge_info['category']: null;
+        } else {
+            $this->data['category'] = null;
         }
 
         if ($this->input->post('per_user')) {
@@ -974,6 +1025,136 @@ class Badge extends MY_Controller
             return false;
         } else {
             return true;
+        }
+    }
+
+    public function category($categoryId = null)
+    {
+        if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                if (!$this->validateAccess()) {
+                    $this->output->set_status_header('401');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access')));
+                    die();
+                }
+
+                if (isset($categoryId)) {
+                    try {
+                        $result = $this->Badge_model->retrieveItemCategoryById($categoryId);
+                        if (isset($result['_id'])) {
+                            $result['_id'] = $result['_id'] . "";
+                        }
+
+                        $this->output->set_status_header('200');
+                        $response = $result;
+
+                    } catch (Exception $e) {
+                        $this->output->set_status_header('404');
+                        $response = array('status' => 'error', 'message' => $this->lang->line('text_empty_item'));
+                    }
+                } else {
+                    $query_data = $this->input->get(null, true);
+
+                    $result = $this->Badge_model->retrieveItemCategory($client_id, $site_id, $query_data);
+                    foreach ($result as &$document) {
+                        if (isset($document['_id'])) {
+                            $document['_id'] = $document['_id'] . "";
+                        }
+                    }
+
+                    $count_category = $this->Badge_model->countItemCategory($client_id, $site_id);
+
+                    $this->output->set_status_header('200');
+                    $response = array(
+                        'total' => $count_category,
+                        'rows' => $result
+                    );
+                }
+
+                echo json_encode($response);
+                die();
+
+            } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+
+                //todo: Add validation here
+                $category_data = $this->input->post();
+
+                $name = !empty($category_data['category-name']) ? $category_data['category-name'] : null;
+
+                $result = null;
+                if (!empty($category_data) && !isset($categoryId)) {
+                    if (isset($category_data['action']) && $category_data['action'] == 'delete' && isset($category_data['id']) && !empty($category_data['id'])) {
+                        foreach ($category_data['id'] as &$id_entry) {
+                            try {
+                                $id_entry = new MongoId($id_entry);
+                            } catch (Exception $e) {
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'error'));
+                                die;
+                            }
+                        }
+                        $result = $this->Badge_model->deleteItemCategoryByIdArray($client_id, $site_id, $category_data['id']);
+                    } else {
+                        $chk_name = $this->Badge_model->retrieveItemCategoryByName($client_id, $site_id, $name);
+                        if($chk_name){
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'name duplicate'));
+                            die;
+                        }else {
+                            $result = $this->Badge_model->createItemCategory($client_id, $site_id, $name);
+                        }
+                    }
+                } else {
+                    try {
+                        $categoryId = new MongoId($categoryId);
+                        if (isset($category_data['action']) && $category_data['action'] == 'delete') {
+                            $result = $this->Badge_model->deleteItemCategory($client_id, $site_id, $categoryId);
+                        } else {
+                            $chk_name = $this->Badge_model->retrieveItemCategoryByNameButNotID($client_id, $site_id, $name, $categoryId);
+                            if($chk_name){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'name duplicate'));
+                                die;
+                            }else {
+                                $result = $this->Badge_model->updateItemCategory($categoryId, array(
+                                    'client_id' => $client_id,
+                                    'site_id' => $site_id,
+                                    'name' => $name
+                                ));
+                            }
+                        }
+                    } catch (Exception $e) {
+                        $this->output->set_status_header('400');
+                        echo json_encode(array('status' => 'error'));
+                        die;
+                    }
+                }
+
+                if (!$result) {
+                    $this->output->set_status_header('400');
+                    echo json_encode(array('status' => 'error'));
+                } elseif (!isset($categoryId) && !isset($category_data['action'])) {
+                    $this->output->set_status_header('201');
+                    // todo: should return newly create object
+                    $category_result = $this->Badge_model->retrieveItemCategoryById($result);
+                    if (isset($category_result['_id'])) {
+                        $category_result['_id'] = $category_result['_id'] . "";
+                    }
+                    echo json_encode(array('status' => 'success', 'rows' => $category_result));
+                } else {
+                    $this->output->set_status_header('200');
+                    // todo: should return update object
+                    echo json_encode(array('status' => 'success'));
+                }
+            }
         }
     }
 
