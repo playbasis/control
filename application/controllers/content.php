@@ -46,10 +46,10 @@ class Content extends REST2_Controller
             }
             $exclude_ids = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
                 $this->validToken['site_id'], $pb_player_id);
-        }
-
-        if (isset($query_data['sort']) && $query_data['sort'] == "random") {
-            $query_data['_limit'] = $query_data['limit'];
+            if (isset($query_data['limit']) && isset($query_data['sort']) && $query_data['sort'] == "random") {
+                $query_data['_limit'] = $query_data['limit'];
+                $query_data['limit'] += count($exclude_ids);
+            }
         }
 
         // Get organize associated between player and content
@@ -97,7 +97,7 @@ class Content extends REST2_Controller
             ));
         }
 
-        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, $exclude_ids);
+        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, (isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true" && isset($query_data['sort']) && $query_data['sort'] == "random") ? array() : $exclude_ids);
 
         foreach ($contents as &$content){
             $nodes_list = $this->store_org_model->getAssociatedNodeOfContent($this->validToken['client_id'],

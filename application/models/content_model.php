@@ -40,6 +40,9 @@ class Content_model extends MY_Model
         if (isset($optionalParams['tags']) && !empty($optionalParams['tags'])){
             $this->mongo_db->where_in('tags', $optionalParams['tags']);
         }
+        if ($exclude_ids){
+            $exclude = array_merge($exclude, $exclude_ids);
+        }
 
         // Sorting
         $sort_data = array('_id', 'title', 'date_start', 'date_end', 'date_added', 'date_modified');
@@ -74,10 +77,6 @@ class Content_model extends MY_Model
                 }
             } else {
                 $optionalParams['limit'] = 20;
-            }
-
-            if ($exclude_ids){
-                $exclude = array_merge($exclude, $exclude_ids);
             }
 
             $this->mongo_db->limit((int)$optionalParams['limit']);
