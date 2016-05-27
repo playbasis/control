@@ -44,7 +44,7 @@ class Store_org_model extends MY_Model
         }
 
         // Sorting
-        $sort_data = array('_id', 'name', 'status', 'description');
+        $sort_data = array('_id', 'name', 'status', 'description', 'date_added', 'date_modified');
 
         if (isset($optionalParams['order']) && (mb_strtolower($optionalParams['order']) == 'desc')) {
             $order = -1;
@@ -105,7 +105,7 @@ class Store_org_model extends MY_Model
         }
 
         // Sorting
-        $sort_data = array('_id', 'name', 'status', 'description');
+        $sort_data = array('_id', 'name', 'status', 'description', 'date_added', 'date_modified');
 
         if (isset($optionalParams['order']) && (mb_strtolower($optionalParams['order']) == 'desc')) {
             $order = -1;

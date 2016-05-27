@@ -3189,7 +3189,7 @@
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Specify field to be sorted [_id, *name*, status]"
+              "Description": "Specify field to be sorted [_id, *name*, status, description, date_added, date_modified]"
             },
             {
               "Name": "order",
@@ -3254,7 +3254,7 @@
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Specify field to be sorted [_id, *name*, status]"
+              "Description": "Specify field to be sorted [_id, *name*, status, description, date_added, date_modified]"
             },
             {
               "Name": "order",
