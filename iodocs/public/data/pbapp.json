@@ -4045,7 +4045,7 @@
             },
             {
               "Name": "node_id",
-              "Required": "Y",
+              "Required": "N",
               "Default": "",
               "Type": "string",
               "Description": "Specific node_id of content"
