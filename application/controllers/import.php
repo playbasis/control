@@ -11,6 +11,7 @@ class import extends MY_Controller
         $this->load->model('User_model');
         $this->load->model('App_model');
         $this->load->model('import_model');
+        $this->load->model('Player_model');
         if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
@@ -18,13 +19,9 @@ class import extends MY_Controller
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
-        $this->lang->load("data", $lang['folder']);
+        $this->lang->load("import", $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
 
-
-        $lang = get_lang($this->session, $this->config);
-        $this->lang->load($lang['name'], $lang['folder']);
-        $this->lang->load("import", $lang['folder']);
     }
 
     public function index()
@@ -67,7 +64,6 @@ class import extends MY_Controller
             $this->data['text_no_results'] = $this->lang->line('text_no_results');
             $this->data['tab_status'] = "log";
             $this->data['main'] = 'import';
-            $this->data['form'] = 'import/log';
 
             $this->getLog($offset);
         }
@@ -81,6 +77,8 @@ class import extends MY_Controller
 
         $this->load->library('pagination');
 
+        $parameter_url = "?";
+
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
         $filter = array(
@@ -91,25 +89,18 @@ class import extends MY_Controller
         );
         if (isset($_GET['filter_import_type'])) {
             $filter['filter_import_type'] = $_GET['filter_import_type'];
+            $parameter_url .= "&filter_import_type=" . $_GET['filter_import_type'];
         }
 
         $importData = $this->import_model->retrieveImportData($filter);
 
-        foreach ( $importData as $key => $val){
-            $inputForResult = array(
-                'client_id' => $client_id,
-                'site_id' => $site_id,
-                'import_id' => $val['_id'].""
-            );
-            $importResults = $this->import_model->retrieveImportResults($inputForResult);
-            $importData[$key] = array_merge($importData[$key], array('logs'=>$importResults));
-        }
-
         $this->data['importData'] = $importData;
 
-        $config['total_rows'] = $this->import_model->countImportData($client_id, $site_id);
+        $config['total_rows'] = $this->import_model->countImportData($filter);
 
         $config['base_url'] = site_url('import/page/cron');
+        $config['suffix'] =  $parameter_url;
+        $config['first_url'] = $config['base_url'].$parameter_url;
         $config["uri_segment"] = 4;
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
@@ -196,17 +187,19 @@ class import extends MY_Controller
             if ($this->form_validation->run()) {
                 $data = $this->input->post();
 
-                $data['client_id']    = $this->User_model->getClientId();
-                $data['site_id']      = $this->User_model->getSiteId();
-                $data['name']         = $data['name'] != "" ? $data['name']: null;
-                $data['host_type']    = $data['host_type'] != "" ? $data['host_type']: null;
-                $data['host_name']    = $data['host_name'] != "" ? $data['host_name']: null;
-                $data['file_name']    = $data['file_name'] != "" ? $data['file_name']: null;
-                $data['port']         = $data['port'] != "" ? $data['port'] : null;
-                $data['user_name']    = $data['user_name'] != "" ? $data['user_name'] : null;
-                $data['password']     = $data['password'] != "" ? $data['password'] : null;
-                $data['import_type']  = $data['import_type'] != "" ? $data['import_type'] : null;
-                $data['routine']      = $data['routine'] != "" ? $data['routine'] : null;
+                $data['client_id']      = $this->User_model->getClientId();
+                $data['site_id']        = $this->User_model->getSiteId();
+                $data['name']           = (isset($data['name']) && !empty($data['name'])) ? $data['name']: null;
+                $data['host_type']      = (isset($data['host_type']) && !empty($data['name'])) ? $data['host_type']: null;
+                $data['host_name']      = (isset($data['host_name']) && !empty($data['host_name'])) ? $data['host_name']: null;
+                $data['port']           = (isset($data['port']) && !empty($data['port'])) ? $data['port'] : null;
+                $data['user_name']      = (isset($data['user_name']) && !empty($data['user_name'])) ? $data['user_name'] : null;
+                $data['password']       = (isset($data['password']) && !empty($data['password'])) ? $data['password'] : null;
+                $data['file_name']      = (isset($data['file_name']) && !empty($data['file_name'])) ? $data['file_name']: null;
+                $data['directory']      = (isset($data['directory']) && !empty($data['directory'])) ? $data['directory']: null;
+                $data['import_type']    = (isset($data['import_type']) && !empty($data['import_type'])) ? $data['import_type'] : null;
+                $data['routine']        = (isset($data['routine']) && !empty($data['routine'])) ? $data['routine'] : null;
+                $data['execution_time'] = (isset($data['execution_time']) && !empty($data['execution_time'])) ? $data['execution_time'] : null;
 
                 $insert = $this->import_model->addImportData($data);
                 if ($insert) {
@@ -256,15 +249,17 @@ class import extends MY_Controller
                 $data['client_id']    = $this->User_model->getClientId();
                 $data['site_id']      = $this->User_model->getSiteId();
                 $data['_id']          = $import_id;
-                $data['name']         = $data['name'] != "" ? $data['name']: null;
-                $data['host_type']    = $data['host_type'] != "" ? $data['host_type']: null;
-                $data['host_name']    = $data['host_name'] != "" ? $data['host_name']: null;
-                $data['file_name']    = $data['file_name'] != "" ? $data['file_name']: null;
-                $data['port']         = $data['port'] != "" ? $data['port'] : null;
-                $data['user_name']    = $data['user_name'] != "" ? $data['user_name'] : null;
-                $data['password']     = $data['password'] != "" ? $data['password'] : null;
-                $data['import_type']  = $data['import_type'] != "" ? $data['import_type'] : null;
-                $data['routine']      = $data['routine'] != "" ? $data['routine'] : null;
+                $data['name']           = (isset($data['name']) && !empty($data['name'])) ? $data['name']: null;
+                $data['host_type']      = (isset($data['host_type']) && !empty($data['name'])) ? $data['host_type']: null;
+                $data['host_name']      = (isset($data['host_name']) && !empty($data['host_name'])) ? $data['host_name']: null;
+                $data['port']           = (isset($data['port']) && !empty($data['port'])) ? $data['port'] : null;
+                $data['user_name']      = (isset($data['user_name']) && !empty($data['user_name'])) ? $data['user_name'] : null;
+                $data['password']       = (isset($data['password']) && !empty($data['password'])) ? $data['password'] : null;
+                $data['file_name']      = (isset($data['file_name']) && !empty($data['file_name'])) ? $data['file_name']: null;
+                $data['directory']      = (isset($data['directory']) && !empty($data['directory'])) ? $data['directory']: null;
+                $data['import_type']    = (isset($data['import_type']) && !empty($data['import_type'])) ? $data['import_type'] : null;
+                $data['routine']        = (isset($data['routine']) && !empty($data['routine'])) ? $data['routine'] : null;
+                $data['execution_time'] = (isset($data['execution_time']) && !empty($data['execution_time'])) ? $data['execution_time'] : null;
 
                 $update = $this->import_model->updateImportData($data);
                 if ($update) {
@@ -398,36 +393,47 @@ class import extends MY_Controller
 
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
+
+                $import_type = $this->input->post('import_type');
+                $import_name = $this->input->post('name');
                 $returnImportActivities = array();
-                $row = 0;
-                while (($line = fgets($handle)) !== false) {
-                    $line = trim($line);
 
-                    $data = array();
-                    $params = explode(',', $line);
-                    $date = "now";
-                    foreach ($params as $param) {
-                        $keyAndValue = explode(':', $param);
-                        $key = $keyAndValue[0];
-                        $value = $keyAndValue[1];
-                        if (strtolower($key) == "player_id") {
-                            $player_id = $value;
-                        } elseif (strtolower($key) == "action") {
-                            $action = $value;
-                        } elseif (strtolower($key) == "date") {
-                            $date = $value;
-                        } else {
-                            $data = array_merge($data, array($key => $value));
-                        }
+                $keys = array();
+                $parameter_set = null;
+                while (($line = fgets($handle)) !== false ) {
+                    if(!$parameter_set){
+
+                        $line = trim($line);
+                        $parameter_set = $line;
+                        $keys = explode(',', $line);
+                        continue;
                     }
+                    $line = trim($line);
+                    $params = explode(',', $line);
+                    if(count($params)<count($keys)){
+                        $returnImportActivities[] = array( "input" => $line,"result" => $this->lang->line('error_format'));
+                    }else {
+                        $data = array();
+                        foreach ($keys as $index => $key) {
+                            $data += array($key => $params[$index]);
+                        }
 
-                    $result = $this->postEngineRule($player_id, $action, $data, $date);
-
-                    $returnImportActivities = array_merge($returnImportActivities, array($row => $result));
-                    $row++;
+                        if($import_type == "player") {
+                            $result = $this->postRegisterPlayer($data);
+                        }elseif($import_type == "transaction") {
+                            $result = $this->postEngineRule($data);
+                        }elseif($import_type == "storeorg") {
+                            $result = $this->postAddPlayerToNodeByName($data);
+                        }elseif($import_type == "content") {
+                            $result = $this->postAddContent($data);
+                        }
+                        $returnImportActivities[] = array( "input" => $line,"result" => $result);
+                    }
                 }
-                $this->import_model->updateCompleteImport($this->User_model->getClientId(), $this->User_model->getSiteId(), array('results' => $returnImportActivities));
 
+                $this->import_model->updateCompleteImport($this->User_model->getClientId(), $this->User_model->getSiteId(), $import_name, array('results' => $returnImportActivities), $parameter_set, $import_type);
+                $this->session->set_flashdata('success', $this->lang->line('text_success_import'));
+                redirect('/import/adhoc', 'refresh');
             }
         }
 
@@ -451,13 +457,77 @@ class import extends MY_Controller
         return $result->response->token;
     }
 
-    private function postEngineRule($player_id, $action, $param, $date = "now")
+    private function postEngineRule($param)
     {
         $this->getToken();
-        if ($date != "now") {
-            $this->_api->setHeader('Date', $date);
+
+        $player_id = isset($param['player_id']) ? $param['player_id'] : null;
+        $action = isset($param['action']) ? $param['action'] : null;
+        $pb_player_id = $this->Player_model->getPlaybasisId(array(
+            'client_id' => $this->User_model->getClientId(),
+            'site_id' => $this->User_model->getSiteId(),
+            'cl_player_id' => $player_id
+        ));
+        if (!$pb_player_id) {
+            return $this->lang->line('error_user_not_found');
         }
-        $result = $this->_api->engine($player_id, $action, $param);
+        if (isset($param['date']) && !is_null($param['date'])) {
+            $this->_api->setHeader('Date', $param['date']);
+        }
+        $customs = array();
+        if (isset($param['customs']) && !is_null($param['customs'])) {
+            $custom_params = explode('|', $param['customs']);
+            foreach ($custom_params as $custom_param)  {
+                $keyAndValue = explode('=', $custom_param);
+                if(count($keyAndValue)!=2){
+                    return $this->lang->line('error_custom_format');
+                }
+
+                $customs = array_merge($customs, array($keyAndValue[0] => $keyAndValue[1]));
+            }
+        }
+        $result = $this->_api->engine($player_id, $action, $customs);
+        return $result->message;
+    }
+
+    private function postRegisterPlayer( $param)
+    {
+        $this->getToken();
+        
+        $player_id = isset($param['player_id']) ? $param['player_id'] : null;
+        $username = isset($param['username']) ? $param['username'] : null;
+        $email = isset($param['email']) ? $param['email'] : null;
+        $result = $this->_api->register($player_id, $username, $email, $param);
+        return $result->message;
+    }
+
+    private function postAddPlayerToNodeByName($param) {
+        $this->getToken();
+
+        $player_id = isset($param['player_id']) ? $param['player_id'] : null;
+        $node_name = isset($param['node_name']) ? $param['node_name'] : null;
+        $organize_type = isset($param['organize_type']) ? $param['organize_type'] : null;
+        $result = $this->_api->addPlayerToNodeByName($player_id, $node_name, $organize_type);
+        if($result->message == "Success" && isset($param['role']) && !is_null($param['role'])){
+            $roles = explode('|', $param['role']);
+            foreach($roles as $role) {
+                $this->postSetPlayerRole($player_id, $result->response->node_id, $role);
+            }
+        }
+        return $result->message;
+    }
+
+    private function postSetPlayerRole($player_id, $node_id, $role) {
+        $this->getToken();
+
+        $result = $this->_api->setPlayerRole($player_id, $node_id->{'$id'}, array('role' => $role));
+        return $result->message;
+    }
+
+    private function postAddContent($param) {
+        $this->getToken();
+
+        $result = $this->_api->addContent($param);
         return $result->message;
     }
 
@@ -486,9 +556,11 @@ class import extends MY_Controller
         $this->load->library('pagination');
 
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
+        $parameter_url = "?";
 
         if ($this->input->get('filter_date_start')) {
             $filter_date_start = $this->input->get('filter_date_start');
+            $parameter_url .= "&filter_date_start=" . $filter_date_start;
         } else {
             $filter_date_start = date("Y-m-d", strtotime("-30 days"));
         }
@@ -497,6 +569,7 @@ class import extends MY_Controller
 
             //--> This will enable to search on the day until the time 23:59:59
             $date = $this->input->get('filter_date_end');
+            $parameter_url .= "&filter_date_end=" . $date;
             $currentDate = strtotime($date);
             $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
@@ -516,39 +589,101 @@ class import extends MY_Controller
             'client_id' => $client_id,
             'site_id' => $site_id,
             'sort' => 'date_added',
-            //'import_id' => $import_id,
             'date_start' => $filter_date_start,
-            'date_expire' => $filter_date_end
+            'date_end' => $filter_date_end
         );
+
+
+        $filteredImportDataByName = array();
+        $filteredImportDataByRoutine = array();
+
         if (isset($_GET['filter_name'])) {
-            $filter['filter_name'] = $_GET['filter_name'];
+            $filteredImportDataByName = $this->import_model->retrieveImportDataByName($client_id, $site_id, $_GET['filter_name']);
+            foreach($filteredImportDataByName as &$data){
+                $data = $data['_id']."";
+            }
+            $filter['import_name'] = $_GET['filter_name'];
+            $parameter_url .= "&filter_name=" . $_GET['filter_name'];
+        }
+        if (isset($_GET['filter_import_method'])) {
+            $filter['filter_import_method'] = $_GET['filter_import_method'];
+            $parameter_url .= "&filter_import_method=" . $_GET['filter_import_method'];
+        }
+        if (isset($_GET['filter_import_type'])) {
+            $filter['filter_import_type'] = $_GET['filter_import_type'];
+            $parameter_url .= "&filter_import_type=" . $_GET['filter_import_type'];
+        }
+        if (isset($_GET['filter_occur'])) {
+            $filteredImportDataByRoutine = $this->import_model->retrieveImportDataByRoutine($client_id, $site_id, $_GET['filter_occur']);
+            foreach($filteredImportDataByRoutine as &$data){
+                $data = $data['_id']."";
+            }
+            $parameter_url .= "&filter_occur=" . $_GET['filter_occur'];
         }
 
-        $importDatas = array();
+        if(isset($_GET['filter_occur']) && isset($_GET['filter_name']) && $_GET['filter_occur'] && $_GET['filter_name']){
+            $filter['import_id'] = array_intersect($filteredImportDataByName,$filteredImportDataByRoutine);
+        }elseif(isset($_GET['filter_name']) && $_GET['filter_name']){
+            $filter['import_id'] = $filteredImportDataByName;
+        }elseif(isset($_GET['filter_occur']) && $_GET['filter_occur']){
+            $filter['import_id'] = $filteredImportDataByRoutine;
+        }
+
+        $logDatas = array();
         $importLogsResults = $this->import_model->retrieveImportResults($filter);
+        $importLogsResultsCount =$this->import_model->countImportResults($filter);
+
         foreach ($importLogsResults as $importLogsResult) {
+
+            $total_result = "";
+            $data_result = array();
+            if($importLogsResult['results'] == "Duplicate"){
+                $total_result = $this->lang->line('entry_duplicate');
+            }else{
+                $success_count = 0;
+                foreach ($importLogsResult['results'] as $index => $log_result){
+                    $temp_data = array($index+1);
+                    array_push($temp_data , array($log_result['input']));
+                    array_push($temp_data , $log_result['result']);
+
+                    $data_result[]=$temp_data;
+                    if($log_result['result']=="Success"){
+                        $success_count++;
+                    }
+                }
+                $total_result = $success_count." / ".count($importLogsResult['results']);
+            }
+
             if($importLogsResult['import_id']){
                 $importData = $this->import_model->retrieveSingleImportData($importLogsResult['import_id']);
-                $importDatas[]=array(
+                $logDatas[]=array(
+                    'log_id' => $importLogsResult['_id'],
                     'name' => $importData['name'],
-                    'import_type' => $importData['import_type'],
+                    'import_method' => "cron",
+                    'import_type' => $importLogsResult['import_type'],
                     'routine' => $importData['routine'],
-                    'date_added' => $importLogsResult['date_added'],
-                    'results' => $importLogsResult['results']
+                    'date_added' => datetimeMongotoReadable($importLogsResult['date_added']),
+                    'result' => $total_result,
+                    'import_key' => $importLogsResult['import_key'],
+                    'log_results' => $data_result
                 );
 
             }else{
-                $importDatas[]=array(
-                    'name' => null,
-                    'import_type' => null,
-                    'routine' => null,
-                    'date_added' => $importLogsResult['date_added'],
-                    'results' => $importLogsResult['results']
+                $logDatas[]=array(
+                    'log_id' => $importLogsResult['_id'],
+                    'name' => isset($importLogsResult['import_name']) ? $importLogsResult['import_name'] : "",
+                    'import_method' => "adhoc",
+                    'import_type' => $importLogsResult['import_type'],
+                    'routine' => "",
+                    'date_added' => datetimeMongotoReadable($importLogsResult['date_added']),
+                    'result' => $total_result,
+                    'import_key' => $importLogsResult['import_key'],
+                    'log_results' => $data_result
                 );
             }
         }
 
-        $this->data['importDatas'] = $importDatas;
+        $this->data['logDatas'] = $logDatas;
 
         $this->data['filter_date_start'] = $filter_date_start;
 
@@ -556,9 +691,12 @@ class import extends MY_Controller
         $filter_date_end_exploded = explode(" ", $filter_date_end);
         $this->data['filter_date_end'] = $filter_date_end_exploded[0];
 
-        $config['total_rows'] = $this->import_model->countImportResults($filter);
+        $config['total_rows'] = $importLogsResultsCount;
+        //$config['total_rows'] = count($importLogsResults);
 
-        $config['base_url'] = site_url('import/page/log'); //. $parameter_url;
+        $config['base_url'] = site_url('import/page/log');
+        $config['suffix'] =  $parameter_url;
+        $config['first_url'] = $config['base_url'].$parameter_url;
         $config["uri_segment"] = 4;
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;

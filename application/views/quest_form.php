@@ -61,6 +61,10 @@
                             <td><input type="checkbox" name="status" <?php echo (isset($editQuest['status']) && $editQuest['status'])?'checked':'unchecked'; ?> size="1" /></td>
                         </tr>
                         <tr>
+                            <td><?php echo $this->lang->line('form_quest_tags'); ?>:</td>
+                            <td><input type="text" class="tags" name="tags" size="100" value="<?php echo isset($editQuest['tags']) && ($editQuest['tags']) ? implode($editQuest['tags'],',') :  set_value('tags'); ?>" /></td>
+                        </tr>
+                        <tr>
                             <td><?php echo $this->lang->line('form_quest_sort_order'); ?>:</td>
                             <td><input type="number" name="sort_order" value="<?php echo isset($editQuest['sort_order'])?$editQuest['sort_order']:''; ?>"/>    </td>
                         </tr>
@@ -1186,6 +1190,7 @@
 
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript">
 
@@ -1270,6 +1275,13 @@
             $organizeParent.select2('enable', true);
             document.getElementById("organize_role").disabled = false;
         }
+
+        $(".tags").select2({
+            width: 'resolve',
+            tags: true,
+            tokenSeparators: [',', ' ']
+        });
+
     });
 
         $(function(){
@@ -2962,4 +2974,5 @@ response($.map(json, function(item) {
         });
     }
 </script>
+
 

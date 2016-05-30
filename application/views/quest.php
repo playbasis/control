@@ -26,6 +26,7 @@
                     <?php if($org_status){?>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_organization'); ?></td>
                     <?php }?>
+                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_tags'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_sort_order'); ?></td>
                     <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
@@ -40,6 +41,7 @@
                         <?php if($org_status){?>
                         <td></td>
                         <?php }?>
+                        <td></td>
                         <td class="right">
                             <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
                             <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
@@ -60,6 +62,7 @@
                                     <?php if($org_status){?>
                                         <td class="right"><?php echo (isset($quest['organize_name']) && !is_null($quest['organize_name']))?$quest['organize_name']:''; ?></td>
                                     <?php }?>
+                                    <td class="right"><?php echo (isset($quest['tags']) && $quest['tags']) ? implode($quest['tags'],',') : null; ?></td>
                                     <td class="right"><?php echo $quest['sort_order'];?></td>
                                     <td class="right">
                                     [<a class="quest_play" href="#" data-quest_id="<?php echo $quest["_id"]; ?>">Play</a>]
@@ -90,7 +93,7 @@
                             <?php }?>
                         <?php }else{?>
                                 <tr>
-                                    <td class="center" colspan="7">
+                                    <td class="center" colspan="8">
                                         No quest
                                     </td>
                                 </tr>

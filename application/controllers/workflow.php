@@ -325,17 +325,11 @@ class Workflow extends MY_Controller
 
     private function getPlayerList($status, $offset, $locked = false)
     {
-        $per_page = 2 * NUMBER_OF_RECORDS_PER_PAGE;
+        $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
 
-        if($locked){
-            $config['base_url'] = site_url('workflow/locked');
-        }elseif($status=="approved"){
-            $config['base_url'] = site_url('workflow/page');
-        }else{
-            $config['base_url'] = site_url('workflow/'.$status);
-        }
+        $parameter_url = "?";
 
         if ($this->input->get('sort')) {
             $sort = $this->input->get('sort');
@@ -360,14 +354,17 @@ class Workflow extends MY_Controller
 
         if (isset($_GET['filter_name'])) {
             $data['filter_name'] = $_GET['filter_name'];
+            $parameter_url .= "&filter_name=" . $_GET['filter_name'];
         }
 
         if (isset($_GET['filter_id'])) {
             $data['filter_id'] = $_GET['filter_id'];
+            $parameter_url .= "&filter_id=" . $_GET['filter_id'];
         }
 
         if (isset($_GET['filter_email'])) {
             $data['filter_email'] = $_GET['filter_email'];
+            $parameter_url .= "&filter_email=" . $_GET['filter_email'];
         }
 
         $this->data['player_list'] = array();
@@ -378,9 +375,7 @@ class Workflow extends MY_Controller
         $this->data['tab_status'] = $locked ? "locked" : $status;
         if ($locked) {
             $this->data['player_list'] = $this->Workflow_model->getLockedPlayer($client_id, $site_id, $data);
-        } elseif ($status == 'pending') {
-            $this->data['player_list'] = $this->Workflow_model->getPendingPlayer($client_id, $site_id, $data);
-        } else {
+        }  else {
             $this->data['player_list'] = $this->Workflow_model->getPlayerByApprovalStatus($client_id, $site_id, $status, $data);
         }
 
@@ -440,13 +435,22 @@ class Workflow extends MY_Controller
         }
 
         if(($locked)){
-            $config['total_rows'] = $this->Workflow_model->getTotalLockedPlayer($client_id, $site_id);
-        }elseif($status == "pending") {
-            $config['total_rows'] = $this->Workflow_model->getTotalPendingPlayer($client_id, $site_id);
+            $config['total_rows'] = $this->Workflow_model->getTotalLockedPlayerWithFilter($client_id, $site_id, $data);
         }else{
-            $config['total_rows'] = $this->Workflow_model->getTotalPlayerByApprovalStatus($client_id, $site_id, $status);
+            $config['total_rows'] = $this->Workflow_model->getTotalPlayerByApprovalStatus($client_id, $site_id, $status, $data);
         }
         $config['per_page'] = $per_page;
+
+        if($locked){
+            $config['base_url'] = site_url('workflow/locked');
+        }elseif($status=="approved"){
+            $config['base_url'] = site_url('workflow/page');
+        }else{
+            $config['base_url'] = site_url('workflow/'.$status);
+        }
+
+        $config['suffix'] =  $parameter_url;
+        $config['first_url'] = $config['base_url'].$parameter_url;
         $config["uri_segment"] = 3;
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
 
@@ -560,23 +564,37 @@ class Workflow extends MY_Controller
                                                 $data['organize_id'][$i], $pb_player_id, $data['organize_node'][$i]);
                                         }
 
-                                        //set role of player
-                                        if (isset($data['organize_role'][$i]) && !empty($data['organize_role'][$i])) {
+                                        //set role of content
+                                        if (isset($data['organize_role'][$i])) {
 
                                             $temp = $this->Workflow_model->getRole($client_id, $site_id, $pb_player_id,
                                                 $data['organize_node'][$i]);
-                                            if ($temp != null) {
-                                                $this->Workflow_model->clearPlayerRole($client_id, $site_id, $pb_player_id,
-                                                    $data['organize_node'][$i]);
-                                            }
 
                                             $role_array = explode(",", $data['organize_role'][$i]);
-                                            foreach ($role_array as $role) {
-                                                $role = str_replace(' ', '', $role);
-                                                $status = $this->Workflow_model->setPlayerRole($data['cl_player_id'],
-                                                    $data['organize_node'][$i], $role);
-                                                if (!$status->success) {
-                                                    break;
+
+                                            if (isset($temp[0]['roles'])){
+                                                // Unset role which different from input
+                                                foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff){
+                                                    $status = $this->Workflow_model->clearPlayerRole($data['cl_player_id'], $data['organize_node'][$i], $diff);
+                                                    if (!$status->success) {
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            // Set content role if input is not empty
+                                            if (!empty($data['organize_role'][$i])) {
+
+                                                foreach ($role_array as $role) {
+
+                                                    // Only set if input is not in existing role
+                                                    if (!in_array($role, array_keys($temp[0]['roles']))) {
+                                                        $status = $this->Workflow_model->setPlayerRole($data['cl_player_id'],
+                                                            $data['organize_node'][$i], $role);
+                                                        if (!$status->success) {
+                                                            break;
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

@@ -89,29 +89,29 @@ class Content_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $insert_data = array(
-            'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
-            'title' => $data['title'],
-            'summary' => $data['summary'],
-            'detail' => $data['detail'],
-            'date_start' => new MongoDate(strtotime($data['date_start'])),
-            'date_end' => new MongoDate(strtotime($data['date_end'])),
-            'image' => $data['image'],
-            'status' => $data['status'],
+        $data = array_merge($data, array(
             'deleted' => false,
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
-        );
-        if (isset($data['category'])) {
-            $insert_data['category'] = new MongoId($data['category']);
-        }
-        if (isset($data['pin'])) {
-            $insert_data['pin'] = $data['pin'];
-        }
-        $insert = $this->mongo_db->insert('playbasis_content_to_client', $insert_data);
+        ));
+        $insert = $this->mongo_db->insert('playbasis_content_to_client', $data);
 
         return $insert;
+    }
+
+    public function findContent($client_id, $site_id, $node_id, $content_id=null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $regex = new MongoRegex("/" . preg_quote(mb_strtolower($node_id)) . "/i");
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('node_id', $regex);
+        $this->mongo_db->where('deleted', false);
+        if($content_id){
+            $this->mongo_db->where_ne('_id', new MongoId($content_id));
+        }
+        $c = $this->mongo_db->count('playbasis_content_to_client');
+        return $c > 0;
     }
 
     public function updateContent($data)
@@ -120,29 +120,7 @@ class Content_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->where('_id', new MongoID($data['_id']));
 
-        $this->mongo_db->set('title', $data['title']);
-        $this->mongo_db->set('summary', $data['summary']);
-        $this->mongo_db->set('detail', $data['detail']);
-        if (isset($data['category'])) {
-            if (empty($data['category'])) {
-                $this->mongo_db->unset_field('category');
-            } else {
-                $this->mongo_db->set('category', new MongoId($data['category']));
-            }
-        }
-        $this->mongo_db->set('image', $data['image']);
-        $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
-        $this->mongo_db->set('date_end', new MongoDate(strtotime($data['date_end'])));
-        $this->mongo_db->set('date_modified', new MongoDate());
-        $this->mongo_db->set('status', $data['status']);
-        if (isset($data['pin'])) {
-            if (empty($data['pin'])) {
-                $this->mongo_db->unset_field('pin');
-            } else {
-                $this->mongo_db->set('pin', $data['pin']);
-            }
-        }
-
+        $this->mongo_db->set($data);
         $update = $this->mongo_db->update('playbasis_content_to_client');
 
         return $update;
@@ -239,6 +217,27 @@ class Content_model extends MY_Model
         return $this->mongo_db->get("playbasis_content_category_to_client");
     }
 
+    public function retrieveContentCategoryByName($client_id, $site_id, $name)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('name', $name);
+        $result = $this->mongo_db->get("playbasis_content_category_to_client");
+        return $result ? $result[0] : null;
+    }
+
+    public function retrieveContentCategoryByNameButNotID($client_id, $site_id, $name, $category_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_ne('_id', $category_id);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('name', $name);
+        $result = $this->mongo_db->get("playbasis_content_category_to_client");
+        return $result ? $result[0] : null;
+    }
+
     public function retrieveContentCategoryById($id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -272,7 +271,7 @@ class Content_model extends MY_Model
         return $update;
     }
 
-    public function deleteContentCategory($category_id)
+    public function deleteContentCategory($client_id, $site_id, $category_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -283,10 +282,22 @@ class Content_model extends MY_Model
         };
 
         $this->mongo_db->set('deleted', true);
-        return $this->mongo_db->update('playbasis_content_category_to_client');
+        $result = $this->mongo_db->update('playbasis_content_category_to_client');
+
+        if($result){
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('category', new MongoID($category_id));
+            $this->mongo_db->set('category', "");
+            $this->mongo_db->set('date_modified', new MongoDate());
+
+            $this->mongo_db->update_all('playbasis_content_to_client');
+        }
+
+        return $result;
     }
 
-    public function deleteContentCategoryByIdArray($id_array)
+    public function deleteContentCategoryByIdArray($client_id, $site_id, $id_array)
     {
         if (!empty($id_array)) {
             array_walk($id_array, array($this, "makeMongoIdObj"));
@@ -296,9 +307,81 @@ class Content_model extends MY_Model
 
         $this->mongo_db->set('date_modified', new MongoDate());
 
-        $update = $this->mongo_db->update_all('playbasis_content_category_to_client');
+        $result = $this->mongo_db->update_all('playbasis_content_category_to_client');
 
-        return $update;
+        if($result){
+            if (!empty($id_array)) {
+                array_walk($id_array, array($this, "makeMongoIdObj"));
+                $this->mongo_db->where('client_id', new MongoID($client_id));
+                $this->mongo_db->where('site_id', new MongoID($site_id));
+                $this->mongo_db->where_in('category', $id_array);
+                $this->mongo_db->set('category', "");
+            }
+
+            $this->mongo_db->set('date_modified', new MongoDate());
+
+            $this->mongo_db->update_all('playbasis_content_to_client');
+        }
+
+        return $result;
+    }
+
+    public function getOrganizationToContent($client_id, $site_id, $content_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where(array(
+            'content_id' => new MongoId($content_id),
+            'site_id' => new MongoId($site_id),
+            'client_id' => new MongoId($client_id)
+        ));
+        $results = $this->mongo_db->get("playbasis_store_organize_to_content");
+        return $results;
+    }
+
+    public function addContentToNode($content_id, $node_id)
+    {
+        $status = $this->_api->addContentToNode($content_id, $node_id);
+        return $status;
+    }
+
+    public function setContentRole($content_id, $node_id, $role)
+    {
+        $status = $this->_api->setContentRole($content_id, $node_id, array('role' => $role));
+        return $status;
+    }
+
+    public function editOrganizationOfContent($client_id, $site_id, $org_id, $content_id, $node_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('_id', new MongoID($org_id));
+
+        $this->mongo_db->set('content_id', new MongoID($content_id));
+        $this->mongo_db->set('node_id', new MongoID($node_id));
+        return $this->mongo_db->update('playbasis_store_organize_to_content');
+    }
+
+    public function getRole($client_id, $site_id, $content_id, $node_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('roles'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('content_id', new MongoId($content_id));
+        $this->mongo_db->where('node_id', new MongoId($node_id));
+
+        $results = $this->mongo_db->get("playbasis_store_organize_to_content");
+        return $results;
+    }
+
+    public function clearContentRole( $content_id, $node_id, $role)
+    {
+        $status = $this->_api->unsetContentRole($content_id, $node_id, array('role' => $role));
+        return $status;
     }
 
     function makeMongoIdObj(&$value)

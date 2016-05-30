@@ -1,27 +1,59 @@
 # Change Log
 
+## [2.11.0](https://github.com/playbasis/control/tree/2.11.0)
+
+[Full Changelog](https://github.com/playbasis/control/compare/2.10.0...2.11.0)
+
+**Implemented enhancements:**
+
+- Show player\_id who created content [\#201](https://github.com/playbasis/control/pull/201) ([piya-playbasis](https://github.com/piya-playbasis))
+- Feature/webhook [\#200](https://github.com/playbasis/control/pull/200) ([niti-playbasis](https://github.com/niti-playbasis))
+- Delete category client after deletion category [\#198](https://github.com/playbasis/control/pull/198) ([piya-playbasis](https://github.com/piya-playbasis))
+- support badge category and filter [\#197](https://github.com/playbasis/control/pull/197) ([piya-playbasis](https://github.com/piya-playbasis))
+- - display an example of what is the format for each import type [\#196](https://github.com/playbasis/control/pull/196) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Support tags input in "Custom Point" [\#195](https://github.com/playbasis/control/pull/195) ([piya-playbasis](https://github.com/piya-playbasis))
+- Revise time setting in each screen \(where applicable\) to have same fo… [\#194](https://github.com/playbasis/control/pull/194) ([piya-playbasis](https://github.com/piya-playbasis))
+- Create project\_id for content [\#192](https://github.com/playbasis/control/pull/192) ([piya-playbasis](https://github.com/piya-playbasis))
+- - Implement import log to have filtering [\#191](https://github.com/playbasis/control/pull/191) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Set Logo for every player visible page. [\#190](https://github.com/playbasis/control/pull/190) ([piya-playbasis](https://github.com/piya-playbasis))
+- Add time setting for import [\#189](https://github.com/playbasis/control/pull/189) ([niti-playbasis](https://github.com/niti-playbasis))
+- App list screen should count from number of platforms [\#188](https://github.com/playbasis/control/pull/188) ([piya-playbasis](https://github.com/piya-playbasis))
+- Add input directory for import [\#187](https://github.com/playbasis/control/pull/187) ([niti-playbasis](https://github.com/niti-playbasis))
+- Import log [\#186](https://github.com/playbasis/control/pull/186) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Add app color per client [\#185](https://github.com/playbasis/control/pull/185) ([piya-playbasis](https://github.com/piya-playbasis))
+- Correct\_role\_update\_on\_content\_and\_workflow [\#183](https://github.com/playbasis/control/pull/183) ([niti-playbasis](https://github.com/niti-playbasis))
+- Add field "answer\_within\_time" into quiz module [\#182](https://github.com/playbasis/control/pull/182) ([piya-playbasis](https://github.com/piya-playbasis))
+- Feature/add "store org" in content module [\#181](https://github.com/playbasis/control/pull/181) ([niti-playbasis](https://github.com/niti-playbasis))
+- When\_user\_switches\_the\_site,app\_system\_should\_remember\_the\_current\_menu [\#179](https://github.com/playbasis/control/pull/179) ([piya-playbasis](https://github.com/piya-playbasis))
+- App list should only display current active app [\#178](https://github.com/playbasis/control/pull/178) ([piya-playbasis](https://github.com/piya-playbasis))
+- Should be able to edit an existing app \(site\_id\) [\#177](https://github.com/playbasis/control/pull/177) ([piya-playbasis](https://github.com/piya-playbasis))
+- Merge "domain\_name" and "site\_name" [\#176](https://github.com/playbasis/control/pull/176) ([piya-playbasis](https://github.com/piya-playbasis))
+- Content category name must be unique [\#175](https://github.com/playbasis/control/pull/175) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Adhoc to support content import [\#174](https://github.com/playbasis/control/pull/174) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Feature/import adhoc tab [\#172](https://github.com/playbasis/control/pull/172) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Support label in content [\#171](https://github.com/playbasis/control/pull/171) ([niti-playbasis](https://github.com/niti-playbasis))
+- Support label in quest [\#170](https://github.com/playbasis/control/pull/170) ([niti-playbasis](https://github.com/niti-playbasis))
+- Feature/store org check duplicate name [\#169](https://github.com/playbasis/control/pull/169) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Display "per\_user" column in badge list [\#168](https://github.com/playbasis/control/pull/168) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Fix pagination with filter [\#199](https://github.com/playbasis/control/pull/199) ([piya-playbasis](https://github.com/piya-playbasis))
+- - Modify pagination in workflow and import feature to applicable with filtering [\#193](https://github.com/playbasis/control/pull/193) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Fix php error when update store org in workflow and content [\#184](https://github.com/playbasis/control/pull/184) ([niti-playbasis](https://github.com/niti-playbasis))
+- Correct\\_role\\_update\\_on\\_content\\_and\\_workflow [\#183](https://github.com/playbasis/control/pull/183) ([niti-playbasis](https://github.com/niti-playbasis))
+- Bug in content label [\#173](https://github.com/playbasis/control/pull/173) ([niti-playbasis](https://github.com/niti-playbasis))
+
 ## [2.10.0](https://github.com/playbasis/control/tree/2.10.0) (2016-05-16)
-[Full Changelog](https://github.com/playbasis/control/compare/media_manager_to_rearrange_photo...2.9.2)
+[Full Changelog](https://github.com/playbasis/control/compare/2.9.2...2.10.0)
 
 **Implemented enhancements:**
 
 - Hotfix/2.9.2 [\#167](https://github.com/playbasis/control/pull/167) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
-- Support label in badge [\#160](https://github.com/playbasis/control/pull/160) ([niti-playbasis](https://github.com/niti-playbasis))
-
-**Fixed bugs:**
-
-- Fix getbadge to force return tags field [\#166](https://github.com/playbasis/control/pull/166) ([niti-playbasis](https://github.com/niti-playbasis))
-- Fix bug in reward form [\#165](https://github.com/playbasis/control/pull/165) ([niti-playbasis](https://github.com/niti-playbasis))
-- Fix badge view error on implode [\#164](https://github.com/playbasis/control/pull/164) ([niti-playbasis](https://github.com/niti-playbasis))
-
-## [media_manager_to_rearrange_photo](https://github.com/playbasis/control/tree/media_manager_to_rearrange_photo) (2016-05-13)
-[Full Changelog](https://github.com/playbasis/control/compare/2.9.1...media_manager_to_rearrange_photo)
-
-**Implemented enhancements:**
-
 - - Reversed the sort order of images in media manager \(from newest to older\) [\#163](https://github.com/playbasis/control/pull/163) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - Remove claim and redeem [\#162](https://github.com/playbasis/control/pull/162) ([piya-playbasis](https://github.com/piya-playbasis))
 - Add per\_user for badge [\#161](https://github.com/playbasis/control/pull/161) ([piya-playbasis](https://github.com/piya-playbasis))
+- Support label in badge [\#160](https://github.com/playbasis/control/pull/160) ([niti-playbasis](https://github.com/niti-playbasis))
 - Update quiz and good view to display label tags [\#159](https://github.com/playbasis/control/pull/159) ([niti-playbasis](https://github.com/niti-playbasis))
 - Add logo field when adding a new app \(site\_id\) [\#158](https://github.com/playbasis/control/pull/158) ([piya-playbasis](https://github.com/piya-playbasis))
 - Support label in quiz [\#157](https://github.com/playbasis/control/pull/157) ([niti-playbasis](https://github.com/niti-playbasis))
@@ -30,7 +62,16 @@
 
 **Fixed bugs:**
 
+- Fix getbadge to force return tags field [\#166](https://github.com/playbasis/control/pull/166) ([niti-playbasis](https://github.com/niti-playbasis))
+- Fix bug in reward form [\#165](https://github.com/playbasis/control/pull/165) ([niti-playbasis](https://github.com/niti-playbasis))
+- Fix badge view error on implode [\#164](https://github.com/playbasis/control/pull/164) ([niti-playbasis](https://github.com/niti-playbasis))
 - Add support label tagging in Goods [\#155](https://github.com/playbasis/control/pull/155) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.9.2](https://github.com/playbasis/control/tree/2.9.2) (2016-05-13)
+[Full Changelog](https://github.com/playbasis/control/compare/media_manager_to_rearrange_photo...2.9.2)
+
+## [media_manager_to_rearrange_photo](https://github.com/playbasis/control/tree/media_manager_to_rearrange_photo) (2016-05-13)
+[Full Changelog](https://github.com/playbasis/control/compare/2.9.1...media_manager_to_rearrange_photo)
 
 ## [2.9.1](https://github.com/playbasis/control/tree/2.9.1) (2016-04-28)
 [Full Changelog](https://github.com/playbasis/control/compare/2.8.3...2.9.1)

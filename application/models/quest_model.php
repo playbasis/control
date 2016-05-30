@@ -398,7 +398,8 @@ class Quest_model extends MY_Model
                      'feedbacks',
                      'missions',
                      'organize_id',
-                     'organize_role'
+                     'organize_role',
+                     'tags'
                  ) as $field) {
             if (isset($data[$field]) && !is_null($data[$field])) {
                 $this->mongo_db->set($field, $data[$field]);

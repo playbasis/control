@@ -156,7 +156,7 @@
                             <?php } else { ?>
                                 <tr>
                                     <td class="center"
-                                        colspan="9"><?php echo $this->lang->line('text_no_results'); ?></td>
+                                        colspan="11"><?php echo $this->lang->line('text_no_results'); ?></td>
                                 </tr>
                             <?php } ?>
                             </tbody>

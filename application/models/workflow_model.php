@@ -3,15 +3,47 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Workflow_model extends MY_Model
 {
-    public function getTotalPlayerByApprovalStatus($client_id, $site_id, $approval_status)
+    public function getTotalPlayerByApprovalStatus($client_id, $site_id, $approval_status, $data)
     {
         $this->set_site_mongodb($site_id);
-        //$this->mongo_db->select(array('email','first_name','last_name','username','image','exp','level','date_added','date_modified'));
-        $this->mongo_db->where(array(
-            'approve_status' => $approval_status,
-            'site_id' => $site_id,
-            'client_id' => $client_id
-        ));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+
+        if($approval_status == "pending") {
+
+            $or_where = array(
+                array('approve_status' => 'pending'),
+                array('approve_status' => null),
+                array('approve_status' => ""),
+            );
+            $this->mongo_db->where(array('$or' => $or_where));
+        }else{
+            $this->mongo_db->where('approve_status', $approval_status);
+        }
+
+        $filter = array();
+
+        if (isset($data['filter_name']) && $data['filter_name']) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
+            //$this->mongo_db->where('name', $regex);
+            $filter[]=array('first_name' => $regex);
+            $filter[]=array('last_name' => $regex);
+        }
+
+        if($filter)
+            $this->mongo_db->where(array('$or' => $filter));
+
+        if (isset($data['filter_id']) && $data['filter_id']) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_id'])) . "/i");
+            $this->mongo_db->where('cl_player_id', $regex);
+            //$or_where[]=array('cl_player_id' => $regex);
+        }
+
+        if (isset($data['filter_email']) && $data['filter_email']) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_email'])) . "/i");
+            $this->mongo_db->where('email', $regex);
+            //$or_where[]=array('email' => $regex);
+        }
 
         $results = $this->mongo_db->count("playbasis_player");
         return $results;
@@ -21,11 +53,21 @@ class Workflow_model extends MY_Model
     {
         $this->set_site_mongodb($site_id);
         //$this->mongo_db->select(array('email','first_name','last_name','username','image','exp','level','date_added','date_modified'));
-        $this->mongo_db->where(array(
-            'approve_status' => $approval_status,
-            'site_id' => $site_id,
-            'client_id' => $client_id
-        ));
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+
+        if($approval_status == "pending") {
+
+            $or_where = array(
+                array('approve_status' => 'pending'),
+                array('approve_status' => null),
+                array('approve_status' => ""),
+            );
+            $this->mongo_db->where(array('$or' => $or_where));
+        }else{
+            $this->mongo_db->where('approve_status', $approval_status);
+        }
 
         $filter = array();
 
@@ -103,77 +145,6 @@ class Workflow_model extends MY_Model
         return $results;
     }
 
-    public function getPendingPlayer($client_id, $site_id, $data)
-    {
-        $this->set_site_mongodb($site_id);
-        //$this->mongo_db->select(array('email','first_name','last_name','username','image','exp','level','date_added','date_modified'));
-        $this->mongo_db->where('client_id', $client_id);
-        $this->mongo_db->where('site_id', $site_id);
-
-        $or_where = array(
-            array('approve_status' => 'pending'),
-            array('approve_status' => null),
-            array('approve_status' => ""),
-        );
-        $this->mongo_db->where(array('$or' => $or_where));
-
-        $filter = array();
-
-        if (isset($data['filter_name']) && $data['filter_name']) {
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            //$this->mongo_db->where('name', $regex);
-            $filter[]=array('first_name' => $regex);
-            $filter[]=array('last_name' => $regex);
-        }
-
-        if($filter)
-            $this->mongo_db->where(array('$or' => $filter));
-
-        if (isset($data['filter_id']) && $data['filter_id']) {
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_id'])) . "/i");
-            $this->mongo_db->where('cl_player_id', $regex);
-            //$or_where[]=array('cl_player_id' => $regex);
-        }
-
-        if (isset($data['filter_email']) && $data['filter_email']) {
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_email'])) . "/i");
-            $this->mongo_db->where('email', $regex);
-            //$or_where[]=array('email' => $regex);
-        }
-
-        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
-            $order = -1;
-        } else {
-            $order = 1;
-        }
-
-        $sort_data = array(
-            'cl_player_id',
-            'first_name',
-            'email'
-        );
-
-        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-            $this->mongo_db->order_by(array($data['sort'] => $order));
-        } else {
-            $this->mongo_db->order_by(array('name' => $order));
-        }
-
-        if (isset($data['start']) || isset($data['limit'])) {
-            if ($data['start'] < 0) {
-                $data['start'] = 0;
-            }
-
-            if ($data['limit'] < 1) {
-                $data['limit'] = 20;
-            }
-
-            $this->mongo_db->limit((int)$data['limit']);
-            $this->mongo_db->offset((int)$data['start']);
-        }
-
-        return $this->mongo_db->get('playbasis_player');
-    }
 
     public function getOrganizationToPlayer($client_id, $site_id, $player_id)
     {
@@ -223,10 +194,13 @@ class Workflow_model extends MY_Model
             $player = $this->findPlayerByClPlayerId($client_id, $site_id, $data['cl_player_id']);
             if ($player) {
                 /* system automatically send an email to notify the player that account is approved */
-                $site_name = $this->findSiteName($client_id, $site_id);
+                $site_data = $this->findClientSite($client_id, $site_id);
                 $this->load->library('parser');
                 $vars = array(
-                    'sitename' => $site_name,
+                    'sitename' => $site_data['site_name'],
+                    'site_logo' => isset($site_data['image']) && !empty($site_data['image']) ? $site_data['image'] : "image/beforelogin/email-header-top.gif",
+                    'site_color' => ((isset($site_data['app_color']) && !empty($site_data['app_color'])) &&
+                                     (isset($site_data['image']) && !empty($site_data['image']))) ? $site_data['app_color'] : "#86559c",
                     'firstname' => $player['first_name'],
                     'lastname' => $player['last_name'],
                     'username' => $player['username'],
@@ -266,11 +240,14 @@ class Workflow_model extends MY_Model
             $player = $this->findPlayerByClPlayerId($client_id, $site_id, $player_id);
             if ($player && (!isset($player['approve_status']) || $player['approve_status'] != 'approved')) { // detect approve_status changed
                 /* system automatically send an email to notify the player that account is approved */
-                $site_name = $this->findSiteName($client_id, $site_id);
+                $site_data = $this->findClientSite($client_id, $site_id);
                 $random_key = $this->generatePasswordResetCode($player['_id']);
                 $this->load->library('parser');
                 $vars = array(
-                    'sitename' => $site_name,
+                    'sitename' => $site_data['site_name'],
+                    'site_logo' => isset($site_data['image']) && !empty($site_data['image']) ? $site_data['image'] : "image/beforelogin/email-header-top.gif",
+                    'site_color' => ((isset($site_data['app_color']) && !empty($site_data['app_color'])) &&
+                                     (isset($site_data['image']) && !empty($site_data['image']))) ? $site_data['app_color'] : "#86559c",
                     'firstname' => $player['first_name'],
                     'lastname' => $player['last_name'],
                     'username' => $player['username'],
@@ -287,20 +264,10 @@ class Workflow_model extends MY_Model
         return $status;
     }
 
-    public function clearPlayerRole($client_id, $site_id, $player_id, $node_id)
+    public function clearPlayerRole($player_id, $node_id, $role)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $this->mongo_db->where('client_id', $client_id);
-        $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('pb_player_id', new MongoId($player_id));
-        $this->mongo_db->where('node_id', new MongoId($node_id));
-
-        $this->mongo_db->unset_field('roles');
-
-        $update = $this->mongo_db->update('playbasis_store_organize_to_player');
-
-        return $update;
+        $status = $this->_api->unsetPlayerRole($player_id, $node_id, array('role' => $role));
+        return $status;
     }
 
     public function approvePlayer($client_id, $site_id, $user_id)
@@ -317,11 +284,14 @@ class Workflow_model extends MY_Model
         /* system automatically send an email to notify the player that account is approved */
         $player = $this->findPlayerById($client_id, $site_id, new MongoID($user_id));
         if ($player) {
-            $site_name = $this->findSiteName($client_id, $site_id);
+            $site_data = $this->findClientSite($client_id, $site_id);
             $random_key = $this->generatePasswordResetCode($player['_id']);
             $this->load->library('parser');
             $vars = array(
-                'sitename' => $site_name,
+                'sitename' => $site_data['site_name'],
+                'site_logo' => isset($site_data['image']) && !empty($site_data['image']) ? $site_data['image'] : "image/beforelogin/email-header-top.gif",
+                'site_color' => ((isset($site_data['app_color']) && !empty($site_data['app_color'])) &&
+                                 (isset($site_data['image']) && !empty($site_data['image']))) ? $site_data['app_color'] : "#86559c",
                 'firstname' => $player['first_name'],
                 'lastname' => $player['last_name'],
                 'username' => $player['username'],
@@ -375,6 +345,45 @@ class Workflow_model extends MY_Model
             'site_id' => $site_id,
             'client_id' => $client_id
         ));
+
+        $results = $this->mongo_db->count("playbasis_player");
+
+        return $results;
+    }
+
+    public function getTotalLockedPlayerWithFilter($client_id, $site_id, $data)
+    {
+        $this->set_site_mongodb($site_id);
+        //$this->mongo_db->select(array('email','first_name','last_name','username','image','exp','level','date_added','date_modified'));
+        $this->mongo_db->where(array(
+            'locked' => true,
+            'site_id' => $site_id,
+            'client_id' => $client_id
+        ));
+
+        $filter = array();
+
+        if (isset($data['filter_name']) && $data['filter_name']) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
+            //$this->mongo_db->where('name', $regex);
+            $filter[]=array('first_name' => $regex);
+            $filter[]=array('last_name' => $regex);
+        }
+
+        if($filter)
+            $this->mongo_db->where(array('$or' => $filter));
+
+        if (isset($data['filter_id']) && $data['filter_id']) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_id'])) . "/i");
+            $this->mongo_db->where('cl_player_id', $regex);
+            //$or_where[]=array('cl_player_id' => $regex);
+        }
+
+        if (isset($data['filter_email']) && $data['filter_email']) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_email'])) . "/i");
+            $this->mongo_db->where('email', $regex);
+            //$or_where[]=array('email' => $regex);
+        }
 
         $results = $this->mongo_db->count("playbasis_player");
 
@@ -449,13 +458,13 @@ class Workflow_model extends MY_Model
         return $this->mongo_db->get('playbasis_player');
     }
 
-    private function findSiteName($client_id, $site_id) {
+    private function findClientSite($client_id, $site_id) {
         $this->mongo_db->where(array(
             '_id' => $site_id,
             'client_id' => $client_id
         ));
         $results = $this->mongo_db->get("playbasis_client_site");
-        return $results && isset($results[0]['site_name']) ? $results[0]['site_name'] : null;
+        return $results && isset($results[0]) ? $results[0] : null;
     }
 
     private function findPlayerById($client_id, $site_id, $pb_player_id) {

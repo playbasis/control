@@ -254,7 +254,7 @@ class Client extends MY_Controller
                 $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
 
                 $data_client = array("client_id" => $result['_id'], 'site_id' => $site_id);
-                $domain_total = $this->App_model->getTotalAppsByClientId($data_client);
+                $site_total = $this->App_model->getTotalAppsByClientId($data_client);
 
                 if (isset($result['image'])) {
                     $info = pathinfo($result['image']);
@@ -285,7 +285,7 @@ class Client extends MY_Controller
                     'last_name' => $result['last_name'],
                     'plan_name' => $plan['name'],
                     'image' => $image,
-                    'quantity' => $domain_total,
+                    'quantity' => $site_total,
                     'status' => $result['status'],
                     'selected' => is_array($this->input->post('selected')) && in_array($result['client_id'],
                             $this->input->post('selected')),
@@ -577,7 +577,7 @@ class Client extends MY_Controller
 
         $this->output->set_output(json_encode($json));
     }
-
+/*/
     public function domain($offset = 0)
     {
 
@@ -602,7 +602,6 @@ class Client extends MY_Controller
                     'site_id' => $result['_id'],
                     'client_id' => $result['client_id'],
                     'plan_id' => $plan_id,
-                    'domain_name' => $result['domain_name'],
                     'site_name' => $result['site_name'],
                     'keys' => $result['api_key'],
                     'secret' => $result['api_secret'],
@@ -623,7 +622,7 @@ class Client extends MY_Controller
         $this->load->vars($this->data);
         $this->render_page('client_domain');
     }
-
+*/
     public function users($offset = 0)
     {
 

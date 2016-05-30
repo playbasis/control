@@ -126,10 +126,10 @@ class Action extends MY_Controller
                             $data_admin = $this->input->post();
                             $data_admin['action_id'] = $this->Action_model->addAction($data);
                             $data_admin['site_id'] = $data['site_id'];
-                            $domains = $this->App_model->getAppsByClientId($data_admin);
+                            $sites = $this->App_model->getAppsByClientId($data_admin);
 
-                            foreach ($domains as $domain) {
-                                $data_admin['site_id'] = $domain['_id'];
+                            foreach ($sites as $site) {
+                                $data_admin['site_id'] = $site['_id'];
                                 $this->Action_model->addActionToClient($data_admin);
                             }
                         } else {

@@ -14,6 +14,12 @@
                 <?php }else{ ?>
                     <button class="btn btn-info" onclick="location = baseUrlPath+'app/add'" type="button"><?php echo $this->lang->line('button_add_app'); ?></button>
                 <?php } ?>
+                <?php if( $plan_limit_platform !== null && $total_platform >= $plan_limit_platform){ ?>
+                    <button class="btn btn-default disabled" disabled type="button">Add Platform</button>
+                <?php }else{ ?>
+                    <button class="btn btn-info" onclick="location='<?php echo site_url("app/add_platform/".$site_id); ?>'" type="button">Add Platform</button>
+                <?php } ?>
+                <button class="btn btn-info" onclick="location='<?php echo site_url("app/edit_app/".$site_id); ?>'" type="button">Edit App</button>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
             </div>
         </div>
@@ -32,46 +38,37 @@
             $attributes = array('id' => 'form');
             echo form_open('app/delete',$attributes);
             ?>
-                <?php if (isset($domain_list)) { ?>
-                    <?php foreach ($domain_list as $domain) { ?>
+                <?php if (isset($site_list)) { ?>
+                    <?php foreach ($site_list as $site) {
+                    if ($site['site_id'] == $site_id) {
+                    ?>
                     <table class="list app-table">
-                        <thead>
-                        <tr>
-                            <td width="1" style="text-align: center;">
-                                <input type="checkbox" name="app_selected[]" value="<?php echo $domain['site_id']; ?>" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);">
-                            </td>
-                            <td class="left" colspan="5"><h3><?php echo $domain['domain_name']; ?></h3>
-                                <?php if( $plan_limit_platform !== null && $total_platform >= $plan_limit_platform){ ?>
-                                    <button class="btn btn-default btn-mini disabled" disabled type="button">Add Platform</button>
-                                <?php }else{ ?>
-                                    <button class="btn btn-info btn-mini" onclick="location='<?php echo site_url("app/add_platform/".$domain['site_id']); ?>'" type="button">Add Platform</button>
-                                <?php } ?>
-                            </td>
-                        </tr>
-                        </thead>
                         <tbody>
                             <tr class="app-table-label">
-                                <td style="text-align: center;" width="10%">
-
+                                <td style="text-align: center;" width="5%">
+                                    <input type="checkbox" name="app_selected[]" value="<?php echo $site['site_id']; ?>" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);">
                                 </td>
-                                <td class="left" width="15%">
+                                <td class="center" width="10%">
                                     Platform
                                 </td>
-                                <td width="20%">
+                                <td class="center" width="30%">
+                                    Platform Url
+                                </td>
+                                <td class="center" width="15%">
                                     Api Key
                                 </td>
-                                <td >
+                                <td class="center" width="30%">
                                     Api Secret
                                 </td>
-                                <td class="right" width="10%">
+                                <td class="center" width="5%">
                                     Status
                                 </td>
-                                <td class="right app-col-action">
+                                <td class="right app-col-action" width="5%">
                                     Action
                                 </td>
                             </tr>
                             <?php
-                            foreach($domain["apps"] as $app){
+                            foreach($site["apps"] as $app){
                             ?>
                             <tr>
                                 <td style="text-align: center;">
@@ -91,6 +88,18 @@
                                     }
                                     ?>
                                     <i class="fa <?php echo $aicon; ?> fa-lg"></i> <?php echo $aname; ?>
+                                </td>
+                                <td >
+                                    <?php
+                                    if($app['platform'] == 'web'){
+                                        $asite = $app['data']['site_url'];
+                                    }elseif($app['platform'] == 'ios'){
+                                        $asite = $app['data']['ios_bundle_id'];
+                                    }elseif($app['platform'] == 'android'){
+                                        $asite = $app['data']['android_package_name'];
+                                    }
+                                    ?>
+                                    <?php echo $asite; ?>
                                 </td>
                                 <td >
                                     <?php echo $app['api_key']; ?>
@@ -115,7 +124,7 @@
                             <?php } ?>
                         </tbody>
                     </table>
-                    <?php } ?>
+                    <?php }} ?>
                 <?php }else{
 
                     } ?>

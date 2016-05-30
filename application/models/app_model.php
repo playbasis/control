@@ -31,6 +31,22 @@ class App_model extends MY_Model
         return $client_data;
     }
 
+    public function getTotalPlatFormsBySiteId($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        $client_data = $this->mongo_db->count("playbasis_platform_client_site");
+
+        return $client_data;
+    }
+    
     public function getPlatFormsByClientId($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -86,7 +102,7 @@ class App_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('domain_name', $regex);
+            $this->mongo_db->where('site_name', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -107,7 +123,7 @@ class App_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('domain_name', $regex);
+            $this->mongo_db->where('site_name', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -115,7 +131,7 @@ class App_model extends MY_Model
         }
 
         $sort_data = array(
-            'domain_name',
+            'site_name',
             'status',
             'sort_order',
             '_id'
@@ -151,6 +167,47 @@ class App_model extends MY_Model
         return $client_data;
     }
 
+    public function getAppsByClientSiteId($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('_id', new MongoID($data['site_id']));
+
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
+            $this->mongo_db->where('site_name', $regex);
+        }
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        $sort_data = array(
+            'site_name',
+            'status',
+            'sort_order',
+            '_id'
+        );
+
+        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
+        $client_data = $this->mongo_db->get("playbasis_client_site");
+
+        return $client_data;
+    }
+
     public function getAppsBySiteId($site_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -171,7 +228,7 @@ class App_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('domain_name', $regex);
+            $this->mongo_db->where('site_name', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -191,7 +248,7 @@ class App_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('domain_name', $regex);
+            $this->mongo_db->where('site_name', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -199,7 +256,7 @@ class App_model extends MY_Model
         }
 
         $sort_data = array(
-            'domain_name',
+            'site_name',
             'status',
             'sort_order',
             '_id'
@@ -341,34 +398,50 @@ class App_model extends MY_Model
         $this->mongo_db->update_all('playbasis_client_site');
     }
 
-    public function checkAppExists($data)
+    public function checkAppExists($site_name,$app_id=null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $domain = preg_replace("/http:\/\//", "", $data['domain_name']);
-        $domain = preg_replace("/https:\/\//", "", $domain);
-
-        $this->mongo_db->where('domain_name', strtolower($domain));
+        $this->mongo_db->where('site_name', $site_name);
         $this->mongo_db->where('deleted', false);
+        if($app_id){
+            $this->mongo_db->where_ne('_id', new MongoID($app_id));
+        }
 
         $c = $this->mongo_db->count('playbasis_client_site');
+        return $c > 0;
+    }
+
+    public function checkPlatformExists($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('site_id', new MongoID($data["site_id"]));
+        $this->mongo_db->where('platform', $data['platform']);
+        if ($data['platform'] == 'ios') {
+            $this->mongo_db->where('data.ios_bundle_id', $data['data_platform']['ios_bundle_id']);
+        } elseif ($data['platform'] == 'android') {
+            $this->mongo_db->where('data.android_package_name', $data['data_platform']['android_package_name']);
+        } else {
+            $this->mongo_db->where('data.site_url', $data['data_platform']['site_url']);
+        }
+        $this->mongo_db->where('deleted', false);
+
+        $c = $this->mongo_db->count('playbasis_platform_client_site');
         return $c > 0;
     }
 
     public function addApp($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $domain = preg_replace("/http:\/\//", "", $data['app_name']);
-        $domain = preg_replace("/https:\/\//", "", $domain);
-
+        
         $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
-            'domain_name' => $domain | '',
             'site_name' => $data['app_name'] | '',
             'api_key' => '',
             'api_secret' => '',
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'app_color' => isset($data['app_color']) && !empty($data['app_color']) ? $data['app_color']: '',
             'status' => true,
             'deleted' => false,
             'last_send_limit_users' => null,
@@ -404,7 +477,20 @@ class App_model extends MY_Model
         return array($data['site_id'], array('key' => $key, 'secret' => $secret));
     }
 
-    public function editApp($platform_id, $data)
+    public function editApp($app_id, $data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($app_id));
+        $this->mongo_db->set('site_name', $data['app_name']);
+        $this->mongo_db->set('image', isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '');
+        $this->mongo_db->set('app_color',  isset($data['app_color']) && !empty($data['app_color']) ? $data['app_color']: '');
+
+        return $this->mongo_db->update('playbasis_client_site');
+
+    }
+
+    public function editPlatform($platform_id, $data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 

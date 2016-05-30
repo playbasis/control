@@ -44,6 +44,7 @@ class Rule extends MY_Controller
         $this->load->model('Sms_model');
         $this->load->model('Push_model');
         $this->load->model('Level_model');
+        $this->load->model('Webhook_model');
 
         $isAdmin = $this->User_model->isAdmin();
         $client_id = $isAdmin ? null : $this->User_model->getClientId();
@@ -64,7 +65,7 @@ class Rule extends MY_Controller
         $this->data['emailList'] = array();
         $this->data['smsList'] = array();
         $this->data['pushList'] = array();
-
+        $this->data['webhookList'] = array();
 
         //if($s_clientId){
         $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
@@ -73,7 +74,8 @@ class Rule extends MY_Controller
         $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
         $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
         $pushList = $this->Push_model->listTemplatesBySiteId($site_id);
-        $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList, $pushList);
+        $webhookList = $this->Webhook_model->listTemplatesBySiteId($site_id);
+        $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList, $pushList, $webhookList);
         $conditionGroupList = $this->Rule_model->getConditionGroupJigsawList($site_id, $client_id);
         $groupList = $this->Rule_model->getGroupJigsawList($site_id, $client_id);
         $levelConditionList = $this->Level_model->getLevelConditions();
@@ -99,6 +101,7 @@ class Rule extends MY_Controller
         $this->data['emailList'] = $emailList;
         $this->data['smsList'] = $smsList;
         $this->data['pushList'] = $pushList;
+        $this->data['webhookList'] = $webhookList;
 
         //}
 

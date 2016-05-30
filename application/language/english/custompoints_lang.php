@@ -6,6 +6,8 @@ $lang = array(
 	'title'								=> 'Custom Points',
 	'text_no_results'					=> 'Text no results',
 	'heading_title'						=> 'Custom Points',
+    'column_name'                       => 'Point Name',
+	'column_tags'                       => 'Tag(s)',
 	'column_action'						=> 'Action',
 	'button_clear_filter'				=> 'Clear Filter',
 	'button_filter'						=> 'Filter',
@@ -22,7 +24,7 @@ $lang = array(
     'entry_energy_loss_based'           => 'Loss based',
     'entry_energy_changing_period'      => 'Changing period',
     'entry_energy_changing_per_period'  => 'Energy changing per period',
-
+    'entry_tags'                        => 'Tags'
 
 );
 

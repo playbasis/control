@@ -12,15 +12,33 @@ class Content extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
+        $this->load->model('Content_model');
+        $this->load->model('Store_org_model');
+        $this->load->model('Feature_model');
+        $this->load->model('App_model');
+
         if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
-        $this->load->model('Content_model');
-
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("content", $lang['folder']);
+
+        /* initialize $this->api */
+        $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(),
+            $this->User_model->getSiteId());
+        $this->_api = $this->playbasisapi;
+        $platforms = $this->App_model->getPlatFormByAppId(array(
+            'site_id' => $this->User_model->getSiteId(),
+        ));
+        $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
+        if ($platform) {
+            $this->_api->set_api_key($result['api_key']);
+            $this->_api->set_api_secret($result['api_secret']);
+            $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
+            $this->_api->auth($pkg_name);
+        }
     }
 
     public function index()
@@ -78,6 +96,8 @@ class Content extends MY_Controller
             $this->data['message'] = $this->lang->line('error_contents_limit');
         }
 
+        $this->form_validation->set_rules('node_id', $this->lang->line('entry_id'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('summary', $this->lang->line('entry_summary'),
@@ -100,22 +120,80 @@ class Content extends MY_Controller
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
-                $data['title'] = $content_data['title'];
-                $data['summary'] = $content_data['summary'];
-                $data['detail'] = $content_data['detail'];
-                $data['date_start'] = $content_data['date_start'];
-                $data['date_end'] = $content_data['date_end'];
-                $data['image'] = $content_data['image'];
-                if (isset($content_data['category']) && !empty($content_data['category'])) {
-                    $data['category'] = $content_data['category'];
-                }
-                $data['status'] = isset($content_data['status']) && $content_data['status'] == 'on' ? true : false;
-                $data['pin'] = $content_data['pin'];
+                $data['node_id'] = (isset($content_data['node_id']) && $content_data['node_id']) ? $content_data['node_id'] : null;
+                $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
+                $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
+                $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
+                $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
+                $data['date_end'] = (isset($content_data['date_end']) && $content_data['date_end']) ? new MongoDate(strtotime($content_data['date_end'])) : null;
+                $data['image'] = (isset($content_data['image']) && $content_data['image']) ? $content_data['image'] : null;
+                $data['category'] = (isset($content_data['category']) && $content_data['category']) ? new MongoId($content_data['category']) : null;
+                $data['status'] = (isset($content_data['status']) && $content_data['status'] == 'on') ? true : false;
+                $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
+                $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
 
-                $insert = $this->Content_model->createContent($data);
-                if ($insert) {
-                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                    redirect('/content', 'refresh');
+                $check_content = $this->Content_model->findContent($client_id, $site_id, $data['node_id']);
+                if(!$check_content){
+                    $insert = $this->Content_model->createContent($data);
+                    if ($insert) {
+                        if ($this->User_model->hasPermission('access', 'store_org') &&
+                            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org'))
+                        {
+                            //Add player to node
+                            if (isset($content_data['organize_node'][0]) && !empty($content_data['organize_node'][0])) {
+                                $status = $this->Content_model->addContentToNode($insert."", $content_data['organize_node'][0]);
+                                if ($status->success) {
+                                    //set role of player
+                                    if (isset($content_data['organize_role'][0]) && !empty($content_data['organize_role'][0])) {
+                                        $role_array = explode(",", $content_data['organize_role'][0]);
+                                        $status1 = null;
+                                        foreach ($role_array as $role) {
+                                            $role = str_replace(' ', '', $role);
+                                            $status1 = $this->Content_model->setContentRole($insert."", $content_data['organize_node'][0], $role);
+                                            if (!$status1->success) {
+                                                break;
+                                            }
+                                        }
+                                        if ($status1->success) {
+                                            // created player, added player to the node and set role of the player
+                                            $this->session->set_flashdata('success',
+                                                $this->lang->line('text_success_create'));
+                                            redirect('/content', 'refresh');
+                                        } else {
+                                            // failed to set role of player
+                                            $this->data['message'] = $status1->message;
+                                        }
+                                    } else {
+                                        //created player and added player to the node but did not set role of the player
+                                        $this->session->set_flashdata('success',
+                                            $this->lang->line('text_success_create_without_role_setting'));
+                                        redirect('/content', 'refresh');
+                                    }
+                                } else {
+                                    //failed to add player to node
+                                    $this->data['message'] = $status->message;
+                                }
+                            } else {
+                                //created player with enabled store org feature but did not add the player to any node
+                                $this->session->set_flashdata('success',
+                                    $this->lang->line('text_success_create_without_org_setting'));
+                                redirect('/content', 'refresh');
+                            }
+                        } else {
+                            // created player with disabled store org feature
+                            $this->session->set_flashdata('success', $this->lang->line('text_success_create'));
+                            redirect('/content', 'refresh');
+                        }
+                    }else{
+                        // failed to create player
+                        if (!isset($_POST['organize_node'][0])) {
+                            $_POST['organize_node'][0] = "";
+                        }
+                        $this->data['message'] = $this->lang->line('error_create');
+                    }
+                }
+                else{
+                    $this->data['message'] = $this->lang->line('error_ID_alrady_exist');
                 }
             }
         }
@@ -149,24 +227,106 @@ class Content extends MY_Controller
 
             if ($this->form_validation->run()) {
                 $content_data = $this->input->post();
-
-                $data['_id'] = $content_id;
-                $data['client_id'] = $this->User_model->getClientId();
-                $data['site_id'] = $this->User_model->getSiteId();
-                $data['title'] = $content_data['title'];
-                $data['summary'] = $content_data['summary'];
-                $data['detail'] = $content_data['detail'];
-                $data['date_start'] = $content_data['date_start'];
-                $data['date_end'] = $content_data['date_end'];
-                $data['image'] = $content_data['image'];
-                $data['category'] = $content_data['category'];
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+                $data['_id'] = new MongoId($content_id);
+                $data['client_id'] = $client_id;
+                $data['site_id'] = $site_id;
+                $data['node_id'] = (isset($content_data['node_id']) && $content_data['node_id']) ? $content_data['node_id'] : null;
+                $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
+                $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
+                $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
+                $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
+                $data['date_end'] = (isset($content_data['date_end']) && $content_data['date_end']) ? new MongoDate(strtotime($content_data['date_end'])) : null;
+                $data['image'] = (isset($content_data['image']) && $content_data['image']) ? $content_data['image'] : null;
+                $data['category'] = (isset($content_data['category']) && $content_data['category']) ? new MongoId($content_data['category']) : null;
                 $data['status'] = isset($content_data['status']) ? true : false;
-                $data['pin'] = $content_data['pin'];
+                $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
+                $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
+                
+                $check_content = $this->Content_model->findContent($data['client_id'], $site_id, $content_data['node_id'], $content_id);
+                if(!$check_content){
+                    $insert = $this->Content_model->updateContent($data);
+                    if ($insert) {
+                        if ($this->User_model->hasPermission('access', 'store_org') &&
+                            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')) 
+                        {
+                            foreach ($content_data['organize_id'] as $i => $org_id) {
+                                //Add player to node
+                                if (isset($content_data['organize_node'][$i]) && !empty($content_data['organize_node'][$i]) && $insert) {
 
-                $update = $this->Content_model->updateContent($data);
-                if ($update) {
-                    $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                    redirect('/content', 'refresh');
+                                    if ($org_id == "") {// this player has never been added to any node
+                                        $status = $this->Content_model->addContentToNode($content_id, $content_data['organize_node'][$i]);
+                                    } else { //this player has been added to some node
+                                        $status = $this->Content_model->editOrganizationOfContent($data['client_id'], $data['site_id'],
+                                            $content_data['organize_id'][$i], $content_id, $content_data['organize_node'][$i]);
+                                    }
+
+                                    //set role of content
+                                    if (isset($content_data['organize_role'][$i])) {
+
+                                        $temp = $this->Content_model->getRole($data['client_id'], $data['site_id'], $content_id,
+                                            $content_data['organize_node'][$i]);
+
+                                        $role_array = explode(",", $content_data['organize_role'][$i]);
+
+                                        if (isset($temp[0]['roles'])) {
+                                            // Unset role which different from input
+                                            foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff) {
+                                                $status = $this->Content_model->clearContentRole($content_id,
+                                                    $content_data['organize_node'][$i], $diff)->success;
+                                                if (!$status) {
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        // Set content role if input is not empty
+                                        if (!empty($content_data['organize_role'][$i])) {
+
+                                            foreach ($role_array as $role) {
+
+                                                // Only set if input is not in existing role
+                                                if ((!isset($temp[0]['roles'])) || (!in_array($role, array_keys($temp[0]['roles'])))) {
+                                                    $status = $this->Content_model->setContentRole($content_id,
+                                                        $content_data['organize_node'][$i], $role)->success;
+                                                    if (!$status) {
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (isset($status->success)) {
+                                if ($status->success == true) {
+                                    // created player, added player to the node and set role of the player
+                                    $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
+                                    redirect('/content', 'refresh');
+                                }
+                                else{
+                                    // failed to set role of player
+                                    $this->data['message'] = $status->message;
+                                }
+                            } else {
+                                // created player, added player to the node and set role of the player
+                                $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
+                                redirect('/content', 'refresh');
+                            }
+
+                        } else {
+                            $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
+                            redirect('/content', 'refresh');
+                        }
+                    } else {
+                        if (!isset($_POST['organize_node'][0])) {
+                            $_POST['organize_node'][0] = "";
+                        }
+                        $this->data['message'] = $this->lang->line('error_update');
+                    }
+                } else {
+                    $this->data['message'] = $this->lang->line('error_ID_alrady_exist');
                 }
             }
         }
@@ -222,8 +382,53 @@ class Content extends MY_Controller
             $contents = $this->Content_model->retrieveContents($client_id, $site_id, $filter);
             foreach ($contents as &$content) {
                 if (array_key_exists('category', $content)) {
-                    $content['category'] = $this->Content_model->retrieveContentCategoryById($content['category']);
+                    if($content['category']){
+                        $content['category'] = $this->Content_model->retrieveContentCategoryById($content['category']);
+                    }
                 }
+                if (array_key_exists('pb_player_id', $content)) {
+                    if($content['pb_player_id']){
+                        $pb_player = $this->Player_model->getPlayerById($content['pb_player_id']);
+                        $content['player_id'] = $pb_player['cl_player_id'];
+                    }
+                }
+            }
+
+            if ($this->User_model->hasPermission('access', 'store_org') &&
+                $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+            ) {
+                $this->data['org_status'] = true;
+                foreach ($contents as &$content) {
+                    $orgs = $this->Content_model->getOrganizationToContent($client_id, $site_id, $content['_id']);
+                    foreach ($orgs as $org) {
+                        $role_string = '';
+                        if (isset($org['roles']) && !empty($org['roles'])) {
+                            $array = array_keys($org['roles']);
+                            foreach ($array as $role) {
+                                if ($role_string == '') {
+                                    $role_string = $role;
+                                } else {
+                                    $role_string = $role_string . ', ' . $role;
+                                }
+                            }
+                        }
+
+                        $node_info = $this->Store_org_model->retrieveNodeById($org['node_id']);
+                        $org_info = $this->Store_org_model->retrieveOrganizeById($node_info['organize']);
+
+                        if (!isset($content['organization_node'])) {
+                            $content['organization_node'] = $node_info['name'];
+                            $content['organization_type'] = $org_info['name'];
+                            $content['organization_role'] = $role_string;
+                        } else {
+                            $content['organization_node'] = $content['organization_node'] . '<hr>' . $node_info['name'];
+                            $content['organization_type'] = $content['organization_type'] . '<hr>' . $org_info['name'];
+                            $content['organization_role'] = $content['organization_role'] . '<hr>' . $role_string;
+                        }
+                    }
+                }
+            } else {
+                $this->data['org_status'] = false;
             }
 
             $this->data['contents'] = $contents;
@@ -266,12 +471,60 @@ class Content extends MY_Controller
 
     public function getForm($content_id = null)
     {
+        if ($this->User_model->hasPermission('access', 'store_org') &&
+            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+        ) {
+            $this->data['org_status'] = true;
+        } else {
+            $this->data['org_status'] = false;
+        }
+
         $this->data['main'] = 'content_form';
 
         if (isset($content_id) && ($content_id != 0)) {
             if ($this->User_model->getClientId()) {
                 $content_info = $this->Content_model->retrieveContent($content_id);
             }
+
+            if ($this->data['org_status']) {
+
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+
+                $org_info = $this->Content_model->getOrganizationToContent($client_id, $site_id, $content_id);
+                if (isset($org_info) && !empty($org_info)) {
+
+                    foreach ($org_info as $org) {
+                        $content_info['organize_id'][] = $org['_id'];
+                        $content_info['organize_node'][] = $org['node_id'];
+                        $node = $this->Store_org_model->retrieveNodeById(new MongoId($org['node_id']));
+                        $content_info['organize_type'][] = $node["organize"];
+
+                        if (isset($org['roles']) && !empty($org['roles'])) {
+                            $array_role = array_keys($org['roles']);
+                            $role_string = '';
+                            foreach ($array_role as $role) {
+                                if ($role_string == '') {
+                                    $role_string = $role;
+                                } else {
+                                    $role_string = $role_string . ',' . $role;
+                                }
+                            }
+                            $content_info['organize_role'][] = $role_string;
+                        } else {
+                            $content_info['organize_role'][] = "";
+                        }
+                    }
+                }
+            }
+
+        }
+        if ($this->input->post('node_id')) {
+            $this->data['node_id'] = $this->input->post('node_id');
+        } elseif (isset($content_info['node_id'])) {
+            $this->data['node_id'] = $content_info['node_id'];
+        } else {
+            $this->data['node_id'] = '';
         }
 
         if ($this->input->post('title')) {
@@ -284,7 +537,7 @@ class Content extends MY_Controller
 
         if ($this->input->post('summary')) {
             $this->data['summary'] = $this->input->post('summary');
-        } elseif (isset($content_info['detail'])) {
+        } elseif (isset($content_info['summary'])) {
             $this->data['summary'] = $content_info['summary'];
         } else {
             $this->data['summary'] = '';
@@ -312,6 +565,14 @@ class Content extends MY_Controller
             $this->data['category'] = $content_info['category'];
         } else {
             $this->data['category'] = '';
+        }
+
+        if ($this->input->post('player_id')) {
+            $this->data['player_id'] = $this->input->post('player_id');
+        } elseif (isset($content_info['player_id'])) {
+            $this->data['player_id'] = $content_info['player_id'];
+        } else {
+            $this->data['player_id'] = '';
         }
 
         if ($this->input->post('date_start')) {
@@ -349,7 +610,7 @@ class Content extends MY_Controller
         } elseif (isset($content_info['status'])) {
             $this->data['status'] = $content_info['status'];
         } else {
-            $this->data['status'] = true;
+            $this->data['status'] = false;
         }
 
         if ($this->input->post('pin')) {
@@ -357,7 +618,47 @@ class Content extends MY_Controller
         } elseif (isset($content_info['pin'])) {
             $this->data['pin'] = $content_info['pin'];
         } else {
-            $this->data['pin'] = '';
+            $this->data['pin'] = null;
+        }
+
+        if ($this->input->post('tags')) {
+            $this->data['tags'] = explode(',', $this->input->post('tags'));
+        } elseif (isset($content_info['tags']) && $content_info['tags']) {
+            $this->data['tags'] = $content_info['tags'];
+        } else {
+            $this->data['tags'] = null;
+        }
+
+        if ($this->input->post('organize_id')) {
+            $this->data['organize_id'] = $this->input->post('organize_id');
+        } elseif (isset($content_info['organize_id'])) {
+            $this->data['organize_id'] = $content_info['organize_id'];
+        } else {
+            $this->data['organize_id'][] = '';
+        }
+
+        if ($this->input->post('organize_type')) {
+            $this->data['organize_type'] = $this->input->post('organize_type');
+        } elseif (isset($content_info['organize_type'])) {
+            $this->data['organize_type'] = $content_info['organize_type'];
+        } else {
+            $this->data['organize_type'][] = '';
+        }
+
+        if ($this->input->post('organize_node')) {
+            $this->data['organize_node'] = $this->input->post('organize_node');
+        } elseif (isset($content_info['organize_node'])) {
+            $this->data['organize_node'] = $content_info['organize_node'];
+        } else {
+            $this->data['organize_node'][] = '';
+        }
+
+        if ($this->input->post('organize_role')) {
+            $this->data['organize_role'] = $this->input->post('organize_role');
+        } elseif (isset($content_info['organize_role'])) {
+            $this->data['organize_role'] = $content_info['organize_role'];
+        } else {
+            $this->data['organize_role'][] = '';
         }
 
         $this->load->vars($this->data);
@@ -406,7 +707,9 @@ class Content extends MY_Controller
 
                     if (!empty($content_info)) {
                         if (array_key_exists('category', $content_info)) {
-                            $content_info['category'] = $this->Content_model->retrieveContentCategoryById($content_info['category']);
+                            if($content_info['category']){
+                                $content_info['category'] = $this->Content_model->retrieveContentCategoryById($content_info['category']);
+                            }
                         }
 
                         $client_id = $this->User_model->getClientId();
@@ -702,21 +1005,35 @@ class Content extends MY_Controller
                                 die;
                             }
                         }
-                        $result = $this->Content_model->deleteContentCategoryByIdArray($category_data['id']);
+                        $result = $this->Content_model->deleteContentCategoryByIdArray($client_id, $site_id, $category_data['id']);
                     } else {
-                        $result = $this->Content_model->createContentCategory($client_id, $site_id, $name);
+                        $chk_name = $this->Content_model->retrieveContentCategoryByName($client_id, $site_id, $name);
+                        if($chk_name){
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'name duplicate'));
+                            die;
+                        }else {
+                            $result = $this->Content_model->createContentCategory($client_id, $site_id, $name);
+                        }
                     }
                 } else {
                     try {
                         $categoryId = new MongoId($categoryId);
                         if (isset($category_data['action']) && $category_data['action'] == 'delete') {
-                            $result = $this->Content_model->deleteContentCategory($categoryId);
+                            $result = $this->Content_model->deleteContentCategory($client_id, $site_id, $categoryId);
                         } else {
-                            $result = $this->Content_model->updateContentCategory($categoryId, array(
-                                'client_id' => $client_id,
-                                'site_id' => $site_id,
-                                'name' => $name
-                            ));
+                            $chk_name = $this->Content_model->retrieveContentCategoryByNameButNotID($client_id, $site_id, $name, $categoryId);
+                            if($chk_name){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'name duplicate'));
+                                die;
+                            }else {
+                                $result = $this->Content_model->updateContentCategory($categoryId, array(
+                                    'client_id' => $client_id,
+                                    'site_id' => $site_id,
+                                    'name' => $name
+                                ));
+                            }
                         }
                     } catch (Exception $e) {
                         $this->output->set_status_header('400');

@@ -1,0 +1,5 @@
+player_id,node_name,organize_type,role
+player1,Nontaburee,District,manager|employer
+player2,Asoke,Area,manager
+player3,Shop1,Store,manager
+player4,Shop1,Store,employee

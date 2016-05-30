@@ -19,7 +19,6 @@
                 <a href="#tab-data" onclick= removeNotifications();><?php echo $this->lang->line('tab_data'); ?></a>
                 <!-- <a href="#tab-address"><?php echo $this->lang->line('tab_address'); ?></a> -->
                 <?php if ($list_client_id.""!=0) { ?><a href="#tab-user" onclick= removeNotifications(); ><?php echo $this->lang->line('tab_user'); ?></a><?php } ?>
-                <?php if(false){ if ($list_client_id.""!=0) { ?><a href="#tab-domain" onclick= removeNotifications();><?php echo $this->lang->line('tab_domain'); ?></a><?php } }?>
             </div>
             <div id ="notification" class="half-width"></div>
             <?php
@@ -181,82 +180,12 @@
 
                 </div>
                 <?php } ?>
-                <?php if(false){ if ($list_client_id.""!=0) { ?>
-                <div id="tab-domain">
-                    <table class="form">
-                        <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_domain_name'); ?>:</td>
-                            <td><input type="text" name="domain_name" value="" size="50" class="tooltips" data-placement="right" title="Client's domain name (example: www.playbasis.com)"/></td>
-                        </tr>
-                        <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_site_name'); ?>:</td>
-                            <td><input type="text" name="domain_site_name" value="" size="50" class="tooltips" data-placement="right" title="Client's site name (example: Playbasis)"/></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_status'); ?>:</td>
-                            <td>
-                                <select name="domain_status">
-                                    <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                    <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td><a onclick="addNewDomain();" class="button"><span><?php echo $this->lang->line('button_add_domain'); ?></span></a></td>
-                        </tr>
-                    </table>
-
-                    <div id="domains"></div>
-                    <!--iframe id="domains" frameborder="0" style="min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/domain?client_id=<?php echo $list_client_id; ?>">
-
-                    </iframe-->
-                </div>
-                <?php } } ?>
             <?php
             echo form_close();
             ?>
         </div>
     </div>
 </div>
-
-<script type="text/javascript"><!--
-
-function addNewDomain() {
-    var domain_name = $('input[name=domain_name]').val();
-    var site_name = $('input[name=domain_site_name]').val();
-    var status = $('select[name=domain_status]').val();
-
-    $('#notification').html("").removeClass('warning').hide();
-
-    $.ajax({
-        url: baseUrlPath+'domain/insert_ajax',
-        type: 'POST',
-        dataType: 'json',
-        data: ({'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','domain_name' : domain_name, 'site_name' : site_name, 'status' : status, 'client_id' : '<?php echo $list_client_id; ?>'}),
-        success: function(json) {
-            var notification = $('#notification');
-
-            if (json['error']) {
-                $('#notification').html(json['error']).addClass('warning').show();
-            } else {
-
-                $('#notification').html(json['success']).addClass('success').show();
-
-                /*$('iframe').each(function() {
-                    this.contentWindow.location.reload(true);
-                });*/
-
-                $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
-            }
-        }
-
-    });
-
-    return false;
-}
-
-//--></script>
 
 <script type="text/javascript"><!--
 
@@ -313,43 +242,6 @@ function addNewUser() {
 
         $('#users').load(baseUrlPath+'client/users?client_id=<?php echo $list_client_id; ?>');
     });
-//--></script>
-
-<script type="text/javascript"><!--
-    $( document ).ready(function() {
-        $('#domains .pagination a').live('click', function() {
-
-            $('#domains').load(this.href);
-
-            return false;
-        });
-
-        $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
-    });
-//--></script>
-
-<script type="text/javascript"><!--
-
-function resetToken(site_id) {
-
-    $.ajax({
-        url: baseUrlPath+'domain/reset',
-        type: 'post',
-        data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','site_id':site_id},
-        dataType: 'json',
-        success: function(json) {
-            $/*('iframe').each(function() {
-                this.contentWindow.location.reload(true);
-            });*/
-
-            $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
-
-        }
-    });
-
-    return false;
-}
-
 //--></script>
 
 <script type="text/javascript"><!--

@@ -3,23 +3,29 @@ class  MY_Controller  extends  CI_Controller  {
 
     function MY_Controller ()  {
         parent::__construct();
-        if ($this->session->userdata('user_id')) {
-            setcookie("client_id", $this->session->userdata('client_id'));
-            setcookie("site_id", $this->session->userdata('site_id'));
-        } else {
-            setcookie("client_id", null);
-            setcookie("site_id", null);
-        }
-    }
-
-    function render_page($view) {
-
         $this->load->model('User_model');
         $this->load->model('Client_model');
         $this->load->model('Player_model');
         $this->load->model('App_model');
         $this->load->model('Feature_model');
         $this->load->model('Plan_model');
+
+        if ($this->session->userdata('user_id')) {
+            setcookie("client_id", $this->session->userdata('client_id'));
+            setcookie("site_id", $this->session->userdata('site_id'));
+
+            if ($this->input->get('site_id')) {
+                $this->User_model->updateSiteId($this->input->get('site_id'));
+            }
+        } else {
+            setcookie("client_id", null);
+            setcookie("site_id", null);
+        }
+
+    }
+
+    function render_page($view) {
+
 
         $lang = get_lang($this->session, $this->config);
 
@@ -117,9 +123,9 @@ class  MY_Controller  extends  CI_Controller  {
         $this->data['lang'] = $lang['folder'];
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
-        $this->data['domain'] = '';
-        $this->data['domain_name'] = '';
-        $this->data['check_domain_exists'] = true;
+        $this->data['site'] = '';
+        $this->data['site_name'] = '';
+        $this->data['check_site_exists'] = true;
 
         $features = array();
 
@@ -143,21 +149,21 @@ class  MY_Controller  extends  CI_Controller  {
 
             if($this->data['site_id']){
 
-                $this->data['domain'] = $this->App_model->getApp($this->data['site_id']);
-                $this->data['domain_name'] = $this->data['domain'];
+                $this->data['site'] = $this->App_model->getApp($this->data['site_id']);
+                $this->data['site_name'] = $this->data['site'];
 
                 $temp = array('client_id'=>$this->data['client_id'], 'site_id'=>$this->data['site_id']);
 
-                $allDomains = $this->App_model->getAppsByClientId($temp);
-                $activeDomains = array();
+                $allSites = $this->App_model->getAppsByClientId($temp);
+                $activeSites = array();
 
-                foreach ($allDomains as $aDomain){
-                    if($aDomain['status']){
-                        $activeDomains[] = $aDomain;    
+                foreach ($allSites as $aSite){
+                    if($aSite['status']){
+                        $activeSites[] = $aSite;    
                     }
                 }
-                $this->data['domain_all'] = $activeDomains;
-                // var_dump($this->data['domain_all']);
+                $this->data['site_all'] = $activeSites;
+                // var_dump($this->data['site_all']);
 
                 $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
 //                var_dump($features);
@@ -199,7 +205,7 @@ class  MY_Controller  extends  CI_Controller  {
                 );
             }else{
                 if($this->data['client_id']){
-                    // check to see if there is an associated plan, otherwise we output error no domain
+                    // check to see if there is an associated plan, otherwise we output error no site
                     $user_plan = $this->User_model->getPlan();
                     if (!array_key_exists('price', $user_plan)) $user_plan['price'] = DEFAULT_PLAN_PRICE;
                     $this->data['user_plan'] = $user_plan;
@@ -225,7 +231,7 @@ class  MY_Controller  extends  CI_Controller  {
                             );
                         }*/
                     } else {
-                        $this->data['check_domain_exists'] = false;
+                        $this->data['check_site_exists'] = false;
                     }
                     $client = $this->Client_model->getClient($this->data['client_id']);
                     $this->data['account'] = $this->set_account($user_plan, $client);
@@ -254,12 +260,12 @@ class  MY_Controller  extends  CI_Controller  {
             }
         }
 
-        if ($this->data['check_domain_exists']){
+        if ($this->data['check_site_exists']){
             $this->load->vars($this->data);
             $this->load->view($view);
         }else{
             $this->load->vars($this->data);
-            $this->load->view('no_domain');
+            $this->load->view('no_site');
         }
     }
 

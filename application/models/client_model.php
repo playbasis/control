@@ -165,19 +165,19 @@ class Client_model extends MY_Model
             }
         }
 
-        if (isset($data['domain_value'])) {
-            foreach ($data['domain_value'] as $domain_value) {
+        if (isset($data['site_value'])) {
+            foreach ($data['site_value'] as $site_value) {
 
-                $this->mongo_db->where('_id', new MongoID($domain_value['site_id']));
-                $this->mongo_db->set('status', (bool)$domain_value['status']);
+                $this->mongo_db->where('_id', new MongoID($site_value['site_id']));
+                $this->mongo_db->set('status', (bool)$site_value['status']);
                 $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
                 $this->mongo_db->update('playbasis_client_site');
 
                 $data_filter = array(
                     'client_id' => $client_id,
-                    'site_id' => $domain_value['site_id'],
+                    'site_id' => $site_value['site_id'],
                     'plan_id' => $data['plan_id'],
-                    'status' => (bool)$domain_value['status'],
+                    'status' => (bool)$site_value['status'],
                     'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
                 );
@@ -521,15 +521,15 @@ class Client_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        if (isset($data['domain_value'])) {
+        if (isset($data['site_value'])) {
             $data_filter = array(
                 'client_id' => $client_id,
-                'site_id' => $data['domain_value']['site_id'],
+                'site_id' => $data['site_value']['site_id'],
                 'plan_id' => $plan_id
             );
 
-            if (isset($data['domain_value']['status'])) {
-                $data_filter['status'] = $data['domain_value']['status'];
+            if (isset($data['site_value']['status'])) {
+                $data_filter['status'] = $data['site_value']['status'];
             }
 
             $this->copyRewardToClient($data_filter);

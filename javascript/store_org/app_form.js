@@ -2,6 +2,8 @@ var $formOrganizeModal = $('#formOrganizeModal'),
     $formNodeModal = $('#formNodeModal'),
     $waitDialog = $('#pleaseWaitDialog'),
     $savedDialog = $('#savedDialog'),
+    $orgErrorDialog = $('#orgErrorDialog'),
+    $nodeErrorDialog = $('#nodeErrorDialog'),
     $storeOrganizeTable = $('#storeOrganizeTable'),
     $storeOrganizeToolbarRemove = $('#storeOrganizeToolbar').find('#remove'),
     storeOrganizeSelections = [],
@@ -500,15 +502,28 @@ function submitOrganizeModalForm() {
             }
         })
         .done(function () {
+            $('form.store-organize-form').trigger("reset");
             $waitDialog.modal('hide');
             $storeOrganizeTable.bootstrapTable('refresh');
             $savedDialog.modal();
+            //$formOrganizeModal.modal('show');
         })
         .fail(function (xhr, textStatus, errorThrown) {
-            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            if(JSON.parse(xhr.responseText).status == "error") {
+                $('form.store-organize-form').trigger("reset");
+                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            }else if(JSON.parse(xhr.responseText).status == "organize duplicate"){
+                $waitDialog.modal('hide');
+                $orgErrorDialog.find("#org_error_message").text("Organize name is already exist!");
+                $orgErrorDialog.modal();
+            }else if(JSON.parse(xhr.responseText).status == "name require"){
+                $waitDialog.modal('hide');
+                $orgErrorDialog.find("#org_error_message").text("Organize name is require!");
+                $orgErrorDialog.modal();
+            }
         })
         .always(function () {
-            $('form.store-organize-form').trigger("reset");
+            //$('form.store-organize-form').trigger("reset");
             $waitDialog.modal('hide');
         });
 }
@@ -532,10 +547,26 @@ function submitNodeModalForm() {
             $savedDialog.modal();
         })
         .fail(function (xhr, textStatus, errorThrown) {
-            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            if(JSON.parse(xhr.responseText).status == "error") {
+                $('form.store-organize-form').trigger("reset");
+                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            }else if(JSON.parse(xhr.responseText).status == "node duplicate"){
+                $waitDialog.modal('hide');
+                $nodeErrorDialog.find("#node_error_message").text("Node name of this organize is already exist!");
+                $nodeErrorDialog.modal();
+            }else if(JSON.parse(xhr.responseText).status == "node name require"){
+                $waitDialog.modal('hide');
+                $nodeErrorDialog.find("#node_error_message").text("Node name is require!");
+                $nodeErrorDialog.modal();
+            }else if(JSON.parse(xhr.responseText).status == "node organize require"){
+                $waitDialog.modal('hide');
+                $nodeErrorDialog.find("#node_error_message").text("Node Organize Level is require!");
+                $nodeErrorDialog.modal();
+            }
+
         })
         .always(function () {
-            $('form.node-form').trigger("reset");
+            //$('form.node-form').trigger("reset");
             $waitDialog.modal('hide');
         });
 }
@@ -554,7 +585,16 @@ $('#page-render')
         $formNodeModal.modal('hide');
         resetOrganizeModalForm();
         $formOrganizeModal.modal('show');
+    })
+    .on('click', 'button#org-error-dialog-close', function () {
+        $orgErrorDialog.modal('hide');
+        $formOrganizeModal.modal('show');
+    })
+    .on('click', 'button#node-error-dialog-close', function () {
+        $nodeErrorDialog.modal('hide');
+        $formNodeModal.modal('show');
     });
+
 //.on('click', $("[data-toggle]").filter("[href='#formOrganizeModal'],[data-target='#formOrganizeModal']"), function(){
 //    resetOrganizeModalForm();
 //    if($(this).hasClass('add-organize'))

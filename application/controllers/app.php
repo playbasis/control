@@ -81,7 +81,7 @@ class App extends MY_Controller
         if ($this->input->get('sort')) {
             $sort = $this->input->get('sort');
         } else {
-            $sort = 'domain_name';
+            $sort = 'site_name';
         }
 
         if ($this->input->get('order')) {
@@ -97,14 +97,12 @@ class App extends MY_Controller
             'site_id' => $site_id,
             'sort' => $sort,
             'order' => $order,
-            'start' => $offset,
-            'limit' => $limit
         );
 
-        if ($client_id) {
-            $total = $this->App_model->getTotalAppsByClientId($data);
+        if ($site_id) {
+            $total = $this->App_model->getTotalPlatFormsBySiteId($data);
 
-            $results_site = $this->App_model->getAppsByClientId($data);
+            $results_site = $this->App_model->getAppsByClientSiteId($data);
 
             $total_platform = $this->App_model->getTotalPlatFormsByClientId($data);
         } else {
@@ -124,16 +122,19 @@ class App extends MY_Controller
             foreach ($results_site as $result) {
 
                 $data_filter_app = array(
-                    'site_id' => $result['_id']
+                    'site_id' => $result['_id'],
+                    'sort' => $sort,
+                    'order' => $order,
+                    'start' => $offset,
+                    'limit' => $limit
                 );
                 $app_data = $this->App_model->getPlatFormByAppId($data_filter_app);
 
-                $this->data['domain_list'][] = array(
+                $this->data['site_list'][] = array(
                     'selected' => is_array($this->input->post('selected')) && in_array($result['_id'],
                             $this->input->post('selected')),
                     'site_id' => $result['_id'],
                     'client_id' => $result['client_id'],
-                    'domain_name' => $result['domain_name'],
                     'site_name' => $result['site_name'],
                     'apps' => $app_data,
                     'status' => $result['status'],
@@ -295,12 +296,11 @@ class App extends MY_Controller
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_platform"));
                     redirect("app");
                 }
+                $app_name = $this->input->post('app_name');
 
-                $c_data = array('domain_name' => $this->input->post('app_name'));
+                $site = $this->App_model->checkAppExists($app_name);
 
-                $domain = $this->App_model->checkAppExists($c_data);
-
-                if (!$domain) {
+                if (!$site) {
 
                     $data_platform = array();
                     if (strtolower($this->input->post('platform')) == 'ios') {
@@ -326,6 +326,7 @@ class App extends MY_Controller
                         "app_name" => $this->input->post('app_name'),
                         "client_id" => $client_id,
                         "image" => $this->input->post('image'),
+                        "app_color" => $this->input->post('app_color'),
                         "platform" => strtolower($this->input->post('platform')),
                         "data" => $data_platform
                     );
@@ -344,7 +345,7 @@ class App extends MY_Controller
                         'site_id' => $site_id . "",
                     ));
 
-                    $another_data['domain_value'] = array(
+                    $another_data['site_value'] = array(
                         'site_id' => $site_id,
                         'status' => true
                     );
@@ -487,7 +488,7 @@ class App extends MY_Controller
                     "platform" => strtolower($this->input->post('platform')),
                     "data" => $data_platform
                 );
-                $this->App_model->editApp($platform_id, $edit_data);
+                $this->App_model->editPlatform($platform_id, $edit_data);
 
                 $this->session->data['success'] = $this->lang->line('text_success');
 
@@ -567,16 +568,29 @@ class App extends MY_Controller
                         $data_platform["site_url"] = $this->input->post('site_url');
                     }
                 }
+                $check_data = array('site_id' => $app_id,
+                                    'platform' => strtolower($this->input->post('platform')),
+                                    'data_platform' => $data_platform);
+                $site = $this->App_model->checkPlatformExists($check_data);
+                if(!$site){
+                    $add_data = array(
+                        "platform" => strtolower($this->input->post('platform')),
+                        "data" => $data_platform
+                    );
+                    $this->App_model->addPlatform($app_id, $add_data);
 
-                $add_data = array(
-                    "platform" => strtolower($this->input->post('platform')),
-                    "data" => $data_platform
-                );
-                $this->App_model->addPlatform($app_id, $add_data);
+                    $this->session->data['success'] = $this->lang->line('text_success');
 
-                $this->session->data['success'] = $this->lang->line('text_success');
-
-                redirect('app', 'refresh');
+                    redirect('app', 'refresh');
+                }
+                else{
+                    if ($this->input->post('format') == 'json') {
+                        echo json_encode($this->lang->line('text_fail_platform_exists'));
+                        exit();
+                    }
+                    $this->data['message'] = $this->lang->line('text_fail_platform_exists');
+                }
+                
             }
         }
 
@@ -588,11 +602,57 @@ class App extends MY_Controller
         $this->getForm($app_id);
     }
 
+    public function edit_app($app_id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $this->data['message'] = null;
+
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            $this->form_validation->set_rules('app_name', $this->lang->line('entry_app_name'),
+                'trim|required|min_length[3]|max_length[100]|check_space|alpha_dash');
+
+            if ($this->form_validation->run() && $this->data['message'] == null) {
+                $app_name = $this->input->post('app_name');
+                $site = $this->App_model->checkAppExists($app_name,$app_id);
+
+                if (!$site) {
+                    $edit_data = array(
+                        "app_name" => $this->input->post('app_name'),
+                        "image" => $this->input->post('image'),
+                        "app_color" => $this->input->post('app_color')
+                    );
+
+                    $this->App_model->editApp($app_id, $edit_data);
+                    $this->session->data['success'] = $this->lang->line('text_success');
+
+                    redirect('app', 'refresh');
+                } else {
+                    if ($this->input->post('format') == 'json') {
+                        echo json_encode($this->lang->line('text_fail_app_exists'));
+                        exit();
+                    }
+                    $this->data['message'] = $this->lang->line('text_fail_app_exists');
+                }
+            }
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['form'] = 'app/edit_app/' . $app_id;
+
+        $this->getForm($app_id);
+    }
+
     private function getForm($app_id = null, $platform_id = null)
     {
 
         if (isset($app_id) && ($app_id != 0)) {
-            $domain_info = $this->App_model->getApp($app_id);
+            $site_info = $this->App_model->getApp($app_id);
         }
 
         if (isset($platform_id) && ($platform_id != 0)) {
@@ -602,15 +662,15 @@ class App extends MY_Controller
         if ($this->input->post('app_name')) {
             $this->data['app_name'] = $this->input->post('app_name');
         } elseif (isset($app_id) && ($app_id != 0)) {
-            $this->data['app_name'] = $domain_info['domain_name'];
+            $this->data['app_name'] = $site_info['site_name'];
         } else {
             $this->data['app_name'] = '';
         }
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-        } elseif (!empty($domain_info)) {
-            $this->data['image'] = $domain_info['image'];
+        } elseif (isset($site_info['image']) && !empty($site_info['image'])) {
+            $this->data['image'] = $site_info['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
         }
@@ -630,6 +690,14 @@ class App extends MY_Controller
         }
 
         $this->data['no_image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+
+        if ($this->input->post('app_color')) {
+            $this->data['app_color'] = $this->input->post('app_color');
+        } elseif (isset($site_info['app_color']) && !empty($site_info['app_color'])) {
+            $this->data['app_color'] = $site_info['app_color'];
+        } else {
+            $this->data['app_color'] = '';
+        }
 
         if ($this->input->post('platform')) {
             $this->data['platform'] = $this->input->post('platform');

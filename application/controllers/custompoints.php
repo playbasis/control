@@ -110,6 +110,7 @@ class Custompoints extends MY_Controller
                     $data['changing_period'] = $custompoints_data['energy_changing_period'];
                     $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
                 }
+                $data['tags'] = $custompoints_data['tags'];
 
                 $insert = $this->Custompoints_model->insertCustompoints($data);
 
@@ -291,6 +292,14 @@ class Custompoints extends MY_Controller
             $this->data['changing_per_period'] = $custompoints_info['energy_props']['changing_per_period'];
         }
 
+        if ($this->input->post('tags')) {
+            $this->data['tags'] = $this->input->post('tags');
+        } elseif (!empty($custompoints_info) && isset($custompoints_info['tags'])) {
+            $this->data['tags'] = $custompoints_info['tags'];
+        } else {
+            $this->data['tags'] = null;
+        }
+
         $this->load->vars($this->data);
         $this->render_page('template');
     }
@@ -337,6 +346,7 @@ class Custompoints extends MY_Controller
                     $data['changing_period'] = $custompoints_data['energy_changing_period'];
                     $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
                 }
+                $data['tags'] = $custompoints_data['tags'];
 
                 $update = $this->Custompoints_model->updateCustompoints($data);
                 if ($update) {

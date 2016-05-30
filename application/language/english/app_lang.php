@@ -71,6 +71,7 @@ $lang['entry_group']							= 'Group';
 
 $lang['entry_app_name']						    = 'App Name';
 $lang['entry_logo']						        = 'Logo';
+$lang['entry_color']						    = 'App Color';
 $lang['entry_site_name']						= 'Site';
 $lang['entry_platform']						    = 'Platform';
 $lang['entry_key']								= 'API Keys:';
@@ -98,6 +99,7 @@ $lang['column_domain_modified'] 		= 'Date Modified.';
 $lang["text_fail_limit_app"]            = "Sorry, you have reach your plan limit for the app";
 $lang["text_fail_limit_platform"]       = "Sorry, you have reach your plan limit for the platform";
 $lang['text_fail_app_exists']			= 'This App name is already used';
+$lang['text_fail_platform_exists']			= 'This platform url is already used';
 
 // User
 $lang['column_title']					= 'Title';

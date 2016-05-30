@@ -29,8 +29,9 @@
                     <table class="list">
                         <thead>
                         <tr>
-                            <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                            <td width="5%" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                             <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
+                            <td class="right"><?php echo $this->lang->line('column_tags'); ?></td>
                             <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>
@@ -44,7 +45,8 @@
                                     <?php }?>
                                 </td>
                                 <td class="left"><?php echo $cs['name']; ?></td>
-                                <td class="right">
+                                <td class="right" width="20%"><?php echo (((isset($cs['tags'])) && $cs['tags'])? implode($cs['tags'],',') : null); ?></td>
+                                <td class="right" width="10%">
                                     <?php if(!$client_id){?>
                                         [ <?php echo anchor('custompoints/update/'.$cs['reward_id'], 'Edit'); ?> ]
                                     <?php }else{?>

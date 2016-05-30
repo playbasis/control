@@ -226,6 +226,14 @@ function find_template($data, $type, $template_id) {
                                     </tr>
                                     <tr>
                                         <td>
+                                            Time limit :
+                                        </td>
+                                        <td>
+                                            <input type="text" class="timelimit" name="quiz[questions][<?php echo $questions['question_id']; ?>][timelimit]"  data-format="HH:mm:ss" data-template="HH : mm : ss" value="<?php echo isset($questions['timelimit'])?$questions['timelimit']:""; ?>" >
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
                                             Sort Order :
                                         </td>
                                         <td>
@@ -1118,6 +1126,14 @@ function find_template($data, $type, $template_id) {
         </tr>\
         <tr>\
             <td>\
+            Time limit :\
+            </td>\
+            <td>\
+                <input type="text" class="timelimit" name="quiz[questions]['+countQuestions+'][timelimit]"  data-format="HH:mm:ss" data-template="HH : mm : ss" value="">\
+            </td>\
+            </tr>\
+        <tr>\
+            <td>\
             Sort Order :\
             </td>\
         <td>\
@@ -1145,6 +1161,11 @@ function find_template($data, $type, $template_id) {
         </div>';
 
         $('.question-wrapper').append(questionHtml);
+
+        $('.timelimit').combodate({
+                firstItem: 'name', //show 'hour' and 'minute' string at first item of dropdown
+                minuteStep: 1
+        });
 
         var element_position = $('.question-item-wrapper[data-question-id="'+countQuestions+'"]').offset();
         $("html, body").animate({scrollTop:(element_position.top-20)}, 600);
@@ -1204,11 +1225,17 @@ function find_template($data, $type, $template_id) {
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/bootstrap/combodate.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/bootstrap/moment.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(function(){
 
         $('.date').datepicker({dateFormat: 'yy-mm-dd'});
 
+        $('.timelimit').combodate({
+            firstItem: 'name', //show 'hour' and 'minute' string at first item of dropdown
+            minuteStep: 1
+        });
     })
 
     $(document).ready(function(){

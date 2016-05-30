@@ -171,8 +171,8 @@ if (isset($username)) {
 
             <!-- start: Header Menu -->
             <div class="nav-no-collapse header-nav">
-            <?php //echo $site_id; echo "--".$domain['_id'];?>
-            <?php //var_dump($domain);?>
+            <?php //echo $site_id; echo "--".$site['_id'];?>
+            <?php //var_dump($site);?>
 
             
 
@@ -187,15 +187,15 @@ if (isset($username)) {
                         <a class="btn dropdown-toggle header-app-manu" data-toggle="dropdown" href="#">
                             <i class="fa fa-hdd-o fa-lg"></i> 
                             <span>
-                                <?php echo (isset($domain_name['site_name'])) ? '[' . $domain_name['site_name'] .']' : '' ; ?>
+                                <?php echo (isset($site_name['site_name'])) ? '[' . $site_name['site_name'] .']' : '' ; ?>
                             </span>
                             <span class="caret"></span>
                         </a>
-                        <?php if(isset($domain_all)) { ?>
+                        <?php if(isset($site_all)) { ?>
                             <ul class="dropdown-menu">
 
-                                <?php foreach($domain_all as $a_domain){?>
-                                    <li><a href="<?php echo site_url().'?site_id='.$a_domain['_id'];?>"><i class="fa fa-hdd-o fa-lg"></i> <?php echo $a_domain['site_name'];?></a></li>
+                                <?php foreach($site_all as $a_site){?>
+                                    <li><a href="<?php echo $_SERVER['PHP_SELF'].'?site_id='.$a_site['_id'];?>"><i class="fa fa-hdd-o fa-lg"></i> <?php echo $a_site['site_name'];?></a></li>
                                 <?php }?>
                             </ul>
                         <?php }else{echo "";} ?>

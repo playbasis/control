@@ -28,6 +28,203 @@ class Badge_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function countItemCategory($client_id, $site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+        $total = $this->mongo_db->count('playbasis_badge_category_to_client');
+
+        return $total;
+    }
+
+    public function createItemCategory($client_id, $site_id, $name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $insert_data = array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'name' => $name,
+            'deleted' => false,
+            'date_added' => new MongoDate(),
+            'date_modified' => new MongoDate()
+        );
+        $insert = $this->mongo_db->insert('playbasis_badge_category_to_client', $insert_data);
+
+        return $insert;
+    }
+
+    public function retrieveItemCategory($client_id, $site_id, $optionalParams = array())
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        // Searching
+        if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['search'])) . "/i");
+            $this->mongo_db->where('name', $regex);
+        }
+        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+            //make sure 'id' is valid before passing here
+            try {
+                $id = new MongoId($optionalParams['id']);
+                $this->mongo_db->where('_id', $id);
+            } catch (Exception $e) {
+            };
+        }
+
+        // Sorting
+        $sort_data = array('_id', 'name', 'sort_order');
+
+        if (isset($optionalParams['order']) && (utf8_strtolower($optionalParams['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
+        // Paging
+        if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
+            if ($optionalParams['offset'] < 0) {
+                $optionalParams['offset'] = 0;
+            }
+
+            if ($optionalParams['limit'] < 1) {
+                $optionalParams['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$optionalParams['limit']);
+            $this->mongo_db->offset((int)$optionalParams['offset']);
+        }
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->get("playbasis_badge_category_to_client");
+    }
+
+    public function retrieveItemCategoryByName($client_id, $site_id, $name)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('name', $name);
+        $result = $this->mongo_db->get("playbasis_badge_category_to_client");
+        return $result ? $result[0] : null;
+    }
+
+
+    public function retrieveItemCategoryByNameFilter($client_id, $site_id, $name)
+    {
+        $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($name)) . "/i");
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('name', $regex);
+        $result = $this->mongo_db->get("playbasis_badge_category_to_client");
+        return $result;
+    }
+
+    public function retrieveItemCategoryByNameButNotID($client_id, $site_id, $name, $category_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_ne('_id', $category_id);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('name', $name);
+        $result = $this->mongo_db->get("playbasis_badge_category_to_client");
+        return $result ? $result[0] : null;
+    }
+
+    public function retrieveItemCategoryById($id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        if(isset($id) && !empty($id)){
+            $this->mongo_db->where('_id', new MongoId($id));
+            $this->mongo_db->where('deleted', false);
+            $c = $this->mongo_db->get("playbasis_badge_category_to_client");
+
+            return isset($c) && !empty($c) ? $c[0] : null;
+        }
+    }
+
+    public function updateItemCategory($category_id, $data)
+    {
+        try {
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+            $this->mongo_db->where('_id', new MongoID($category_id));
+        } catch (Exception $e) {
+            return false;
+        };
+
+        $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_badge_category_to_client');
+
+        return $update;
+    }
+
+    public function deleteItemCategory($client_id, $site_id, $category_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        try {
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('_id', new MongoID($category_id));
+        } catch (Exception $e) {
+            return false;
+        };
+        $this->mongo_db->set('deleted', true);
+        $result = $this->mongo_db->update('playbasis_badge_category_to_client');
+
+        if($result){
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('category', new MongoID($category_id));
+            $this->mongo_db->set('category', "");
+            $this->mongo_db->set('date_modified', new MongoDate());
+            $this->mongo_db->update_all('playbasis_badge_to_client');
+        }
+
+        return $result;
+    }
+
+    public function deleteItemCategoryByIdArray($client_id, $site_id, $id_array)
+    {
+        if (!empty($id_array)) {
+            array_walk($id_array, array($this, "makeMongoIdObj"));
+            $this->mongo_db->where_in('_id', $id_array);
+            $this->mongo_db->set('deleted', true);
+        }
+        $this->mongo_db->set('date_modified', new MongoDate());
+        $result = $this->mongo_db->update_all('playbasis_badge_category_to_client');
+
+        if($result){
+            if (!empty($id_array)) {
+                array_walk($id_array, array($this, "makeMongoIdObj"));
+                $this->mongo_db->where('client_id', new MongoID($client_id));
+                $this->mongo_db->where('site_id', new MongoID($site_id));
+                $this->mongo_db->where_in('category', $id_array);
+                $this->mongo_db->set('category', "");
+            }
+            $this->mongo_db->set('date_modified', new MongoDate());
+            $this->mongo_db->update_all('playbasis_badge_to_client');
+        }
+
+        return $result;
+    }
+
     public function getBadges($data = array(), $onlyTemplate = false)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -39,6 +236,14 @@ class Badge_model extends MY_Model
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        if (isset($data['filter_category']) && !is_null($data['filter_category'])) {
+            $filter_category = array();
+            foreach ($data['filter_category'] as $catetory_data){
+                $filter_category[]= $catetory_data['_id'];
+            }
+            $this->mongo_db->where_in('category', $filter_category);
         }
 
         $sort_data = array(
@@ -95,6 +300,15 @@ class Badge_model extends MY_Model
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
+
+        if (isset($data['filter_category']) && !is_null($data['filter_category'])) {
+            $filter_category = array();
+            foreach ($data['filter_category'] as $catetory_data){
+                $filter_category[]= $catetory_data['_id'];
+            }
+            $this->mongo_db->where_in('category', $filter_category);
+        }
+
         $this->mongo_db->where('deleted', false);
 
         if ($onlyTemplate) {
@@ -117,6 +331,14 @@ class Badge_model extends MY_Model
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        if (isset($data['filter_category']) && !is_null($data['filter_category'])) {
+            $filter_category = array();
+            foreach ($data['filter_category'] as $catetory_data){
+                $filter_category[]= $catetory_data['_id'];
+            }
+            $this->mongo_db->where_in('category', $filter_category);
         }
 
         $sort_data = array(
@@ -171,6 +393,14 @@ class Badge_model extends MY_Model
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
 
+        if (isset($data['filter_category']) && !is_null($data['filter_category'])) {
+            $filter_category = array();
+            foreach ($data['filter_category'] as $catetory_data){
+                $filter_category[]= $catetory_data['_id'];
+            }
+            $this->mongo_db->where_in('category', $filter_category);
+        }
+
         $sort_data = array(
             '_id',
             'name',
@@ -213,14 +443,12 @@ class Badge_model extends MY_Model
     public function getTotalBadgeBySiteId($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('name', $regex);
-        }
-
-        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
-            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        if (isset($data['filter_category']) && !is_null($data['filter_category'])) {
+            $filter_category = array();
+            foreach ($data['filter_category'] as $catetory_data){
+                $filter_category[]= $catetory_data['_id'];
+            }
+            $this->mongo_db->where_in('category', $filter_category);
         }
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id', $data['site_id'] ? new MongoID($data['site_id']) : null);
@@ -312,6 +540,7 @@ class Badge_model extends MY_Model
             'stackable' => (int)$data['stackable'] | 0,
             'substract' => (int)$data['substract'] | 0,
             'quantity' => (int)$data['quantity'] | 0,
+            'category' => (isset($data['category']) && !empty($data['category'])) ? new MongoID($data['category']) : null,
             'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
@@ -348,6 +577,7 @@ class Badge_model extends MY_Model
             'stackable' => (int)$data['stackable'] | 0,
             'substract' => (int)$data['substract'] | 0,
             'quantity' => (int)$data['quantity'] | 0,
+            'category' => (isset($data['category']) && !empty($data['category'])) ? new MongoID($data['category']) : null,
             'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
@@ -377,6 +607,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('stackable', (int)$data['stackable']);
         $this->mongo_db->set('substract', (int)$data['substract']);
         $this->mongo_db->set('quantity', (int)$data['quantity']);
+        $this->mongo_db->set('category', (isset($data['category']) && !empty($data['category'])) ? new MongoID($data['category']) : null);
         $this->mongo_db->set('per_user', (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
@@ -424,6 +655,7 @@ class Badge_model extends MY_Model
                 $this->mongo_db->set('stackable', (int)$data['stackable']);
                 $this->mongo_db->set('substract', (int)$data['substract']);
                 $this->mongo_db->set('quantity', (int)$data['quantity']);
+                $this->mongo_db->set('category', (isset($data['category']) && !empty($data['category'])) ? new MongoID($data['category']) : null);
                 $this->mongo_db->set('per_user', (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
                 $this->mongo_db->set('status', (bool)$data['status']);
                 $this->mongo_db->set('sort_order', (int)$data['sort_order']);
@@ -459,6 +691,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('stackable', (int)$data['stackable']);
         $this->mongo_db->set('substract', (int)$data['substract']);
         $this->mongo_db->set('quantity', (int)$data['quantity']);
+        $this->mongo_db->set('category', (isset($data['category']) && !empty($data['category'])) ?  new MongoID($data['category']) : null);
         $this->mongo_db->set('per_user', (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
@@ -687,8 +920,10 @@ class Badge_model extends MY_Model
         return ($badge1["stackable"] == (int)$badge2["stackable"] &&
             $badge1["substract"] == (int)$badge2["substract"] &&
             $badge1["quantity"] == (int)$badge2["quantity"] &&
-            ((isset($badge1['per_user']) && !empty($badge1['per_user'])) ? $badge1['per_user'] : null) ==
-            ((isset($badge2['per_user']) && !empty($badge2['per_user'])) ? (int)$badge2["per_user"] : null) &&
+            ((isset($badge1['category']) && !empty($badge1['category'])) ? $badge1['category'] : null) ==
+            ((isset($badge2['category']) && !empty($badge2['category'])) ? $badge2['category'] : null) &&
+            ((isset($badge1['per_user']) && !empty($badge1['per_user'])) ? (int)$badge1['per_user'] : null) ==
+            ((isset($badge2['per_user']) && !empty($badge2['per_user'])) ? (int)$badge2['per_user'] : null) &&
             $badge1["sort_order"] == (int)$badge2["sort_order"] &&
             $badge1["name"] == $badge2["name"] &&
             $badge1["description"] == $badge2["description"] &&
@@ -698,5 +933,9 @@ class Badge_model extends MY_Model
             $badge1["redeem"] == $badge2["redeem"] &&
             $badge1["image"] == $badge2["image"] &&
             $badge1["status"] == (bool)$badge2["status"]);
+    }
+    function makeMongoIdObj(&$value)
+    {
+        $value = new MongoId($value);
     }
 }

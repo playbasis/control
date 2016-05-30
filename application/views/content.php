@@ -42,25 +42,48 @@
                                     <table class="list">
                                         <thead>
                                         <tr>
-                                            <td width="1" style="text-align: center;">
+                                            <td rowspan="2" width="1" style="text-align: center;">
                                                 <input type="checkbox"
                                                        onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                                             </td>
-                                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
-                                            <td class="right" style="width:80px;"><?php echo $this->lang->line('column_category'); ?></td>
-                                            <td class="right"
-                                                style="width:100px;"><?php echo $this->lang->line('column_date_range'); ?></td>
-                                            <td class="right" style="width:60px;"><?php echo $this->lang->line('column_status'); ?></td>
-                                            <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
+                                            <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_id'); ?></td>
+                                            <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
+                                            <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('column_category'); ?></td>
+                                            <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('column_author'); ?></td>
+                                            <td rowspan="2" class="center"
+                                                style="width:150px;"><?php echo $this->lang->line('column_date_range'); ?></td>
+                                            <td rowspan="2" class="center" style="width:150px;"><?php echo $this->lang->line('column_tags'); ?></td>
+                                            <td rowspan="2" class="center" style="width:60px;"><?php echo $this->lang->line('column_status'); ?></td>
+                                            <?php if($org_status){?>
+                                                <td colspan="3" class="center" style="width:180px;"><?php echo $this->lang->line('column_organization'); ?></td>
+                                            <?php }?>
+                                            <td rowspan="2" class="center" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                                         </tr>
+
+                                        <?php if($org_status){?>
+                                            <tr>
+                                                <td style="text-align: center;"><?php echo $this->lang->line('column_node'); ?></td>
+                                                <td style="text-align: center;"><?php echo $this->lang->line('column_type'); ?></td>
+                                                <td style="text-align: center;"><?php echo $this->lang->line('column_role'); ?></td>
+                                            </tr>
+                                        <?php }?>
+
                                         </thead>
                                         <tbody>
                                         <tr class="filter">
                                             <td></td>
-                                            <td><input title="name" type="text" name="filter_title" value="<?php echo isset($_GET['title']) ? $_GET['title'] : "" ?>" style="width:50%;"/></td>
+                                            <td></td>
+                                            <td class="right"><input title="name" type="text" name="filter_title" value="<?php echo isset($_GET['title']) ? $_GET['title'] : "" ?>" style="width:50%;"/></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <?php if($org_status){?>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            <?php }?>
                                             <td class="right">
                                                 <a onclick="clear_filter();" class="button"
                                                    id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
@@ -78,14 +101,26 @@
                                                             <input type="checkbox" name="selected[]"
                                                                    value="<?php echo $content['_id']; ?>"/>
                                                         <?php } ?></td>
+                                                    <td class="right"><?php echo isset($content['node_id']) && !empty($content['node_id']) ? $content['node_id']: ""; ?> <?php if (!empty($content['error'])) { ?>
+                                                            <span class="red"><a herf="javascript:void(0)" class="error-icon"
+                                                                                 title="<?php echo $content['error']; ?>"
+                                                                                 data-toggle="tooltip"><i class="icon-warning-sign"></i></a>
+                                                            </span><?php } ?></td> 
                                                     <td class="right"><?php echo $content['title']; ?> <?php if (!empty($content['error'])) { ?>
                                                             <span class="red"><a herf="javascript:void(0)" class="error-icon"
                                                                                  title="<?php echo $content['error']; ?>"
                                                                                  data-toggle="tooltip"><i class="icon-warning-sign"></i></a>
                                                             </span><?php } ?></td>
                                                     <td class="right"><?php echo isset($content['category']['name']) ? $content['category']['name'] : ""; ?></td>
+                                                    <td class="right"><?php echo isset($content['player_id']) ? $content['player_id'] : ""; ?></td>
                                                     <td class="right"><?php echo isset($content['date_start']) ? dateMongotoReadable($content['date_start']) : "N/A"; ?>&nbsp;-&nbsp;<?php echo isset($content['date_end']) ? dateMongotoReadable($content['date_end']) : "N/A"; ?></td>
+                                                    <td class="right"><?php echo (isset($content['tags']) && $content['tags']) ? implode($content['tags'],',') : null; ?></td>
                                                     <td class="right"><?php echo isset($content['status']) ? ( $content['status'] ? "Enable" : "Disabled") : "N/A"; ?></td>
+                                                    <?php if($org_status){?>
+                                                        <td class="right"><?php echo (isset($content['organization_node']) && !is_null($content['organization_node']))?$content['organization_node']:''; ?></td>
+                                                        <td class="right"><?php echo (isset($content['organization_type']) && !is_null($content['organization_type']))?$content['organization_type']:''; ?></td>
+                                                        <td class="right"><?php echo (isset($content['organization_role']) && !is_null($content['organization_role']))?$content['organization_role']:''; ?></td>
+                                                    <?php }?>
                                                     <td class="right">
                                                         <?php if ($push_feature_existed) { ?>
                                                             <span>[ <?php echo anchor('#confirmModal', 'Send push',
@@ -104,7 +139,7 @@
                                         } else {
                                             ?>
                                             <tr>
-                                                <td colspan="6" class="center">
+                                                <td colspan="12" class="center">
                                                     <?php echo $this->lang->line('text_empty_content'); ?>
                                                 </td>
                                             </tr>
@@ -222,6 +257,21 @@
     </div>
 </div>
 
+<div class="modal hide" id="categoryErrorDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
+        <h1>Error</h1>
+    </div>
+    <div class="modal-body">
+        <div>
+            <i class="fa fa-times"></i>&nbsp;<span id="category_error_message"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" id="category-error-dialog-close">Close</button>
+    </div>
+</div>
+
 <link id="base-style" rel="stylesheet" type="text/css"
       href="<?php echo base_url(); ?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css"/>
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
@@ -272,7 +322,8 @@
         $categoryContentTable = $('#categoryContentTable'),
         $categoryContentToolbarRemove = $('#categoryContentToolbar').find('#remove'),
         categorySelections = [],
-        $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
+        $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html(),
+        $categoryErrorDialog = $('#categoryErrorDialog');
 
     function initCategoryTable() {
         $categoryContentTable.bootstrapTable({
@@ -394,10 +445,17 @@
                 //$categoryContentTable.bootstrapTable('append', result);
             })
             .fail(function (xhr, textStatus, errorThrown) {
-                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+                if(JSON.parse(xhr.responseText).status == "error") {
+                    $('form.category-form').trigger("reset");
+                    alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+                }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                    $waitDialog.modal('hide');
+                    $categoryErrorDialog.find("#category_error_message").text("Category name is already exist!");
+                    $categoryErrorDialog.modal();
+                }
             })
             .always(function () {
-                $('form.category-form').trigger("reset");
+                //$('form.category-form').trigger("reset");
                 $waitDialog.modal('hide');
             });
     }
@@ -474,6 +532,10 @@
         .on('click', '#addNewCategoryLink', function () {
             $('#mainTab').find('a[href="#categoryContentTab"]').tab('show');
             resetModalForm();
+            $formCategoryModal.modal('show');
+        })
+        .on('click', 'button#category-error-dialog-close', function () {
+            $categoryErrorDialog.modal('hide');
             $formCategoryModal.modal('show');
         });
 
