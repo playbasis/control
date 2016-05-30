@@ -325,10 +325,10 @@ $route['StoreOrg/rankPeerByAccAction/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/r
 $route['StoreOrg/rankPeerByAccAction/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/0/0';
 $route['StoreOrg/rankPeerByAccAction'] = 'store_org/rankPeerByAccumulateAction/0/0/0';
 
-$route['StoreOrg/nodes/'.ANY_STRING.'/addContent/'.ANY_STRING] = 'store_org/contentRegister/$1/$2'; // ANY_STRING = node_id/content_id
-$route['StoreOrg/nodes/'.ANY_STRING.'/removeContent/'.ANY_STRING] = 'store_org/contentRemove/$1/$2'; // ANY_STRING = node_id/content_id
-$route['StoreOrg/nodes/'.ANY_STRING.'/setContentRole/'.ANY_STRING] = 'store_org/contentRoleSet/$1/$2'; // ANY_STRING = node_id/content_id
-$route['StoreOrg/nodes/'.ANY_STRING.'/unsetContentRole/'.ANY_STRING] = 'store_org/contentRoleUnset/$1/$2'; // ANY_STRING = node_id/content_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/addContent/'.ANY_STRING] = 'store_org/contentRegister/$1/$2'; // ANY_STRING = node_id/node_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/removeContent/'.ANY_STRING] = 'store_org/contentRemove/$1/$2'; // ANY_STRING = node_id/node_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/setContentRole/'.ANY_STRING] = 'store_org/contentRoleSet/$1/$2'; // ANY_STRING = node_id/node_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/unsetContentRole/'.ANY_STRING] = 'store_org/contentRoleUnset/$1/$2'; // ANY_STRING = node_id/node_id
 
 //content API
 $route['Content'] = 'content/list';

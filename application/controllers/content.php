@@ -312,11 +312,8 @@ class Content extends REST2_Controller
         $this->benchmark->mark('start');
         $contentInfo = array();
 
-        if((!isset($node_id)  || empty($node_id)) && !$this->input->post('node_id')) {
+        if(!$node_id) {
             $this->response($this->error->setError('PARAMETER_INVALID',array('node_id')), 200);
-        }
-        if((!isset($node_id) || empty($node_id)) && $this->input->post('node_id')){
-            $node_id = $this->input->post('node_id');
         }
 
         if($this->input->post('title')){
@@ -402,11 +399,8 @@ class Content extends REST2_Controller
         }
         $actionInfo['pb_player_id'] = $pb_player_id;
 
-        if(!isset($node_id) && !$this->input->post('node_id')) {
+        if(!$node_id) {
             $this->response($this->error->setError('PARAMETER_INVALID',array('node_id')), 200);
-        }
-        if((!isset($node_id) || empty($node_id)) && $this->input->post('node_id')){
-            $node_id = $this->input->post('node_id');
         }
 
         $contents = $this->content_model->getContentByNodeId($this->validToken['client_id'], $this->validToken['site_id'], $node_id);
@@ -498,12 +492,10 @@ class Content extends REST2_Controller
 
         $postData = $this->input->post();
 
-        if(!isset($node_id) && !$this->input->post('node_id')) {
+        if(!$node_id) {
             $this->response($this->error->setError('PARAMETER_INVALID',array('node_id')), 200);
         }
-        if((!isset($node_id) || empty($node_id)) && $this->input->post('node_id')){
-            $node_id = $this->input->post('node_id');
-        }
+
         $contents = $this->content_model->getContentByNodeId($this->validToken['client_id'], $this->validToken['site_id'], $node_id);
         if(isset($contents[0]['_id']) && !empty($contents[0]['_id'])){
             $data['content_id'] = $contents[0]['_id'];
@@ -566,7 +558,7 @@ class Content extends REST2_Controller
         if($result){
             $this->content_model->deleteContent($client_id, $site_id, $node_id);
         } else {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id')), 200);
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
 
         $this->benchmark->mark('end');

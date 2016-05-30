@@ -3767,7 +3767,7 @@
           "MethodName": "Add Content to Node",
           "Synopsis": "Add Content to specific Node",
           "HTTPMethod": "POST",
-          "URI": "/StoreOrg/nodes/:node_id/addContent/:content_id",
+          "URI": "/StoreOrg/nodes/:node_id/addContent/:content_node_id",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -3782,14 +3782,14 @@
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Node Id to add player"
+              "Description": "Node Id of store org to add player"
             },
             {
-              "Name": "content_id",
+              "Name": "content_node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Content Id to add to Node"
+              "Description": "node id of content"
             }
           ]
         },
@@ -3797,7 +3797,7 @@
           "MethodName": "Remove Content from Node",
           "Synopsis": "Remove Content from specific Node",
           "HTTPMethod": "POST",
-          "URI": "/StoreOrg/nodes/:node_id/removeContent/:content_id",
+          "URI": "/StoreOrg/nodes/:node_id/removeContent/:content_node_id",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -3812,14 +3812,14 @@
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Node Id to add player"
+              "Description": "Node Id of store org to add player"
             },
             {
-              "Name": "content_id",
+              "Name": "content_node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Content Id to add to Node"
+              "Description": "node id of content"
             }
           ]
         },
@@ -3827,7 +3827,7 @@
           "MethodName": "Set Content role",
           "Synopsis": "Set Content's organization role to specific Node",
           "HTTPMethod": "POST",
-          "URI": "/StoreOrg/nodes/:node_id/setContentRole/:content_id",
+          "URI": "/StoreOrg/nodes/:node_id/setContentRole/:content_node_id",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -3842,14 +3842,14 @@
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Node Id to set player's role"
+              "Description": "Node Id of store org to set player's role"
             },
             {
-              "Name": "content_id",
+              "Name": "content_node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Content Id to set content's role"
+              "Description": "node id of content"
             },
             {
               "Name": "role",
@@ -3864,7 +3864,7 @@
           "MethodName": "Unset Content role",
           "Synopsis": "Unset Content's organization role from specific Node",
           "HTTPMethod": "POST",
-          "URI": "/StoreOrg/nodes/:node_id/unsetContentRole/:content_id",
+          "URI": "/StoreOrg/nodes/:node_id/unsetContentRole/:content_node_id",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -3882,11 +3882,11 @@
               "Description": "Node Id to unset player's role"
             },
             {
-              "Name": "content_id",
+              "Name": "content_node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Content Id to unset content's role"
+              "Description": "node id of content to unset content's role"
             },
             {
               "Name": "role",
