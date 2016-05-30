@@ -1109,7 +1109,7 @@ class Notification extends Engine
         $validToken = array(
             'client_id' => $site['client_id'],
             'site_id' => $site_id,
-            'domain_name' => $site['domain_name']
+            'site_name' => $site['site_name']
         );
         $action = $this->client_model->getAction(array(
             'client_id' => $validToken['client_id'],

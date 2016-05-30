@@ -98,7 +98,7 @@ class Client extends REST2_Controller
             'action_name' => 'like',
             'client_id' => $token['client_id'],
             'site_id' => $token['site_id'],
-            'domain_name' => $token['domain_name'],
+            'site_name' => $token['site_name'],
             'jigsaw_id' => $jigsaw_id,
             'rule_id' => $rule_id
         ));

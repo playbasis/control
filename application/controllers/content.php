@@ -10,6 +10,7 @@ class Content extends REST2_Controller
         $this->load->model('auth_model');
         $this->load->model('content_model');
         $this->load->model('player_model');
+        $this->load->model('store_org_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -18,39 +19,62 @@ class Content extends REST2_Controller
     {
         $this->benchmark->mark('start');
         $query_data = $this->input->get(null, true);
-        $content_id = array();
+        $exclude_ids = array();
 
-        if (isset($query_data['id'])) {
-            try {
-                $query_data['id'] = new MongoId($query_data['id']);
-            } catch (Exception $e) {
-                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+        if (isset($query_data['player_id']) && !empty($query_data['player_id'])) {
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id' => $this->validToken['client_id'],
+                'site_id' => $this->validToken['site_id'],
+                'cl_player_id' => $query_data['player_id']
+            ));
+            if (empty($pb_player_id)) {
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
             }
         }
 
-        if ((isset($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true") ) {
-
-            if (isset($query_data['player_id'])) {
-                $pb_player_id = $this->player_model->getPlaybasisId(array(
-                    'client_id' => $this->validToken['client_id'],
-                    'site_id' => $this->validToken['site_id'],
-                    'cl_player_id' => $query_data['player_id']
-                ));
-                if (empty($pb_player_id)) {
-                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
-                }
-                $content_id = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
-                    $this->validToken['site_id'], $pb_player_id);
-                if (isset($query_data['limit'])) {
-                    $query_data['_limit'] = $query_data['limit'];
-                    $query_data['limit'] += count($content_id);
-                }
-            }else{
+        if ((isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true")) {
+            if (!isset($query_data['player_id'])){
                 $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
             }
+            $exclude_ids = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
+                $this->validToken['site_id'], $pb_player_id);
+            if (isset($query_data['limit']) && isset($query_data['sort']) && $query_data['sort'] == "random") {
+                $query_data['_limit'] = $query_data['limit'];
+                $query_data['limit'] += count($exclude_ids);
+            }
         }
 
-        if (isset($query_data['category']) && !is_null($query_data['category'])) {
+        // Get organize associated between player and content
+        if (!empty($pb_player_id)){
+            $all_content_to_node = array();
+            $content_to_node_and_player = array();
+
+            // Retrieve all content_id associate to store_org
+            $content_to_node = $this->store_org_model->retrieveAllContentToNode($this->validToken['client_id'],
+                $this->validToken['site_id']);
+            foreach ($content_to_node as $ct){
+                if (isset($ct['content_id']) && !empty($ct['content_id'])){
+                    $all_content_to_node[] = $ct['content_id'];
+                }
+            }
+
+            // Retrieve content_id associate to store_org with player
+            $nodes_list = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'],
+                $this->validToken['site_id'], $pb_player_id);
+            $query_data['content_id_organize_assoc'] = array();
+            foreach ($nodes_list as $val){
+                $content_to_node = $this->store_org_model->retrieveAllContentToNode($this->validToken['client_id'],
+                    $this->validToken['site_id'], $val['node_id']);
+                foreach ($content_to_node as $ct){
+                    if (isset($ct['content_id']) && !empty($ct['content_id'])){
+                        $content_to_node_and_player[] = $ct['content_id'];
+                    }
+                }
+            }
+            $query_data['content_id_organize_assoc'] = array_merge($query_data['content_id_organize_assoc'], array_diff($all_content_to_node, $content_to_node_and_player));
+        }
+
+        if (isset($query_data['category']) && !empty($query_data['category'])) {
             $category_result = $this->content_model->retrieveContentCategory($this->validToken['client_id'], $this->validToken['site_id'],
                 array('name' => $query_data['category']));
             if($category_result){
@@ -59,8 +83,45 @@ class Content extends REST2_Controller
                 $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
             }
         }
+        if (isset($query_data['tags']) && !empty($query_data['tags'])) {
+            $query_data = array_merge($query_data, array(
+                'tags' => explode(',', $this->input->get('tags'))
+            ));
+        }
 
-        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, $content_id);
+        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, (isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true" && isset($query_data['sort']) && $query_data['sort'] == "random") ? array() : $exclude_ids);
+
+        foreach ($contents as &$content){
+            $nodes_list = $this->store_org_model->getAssociatedNodeOfContent($this->validToken['client_id'],
+                $this->validToken['site_id'], $content['_id']);
+            $organization = array();
+            if (!empty($nodes_list)) {
+                foreach ($nodes_list as $node) {
+                    $org_node = $this->store_org_model->retrieveNodeById($this->validToken['site_id'], $node['node_id']);
+                    $name = $org_node['name'];
+                    $org_info = $this->store_org_model->retrieveOrganizeById($this->validToken['client_id'],
+                        $this->validToken['site_id'], $org_node['organize']);
+                    $node_id = (String)$node['node_id'];
+                    $roles = array();
+                    if (isset($node['roles']) && is_array($node['roles'])) {
+                        foreach ($node['roles'] as $role_name => $date_join) {
+                            array_push($roles,
+                                array('role' => $role_name, 'join_date' => datetimeMongotoReadable($date_join)));
+                        }
+                    }
+                    if (empty($roles)) {
+                        $roles = null;
+                    }
+                    array_push($organization, array(
+                        'name' => $name,
+                        'node_id' => $node_id,
+                        'organize_type' => $org_info['name'],
+                        'roles' => $roles
+                    ));
+                }
+                $content['organize'] = $organization;
+            }
+        }
 
         if (isset($query_data['full_html']) && $query_data['full_html'] == "true") {
             if(is_array($contents))foreach ($contents as &$content){
@@ -81,28 +142,111 @@ class Content extends REST2_Controller
             }
             if (isset($query_data['_limit'])) $query_data['limit'] = $query_data['_limit'];
             $m = count($contents);
-            $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data, $content_id);
+            $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data, $exclude_ids);
             if (isset($query_data['limit']) && $query_data['limit'] < $n) $n = $query_data['limit'];
             if (!isset($query_data['offset']) || $query_data['offset'] < 0) $query_data['offset'] = 0;
             $numbers = range(0, $m-1);
             shuffle($numbers);
             $c = 0;
             foreach ($numbers as $i) {
-                if (!isset($query_data['offset']) || $c >= $query_data['offset']) {
-                    if (!in_array($contents[$i]['_id'], $content_id)) {
+                if (!is_array($exclude_ids) || !in_array($contents[$i]['_id'], $exclude_ids)) {
+                    if (!isset($query_data['offset']) || $c >= $query_data['offset']) {
                         $result[] = $contents[$i];
                         if (count($result) >= $n) break;
                     }
+                    $c++;
                 }
-                if (!in_array($contents[$i]['_id'], $content_id)) $c++;
             }
         }else{
             $result = $contents;
+        }
+        if(isset($query_data['pin']) && (!$result)){
+            $this->response($this->error->setError('PIN_CODE_INVALID'), 200);
+        }
+        if(isset($query_data['node_id']) && !empty($query_data['node_id']) && (!$result)){
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
+    }
+
+    public function countContent_get()
+    {
+        $this->benchmark->mark('start');
+        $query_data = $this->input->get();
+        $exclude_ids = array();
+
+        if (isset($query_data['player_id']) && !empty($query_data['player_id'])) {
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id' => $this->validToken['client_id'],
+                'site_id' => $this->validToken['site_id'],
+                'cl_player_id' => $query_data['player_id']
+            ));
+            if (empty($pb_player_id)) {
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            }
+        }
+
+        if ((isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true")) {
+            if (!isset($query_data['player_id'])){
+                $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
+            }
+            $exclude_ids = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
+        }
+
+        // Get organize associated between player and content
+        if (!empty($pb_player_id)){
+            $all_content_to_node = array();
+            $content_to_node_and_player = array();
+
+            // Retrieve all content_id associate to store_org
+            $content_to_node = $this->store_org_model->retrieveAllContentToNode($this->validToken['client_id'],
+                $this->validToken['site_id']);
+            foreach ($content_to_node as $ct){
+                if (isset($ct['content_id']) && !empty($ct['content_id'])){
+                    $all_content_to_node[] = $ct['content_id'];
+                }
+            }
+
+            // Retrieve content_id associate to store_org with player
+            $nodes_list = $this->store_org_model->getAssociatedNodeOfPlayer($this->validToken['client_id'],
+                $this->validToken['site_id'], $pb_player_id);
+            $query_data['content_id_organize_assoc'] = array();
+            foreach ($nodes_list as $val){
+                $content_to_node = $this->store_org_model->retrieveAllContentToNode($this->validToken['client_id'],
+                    $this->validToken['site_id'], $val['node_id']);
+                foreach ($content_to_node as $ct){
+                    if (isset($ct['content_id']) && !empty($ct['content_id'])){
+                        $content_to_node_and_player[] = $ct['content_id'];
+                    }
+                }
+            }
+            $query_data['content_id_organize_assoc'] = array_merge($query_data['content_id_organize_assoc'], array_diff($all_content_to_node, $content_to_node_and_player));
+        }
+
+        if (isset($query_data['category']) && !empty($query_data['category'])) {
+            $category_result = $this->content_model->retrieveContentCategory($this->validToken['client_id'], $this->validToken['site_id'],
+                array('name' => $query_data['category']));
+            if($category_result){
+                $query_data['category'] = new MongoId($category_result[0]['_id']);
+            }else{
+                $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
+            }
+        }
+
+        if (isset($query_data['tags']) && !empty($query_data['tags'])) {
+            $query_data = array_merge($query_data, array(
+                'tags' => explode(',', $this->input->get('tags'))
+            ));
+        }
+
+        $count_value = $this->content_model->retrieveContentCount($this->validToken['client_id'], $this->validToken['site_id'], $query_data , $exclude_ids);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $count_value,'processing_time' => $t)), 200);
     }
 
     public function listCategory_get()
@@ -161,6 +305,29 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         }
 
+        if($this->input->post('node_id')) {
+            if (strpos($this->input->post('node_id'), ' ') > 0) {
+                $this->response($this->error->setError('CONTENT_NODE_ID__SPACE_EXIST'), 200);
+            }
+            else
+            {
+                $check_node_id = $this->content_model->findContent($this->client_id, $this->site_id, $this->input->post('node_id'));
+                if($check_node_id)
+                {
+                    $this->response($this->error->setError('CONTENT_NODE_ID_ALREADY_EXISTS'), 200);
+                }
+                $contentInfo['node_id'] = $this->input->post('node_id');
+            }
+        }
+        else{
+            do{
+                $random_node_id = new MongoId();
+                $random_node_id = $random_node_id . "";
+                $check_node_id = $this->content_model->findContent($this->client_id, $this->site_id, $random_node_id);
+            } while($check_node_id);
+            $contentInfo['node_id'] = $random_node_id;
+        }
+
         $contentInfo['title']    = $this->input->post('title');
         $contentInfo['summary']  = $this->input->post('summary');
         $contentInfo['detail']   = $this->input->post('detail');
@@ -194,6 +361,7 @@ class Content extends REST2_Controller
         if ($this->input->post('pin')){
             $contentInfo['pin'] = $this->input->post('pin');
         }
+        $contentInfo['tags'] = $this->input->post('tags') && !is_null($this->input->post('status')) ? explode(',', $this->input->post('tags')) : null;
 
         if ($this->input->post('key')) {
             $data['custom'] = array();
@@ -206,21 +374,23 @@ class Content extends REST2_Controller
         }
 
         $insert = $this->content_model->createContent($contentInfo);
+        $result_node_id = "";
+        if($insert){
+            $result_node_id = $contentInfo['node_id'];
+        }
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $insert, 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond(array('result' => $insert, 'node_id' => $result_node_id, 'processing_time' => $t)), 200);
     }
 
-    public function update_post($content_id = null)
+    public function update_post($node_id = null)
     {
         $this->benchmark->mark('start');
         $contentInfo = array();
 
-        try {
-            new MongoId($content_id);
-        } catch (Exception $e) {
-            $this->response($this->error->setError('PARAMETER_INVALID', array('_id')), 200);
+        if(!$node_id) {
+            $this->response($this->error->setError('PARAMETER_INVALID',array('node_id')), 200);
         }
 
         if($this->input->post('title')){
@@ -265,6 +435,10 @@ class Content extends REST2_Controller
             $contentInfo['pin'] = $this->input->post('pin');
         }
 
+        if ($this->input->post('tags')){
+            $contentInfo['tags'] = explode(',', $this->input->post('tags'));
+        }
+
         if ($this->input->post('key')) {
             $data['custom'] = array();
             $keys = explode(',', $this->input->post('key'));
@@ -275,14 +449,14 @@ class Content extends REST2_Controller
             }
         }
 
-        $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'], $content_id, $contentInfo);
+        $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'], $contentInfo , $node_id);
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function action_post($action = null, $content_id = null, $player_id = null)
+    public function action_post($action = null, $node_id = null, $player_id = null)
     {
         $this->load->library('RestClient');
 
@@ -302,8 +476,30 @@ class Content extends REST2_Controller
         }
         $actionInfo['pb_player_id'] = $pb_player_id;
 
-        $contents = $this->checkValidContent($content_id);
-        $actionInfo['content_id'] = $contents[0]['_id'];
+        if(!$node_id) {
+            $this->response($this->error->setError('PARAMETER_INVALID',array('node_id')), 200);
+        }
+
+        $contents = $this->content_model->getContentByNodeId($this->validToken['client_id'], $this->validToken['site_id'], $node_id);
+        if(isset($contents[0]['_id']) && !empty($contents[0]['_id'])){
+            $actionInfo['content_id'] = $contents[0]['_id'];
+        }
+        else{
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
+        $actionInfo['custom'] = null;
+        $key = $this->input->post('key');
+        if ($key) {
+            $keys = explode(',', $key);
+            $value = $this->input->post('value');
+            $values = explode(',', $value);
+            if (count($values) != count($keys)){
+                $this->response($this->error->setError('PARAMETER_INVALID', array('key','value')), 200);
+            }
+            foreach ($keys as $i => $key) {
+                $actionInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
+            }
+        }
 
         $playerContent = $this->content_model->retrieveExistingPlayerContent(array(
             'client_id'    => $this->validToken['client_id'],
@@ -367,17 +563,23 @@ class Content extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function giveFeedback_post($content_id, $player_id)
+    public function giveFeedback_post($node_id, $player_id)
     {
         $this->benchmark->mark('start');
 
         $postData = $this->input->post();
 
-        if (empty($content_id)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('content_id')), 200);
+        if(!$node_id) {
+            $this->response($this->error->setError('PARAMETER_INVALID',array('node_id')), 200);
         }
-        $this->checkValidContent($content_id);
-        $data['content_id'] = $content_id;
+
+        $contents = $this->content_model->getContentByNodeId($this->validToken['client_id'], $this->validToken['site_id'], $node_id);
+        if(isset($contents[0]['_id']) && !empty($contents[0]['_id'])){
+            $data['content_id'] = $contents[0]['_id'];
+        }
+        else{
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
 
         if (empty($player_id)) {
             $this->response($this->error->setError('PARAMETER_MISSING', array('$player_id')), 200);
@@ -397,13 +599,16 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING', array('feedback')), 200);
         }
         $data['feedback'] = $postData['feedback'];
-
+        $data['custom'] = null;
         $key = $this->input->post('key');
         if ($key) {
             $data['custom'] = array();
             $keys = explode(',', $key);
             $value = $this->input->post('value');
             $values = explode(',', $value);
+            if (count($values) != count($keys)){
+                $this->response($this->error->setError('PARAMETER_INVALID', array('key','value')), 200);
+            }
             foreach ($keys as $i => $key) {
                 $data['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
             }
@@ -416,18 +621,22 @@ class Content extends REST2_Controller
         $this->response($this->resp->setRespond(array('result'=> $result,'processing_time' => $t)), 200);
     }
 
-    public function deleteContent_post($content_id = null)
+    public function deleteContent_post($node_id = null)
     {
         $this->benchmark->mark('start');
         $client_id = $this->validToken['client_id'];
         $site_id = $this->validToken['site_id'];
-        $this->checkValidContent($content_id);
 
-        if(!$content_id){
-            $this->response($this->error->setError('PARAMETER_MISSING', array('content_id')), 200);
+        if(!$node_id){
+            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id')), 200);
         }
 
-        $this->content_model->deleteContent($client_id, $site_id, $content_id);
+        $result = $this->content_model->getContentByNodeId($client_id, $site_id, $node_id);
+        if($result){
+            $this->content_model->deleteContent($client_id, $site_id, $node_id);
+        } else {
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -523,44 +732,6 @@ class Content extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function countContent_get()
-    {
-        $this->benchmark->mark('start');
-        $getData = $this->input->get();
-        $query_data = array();
-
-        if (isset($getData['player_exclude'])){
-            $pb_player_id = $this->player_model->getPlaybasisId(array(
-                'client_id'    => $this->validToken['client_id'],
-                'site_id'      => $this->validToken['site_id'],
-                'cl_player_id' => $getData['player_exclude']
-            ));
-            if ($pb_player_id) {
-                $query_data['player_exclude'] = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
-            }else{
-                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
-            }
-
-        }
-
-        if (isset($getData['category']) && !is_null($getData['category'])) {
-            $category_result = $this->content_model->retrieveContentCategory($this->validToken['client_id'], $this->validToken['site_id'],
-                array('name' => $getData['category']));
-            if($category_result){
-                $query_data['category'] = $category_result[0];
-            }else{
-                $this->response($this->error->setError('CONTENT_CATEGORY_NOT_FOUND'), 200);
-            }
-
-        }
-
-        $count_value = $this->content_model->countContent($this->validToken['client_id'], $this->validToken['site_id'], $query_data);
-
-        $this->benchmark->mark('end');
-        $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $count_value, 'processing_time' => $t)), 200);
-    }
-
     /**
      * Use with array_walk and array_walk_recursive.
      * Recursive iterable items to modify array's value
@@ -570,7 +741,7 @@ class Content extends REST2_Controller
      */
     private function convert_mongo_object_and_category(&$item, $key)
     {
-        if ($key == 'category') {
+        if ($key === 'category') {
             $item = $this->content_model->getContentCategoryNameById($this->client_id, $this->site_id, $item);
         }
         if (is_object($item)) {

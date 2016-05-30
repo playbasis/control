@@ -302,7 +302,7 @@ $route['Push/template'] = 'push/template';
 
 //Store Organize API
 $route['StoreOrg/nodes/'.ANY_STRING.'/addPlayer/'.ANY_STRING] = 'store_org/playerRegister/$1/$2'; // ANY_STRING = node_id/pb_player_id
-$route['StoreOrg/nodes/name/'.ANY_STRING.'/addPlayer/'.ANY_STRING] = 'store_org/playerRegisterByNodeName/$1/$2'; // ANY_STRING = node_name/pb_player_id
+$route['StoreOrg/nodes/name/'.ANY_STRING.'/type/'.ANY_STRING.'/addPlayer/'.ANY_STRING] = 'store_org/playerRegisterByNodeName/$1/$2/$3'; // ANY_STRING = node_name/organize_type/pb_player_id
 $route['StoreOrg/nodes/'.ANY_STRING.'/removePlayer/'.ANY_STRING] = 'store_org/playerRemove/$1/$2'; // ANY_STRING = node_id/pb_player_id
 $route['StoreOrg/nodes/'.ANY_STRING.'/setPlayerRole/'.ANY_STRING] = 'store_org/playerRoleSet/$1/$2'; // ANY_STRING = node_id/pb_player_id
 $route['StoreOrg/nodes/'.ANY_STRING.'/unsetPlayerRole/'.ANY_STRING] = 'store_org/playerRoleUnset/$1/$2'; // ANY_STRING = node_id/pb_player_id
@@ -325,19 +325,19 @@ $route['StoreOrg/rankPeerByAccAction/'.ANY_STRING.'/'.ANY_STRING] = 'store_org/r
 $route['StoreOrg/rankPeerByAccAction/'.ANY_STRING] = 'store_org/rankPeerByAccumulateAction/$1/0/0';
 $route['StoreOrg/rankPeerByAccAction'] = 'store_org/rankPeerByAccumulateAction/0/0/0';
 
-$route['StoreOrg/nodes/'.ANY_STRING.'/addContent/'.ANY_STRING] = 'store_org/contentRegister/$1/$2'; // ANY_STRING = node_id/content_id
-$route['StoreOrg/nodes/'.ANY_STRING.'/removeContent/'.ANY_STRING] = 'store_org/contentRemove/$1/$2'; // ANY_STRING = node_id/content_id
-$route['StoreOrg/nodes/'.ANY_STRING.'/setContentRole/'.ANY_STRING] = 'store_org/contentRoleSet/$1/$2'; // ANY_STRING = node_id/content_id
-$route['StoreOrg/nodes/'.ANY_STRING.'/unsetContentRole/'.ANY_STRING] = 'store_org/contentRoleUnset/$1/$2'; // ANY_STRING = node_id/content_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/addContent/'.ANY_STRING] = 'store_org/contentRegister/$1/$2'; // ANY_STRING = node_id/node_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/removeContent/'.ANY_STRING] = 'store_org/contentRemove/$1/$2'; // ANY_STRING = node_id/node_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/setContentRole/'.ANY_STRING] = 'store_org/contentRoleSet/$1/$2'; // ANY_STRING = node_id/node_id
+$route['StoreOrg/nodes/'.ANY_STRING.'/unsetContentRole/'.ANY_STRING] = 'store_org/contentRoleUnset/$1/$2'; // ANY_STRING = node_id/node_id
 
 //content API
 $route['Content'] = 'content/list';
 $route['Content/addContent'] = 'content/insert';
-$route['Content/'.ANY_STRING.'/update'] = 'content/update/$1';                                   // ANY_STRING = content_id
-$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/like'] = 'content/action/like/$1/$2';       // ANY_STRING = content_id/cl_player_id
-$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/dislike'] = 'content/action/dislike/$1/$2'; // ANY_STRING = content_id/cl_player_id
-$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/feedback'] = 'content/giveFeedback/$1/$2';  // ANY_STRING = content_id/cl_player_id
-$route['Content/'.ANY_STRING.'/delete'] = 'content/deleteContent/$1';                            // ANY_STRING = content_id
+$route['Content/'.ANY_STRING.'/update'] = 'content/update/$1';                                   // ANY_STRING = node_id
+$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/like'] = 'content/action/like/$1/$2';       // ANY_STRING = node_id/cl_player_id
+$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/dislike'] = 'content/action/dislike/$1/$2'; // ANY_STRING = node_id/cl_player_id
+$route['Content/'.ANY_STRING.'/player/'.ANY_STRING.'/feedback'] = 'content/giveFeedback/$1/$2';  // ANY_STRING = node_id/cl_player_id
+$route['Content/'.ANY_STRING.'/delete'] = 'content/deleteContent/$1';                            // ANY_STRING = node_id
 $route['Content/count'] = 'content/countContent';
 $route['Content/category'] = 'content/listCategory';
 $route['Content/category/create'] = 'content/createContentCategory';

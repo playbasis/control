@@ -146,7 +146,7 @@ class Janrain extends REST2_Controller
             'action_name' => 'login',
             'action_icon' => 'fa-sign-in',
             'message' => $eventMessage
-        ), $validToken['domain_name'], $site_id);
+        ), $validToken['site_name'], $site_id);
         //var_dump($eventMessage);
         if ($option == "ajax") {
             $cl_player_id = $this->player_model->getClientPlayerId($pb_player_id, $site_id);

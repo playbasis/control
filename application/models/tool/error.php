@@ -330,6 +330,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Question is out of sequence ";
                 $errorData['error_code'] = '1006';
                 break;
+            case 'QUIZ_QUESTION_TIME_OUT':
+                $errorData['message'] = "Question is time out";
+                $errorData['error_code'] = '1007';
+                break;
             case 'RULE_NOT_FOUND':
                 $errorData['message'] = "Rule not available";
                 $errorData['error_code'] = '1101';
@@ -341,6 +345,14 @@ class Error extends CI_Model
             case 'CONTENT_CATEGORY_NOT_FOUND':
                 $errorData['message'] = "Content category not found";
                 $errorData['error_code'] = '2002';
+                break;
+            case 'CONTENT_NODE_ID_ALREADY_EXISTS':
+                $errorData['message'] = "Content node_id already exists";
+                $errorData['error_code'] = '2003';
+                break;
+            case 'CONTENT_NODE_ID__SPACE_EXIST':
+                $errorData['message'] = "Content node_id is invalid,space exists";
+                $errorData['error_code'] = '2003';
                 break;
             case 'PIN_CODE_INVALID':
                 $errorData['message'] = "PIN code is invalid";
@@ -467,6 +479,14 @@ class Error extends CI_Model
             case 'EMAIL_NOT_VERIFIED':
                 $errorData['message'] = "Your account need to verify email address";
                 $errorData['error_code'] = '2423';
+                break;
+            case 'STORE_ORG_TYPE_NOT_FOUND':
+                $errorData['message'] = "Organize type is not found";
+                $errorData['error_code'] = '2424';
+                break;
+            case 'STORE_ORG_NODE_NOT_FOUND_IN_ORGANIZE':
+                $errorData['message'] = "Node is not found in this organize type";
+                $errorData['error_code'] = '2424';
                 break;
             default:
                 $errorData['message'] = "Unknown";

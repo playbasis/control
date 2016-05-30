@@ -1486,47 +1486,60 @@ class Cron extends CI_Controller
                             } else {
 
                                 foreach ($returnData['importData'] as $key => $val) {
-
-                                    $f = function($v) {
-                                        return explode("=", $v[0]);
-                                    };
-                                    $f2 = function($v) {
-                                        return array($v[0] => $v[1]);
-                                    };
-
-                                    $data = array(
-                                        'api_key' => $returnImportData['api_key'],
-                                        'token' => $returnImportData['token'],
-                                        'action' => $val['action'],
-                                        'player_id' => $val['cl_player_id']
-                                    );
-
-                                    // Set custom parameters if required
-                                    if (!empty(strtolower($val['customs']))) {
-                                        $arrays = array_map($f2, array_map($f, array_map('str_getcsv', explode("|", $val['customs']))));
-
-                                        foreach ($arrays as $arr) {
-                                            $data = array_merge($data, $arr);
+                                    if($val) {
+                                        $pb_player_id = $this->player_model->getPlaybasisId(array(
+                                            'client_id' => new MongoId($returnImportData['client_id']),
+                                            'site_id' => new MongoId($returnImportData['site_id']),
+                                            'cl_player_id' => $val['player_id']
+                                        ));
+                                        if (!$pb_player_id) {
+                                            $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "User doesn't exist");
+                                            continue;
                                         }
+
+                                        // Set Date at HTTP header
+                                        if (isset($val['date']) && !is_null($val['date'])) {
+                                            $this->restclient->http_header('Date', $val['date']);
+                                        }
+
+                                        // Check if custom parameter is set
+                                        $customs_valid = true;
+                                        if (isset($val['customs']) && !is_null($val['customs'])) {
+                                            $custom_params = explode('|', $val['customs']);
+                                            foreach ($custom_params as $custom_param)  {
+                                                $keyAndValue = explode('=', $custom_param);
+                                                if(count($keyAndValue)!=2){
+                                                    $customs_valid = false;
+                                                    break;
+                                                }
+                                                $val = array_merge($val, array($keyAndValue[0] => $keyAndValue[1]));
+                                            }
+                                            unset($val['customs']);
+                                        }
+
+                                        if($customs_valid){
+
+                                            $result = $this->restclient->post($this->config->base_url() . 'Engine/rule',
+                                                array_merge($val,
+                                                    array(
+                                                        'api_key' => $returnImportData['api_key'],
+                                                        'token' => $returnImportData['token']))
+                                            );
+                                            $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => $result->message);
+                                        }else{
+                                            $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "Custom parameter format is invalid");
+                                        }
+
+                                    }else{
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "Input format is invalid");
                                     }
-
-                                    // Set Date at HTTP header
-                                    if (!empty(strtolower($val['date']))){
-                                        $this->restclient->http_header('Date', $val['date']);
-                                    }
-
-                                    $result = $this->restclient->post($this->config->base_url() . 'Engine/rule', $data);
-
-                                    $returnImportActivities = array_merge($returnImportActivities, array(
-                                        $key => $result->message
-                                    ));
                                 }
 
                             }
 
                             // Update import log
                             $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
-                                $returnData['import_id'], array('results' => $returnImportActivities));
+                                $returnData['import_id'], array('results' => $returnImportActivities),$returnData['parameter_set'],$importData['import_type']);
                         }
                     }
                 }
@@ -1564,27 +1577,24 @@ class Cron extends CI_Controller
                             } else {
 
                                 foreach ($returnData['importData'] as $key => $val) {
-                                    $data = array(
-                                        'api_key' => $returnImportData['api_key'],
-                                        'token' => $returnImportData['token'],
-                                        'player_id' => $val['player_id'],
-                                        'username' => $val['username'],
-                                        'password' => $val['password'],
-                                        'email' => $val['email'],
-                                        'image' => $val['image']
-                                    );
-                                    $result = $this->restclient->post($this->config->base_url() . 'Player/' . $val['player_id'] . '/register',
-                                        $data);
 
-                                    $returnImportActivities = array_merge($returnImportActivities, array(
-                                        $val['player_id'] => $result->message
-                                    ));
+                                    if($val) {
+                                        $result = $this->restclient->post($this->config->base_url() . 'Player/' . $val['player_id'] . '/register',
+                                            array_merge($val,
+                                                array(
+                                                    'api_key' => $returnImportData['api_key'],
+                                                    'token' => $returnImportData['token']))
+                                        );
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => $result->message);
+                                    }else{
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "Input format is invalid");
+                                    }
                                 }
                             }
 
                             // Update import log
                             $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
-                                $returnData['import_id'], array('results' => $returnImportActivities));
+                                $returnData['import_id'], array('results' => $returnImportActivities),$returnData['parameter_set'],$importData['import_type']);
                         }
                     }
                 }
@@ -1622,39 +1632,90 @@ class Cron extends CI_Controller
 
                                 foreach ($returnData['importData'] as $key => $val) {
 
-                                    $data = array(
-                                        'api_key' => $returnImportData['api_key'],
-                                        'token' => $returnImportData['token'],
-                                        'player_id' => $val['player_id'],
-                                        'name' => $val['node_name'],
-                                    );
-
-                                    // Insert player to store_org
-                                    $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/name/' . $val['node_name'] . '/addPlayer/' . $val['player_id'],
-                                        $data);
-
-                                    if ((isset($val['roles'])) && (isset($result->response->node_id))) {
-                                        $node_id = json_decode(json_encode($result->response->node_id), true)['$id'];
-
-                                        $roles = explode("|",$val['roles']);
-
-                                        // Insert role to player
-                                        foreach ($roles as $key => $role) {
-                                            $data['role'] = $role;
-                                            $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/' . $node_id . '/setPlayerRole/' . $val['player_id'],
-                                                $data);
+                                    if($val) {
+                                        $result = $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/name/' . $val['node_name'] . '/type/' . $val['organize_type'] . '/addPlayer/' . $val['player_id'],
+                                            array_merge($val,
+                                                array(
+                                                    'api_key' => $returnImportData['api_key'],
+                                                    'token' => $returnImportData['token']))
+                                        );
+                                        if($result->message == "Success" && isset($val['role']) && !is_null($val['role'])){
+                                            $roles = explode('|', $val['role']);
+                                            foreach($roles as $role) {
+                                                $this->restclient->post($this->config->base_url() . 'StoreOrg/nodes/' . $result->response->node_id->{'$id'} . '/setPlayerRole/' . $val['player_id'],
+                                                    array_merge(array('role' => $role),
+                                                        array(
+                                                            'api_key' => $returnImportData['api_key'],
+                                                            'token' => $returnImportData['token']))
+                                                );
+                                            }
                                         }
-                                    }
 
-                                    $returnImportActivities = array_merge($returnImportActivities, array(
-                                        $val['player_id'] => $result->message
-                                    ));
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => $result->message);
+                                    }else{
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "Input format is invalid");
+                                    }
                                 }
                             }
 
                             // Update import log
                             $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
-                                $returnData['import_id'], array('results' => $returnImportActivities));
+                                $returnData['import_id'], array('results' => $returnImportActivities),$returnData['parameter_set'],$importData['import_type']);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function processImportContent()
+    {
+        $this->load->library('RestClient');
+
+        $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
+
+        if ($clients) {
+
+            foreach ($clients as $client) {
+
+                $returnImportData = $this->getImportData($client, 'content');
+
+                if(isset($returnImportData['response'])) {
+
+                    foreach ($returnImportData['response'] as $importData) {
+
+                        $returnData = $this->getDataFromURL($importData);
+
+                        if (isset($returnData)) {
+
+                            $returnImportActivities = array();
+
+                            if ($returnData['duplicate_flag']) {
+
+                                // Add 'Duplicate' to import log
+                                $returnImportActivities = 'Duplicate';
+
+                            } else {
+
+                                foreach ($returnData['importData'] as $key => $val) {
+
+                                    if($val) {
+                                        $result = $this->restclient->post($this->config->base_url() . 'Content/addContent',
+                                            array_merge($val,
+                                                array(
+                                                    'api_key' => $returnImportData['api_key'],
+                                                    'token' => $returnImportData['token']))
+                                        );
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => $result->message);
+                                    }else{
+                                        $returnImportActivities[] = array( "input" => trim($returnData['line'][$key]),"result" => "Input format is invalid");
+                                    }
+                                }
+                            }
+
+                            // Update import log
+                            $this->import_model->updateCompleteImport($importData['client_id']['$id'], $importData['site_id']['$id'],
+                                $returnData['import_id'], array('results' => $returnImportActivities),$returnData['parameter_set'],$importData['import_type']);
                         }
                     }
                 }
@@ -1707,13 +1768,18 @@ class Cron extends CI_Controller
             // login with username and password
             $login_result = ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
 
+            // Change directory to selected directory
+            if (isset($importData['directory']) && !empty($importData['directory'])) {
+                ftp_chdir($conn_id, $importData['directory']);
+            }
+
             // login with username and password
             $ftp_get_result = ftp_fget($conn_id, $handle, $remote_file, FTP_ASCII, 0);
 
             // close the connection and the file handler
             ftp_close($conn_id);
             fclose($handle);
-
+            $line = array();
             // try to download $remote_file and save it to $handle
             if ($login_result && $ftp_get_result) {
                 $result = file_get_contents($local_file);
@@ -1721,9 +1787,19 @@ class Cron extends CI_Controller
                 // Convert CSV to JSON
                 if ($file_extension === 'csv') {
                     $result = rtrim($result,"\n");
+                    $line = explode("\n", $result);
                     $array = array_map('str_getcsv', explode("\n", $result));
                     array_walk($array, function (&$a) use ($array) {
-                        $a = array_combine($array[0], $a);
+                        if(count($a)<count($array[0])){
+                            $a = null;
+                        }else{
+                            $data = array();
+                            foreach ($array[0] as $index => $key) {
+                                $data += array($key => $a[$index]);
+                            }
+                            $a = $data;
+                        }
+                        //$a = array_combine($array[0], $a);
                     });
                     array_shift($array);
                     $result = json_encode($array);
@@ -1750,9 +1826,19 @@ class Cron extends CI_Controller
             // Convert CSV to JSON
             if ($file_extension === 'csv') {
                 $result = rtrim($result,"\n");
+                $line = explode("\n", $result);
                 $array = array_map('str_getcsv', explode("\n", $result));
                 array_walk($array, function (&$a) use ($array) {
-                    $a = array_combine($array[0], $a);
+                    if(count($a)<count($array[0])){
+                        $a = null;
+                    }else{
+                        $data = array();
+                        foreach ($array[0] as $index => $key) {
+                            $data += array($key => $a[$index]);
+                        }
+                        $a = $data;
+                    }
+                    //$a = array_combine($array[0], $a);
                 });
                 array_shift($array);
                 $result = json_encode($array);
@@ -1765,6 +1851,9 @@ class Cron extends CI_Controller
 
             // Add import data to return
             $data['importData'] = $jsonData;
+            $data['parameter_set'] = trim($line[0]);
+            array_shift($line);
+            $data['line'] = $line;
 
             // Get latest import result from import log
             $latestImportLog = $this->import_model->retrieveLatestImportResult($data['import_id']);
@@ -1777,8 +1866,11 @@ class Cron extends CI_Controller
                 $latestExecute = $importData['date_modified']['sec'];
             }
 
-            // Get next execute date from latest execute + routine occurrence, given execution time to 1AM at the day
-            $dateNextExecute = strtotime(date('Y-m-d 01:00:00',
+            // Get execution time, if not set then execute at 00:00 at the day
+            $execution_time = (isset($importData['execution_time']) && !empty($importData['execution_time'])) ? $importData['execution_time'] : '00:00';
+
+            // Get next execute date from latest execute + routine occurrence
+            $dateNextExecute = strtotime(date('Y-m-d ' . $execution_time,
                 strtotime('+' . $importData['routine'] . 'days', $latestExecute)));
             $today = time();
 
@@ -1840,7 +1932,7 @@ class Cron extends CI_Controller
                 'cl_player_id' => $cl_player_id,
                 'client_id' => $client_id,
                 'site_id' => $site_id,
-                'domain_name' => $client_info['domain_name'],
+                'site_name' => $client_info['site_name'],
                 'leaderboard_id' => $config['_id'],
                 //'node_id' => $node_id,
             ));
@@ -1865,7 +1957,7 @@ class Cron extends CI_Controller
         $cl_player_id = $input['cl_player_id'];
         $client_id = $input['client_id'];
         $site_id = $input['site_id'];
-        $domain_name = $input['domain_name'];
+        $site_name = $input['site_name'];
         $leaderboard_id = $input['leaderboard_id'];
         $node_id = isset($input['node_id']) ? $input['node_id'] : null;
         $return_event = array();
@@ -1925,7 +2017,7 @@ class Cron extends CI_Controller
                         'action_name' => $action,
                         'message' => $eventMessage,
                         'badge' => $event['reward_data'],
-                    )), $domain_name, $site_id);
+                    )), $site_name, $site_id);
                 }
             } elseif ($type == "goods") {
                 foreach ($r as $item) {
@@ -1976,7 +2068,7 @@ class Cron extends CI_Controller
                         'action_name' => $action,
                         'message' => $eventMessage,
                         'goods' => $event['reward_data'],
-                    )), $domain_name, $site_id);
+                    )), $site_name, $site_id);
                 }
             } elseif ($type == "custompoints") {
                 foreach ($r as $point) {
@@ -2028,7 +2120,7 @@ class Cron extends CI_Controller
                         'message' => $eventMessage,
                         'amount' => $point["reward_value"],
                         'point' => $reward_type_name,
-                    )), $domain_name, $site_id);
+                    )), $site_name, $site_id);
                 }
             } else {
                 // for POINT  and EXP
@@ -2046,7 +2138,7 @@ class Cron extends CI_Controller
                             'action_name' => $action,
                             'message' => $eventMessage,
                             'level' => $lv
-                        )), $domain_name, $site_id);
+                        )), $site_name, $site_id);
                     }
 
                     $reward_type_message = 'point';
@@ -2100,7 +2192,7 @@ class Cron extends CI_Controller
                     'message' => $eventMessage,
                     'amount' => $r["reward_value"],
                     'point' => $reward_type_name,
-                )), $domain_name, $site_id);
+                )), $site_name, $site_id);
             }
 
         }

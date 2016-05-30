@@ -318,6 +318,11 @@ class Quiz extends REST2_Controller
                 unset($option['explanation']);
             }
             array_walk_recursive($question, array($this, "convert_mongo_object_and_image_path"));
+
+            $question_id = new MongoId($question['question_id']);
+            $question_active = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id, $pb_player_id , $quiz_id, $question_id );
+            $active = (isset($question_active) && !empty($question_active)) ? false:true;
+            $this->quiz_model->insert_question_timestamp($this->client_id, $this->site_id, $pb_player_id , $quiz_id, $question_id, $active);
         }
 
         $this->benchmark->mark('end');
@@ -460,6 +465,24 @@ class Quiz extends REST2_Controller
         $grade['total_score'] = $total_score;
         $grade['total_max_score'] = $total_max_score;
 
+        $active_qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id,$pb_player_id , $quiz_id,$question_id );
+        $timelimit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit']: null;
+        if($active_qustions_timestamp){
+            if($timelimit){
+                $timelimits = explode(':',$timelimit);
+                $limit = (($timelimits[0]*3600) + ($timelimits[1]*60) + ($timelimits[2]));
+                if($limit){
+                    $expect_time = new MongoDate(time() - $limit);
+                    if($expect_time > $active_qustions_timestamp[0]['questions_timestamp']){
+                        $this->response($this->error->setError('QUIZ_QUESTION_TIME_OUT'), 200);
+                    }
+                }
+            }
+            $this->quiz_model->update_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question_id, $option_id);
+        }else{
+            $this->quiz_model->insert_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question_id, $option_id , false);
+        }
+
         /* update player's score */
         $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id,
             $option_id, $score, $grade);
@@ -490,7 +513,7 @@ class Quiz extends REST2_Controller
         if (is_array($rewards)) {
             foreach ($rewards as $reward) {
                 $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $quiz,
-                    $this->validToken['domain_name'], $reward);
+                    $this->validToken['site_name'], $reward);
             }
         }
 
@@ -792,7 +815,7 @@ class Quiz extends REST2_Controller
         return $events;
     }
 
-    private function publish_event($client_id, $site_id, $pb_player_id, $cl_player_id, $quiz, $domain_name, $event)
+    private function publish_event($client_id, $site_id, $pb_player_id, $cl_player_id, $quiz, $site_name, $event)
     {
         $message = null;
         if ($event['value'] == 0 || empty($event['value'])) {
@@ -867,7 +890,7 @@ class Quiz extends REST2_Controller
                     'message' => $message['message'],
                     'level' => $event['value'],
                     'quiz' => $quiz,
-                ), $domain_name, $site_id);
+                ), $site_name, $site_id);
             } else {
                 if ($event['reward_type'] == 'badge') {
                     $this->node->publish(array(
@@ -880,7 +903,7 @@ class Quiz extends REST2_Controller
                         'message' => $message['message'],
                         'badge' => $event['reward_data'],
                         'quiz' => $quiz,
-                    ), $domain_name, $site_id);
+                    ), $site_name, $site_id);
                 } else {
                     $this->node->publish(array(
                         'client_id' => $client_id,
@@ -893,7 +916,7 @@ class Quiz extends REST2_Controller
                         'amount' => $event['value'],
                         'point' => $event['reward_type'],
                         'quiz' => $quiz,
-                    ), $domain_name, $site_id);
+                    ), $site_name, $site_id);
                 }
             }
         }

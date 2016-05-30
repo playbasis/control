@@ -14,11 +14,11 @@ class Store_org_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         // Searching
-        if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
+        if (isset($optionalParams['search']) && !empty($optionalParams['search'])) {
             $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['search'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
-        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+        if (isset($optionalParams['id']) && !empty($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
             try {
                 $id = new MongoId($optionalParams['id']);
@@ -26,7 +26,7 @@ class Store_org_model extends MY_Model
             } catch (Exception $e) {
             }
         }
-        if (isset($optionalParams['organize_id']) && !is_null($optionalParams['organize_id'])) {
+        if (isset($optionalParams['organize_id']) && !empty($optionalParams['organize_id'])) {
             //make sure 'id' is valid before passing here
             try {
                 $organize = new MongoId($optionalParams['organize_id']);
@@ -34,7 +34,7 @@ class Store_org_model extends MY_Model
             } catch (Exception $e) {
             }
         }
-        if (isset($optionalParams['parent_id']) && !is_null($optionalParams['parent_id'])) {
+        if (isset($optionalParams['parent_id']) && !empty($optionalParams['parent_id'])) {
             //make sure 'id' is valid before passing here
             try {
                 $parent_node_id = new MongoId($optionalParams['parent_id']);
@@ -44,7 +44,7 @@ class Store_org_model extends MY_Model
         }
 
         // Sorting
-        $sort_data = array('_id', 'name', 'status', 'description');
+        $sort_data = array('_id', 'name', 'status', 'description', 'date_added', 'date_modified');
 
         if (isset($optionalParams['order']) && (mb_strtolower($optionalParams['order']) == 'desc')) {
             $order = -1;
@@ -60,7 +60,7 @@ class Store_org_model extends MY_Model
 
         // Paging
         if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
-            if (isset($optionalParams['offset'])) {
+            if (!empty($optionalParams['offset'])) {
                 if ($optionalParams['offset'] < 0) {
                     $optionalParams['offset'] = 0;
                 }
@@ -68,7 +68,7 @@ class Store_org_model extends MY_Model
                 $optionalParams['offset'] = 0;
             }
 
-            if (isset($optionalParams['limit'])) {
+            if (!empty($optionalParams['limit'])) {
                 if ($optionalParams['limit'] < 1) {
                     $optionalParams['limit'] = 20;
                 }
@@ -91,11 +91,11 @@ class Store_org_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         // Searching
-        if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
+        if (isset($optionalParams['search']) && !empty($optionalParams['search'])) {
             $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['search'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
-        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+        if (isset($optionalParams['id']) && !empty($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
             try {
                 $id = new MongoId($optionalParams['id']);
@@ -105,7 +105,7 @@ class Store_org_model extends MY_Model
         }
 
         // Sorting
-        $sort_data = array('_id', 'name', 'status', 'description');
+        $sort_data = array('_id', 'name', 'status', 'description', 'date_added', 'date_modified');
 
         if (isset($optionalParams['order']) && (mb_strtolower($optionalParams['order']) == 'desc')) {
             $order = -1;
@@ -121,7 +121,7 @@ class Store_org_model extends MY_Model
 
         // Paging
         if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
-            if (isset($optionalParams['offset'])) {
+            if (!empty($optionalParams['offset'])) {
                 if ($optionalParams['offset'] < 0) {
                     $optionalParams['offset'] = 0;
                 }
@@ -129,7 +129,7 @@ class Store_org_model extends MY_Model
                 $optionalParams['offset'] = 0;
             }
 
-            if (isset($optionalParams['limit'])) {
+            if (!empty($optionalParams['limit'])) {
                 if ($optionalParams['limit'] < 1) {
                     $optionalParams['limit'] = 20;
                 }
@@ -164,13 +164,15 @@ class Store_org_model extends MY_Model
         }
     }
 
-    public function retrieveNodeByName($site_id, $name)
+    public function retrieveNodeByNameInOrg($client_id, $site_id, $name, $org_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
 
         $this->mongo_db->where('name', $name);
+        $this->mongo_db->where('organize', new MongoId($org_id));
         $this->mongo_db->where('deleted', false);
         $c = $this->mongo_db->get("playbasis_store_organize_to_client");
 
@@ -199,6 +201,24 @@ class Store_org_model extends MY_Model
         }
     }
 
+    public function retrieveOrganizeByName($client_id, $site_id, $name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->where('deleted', false);
+        $c = $this->mongo_db->get("playbasis_store_organize");
+
+        if ($c) {
+            return $c[0];
+        } else {
+            return null;
+        }
+    }
+
     public function createPlayerToNode($client_id, $site_id, $pb_player_id, $node_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -207,7 +227,7 @@ class Store_org_model extends MY_Model
             'client_id' => $client_id,
             'site_id' => $site_id,
             'pb_player_id' => $pb_player_id,
-            'node_id' => $node_id,
+            'node_id' => new MongoId($node_id),
 
         );
 
@@ -276,6 +296,20 @@ class Store_org_model extends MY_Model
         } else {
             return null;
         }
+    }
+
+    public function retrieveAllContentToNode($client_id, $site_id, $node_id = null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        if (isset($node_id)) {
+            $this->mongo_db->where('node_id', new MongoId($node_id));
+        }
+
+        return $c = $this->mongo_db->get("playbasis_store_organize_to_content");
     }
 
     public function deletePlayerToNode($client_id, $site_id, $pb_player_id, $node_id)
@@ -702,6 +736,22 @@ class Store_org_model extends MY_Model
             'pb_player_id' => $player_id,
         ));
         return $this->mongo_db->get('playbasis_store_organize_to_player');
+    }
+
+    public function getAssociatedNodeOfContent($client_id, $site_id, $content_id)
+    {
+
+        $this->mongo_db->select(array(
+            'node_id',
+            'roles',
+
+        ));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'content_id' => $content_id,
+        ));
+        return $this->mongo_db->get('playbasis_store_organize_to_content');
     }
 
     public function getRoleOfPlayer($client_id, $site_id, $player_id, $node_id)

@@ -2,8 +2,9 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 //define('STREAM_URL', 'https://dev.pbapp.net/activitystream/');
 define('STREAM_URL', 'https://node.pbapp.net/activitystream/');
-// define('STREAM_URL', 'http://localhost/activitystream/');
+//define('STREAM_URL', 'http://localhost/activitystream/');
 define('STREAM_PORT', 443);
+//define('STREAM_PORT', 3000);
 define('USERPASS', 'planes:capetorment852456');
 
 class Node_stream extends MY_Model
@@ -14,10 +15,10 @@ class Node_stream extends MY_Model
         $this->load->library('mongo_db');
     }
 
-    public function publish($data, $domain_name, $site_id)
+    public function publish($data, $site_name, $site_id)
     {
         //get chanel name
-        $chanelName = preg_replace('/(http[s]?:\/\/)?([w]{3}\.)?/', '', $domain_name);
+        $chanelName = preg_replace('/(http[s]?:\/\/)?([w]{3}\.)?/', '', $site_name);
         $chanelName = preg_replace('/\//', '\\', $chanelName);
         $message = json_encode($this->activityFeedFormatter($data, $site_id));
         $ch = curl_init();

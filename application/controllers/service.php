@@ -320,7 +320,7 @@ class Service extends REST2_Controller
     public function domain_get()
     {
         $data_token = $this->validToken;
-        $res['domain_name'] = $data_token['domain_name'];
+        $res['site_name'] = $data_token['site_name'];
         $this->response($this->resp->setRespond($res), 200);
     }
 

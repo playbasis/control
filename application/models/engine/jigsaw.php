@@ -54,7 +54,7 @@ class jigsaw extends MY_Model
         assert(is_array($config));
         assert(isset($config['param_name']));
         assert(isset($config['param_value']));
-        assert(isset($config['param_operation']));
+        if (!isset($config['param_operation'])) $config['param_operation'] = '='; // default is the equal operator
 
         $result = false;
         $param_name = $config['param_name'];

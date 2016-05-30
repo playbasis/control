@@ -42,21 +42,25 @@ class Store_org extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function contentRegister_post($node_id, $content_id)
+    public function contentRegister_post($node_id, $content_node_id)
     {
         $this->benchmark->mark('start');
 
-        if (empty($node_id) || empty($content_id)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id', 'content_id')), 200);
+        if (empty($node_id) || empty($content_node_id)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id', 'content_node_id')), 200);
         }
-        $this->checkValidContent($content_id);
+
+        $contents = $this->content_model->getContentByNodeId($this->client_id, $this->site_id, $content_node_id);
+        if(!isset($contents[0]['_id'])){
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
         $node_id = $this->findNodeId($node_id);
 
         $existed_content_organize = $this->store_org_model->retrieveContentToNode($this->client_id, $this->site_id,
-            $content_id, $node_id);
+            $contents[0]['_id'], $node_id);
         if (!$existed_content_organize) {
             $content_organize_id = $this->store_org_model->createContentToNode($this->client_id, $this->site_id,
-                $content_id, $node_id);
+                $contents[0]['_id'], $node_id);
         } else {
             $this->response($this->error->setError('STORE_ORG_CONTENT_ALREADY_EXISTS_WITH_NODE'), 200);
         }
@@ -66,33 +70,42 @@ class Store_org extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function playerRegisterByNodeName_post($name, $player_id)
+    public function playerRegisterByNodeName_post($name,$organize, $player_id)
     {
         $this->benchmark->mark('start');
 
-        if (empty($name) || empty($player_id)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('name', 'player_id')), 200);
+        if (empty($name) || empty($organize) || empty($player_id)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('name', 'organize_type','player_id')), 200);
         }
 
         if (!$this->validClPlayerId($player_id)) {
             $this->response($this->error->setError('USER_ID_INVALID'), 200);
         }
 
-        $node_id = $this->findNodeIdbyName($name);
+        $org_info = $this->store_org_model->retrieveOrganizeByName($this->client_id, $this->site_id, $organize);
+        if(!$org_info){
+            $this->response($this->error->setError('STORE_ORG_TYPE_NOT_FOUND'), 200);
+        }
+
+        $node_id = $this->store_org_model->retrieveNodeByNameInOrg($this->client_id, $this->site_id, $name, $org_info['_id']);
+        if (!$node_id) {
+            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND_IN_ORGANIZE'), 200);
+        }
+
         $pb_player_id = $this->findPbPlayerId($player_id);
 
         $existed_player_organize = $this->store_org_model->retrievePlayerToNode($this->client_id, $this->site_id,
-            $pb_player_id, $node_id);
+            $pb_player_id, $node_id['_id']);
         if (!$existed_player_organize) {
             $player_organize_id = $this->store_org_model->createPlayerToNode($this->client_id, $this->site_id,
-                $pb_player_id, $node_id);
+                $pb_player_id, $node_id['_id']);
         } else {
             $this->response($this->error->setError('STORE_ORG_PLAYER_ALREADY_EXISTS_WITH_NODE'), 200);
         }
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('processing_time' => $t, 'node_id' => $node_id)), 200);
+        $this->response($this->resp->setRespond(array('processing_time' => $t, 'node_id' => $node_id['_id'])), 200);
     }
 
     public function playerRemove_post($node_id, $player_id)
@@ -117,21 +130,25 @@ class Store_org extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function contentRemove_post($node_id, $content_id)
+    public function contentRemove_post($node_id, $content_node_id)
     {
         $this->benchmark->mark('start');
 
-        if (empty($node_id) || empty($content_id)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id', 'content_id')), 200);
+        if (empty($node_id) || empty($content_node_id)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id', 'content_node_id')), 200);
         }
-        $this->checkValidContent($content_id);
+
+        $contents = $this->content_model->getContentByNodeId($this->client_id, $this->site_id, $content_node_id);
+        if(!isset($contents[0]['_id'])){
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
         $node_id = $this->findNodeId($node_id);
 
         $existed_content_organize = $this->store_org_model->retrieveContentToNode($this->client_id, $this->site_id,
-            $content_id, $node_id);
+            $contents[0]['_id'], $node_id);
         if ($existed_content_organize) {
             $is_deleted = $this->store_org_model->deleteContentToNode($this->client_id, $this->site_id,
-                $content_id, $node_id);
+                $contents[0]['_id'], $node_id);
         } else {
             $this->response($this->error->setError('STORE_ORG_CONTENT_NOT_EXISTS_WITH_NODE'), 200);
         }
@@ -210,7 +227,7 @@ class Store_org extends REST2_Controller
         }
     }
 
-    public function contentRoleSet_post($node_id, $content_id)
+    public function contentRoleSet_post($node_id, $content_node_id)
     {
         $this->benchmark->mark('start');
 
@@ -220,19 +237,23 @@ class Store_org extends REST2_Controller
             die();
         }
 
-        if (empty($node_id) || empty($content_id)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id', 'content_id')), 200);
+        if (empty($node_id) || empty($content_node_id)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id', 'content_node_id')), 200);
         }
-        $this->checkValidContent($content_id);
+
+        $contents = $this->content_model->getContentByNodeId($this->client_id, $this->site_id, $content_node_id);
+        if(!isset($contents[0]['_id'])){
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
         $node_id = $this->findNodeId($node_id);
 
         $role_data = $this->makeRoleDict($role_name);
 
         $existed_content_organize = $this->store_org_model->retrieveContentToNode($this->client_id, $this->site_id,
-            $content_id, $node_id);
+            $contents[0]['_id'], $node_id);
         if ($existed_content_organize) {
             $is_updated = $this->store_org_model->setContentRoleToNode($this->client_id, $this->site_id,
-                $content_id, $node_id, $role_data);
+                $contents[0]['_id'], $node_id, $role_data);
         } else {
             $this->response($this->error->setError('STORE_ORG_CONTENT_NOT_EXISTS_WITH_NODE'), 200);
         }
@@ -242,7 +263,7 @@ class Store_org extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function contentRoleUnset_post($node_id, $content_id)
+    public function contentRoleUnset_post($node_id, $content_node_id)
     {
         $this->benchmark->mark('start');
 
@@ -252,20 +273,25 @@ class Store_org extends REST2_Controller
             die();
         }
 
-        if (empty($node_id) || empty($content_id)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id', '$content_id')), 200);
+        if (empty($node_id) || empty($content_node_id)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id', '$content_node_id')), 200);
         }
-        $this->checkValidContent($content_id);
+
+        $contents = $this->content_model->getContentByNodeId($this->client_id, $this->site_id, $content_node_id);
+        if(!isset($contents[0]['_id'])){
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
+
         $node_id = $this->findNodeId($node_id);
 
         $existed_content_organize = $this->store_org_model->retrieveContentToNode($this->client_id, $this->site_id,
-            $content_id, $node_id);
+            $contents[0]['_id'], $node_id);
         if ($existed_content_organize) {
             if (isset($existed_content_organize['roles']) && is_array($existed_content_organize['roles'])) {
                 foreach ($existed_content_organize['roles'] as $key => $value) {
                     if ($key === $role_name) {
                         $is_updated = $this->store_org_model->unsetContentRoleToNode($this->client_id, $this->site_id,
-                            $content_id, $node_id, $role_name);
+                            $contents[0]['_id'], $node_id, $role_name);
 
                         $this->benchmark->mark('end');
                         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -288,7 +314,7 @@ class Store_org extends REST2_Controller
 
         $query_data = $this->input->get(null, true);
 
-        if (isset($query_data['id'])) {
+        if (isset($query_data['id']) && !empty($query_data['id'])) {
             try {
                 $query_data['id'] = new MongoId($query_data['id']);
             } catch (Exception $e) {
@@ -324,7 +350,7 @@ class Store_org extends REST2_Controller
 
         $query_data = $this->input->get(null, true);
 
-        if (isset($query_data['id'])) {
+        if (isset($query_data['id']) && !empty($query_data['id'])) {
             try {
                 $query_data['id'] = new MongoId($query_data['id']);
             } catch (Exception $e) {
@@ -332,7 +358,7 @@ class Store_org extends REST2_Controller
             }
         }
 
-        if (isset($query_data['organize_id'])) {
+        if (isset($query_data['organize_id']) && !empty($query_data['organize_id'])) {
             try {
                 $query_data['organize_id'] = new MongoId($query_data['organize_id']);
             } catch (Exception $e) {
@@ -340,7 +366,7 @@ class Store_org extends REST2_Controller
             }
         }
 
-        if (isset($query_data['parent_id'])) {
+        if (isset($query_data['parent_id']) && !empty($query_data['parent_id'])) {
             try {
                 $query_data['parent_id'] = new MongoId($query_data['parent_id']);
             } catch (Exception $e) {
@@ -443,20 +469,6 @@ class Store_org extends REST2_Controller
             die();
         }
         return $node_id;
-    }
-
-    /**
-     * @param $name
-     * @return MongoId
-     */
-    private function findNodeIdByName($name)
-    {
-        $node_id = $this->store_org_model->retrieveNodeByName($this->site_id, $name);
-        if ($node_id === null) {
-            $this->response($this->error->setError('STORE_ORG_NODE_NOT_FOUND'), 200);
-            die();
-        }
-        return $node_id['_id'];
     }
 
     /**

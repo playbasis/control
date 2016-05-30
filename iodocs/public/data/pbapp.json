@@ -1237,6 +1237,13 @@
               "Description": "player id as used in client's website"
             },
             {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            },
+            {
               "Name": "filter",
               "Required": "N",
               "Default": "",
@@ -1807,7 +1814,15 @@
           "HTTPMethod": "GET",
           "URI": "/Quest",
           "RequiresOAuth": "N",
-          "parameters": []
+          "parameters": [
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            }
+          ]
         },
         {
           "MethodName": "Quest Info",
@@ -3174,7 +3189,7 @@
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Specify field to be sorted [_id, *name*, status]"
+              "Description": "Specify field to be sorted [_id, *name*, status, description, date_added, date_modified]"
             },
             {
               "Name": "order",
@@ -3239,7 +3254,7 @@
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Specify field to be sorted [_id, *name*, status]"
+              "Description": "Specify field to be sorted [_id, *name*, status, description, date_added, date_modified]"
             },
             {
               "Name": "order",
@@ -3752,7 +3767,7 @@
           "MethodName": "Add Content to Node",
           "Synopsis": "Add Content to specific Node",
           "HTTPMethod": "POST",
-          "URI": "/StoreOrg/nodes/:node_id/addContent/:content_id",
+          "URI": "/StoreOrg/nodes/:node_id/addContent/:content_node_id",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -3767,14 +3782,14 @@
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Node Id to add player"
+              "Description": "Node Id of store org to add player"
             },
             {
-              "Name": "content_id",
+              "Name": "content_node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Content Id to add to Node"
+              "Description": "node id of content"
             }
           ]
         },
@@ -3782,7 +3797,7 @@
           "MethodName": "Remove Content from Node",
           "Synopsis": "Remove Content from specific Node",
           "HTTPMethod": "POST",
-          "URI": "/StoreOrg/nodes/:node_id/removeContent/:content_id",
+          "URI": "/StoreOrg/nodes/:node_id/removeContent/:content_node_id",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -3797,14 +3812,14 @@
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Node Id to add player"
+              "Description": "Node Id of store org to add player"
             },
             {
-              "Name": "content_id",
+              "Name": "content_node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Content Id to add to Node"
+              "Description": "node id of content"
             }
           ]
         },
@@ -3812,7 +3827,7 @@
           "MethodName": "Set Content role",
           "Synopsis": "Set Content's organization role to specific Node",
           "HTTPMethod": "POST",
-          "URI": "/StoreOrg/nodes/:node_id/setContentRole/:content_id",
+          "URI": "/StoreOrg/nodes/:node_id/setContentRole/:content_node_id",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -3827,14 +3842,14 @@
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Node Id to set player's role"
+              "Description": "Node Id of store org to set player's role"
             },
             {
-              "Name": "content_id",
+              "Name": "content_node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Content Id to set content's role"
+              "Description": "node id of content"
             },
             {
               "Name": "role",
@@ -3849,7 +3864,7 @@
           "MethodName": "Unset Content role",
           "Synopsis": "Unset Content's organization role from specific Node",
           "HTTPMethod": "POST",
-          "URI": "/StoreOrg/nodes/:node_id/unsetContentRole/:content_id",
+          "URI": "/StoreOrg/nodes/:node_id/unsetContentRole/:content_node_id",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -3867,11 +3882,11 @@
               "Description": "Node Id to unset player's role"
             },
             {
-              "Name": "content_id",
+              "Name": "content_node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "Content Id to unset content's role"
+              "Description": "node id of content to unset content's role"
             },
             {
               "Name": "role",
@@ -3895,11 +3910,11 @@
           "RequiresOAuth": "N",
           "parameters": [
             {
-              "Name": "id",
+              "Name": "node_id",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Specific id of content"
+              "Description": "Specific node_id of content"
             },
             {
               "Name": "title",
@@ -3965,6 +3980,13 @@
               "Description": "Secret PIN given to content"
             },
             {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            },
+            {
               "Name": "player_id",
               "Required": "N",
               "Default": "",
@@ -3992,6 +4014,13 @@
           "RequiresOAuth": "N",
           "parameters": [
             {
+              "Name": "title",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific title of content"
+            },
+            {
               "Name": "category",
               "Required": "N",
               "Default": "",
@@ -3999,11 +4028,43 @@
               "Description": "Specific category name of content"
             },
             {
-              "Name": "player_exclude",
+              "Name": "date_check",
+              "Required": "N",
+              "Default": "false",
+              "Type": "string",
+              "Description": "Return content that available in this date range"
+            },
+            {
+              "Name": "pin",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Find content which no activity with player"
+              "Description": "Secret PIN given to content"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            },
+            {
+              "Name": "player_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "display content with given player id"
+            },
+            {
+              "Name": "only_new_content",
+              "Required": "N",
+              "Default": "false",
+              "Type": "enumerated",
+              "Description": "true = display new content with [player_id]",
+              "EnumeratedList": [
+                "true",
+                "false"
+              ]
             }
           ]
         },
@@ -4020,6 +4081,13 @@
               "Default": "",
               "Type": "string",
               "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "node_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific node_id of content"
             },
             {
               "Name": "title",
@@ -4092,6 +4160,13 @@
               "Description": "Secret PIN given to content"
             },
             {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to add (e.g. foo,bar)"
+            },
+            {
               "Name": "key",
               "Required": "N",
               "Default": "",
@@ -4111,7 +4186,7 @@
           "MethodName": "Update content",
           "Synopsis": "Update content by content ID",
           "HTTPMethod": "POST",
-          "URI": "/Content/:content_id/update",
+          "URI": "/Content/:node_id/update",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -4122,11 +4197,11 @@
               "Description": "access token returned from Auth"
             },
             {
-              "Name": "content_id",
+              "Name": "node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "content id as used in client's content"
+              "Description": "Specific node_id of content"
             },
             {
               "Name": "title",
@@ -4192,6 +4267,13 @@
               "Description": "Secret PIN given to content"
             },
             {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to update (e.g. foo,bar)"
+            },
+            {
               "Name": "key",
               "Required": "N",
               "Default": "",
@@ -4211,7 +4293,7 @@
           "MethodName": "Delete content",
           "Synopsis": "Delete existing content",
           "HTTPMethod": "POST",
-          "URI": "/Content/:content_id/delete",
+          "URI": "/Content/:node_id/delete",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -4222,11 +4304,11 @@
               "Description": "access token returned from Auth"
             },
             {
-              "Name": "content_id",
+              "Name": "node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "content id as used in client's content"
+              "Description": "node id as used in client's content"
             }
           ]
         },
@@ -4361,7 +4443,7 @@
           "MethodName": "Action Like",
           "Synopsis": "Player send Like action to content",
           "HTTPMethod": "POST",
-          "URI": "/Content/:content_id/player/:player_id/like",
+          "URI": "/Content/:node_id/player/:player_id/like",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -4372,11 +4454,11 @@
               "Description": "access token returned from Auth"
             },
             {
-              "Name": "content_id",
+              "Name": "node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "content id as used in client's content"
+              "Description": "node id as used in client's content"
             },
             {
               "Name": "player_id",
@@ -4384,6 +4466,20 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "key",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field keys separated by comma"
+            },
+            {
+              "Name": "value",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field values separated by comma"
             }
           ]
         },
@@ -4391,7 +4487,7 @@
           "MethodName": "Action Dislike",
           "Synopsis": "Player send Dislike action to content",
           "HTTPMethod": "POST",
-          "URI": "/Content/:content_id/player/:player_id/dislike",
+          "URI": "/Content/:node_id/player/:player_id/dislike",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -4402,11 +4498,11 @@
               "Description": "access token returned from Auth"
             },
             {
-              "Name": "content_id",
+              "Name": "node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "content id as used in client's content"
+              "Description": "node id as used in client's content"
             },
             {
               "Name": "player_id",
@@ -4414,6 +4510,20 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "key",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field keys separated by comma"
+            },
+            {
+              "Name": "value",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field values separated by comma"
             }
           ]
         },
@@ -4421,7 +4531,7 @@
           "MethodName": "Give feedback",
           "Synopsis": "Player give any feedback(s) to content",
           "HTTPMethod": "POST",
-          "URI": "/Content/:content_id/player/:player_id/feedback",
+          "URI": "/Content/:node_id/player/:player_id/feedback",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -4432,11 +4542,11 @@
               "Description": "access token returned from Auth"
             },
             {
-              "Name": "content_id",
+              "Name": "node_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "content id as used in client's content"
+              "Description": "node id as used in client's content"
             },
             {
               "Name": "player_id",
