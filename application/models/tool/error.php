@@ -346,8 +346,12 @@ class Error extends CI_Model
                 $errorData['message'] = "Content category not found";
                 $errorData['error_code'] = '2002';
                 break;
-            case 'CONTENT_NODE_ID__ALREADY_EXISTS':
+            case 'CONTENT_NODE_ID_ALREADY_EXISTS':
                 $errorData['message'] = "Content node_id already exists";
+                $errorData['error_code'] = '2003';
+                break;
+            case 'CONTENT_NODE_ID__SPACE_EXIST':
+                $errorData['message'] = "Content node_id is invalid,space exists";
                 $errorData['error_code'] = '2003';
                 break;
             case 'PIN_CODE_INVALID':

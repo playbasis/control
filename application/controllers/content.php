@@ -21,14 +21,6 @@ class Content extends REST2_Controller
         $query_data = $this->input->get(null, true);
         $exclude_ids = array();
 
-        if (isset($query_data['id'])) {
-            try {
-                $query_data['id'] = new MongoId($query_data['id']);
-            } catch (Exception $e) {
-                $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
-            }
-        }
-
         if (isset($query_data['player_id']) && !empty($query_data['player_id'])) {
             $pb_player_id = $this->player_model->getPlaybasisId(array(
                 'client_id' => $this->validToken['client_id'],
@@ -171,7 +163,7 @@ class Content extends REST2_Controller
         if(isset($query_data['pin']) && (!$result)){
             $this->response($this->error->setError('PIN_CODE_INVALID'), 200);
         }
-        if(isset($query_data['id']) && (!$result)){
+        if(isset($query_data['node_id']) && !empty($query_data['node_id']) && (!$result)){
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
 
@@ -226,7 +218,6 @@ class Content extends REST2_Controller
         $contentInfo['site_id'] = $this->validToken['site_id'];
 
         $required = $this->input->checkParam(array(
-            'node_id',
             'title',
             'summary',
             'detail',
@@ -238,12 +229,26 @@ class Content extends REST2_Controller
         }
 
         if($this->input->post('node_id')) {
-            $check_node_id = $this->content_model->findContent($this->client_id, $this->site_id, $this->input->post('node_id'));
-            if($check_node_id)
-            {
-                $this->response($this->error->setError('CONTENT_NODE_ID__ALREADY_EXISTS'), 200);
+            if (strpos($this->input->post('node_id'), ' ') > 0) {
+                $this->response($this->error->setError('CONTENT_NODE_ID__SPACE_EXIST'), 200);
             }
-            $contentInfo['node_id'] = $this->input->post('node_id');
+            else
+            {
+                $check_node_id = $this->content_model->findContent($this->client_id, $this->site_id, $this->input->post('node_id'));
+                if($check_node_id)
+                {
+                    $this->response($this->error->setError('CONTENT_NODE_ID_ALREADY_EXISTS'), 200);
+                }
+                $contentInfo['node_id'] = $this->input->post('node_id');
+            }
+        }
+        else{
+            do{
+                $random_node_id = new MongoId();
+                $random_node_id = $random_node_id . "";
+                $check_node_id = $this->content_model->findContent($this->client_id, $this->site_id, $random_node_id);
+            } while($check_node_id);
+            $contentInfo['node_id'] = $random_node_id;
         }
 
         $contentInfo['title']    = $this->input->post('title');
@@ -292,30 +297,26 @@ class Content extends REST2_Controller
         }
 
         $insert = $this->content_model->createContent($contentInfo);
+        $result_node_id = "";
+        if($insert){
+            $result_node_id = $contentInfo['node_id'];
+        }
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $insert, 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond(array('result' => $insert, 'node_id' => $result_node_id, 'processing_time' => $t)), 200);
     }
 
-    public function update_post($content_id = null)
+    public function update_post($node_id = null)
     {
         $this->benchmark->mark('start');
         $contentInfo = array();
 
-        try {
-            new MongoId($content_id);
-        } catch (Exception $e) {
-            $this->response($this->error->setError('PARAMETER_INVALID', array('_id')), 200);
+        if((!isset($node_id)  || empty($node_id)) && !$this->input->post('node_id')) {
+            $this->response($this->error->setError('PARAMETER_INVALID',array('node_id')), 200);
         }
-
-        if($this->input->post('node_id')){
-            $check_node_id = $this->content_model->findContent($this->client_id, $this->site_id, $this->input->post('node_id'), $content_id);
-            if($check_node_id)
-            {
-                $this->response($this->error->setError('CONTENT_NODE_ID__ALREADY_EXISTS'), 200);
-            }
-            $contentInfo['node_id'] = $this->input->post('node_id');
+        if((!isset($node_id) || empty($node_id)) && $this->input->post('node_id')){
+            $node_id = $this->input->post('node_id');
         }
 
         if($this->input->post('title')){
@@ -374,14 +375,14 @@ class Content extends REST2_Controller
             }
         }
 
-        $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'], $content_id, $contentInfo);
+        $update = $this->content_model->updateContent($this->validToken['client_id'], $this->validToken['site_id'], $contentInfo , $node_id);
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function action_post($action = null, $content_id = null, $player_id = null)
+    public function action_post($action = null, $node_id = null, $player_id = null)
     {
         $this->load->library('RestClient');
 
@@ -401,8 +402,20 @@ class Content extends REST2_Controller
         }
         $actionInfo['pb_player_id'] = $pb_player_id;
 
-        $contents = $this->checkValidContent($content_id);
-        $actionInfo['content_id'] = $contents[0]['_id'];
+        if(!isset($node_id) && !$this->input->post('node_id')) {
+            $this->response($this->error->setError('PARAMETER_INVALID',array('node_id')), 200);
+        }
+        if((!isset($node_id) || empty($node_id)) && $this->input->post('node_id')){
+            $node_id = $this->input->post('node_id');
+        }
+
+        $contents = $this->content_model->getContentByNodeId($this->validToken['client_id'], $this->validToken['site_id'], $node_id);
+        if(isset($contents[0]['_id']) && !empty($contents[0]['_id'])){
+            $actionInfo['content_id'] = $contents[0]['_id'];
+        }
+        else{
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
         $actionInfo['custom'] = null;
         $key = $this->input->post('key');
         if ($key) {
@@ -479,17 +492,25 @@ class Content extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function giveFeedback_post($content_id, $player_id)
+    public function giveFeedback_post($node_id, $player_id)
     {
         $this->benchmark->mark('start');
 
         $postData = $this->input->post();
 
-        if (empty($content_id)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('content_id')), 200);
+        if(!isset($node_id) && !$this->input->post('node_id')) {
+            $this->response($this->error->setError('PARAMETER_INVALID',array('node_id')), 200);
         }
-        $this->checkValidContent($content_id);
-        $data['content_id'] = $content_id;
+        if((!isset($node_id) || empty($node_id)) && $this->input->post('node_id')){
+            $node_id = $this->input->post('node_id');
+        }
+        $contents = $this->content_model->getContentByNodeId($this->validToken['client_id'], $this->validToken['site_id'], $node_id);
+        if(isset($contents[0]['_id']) && !empty($contents[0]['_id'])){
+            $data['content_id'] = $contents[0]['_id'];
+        }
+        else{
+            $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
+        }
 
         if (empty($player_id)) {
             $this->response($this->error->setError('PARAMETER_MISSING', array('$player_id')), 200);
@@ -531,18 +552,22 @@ class Content extends REST2_Controller
         $this->response($this->resp->setRespond(array('result'=> $result,'processing_time' => $t)), 200);
     }
 
-    public function deleteContent_post($content_id = null)
+    public function deleteContent_post($node_id = null)
     {
         $this->benchmark->mark('start');
         $client_id = $this->validToken['client_id'];
         $site_id = $this->validToken['site_id'];
-        $this->checkValidContent($content_id);
 
-        if(!$content_id){
-            $this->response($this->error->setError('PARAMETER_MISSING', array('content_id')), 200);
+        if(!$node_id){
+            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id')), 200);
         }
 
-        $this->content_model->deleteContent($client_id, $site_id, $content_id);
+        $result = $this->content_model->getContentByNodeId($client_id, $site_id, $node_id);
+        if($result){
+            $this->content_model->deleteContent($client_id, $site_id, $node_id);
+        } else {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('node_id')), 200);
+        }
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
