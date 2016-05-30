@@ -8,6 +8,7 @@ $lang['column_name'] = "Title";
 $lang['column_date_range'] = "Date Range";
 $lang['column_status'] = "Status";
 $lang['column_category'] = "Category";
+$lang['column_author'] = "Author";
 $lang['column_action'] = "Action";
 $lang['column_tags'] = "Tag(s)";
 $lang['column_organization'] = "Organization";

@@ -49,6 +49,7 @@
                                             <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_id'); ?></td>
                                             <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
                                             <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('column_category'); ?></td>
+                                            <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('column_author'); ?></td>
                                             <td rowspan="2" class="center"
                                                 style="width:150px;"><?php echo $this->lang->line('column_date_range'); ?></td>
                                             <td rowspan="2" class="center" style="width:150px;"><?php echo $this->lang->line('column_tags'); ?></td>
@@ -73,6 +74,7 @@
                                             <td></td>
                                             <td></td>
                                             <td class="right"><input title="name" type="text" name="filter_title" value="<?php echo isset($_GET['title']) ? $_GET['title'] : "" ?>" style="width:50%;"/></td>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -110,6 +112,7 @@
                                                                                  data-toggle="tooltip"><i class="icon-warning-sign"></i></a>
                                                             </span><?php } ?></td>
                                                     <td class="right"><?php echo isset($content['category']['name']) ? $content['category']['name'] : ""; ?></td>
+                                                    <td class="right"><?php echo isset($content['player_id']) ? $content['player_id'] : ""; ?></td>
                                                     <td class="right"><?php echo isset($content['date_start']) ? dateMongotoReadable($content['date_start']) : "N/A"; ?>&nbsp;-&nbsp;<?php echo isset($content['date_end']) ? dateMongotoReadable($content['date_end']) : "N/A"; ?></td>
                                                     <td class="right"><?php echo (isset($content['tags']) && $content['tags']) ? implode($content['tags'],',') : null; ?></td>
                                                     <td class="right"><?php echo isset($content['status']) ? ( $content['status'] ? "Enable" : "Disabled") : "N/A"; ?></td>
@@ -136,7 +139,7 @@
                                         } else {
                                             ?>
                                             <tr>
-                                                <td colspan="11" class="center">
+                                                <td colspan="12" class="center">
                                                     <?php echo $this->lang->line('text_empty_content'); ?>
                                                 </td>
                                             </tr>

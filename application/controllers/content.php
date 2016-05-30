@@ -386,6 +386,12 @@ class Content extends MY_Controller
                         $content['category'] = $this->Content_model->retrieveContentCategoryById($content['category']);
                     }
                 }
+                if (array_key_exists('pb_player_id', $content)) {
+                    if($content['pb_player_id']){
+                        $pb_player = $this->Player_model->getPlayerById($content['pb_player_id']);
+                        $content['player_id'] = $pb_player['cl_player_id'];
+                    }
+                }
             }
 
             if ($this->User_model->hasPermission('access', 'store_org') &&
@@ -559,6 +565,14 @@ class Content extends MY_Controller
             $this->data['category'] = $content_info['category'];
         } else {
             $this->data['category'] = '';
+        }
+
+        if ($this->input->post('player_id')) {
+            $this->data['player_id'] = $this->input->post('player_id');
+        } elseif (isset($content_info['player_id'])) {
+            $this->data['player_id'] = $content_info['player_id'];
+        } else {
+            $this->data['player_id'] = '';
         }
 
         if ($this->input->post('date_start')) {
