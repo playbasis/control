@@ -26,14 +26,7 @@ class Content_model extends MY_Model
         if (isset($optionalParams['category']) && !empty($optionalParams['category'])) {
             $this->mongo_db->where('category', $optionalParams['category']);
         }
-        if (isset($optionalParams['id']) && !empty($optionalParams['id'])) {
-            try {
-                $id = new MongoId($optionalParams['id']);
-                $this->mongo_db->where('_id', $id);
-            } catch (Exception $e) {
-                return null;
-            }
-        }
+
         if (isset($optionalParams['pin']) && !empty($optionalParams['pin'])){
             $this->mongo_db->where('pin', $optionalParams['pin']);
         }
@@ -247,11 +240,11 @@ class Content_model extends MY_Model
         return $insert;
     }
 
-    public function updateContent($client_id, $site_id, $content_id, $data)
+    public function updateContent($client_id, $site_id, $data , $node_id)
     {
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
-        $this->mongo_db->where('_id', new MongoID($content_id));
+        $this->mongo_db->where('node_id', $node_id);
 
         $this->mongo_db->set($data);
 
@@ -319,11 +312,11 @@ class Content_model extends MY_Model
         return $update;
     }
 
-    public function deleteContent($client_id, $site_id, $content_id)
+    public function deleteContent($client_id, $site_id, $node_id)
     {
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
-        $this->mongo_db->where('_id', new MongoId($content_id));
+        $this->mongo_db->where('node_id', $node_id);
 
         $this->mongo_db->set(array(
             'deleted' => true
@@ -352,7 +345,7 @@ class Content_model extends MY_Model
         return $result;
     }
 
-    public function findContent($client_id, $site_id, $node_id, $content_id=null)
+    public function getContentByNodeId($client_id, $site_id, $node_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $regex = new MongoRegex("/" . preg_quote(mb_strtolower($node_id)) . "/i");
@@ -360,9 +353,20 @@ class Content_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('node_id', $regex);
         $this->mongo_db->where('deleted', false);
-        if($content_id){
-            $this->mongo_db->where_ne('_id', new MongoId($content_id));
-        }
+
+        $result = $this->mongo_db->get('playbasis_content_to_client');
+        return !empty($result) ? $result : array();
+    }
+
+    public function findContent($client_id, $site_id, $node_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $regex = new MongoRegex("/" . preg_quote(mb_strtolower($node_id)) . "/i");
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('node_id', $regex);
+        $this->mongo_db->where('deleted', false);
+
         $c = $this->mongo_db->count('playbasis_content_to_client');
         return $c > 0;
     }
