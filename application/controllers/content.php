@@ -160,10 +160,10 @@ class Content extends REST2_Controller
         }else{
             $result = $contents;
         }
-        if(isset($query_data['pin']) && (!$result)){
+        if(isset($query_data['pin']) && $query_data['pin'] && !$result){
             $this->response($this->error->setError('PIN_CODE_INVALID'), 200);
         }
-        if(isset($query_data['node_id']) && !empty($query_data['node_id']) && (!$result)){
+        if(isset($query_data['node_id']) && $query_data['node_id'] && !$result){
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
 
