@@ -438,27 +438,4 @@ class Content_model extends MY_Model
         }
         return $return;
     }
-
-    public function countContent($client_id, $site_id, $query_data)
-    {
-        if (isset($query_data['player_exclude']) && !is_null($query_data['player_exclude'])) {
-            $this->mongo_db->where_not_in('_id', $query_data['player_exclude']);
-        }
-        if (isset($query_data['category']) && !is_null($query_data['category'])) {
-            $this->mongo_db->where('category', $query_data['category']['_id']);
-        }
-
-        try {
-            $this->mongo_db->where('client_id', new MongoID($client_id));
-            $this->mongo_db->where('site_id', new MongoID($site_id));
-        } catch (Exception $e) {
-            return false;
-        };
-
-        $this->mongo_db->where('status', true);
-        $this->mongo_db->where('deleted', false);
-
-        $result = $this->mongo_db->count('playbasis_content_to_client');
-        return $result;
-    }
 }

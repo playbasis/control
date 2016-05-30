@@ -4014,6 +4014,13 @@
           "RequiresOAuth": "N",
           "parameters": [
             {
+              "Name": "title",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific title of content"
+            },
+            {
               "Name": "category",
               "Required": "N",
               "Default": "",
@@ -4021,11 +4028,43 @@
               "Description": "Specific category name of content"
             },
             {
-              "Name": "player_exclude",
+              "Name": "date_check",
+              "Required": "N",
+              "Default": "false",
+              "Type": "string",
+              "Description": "Return content that available in this date range"
+            },
+            {
+              "Name": "pin",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "Find content which no activity with player"
+              "Description": "Secret PIN given to content"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            },
+            {
+              "Name": "player_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "display content with given player id"
+            },
+            {
+              "Name": "only_new_content",
+              "Required": "N",
+              "Default": "false",
+              "Type": "enumerated",
+              "Description": "true = display new content with [player_id]",
+              "EnumeratedList": [
+                "true",
+                "false"
+              ]
             }
           ]
         },
