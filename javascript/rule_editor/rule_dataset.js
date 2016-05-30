@@ -61,6 +61,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         case 'sms': template = jsonString_Sms; break;
                         case 'push': template = jsonString_Push; break;
                         case 'level' : template = jsonString_levelCondition;break;
+                        case 'webhook' : template = jsonString_Webhook;break;
                     }
                     return {
                         'hidden': '<input type="text" class="hide" value="'+v.value+'" />',
@@ -198,6 +199,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         case 'sms': template = jsonString_Sms; break;
                         case 'push': template = jsonString_Push; break;
                         case 'level' : template = jsonString_levelCondition;break;
+                        case 'webhook' : template = jsonString_Webhook;break;
                     }
                     ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type + '">' + get_selected_option_text(template, v.value) + '</span>');
                 }

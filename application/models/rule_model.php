@@ -327,7 +327,7 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function getFeedbackJigsawList($siteId, $clientId, $emailList, $smsList, $pushList)
+    public function getFeedbackJigsawList($siteId, $clientId, $emailList, $smsList, $pushList, $webhookList=null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $output = array();
@@ -431,6 +431,41 @@ class Rule_model extends MY_Model
                     array(
                         'field_type' => 'select',
                         'label' => 'Template id',
+                        'param_name' => 'template_id',
+                        'placeholder' => 'Template id',
+                        'sortOrder' => 0,
+                        'tooltips' => 'which template to use',
+                        'value' => 0,
+                        'type' => $type,
+                    ),
+                ),
+                'id' => $type,
+                'category' => 'FEEDBACK',
+            );
+        }
+
+        if ($this->getFeatureExistByClientId($clientId, 'webhook') && !empty($webhookList)) {
+            $type = 'webhook';
+            $output[] = array(
+                '_id' => $type,
+                'name' => $type,
+                'description' => 'Send ' . $type,
+                'sort_order' => 10,
+                'status' => 1,
+                'specific_id' => $type,
+                'dataSet' => array(
+                    array(
+                        'field_type' => 'hidden',
+                        'label' => 'feedback_name',
+                        'param_name' => 'feedback_name',
+                        'placeholder' => 'feedback_name',
+                        'sortOrder' => 0,
+                        'tooltips' => 'feedback_name',
+                        'value' => 'sms',
+                    ),
+                    array(
+                        'field_type' => 'select',
+                        'label' => 'Webhook template',
                         'param_name' => 'template_id',
                         'placeholder' => 'Template id',
                         'sortOrder' => 0,
