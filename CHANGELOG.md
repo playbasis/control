@@ -1,8 +1,152 @@
 # Change Log
 
-## [2.9.0](https://github.com/playbasis/api/tree/2.9.0)
+## [2.10.0](https://github.com/playbasis/api/tree/2.10.0) (2016-05-30)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0...2.10.0)
 
-[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.12...2.9.0)
+**Implemented enhancements:**
+
+- revise "get content count" to compatable with "get content count" [\#260](https://github.com/playbasis/api/pull/260) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.10.0-alpha.14](https://github.com/playbasis/api/tree/2.10.0-alpha.14) (2016-05-30)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.15...2.10.0-alpha.14)
+
+## [2.10.0-alpha.15](https://github.com/playbasis/api/tree/2.10.0-alpha.15) (2016-05-30)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.13...2.10.0-alpha.15)
+
+**Implemented enhancements:**
+
+- Revise content id with node id [\#259](https://github.com/playbasis/api/pull/259) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.10.0-alpha.13](https://github.com/playbasis/api/tree/2.10.0-alpha.13) (2016-05-27)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.12...2.10.0-alpha.13)
+
+**Implemented enhancements:**
+
+- Add date sorting in store org [\#257](https://github.com/playbasis/api/pull/257) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.10.0-alpha.12](https://github.com/playbasis/api/tree/2.10.0-alpha.12) (2016-05-27)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.11...2.10.0-alpha.12)
+
+**Implemented enhancements:**
+
+- Enhance api to support empty value [\#254](https://github.com/playbasis/api/pull/254) ([niti-playbasis](https://github.com/niti-playbasis))
+- Create project\_id for content [\#253](https://github.com/playbasis/api/pull/253) ([piya-playbasis](https://github.com/piya-playbasis))
+- Return error\_id when content\_not\_found [\#251](https://github.com/playbasis/api/pull/251) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.10.0-alpha.11](https://github.com/playbasis/api/tree/2.10.0-alpha.11) (2016-05-25)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.10...2.10.0-alpha.11)
+
+**Fixed bugs:**
+
+- Fix bug when list content with store\_org [\#250](https://github.com/playbasis/api/pull/250) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.10.0-alpha.10](https://github.com/playbasis/api/tree/2.10.0-alpha.10) (2016-05-25)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.9...2.10.0-alpha.10)
+
+**Implemented enhancements:**
+
+- Set Logo for every player visible page [\#248](https://github.com/playbasis/api/pull/248) ([piya-playbasis](https://github.com/piya-playbasis))
+- Support time setting for cron import [\#247](https://github.com/playbasis/api/pull/247) ([niti-playbasis](https://github.com/niti-playbasis))
+
+**Fixed bugs:**
+
+- Initialize $content\_id to be array\(\) instead of null [\#249](https://github.com/playbasis/api/pull/249) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.10.0-alpha.9](https://github.com/playbasis/api/tree/2.10.0-alpha.9) (2016-05-23)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.4...2.10.0-alpha.9)
+
+## [2.9.4](https://github.com/playbasis/api/tree/2.9.4) (2016-05-23)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.8...2.9.4)
+
+**Implemented enhancements:**
+
+- Hotfix/2.9.4 [\#246](https://github.com/playbasis/api/pull/246) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.9.4 [\#246](https://github.com/playbasis/api/pull/246) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.10.0-alpha.8](https://github.com/playbasis/api/tree/2.10.0-alpha.8) (2016-05-23)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.7...2.10.0-alpha.8)
+
+**Fixed bugs:**
+
+- Fix bug for hardcoding change directory at import [\#245](https://github.com/playbasis/api/pull/245) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.10.0-alpha.7](https://github.com/playbasis/api/tree/2.10.0-alpha.7) (2016-05-23)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.6...2.10.0-alpha.7)
+
+**Implemented enhancements:**
+
+- To support reset quiz for time limit question [\#244](https://github.com/playbasis/api/pull/244) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.10.0-alpha.6](https://github.com/playbasis/api/tree/2.10.0-alpha.6) (2016-05-19)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.5...2.10.0-alpha.6)
+
+**Implemented enhancements:**
+
+- Update content to get content with player associate with store\_org [\#243](https://github.com/playbasis/api/pull/243) ([niti-playbasis](https://github.com/niti-playbasis))
+- Should return error if player takes too long to provide an answer to … [\#242](https://github.com/playbasis/api/pull/242) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.10.0-alpha.5](https://github.com/playbasis/api/tree/2.10.0-alpha.5) (2016-05-19)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.4...2.10.0-alpha.5)
+
+**Implemented enhancements:**
+
+- Cron to support import content [\#241](https://github.com/playbasis/api/pull/241) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Modified import "cron" to have same result with "adhoc" [\#240](https://github.com/playbasis/api/pull/240) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.10.0-alpha.4](https://github.com/playbasis/api/tree/2.10.0-alpha.4) (2016-05-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.3...2.10.0-alpha.4)
+
+**Implemented enhancements:**
+
+- Support label in content [\#237](https://github.com/playbasis/api/pull/237) ([niti-playbasis](https://github.com/niti-playbasis))
+- To log when player get\_question / answer to question\_to\_player [\#236](https://github.com/playbasis/api/pull/236) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.9.3](https://github.com/playbasis/api/tree/2.9.3) (2016-05-17)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.3...2.9.3)
+
+**Fixed bugs:**
+
+- Hotfix/2.9.3 [\#235](https://github.com/playbasis/api/pull/235) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.10.0-alpha.3](https://github.com/playbasis/api/tree/2.10.0-alpha.3) (2016-05-17)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.2...2.10.0-alpha.3)
+
+**Implemented enhancements:**
+
+- Support label in quest [\#234](https://github.com/playbasis/api/pull/234) ([niti-playbasis](https://github.com/niti-playbasis))
+- Modified API to add player to node\(by node's name\) with organize type [\#233](https://github.com/playbasis/api/pull/233) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.10.0-alpha.2](https://github.com/playbasis/api/tree/2.10.0-alpha.2) (2016-05-16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.2_Fix_bug_PHP_internal_error_when_trying_to_like_and_dislike_content...2.10.0-alpha.2)
+
+## [2.9.2_Fix_bug_PHP_internal_error_when_trying_to_like_and_dislike_content](https://github.com/playbasis/api/tree/2.9.2_Fix_bug_PHP_internal_error_when_trying_to_like_and_dislike_content) (2016-05-16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.1_fix_bug_php_error_when_trying_to_get_player_detail...2.9.2_Fix_bug_PHP_internal_error_when_trying_to_like_and_dislike_content)
+
+**Implemented enhancements:**
+
+- Modify an endpoint for storing custom field in content like/dislike [\#231](https://github.com/playbasis/api/pull/231) ([niti-playbasis](https://github.com/niti-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.9.2 fix bug php internal error when trying to like and dislike content [\#232](https://github.com/playbasis/api/pull/232) ([piya-playbasis](https://github.com/piya-playbasis))
+- Modify an endpoint for storing custom field in content like/dislike [\#231](https://github.com/playbasis/api/pull/231) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.9.1_fix_bug_php_error_when_trying_to_get_player_detail](https://github.com/playbasis/api/tree/2.9.1_fix_bug_php_error_when_trying_to_get_player_detail) (2016-05-16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.1...2.9.1_fix_bug_php_error_when_trying_to_get_player_detail)
+
+**Fixed bugs:**
+
+- Hotfix/2.9.1 fix bug php error when trying to get player detail [\#230](https://github.com/playbasis/api/pull/230) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/fix bug php error when trying to get player detail [\#229](https://github.com/playbasis/api/pull/229) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.10.0-alpha.1](https://github.com/playbasis/api/tree/2.10.0-alpha.1) (2016-05-16)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.9.0...2.10.0-alpha.1)
+
+## [v2.9.0](https://github.com/playbasis/api/tree/v2.9.0) (2016-05-16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.9.0-alpha.12...v2.9.0)
 
 **Fixed bugs:**
 
@@ -236,13 +380,13 @@
 - - Merge generate content PIN into create/update content [\#193](https://github.com/playbasis/api/pull/193) ([niti-playbasis](https://github.com/niti-playbasis))
 
 ## [2.8.0-alpha.1](https://github.com/playbasis/api/tree/2.8.0-alpha.1) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...2.8.0-alpha.1)
-
-## [2.7.6](https://github.com/playbasis/api/tree/2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.8.0-alpha.1)
 
 ## [v2.7.6](https://github.com/playbasis/api/tree/v2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...v2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...v2.7.6)
+
+## [2.7.6](https://github.com/playbasis/api/tree/2.7.6) (2016-04-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...2.7.6)
 
 **Implemented enhancements:**
 
@@ -1711,13 +1855,13 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.3...2.1.24-alpha.4)
 
 ## [2.1.24-alpha.3](https://github.com/playbasis/api/tree/2.1.24-alpha.3) (2015-04-27)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.3)
-
-## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.3)
 
 ## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.2)
+
+## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.1)
 
 ## [2.1.20-alpha.1](https://github.com/playbasis/api/tree/2.1.20-alpha.1) (2015-03-18)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.19-alpha.1...2.1.20-alpha.1)
