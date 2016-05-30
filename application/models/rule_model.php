@@ -461,7 +461,7 @@ class Rule_model extends MY_Model
                         'placeholder' => 'feedback_name',
                         'sortOrder' => 0,
                         'tooltips' => 'feedback_name',
-                        'value' => 'sms',
+                        'value' => 'webhook',
                     ),
                     array(
                         'field_type' => 'select',
