@@ -471,11 +471,11 @@ class import extends MY_Controller
         if (!$pb_player_id) {
             return $this->lang->line('error_user_not_found');
         }
-        if (isset($param['date']) && !is_null($param['date'])) {
+        if (isset($param['date']) && $param['date']) {
             $this->_api->setHeader('Date', $param['date']);
         }
         $customs = array();
-        if (isset($param['customs']) && !is_null($param['customs'])) {
+        if (isset($param['customs']) && $param['customs']) {
             $custom_params = explode('|', $param['customs']);
             foreach ($custom_params as $custom_param)  {
                 $keyAndValue = explode('=', $custom_param);
@@ -508,7 +508,7 @@ class import extends MY_Controller
         $node_name = isset($param['node_name']) ? $param['node_name'] : null;
         $organize_type = isset($param['organize_type']) ? $param['organize_type'] : null;
         $result = $this->_api->addPlayerToNodeByName($player_id, $node_name, $organize_type);
-        if($result->message == "Success" && isset($param['role']) && !is_null($param['role'])){
+        if($result->message == "Success" && isset($param['role']) && $param['role']){
             $roles = explode('|', $param['role']);
             foreach($roles as $role) {
                 $this->postSetPlayerRole($player_id, $result->response->node_id, $role);
