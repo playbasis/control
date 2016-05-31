@@ -32,7 +32,7 @@ class Client_model extends MY_Model
         return $total;
     }
 
-    public function getClients($data)
+    public function getClients($data, $query_data = null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -45,6 +45,10 @@ class Client_model extends MY_Model
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        if (isset($query_data) && !empty($query_data)){
+            $this->mongo_db->where($query_data);
         }
 
         $sort_data = array(
