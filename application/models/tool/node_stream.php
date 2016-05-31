@@ -102,6 +102,10 @@ class Node_stream extends MY_Model
 
     private function getPlayerInfo($pb_player_id, $site_id)
     {
+        if(!$pb_player_id){
+            return array();
+        }
+
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
             'cl_player_id',
@@ -110,7 +114,7 @@ class Node_stream extends MY_Model
             'image',
             'username'
         ));
-        $this->mongo_db->where('_id', $pb_player_id);
+        $this->mongo_db->where('_id', new MongoId($pb_player_id));
         $result = $this->mongo_db->get('playbasis_player');
         return ($result) ? $result[0] : $result;
     }
