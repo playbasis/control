@@ -3,9 +3,9 @@
 $lang['heading_title']                  = 'Item List';
 
 // Text
-$lang['text_success']                   = 'You have successfully created a item!';
+$lang['text_success']                   = 'You have successfully created an item!';
 $lang['text_success_delete']            = 'You have successfully deleted item(s)!';
-$lang['text_success_update']            = 'You have successfully updated a item!';
+$lang['text_success_update']            = 'You have successfully updated an item!';
 $lang['text_default']                   = 'Default';
 $lang['text_image_manager']             = 'Image Manager';
 $lang['text_browse']                    = 'Browse Files';
