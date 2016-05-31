@@ -15,7 +15,7 @@ $lang['text_textarea']       = 'Textarea';
 $lang['text_date']           = 'Date';
 $lang['text_datetime']       = 'Date &amp; Time';
 $lang['text_time']           = 'Time';
-$lang['text_badge']           = 'Badge';
+$lang['text_badge']           = 'item';
 $lang['text_reward']           = 'Reward';
 $lang['text_interval']           = 'Interval';
 
@@ -40,7 +40,7 @@ $lang['entry_sort_order']			= 'Sort Order:';
 
 $lang['entry_day']           	 		= 'Day:';
 $lang['entry_month']            		= 'Month:';
-$lang['entry_badge']			 		= 'Badge:';
+$lang['entry_badge']			 		= 'Items:';
 $lang['entry_time']				 	= 'Time: <span class="help">Day/Hours/Minute</span>';
 $lang['entry_reward']			 		= 'Reward:';
 $lang['entry_text']             		= 'Text:';

@@ -146,7 +146,7 @@ class Badge extends MY_Controller
 
                 }
             } else {
-                $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_badge'));
+                $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_item'));
                 redirect('/badge/insert', 'refresh');
             }
         }

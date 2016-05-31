@@ -3,15 +3,15 @@
 $lang['heading_title']                  = 'Item List';
 
 // Text
-$lang['text_success']                   = 'You have successfully created a badge!';
-$lang['text_success_delete']            = 'You have successfully deleted badge(s)!';
-$lang['text_success_update']            = 'You have successfully updated a badge!';
+$lang['text_success']                   = 'You have successfully created a item!';
+$lang['text_success_delete']            = 'You have successfully deleted item(s)!';
+$lang['text_success_update']            = 'You have successfully updated a item!';
 $lang['text_default']                   = 'Default';
 $lang['text_image_manager']             = 'Image Manager';
 $lang['text_browse']                    = 'Browse Files';
 $lang['text_clear']                     = 'Clear Image';
-$lang['text_reach_limit_badge']         = 'You have reached the limit of creating badges, please contact Playbasis';
-$lang['text_no_results']                = 'You do not have any badges created';
+$lang['text_reach_limit_item']         = 'You have reached the limit of creating items, please contact Playbasis';
+$lang['text_no_results']                = 'You do not have any items created';
 
 // Tab
 $lang['tab_item']                       = 'Item';
@@ -61,12 +61,12 @@ $lang['button_filter']                  = 'Filter';
 $lang['button_clear_filter']            = 'Clear';
 
 $lang['entry_client']                   = 'Type Client Name:';
-$lang['text_no_client']                 = 'No client assign to this badge';
+$lang['text_no_client']                 = 'No client assign to this item';
 
 // Error 
 $lang['error_warning']                  = 'Warning: Please check the form carefully for errors!';
-$lang['error_permission']               = 'Warning: You do not have permission to modify badges!';
+$lang['error_permission']               = 'Warning: You do not have permission to modify item!';
 $lang['error_access']                   = 'Warning: You do not have permission to access this page!';
 $lang['error_name']                     = 'Category Name must be between 2 and 32 characters!';
-$lang['error_limit']                    = 'You have reached badges limit.';
+$lang['error_limit']                    = 'You have reached Item limit.';
 ?>

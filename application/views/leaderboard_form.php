@@ -201,7 +201,7 @@
                                                             <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>
                                                             <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CURRENCY</a></li>
                                                             <li class="add-goods"><a tabindex="-1" href="javascript:void(0)">GOODS</a></li>
-                                                            <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                                                            <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">ITEM</a></li>
                                                             <?php if( isset($emails) && $emails !== null ){ ?>
                                                                 <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
                                                             <?php } ?>
@@ -278,7 +278,7 @@
                                                         <?php } ?>
                                                         <?php if(isset($rewards[$key]['badges'])){ ?>
                                                             <div class="badges-wrapper rewards-type well">
-                                                                <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
+                                                                <h3>Items  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Items</a></h3>
                                                                 <div class="item-container">
                                                                     <?php foreach($rewards[$key]['badges'] as $badge){ ?>
                                                                         <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['reward_id'] ?>">
@@ -414,7 +414,7 @@
 <div id="modal-select-badge" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Select Badge</h3>
+        <h3 id="myModalLabel">Select Item</h3>
     </div>
     <div class="modal-body">
         <div class="select-list">
@@ -771,7 +771,7 @@
                                               <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>\
                                               <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CURRENCY</a></li>\
                                               <li class="add-goods"><a tabindex="-1" href="javascript:void(0)">GOODS</a></li>\
-                                              <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>\
+                                              <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">ITEM</a></li>\
                                             <?php if( $emails !== null ){ ?>
                                                 <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>\
                                             <?php } ?>
@@ -1136,7 +1136,7 @@
         var id = target.id || null;
         var parent = target.parent || 'quest';
 
-        var badgesHead = '<h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>';
+        var badgesHead = '<h3>Items  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Items</a></h3>';
         var badgesHtml = '<div class="badges-wrapper '+type+'-type well">'+badgesHead+'<div class="item-container"></div></div>';
 
         target.html = badgesHtml;
@@ -1611,7 +1611,7 @@
                     var typeElement = checkTypeReward(type);
 
                     inputHtml = '<input type="text" name ="'+parent+'['+taget_id+'][custompoints]['+id+']['+typeElement+'_value]" placeholder="Value" value="1">\
-                            <input type="hidden" name = "'+parent+'['+taget_id+'][custompoints]['+id+']['+typeElement+'_type]" value = "CURRENCY"/>\
+                            <input type="hidden" name = "'+parent+'['+taget_id+'][custompoints]['+id+']['+typeElement+'_type]" value = "CUSTOM_POINT"/>\
                             <input type="hidden" name = "'+parent+'['+taget_id+'][custompoints]['+id+']['+typeElement+'_id]" value = "'+id+'"/>';
 
 
