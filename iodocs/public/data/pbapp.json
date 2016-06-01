@@ -3991,7 +3991,7 @@
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "all = Display all non-deleted content"
+              "Description": "all = display all non-deleted content, true = display active content, false = display inactive content"
             },
             {
               "Name": "player_id",
@@ -4060,7 +4060,7 @@
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "all = Display all non-deleted content"
+              "Description": "all = display all non-deleted content, true = display active content, false = display inactive content"
             },
             {
               "Name": "player_id",
