@@ -1086,7 +1086,7 @@ class User extends MY_Controller
             $app = $this->App_model->getApp($player['site_id']);
             $this->data['app_name'] = $app['site_name'];
             $this->data['thumb'] = "";
-            if ($app['image']) {
+            if (isset($app['image']) && !empty($app['image'])) {
                 $info = pathinfo($app['image']);
                 if (isset($info['extension'])) {
                     $extension = $info['extension'];
@@ -1095,7 +1095,7 @@ class User extends MY_Controller
                     $this->data['thumb'] = S3_IMAGE . $new_image;
                 }
             }
-            $this->data['site_color'] =  isset($site_info['app_color']) ? $site_info['app_color'] : "#86559c";
+            $this->data['site_color'] =  (isset($site_info['app_color']) && !empty($site_info['app_color'])) ? $site_info['app_color'] : "#86559c";
             $this->data['referral_code'] = $code;
         }
         $this->data['main'] = 'partial/referral_partial';
@@ -1361,7 +1361,7 @@ class User extends MY_Controller
                 if($player_info){
                     $site_info = $this->App_model->getApp($player_info['site_id']);
                     $this->data['thumb'] = "";
-                    if ($site_info['image']) {
+                    if (isset($site_info['image']) && !empty($site_info['image'])) {
                         $info = pathinfo($site_info['image']);
                         if (isset($info['extension'])) {
                             $extension = $info['extension'];
@@ -1370,7 +1370,7 @@ class User extends MY_Controller
                             $this->data['thumb'] = S3_IMAGE . $new_image;
                         }
                     }
-                    $this->data['site_color'] =  isset($site_info['app_color']) ? $site_info['app_color'] : "#86559c";
+                    $this->data['site_color'] =  (isset($site_info['app_color']) && !empty($site_info['app_color'])) ? $site_info['app_color'] : "#86559c";
                 }
                 $this->data['player_info'] = $player_info;
                 $this->data['password_recovery_code'] = $code;
@@ -1392,7 +1392,7 @@ class User extends MY_Controller
         $this->data['thumb'] = "";
         if($this->session->userdata('site_id')){
             $site_info = $this->App_model->getApp($this->session->userdata('site_id'));
-            if ($site_info['image']) {
+            if (isset($site_info['image']) && !empty($site_info['image'])) {
                 $info = pathinfo($site_info['image']);
                 if (isset($info['extension'])) {
                     $extension = $info['extension'];
@@ -1401,7 +1401,7 @@ class User extends MY_Controller
                     $this->data['thumb'] = S3_IMAGE . $new_image;
                 }
             }
-            $this->data['site_color'] =  isset($site_info['app_color']) ? $site_info['app_color'] : "#86559c";
+            $this->data['site_color'] =  (isset($site_info['app_color']) && !empty($site_info['app_color'])) ? $site_info['app_color'] : "#86559c";
         }
 
 
@@ -1441,7 +1441,7 @@ class User extends MY_Controller
             $this->data['thumb'] = "";
             if($player_info){
                 $site_info = $this->App_model->getApp($player_info['site_id']);
-                if ($site_info['image']) {
+                if (isset($site_info['image']) && !empty($site_info['image'])) {
                     $info = pathinfo($site_info['image']);
                     if (isset($info['extension'])) {
                         $extension = $info['extension'];
@@ -1450,7 +1450,7 @@ class User extends MY_Controller
                         $this->data['thumb'] = S3_IMAGE . $new_image;
                     }
                 }
-                $this->data['site_color'] =  isset($site_info['app_color']) ? $site_info['app_color'] : "#86559c";
+                $this->data['site_color'] =  (isset($site_info['app_color']) && !empty($site_info['app_color'])) ? $site_info['app_color'] : "#86559c";
             }
             $this->data['topic_message'] = 'Thanks. You have completed to verify your email.';
             $this->data['message'] = 'You email address has been verified. Let\'s have fun .';
