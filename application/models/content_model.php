@@ -103,9 +103,7 @@ class Content_model extends MY_Model
             'deleted' => false
         ));
 
-        if (!isset($optionalParams['status']) || (strtolower($optionalParams['status'])!=='all')){
-            $this->mongo_db->where('status', (isset($optionalParams['status']) && strtolower($optionalParams['status'])==='false') ? false : true);
-        }
+        if (isset($optionalParams['status'])) $this->mongo_db->where('status', $optionalParams['status']);
 
         $result = $this->mongo_db->get('playbasis_content_to_client');
 
@@ -162,9 +160,7 @@ class Content_model extends MY_Model
             'deleted' => false
         ));
 
-        if (!isset($optionalParams['status']) || (strtolower($optionalParams['status'])!=='all')){
-            $this->mongo_db->where('status', (isset($optionalParams['status']) && strtolower($optionalParams['status'])==='false') ? false : true);
-        }
+        if (isset($optionalParams['status'])) $this->mongo_db->where('status', $optionalParams['status']);
 
         return $this->mongo_db->count('playbasis_content_to_client');
     }
