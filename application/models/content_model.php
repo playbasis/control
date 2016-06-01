@@ -100,9 +100,10 @@ class Content_model extends MY_Model
         $this->mongo_db->where(array(
             'client_id' => $client_id,
             'site_id' => $site_id,
-            'status' => true,
             'deleted' => false
         ));
+
+        if (isset($optionalParams['status'])) $this->mongo_db->where('status', $optionalParams['status']);
 
         $result = $this->mongo_db->get('playbasis_content_to_client');
 
@@ -156,9 +157,10 @@ class Content_model extends MY_Model
         $this->mongo_db->where(array(
             'client_id' => $client_id,
             'site_id' => $site_id,
-            'status' => true,
             'deleted' => false
         ));
+
+        if (isset($optionalParams['status'])) $this->mongo_db->where('status', $optionalParams['status']);
 
         return $this->mongo_db->count('playbasis_content_to_client');
     }
