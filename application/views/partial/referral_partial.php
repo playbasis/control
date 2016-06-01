@@ -1,4 +1,4 @@
-<header class="pbr-header" role="banner" <?if(isset($site_color)){ ?>style="background:<?php echo $site_color?>" <?php }?>>
+<header class="pbr-header" role="banner" <?php if(isset($site_color)){ ?>style="background:<?php echo $site_color?>" <?php }?>>
   <div class="row" role="navigation">
       <?php if(isset($thumb) && !empty($thumb)) {?>
         <a><img src="<?php echo $thumb; ?>" alt="" id="thumb"/></a>
