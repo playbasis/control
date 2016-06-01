@@ -3987,6 +3987,13 @@
               "Description": "Specific tag(s) to find (e.g. foo,bar)"
             },
             {
+              "Name": "status",
+              "Required": "N",
+              "Default": "true",
+              "Type": "string",
+              "Description": "true = display only active content, otherwise will display all non-deleted content"
+            },
+            {
               "Name": "player_id",
               "Required": "N",
               "Default": "",
@@ -4047,6 +4054,13 @@
               "Default": "",
               "Type": "string",
               "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "true",
+              "Type": "string",
+              "Description": "true = display only active content, otherwise will display all non-deleted content"
             },
             {
               "Name": "player_id",
