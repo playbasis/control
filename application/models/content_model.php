@@ -103,7 +103,7 @@ class Content_model extends MY_Model
             'deleted' => false
         ));
 
-        if (isset($optionalParams['status']) && strtolower($optionalParams['status'])==='true'){
+        if (!isset($optionalParams['status']) || strtolower($optionalParams['status'])!=='all'){
             $this->mongo_db->where('status', true);
         }
 
@@ -162,7 +162,7 @@ class Content_model extends MY_Model
             'deleted' => false
         ));
 
-        if (isset($optionalParams['status']) && strtolower($optionalParams['status'])==='true'){
+        if (!isset($optionalParams['status']) || strtolower($optionalParams['status'])!=='all'){
             $this->mongo_db->where('status', true);
         }
 

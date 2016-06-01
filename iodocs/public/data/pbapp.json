@@ -3989,23 +3989,23 @@
             {
               "Name": "status",
               "Required": "N",
-              "Default": "true",
+              "Default": "",
               "Type": "string",
-              "Description": "true = display only active content, otherwise will display all non-deleted content"
+              "Description": "all = Display all non-deleted content"
             },
             {
               "Name": "player_id",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "display content with given player id"
+              "Description": "Display content with given player id"
             },
             {
               "Name": "only_new_content",
               "Required": "N",
               "Default": "false",
               "Type": "enumerated",
-              "Description": "true = display new content with [player_id]",
+              "Description": "true = Display new content with [player_id]",
               "EnumeratedList": [
                 "true",
                 "false"
@@ -4058,16 +4058,16 @@
             {
               "Name": "status",
               "Required": "N",
-              "Default": "true",
+              "Default": "",
               "Type": "string",
-              "Description": "true = display only active content, otherwise will display all non-deleted content"
+              "Description": "all = Display all non-deleted content"
             },
             {
               "Name": "player_id",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "display content with given player id"
+              "Description": "Display content with given player id"
             },
             {
               "Name": "only_new_content",
