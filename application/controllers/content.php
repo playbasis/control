@@ -89,6 +89,14 @@ class Content extends REST2_Controller
             ));
         }
 
+        if (!isset($query_data['status']) || (strtolower($query_data['status'])!=='all')){
+            $query_data = array_merge($query_data, array(
+                'status' => (isset($query_data['status']) && (strtolower($query_data['status'])==='false')) ? false : true
+            ));
+        }else{
+            unset($query_data['status']);
+        }
+
         $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, (isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true" && isset($query_data['sort']) && $query_data['sort'] == "random") ? array() : $exclude_ids);
 
         foreach ($contents as &$content){
@@ -240,6 +248,14 @@ class Content extends REST2_Controller
             $query_data = array_merge($query_data, array(
                 'tags' => explode(',', $this->input->get('tags'))
             ));
+        }
+
+        if (!isset($query_data['status']) || (strtolower($query_data['status'])!=='all')){
+            $query_data = array_merge($query_data, array(
+                'status' => (isset($query_data['status']) && (strtolower($query_data['status'])==='false')) ? false : true
+            ));
+        }else{
+            unset($query_data['status']);
         }
 
         $count_value = $this->content_model->retrieveContentCount($this->validToken['client_id'], $this->validToken['site_id'], $query_data , $exclude_ids);

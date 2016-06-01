@@ -3987,18 +3987,25 @@
               "Description": "Specific tag(s) to find (e.g. foo,bar)"
             },
             {
+              "Name": "status",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "all = display all non-deleted content, true = display active content, false = display inactive content"
+            },
+            {
               "Name": "player_id",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "display content with given player id"
+              "Description": "Display content with given player id"
             },
             {
               "Name": "only_new_content",
               "Required": "N",
               "Default": "false",
               "Type": "enumerated",
-              "Description": "true = display new content with [player_id]",
+              "Description": "true = Display new content with [player_id]",
               "EnumeratedList": [
                 "true",
                 "false"
@@ -4049,11 +4056,18 @@
               "Description": "Specific tag(s) to find (e.g. foo,bar)"
             },
             {
+              "Name": "status",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "all = display all non-deleted content, true = display active content, false = display inactive content"
+            },
+            {
               "Name": "player_id",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "display content with given player id"
+              "Description": "Display content with given player id"
             },
             {
               "Name": "only_new_content",
