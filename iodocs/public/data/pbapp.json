@@ -4148,14 +4148,14 @@
             {
               "Name": "date_start",
               "Required": "N",
-              "Default": "1970-01-01",
+              "Default": "",
               "Type": "string",
               "Description": "date start in the format YYYY-MM-DD (ex.1982-09-29)"
             },
             {
               "Name": "date_end",
               "Required": "N",
-              "Default": "1970-01-01",
+              "Default": "",
               "Type": "string",
               "Description": "date end in the format YYYY-MM-DD (ex.1982-09-29)"
             },
