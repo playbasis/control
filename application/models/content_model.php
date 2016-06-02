@@ -109,7 +109,7 @@ class Content_model extends MY_Model
             $this->mongo_db->where_lt('date_start', new MongoDate());
         }
 
-        $this->mongo_db->select(array('_id', 'node_id', 'title', 'summary', 'detail', 'image','pb_player_id', 'category', 'date_start', 'date_end', 'pin', 'tags', 'custom'));
+        $this->mongo_db->select(array('_id', 'node_id', 'title', 'summary', 'detail', 'image','pb_player_id', 'category', 'date_start', 'date_end', 'pin', 'status', 'tags', 'custom'));
         //$this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $client_id,
