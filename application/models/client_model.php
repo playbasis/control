@@ -568,6 +568,7 @@ class Client_model extends MY_Model
         //update badge master table
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
+            'group',
             'quantity'
         ));
         $this->mongo_db->where(array(
@@ -634,6 +635,7 @@ class Client_model extends MY_Model
                 'client_id' => $client_id,
                 'site_id' => $site_id,
                 'goods_id' => $goodsId,
+                'group' => $goodsInfo['group'],
                 'is_sponsor' => $is_sponsor,
                 'value' => intval($quantity),
                 'date_added' => $mongoDate,
