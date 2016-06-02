@@ -368,8 +368,8 @@ class Content extends REST2_Controller
             $contentInfo['pb_player_id'] = $pb_player_id;
         }
         $contentInfo['image']      = ($this->input->post('image')) ? $this->input->post('image') : "no_image.jpg";
-        $contentInfo['date_start'] = (isset($contentInfo['date_start']) && !empty($contentInfo['date_start'])) ? new MongoDate(strtotime($this->input->post('date_start'))) : null;
-        $contentInfo['date_end']   = (isset($contentInfo['date_end']) && !empty($contentInfo['date_end'])) ? new MongoDate(strtotime($this->input->post('date_end'))) : null;
+        $contentInfo['date_start'] = !empty($this->input->post('date_start')) ? new MongoDate(strtotime($this->input->post('date_start'))) : null;
+        $contentInfo['date_end']   = !empty($this->input->post('date_end')) ? new MongoDate(strtotime($this->input->post('date_end'))) : null;
         $contentInfo['status']     = strtolower($this->input->post('status')) == 'true';
 
         if ($this->input->post('pin')){
