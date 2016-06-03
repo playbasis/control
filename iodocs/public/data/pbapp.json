@@ -4595,6 +4595,27 @@
       ]
     },
     {
+      "name": "Link API",
+      "methods": [
+        {
+          "MethodName": "Generate a link",
+          "Synopsis": "Generate a unique link given data",
+          "HTTPMethod": "POST",
+          "URI": "/Link/generate",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "File API",
       "methods": [
         {
