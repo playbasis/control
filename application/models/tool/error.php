@@ -488,6 +488,22 @@ class Error extends CI_Model
                 $errorData['message'] = "Node is not found in this organize type";
                 $errorData['error_code'] = '2424';
                 break;
+            case 'LINK_CONFIG_NOT_FOUND':
+                $errorData['message'] = "Link configuration is not found";
+                $errorData['error_code'] = '3000';
+                break;
+            case 'LINK_CONFIG_INVALID_TYPE':
+                $errorData['message'] = "Link type is invalid";
+                $errorData['error_code'] = '3001';
+                break;
+            case 'LINK_CONFIG_INVALID_BRANCH_KEY':
+                $errorData['message'] = "Branch.io key is required";
+                $errorData['error_code'] = '3002';
+                break;
+            case 'LINK_BRANCH_ERROR':
+                $errorData['message'] = "Error when sending request to branch.io";
+                $errorData['error_code'] = '3003';
+                break;
             default:
                 $errorData['message'] = "Unknown";
                 $errorData['error_code'] = '9999';
