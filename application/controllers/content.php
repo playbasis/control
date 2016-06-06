@@ -139,7 +139,7 @@ class Content extends REST2_Controller
                         '</head><title></title><body>' . $content['detail'] . '</body></html>';
             }
         }
-        array_walk_recursive($contents, array($this, "convert_mongo_object_and_category"));
+        array_walk_recursive($contents, array($this, "convert_mongo_object_and_optional"));
 
         array_walk($contents, function(&$val, $key) use (&$contents){
             if (isset($val['pb_player_id'])){
@@ -762,7 +762,7 @@ class Content extends REST2_Controller
      * @param mixed $item this is reference
      * @param string $key
      */
-    private function convert_mongo_object_and_category(&$item, $key)
+    private function convert_mongo_object_and_optional(&$item, $key)
     {
         if ($key === 'category') {
             $item = $this->content_model->getContentCategoryNameById($this->client_id, $this->site_id, $item);
@@ -776,7 +776,9 @@ class Content extends REST2_Controller
                 }
             }
         }
-
+        if ($key === 'image') {
+            $item = $this->config->item('IMG_PATH') . $item;
+        }
     }
 
     /**
