@@ -796,7 +796,9 @@
                                                             <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $eBadge['reward_id'] ?>">                                    
                                                                 <div class="span2 text-center"><img src="<?php echo $eBadge['reward_data']['image'] ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                                 </div>                                    
-                                                                <div class="span7"><?php echo $eBadge['reward_data']['name'] ?></div>                                    
+                                                                <div class="span7">
+                                                                    <?php echo $eBadge['reward_data']['name'] ?>
+                                                                </div>                                    
                                                                 <div class="span1">                                    
                                                                 <small>value</small>                                    
                                                                 <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eBadge['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $eBadge['reward_value'] ?>">
@@ -956,7 +958,7 @@
                         <div class="span2 image text-center">
                             <img height="50" width="50" src="<?php echo S3_IMAGE.$goods_items[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                         </div>
-                        <div class="span9 title"><?php echo $goods_items[$i]['name'];?></div>
+                        <div class="span9 title"><?php echo isset($goods_items[$i]['group']) ? $goods_items[$i]['group'] : $goods_items[$i]['name'];?></div>
                     </div>
                 </label>
             <?php } ?>
