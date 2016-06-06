@@ -75,7 +75,7 @@ class Quest extends REST2_Controller
         }
 
         $platform = $this->auth_model->getOnePlatform($this->client_id, $this->site_id);
-
+        $request_array = array();
         foreach ($quests as $q) {
 
             $missionEvent = array();
@@ -173,11 +173,15 @@ class Quest extends REST2_Controller
                                         $pb_player_id
                                     );
                                     /* fire complete-mission action */
-                                    $this->utility->request('engine', 'json', http_build_query(array(
+                                    array_push($request_array,array('api_key' => $platform['api_key'],
+                                                                    'pb_player_id' => $pb_player_id . '',
+                                                                    'action' => ACTION_COMPLETE_MISSION ));
+
+                                    /*$this->utility->request('engine', 'json', http_build_query(array(
                                         'api_key' => $platform['api_key'],
                                         'pb_player_id' => $pb_player_id . '',
                                         'action' => ACTION_COMPLETE_MISSION,
-                                    )));
+                                    )));*/
                                 }
 
                                 //for check total mission finish
@@ -254,11 +258,14 @@ class Quest extends REST2_Controller
                                     );
                                     /* fire complete-mission action */
 
-                                    $this->utility->request('engine', 'json', http_build_query(array(
+                                    array_push($request_array,array('api_key' => $platform['api_key'],
+                                                                    'pb_player_id' => $pb_player_id . '',
+                                                                    'action' => ACTION_COMPLETE_MISSION));
+                                    /*$this->utility->request('engine', 'json', http_build_query(array(
                                         'api_key' => $platform['api_key'],
                                         'pb_player_id' => $pb_player_id . '',
                                         'action' => ACTION_COMPLETE_MISSION,
-                                    )));
+                                    )));*/
                                 }
                                 //for check total mission finish
                                 $player_finish_count++;
@@ -308,11 +315,15 @@ class Quest extends REST2_Controller
                     );
                     /* fire complete-quest action */
 
-                    $this->utility->request('engine', 'json', http_build_query(array(
+                    array_push($request_array,array('api_key' => $platform['api_key'],
+                        'pb_player_id' => $pb_player_id . '',
+                        'action' => ACTION_COMPLETE_QUEST));
+
+                    /*$this->utility->request('engine', 'json', http_build_query(array(
                         'api_key' => $platform['api_key'],
                         'pb_player_id' => $pb_player_id . '',
                         'action' => ACTION_COMPLETE_QUEST,
-                    )));
+                    )));*/
                     try {
                         $this->client_model->permissionProcess(
                             $this->client_data,
@@ -338,6 +349,10 @@ class Quest extends REST2_Controller
                 'missions' => $missionEvent
             );
             array_push($questEvent, $event);
+        }
+
+        foreach ($request_array as $request){
+            $this->utility->request('engine', 'json', http_build_query($request));
         }
 
         return $questResult;
@@ -715,6 +730,27 @@ class Quest extends REST2_Controller
         );
 
         if (isset($mission["missions"][0]["rewards"])) {
+            foreach($mission["missions"][0]["rewards"] as $rewardkey => $reward ){
+                if(isset($reward['reward_data']['group']) && ($reward['reward_type'] == 'GOODS') && ($reward['reward_value'] > 0))
+                {
+                    $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $reward['reward_data']['group'] , "" , $reward['reward_value'] , 1 );
+                    $i = 1;
+                    foreach($goods_group_rewards as $goods_rewards){
+                        $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $reward['reward_data']['group'] ,$player_id);
+                        if(($goods_rewards['per_user'] >= ($player_goods + $i)) && ($i < $reward['reward_value'])){
+                            $goods_data = array('reward_value' => "1",
+                                'reward_id' => $goods_rewards['goods_id'],
+                                'reward_type' => "GOODS",
+                            );
+                            $goods_data['reward_data'] = $goods_rewards;
+                            array_push($mission["missions"][0]["rewards"], $goods_data);
+                        }
+                        $i++;
+                    }
+                    unset($mission["missions"][0]["rewards"][$rewardkey]);
+                }
+            }
+
             $sub_events = $this->updateReward($mission["missions"][0]["rewards"], $sub_events, $player_id,
                 $cl_player_id, $validToken, $anonymous);
         }
@@ -749,8 +785,27 @@ class Quest extends REST2_Controller
         );
 
         if (isset($quest["rewards"])) {
-            $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken,
-                $anonymous);
+            foreach($quest["rewards"] as $rewardkey => $reward){
+                if(isset($reward['reward_data']['group']) && ($reward['reward_type'] == 'GOODS') && ($reward['reward_value'] > 0))
+                {
+                    $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $reward['reward_data']['group'] , "" , $reward['reward_value'] , 1 );
+                    $i=1;
+                    foreach($goods_group_rewards as $goods_rewards){
+                        $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $reward['reward_data']['group'] ,$player_id);
+                        if(($goods_rewards['per_user'] >= ($player_goods + $i)) && ($i < $reward['reward_value'])){
+                            $goods_data = array('reward_value' => "1",
+                                'reward_id' => $goods_rewards['goods_id'],
+                                'reward_type' => "GOODS",
+                            );
+                            $goods_data['reward_data'] = $goods_rewards;
+                            array_push($quest["rewards"], $goods_data);
+                        }
+                        $i++;
+                    }
+                    unset($quest["rewards"][$rewardkey]);
+                }
+            }
+            $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken, $anonymous);
         }
 
         array_push($questResult['events_quests'], $sub_events);
@@ -810,7 +865,15 @@ class Quest extends REST2_Controller
                     'quest' => (!isset($sub_events["mission_id"])) ? $sub_events : null
                 )), $validToken['site_name'], $validToken['site_id']);
             } elseif ($r["reward_type"] == "GOODS") {
-                $this->client_model->updateplayerGoods($r["reward_id"], $r["reward_value"], $player_id, $cl_player_id,
+                $player_goods = $this->goods_model->getPlayerGoods($validToken['site_id'], $r["reward_id"], $player_id);
+                if(isset($r["reward_data"]['per_user']) && (int)$r["reward_data"]['per_user'] > 0){
+                    $quantity = ((int)$r["reward_value"] + (isset($player_goods) && !empty($player_goods) ? $player_goods : 0)) >
+                                 (int)$r["reward_data"]['per_user'] ? (int)$r["reward_data"]['per_user'] - (int)$player_goods : $r["reward_value"];
+                }
+                else{
+                    $quantity = $r["reward_value"];
+                }
+                $this->client_model->updateplayerGoods($r["reward_id"], $quantity, $player_id, $cl_player_id,
                     $validToken['client_id'], $validToken['site_id']);
                 $goods = $this->goods_model->getGoods(array_merge($validToken, array(
                     'goods_id' => new MongoId($r["reward_id"])

@@ -1315,32 +1315,53 @@ class Engine extends Quest
     private function giveGoods($jigsawConfig, $input, $validToken, $event, $fbData, $goodsData)
     {
         $site_name = $validToken['site_name'];
-
-        $this->client_model->updateplayerGoods($jigsawConfig['item_id'], $jigsawConfig['quantity'],
-            $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
-
         $eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], '', '', '', '', '',
             $event['reward_data']['name']);
-
-        // log event - reward, goods
-        /*$this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
-            'reward_id' => $jigsawConfig['reward_id'],
-            'reward_name' => $jigsawConfig['reward_name'],
-            'item_id' => $jigsawConfig['item_id'],
-            'amount' => $jigsawConfig['quantity'])));*/
-
-        // log event - goods
-        $this->tracker_model->trackGoods(array_merge($validToken, array(
-            'pb_player_id' => $input['pb_player_id'],
-            'goods_id' => new MongoId($goodsData['goods_id']),
-            'goods_name' => $goodsData['name'],
-            'is_sponsor' => false,
-            'amount' => $jigsawConfig['quantity'],
-            'redeem' => null, // cannot pull from goodsData, should pull from "redeem" condition for rule context
-            'action_name' => 'redeem_goods',
-            'action_icon' => 'fa-icon-shopping-cart',
-            'message' => $eventMessage
-        )));
+        if(isset($goodsData['group']) && !empty($goodsData['group'])){
+            $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $goodsData['group'] , "" , $jigsawConfig['quantity'] , 1 );
+            foreach($goods_group_rewards as $goods_rewards){
+                $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $goodsData['group'] , $input['pb_player_id']);
+                if(($goods_rewards['per_user'] < $player_goods) || ($goods_rewards['per_user'] == null)) {
+                    $this->client_model->updateplayerGoods($goods_rewards['goods_id'], 1,
+                        $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
+                    $this->tracker_model->trackGoods(array_merge($validToken, array(
+                        'pb_player_id' => $input['pb_player_id'],
+                        'goods_id' => new MongoId($goods_rewards['goods_id']),
+                        'goods_name' => $goods_rewards['name'],
+                        'is_sponsor' => false,
+                        'amount' => $goods_rewards['quantity'],
+                        'redeem' => null, // cannot pull from goodsData, should pull from "redeem" condition for rule context
+                        'action_name' => 'redeem_goods',
+                        'action_icon' => 'fa-icon-shopping-cart',
+                        'message' => $eventMessage
+                    )));
+                }
+            }
+        }
+        else{
+            $player_goods = $this->goods_model->getPlayerGoods($validToken['site_id'], $goodsData['goods_id'], $input['pb_player_id']);
+            if(isset($goodsData['per_user']) && (int)$goodsData['per_user'] > 0){
+                $quantity = ((int)$jigsawConfig['quantity'] + (int)$player_goods) > (int)$goodsData['per_user'] ? (int)$goodsData['per_user'] - (int)$player_goods : $jigsawConfig['quantity'];
+            }
+            else{
+                $quantity = $jigsawConfig['quantity'];
+            }
+            
+            $this->client_model->updateplayerGoods($jigsawConfig['item_id'], $quantity,
+                $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
+            // log event - goods
+            $this->tracker_model->trackGoods(array_merge($validToken, array(
+                'pb_player_id' => $input['pb_player_id'],
+                'goods_id' => new MongoId($goodsData['goods_id']),
+                'goods_name' => $goodsData['name'],
+                'is_sponsor' => false,
+                'amount' => $jigsawConfig['quantity'],
+                'redeem' => null, // cannot pull from goodsData, should pull from "redeem" condition for rule context
+                'action_name' => 'redeem_goods',
+                'action_icon' => 'fa-icon-shopping-cart',
+                'message' => $eventMessage
+            )));
+        }
 
         // publish - node stream
         $this->node->publish(array_merge($input, array(

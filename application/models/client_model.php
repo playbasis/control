@@ -635,7 +635,7 @@ class Client_model extends MY_Model
                 'client_id' => $client_id,
                 'site_id' => $site_id,
                 'goods_id' => $goodsId,
-                'group' => $goodsInfo['group'],
+                'group' => isset($goodsInfo['group']) ? $goodsInfo['group'] : "",
                 'is_sponsor' => $is_sponsor,
                 'value' => intval($quantity),
                 'date_added' => $mongoDate,

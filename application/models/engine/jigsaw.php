@@ -850,18 +850,18 @@ class jigsaw extends MY_Model
             return false;
         }
         $total = isset($goods['group']) ? $this->getGroupQuantity($site_id, $goods['group']) : $goods['quantity'];
-        $max = $goods['per_user'];
+        $max = isset($goods['per_user']) ? $goods['per_user'] : null;
         $used = isset($goods['group']) ? $this->getPlayerGoodsGroup($site_id, $goods['group'], $pb_player_id) : $this->getPlayerGoods($site_id, $goodsId, $pb_player_id);
         if ($total === 0 || $max === 0) {
             return false;
         }
-        if ($total && $quantity > $total) {
-            return false;
-        }
-        if (!$max) {
+        if(!$max){
             return true;
         }
-        return $used + $quantity <= $max;
+        if ($used >= $max) {
+            return false;
+        }
+        return true;
     }
 
     private function checkReward($rewardId, $siteId, $quantity = 0)
