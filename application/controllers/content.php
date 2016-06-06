@@ -141,6 +141,15 @@ class Content extends REST2_Controller
         }
         array_walk_recursive($contents, array($this, "convert_mongo_object_and_category"));
 
+        array_walk($contents, function(&$val, $key) use (&$contents){
+            if (isset($val['pb_player_id'])){
+                $val = array_merge($val, array(
+                    'player_id' => $this->player_model->getClientPlayerId(new MongoId($val['pb_player_id']), $this->validToken['site_id'])
+                ));
+                unset($contents[$key]['pb_player_id']);
+            }
+        });
+
         $result = array();
         if (isset($query_data['sort']) && $query_data['sort'] == "random") {
             if (isset($query_data['order'])) {
