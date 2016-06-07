@@ -1318,18 +1318,19 @@ class Engine extends Quest
         $eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], '', '', '', '', '',
             $event['reward_data']['name']);
         if(isset($goodsData['group']) && !empty($goodsData['group'])){
-            $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $goodsData['group'] , "" , $jigsawConfig['quantity'] , 1 );
-            foreach($goods_group_rewards as $goods_rewards){
+            $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $goodsData['group'] , null , null , 1 );
+            $rand_goods = array_rand($goods_group_rewards, (int)$jigsawConfig['quantity']);
+            foreach($rand_goods as $index){
                 $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $goodsData['group'] , $input['pb_player_id']);
-                if(($goods_rewards['per_user'] < $player_goods) || ($goods_rewards['per_user'] == null)) {
-                    $this->client_model->updateplayerGoods($goods_rewards['goods_id'], 1,
+                if(($goods_group_rewards[$index]['per_user'] > $player_goods) || ($goods_group_rewards[$index]['per_user'] == null)) {
+                    $this->client_model->updateplayerGoods($goods_group_rewards[$index]['goods_id'], 1,
                         $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
                     $this->tracker_model->trackGoods(array_merge($validToken, array(
                         'pb_player_id' => $input['pb_player_id'],
-                        'goods_id' => new MongoId($goods_rewards['goods_id']),
-                        'goods_name' => $goods_rewards['name'],
+                        'goods_id' => new MongoId($goods_group_rewards[$index]['goods_id']),
+                        'goods_name' => $goods_group_rewards[$index]['name'],
                         'is_sponsor' => false,
-                        'amount' => $goods_rewards['quantity'],
+                        'amount' => $goods_group_rewards[$index]['quantity'],
                         'redeem' => null, // cannot pull from goodsData, should pull from "redeem" condition for rule context
                         'action_name' => 'redeem_goods',
                         'action_icon' => 'fa-icon-shopping-cart',

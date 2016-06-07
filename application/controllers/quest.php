@@ -733,16 +733,17 @@ class Quest extends REST2_Controller
             foreach($mission["missions"][0]["rewards"] as $rewardkey => $reward ){
                 if(isset($reward['reward_data']['group']) && ($reward['reward_type'] == 'GOODS') && ($reward['reward_value'] > 0))
                 {
-                    $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $reward['reward_data']['group'] , "" , $reward['reward_value'] , 1 );
+                    $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $reward['reward_data']['group'] , null , null , 1 );
+                    $rand_goods = array_rand($goods_group_rewards, (int)$reward['reward_value']);
                     $i = 1;
-                    foreach($goods_group_rewards as $goods_rewards){
+                    foreach($rand_goods as $index){
                         $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $reward['reward_data']['group'] ,$player_id);
-                        if(($goods_rewards['per_user'] >= ($player_goods + $i)) && ($i < $reward['reward_value'])){
+                        if(($goods_group_rewards[$index]['per_user'] >= ($player_goods + $i)) && ($i < $reward['reward_value'])){
                             $goods_data = array('reward_value' => "1",
-                                'reward_id' => $goods_rewards['goods_id'],
+                                'reward_id' => $goods_group_rewards[$index]['goods_id'],
                                 'reward_type' => "GOODS",
                             );
-                            $goods_data['reward_data'] = $goods_rewards;
+                            $goods_data['reward_data'] = $goods_group_rewards[$index];
                             array_push($mission["missions"][0]["rewards"], $goods_data);
                         }
                         $i++;
@@ -788,21 +789,21 @@ class Quest extends REST2_Controller
             foreach($quest["rewards"] as $rewardkey => $reward){
                 if(isset($reward['reward_data']['group']) && ($reward['reward_type'] == 'GOODS') && ($reward['reward_value'] > 0))
                 {
-                    $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $reward['reward_data']['group'] , "" , $reward['reward_value'] , 1 );
-                    $i=1;
-                    foreach($goods_group_rewards as $goods_rewards){
+                    $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $reward['reward_data']['group'] , null , null , 1 );
+                    $rand_goods = array_rand($goods_group_rewards, (int)$reward['reward_value']);
+                    $i = 1;
+                    foreach($rand_goods as $index){
                         $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $reward['reward_data']['group'] ,$player_id);
-                        if(($goods_rewards['per_user'] >= ($player_goods + $i)) && ($i < $reward['reward_value'])){
+                        if(($goods_group_rewards[$index]['per_user'] >= ($player_goods + $i)) && ($i < $reward['reward_value'])){
                             $goods_data = array('reward_value' => "1",
-                                'reward_id' => $goods_rewards['goods_id'],
+                                'reward_id' => $goods_group_rewards[$index]['goods_id'],
                                 'reward_type' => "GOODS",
                             );
-                            $goods_data['reward_data'] = $goods_rewards;
+                            $goods_data['reward_data'] = $goods_group_rewards[$index];
                             array_push($quest["rewards"], $goods_data);
                         }
                         $i++;
                     }
-                    unset($quest["rewards"][$rewardkey]);
                 }
             }
             $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken, $anonymous);
