@@ -1080,7 +1080,7 @@ class Goods extends MY_Controller
             $this->data['members_current_total_page'] = ($limit * ($offset + 1)) >= $limit ? ($limit * ($offset + 1)) : $this->data['members_total'];
             $this->data['members_current_start_page'] = (($limit * $offset) + 1) >= 1 ? (($limit * $offset) + 1) : 1;
 
-            $total_page = $this->data['members_total'] > 0 ? ($this->data['members_total'] / $limit) : 0;
+            $total_page = $this->data['members_total'] > 0 ? ceil($this->data['members_total'] / $limit) : 0;
 
             $this->data['total_page'] = $this->create(($offset + 1), $total_page, 1,
                 '<a class="paginate_button" data-page="%d">%d</a>',
