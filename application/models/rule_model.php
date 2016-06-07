@@ -242,7 +242,7 @@ class Rule_model extends MY_Model
                     $this->mongo_db->where('client_id', new MongoID($clientId));
                     $this->mongo_db->where('category', 'REWARD');
                     $this->mongo_db->where('status', true);
-//                    $this->mongo_db->where('name', array('$nin'=>array('reward', 'customPointReward')));
+                    $this->mongo_db->where('name', 'customPointReward');
                     $this->mongo_db->limit(1);
                     $ds2 = $this->mongo_db->get("playbasis_game_jigsaw_to_client");
 
