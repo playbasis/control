@@ -113,9 +113,8 @@ class Custompoints extends MY_Controller
                 $data['tags'] = $custompoints_data['tags'];
 
                 $insert = $this->Custompoints_model->insertCustompoints($data);
-
                 if ($insert) {
-                    if ($this->initPlayerPoint($data)) {
+                    if($this->initPlayerPoint($data) || $data['type'] == "normal"){
                         redirect('/custompoints', 'refresh');
                     }
                 }
@@ -426,6 +425,7 @@ class Custompoints extends MY_Controller
                 if (!empty($batch_data)) {
                     $completed_flag = $this->Custompoints_model->bulkInsertInitialValue($batch_data);
                 }
+
             }
         }
         return $completed_flag;
