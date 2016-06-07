@@ -840,7 +840,7 @@ class Goods extends MY_Controller
             $this->data['members_total'] = $this->Goods_model->getTotalAvailableGoodsByGroup($data);
             $this->data['members_current_total_page'] = $this->data['members_total'] > $limit_group ? $limit_group : $this->data['members_total'];
 
-            $total_page = $this->data['members_total'] > 0 ? ($this->data['members_total'] / $limit_group) : 0;
+            $total_page = $this->data['members_total'] > 0 ?  ceil($this->data['members_total'] / $limit_group) : 0;
 
             $this->data['total_page'] = $this->create(1, $total_page, 1,
                 '<a class="paginate_button" data-page="%d">%d</a>',
