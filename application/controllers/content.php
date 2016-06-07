@@ -139,8 +139,6 @@ class Content extends REST2_Controller
                         '</head><title></title><body>' . $content['detail'] . '</body></html>';
             }
         }
-        array_walk_recursive($contents, array($this, "convert_mongo_object_and_optional"));
-
         array_walk($contents, function(&$val, $key) use (&$contents){
             if (isset($val['pb_player_id'])){
                 $val = array_merge($val, array(
@@ -148,7 +146,18 @@ class Content extends REST2_Controller
                 ));
                 unset($contents[$key]['pb_player_id']);
             }
+            if (isset($val['image']) && !empty($val['image']) && (!strstr(strtolower($val['image']),'http') || !strstr(strtolower($val['image']),'www'))){
+                $extension = substr(strrchr($val['image'],'.'), 0);
+                $name = basename($val['image'], $extension);
+                $val = array_merge($val, array(
+                    'image_thumb_small' => 'cache/' . S3_DATA_FOLDER . $name . '-' .
+                        MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT . $extension,
+                    'image_thumb_large' => 'cache/' . S3_DATA_FOLDER . $name . '-' .
+                        MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT . $extension
+                ));
+            }
         });
+        array_walk_recursive($contents, array($this, "convert_mongo_object_and_optional"));
 
         $result = array();
         if (isset($query_data['sort']) && $query_data['sort'] == "random") {
@@ -776,8 +785,8 @@ class Content extends REST2_Controller
                 }
             }
         }
-        if ($key === 'image') {
-            $item = $this->config->item('IMG_PATH') . $item;
+        if ($key === 'image' || $key === 'image_thumb_small' || $key === 'image_thumb_large') {
+            $item = strstr(strtolower($item),'http') || strstr(strtolower($item),'www') ? $item : $this->config->item('IMG_PATH') . $item;
         }
     }
 
