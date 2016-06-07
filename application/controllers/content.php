@@ -146,15 +146,16 @@ class Content extends REST2_Controller
                 ));
                 unset($contents[$key]['pb_player_id']);
             }
-            if (isset($val['image']) && !empty($val['image']) && (!strstr(strtolower($val['image']),'http') || !strstr(strtolower($val['image']),'www'))){
+            if (isset($val['image']) && !empty($val['image']) && (substr(strtolower($val['image']), 0, 4) != 'http') && (substr(strtolower($val['image']), 0, 3) != 'www')){
                 $extension = substr(strrchr($val['image'],'.'), 0);
                 $name = basename($val['image'], $extension);
                 $val = array_merge($val, array(
-                    'image_thumb_small' => 'cache/' . S3_DATA_FOLDER . $name . '-' .
+                    'image_thumb_small' => $this->config->item('IMG_PATH').'cache/' . S3_DATA_FOLDER . $name . '-' .
                         MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT . $extension,
-                    'image_thumb_large' => 'cache/' . S3_DATA_FOLDER . $name . '-' .
+                    'image_thumb_large' => $this->config->item('IMG_PATH').'cache/' . S3_DATA_FOLDER . $name . '-' .
                         MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH . 'x' . MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT . $extension
                 ));
+                $val['image'] = $this->config->item('IMG_PATH') . $val['image'];
             }
         });
         array_walk_recursive($contents, array($this, "convert_mongo_object_and_optional"));
@@ -784,9 +785,6 @@ class Content extends REST2_Controller
                     $item = datetimeMongotoReadable($item);
                 }
             }
-        }
-        if ($key === 'image' || $key === 'image_thumb_small' || $key === 'image_thumb_large') {
-            $item = strstr(strtolower($item),'http') || strstr(strtolower($item),'www') ? $item : $this->config->item('IMG_PATH') . $item;
         }
     }
 
