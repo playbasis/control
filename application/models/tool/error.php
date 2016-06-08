@@ -496,6 +496,10 @@ class Error extends CI_Model
                 $errorData['message'] = "FitBit Player is not exist";
                 $errorData['error_code'] = '2602';
                 break;
+            case 'FITBIT_PLAYER_ALREADY_EXIST':
+                $errorData['message'] = "FitBit Player already exist";
+                $errorData['error_code'] = '2602';
+                break;
             case 'LINK_CONFIG_NOT_FOUND':
                 $errorData['message'] = "Link configuration is not found";
                 $errorData['error_code'] = '3000';

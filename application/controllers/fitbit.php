@@ -61,8 +61,13 @@ class Fitbit extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING', 'fitbit_token'), 200);
         }
 
+        $count = $this->Fitbit_model->findFitbitPlayer($client_id, $site_id, $pb_player_id);
+        if($count){
+            $this->response($this->error->setError('FITBIT_PLAYER_ALREADY_EXIST'), 200);
+        }
+
         $result = $this->Fitbit_model->addFitbitPlayer($client_id, $site_id, $pb_player_id,$query_data['fitbit_token'],
-            isset($query_data['subscription_id']) && !empty($query_data['subscription_id']) ? $query_data['subscription_id'] : $pb_player_id+"");
+            isset($query_data['subscription_id']) && !empty($query_data['subscription_id']) ? $query_data['subscription_id'] : $pb_player_id."");
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');

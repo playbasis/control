@@ -18,6 +18,15 @@ class Fitbit_model extends MY_Model
         return $result[0];
     }
 
+    public function findFitbitPlayer($client_id, $site_id, $pb_player_id)
+    {
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('pb_player_id', new MongoID($pb_player_id));
+        $result = $this->mongo_db->count('playbasis_fitbit');
+        return $result;
+    }
+
     public function addFitbitPlayer($client_id, $site_id, $pb_player_id, $fitbit_token, $subscription_id)
     {
         $insert_data = array(
