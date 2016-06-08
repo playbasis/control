@@ -488,6 +488,14 @@ class Error extends CI_Model
                 $errorData['message'] = "Node is not found in this organize type";
                 $errorData['error_code'] = '2424';
                 break;
+            case 'FITBIT_TOKEN_EXPIRED':
+                $errorData['message'] = "FitBit Token is expired";
+                $errorData['error_code'] = '2601';
+                break;
+            case 'FITBIT_PLAYER_NOT_EXIST':
+                $errorData['message'] = "FitBit Player is not exist";
+                $errorData['error_code'] = '2602';
+                break;
             case 'LINK_CONFIG_NOT_FOUND':
                 $errorData['message'] = "Link configuration is not found";
                 $errorData['error_code'] = '3000';
