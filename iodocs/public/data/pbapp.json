@@ -4679,6 +4679,171 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Health API",
+      "methods": [
+        {
+          "MethodName": "Retrieve FitBit Player",
+          "Synopsis": "Retrieve FitBit Player",
+          "HTTPMethod": "GET",
+          "URI": "/Fitbit",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            }
+          ]
+        },
+        {
+          "MethodName": "Add FitBit Player",
+          "Synopsis": "Add new FitBit Player",
+          "HTTPMethod": "POST",
+          "URI": "/Fitbit/add",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "fitbit_token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "FitBit token to access FitBit API"
+            },
+            {
+              "Name": "subscription_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "subscription id to subscribe FitBit activity"
+            }
+          ]
+        },
+        {
+          "MethodName": "Update FitBit Player",
+          "Synopsis": "Update FitBit Player",
+          "HTTPMethod": "POST",
+          "URI": "/Fitbit/:player_id/update",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "fitbit_token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "FitBit token to access FitBit API"
+            },
+            {
+              "Name": "subscription_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "subscription id to subscribe FitBit activity"
+            }
+          ]
+        },
+        {
+          "MethodName": "Delete FitBit Player",
+          "Synopsis": "Delete FitBit Player",
+          "HTTPMethod": "POST",
+          "URI": "/Fitbit/:player_id/delete",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            }
+          ]
+        },
+        {
+          "MethodName": "Retrieve FitBit Player Data",
+          "Synopsis": "Retrieve FitBit Player Data",
+          "HTTPMethod": "GET",
+          "URI": "/Fitbit/:player_id/data",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "category",
+              "Required": "N",
+              "Default": "PROFILE",
+              "Type": "enumerated",
+              "Description": "category of data",
+              "EnumeratedList": [
+                "ACTIVITY",
+                "BODY",
+                "BP",
+                "FOOD",
+                "GLUCOSE",
+                "HEART",
+                "PROFILE",
+                "SLEEP"
+              ]
+            },
+            {
+              "Name": "date",
+              "Required": "N",
+              "Default": "today",
+              "Type": "string",
+              "Description": "date start in the format yyyy-MM-dd or today."
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -352,6 +352,13 @@ $route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 //Link API
 $route['Link/generate'] = 'link/generate';
 
+//FitBit API
+$route['Fitbit'] = 'fitbit/getFitBitPlayer';
+$route['Fitbit/add'] = 'fitbit/addFitBitPlayer';
+$route['Fitbit/'.ANY_STRING.'/update'] = 'fitbit/updateFitBitPlayer/$1';
+$route['Fitbit/'.ANY_STRING.'/delete'] = 'fitbit/deleteFitBitPlayer/$1';
+$route['Fitbit/'.ANY_STRING.'/data'] = 'fitbit/getFitBitPlayerData/$1';
+
 //File API
 $route['File/upload'] = 'file/upload';
 $route['File/delete'] = 'file/delete';
