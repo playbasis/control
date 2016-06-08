@@ -30,6 +30,8 @@ urlConfig = {
   URL_getRules: function(){ return this.forgeCustomActionURL('jsonGetRules')},
   URL_getRuleById: function(){ return this.forgeCustomActionURL('jsonGetRuleById')},
   URL_saveRule: function(){ return this.forgeCustomActionURL('jsonSaveRule')},
+  URL_exportRule: function(){ return this.forgeCustomActionURL('jsonExportRule')},
+  URL_importRule: function(){ return this.forgeCustomActionURL('jsonImportRule')},
   URL_cloneRule: function(){ return this.forgeCustomActionURL('jsonCloneRule')},
   URL_playRule: function(){ return this.forgeCustomActionURL('jsonPlayRule')},
   URL_deleteRule: function(){ return this.forgeCustomActionURL('deleteRule')},
@@ -300,16 +302,16 @@ dataMan = {
               oneRuleMan.discardCurrentRule();
               // $('.one_rule_discard_btn').trigger('click');
 
-                            /* for sure have functon */
-                            if($.isFunction($.fn.slidePanel)){
-                                $().slidePanel();
-                                $(".pbd_one_rule_holder").hide();
-                            }
-                            if($.isFunction($.fn.disableFixMenu)){
-                                $(".fixMenu").disableFixMenu();
-                            }
+                /* for sure have functon */
+                if($.isFunction($.fn.slidePanel)){
+                    $().slidePanel();
+                    $(".pbd_one_rule_holder").hide();
+                }
+                if($.isFunction($.fn.disableFixMenu)){
+                    $(".fixMenu").disableFixMenu();
+                }
 
-                            oneRuleMan.ruleActionPanelControl('not_editing');
+                oneRuleMan.ruleActionPanelControl('not_editing');
             }
             
 
@@ -322,6 +324,121 @@ dataMan = {
             /*TODO : Implement Rule set updating*/
 
           }
+        });
+  },
+
+  exportRule:function(array_rules){
+        var export_status = false;
+        var _data = {
+            'array_rules': array_rules ,
+            'site_id': jsonConfig_siteId,
+            'client_id' : jsonConfig_clientId
+        };
+        _data[csrf_token_name] = csrf_token_hash;
+        $.ajax({
+            url: urlConfig.URL_exportRule(),
+            data: _data,
+            type:'POST',
+            // dataType:'json',
+            beforeSend:function(){
+                progressDialog.show('Exporting rule ...');
+            },
+            success:function(data){
+
+                if(($.parseJSON(data))){
+                    var output_data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($.parseJSON(data)));
+                    link = document.createElement('a');
+                    link.setAttribute('href', 'data:' +output_data);
+                    link.setAttribute('download', 'rules.json');
+                    link.click();
+                    export_status = true;
+                    dialogMsg = 'Export rule successfully';}
+                else {
+                    dialogMsg = 'Unable to Export rule from server ';
+                }
+
+
+            },
+            error:function(){
+                //console.log('on error')
+                dialogMsg = 'Unable to Export rule from server,\n Please try again later';
+
+            },
+            complete:function(){
+                //console.log('on complete')
+                notificationManagerJS.showAlertDialog('save',dialogMsg);
+                progressDialog.hide();
+
+                if(export_status){
+                    oneRuleMan.ruleActionPanelControl('cancel');
+                }
+            }
+        });
+  },
+
+  importRule:function(array_rules){
+        var import_status = false;
+        var _data = {
+            'array_rules': array_rules ,
+            'site_id': jsonConfig_siteId,
+            'client_id' : jsonConfig_clientId
+        };
+        _data[csrf_token_name] = csrf_token_hash;
+        $.ajax({
+            url: urlConfig.URL_importRule(),
+            data: _data,
+            type:'POST',
+            // dataType:'json',
+            beforeSend:function(){
+                progressDialog.show('Importing rule ...');
+            },
+            success:function(data){
+                //console.log('on success')
+                //console.log(data);
+
+                if(($.parseJSON(data).status=='success')){
+
+                    import_status = true;
+                    dialogMsg = 'Import rule successfully';
+                }
+                else {
+                    dialogMsg = $.parseJSON(data).message;
+                }
+
+
+            },
+            error:function(){
+                //console.log('on error')
+                dialogMsg = 'Unable to Export rule from server,\n Please try again later';
+
+            },
+            complete:function(){
+                //console.log('on complete')
+                notificationManagerJS.showAlertDialog('save',dialogMsg);
+                progressDialog.hide();
+
+                if(import_status){
+                    //Reload - Update Rule table on left
+                    setTimeout(function(){dataMan.loadRulesTable()},500);
+
+                    oneRuleMan.ruleActionPanelControl('cancel');
+
+                    if($.isFunction($.fn.slidePanel)){
+                        $().slidePanel();
+                    }
+
+                }
+
+
+                // notificationManagerJS.showAlertDialog('','Updateing Rule table...');
+                // // alert('refresing rule table')
+                // setTimeout(function(){
+                //  initRulelist();
+                // },1000);
+
+                /*TODO : Implement Rule set updating*/
+
+            }
         });
   },
 

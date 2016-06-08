@@ -48,6 +48,7 @@ $lang['entry_option']               = 'Option:';
 $lang['entry_option_value']         = 'Value:';
 $lang['entry_required']             = 'Required:';
 $lang['entry_status']               = 'Status:';
+$lang['entry_file']                 = 'JSON File To Import';
 
 // Error 
 $lang['error_warning']              = 'Warning: Please check the form carefully for errors!';

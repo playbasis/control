@@ -15,6 +15,8 @@ class Rule extends MY_Controller
 
         $this->load->model('Rule_model');
         $this->load->model('Push_model');
+        $this->load->model('Badge_model');
+        $this->load->model('Goods_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -197,6 +199,239 @@ class Rule extends MY_Controller
 
         $input = json_decode(html_entity_decode($this->input->post('json')), true);
         $this->output->set_output(json_encode($this->Rule_model->saveRule($input)));
+    }
+
+    private function setRewards($client_id, $site_id, &$jigsaw){
+        if($jigsaw['name']=="exp" || $jigsaw['name']=="point" || $jigsaw['name']=="specialReward") {
+            // do nothing
+        }elseif($jigsaw['name']=="badge") {
+            if($jigsaw['dataSet'][1]['value']){
+                $badge_name = $this->Badge_model->getNameOfBadgeID($client_id, $site_id,$jigsaw['dataSet'][1]['value']);
+                //$jigsaw['dataSet'][1]['value'] this value must be changed when import (badge_name -> badge_id)
+                //$jigsaw['config']['item_id'] this value must be changed when import (badge_name -> badge_id)
+                $jigsaw['config']['badge_name'] = $badge_name;
+            }else{
+                $jigsaw['config']['badge_name'] = null;
+            }
+        }elseif($jigsaw['name']=="goods" ) {
+            if($jigsaw['dataSet'][1]['value']) {
+                $goods_private = $this->Goods_model->getGoodsOfClientPrivate($jigsaw['dataSet'][1]['value']);
+                //$jigsaw['dataSet'][1]['value'] this value must be changed when import (goods_name,good_group -> goods_id)
+                //$jigsaw['config']['item_id'] this value must be changed when import (goods_name,good_group -> goods_id)
+                $jigsaw['config']['good_name'] = $goods_private['name'];
+                $jigsaw['config']['good_group'] = isset($goods_private['group']) ? $goods_private['group'] : null;
+            }else{
+                $jigsaw['config']['good_name'] = null;
+                $jigsaw['config']['good_group'] =  null;
+            }
+        }else{//customPoint
+            // validate customPoint when import
+        }
+    }
+
+    public function jsonExportRule()
+    {
+        if (!$this->input->post('array_rules')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission'));
+            return;
+        }
+
+        $client_id = $this->input->post("client_id");
+        $site_id = $this->input->post("site_id");
+
+        $array_rules = array();
+        foreach($this->input->post('array_rules') as $rule){
+            $rule_info = $this->Rule_model->getRuleForExport($client_id, $site_id,  $rule);
+            $rule_info['client_id'] = null;
+            $rule_info['site_id'] = null;
+            $rule_info['action_id'] = $rule_info['action_id']."";
+            foreach($rule_info['jigsaw_set'] as &$jigsaw){
+                if( $jigsaw['category']=="REWARD"){
+                    $this->setRewards($client_id, $site_id, $jigsaw);
+                }elseif( $jigsaw['category']=="GROUP"){// reward group
+                    foreach($jigsaw['dataSet'][0]['value'] as &$dataSet){
+                        $this->setRewards($client_id, $site_id, $dataSet);
+                    }
+                }elseif( $jigsaw['category']=="CONDITION"){
+                    if($jigsaw['name']=="badge"){
+                        $this->setRewards($client_id, $site_id, $jigsaw);
+                    }elseif($jigsaw['name']=="redeem"){
+                        foreach($jigsaw['dataSet'][0]['value'] as &$dataSet){
+                            $this->setRewards($client_id, $site_id, $dataSet);
+                        }
+                    }
+
+                }elseif( $jigsaw['category']=="CONDITION_GROUP"){
+                    foreach($jigsaw['dataSet'][0]['value'] as &$dataSet){
+                        if($dataSet['name']=="badge"){
+                            $this->setRewards($client_id, $site_id, $dataSet);
+                        }elseif($dataSet['name']=="redeem"){
+                            // TODO : there is a bug when adding redeem reward in condition group, need to investigate and fix first
+                            /*foreach($dataSet['dataSet'][0]['value'] as $index => &$dataSet2){
+                                $this->setRewards($client_id, $site_id, $dataSet);
+                            }*/
+                        }
+                    }
+                }elseif( $jigsaw['category']=="FEEDBACK"){
+                    if($jigsaw['name']=="sms"){
+                        //TODO : convert template ID to name
+                    }
+                }
+            }
+
+            $array_rules[] = $rule_info;
+        }
+
+        $this->output->set_output(json_encode($array_rules));
+    }
+
+    private function validateRewards($client_id, $site_id, &$jigsaw){
+        $result = null;
+        if($jigsaw['name']=="exp" || $jigsaw['name']=="point" || $jigsaw['name']=="specialReward") {
+            // do nothing
+        }elseif($jigsaw['name']=="badge") {
+            if($jigsaw['config']['badge_name']){
+                $badge_id = $this->Badge_model->getBadgeIDByName($client_id, $site_id,$jigsaw['config']['badge_name']);
+                if($badge_id){
+                    unset($jigsaw['config']['badge_name']);
+                    $jigsaw['dataSet'][1]['value'] = $badge_id;
+                    $jigsaw['config']['item_id'] = $badge_id;
+                }else{
+                    $result = "Badge \'". $jigsaw['config']['badge_name'] . "\' is not found in this site";
+                }
+            }
+        }elseif($jigsaw['name']=="goods" ) {
+            if($jigsaw['config']['good_name'] || $jigsaw['config']['good_group']) {
+                $goods_id = $this->Goods_model->getGoodsIDByName($client_id, $site_id, $jigsaw['config']['good_name'],$jigsaw['config']['good_group']);
+                if($goods_id){
+                    $jigsaw['dataSet'][1]['value'] = $goods_id;
+                    $jigsaw['config']['item_id'] = $goods_id;
+                    unset($jigsaw['config']['good_name']);
+                    unset($jigsaw['config']['good_group']);
+                }else{
+                    $result = "Goods \'" .($jigsaw['config']['good_group']) ? $jigsaw['config']['good_group'] : $jigsaw['config']['good_name']. "\' is not found in this site";
+                }
+            }
+        }else{//customPoint
+            // validate customPoint when import
+        }
+        return $result;
+    }
+
+    public function jsonImportRule()
+    {
+        if (!$this->input->post('array_rules')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission'));
+            return;
+        }
+
+        $array_rules = json_decode($this->input->post('array_rules'),true);
+        $client_id = $this->input->post("client_id");
+        $site_id = $this->input->post("site_id");
+
+        $validation_result = array();
+        foreach($array_rules as &$rule_info){
+            $rule_info['rule_id'] = 'undefined';
+            $rule_info['client_id'] = $client_id;
+            $rule_info['site_id'] = $site_id;
+            $rule_info['date_added'] = "";
+            $rule_info['date_modified'] = "";
+            //$rule_info['active_status'] = $rule_info['active_status'] ? 1 : 0;
+            foreach($rule_info['jigsaw_set'] as &$jigsaw){
+                if( $jigsaw['category']=="REWARD"){
+                    $vResult = $this->validateRewards($client_id, $site_id, $jigsaw);
+                    if($vResult){ // if $vResult is not NULL then mean that the validation got error
+                        $validation_result[] = array('rule_name'=>$rule_info['name'], 'message'=>$vResult);
+                    }
+
+                }elseif( $jigsaw['category']=="GROUP"){// reward group
+                    foreach($jigsaw['dataSet'][0]['value'] as $index => &$dataSet){
+                        $vResult = $this->validateRewards($client_id, $site_id, $dataSet);
+                        if($vResult){ // if $vResult is not NULL then mean that the validation got error
+                            $validation_result[] = array('rule_name'=>$rule_info['name'], 'message'=>$vResult);
+                        }else{
+                            $jigsaw['config']['group_container'][$index]['item_id']=$dataSet['config']['item_id'];
+                        }
+                    }
+                }elseif( $jigsaw['category']=="CONDITION"){
+                    if($jigsaw['name']=="badge"){
+                        if($jigsaw['config']['badge_name']) {
+                            $badge_id = $this->Badge_model->getBadgeIDByName($client_id, $site_id,$jigsaw['config']['badge_name']);
+                            if($badge_id){
+                                unset($jigsaw['config']['badge_name']);
+                                $jigsaw['dataSet'][1]['value'] = $badge_id;
+                                $jigsaw['config']['badge_id'] = $badge_id;
+                            }else{
+                                $validation_result[] = array('rule_name'=>$rule_info['name'],'message'=>"Badge \'". $jigsaw['config']['badge_name'] . "\' is not found in this site");
+                            }
+                        }
+                    }elseif($jigsaw['name']=="redeem"){
+                        foreach($jigsaw['dataSet'][0]['value'] as $index => &$dataSet){
+                            $vResult = $this->validateRewards($client_id, $site_id, $dataSet);
+                            if($vResult){ // if $vResult is not NULL, mean that the validation got error
+                                $validation_result[] = array('rule_name'=>$rule_info['name'], 'message'=>$vResult);
+                            }else{
+                                $jigsaw['config']['group_container'][$index]['item_id']=$dataSet['config']['item_id'];
+                            }
+                        }
+                    }
+                }elseif( $jigsaw['category']=="CONDITION_GROUP"){
+                    foreach($jigsaw['dataSet'][0]['value'] as $index => &$dataSet){
+                        if($dataSet['name']=="badge"){
+                            if($dataSet['config']['badge_name']) {
+                                $badge_id = $this->Badge_model->getBadgeIDByName($client_id, $site_id,$dataSet['config']['badge_name']);
+                                if($badge_id){
+                                    unset($dataSet['config']['badge_name']);
+                                    $dataSet['dataSet'][1]['value'] = $badge_id;
+                                    $dataSet['config']['badge_id'] = $badge_id;
+                                    $jigsaw['config']['condition_group_container'][$index]['badge_id']=$badge_id;
+                                }else{
+                                    $validation_result[] = array('rule_name'=>$rule_info['name'],'message'=>"Badge \'". $dataSet['config']['badge_name'] . "\' is not found in this site");
+                                }
+                            }
+                        }elseif($dataSet['name']=="redeem"){
+                            // TODO : there is a bug when adding redeem reward in condition group, need to investigate and fix first
+                            /*foreach($dataSet['dataSet'][0]['value'] as $index => &$dataSet2){
+                                $vResult = $this->validateRewards($client_id, $site_id, $dataSet2);
+                                if($vResult){ // if $vResult is not NULL, mean that the validation got error
+                                    $validation_result[] = array('rule_name'=>$rule_info['name'], 'message'=>$vResult);
+                                }else{
+                                    $dataSet['config']['group_container'][$index]['item_id']=$dataSet2['config']['item_id'];
+                                }
+                            }*/
+                        }
+                    }
+                }elseif( $jigsaw['category']=="FEEDBACK"){
+                    if($jigsaw['name']=="sms"){
+                        //TODO : convert template name to ID
+                    }
+
+                }
+            }
+        }
+
+        if(!$validation_result){ // passed data validation
+            foreach($array_rules as $rule) {
+                $import_result = $this->Rule_model->saveRule($rule);
+
+            }
+            $this->output->set_output(json_encode(array('status'=>'success')));
+        }else{ // failed data validation
+
+        }
+
+
+
     }
 
     public function jsonCloneRule()

@@ -13,6 +13,21 @@ class Badge_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getBadgeIDByName($client_id, $site_id, $badge_name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('badge_id'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('name', $badge_name);
+        $results = $this->mongo_db->get("playbasis_badge_to_client");
+
+        return $results ? $results[0]['badge_id']."" : null;
+    }
+
     public function getBadgeToClient($badge_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -286,6 +301,19 @@ class Badge_model extends MY_Model
         $badges_data = $this->mongo_db->get("playbasis_badge");
 
         return $badges_data;
+    }
+
+    public function getNameOfBadgeID($client_id, $site_id, $badge_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->select(array('name'));
+        $this->mongo_db->where('badge_id', new MongoID($badge_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('status', true);
+        $result = $this->mongo_db->get('playbasis_badge_to_client');
+        return $result ? $result[0]['name'] : null;
     }
 
     public function getTotalBadges($data, $onlyTemplate = false)
