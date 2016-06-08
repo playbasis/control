@@ -4834,21 +4834,13 @@
                 "SLEEP"
               ]
             },
-
             {
               "Name": "date",
               "Required": "N",
               "Default": "today",
               "Type": "string",
               "Description": "date start in the format yyyy-MM-dd or today."
-            }/*,
-            {
-              "Name": "period",
-              "Required": "N",
-              "Default": "",
-              "Type": "string",
-              "Description": "The range for which data will be returned (1d, 7d, 30d, 1w, 1m)"
-            }*/ // for current Fitbit API end point not support period
+            }
           ]
         }
       ]
