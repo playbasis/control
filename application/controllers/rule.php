@@ -17,6 +17,7 @@ class Rule extends MY_Controller
         $this->load->model('Push_model');
         $this->load->model('Badge_model');
         $this->load->model('Goods_model');
+        $this->load->model('Reward_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -278,9 +279,17 @@ class Rule extends MY_Controller
                         }
                     }
                 }elseif( $jigsaw['category']=="FEEDBACK"){
-                    if($jigsaw['name']=="sms"){
+
+
+                    if($jigsaw['name']=="email"){
+                        //TODO : convert template ID to name
+                    }elseif($jigsaw['name']=="sms"){
+                        //TODO : convert template ID to name
+                    }elseif($jigsaw['name']=="push"){
                         //TODO : convert template ID to name
                     }
+
+
                 }
             }
 
@@ -314,11 +323,19 @@ class Rule extends MY_Controller
                     unset($jigsaw['config']['good_name']);
                     unset($jigsaw['config']['good_group']);
                 }else{
-                    $result = "Goods \'" .($jigsaw['config']['good_group']) ? $jigsaw['config']['good_group'] : $jigsaw['config']['good_name']. "\' is not found in this site";
+                    $result = "Goods \'" .($jigsaw['config']['good_group'] ? $jigsaw['config']['good_group'] : $jigsaw['config']['good_name']). "\' is not found in this site";
                 }
             }
         }else{//customPoint
-            // validate customPoint when import
+            // validate customPoint whether exist
+            $customPoint_id = $this->Reward_model->getClientRewardIDByName($client_id, $site_id, $jigsaw['name']);
+            if($customPoint_id){
+                $jigsaw['specific_id'] = $customPoint_id;
+                $jigsaw['config']['reward_id'] = $customPoint_id;
+
+            }else{
+                $result = "Custom point \'" .$jigsaw['name']. "\' is not found in this site";
+            }
         }
         return $result;
     }
@@ -412,7 +429,12 @@ class Rule extends MY_Controller
                         }
                     }
                 }elseif( $jigsaw['category']=="FEEDBACK"){
-                    if($jigsaw['name']=="sms"){
+
+                    if($jigsaw['name']=="email"){
+                        //TODO : convert template name to ID
+                    }elseif($jigsaw['name']=="sms"){
+                        //TODO : convert template name to ID
+                    }elseif($jigsaw['name']=="push"){
                         //TODO : convert template name to ID
                     }
 
@@ -427,7 +449,7 @@ class Rule extends MY_Controller
             }
             $this->output->set_output(json_encode(array('status'=>'success')));
         }else{ // failed data validation
-
+            $this->output->set_output(json_encode(array('status'=>'fail','message'=>"fail")));
         }
 
 
