@@ -488,6 +488,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Node is not found in this organize type";
                 $errorData['error_code'] = '2424';
                 break;
+            case 'TRIP_NOT_EXIST':
+                $errorData['message'] = "Trip is not exist";
+                $errorData['error_code'] = '2501';
+                break;
             case 'FITBIT_TOKEN_EXPIRED':
                 $errorData['message'] = "FitBit Token is expired";
                 $errorData['error_code'] = '2601';

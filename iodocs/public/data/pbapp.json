@@ -4844,6 +4844,172 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Trip API",
+      "methods": [
+        {
+          "MethodName": "Retrieve Trip Data",
+          "Synopsis": "Retrieve trip data by specified filter fields",
+          "HTTPMethod": "GET",
+          "URI": "/Trip",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "trip_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific trip id of player's trip"
+            },
+            {
+              "Name": "finished",
+              "Required": "N",
+              "Default": "false",
+              "Type": "enumerated",
+              "Description": "Specific finished trip of player's trip"
+              "EnumeratedList": [
+                "true",
+                "false"
+              ]
+            }
+          ]
+        },
+        {
+          "MethodName": "Start Trip",
+          "Synopsis": "Start Trip",
+          "HTTPMethod": "POST",
+          "URI": "/Trip/startTrip",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            }
+          ]
+        },
+        {
+          "MethodName": "Finish Trip",
+          "Synopsis": "Finish Trip",
+          "HTTPMethod": "POST",
+          "URI": "/Trip/finishTrip",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            }
+          ]
+        },
+        {
+          "MethodName": "Retrieve Trip Log by Trip ID",
+          "Synopsis": "Retrieve Trip Log by Trip ID",
+          "HTTPMethod": "GET",
+          "URI": "/Trip/:trip_id/getTripLog",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "trip_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific trip id of player's trip"
+            }
+          ]
+        },
+        {
+          "MethodName": "Add Trip Log by Trip ID",
+          "Synopsis": "Add Trip Log by Trip ID",
+          "HTTPMethod": "POST",
+          "URI": "/Trip/:trip_id/addTripLog",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "trip_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific trip id of player's trip"
+            },
+            {
+              "Name": "speed",
+              "Required": "N",
+              "Default": "",
+              "Type": "integer",
+              "Description": "Speed of trip"
+            },
+            {
+              "Name": "latitude",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Latitude of trip"
+            },
+            {
+              "Name": "longitude",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Longitude of trip"
+            },
+            {
+              "Name": "altitude",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Altitude of trip"
+            },
+            {
+              "Name": "rpm",
+              "Required": "N",
+              "Default": "",
+              "Type": "integer",
+              "Description": "RPM of trip"
+            },
+            {
+              "Name": "distance",
+              "Required": "N",
+              "Default": "",
+              "Type": "integer",
+              "Description": "Distance of trip"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

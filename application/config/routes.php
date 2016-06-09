@@ -352,6 +352,13 @@ $route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 //Link API
 $route['Link/generate'] = 'link/generate';
 
+//Trip API
+$route['Trip'] = 'trip/getTrip';
+$route['Trip/startTrip'] = 'trip/startTrip';
+$route['Trip/'.ANY_STRING.'/finishTrip'] = 'trip/finishTrip/$1';
+$route['Trip/'.ANY_STRING.'/addTripLog'] = 'trip/insertTripLog/$1';
+$route['Trip/'.ANY_STRING.'/getTripLog'] = 'trip/getTripLog/$1';
+
 //FitBit API
 $route['Fitbit'] = 'fitbit/getFitBitPlayer';
 $route['Fitbit/add'] = 'fitbit/addFitBitPlayer';
