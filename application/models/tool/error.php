@@ -355,7 +355,7 @@ class Error extends CI_Model
                 $errorData['error_code'] = '2003';
                 break;
             case 'PIN_CODE_INVALID':
-                $errorData['message'] = "PIN code is invalid";
+                $errorData['message'] = "Sorry, this PIN doesn’t match any active project";
                 $errorData['error_code'] = '2101';
                 break;
             case 'REFERRAL_CODE_INVALID':
