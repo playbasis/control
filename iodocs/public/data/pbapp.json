@@ -1679,6 +1679,36 @@
               "Description": "amount of the goods to redeem"
             }
           ]
+        },
+        {
+          "MethodName": "Coupon code verification",
+          "Synopsis": "verify coupon code available.",
+          "HTTPMethod": "POST",
+          "URI": "/Goods/couponVerify",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "goods_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "goods id"
+            },
+            {
+              "Name": "coupon_code",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "coupon code of goods to verify"
+            }
+          ]
         }
       ]
     },
@@ -4874,7 +4904,7 @@
               "Required": "N",
               "Default": "false",
               "Type": "enumerated",
-              "Description": "Specific finished trip of player's trip"
+              "Description": "Specific finished trip of player's trip",
               "EnumeratedList": [
                 "true",
                 "false"

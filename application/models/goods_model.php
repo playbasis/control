@@ -106,6 +106,33 @@ class Goods_model extends MY_Model
         return $result ? $result[0] : null;
     }
 
+    public function getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $group, $code, $quantity=false)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('code', $code);
+        if($quantity){
+            $this->mongo_db->where_gt('quantity', 0);
+        }
+
+        $result = $this->mongo_db->get('playbasis_goods_to_client');
+        return $result;
+    }
+
+    public function checkGoodsAvailable($client_id, $site_id, $goods_id)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'goods_id' => $goods_id
+        ));
+        $playerRecord = $this->mongo_db->count('playbasis_goods_to_player');
+        return $playerRecord;
+    }
+
     public function getGoods($data, $is_sponsor = false)
     {
         //get goods id

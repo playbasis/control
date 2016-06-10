@@ -250,6 +250,14 @@ class Error extends CI_Model
                 $errorData['message'] = "Goods is not yet redeemed";
                 $errorData['error_code'] = '0502';
                 break;
+            case 'GOODS_ID_INVALID':
+                $errorData['message'] = "Invalid goods id";
+                $errorData['error_code'] = '0503';
+                break;
+            case 'COUPON_NOT_AVAILABLE':
+                $errorData['message'] = "Coupon is not available";
+                $errorData['error_code'] = '0504';
+                break;
             case 'OVER_LIMIT_REDEEM':
                 $errorData['message'] = "User has exceeded redeem limit";
                 $errorData['error_code'] = '0601';
@@ -280,7 +288,7 @@ class Error extends CI_Model
                 break;
             case 'BRANCH_IS_NOT_ALLOW_TO_VERIFY_GOODS':
                 $errorData['message'] = "This branch(pincode) is not allowed to verify the goods";
-                $errorData['error_code'] = '0603';
+                $errorData['error_code'] = '0608';
                 break;
             case "QUEST_JOINED":
                 $errorData["message"] = "User has already join this quest";
