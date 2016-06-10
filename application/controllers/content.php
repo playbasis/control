@@ -534,6 +534,12 @@ class Content extends REST2_Controller
             }
         }
 
+        foreach ($actionInfo['custom'] as $name => $value) {
+            if (is_numeric($value)) {
+                $actionInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
+            }
+        }
+
         $playerContent = $this->content_model->retrieveExistingPlayerContent(array(
             'client_id'    => $this->validToken['client_id'],
             'site_id'      => $this->validToken['site_id'],
@@ -644,6 +650,12 @@ class Content extends REST2_Controller
             }
             foreach ($keys as $i => $key) {
                 $data['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
+            }
+        }
+
+        foreach ($data['custom'] as $name => $value) {
+            if (is_numeric($value)) {
+                $data['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
             }
         }
 
