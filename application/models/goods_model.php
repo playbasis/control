@@ -524,10 +524,10 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($goods_id));
         // $this->mongo_db->set('quantity', (int)$data['quantity']);
         $this->mongo_db->set('quantity',
-            (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null);
+            (isset($data['quantity']) && !($data['quantity'] === "")) ? (int)$data['quantity'] : null);
         // $this->mongo_db->set('per_user', (int)$data['per_user']);
         $this->mongo_db->set('per_user',
-            (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
+            (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
@@ -589,10 +589,10 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         // $this->mongo_db->set('quantity', (int)$data['quantity']);
         $this->mongo_db->set('quantity',
-            (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null);
+            (isset($data['quantity']) && !($data['quantity'] === "")) ? (int)$data['quantity'] : null);
         // $this->mongo_db->set('per_user', (int)$data['per_user']);
         $this->mongo_db->set('per_user',
-            (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
+            (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
@@ -655,7 +655,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('group', $data['name']);
-        $this->mongo_db->set('per_user', (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
+        $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);

@@ -337,9 +337,9 @@ class Badge extends MY_Controller
                     'badge_id' => $result['_id'],
                     'name' => $result['name'],
                     'hint' => $result['hint'],
-                    'quantity' => $result['quantity'],
+                    'quantity' => (isset($result['quantity']) && !is_null($result['quantity'])) ? $result['quantity']: null,
                     'category' => (isset($result['category']) && !empty($result['category'])) ? $result['category']: null ,
-                    'per_user' => (isset($result['per_user']) && !empty($result['per_user'])) ? $result['per_user']: null ,
+                    'per_user' => (isset($result['per_user']) && !is_null($result['per_user'])) ? $result['per_user']: null ,
                     'status' => $result['status'],
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
@@ -419,9 +419,9 @@ class Badge extends MY_Controller
                                 'badge_id' => $badge_info['_id'],
                                 'name' => $badge_info['name'],
                                 'hint' => $badge_info['hint'],
-                                'quantity' => $badge_info['quantity'],
+                                'quantity' => (isset($badge_info['quantity']) && !is_null($badge_info['quantity'])) ? $badge_info['quantity']: null ,
                                 'category' => (isset($badge_info['category']) && !empty($badge_info['category'])) ? $badge_info['category']: null ,
-                                'per_user' => (isset($badge_info['per_user']) && !empty($badge_info['per_user'])) ? $badge_info['per_user']: null ,
+                                'per_user' => (isset($badge_info['per_user']) && !is_null($badge_info['per_user'])) ? $badge_info['per_user']: null ,
                                 'tags' => isset($badge_info['tags']) ? $badge_info['tags'] : null,
                                 'status' => $badge_info['status'],
                                 'image' => $image,
@@ -564,9 +564,9 @@ class Badge extends MY_Controller
                     'badge_id' => $result['_id'],
                     'name' => $result['name'],
                     'hint' => $result['hint'],
-                    'quantity' => $result['quantity'],
+                    'quantity' => (isset($result['quantity']) && !is_null($result['quantity'])) ? $result['quantity']: null ,
                     'category' => (isset($result['category']) && !empty($result['category'])) ? $result['category']: null ,
-                    'per_user' => (isset($result['per_user']) && !empty($result['per_user'])) ? $result['per_user']: null ,
+                    'per_user' => (isset($result['per_user']) && !is_null($result['per_user'])) ? $result['per_user']: null ,
                     'status' => $result['status'],
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
@@ -642,9 +642,9 @@ class Badge extends MY_Controller
                                 'badge_id' => $badge_info['_id'],
                                 'name' => $badge_info['name'],
                                 'hint' => $badge_info['hint'],
-                                'quantity' => $badge_info['quantity'],
+                                'quantity' => (isset($badge_info['quantity']) && !is_null($badge_info['quantity'])) ? $badge_info['quantity']: null,
                                 'category' => (isset($badge_info['category']) && !empty($badge_info['category'])) ? $badge_info['category']: null ,
-                                'per_user' => (isset($badge_info['per_user']) && !empty($badge_info['per_user'])) ? $badge_info['per_user']: null,
+                                'per_user' => (isset($badge_info['per_user']) && !is_null($badge_info['per_user'])) ? $badge_info['per_user']: null,
                                 'tags' => isset($badge_info['tags']) ? $badge_info['tags'] : null,
                                 'status' => $badge_info['status'],
                                 'image' => $image,
@@ -832,9 +832,9 @@ class Badge extends MY_Controller
         if ($this->input->post('quantity')) {
             $this->data['quantity'] = $this->input->post('quantity');
         } elseif (!empty($badge_info)) {
-            $this->data['quantity'] = $badge_info['quantity'];
+            $this->data['quantity'] = (isset($badge_info['quantity']) && !is_null($badge_info['quantity'])) ? $badge_info['quantity']: null;
         } else {
-            $this->data['quantity'] = 1;
+            $this->data['quantity'] = null;
         }
 
         if ($this->input->post('category')) {
@@ -848,7 +848,7 @@ class Badge extends MY_Controller
         if ($this->input->post('per_user')) {
             $this->data['per_user'] = $this->input->post('per_user');
         } elseif (!empty($badge_info)) {
-            $this->data['per_user'] = (isset($badge_info['per_user']) && !empty($badge_info['per_user'])) ? $badge_info['per_user']: null;
+            $this->data['per_user'] = (isset($badge_info['per_user']) && !is_null($badge_info['per_user'])) ? $badge_info['per_user']: null;
         } else {
             $this->data['per_user'] = null;
         }

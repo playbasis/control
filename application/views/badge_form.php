@@ -103,7 +103,7 @@
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_quantity'); ?>:</td>
-                            <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" /></td>
+                            <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" class="tooltips" data-placement="right" title="if left blank it is unlimited"/></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_per_user'); ?>:</td>
