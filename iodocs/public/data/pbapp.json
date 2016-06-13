@@ -4598,6 +4598,22 @@
       "name": "Link API",
       "methods": [
         {
+          "MethodName": "Find info of a link",
+          "Synopsis": "Find detail of the data associated with a given link",
+          "HTTPMethod": "GET",
+          "URI": "/Link/",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "link",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Link to find the data"
+            }
+          ]
+        },
+        {
           "MethodName": "Generate a link",
           "Synopsis": "Generate a unique link given data",
           "HTTPMethod": "POST",
