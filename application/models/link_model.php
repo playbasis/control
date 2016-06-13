@@ -20,7 +20,7 @@ class Link_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function find($client_id, $site_id, $key=null)
+    public function find($client_id, $site_id, $data=null)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where(array(
@@ -29,19 +29,19 @@ class Link_model extends MY_Model
             'status' => true,
             'deleted' => false
         ));
-        if ($key) $this->mongo_db->where('key', $key);
+        if ($data) $this->mongo_db->where('data', $data);
         $results = $this->mongo_db->get('playbasis_link_to_client');
-        return $results && $key ? $results[0]['url'] : null;
+        return $results ? ($data && isset($results[0]['url']) ? $results[0]['url'] : $results[0]) : null;
     }
 
-    public function save($client_id, $site_id, $key, $url)
+    public function save($client_id, $site_id, $data, $url)
     {
         $d = new MongoDate();
         $this->set_site_mongodb($site_id);
         return $this->mongo_db->insert('playbasis_link_to_client', array(
             'client_id' => $client_id,
             'site_id' => $site_id,
-            'key' => $key,
+            'data' => $data,
             'url' => $url,
             'status' => true,
             'deleted' => false,

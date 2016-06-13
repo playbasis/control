@@ -18,9 +18,8 @@ class Link extends REST2_Controller
     {
         $data = $this->input->post();
         $data = array_merge($data, array('vendor' => 'playbasis'));
-        unset($data['token']);
-        $json = json_encode($data);
-        $link = $this->link_model->find($this->client_id, $this->site_id, $json);
+        foreach (array('api_key', 'api_secret', 'token') as $k) unset($data[$k]);
+        $link = $this->link_model->find($this->client_id, $this->site_id, $data);
         if (!$link) {
             $conf = $this->link_model->getConfig($this->client_id, $this->site_id);
             if (!$conf) $this->response($this->error->setError('LINK_CONFIG_NOT_FOUND'), 200);
@@ -30,11 +29,7 @@ class Link extends REST2_Controller
             }
             $message = array(
                 'branch_key' => $conf['key'],
-                'sdk' => 'api',
-                'campaign' => 'idea',
-                'feature' => 'generate',
-                'channel' => 'lucid',
-                'tag' => array('consumer'),
+                'feature' => 'api',
                 'data' => json_encode($data)
             );
             $this->curl->create('https://api.branch.io/v1/url');
@@ -46,7 +41,7 @@ class Link extends REST2_Controller
             $res = json_decode($response);
             if (!isset($res->url)) $this->response($this->error->setError('LINK_BRANCH_ERROR'), 200);
             $link = $res->url;
-            $this->link_model->save($this->client_id, $this->site_id, $json, $link);
+            $this->link_model->save($this->client_id, $this->site_id, $data, $link);
         }
         $this->response($this->resp->setRespond(array('link' => $link)), 200);
     }
