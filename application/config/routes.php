@@ -350,6 +350,7 @@ $route['CMS/getArticle'] = 'cms/getArticle';
 $route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 
 //Link API
+$route['Link'] = 'link/view';
 $route['Link/generate'] = 'link/generate';
 
 //File API
