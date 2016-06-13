@@ -4604,6 +4604,13 @@
           "URI": "/Link/",
           "RequiresOAuth": "N",
           "parameters": [
+            {
+              "Name": "link",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Link to find the data"
+            }
           ]
         },
         {
