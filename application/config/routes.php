@@ -357,9 +357,9 @@ $route['Link/generate'] = 'link/generate';
 //Trip API
 $route['Trip'] = 'trip/getTrip';
 $route['Trip/startTrip'] = 'trip/startTrip';
-$route['Trip/'.ANY_STRING.'/finishTrip'] = 'trip/finishTrip/$1';
-$route['Trip/'.ANY_STRING.'/addTripLog'] = 'trip/insertTripLog/$1';
-$route['Trip/'.ANY_STRING.'/getTripLog'] = 'trip/getTripLog/$1';
+$route['Trip/finishTrip'] = 'trip/finishTrip';
+$route['Trip/addTripLog'] = 'trip/addTripLog';
+$route['Trip/getTripLog'] = 'trip/getTripLog';
 
 //FitBit API
 $route['Fitbit'] = 'fitbit/getFitBitPlayer';
