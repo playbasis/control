@@ -497,11 +497,11 @@ class Error extends CI_Model
                 $errorData['error_code'] = '2424';
                 break;
             case 'TRIP_NOT_EXIST':
-                $errorData['message'] = "The specific trip is not exist";
+                $errorData['message'] = "The specified trip does not exist";
                 $errorData['error_code'] = '2501';
                 break;
             case 'TRIP_ALTREADY_STARTED':
-                $errorData['message'] = "Trip is already started";
+                $errorData['message'] = "Trip has already been started";
                 $errorData['error_code'] = '2502';
                 break;
             case 'TRIP_NOT_STARTED':
