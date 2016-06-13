@@ -34,6 +34,20 @@ class Link_model extends MY_Model
         return $results ? ($data && isset($results[0]['url']) ? $results[0]['url'] : $results[0]) : null;
     }
 
+    public function findByLink($client_id, $site_id, $link=null)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'status' => true,
+            'deleted' => false
+        ));
+        if ($link) $this->mongo_db->where('url', $link);
+        $results = $this->mongo_db->get('playbasis_link_to_client');
+        return $results ? ($link && isset($results[0]['data']) ? $results[0]['data'] : $results[0]) : null;
+    }
+
     public function save($client_id, $site_id, $data, $url)
     {
         $d = new MongoDate();
