@@ -497,8 +497,16 @@ class Error extends CI_Model
                 $errorData['error_code'] = '2424';
                 break;
             case 'TRIP_NOT_EXIST':
-                $errorData['message'] = "Trip is not exist";
+                $errorData['message'] = "The specified trip does not exist";
                 $errorData['error_code'] = '2501';
+                break;
+            case 'TRIP_ALTREADY_STARTED':
+                $errorData['message'] = "Trip has already been started";
+                $errorData['error_code'] = '2502';
+                break;
+            case 'TRIP_NOT_STARTED':
+                $errorData['message'] = "Cannot find a trip that is currently started by this player";
+                $errorData['error_code'] = '2503';
                 break;
             case 'FITBIT_TOKEN_EXPIRED':
                 $errorData['message'] = "FitBit Token is expired";
