@@ -802,8 +802,8 @@ class jigsaw extends MY_Model
             return false;
         }
         $badgeInfo = $badgeInfo[0];
-        $max = (isset($badgeInfo['per_user']) && !empty($badgeInfo['per_user'])) ? $badgeInfo['per_user']: null;
-        if (!$badgeInfo['quantity']) {
+        $max = (isset($badgeInfo['per_user']) && !is_null($badgeInfo['per_user'])) ? $badgeInfo['per_user']: null;
+        if (!$badgeInfo['quantity'] && !is_null($badgeInfo['quantity'])) {
             return false;
         }
         /* will handle quantity in client model updateplayerBadge()
@@ -819,6 +819,9 @@ class jigsaw extends MY_Model
                         return false;
                     }
                 }
+            }
+            elseif (!is_null($max)){
+                return false;
             }
             return true;
         }
