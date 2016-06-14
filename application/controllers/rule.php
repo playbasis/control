@@ -18,6 +18,9 @@ class Rule extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Goods_model');
         $this->load->model('Reward_model');
+        $this->load->model('Email_model');
+        $this->load->model('Sms_model');
+        $this->load->model('Push_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -279,17 +282,22 @@ class Rule extends MY_Controller
                         }
                     }
                 }elseif( $jigsaw['category']=="FEEDBACK"){
-
-
                     if($jigsaw['name']=="email"){
-                        //TODO : convert template ID to name
+                        $info = $this->Email_model->getTemplate($jigsaw['dataSet'][1]['value']);
+                        //$jigsaw['dataSet'][1]['value'] this value must be changed when import (template_name -> template_id)
+                        //$jigsaw['config']['template_id'] this value must be changed when import (template_name -> template_id)
+                        $jigsaw['config']['template_name'] = $info['name'];
                     }elseif($jigsaw['name']=="sms"){
-                        //TODO : convert template ID to name
+                        $info = $this->Sms_model->getTemplate($jigsaw['dataSet'][1]['value']);
+                        //$jigsaw['dataSet'][1]['value'] this value must be changed when import (template_name -> template_id)
+                        //$jigsaw['config']['template_id'] this value must be changed when import (template_name -> template_id)
+                        $jigsaw['config']['template_name'] = $info['name'];
                     }elseif($jigsaw['name']=="push"){
-                        //TODO : convert template ID to name
+                        $info = $this->Push_model->getTemplate($jigsaw['dataSet'][1]['value']);
+                        //$jigsaw['dataSet'][1]['value'] this value must be changed when import (template_name -> template_id)
+                        //$jigsaw['config']['template_id'] this value must be changed when import (template_name -> template_id)
+                        $jigsaw['config']['template_name'] = $info['name'];
                     }
-
-
                 }
             }
 
@@ -311,7 +319,7 @@ class Rule extends MY_Controller
                     $jigsaw['dataSet'][1]['value'] = $badge_id;
                     $jigsaw['config']['item_id'] = $badge_id;
                 }else{
-                    $result = "Badge \'". $jigsaw['config']['badge_name'] . "\' is not found in this site";
+                    $result = array('jigsaw'=>'badge','name'=>$jigsaw['config']['badge_name']);
                 }
             }
         }elseif($jigsaw['name']=="goods" ) {
@@ -323,7 +331,7 @@ class Rule extends MY_Controller
                     unset($jigsaw['config']['good_name']);
                     unset($jigsaw['config']['good_group']);
                 }else{
-                    $result = "Goods \'" .($jigsaw['config']['good_group'] ? $jigsaw['config']['good_group'] : $jigsaw['config']['good_name']). "\' is not found in this site";
+                    $result = array('jigsaw'=>'goods','name'=>$jigsaw['config']['good_group'] ? $jigsaw['config']['good_group'] : $jigsaw['config']['good_name']);
                 }
             }
         }else{//customPoint
@@ -334,10 +342,19 @@ class Rule extends MY_Controller
                 $jigsaw['config']['reward_id'] = $customPoint_id;
 
             }else{
-                $result = "Custom point \'" .$jigsaw['name']. "\' is not found in this site";
+                $result = array('jigsaw'=>'customPoint','name'=>$jigsaw['name']);
             }
         }
         return $result;
+    }
+
+    private function push_validation_error(&$array,$key,$value){
+        if(isset($array[$key])){
+            $array[$key] = array_keys(array_flip(array_merge($array[$key],array($value))));
+        }else{
+            $array[$key] = array($value);
+        }
+
     }
 
     public function jsonImportRule()
@@ -368,14 +385,14 @@ class Rule extends MY_Controller
                 if( $jigsaw['category']=="REWARD"){
                     $vResult = $this->validateRewards($client_id, $site_id, $jigsaw);
                     if($vResult){ // if $vResult is not NULL then mean that the validation got error
-                        $validation_result[] = array('rule_name'=>$rule_info['name'], 'message'=>$vResult);
+                        $this->push_validation_error($validation_result, $vResult['jigsaw'], $vResult['name']);
                     }
 
                 }elseif( $jigsaw['category']=="GROUP"){// reward group
                     foreach($jigsaw['dataSet'][0]['value'] as $index => &$dataSet){
                         $vResult = $this->validateRewards($client_id, $site_id, $dataSet);
                         if($vResult){ // if $vResult is not NULL then mean that the validation got error
-                            $validation_result[] = array('rule_name'=>$rule_info['name'], 'message'=>$vResult);
+                            $this->push_validation_error($validation_result, $vResult['jigsaw'], $vResult['name']);
                         }else{
                             $jigsaw['config']['group_container'][$index]['item_id']=$dataSet['config']['item_id'];
                         }
@@ -389,14 +406,14 @@ class Rule extends MY_Controller
                                 $jigsaw['dataSet'][1]['value'] = $badge_id;
                                 $jigsaw['config']['badge_id'] = $badge_id;
                             }else{
-                                $validation_result[] = array('rule_name'=>$rule_info['name'],'message'=>"Badge \'". $jigsaw['config']['badge_name'] . "\' is not found in this site");
+                                $this->push_validation_error($validation_result, "badge", $jigsaw['config']['badge_name']);
                             }
                         }
                     }elseif($jigsaw['name']=="redeem"){
                         foreach($jigsaw['dataSet'][0]['value'] as $index => &$dataSet){
                             $vResult = $this->validateRewards($client_id, $site_id, $dataSet);
                             if($vResult){ // if $vResult is not NULL, mean that the validation got error
-                                $validation_result[] = array('rule_name'=>$rule_info['name'], 'message'=>$vResult);
+                                $this->push_validation_error($validation_result, $vResult['jigsaw'], $vResult['name']);
                             }else{
                                 $jigsaw['config']['group_container'][$index]['item_id']=$dataSet['config']['item_id'];
                             }
@@ -413,7 +430,7 @@ class Rule extends MY_Controller
                                     $dataSet['config']['badge_id'] = $badge_id;
                                     $jigsaw['config']['condition_group_container'][$index]['badge_id']=$badge_id;
                                 }else{
-                                    $validation_result[] = array('rule_name'=>$rule_info['name'],'message'=>"Badge \'". $dataSet['config']['badge_name'] . "\' is not found in this site");
+                                    $this->push_validation_error($validation_result,"badge",$dataSet['config']['badge_name']);
                                 }
                             }
                         }elseif($dataSet['name']=="redeem"){
@@ -421,7 +438,8 @@ class Rule extends MY_Controller
                             /*foreach($dataSet['dataSet'][0]['value'] as $index => &$dataSet2){
                                 $vResult = $this->validateRewards($client_id, $site_id, $dataSet2);
                                 if($vResult){ // if $vResult is not NULL, mean that the validation got error
-                                    $validation_result[] = array('rule_name'=>$rule_info['name'], 'message'=>$vResult);
+                                    //$validation_result[] = array('rule_name'=>$rule_info['name'], 'message'=>$vResult);
+                                    $this->push_validation_error($validation_result, $vResult['jigsaw'], $vResult['name']);
                                 }else{
                                     $dataSet['config']['group_container'][$index]['item_id']=$dataSet2['config']['item_id'];
                                 }
@@ -431,13 +449,35 @@ class Rule extends MY_Controller
                 }elseif( $jigsaw['category']=="FEEDBACK"){
 
                     if($jigsaw['name']=="email"){
-                        //TODO : convert template name to ID
-                    }elseif($jigsaw['name']=="sms"){
-                        //TODO : convert template name to ID
-                    }elseif($jigsaw['name']=="push"){
-                        //TODO : convert template name to ID
-                    }
+                        $email_template_id = $this->Email_model->getTemplateIDByName($site_id, $jigsaw['config']['template_name']);
+                        if($email_template_id){
+                            unset($jigsaw['config']['template_name']);
+                            $jigsaw['dataSet'][1]['value'] = $email_template_id;
+                            $jigsaw['config']['template_id'] = $email_template_id;
+                        }else{
+                            $this->push_validation_error($validation_result,"email",$jigsaw['config']['template_name']);
+                        }
 
+                    }elseif($jigsaw['name']=="sms"){
+                        $sms_template_id = $this->Sms_model->getTemplateIDByName($site_id, $jigsaw['config']['template_name']);
+                        if($sms_template_id){
+                            unset($jigsaw['config']['template_name']);
+                            $jigsaw['dataSet'][1]['value'] = $sms_template_id;
+                            $jigsaw['config']['template_id'] = $sms_template_id;
+                        }else{
+                            $this->push_validation_error($validation_result,"sms",$jigsaw['config']['template_name']);
+                        }
+
+                    }elseif($jigsaw['name']=="push"){
+                        $push_template_id = $this->Push_model->getTemplateIDByName($site_id, $jigsaw['config']['template_name']);
+                        if($push_template_id){
+                            unset($jigsaw['config']['template_name']);
+                            $jigsaw['dataSet'][1]['value'] = $push_template_id;
+                            $jigsaw['config']['template_id'] = $push_template_id;
+                        }else{
+                            $this->push_validation_error($validation_result,"push",$jigsaw['config']['template_name']);
+                        }
+                    }
                 }
             }
         }
@@ -445,11 +485,10 @@ class Rule extends MY_Controller
         if(!$validation_result){ // passed data validation
             foreach($array_rules as $rule) {
                 $import_result = $this->Rule_model->saveRule($rule);
-
             }
             $this->output->set_output(json_encode(array('status'=>'success')));
         }else{ // failed data validation
-            $this->output->set_output(json_encode(array('status'=>'fail','message'=>"fail")));
+            $this->output->set_output(json_encode(array('status'=>'fail','results'=>$validation_result)));
         }
 
 

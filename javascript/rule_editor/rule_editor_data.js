@@ -402,7 +402,15 @@ dataMan = {
                     dialogMsg = 'Import rule successfully';
                 }
                 else {
-                    dialogMsg = $.parseJSON(data).message;
+                    var msg = "";
+                    for (var k in $.parseJSON(data).results){
+                        if ($.parseJSON(data).results.hasOwnProperty(k)) {
+                            msg += k.fontcolor( '570420' ).bold() + " : " + $.parseJSON(data).results[k] +"<br>";
+                        }
+                    }
+
+                    preventUnusual.message(msg,'Error to import, The following item(s) are not found in this site.');
+                    dialogMsg = 'Failed to import rule';
                 }
 
 
