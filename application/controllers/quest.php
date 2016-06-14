@@ -217,9 +217,9 @@ class Quest extends MY_Controller
             foreach ($missions_input as $i => $mission) {
                 if (!empty($mission['mission_name'])) {
                     $this->form_validation->set_rules('missions[' . $i . '][mission_name]',
-                        $this->lang->line('form_mission_name'), 'trim|required|xss_clean|check_space');
+                        $this->lang->line('form_mission_name'), 'trim|required|xss_clean');
                     $this->form_validation->set_rules('missions[' . $i++ . '][mission_number]',
-                        $this->lang->line('form_mission_number'), 'trim|required|xss_clean|check_space');
+                        $this->lang->line('form_mission_number'), 'integer|trim|required|xss_clean|check_space');
                 }
             }
         }
@@ -1357,7 +1357,7 @@ class Quest extends MY_Controller
                 $this->form_validation->set_rules('missions[' . $i . '][mission_name]',
                     $this->lang->line('form_mission_name'), 'trim|required|xss_clean');
                 $this->form_validation->set_rules('missions[' . $i++ . '][mission_number]',
-                    $this->lang->line('form_mission_number'), 'trim|required|xss_clean');
+                    $this->lang->line('form_mission_number'), 'integer|trim|required|xss_clean|check_space');
             }
         }
 

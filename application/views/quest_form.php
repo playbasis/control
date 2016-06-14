@@ -779,7 +779,7 @@
                                                                         <small>value</small>
                                                                         <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eGoods['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $eGoods['reward_value'] ?>">
                                                                         <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eGoods['reward_id'] ?>][reward_id]" value="<?php echo $eGoods['reward_id'] ?>">
-                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eGoods['reward_id'] ?>][reward_type]" value="BADGE"></div>
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eGoods['reward_id'] ?>][reward_type]" value="GOODS"></div>
                                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>
                                                                     </div>
                                                                 </div>
