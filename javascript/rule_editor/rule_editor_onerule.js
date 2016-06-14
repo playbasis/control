@@ -323,10 +323,32 @@ oneRuleMan = {
     ruleActionPanelControl:function(command){
         if(command =='not_editing'){
             $('.one_rule_new_btn').show('fast')
+            $('.export_rule_btn').show('fast');
+            $('.import_rule_btn').show('fast');
             $('.one_rule_actionbtn_holder').hide('fast');
         }else if(command == 'editing'){
             $('.one_rule_new_btn').hide('fast')
+            $('.export_rule_btn').hide('fast');
+            $('.import_rule_btn').hide('fast');
             $('.one_rule_actionbtn_holder').show('fast');
+        }else if(command == 'cancel'){
+            $('.export_rule_btn').show('fast');
+            $('.import_rule_btn').show('fast');
+            $('.one_rule_new_btn').show('fast');
+
+            $('.pbd_rule_import').hide('fast');
+            $('.export_rule_actionbtn_holder').hide('fast');
+            $('.import_rule_actionbtn_holder').hide('fast');
+
+            var tableObj = $('table.' + ruleTableMan.targetTable);
+            var index = 7,
+                selector = "tbody tr td:nth-child("+index+")",  // selector for all body cells in the column
+                column = tableObj.find(selector).add("#column_import_check"); // all cells in the column
+
+            // toggle the "hidden" class on all the column cells
+            column.addClass("hidden");
+
+            $('#file-import').val('');
         }
     }
 },//->
@@ -686,6 +708,67 @@ $('.one_rule_save_btn').live('click',function(){
     return true;
 })
 
+//Event : Click on [Export] button
+$('.export_execute_btn').live('click',function(){
+
+    var array_rules = new Array();
+    $("input:checkbox[name=import_selected]:checked").each(function(){
+        array_rules.push($(this).val());
+    });
+    if(array_rules.length == 0){
+        preventUnusual.message('Please select at least 1 rule to import!');
+    }
+    else{
+        dataMan.exportRule(array_rules);
+        var test ="test";
+    }
+    return true;
+
+})
+
+//Event : Click on [Import] button
+$('.import_execute_btn').live('click',function(){
+
+    var myfile = document.getElementById("file-import");
+
+    if(myfile.files[0] != undefined){
+        //
+        //var textType = 'text/csv';
+
+        if (myfile.value.match(/\.json/gi)==".json") {
+            var file = myfile.files[0];
+            var reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = (function (theFile) {
+                return function (e) {
+                    try {
+                        json = JSON.parse(e.target.result);
+                        var rules_data =  JSON.stringify(json);
+                        dataMan.importRule(rules_data);
+                    } catch (ex) {
+
+                        preventUnusual.message('Error when trying to parse json : ' + ex);
+                    }
+                }
+            })(file);
+            reader.onerror = function() {
+                preventUnusual.message('Unable to read ' + file.fileName);
+            };
+
+
+        } else {
+            preventUnusual.message('File type is invalid! ( only JSON file is supported)');
+        }
+
+    }else{
+        preventUnusual.message('Please choose a file to execute!');
+    }
+    //
+    //$('.file-import').html();
+
+    return true;
+})
+
 //Event : Click on [+New Rule] button
 $('.one_rule_new_btn').live('click',function(){
 
@@ -702,9 +785,51 @@ $('.one_rule_new_btn').live('click',function(){
     oneRuleMan.ruleActionPanelControl('editing')
 })
 
+//Event : Click on [Export Rule] button
+$('.export_rule_btn').live('click',function(){
+
+    $('.export_rule_btn').hide('fast');
+    $('.import_rule_btn').hide('fast');
+    $('.one_rule_new_btn').hide('fast');
+
+    $('.export_rule_actionbtn_holder').show('fast');
+
+    $('input[name=\'import_selected_head\']').attr('checked', false);
+    $('input[name*=\'import_selected\']').attr('checked', false);
+
+    var tableObj = $('table.' + ruleTableMan.targetTable);
+    var index = 7,
+        selector = "tbody tr td:nth-child("+index+")",  // selector for all body cells in the column
+        column = tableObj.find(selector).add("#column_import_check"); // all cells in the column
+
+    // toggle the "hidden" class on all the column cells
+    column.removeClass("hidden");
+})
+
+//Event : Click on [Import Rule] button
+$('.import_rule_btn').live('click',function(){
+
+    $('.export_rule_btn').hide('fast');
+    $('.import_rule_btn').hide('fast');
+    $('.one_rule_new_btn').hide('fast');
+
+    $('.pbd_rule_import').show('fast');
+    $('.import_rule_actionbtn_holder').show('fast');
+
+})
+
 //Event : Click on [Discard] button
 $('.one_rule_discard_btn').live('click',function(){
     perventDialogMan.confirmDialog('Confirm','Do you really want to discard unsaved game rules ?','DIRECTION_discardRule');
+})
+
+//Event : Click on [Cancel] button
+$('.export_import_cancel_btn').live('click',function(){
+    oneRuleMan.ruleActionPanelControl('cancel');
+
+    if($.isFunction($.fn.slidePanel)){
+        $().slidePanel();
+    }
 })
 
 //Event : On disable Each node 
@@ -730,6 +855,18 @@ $('.gen_rule_edit_btn').live('click',function(event){
     if(DEBUG)console.log('Attempt to load rule id : '+id)
     dataMan.currentRuleIdToLoad = id;
     dataMan.loadForEdit();
+
+    $('.pbd_rule_import').hide('fast');
+    $('.export_rule_actionbtn_holder').hide('fast');
+    $('.import_rule_actionbtn_holder').hide('fast');
+
+    var tableObj = $('table.' + ruleTableMan.targetTable);
+    var index = 7,
+        selector = "tbody tr td:nth-child("+index+")",  // selector for all body cells in the column
+        column = tableObj.find(selector).add("#column_import_check"); // all cells in the column
+
+    // toggle the "hidden" class on all the column cells
+    column.addClass("hidden");
 
     oneRuleMan.ruleActionPanelControl('editing');
 })
