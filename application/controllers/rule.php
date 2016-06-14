@@ -455,7 +455,7 @@ class Rule extends MY_Controller
                             $jigsaw['dataSet'][1]['value'] = $email_template_id;
                             $jigsaw['config']['template_id'] = $email_template_id;
                         }else{
-                            $this->push_validation_error($validation_result,"email",$jigsaw['config']['template_name']);
+                            $this->push_validation_error($validation_result,"email_template",$jigsaw['config']['template_name']);
                         }
 
                     }elseif($jigsaw['name']=="sms"){
@@ -465,7 +465,7 @@ class Rule extends MY_Controller
                             $jigsaw['dataSet'][1]['value'] = $sms_template_id;
                             $jigsaw['config']['template_id'] = $sms_template_id;
                         }else{
-                            $this->push_validation_error($validation_result,"sms",$jigsaw['config']['template_name']);
+                            $this->push_validation_error($validation_result,"sms_template",$jigsaw['config']['template_name']);
                         }
 
                     }elseif($jigsaw['name']=="push"){
@@ -475,7 +475,7 @@ class Rule extends MY_Controller
                             $jigsaw['dataSet'][1]['value'] = $push_template_id;
                             $jigsaw['config']['template_id'] = $push_template_id;
                         }else{
-                            $this->push_validation_error($validation_result,"push",$jigsaw['config']['template_name']);
+                            $this->push_validation_error($validation_result,"push_template",$jigsaw['config']['template_name']);
                         }
                     }
                 }
