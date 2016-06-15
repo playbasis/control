@@ -141,7 +141,7 @@ class Tracker_model extends MY_Model
         $this->set_site_mongodb($input['site_id']);
         $mongoDate = new MongoDate();
         $options = $async ? array("w" => 0, "j" => false) : array();
-        $id = $this->mongo_db->insert('playbasis_gift_to_player_log', array(
+        $id = $this->mongo_db->insert('playbasis_gift_log', array(
             'pb_player_id' => $input['pb_player_id'],
             'client_id' => $input['client_id'],
             'site_id' => $input['site_id'],
