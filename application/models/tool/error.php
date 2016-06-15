@@ -290,6 +290,14 @@ class Error extends CI_Model
                 $errorData['message'] = "This branch(pincode) is not allowed to verify the goods";
                 $errorData['error_code'] = '0608';
                 break;
+            case 'GIFT_NOT_ENOUGH':
+                $errorData['message'] = "Gift to send is not enough";
+                $errorData['error_code'] = '0609';
+                break;
+            case 'GIFT_NOT_EXIST':
+                $errorData['message'] = "Gift to send is not exist";
+                $errorData['error_code'] = '0610';
+                break;
             case "QUEST_JOINED":
                 $errorData["message"] = "User has already join this quest";
                 $errorData["error_code"] = "0701";

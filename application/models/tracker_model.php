@@ -71,6 +71,8 @@ class Tracker_model extends MY_Model
             'quiz_id' => (isset($input['quiz_id'])) ? $input['quiz_id'] : null,
             'leaderboard_id' => (isset($input['leaderboard_id'])) ? $input['leaderboard_id'] : null,
             'node_id' => (isset($input['node_id'])) ? $input['node_id'] : null,
+            'sender' => (isset($input['sent_pb_player_id'])) ? $input['sent_pb_player_id'] : null,
+            'gift_log_id' => (isset($input['gift_log_id'])) ? $input['gift_log_id'] : null,
             'date_added' => $mongoDate,
             'date_modified' => $mongoDate
         ), $options);
@@ -132,6 +134,39 @@ class Tracker_model extends MY_Model
             'date_modified' => $mongoDate
         ), $options);
         return $async ? null : $_id;
+    }
+
+    public function trackGift($input, $async = true)
+    {
+        $this->set_site_mongodb($input['site_id']);
+        $mongoDate = new MongoDate();
+        $options = $async ? array("w" => 0, "j" => false) : array();
+        $id = $this->mongo_db->insert('playbasis_gift_log', array(
+            'pb_player_id' => $input['pb_player_id'],
+            'client_id' => $input['client_id'],
+            'site_id' => $input['site_id'],
+            'gift_type' => $input['reward_type'],
+            'gift_id' => $input['reward_id'],
+            'gift_name' => $input['reward_name'],
+            'gift_value' => $input['amount'],
+            'sender' => $input['sent_pb_player_id'],
+            'date_added' => $mongoDate,
+            'date_modified' => $mongoDate
+        ), $options);
+
+        $input['gift_log_id'] = $id;
+        if ($input['reward_type'] == 'BADGE') {
+            $input['reward_name'] = 'badge';
+            $input['item_id'] = $input['reward_id'];
+            $input['reward_id'] = $this->get_reward_id_by_name(array(
+                'client_id' => $input['client_id'],
+                'site_id' => $input['site_id']
+            ), 'badge');
+        } elseif($input['reward_type'] == "GOODS"){
+            $input['goods_id'] = $input['reward_id'];
+            unset($input['reward_id']);
+        }
+        return $this->trackEvent('REWARD', $input['message'], $input, $async);
     }
 
     public function trackQuest($input, $async = true)

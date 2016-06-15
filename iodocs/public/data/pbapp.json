@@ -1343,6 +1343,62 @@
           ]
         },
         {
+          "MethodName": "Gift",
+          "Synopsis": "Unlock player for authentication",
+          "HTTPMethod": "POST",
+          "URI": "/Player/:sent_player_id/giveGift/:type",
+          "RequiresOAuth": "Y",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "sent_player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "received_player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "gift_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "gift id can be badge id,goods id,custom_point id"
+            },
+            {
+              "Name": "type",
+              "Required": "Y",
+              "Default": "BADGE",
+              "Type": "enumerated",
+              "Description": "type of gift",
+              "EnumeratedList": [
+                "BADGE",
+                "CUSTOM_POINT",
+                "GOODS"
+              ]
+            },
+            {
+              "Name": "amount",
+              "Required": "Y",
+              "Default": "",
+              "Type": "integer",
+              "Description": "gift amount"
+            }
+          ]
+        },
+        {
           "MethodName": "Player Referral Code",
           "Synopsis": "Returns generated referral code of player",
           "HTTPMethod": "GET",
