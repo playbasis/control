@@ -87,7 +87,7 @@ class Image_model extends MY_Model
 
     }
 
-    public function registerImageToSite($client_id, $site_id, $image_size, $filename, $url, $directory = null)
+    public function registerImageToSite($client_id, $site_id, $user_id, $image_size, $filename, $url, $directory = null)
     {
         if ($this->getImageUrl($client_id, $site_id, $filename, $directory)) {
             $mongoDate = new MongoDate(time());
@@ -95,6 +95,7 @@ class Image_model extends MY_Model
             $this->mongo_db->set('date_modified', $mongoDate);
             $this->mongo_db->set('file_size', $image_size);
             $this->mongo_db->set('url', $url);
+            $this->mongo_db->set('user_id', $user_id);
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('file_name', $filename);
@@ -106,6 +107,7 @@ class Image_model extends MY_Model
             $data = array(
                 'client_id' => $client_id,
                 'site_id' => $site_id,
+                'user_id' => $user_id,
                 'url' => $url,
                 'file_size' => $image_size
             );
