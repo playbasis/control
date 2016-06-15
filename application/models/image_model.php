@@ -221,6 +221,15 @@ class Image_model extends MY_Model
             }
         }
 
+        if (isset($optionalParams['user_id']) && !empty($optionalParams['user_id'])) {
+            try {
+                $user_id = new MongoId($optionalParams['user_id']);
+                $this->mongo_db->where('user_id', $user_id);
+            } catch (Exception $e) {
+                $this->mongo_db->where_exists('user_id', true);
+            }
+        }
+
         // Sorting
         $sort_data = array('_id', 'date_added', 'date_modified', 'type', 'file_size');
 

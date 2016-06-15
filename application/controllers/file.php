@@ -17,7 +17,6 @@ class File extends REST2_Controller
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
         $this->load->model('tool/utility', 'utility');
-
     }
 
     public function upload_post()
@@ -214,12 +213,27 @@ class File extends REST2_Controller
         }
 
         if (isset($query_data['player_id']) && !empty($query_data['player_id'])){
-
-            // Find pb_player_id
             $query_data['pb_player_id'] = new MongoId($this->player_model->getPlaybasisId(array_merge($this->validToken,
                 array(
                     'cl_player_id' => $query_data['player_id']
                 ))));
+        }
+
+        if (isset($query_data['username']) && !empty($query_data['username'])){
+            if ($query_data['username'] == 'all') {
+                $query_data['user_id'] = 'all';
+            } else {
+                $user = isset($input['username']) ? $this->user_model->getByUsername($input['username']) : null;
+                if (!$user) {
+                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+                }
+                $user_id = isset($user) ? $user['_id'] : null;
+                try {
+                    $query_data['user_id'] = new MongoId($user_id);
+                } catch (Exception $e) {
+                    $this->response($this->error->setError('PARAMETER_INVALID', array('id')), 200);
+                }
+            }
         }
 
         $files = $this->image_model->retrieveData($this->client_id, $this->site_id, $query_data);
