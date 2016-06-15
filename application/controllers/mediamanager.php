@@ -425,8 +425,9 @@ class MediaManager extends MY_Controller
 
                 $client_id = $this->User_model->getClientId();
                 $site_id = $this->User_model->getSiteId();
+                $user_id = $this->User_model->getId();
 
-                $this->Image_model->registerImageToSite($client_id, $site_id, $_FILES['file']['size'], $filename,
+                $this->Image_model->registerImageToSite($client_id, $site_id, $user_id, $_FILES['file']['size'], $filename,
                     rtrim('data/' . str_replace('../', '', $this->input->post('directory')),
                         '/') . "/" . urlencode($filename));
 

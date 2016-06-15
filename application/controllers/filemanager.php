@@ -631,8 +631,9 @@ class FileManager extends MY_Controller
                 if ($this->validateMediaManagerAccess()) {
                     $client_id = $this->User_model->getClientId();
                     $site_id = $this->User_model->getSiteId();
+                    $user_id = $this->User_model->getId();
 
-                    $this->Image_model->registerImageToSite($client_id, $site_id, $_FILES['image']['size'], $filename,
+                    $this->Image_model->registerImageToSite($client_id, $site_id, $user_id, $_FILES['image']['size'], $filename,
                         $url);
 
                     $this->Image_model->resize('data/' . $filename, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH,
