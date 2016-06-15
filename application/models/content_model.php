@@ -84,29 +84,25 @@ class Content_model extends MY_Model
             $this->mongo_db->where_not_in('_id', $exclude);
         }
 
-        if (isset($optionalParams['date_check']) && !empty($optionalParams['date_check'])) {
-            $bool = filter_var($optionalParams['date_check'], FILTER_VALIDATE_BOOLEAN);
-            if ($bool == true) {
-                $this->mongo_db->where(array(
-                    '$and' => array(
-                        array(
-                            '$or' => array(
-                                array('date_start' => array('$lt' => new MongoDate())),
-                                array('date_start' => null)
-                            )
-                        ),
-                        array(
-                            '$or' => array(
-                                array('date_end' => array('$gte' => new MongoDate())),
-                                array('date_end' => null)
-                            )
+        $bool = filter_var(isset($optionalParams['date_check']) ? $optionalParams['date_check'] : false, FILTER_VALIDATE_BOOLEAN);
+
+        if ($bool == true) {
+            $this->mongo_db->where(array(
+                '$and' => array(
+                    array(
+                        '$or' => array(
+                            array('date_start' => array('$lt' => new MongoDate())),
+                            array('date_start' => null)
+                        )
+                    ),
+                    array(
+                        '$or' => array(
+                            array('date_end' => array('$gte' => new MongoDate())),
+                            array('date_end' => null)
                         )
                     )
-                ));
-            }
-        } else {
-            $this->mongo_db->where_gte('date_end', new MongoDate());
-            $this->mongo_db->where_lt('date_start', new MongoDate());
+                )
+            ));
         }
 
         $this->mongo_db->select(array('_id', 'node_id', 'title', 'summary', 'detail', 'image','pb_player_id', 'category', 'date_start', 'date_end', 'pin', 'status', 'tags', 'custom'));
