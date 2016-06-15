@@ -2595,7 +2595,7 @@ function selectCustompointsItem(){
                                 <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_type]" value = "CUSTOM_POINT"/>\
                                 <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_id]" value = "'+id+'"/>';
                 }else{
-                    inputHtml = '<input type="text" name ="'+type+'['+id+']['+typeElement+'_value]" placeholder="Value" value="1"></div>\
+                    inputHtml = '<input type="text" name ="'+type+'['+id+']['+typeElement+'_value]" placeholder="Value" value="1">\
                                 <input type="hidden" name = "'+type+'['+id+']['+typeElement+'_type]" value = "CUSTOM_POINT"/>\
                                 <input type="hidden" name = "'+type+'['+id+']['+typeElement+'_id]" value = "'+id+'"/>'
                 }
