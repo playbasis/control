@@ -10,7 +10,8 @@ class Utility extends CI_Model
         $badgeName = 'a',
         $newLevel = '',
         $objectiveName = '',
-        $goodsName = ''
+        $goodsName = '',
+        $sent_player = null
     ) {
         switch ($eventType) {
             case 'badge':
@@ -27,6 +28,8 @@ class Utility extends CI_Model
                 return 'completed an objective "' . $objectiveName . '"';
             case 'goods':
                 return "redeem $goodsName";
+            case 'gift':
+                return "$sent_player sent gift to you";
             default:
                 return 'did a thing';
         }

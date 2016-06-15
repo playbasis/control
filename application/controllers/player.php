@@ -18,6 +18,7 @@ class Player extends REST2_Controller
         $this->load->model('reward_model');
         $this->load->model('quest_model');
         $this->load->model('badge_model');
+        $this->load->model('goods_model');
         $this->load->model('energy_model');
         $this->load->model('email_model');
         $this->load->model('tool/error', 'error');
@@ -1446,6 +1447,116 @@ class Player extends REST2_Controller
             $actions['action'] = $this->player_model->getLastActionPerform($pb_player_id, $this->site_id);
         }
         $this->response($this->resp->setRespond($actions), 200);
+    }
+
+    public function giveGift_post($sent_player_id, $gift_type){
+
+        $required = $this->input->checkParam(array(
+            'received_player_id',
+            'gift_id',
+            'amount'
+        ));
+
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        $client_id = new MongoId($this->validToken['client_id']);
+        $site_id = new MongoId($this->validToken['site_id']);
+        $site_name = $this->validToken['site_name'];
+        $gift_id = new MongoId($this->input->post('gift_id'));
+        $gift_value = $this->input->post('amount');
+        $received_player_id = $this->input->post('received_player_id');
+        $gift_type = strtoupper($gift_type);
+        $gift_data = array();
+
+        $sent_pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $sent_player_id)));
+        if (!$sent_pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $received_pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $received_player_id)));
+        if (!$received_pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        if($gift_type == "BADGE"){
+            $gift_data['before'] = $this->player_model->checkPlayerWithEnoughBadge($client_id, $site_id, $sent_pb_player_id, $gift_id, $gift_value);
+            $gift_data['gift'] = $this->badge_model->getBadge(array("client_id" => $client_id, "site_id" => $site_id, "badge_id" => $gift_id));
+        }
+        elseif($gift_type == "GOODS"){
+            $gift_data['before'] = $this->player_model->checkPlayerWithEnoughGoods($client_id, $site_id, $sent_pb_player_id, $gift_id, $gift_value);
+            $gift_data['gift'] = $this->goods_model->getGoods(array("client_id" => $client_id, "site_id" => $site_id, "goods_id" => $gift_id));
+        }
+        elseif($gift_type == "CUSTOM_POINT"){
+            $gift_data['before'] = $this->player_model->checkPlayerWithEnoughPoint($client_id, $site_id, $sent_pb_player_id, $gift_id, $gift_value);
+            $gift_data['gift']['name'] = $this->point_model->getRewardNameById(array("client_id" => $client_id, "site_id" => $site_id, "reward_id" => $gift_id));
+        }
+
+        if(!$gift_data['gift']){
+            $this->response($this->error->setError('GIFT_NOT_EXIST'), 200);
+        }
+
+        if(!$gift_data['before']){
+            $this->response($this->error->setError('GIFT_NOT_ENOUGH'), 200);
+        }
+
+
+        $status = $this->player_model->giveGift($client_id, $site_id, $sent_pb_player_id, $received_pb_player_id, $received_player_id, $gift_id, $gift_type, $gift_value);
+        $gift_data['after']['gift_name'] = $gift_data['gift']['name'];
+        $gift_data['after']['type'] = $gift_type;
+        $gift_data['after']['remaining'] = $gift_data['before']['value'] - $gift_value;
+
+        if($status) {
+            $event = array(
+                'event_type' => 'GIFT_RECEIVED',
+                'gift_type' => strtolower($gift_type),
+                'gift_data' => $gift_data['gift'],
+                'value' => $gift_value
+            );
+
+            //log event - reward, badge
+            $data_reward = array(
+                'gift_type' => $gift_type,
+                'gift_id' => $gift_id,
+                'gift_name' => $event['gift_data']['name'],
+                'gift_value' => $gift_value,
+            );
+
+            $this->trackGift($sent_pb_player_id, $sent_player_id, $received_pb_player_id, $client_id, $site_id, $data_reward);
+
+            $eventMessage = $this->utility->getEventMessage('gift', $gift_value, $event['gift_data']['name'], $event['gift_data']['name'], '', '',$event['gift_data']['name'], $sent_player_id);
+
+            //publish to node stream
+            $this->node->publish(array(
+                "client_id" => $client_id,
+                "site_id" => $site_id,
+                "pb_player_id" => $received_pb_player_id,
+                "player_id" => $received_player_id,
+                'action_name' => 'gift',
+                'action_icon' => 'fa-gift',
+                'message' => $eventMessage,
+                strtolower($gift_type) => $event['gift_data'],
+            ), $site_name, $site_id);
+        }
+        $this->response($this->resp->setRespond($gift_data['after']), 200);
+    }
+
+    private function trackGift($sent_pb_player_id, $sent_player_id, $received_pb_player_id, $client_id, $site_id, $data_reward)
+    {
+        $eventMessage = $this->utility->getEventMessage('gift', $data_reward['gift_value'], $data_reward['gift_name'],$data_reward['gift_name'], '', '',$data_reward['gift_name'], $sent_player_id);
+        $data = array(
+            'sent_pb_player_id' => $sent_pb_player_id,
+            'pb_player_id' => $received_pb_player_id,
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'reward_type' => $data_reward['gift_type'],
+            'reward_id' => $data_reward['gift_id'],
+            'reward_name' => $data_reward['gift_name'],
+            'amount' => $data_reward['gift_value'],
+            'message' => $eventMessage
+        );
+        $this->tracker_model->trackGift($data);
     }
 
     public function badge_get($player_id = '')
