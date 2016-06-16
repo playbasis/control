@@ -60,7 +60,7 @@ class Link_model extends MY_Model
             'status' => true,
             'deleted' => false,
             'date_added' => $d,
-            'date_expire' => $d
+            'date_modified' => $d
         ));
     }
 }
