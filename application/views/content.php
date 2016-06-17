@@ -643,8 +643,13 @@
                 $sentDialog.modal();
             });
 
-            request.fail(function( jqXHR, textStatus ) {
-                alert(JSON.parse(jqXHR.responseText).message + ' \n\nPlease contact Playbasis!');
+            request.fail(function( jqXHR, textStatus) {
+                try{
+                    alert(JSON.parse(jqXHR.responseText).message + ' \n\nPlease contact Playbasis!');
+                }
+                catch(err){
+                    alert('Push notification setting has problem. \n\nPlease contact Playbasis!');
+                }
             });
 
             request.always(function(){
