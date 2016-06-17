@@ -120,6 +120,113 @@ class Quest_model extends MY_Model
         ));
     }
 
+    public function getAllPlayerByQuestId($data,$filter_id=null)
+    {
+        $this->set_site_mongodb($data["site_id"]);
+        $this->mongo_db->select(
+            array('missions',
+                  'pb_player_id',
+                  'status',
+        ));
+
+        $this->mongo_db->where(array(
+            "quest_id" => new MongoId($data["quest_id"])
+        ));
+        if ($filter_id) {
+            $this->mongo_db->where_not_in('pb_player_id', $filter_id);
+        }
+        if(isset($data['limit_adjust'])){
+            $this->mongo_db->limit((int)$data['limit_adjust']);
+        }
+        return $this->mongo_db->get('playbasis_quest_to_player');
+    }
+
+    public function getLeaderboard($activity, $completion_filter, $completion_option, $filter)
+    {
+        if($completion_option == 'sum'){
+
+        }
+        else{
+
+        }
+        //return $results['result'];
+    }
+
+    public function getLeaderboardCompletion($activity, $completion_filter, $complation_title, $completion_option, $filter)
+    {
+        $match_condition = array(
+            'site_id' => new MongoId($filter['site_id']),
+            'action_id' => new MongoId($activity)
+        );
+
+        if($completion_option == 'sum'){
+
+            $datecondition = array();
+            if (isset($filter['starttime']) && !empty($filter['starttime'])) {
+                $datecondition = array_merge($datecondition, array('$gt' => new MongoDate(strtotime($filter['starttime']))));
+            }
+            if (isset($filter['starttime']) && !empty($filter['endtime'])) {
+                $datecondition = array_merge($datecondition, array('$lte' => new MongoDate(strtotime($filter['endtime']))));
+            }
+            if ((isset($filter['starttime']) && !empty($filter['starttime']))|| (isset($filter['starttime']) && !empty($filter['endtime']))) {
+                $match_condition = array_merge($match_condition, array('date_added' => $datecondition));
+            }
+
+            $query_array = array(
+                array(
+                    '$match' => $match_condition
+                ),
+                array(
+                    '$group' => array('_id' => '$pb_player_id', $complation_title => array('$sum' => '$parameters.'.$completion_filter.POSTFIX_NUMERIC_PARAM), 'date_added' => array('$max' => '$date_added'))
+                ),
+                array(
+                    '$sort' => array($complation_title => -1, 'date_added' => 1),
+                )
+            );
+            if(isset($filter['limit']) && !empty($filter['limit'])){
+                array_push($query_array, array('$limit' => (int)$filter['limit'] + (int)$filter['offset']));
+            }
+            if(isset($filter['offset']) && !empty($filter['offset'])){
+                array_push($query_array, array('$skip' => (int)$filter['offset']));
+            }
+
+            $results = $this->mongo_db->aggregate('playbasis_validated_action_log', $query_array);
+        }
+        else{
+            $datecondition = array();
+            if (isset($filter['starttime']) && !empty($filter['starttime'])) {
+                $datecondition = array_merge($datecondition, array('$gt' => new MongoDate(strtotime($filter['starttime']))));
+            }
+            if (isset($filter['starttime']) && !empty($filter['endtime'])) {
+                $datecondition = array_merge($datecondition, array('$lte' => new MongoDate(strtotime($filter['endtime']))));
+            }
+            if ((isset($filter['starttime']) && !empty($filter['starttime']))|| (isset($filter['starttime']) && !empty($filter['endtime']))) {
+                $match_condition = array_merge($match_condition, array('date_added' => $datecondition));
+            }
+
+            $query_array = array(
+                array(
+                    '$match' => $match_condition
+                ),
+                array(
+                    '$group' => array('_id' => '$pb_player_id', $complation_title => array('$sum' => 1), 'date_added' => array('$max' => '$date_added'))
+                ),
+                array(
+                    '$sort' => array($complation_title => -1, 'date_added' => 1),
+                )
+            );
+            if(isset($filter['limit']) && !empty($filter['limit'])){
+                array_push($query_array, array('$limit' => (int)$filter['limit'] + (int)$filter['offset']));
+            }
+            if(isset($filter['offset']) && !empty($filter['offset'])){
+                array_push($query_array, array('$skip' => (int)$filter['offset']));
+            }
+
+            $results = $this->mongo_db->aggregate('playbasis_validated_action_log', $query_array);
+        }
+        return $results['result'];
+    }
+
     public function getPlayerQuest($data)
     {
         $this->set_site_mongodb($data["site_id"]);

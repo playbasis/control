@@ -253,6 +253,7 @@ $route['Quest/'.ANY_STRING.'/available'] = 'quest/available/$1';
 $route['Quest/'.ANY_STRING.'/mission/'.ANY_STRING] = 'quest/mission/$1/$2';
 $route['Quest/joinAll'] = 'quest/joinAll';
 $route['Quest/reset'] = 'quest/reset';
+$route['Quest/leader'] = 'quest/leaderBoard';
 
 //quiz API
 $route['Quiz/list'] = 'quiz/list';
