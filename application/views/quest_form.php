@@ -196,9 +196,9 @@
                                                 <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['condition_id'] ?>">                                
                                                     <div class="span7"><?php foreach($customPoints as $p){if($p['reward_id']==$point['condition_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                
                                                     <!-- <div class="span7"><?php //foreach($customPoints as $p){if($p['_id']==$point['condition_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                 -->
-                                                    <input type="text" name="condition[custompoints][condition_value]" placeholder="Value" value="<?php echo $point['condition_value']; ?>">
-                                                    <input type="hidden" name="condition[custompoints][condition_type]" value="CUSTOM_POINT">                                
-                                                    <input type="hidden" name="condition[custompoints][condition_id]" value="<?php echo $point['condition_id'] ?>">
+                                                    <input type="text"   name="condition[<?php echo $point['condition_id'] ?>][condition_value]" placeholder="Value" value="<?php echo $point['condition_value']; ?>">
+                                                    <input type="hidden" name="condition[<?php echo $point['condition_id'] ?>][condition_type]" value="CUSTOM_POINT">
+                                                    <input type="hidden" name="condition[<?php echo $point['condition_id'] ?>][condition_id]" value="<?php echo $point['condition_id'] ?>">
                                                     </div>                                
                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
                                                 </div>
@@ -306,9 +306,9 @@
                                                 <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['reward_id'] ?>">
                                                     <div class="span7"><?php foreach($customPoints as $p){if($p['reward_id']==$point['reward_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                
                                                     <!-- <div class="span7"><?php //foreach($customPoints as $p){if($p['_id']==$point['reward_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                 -->
-                                                    <input type="text" name="rewards[custompoints][reward_value]" placeholder="Value" value="<?php echo $point['reward_value']; ?>">
-                                                    <input type="hidden" name="rewards[custompoints][reward_type]" value="CUSTOM_POINT">
-                                                    <input type="hidden" name="rewards[custompoints][reward_id]" value="<?php echo $point['reward_id'] ?>">
+                                                    <input type="text" name="rewards[<?php echo $point['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $point['reward_value']; ?>">
+                                                    <input type="hidden" name="rewards[<?php echo $point['reward_id'] ?>][reward_type]" value="CUSTOM_POINT">
+                                                    <input type="hidden" name="rewards[<?php echo $point['reward_id'] ?>][reward_id]" value="<?php echo $point['reward_id'] ?>">
                                                     </div>                                
                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
                                                 </div>
@@ -523,7 +523,7 @@
                                                         <?php foreach($mission['editAction'] as $action){ ?>
                                                                 
                                                                 <div class="clearfix item-wrapper actions-item-wrapper" data-id-action="<?php echo $action['completion_element_id']; ?>">
-                                                                    <div class="clearfix">
+                                                                    <div class="span10 clearfix">
                                                                         <div class="span2 text-center">
                                                                             <i class="<?php foreach($actions as $aa){if($aa['action_id'] == $action['completion_id']){echo $aa['icon'];}} ?> icon-4x"></i>
                                                                         </div>
@@ -532,9 +532,9 @@
                                                                             <?php foreach($actions as $aa){if($aa['action_id'] == $action['completion_id']){echo $aa['name'];}} ?>
                                                                         </div>
 
-                                                                        <div class="span1 col-remove">
-                                                                            <a class="item-remove"><i class="icon-remove-sign"></i></a>
-                                                                        </div class="completeBy">
+                                                                    </div>
+                                                                    <div class="span2 col-remove">
+                                                                        <a class="item-remove"><i class="icon-remove-sign"></i></a>
                                                                     </div>
                                                                     <div class="completeBy" >
                                                                         <label class="span4">Complete By : </label>
@@ -2775,7 +2775,7 @@ function selectActionsItem(){
                     
                 }
                 */
-                var index = wrapperObj.find('.actions-item-wrapper').length;
+                var index = "action"+wrapperObj.find('.actions-item-wrapper').length;
 
                 if(parent == 'missions'){
                     inputFilterHtml = '<small>Matched string</small><br><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_string]"/>';
@@ -2840,11 +2840,11 @@ function selectActionsItem(){
                         inputCompletionHtml = '<hr><div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_title]" placeholder="Title" value=""></div></div>';
                 }
                 var actionsItemHtml = '<div class="clearfix item-wrapper actions-item-wrapper" data-id-action="'+id+'">\
-                                    <div class="clearfix">\
-                                    <div class="span2 text-center"><i class="'+icon+'"></i></div>\
-                                    <div class="action_name span8" >'+title+'</div>\
-                                    <div class="span1 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>\
+                                    <div class="span10 clearfix">\
+                                        <div class="span2 text-center"><i class="'+icon+'"></i></div>\
+                                        <div class="action_name span8" >'+title+'</div>\
                                     </div>\
+                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>\
                                     <div class="completeBy" >'+inputOpHtml+'</div>\
                                     <div class="completeParamList" style="display:none" >'+inputParamListHtml+'</div>\
                                     <div class="actionValue" >'+inputHtml+'</div>\
