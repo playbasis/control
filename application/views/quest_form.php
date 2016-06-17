@@ -163,7 +163,7 @@
                                                     <div class="span2 text-center">
                                                         <img src="<?php echo $quest['condition_data']['image'] ?>" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">                                
                                                     </div>
-                                                    <div class="span7"><?php foreach($quests as $q){if($q['_id']==$quest['condition_id']){echo $q['quest_name'];}} ?></div>                                
+                                                    <div class="span7"><?php echo $quest['condition_data']['quest_name']; ?></div>
                                                     <div class="span1">
                                                         <input type="hidden" name="condition[<?php echo $quest['condition_id'];?>][condition_id]" value="<?php echo $quest['condition_id']; ?>">
                                                     </div>                                
@@ -325,7 +325,7 @@
                                                     <div class="span2 text-center">
                                                         <img src="<?php echo $item['reward_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">
                                                     </div>
-                                                    <div class="span7"><?php echo $item['reward_data']['name'];?></div>
+                                                    <div class="span7"><?php echo isset($item['reward_data']['group']) ? $item['reward_data']['group'] : $item['reward_data']['name'];?></div>
                                                     <div class="span1">
                                                         <small>value</small>
                                                         <input type="text" name="rewards[<?php echo $item['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $item['reward_value'] ?>">
@@ -656,8 +656,10 @@
                                                                 <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $eBadge['completion_id'] ?>">                                    
                                                                     <div class="span2 text-center">
                                                                         <img src="<?php echo $eBadge['completion_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
-                                                                    </div>                                    
-                                                                    <div class="span7"><?php foreach($badges as $b){if($b['badge_id'] == $eBadge['completion_id']){echo $b['name'];}} ?></div>                                    
+                                                                    </div>
+                                                                    <div class="span7">
+                                                                        <?php echo $eBadge['completion_data']['name'] ?>
+                                                                    </div>
                                                                     <div class="span1">                                    
                                                                         <small>value</small>                                    
                                                                         <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eBadge['completion_id'] ?>][completion_value]" placeholder="Value" value="<?php echo $eBadge['completion_value']; ?>">                                    
@@ -683,7 +685,7 @@
                                                                     <div class="span2 text-center">
                                                                         <img src="<?php echo $eQuiz['completion_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                                     </div>                                    
-                                                                    <div class="span7"><?php foreach($quizs as $q){if($q['_id'] == $eQuiz['completion_id']){echo $q['name'];}} ?></div>                                    
+                                                                    <div class="span7"><?php echo $eQuiz['completion_data']['name']; ?></div>
                                                                     <div class="span1">                                    
                                                                         <small>value</small>                                    
                                                                         <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eQuiz['completion_id'] ?>][completion_value]" placeholder="Value" value="<?php echo $eQuiz['completion_value']; ?>">                                    
@@ -754,10 +756,10 @@
                                                                     <div class="span7"><?php foreach($customPoints as $pp){if($pp['reward_id'] == $eCustomPoint['reward_id']){echo $pp['name'];}} ?></div>
                                                                     <!-- <div class="span7"><?php //foreach($customPoints as $pp){if($pp['_id'] == $eCustomPoint['reward_id']){echo $pp['name'];}} ?></div> -->
                                                                     <div class="span3"><small>value</small>                                
-                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][custompoints][reward_value]" placeholder="Value" value="<?php echo $eCustomPoint['reward_value'] ?>">
+                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eCustomPoint['reward_id']; ?>][reward_value]" placeholder="Value" value="<?php echo $eCustomPoint['reward_value'] ?>">
                                                                     </div>                                
-                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][custompoints][reward_type]" value="CUSTOM_POINT">
-                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][custompoints][reward_id]" value="<?php echo $eCustomPoint['reward_id'] ?>">
+                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eCustomPoint['reward_id']; ?>][reward_type]" value="CUSTOM_POINT">
+                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eCustomPoint['reward_id']; ?>][reward_id]" value="<?php echo $eCustomPoint['reward_id'] ?>">
                                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
                                                                 </div>
                                                             <?php } ?>
@@ -774,7 +776,7 @@
                                                                 <div class="clearfix item-wrapper goods-item-wrapper" data-id-goods="<?php echo $eGoods['reward_id'] ?>">
                                                                     <div class="span2 text-center"><img src="<?php echo $eGoods['reward_data']['image'] ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">
                                                                     </div>
-                                                                    <div class="span7"><?php echo $eGoods['reward_data']['name'] ?></div>
+                                                                    <div class="span7"><?php echo isset($eGoods['reward_data']['group']) ? $eGoods['reward_data']['group'] : $eGoods['reward_data']['name'];?></div>
                                                                     <div class="span1">
                                                                         <small>value</small>
                                                                         <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eGoods['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $eGoods['reward_value'] ?>">

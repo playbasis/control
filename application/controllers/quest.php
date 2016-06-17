@@ -652,8 +652,8 @@ class Quest extends MY_Controller
                             $this->data['editQuestConditionCon'][$countQuest]['condition_type'] = $condition['condition_type'];
                             $this->data['editQuestConditionCon'][$countQuest]['condition_id'] = isset($condition['condition_id']) ? $condition['condition_id'] : null;
                             $this->data['editQuestConditionCon'][$countQuest]['condition_value'] = isset($condition['condition_value']) ? $condition['condition_value'] : null;
-                            $this->data['editQuestConditionCon'][$countQuest]['condition_data'] = isset($condition['condition_data']) ? $condition['condition_data'] : $this->questObjectData($this->data['editQuestConditionCon'][$countQuest],
-                                "condition_type", "condition_id", $qdata);
+                            $this->data['editQuestConditionCon'][$countQuest]['condition_data'] = $this->questObjectData($this->data['editQuestConditionCon'][$countQuest],
+                                                                                                                            "condition_type", "condition_id", $qdata);
 
                             $condition_data = $this->data['editQuestConditionCon'][$countQuest]['condition_data'];
                             if (isset($condition_data['image'])) {
@@ -686,8 +686,7 @@ class Quest extends MY_Controller
                             $this->data['editQuizCon'][$countQuizs]['condition_type'] = $condition['condition_type'];
                             $this->data['editQuizCon'][$countQuizs]['condition_id'] = isset($condition['condition_id']) ? $condition['condition_id'] : null;
                             $this->data['editQuizCon'][$countQuizs]['condition_value'] = isset($condition['condition_value']) ? $condition['condition_value'] : null;
-                            $this->data['editQuizCon'][$countQuizs]['condition_data'] = isset($condition['condition_data']) ? $condition['condition_data'] : $this->questObjectData($this->data['editQuizCon'][$countQuizs],
-                                "condition_type", "condition_id", $qdata);
+                            $this->data['editQuizCon'][$countQuizs]['condition_data'] = $this->questObjectData($this->data['editQuizCon'][$countQuizs], "condition_type", "condition_id", $qdata);
 
                             $condition_data = $this->data['editQuizCon'][$countQuizs]['condition_data'];
                             if (isset($condition_data['image'])) {
@@ -709,8 +708,7 @@ class Quest extends MY_Controller
                             $this->data['editBadgeCon'][$countBadges]['condition_type'] = $condition['condition_type'];
                             $this->data['editBadgeCon'][$countBadges]['condition_id'] = isset($condition['condition_id']) ? $condition['condition_id'] : null;
                             $this->data['editBadgeCon'][$countBadges]['condition_value'] = isset($condition['condition_value']) ? $condition['condition_value'] : null;
-                            $this->data['editBadgeCon'][$countBadges]['condition_data'] = isset($condition['condition_data']) ? $condition['condition_data'] : $this->questObjectData($this->data['editBadgeCon'][$countBadges],
-                                "condition_type", "condition_id", $qdata);
+                            $this->data['editBadgeCon'][$countBadges]['condition_data'] =  $this->questObjectData($this->data['editBadgeCon'][$countBadges],"condition_type", "condition_id", $qdata);
 
                             $condition_data = $this->data['editBadgeCon'][$countBadges]['condition_data'];
                             if (isset($condition_data['image'])) {
@@ -759,8 +757,7 @@ class Quest extends MY_Controller
                             $this->data['editGoodsRew'][$countGoods]['reward_type'] = $reward['reward_type'];
                             $this->data['editGoodsRew'][$countGoods]['reward_id'] = isset($reward['reward_id']) ? $reward['reward_id'] : null;
                             $this->data['editGoodsRew'][$countGoods]['reward_value'] = isset($reward['reward_value']) ? $reward['reward_value'] : null;
-                            $this->data['editGoodsRew'][$countGoods]['reward_data'] = isset($reward['reward_data']) ? $reward['reward_data'] : $this->questObjectData($this->data['editGoodsRew'][$countGoods],
-                                "reward_type", "reward_id", $qdata);
+                            $this->data['editGoodsRew'][$countGoods]['reward_data'] = $this->questObjectData($this->data['editGoodsRew'][$countGoods], "reward_type", "reward_id", $qdata);
 
                             $reward_data = $this->data['editGoodsRew'][$countGoods]['reward_data'];
                             if (isset($reward_data['image'])) {
@@ -782,8 +779,7 @@ class Quest extends MY_Controller
                             $this->data['editBadgeRew'][$countBadges]['reward_type'] = $reward['reward_type'];
                             $this->data['editBadgeRew'][$countBadges]['reward_id'] = isset($reward['reward_id']) ? $reward['reward_id'] : null;
                             $this->data['editBadgeRew'][$countBadges]['reward_value'] = isset($reward['reward_value']) ? $reward['reward_value'] : null;
-                            $this->data['editBadgeRew'][$countBadges]['reward_data'] = isset($reward['reward_data']) ? $reward['reward_data'] : $this->questObjectData($this->data['editBadgeRew'][$countBadges],
-                                "reward_type", "reward_id", $qdata);
+                            $this->data['editBadgeRew'][$countBadges]['reward_data'] =  $this->questObjectData($this->data['editBadgeRew'][$countBadges], "reward_type", "reward_id", $qdata);
 
                             $reward_data = $this->data['editBadgeRew'][$countBadges]['reward_data'];
                             if (isset($reward_data['image'])) {
@@ -815,22 +811,19 @@ class Quest extends MY_Controller
                             $this->data['editEmailRew'][$countEmails]['feedback_type'] = $feedback['feedback_type'];
                             $this->data['editEmailRew'][$countEmails]['template_id'] = isset($feedback['template_id']) ? $feedback['template_id'] : null;
                             $this->data['editEmailRew'][$countEmails]['subject'] = isset($feedback['subject']) ? $feedback['subject'] : null;
-                            $this->data['editEmailRew'][$countEmails]['feedback_data'] = isset($feedback['feedback_data']) ? $feedback['feedback_data'] : $this->questObjectData($this->data['editEmailRew'][$countEmails],
-                                "feedback_type", "template_id", $qdata);
+                            $this->data['editEmailRew'][$countEmails]['feedback_data'] = $this->questObjectData($this->data['editEmailRew'][$countEmails], "feedback_type", "template_id", $qdata);
                             $countEmails++;
                         }
                         if ($feedback['feedback_type'] == 'SMS') {
                             $this->data['editSmsRew'][$countSmses]['feedback_type'] = $feedback['feedback_type'];
                             $this->data['editSmsRew'][$countSmses]['template_id'] = isset($feedback['template_id']) ? $feedback['template_id'] : null;
-                            $this->data['editSmsRew'][$countSmses]['feedback_data'] = isset($feedback['feedback_data']) ? $feedback['feedback_data'] : $this->questObjectData($this->data['editSmsRew'][$countSmses],
-                                "feedback_type", "template_id", $qdata);
+                            $this->data['editSmsRew'][$countSmses]['feedback_data'] = $this->questObjectData($this->data['editSmsRew'][$countSmses], "feedback_type", "template_id", $qdata);
                             $countSmses++;
                         }
                         if ($feedback['feedback_type'] == 'PUSH') {
                             $this->data['editPushRew'][$countPushes]['feedback_type'] = $feedback['feedback_type'];
                             $this->data['editPushRew'][$countPushes]['template_id'] = isset($feedback['template_id']) ? $feedback['template_id'] : null;
-                            $this->data['editPushRew'][$countPushes]['feedback_data'] = isset($feedback['feedback_data']) ? $feedback['feedback_data'] : $this->questObjectData($this->data['editPushRew'][$countPushes],
-                                "feedback_type", "template_id", $qdata);
+                            $this->data['editPushRew'][$countPushes]['feedback_data'] = $this->questObjectData($this->data['editPushRew'][$countPushes], "feedback_type", "template_id", $qdata);
                             $countPushes++;
                         }
                     }
@@ -910,8 +903,8 @@ class Quest extends MY_Controller
                                     $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_value'] = $mm['completion_value'];
                                     $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_id'] = $mm['completion_id'];
                                     $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_title'] = $mm['completion_title'];
-                                    $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_data'] = isset($mm['completion_data']) ? $mm['completion_data'] : $this->questObjectData($this->data['editMission'][$missionCount]['editQuiz'][$countQuizs],
-                                        "completion_type", "completion_id", $qdata);
+                                    $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_data'] = $this->questObjectData($this->data['editMission'][$missionCount]['editQuiz'][$countQuizs],
+                                                                                                                                                    "completion_type", "completion_id", $qdata);
 
                                     $completion_data = $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_data'];
                                     if (isset($completion_data['image'])) {
@@ -935,8 +928,8 @@ class Quest extends MY_Controller
                                     $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_value'] = $mm['completion_value'];
                                     $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_id'] = $mm['completion_id'];
                                     $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_title'] = $mm['completion_title'];
-                                    $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_data'] = isset($mm['completion_data']) ? $mm['completion_data'] : $this->questObjectData($this->data['editMission'][$missionCount]['editBadge'][$countBadge],
-                                        "completion_type", "completion_id", $qdata);
+                                    $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_data'] = $this->questObjectData($this->data['editMission'][$missionCount]['editBadge'][$countBadge],
+                                                                                                                                                        "completion_type", "completion_id", $qdata);
 
                                     $completion_data = $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_data'];
                                     if (isset($completion_data['image'])) {
@@ -986,8 +979,8 @@ class Quest extends MY_Controller
                                     $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_type'] = $rr['reward_type'];
                                     $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_value'] = $rr['reward_value'];
                                     $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_id'] = $rr['reward_id'];
-                                    $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_data'] = isset($rr['reward_data']) ? $rr['reward_data'] : $this->questObjectData($this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods],
-                                        "reward_type", "reward_id", $qdata);
+                                    $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_data'] = $this->questObjectData($this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods],
+                                                                                                                                                    "reward_type", "reward_id", $qdata);
 
                                     $reward_data = $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_data'];
                                     if (isset($reward_data['image'])) {
@@ -1011,8 +1004,8 @@ class Quest extends MY_Controller
                                     $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_type'] = $rr['reward_type'];
                                     $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_value'] = $rr['reward_value'];
                                     $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_id'] = $rr['reward_id'];
-                                    $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_data'] = isset($rr['reward_data']) ? $rr['reward_data'] : $this->questObjectData($this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge],
-                                        "reward_type", "reward_id", $qdata);
+                                    $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_data'] = $this->questObjectData($this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge],
+                                                                                                                            "reward_type", "reward_id", $qdata);
 
                                     $reward_data = $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_data'];
                                     if (isset($reward_data['image'])) {
@@ -1043,22 +1036,22 @@ class Quest extends MY_Controller
                                     $this->data['editMission'][$missionCount]['editEmailRew'][$countEmails]['feedback_type'] = $rr['feedback_type'];
                                     $this->data['editMission'][$missionCount]['editEmailRew'][$countEmails]['template_id'] = $rr['template_id'];
                                     $this->data['editMission'][$missionCount]['editEmailRew'][$countEmails]['subject'] = $rr['subject'];
-                                    $this->data['editMission'][$missionCount]['editEmailRew'][$countEmails]['feedback_data'] = isset($rr['feedback_data']) ? $rr['feedback_data'] : $this->questObjectData($this->data['editMission'][$missionCount]['editEmailRew'][$countEmails],
-                                        "feedback_type", "template_id", $qdata);
+                                    $this->data['editMission'][$missionCount]['editEmailRew'][$countEmails]['feedback_data'] = $this->questObjectData($this->data['editMission'][$missionCount]['editEmailRew'][$countEmails],
+                                                                                                                                                        "feedback_type", "template_id", $qdata);
                                     $countEmails++;
                                 }
                                 if ($rr['feedback_type'] == 'SMS') {
                                     $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['feedback_type'] = $rr['feedback_type'];
                                     $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['template_id'] = $rr['template_id'];
-                                    $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['feedback_data'] = isset($rr['feedback_data']) ? $rr['feedback_data'] : $this->questObjectData($this->data['editMission'][$missionCount]['editSmsRew'][$countSmses],
-                                        "feedback_type", "template_id", $qdata);
+                                    $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['feedback_data'] = $this->questObjectData($this->data['editMission'][$missionCount]['editSmsRew'][$countSmses],
+                                                                                                                                                        "feedback_type", "template_id", $qdata);
                                     $countSmses++;
                                 }
                                 if ($rr['feedback_type'] == 'PUSH') {
                                     $this->data['editMission'][$missionCount]['editPushRew'][$countPushes]['feedback_type'] = $rr['feedback_type'];
                                     $this->data['editMission'][$missionCount]['editPushRew'][$countPushes]['template_id'] = $rr['template_id'];
-                                    $this->data['editMission'][$missionCount]['editPushRew'][$countPushes]['feedback_data'] = isset($rr['feedback_data']) ? $rr['feedback_data'] : $this->questObjectData($this->data['editMission'][$missionCount]['editPushRew'][$countPushes],
-                                        "feedback_type", "template_id", $qdata);
+                                    $this->data['editMission'][$missionCount]['editPushRew'][$countPushes]['feedback_data'] = $this->questObjectData($this->data['editMission'][$missionCount]['editPushRew'][$countPushes],
+                                                                                                                                                        "feedback_type", "template_id", $qdata);
                                     $countPushes++;
                                 }
                             }
