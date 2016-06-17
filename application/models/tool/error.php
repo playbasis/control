@@ -504,6 +504,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Error when sending request to branch.io";
                 $errorData['error_code'] = '3003';
                 break;
+            case 'LINK_BRANCH_NOT_FOUND':
+                $errorData['message'] = "Link cannot be found in branch.io";
+                $errorData['error_code'] = '3004';
+                break;
             default:
                 $errorData['message'] = "Unknown";
                 $errorData['error_code'] = '9999';
