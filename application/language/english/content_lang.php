@@ -59,6 +59,7 @@ $lang['error_permission'] = 'Warning: You do not have permission to modify Conte
 $lang['error_access'] = 'Warning: You do not have permission to access this page!';
 $lang['error_contents_limit'] = 'You have reached Content limit.';
 $lang['error_no_device_info'] = 'Warning: No device information found!';
+$lang['error_no_device_type'] = 'Warning: No device type found!';
 $lang['error_empty_content'] = 'Warning: No content found!';
 $lang['error_create'] = 'Warning: Unable to create content!';
 $lang['error_ID_alrady_exist'] = 'Warning: Id already exist!';

@@ -769,11 +769,20 @@ class Content extends MY_Controller
                                 $device_tokens_android = array();
                                 $device_tokens_iOS = array();
                             }
-                            $this->output->set_status_header('200');
-                            echo json_encode(array(
-                                'status' => 'success',
-                                'devices' => count($devices)
-                            ));
+                            if(empty($device_tokens_android) && empty($device_tokens_iOS)){
+                                $this->output->set_status_header('404');
+                                echo json_encode(array(
+                                    'status' => 'error',
+                                    'message' => $this->lang->line('error_no_device_type')
+                                ));
+                            }
+                            else{
+                                $this->output->set_status_header('200');
+                                echo json_encode(array(
+                                    'status' => 'success',
+                                    'devices' => count($devices)
+                                ));
+                            }
                         } else {
                             $this->output->set_status_header('404');
                             echo json_encode(array(
