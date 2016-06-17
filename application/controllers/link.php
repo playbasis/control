@@ -38,7 +38,7 @@ class Link extends REST2_Controller
             //$this->curl->ssl(false);
             $this->curl->http_header('Content-Type', 'application/json');
             $response = $this->curl->execute();
-            if (!$response) $this->response($this->error->setError('LINK_BRANCH_ERROR'), 200);
+            if (!$response) $this->response($this->error->setError($this->curl->error_code == 22 ? 'LINK_BRANCH_NOT_FOUND' : 'LINK_BRANCH_ERROR'), 200);
             $res = json_decode($response);
             if (!isset($res->data)) $this->response($this->error->setError('LINK_BRANCH_ERROR'), 200);
             $data = (array) $res->data;
