@@ -141,17 +141,6 @@ class Quest_model extends MY_Model
         return $this->mongo_db->get('playbasis_quest_to_player');
     }
 
-    public function getLeaderboard($activity, $completion_filter, $completion_option, $filter)
-    {
-        if($completion_option == 'sum'){
-
-        }
-        else{
-
-        }
-        //return $results['result'];
-    }
-
     public function getLeaderboardCompletion($activity, $completion_filter, $complation_title, $completion_option, $filter)
     {
         $match_condition = array(
