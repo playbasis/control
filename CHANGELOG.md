@@ -1,7 +1,134 @@
 # Change Log
 
-## [2.11.0](https://github.com/playbasis/control/tree/2.11.0)
+## [2.12.0](https://github.com/playbasis/control/tree/2.12.0)
 
+[Full Changelog](https://github.com/playbasis/control/compare/2.12.8...2.12.0)
+
+**Implemented enhancements:**
+
+- change action button to icon [\#222](https://github.com/playbasis/control/pull/222) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- fix missing ajax page [\#223](https://github.com/playbasis/control/pull/223) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.12.8](https://github.com/playbasis/control/tree/2.12.8) (2016-06-17)
+[Full Changelog](https://github.com/playbasis/control/compare/bug_edit_quest...2.12.8)
+
+**Fixed bugs:**
+
+- Hotfix/2.12.8 [\#221](https://github.com/playbasis/control/pull/221) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [bug_edit_quest](https://github.com/playbasis/control/tree/bug_edit_quest) (2016-06-17)
+[Full Changelog](https://github.com/playbasis/control/compare/hotfix/2.12.7/fix_content_push_notification_hang...bug_edit_quest)
+
+**Fixed bugs:**
+
+- Hotfix/bug edit quest [\#220](https://github.com/playbasis/control/pull/220) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [hotfix/2.12.7/fix_content_push_notification_hang](https://github.com/playbasis/control/tree/hotfix/2.12.7/fix_content_push_notification_hang) (2016-06-17)
+[Full Changelog](https://github.com/playbasis/control/compare/2.11.1...hotfix/2.12.7/fix_content_push_notification_hang)
+
+**Implemented enhancements:**
+
+- - created new feature to configure link \(support only branch.io\) [\#218](https://github.com/playbasis/control/pull/218) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/hotfix/2.12.7/fix content push notification hang [\#219](https://github.com/playbasis/control/pull/219) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.11.1](https://github.com/playbasis/control/tree/2.11.1) (2016-06-15)
+[Full Changelog](https://github.com/playbasis/control/compare/bug_add_currency_condition_in_quest...2.11.1)
+
+**Fixed bugs:**
+
+- Hotfix/2.11.1 [\#217](https://github.com/playbasis/control/pull/217) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [bug_add_currency_condition_in_quest](https://github.com/playbasis/control/tree/bug_add_currency_condition_in_quest) (2016-06-15)
+[Full Changelog](https://github.com/playbasis/control/compare/hotfix/2.12.6/fix_bug_goods_reward_when_edit_quest_mission...bug_add_currency_condition_in_quest)
+
+**Implemented enhancements:**
+
+- Create import and export rules to include badges, custom points, goods and so on [\#215](https://github.com/playbasis/control/pull/215) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/bug when add the currency condition of quest [\#216](https://github.com/playbasis/control/pull/216) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [hotfix/2.12.6/fix_bug_goods_reward_when_edit_quest_mission](https://github.com/playbasis/control/tree/hotfix/2.12.6/fix_bug_goods_reward_when_edit_quest_mission) (2016-06-14)
+[Full Changelog](https://github.com/playbasis/control/compare/hotfix/2.12.5/fix_redirect_for_normal_custom_point...hotfix/2.12.6/fix_bug_goods_reward_when_edit_quest_mission)
+
+**Implemented enhancements:**
+
+- Unlimit badge quantity setting [\#213](https://github.com/playbasis/control/pull/213) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/hotfix/2.12.6/fix bug goods reward when edit quest mission [\#214](https://github.com/playbasis/control/pull/214) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [hotfix/2.12.5/fix_redirect_for_normal_custom_point](https://github.com/playbasis/control/tree/hotfix/2.12.5/fix_redirect_for_normal_custom_point) (2016-06-07)
+[Full Changelog](https://github.com/playbasis/control/compare/hotfix/2.12.4/fix_pagination_goods_group_2...hotfix/2.12.5/fix_redirect_for_normal_custom_point)
+
+**Fixed bugs:**
+
+- Hotfix/hotfix/2.12.5/fix redirect for normal custom point [\#212](https://github.com/playbasis/control/pull/212) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [hotfix/2.12.4/fix_pagination_goods_group_2](https://github.com/playbasis/control/tree/hotfix/2.12.4/fix_pagination_goods_group_2) (2016-06-07)
+[Full Changelog](https://github.com/playbasis/control/compare/hotfix/2.12.3/fix_pagination_goods_group...hotfix/2.12.4/fix_pagination_goods_group_2)
+
+**Fixed bugs:**
+
+- Hotfix/hotfix/2.12.4/fix pagination goods group 2 [\#211](https://github.com/playbasis/control/pull/211) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [hotfix/2.12.3/fix_pagination_goods_group](https://github.com/playbasis/control/tree/hotfix/2.12.3/fix_pagination_goods_group) (2016-06-07)
+[Full Changelog](https://github.com/playbasis/control/compare/2.12.2/fix_spacialReward_missing...hotfix/2.12.3/fix_pagination_goods_group)
+
+**Fixed bugs:**
+
+- Hotfix/hotfix/2.12.3/fix pagination goods group [\#210](https://github.com/playbasis/control/pull/210) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.12.2/fix_spacialReward_missing](https://github.com/playbasis/control/tree/2.12.2/fix_spacialReward_missing) (2016-06-07)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_blank_page_complete_verify...2.12.2/fix_spacialReward_missing)
+
+**Implemented enhancements:**
+
+- Support good group in quest [\#208](https://github.com/playbasis/control/pull/208) ([piya-playbasis](https://github.com/piya-playbasis))
+- To support per\_user in goods group [\#207](https://github.com/playbasis/control/pull/207) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.12.2/fix spacial reward missing [\#209](https://github.com/playbasis/control/pull/209) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [fix_blank_page_complete_verify](https://github.com/playbasis/control/tree/fix_blank_page_complete_verify) (2016-06-01)
+[Full Changelog](https://github.com/playbasis/control/compare/2.12.1/client_create_unique_email...fix_blank_page_complete_verify)
+
+**Implemented enhancements:**
+
+- Change badge to item [\#205](https://github.com/playbasis/control/pull/205) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/fix blank page complete verify [\#206](https://github.com/playbasis/control/pull/206) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.12.1/client_create_unique_email](https://github.com/playbasis/control/tree/2.12.1/client_create_unique_email) (2016-05-31)
+[Full Changelog](https://github.com/playbasis/control/compare/bug_import_transaction...2.12.1/client_create_unique_email)
+
+**Fixed bugs:**
+
+- Hotfix/2.12.1/client create unique email [\#204](https://github.com/playbasis/control/pull/204) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [bug_import_transaction](https://github.com/playbasis/control/tree/bug_import_transaction) (2016-05-31)
+[Full Changelog](https://github.com/playbasis/control/compare/2.11.0...bug_import_transaction)
+
+**Implemented enhancements:**
+
+- Change custom points to currency [\#202](https://github.com/playbasis/control/pull/202) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/bug import transaction [\#203](https://github.com/playbasis/control/pull/203) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.11.0](https://github.com/playbasis/control/tree/2.11.0) (2016-05-30)
 [Full Changelog](https://github.com/playbasis/control/compare/2.10.0...2.11.0)
 
 **Implemented enhancements:**

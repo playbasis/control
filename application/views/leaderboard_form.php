@@ -199,9 +199,9 @@
                                                         <ul class="dropdown-menu add-rewards-menu" role="menu" aria-labelledby="dropdownMenu">
                                                             <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
                                                             <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>
-                                                            <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                                            <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CURRENCY</a></li>
                                                             <li class="add-goods"><a tabindex="-1" href="javascript:void(0)">GOODS</a></li>
-                                                            <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                                                            <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">ITEM</a></li>
                                                             <?php if( isset($emails) && $emails !== null ){ ?>
                                                                 <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
                                                             <?php } ?>
@@ -239,7 +239,7 @@
                                                         <?php } ?>
                                                         <?php if(isset($rewards[$key]['custompoints'])){ ?>
                                                             <div class="custompoints-wrapper rewards-type well">
-                                                                <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
+                                                                <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Currency</a></h3>
                                                                 <?php foreach($rewards[$key]['custompoints'] as $point){ ?>
                                                                     <div class="item-container">
                                                                         <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['reward_id'] ?>">
@@ -278,7 +278,7 @@
                                                         <?php } ?>
                                                         <?php if(isset($rewards[$key]['badges'])){ ?>
                                                             <div class="badges-wrapper rewards-type well">
-                                                                <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
+                                                                <h3>Items  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Items</a></h3>
                                                                 <div class="item-container">
                                                                     <?php foreach($rewards[$key]['badges'] as $badge){ ?>
                                                                         <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['reward_id'] ?>">
@@ -414,7 +414,7 @@
 <div id="modal-select-badge" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Select Badge</h3>
+        <h3 id="myModalLabel">Select Item</h3>
     </div>
     <div class="modal-body">
         <div class="select-list">
@@ -577,7 +577,7 @@
 <div id="modal-select-custompoint" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Select Custom Point</h3>
+        <h3 id="myModalLabel">Select Currency</h3>
     </div>
     <div class="modal-body">
         <div class="select-list">
@@ -769,9 +769,9 @@
                                             <ul class="dropdown-menu add-rewards-menu" role="menu" aria-labelledby="dropdownMenu">\
                                               <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>\
                                               <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>\
-                                              <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>\
+                                              <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CURRENCY</a></li>\
                                               <li class="add-goods"><a tabindex="-1" href="javascript:void(0)">GOODS</a></li>\
-                                              <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>\
+                                              <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">ITEM</a></li>\
                                             <?php if( $emails !== null ){ ?>
                                                 <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>\
                                             <?php } ?>
@@ -1111,7 +1111,7 @@
         var id = target.id || null;
         var parent = target.parent || 'quest';
 
-        var customPointsHead = '<h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>';
+        var customPointsHead = '<h3>Currency  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Currency</a></h3>';
         var customPointsHtml = '<div class="custompoints-wrapper '+type+'-type well">'+customPointsHead+'<div class="item-container"></div></div>';
 
         target.html = customPointsHtml;
@@ -1136,7 +1136,7 @@
         var id = target.id || null;
         var parent = target.parent || 'quest';
 
-        var badgesHead = '<h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>';
+        var badgesHead = '<h3>Items  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Items</a></h3>';
         var badgesHtml = '<div class="badges-wrapper '+type+'-type well">'+badgesHead+'<div class="item-container"></div></div>';
 
         target.html = badgesHtml;

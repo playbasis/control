@@ -48,7 +48,8 @@ var ruleTableMan = {
           createDateColumn = $('<td>').appendTo(row),
           modifiedDateColumn = $('<td>').appendTo(row).hide(),
           statusColumn = $('<td>').appendTo(row),
-          actionColumn = $('<td>').addClass('center').appendTo(row);
+          actionColumn = $('<td>').addClass('center').appendTo(row),
+          export_rule = $('<td>').addClass('hidden tb_hilight center').appendTo(row);
 
       // error sign
       if(this.error != undefined && this.error != ''){
@@ -134,6 +135,10 @@ var ruleTableMan = {
                 $('<li><a tabindex="-1" href="#" class="gen_rule_play_btn"><i class="icon-play"></i>Play</a></li>')
               )
           )
+      )
+
+      export_rule.append(
+          $('<input type="checkbox" name="import_selected"  />').attr('value', this.rule_id)
       )
 
       // add row to table

@@ -29,8 +29,13 @@
                                 <td class="left"><?php echo ($email['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $email['sort_order']; ?></td>
                                 <td class="right">
-                                    
-                                    [ <?php echo anchor('email/update/'.$email['_id'], 'Edit'); ?> ]
+
+                                    <?php echo anchor('email/update/'.$email['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                        array('class'=>'tooltips',
+                                            'title' => 'Edit',
+                                            'data-placement' => 'top'
+                                        ));
+                                    ?>
                                     <?php echo anchor('email/increase_order/'.$email['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$email['_id'], 'style'=>'text-decoration:none'));?>
                                     <?php echo anchor('email/decrease_order/'.$email['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$email['_id'], 'style'=>'text-decoration:none' ));?>
                                 </td>

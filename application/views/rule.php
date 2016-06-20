@@ -140,6 +140,7 @@
                         <th class='tb_rule_th tb_rule_date'>Create Date</th>
                         <th class='tb_rule_th tb_rule_status' >Status</th>
                         <th class='tb_rule_th tb_rule_action' ></th>
+                        <th id="column_import_check" class='tb_hilight center hidden' ><input name="import_selected_head" type="checkbox" onclick="$('input[name*=\'import_selected\']').attr('checked', this.checked);" /></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -164,7 +165,9 @@
         <!-- start : jigsaw container -->
         <div class="row span6 rule_jigsaws_container" style='margin-top:20px;overflow:auto'>
             <div class="span12 action_panel_jigsaws">
-                <button class='btn btn-primary  one_rule_new_btn right'> + New Rule</button>
+                <button class='btn btn-primary  one_rule_new_btn right' style="width: 110px;"> + New Rule </button>
+                <button class='btn btn-primary  export_rule_btn right' style="width: 110px;" ;> <i class="fa fa-cloud-upload"></i> Export </button>
+                <button class='btn btn-primary  import_rule_btn right' style="width: 110px;"> <i class="fa fa-cloud-download"></i> Import </button>
                 <!-- <div class="screen-width-768 "> -->
                 <span class=' one_rule_actionbtn_holder hide pull-right'>
                     <?php if (!$isAdmin && sizeof($ruleTemplate) > 0): ?>
@@ -188,11 +191,36 @@
                     <?php endif; ?>
                     <button class='btn btn-success one_rule_save_btn'> Save </button>
                     <button class='btn btn-danger one_rule_discard_btn' style='margin-left:4px'> Discard </button>
-                  </span>
+                </span>
+
+                <span class=' export_rule_actionbtn_holder hide pull-right'>
+                    <button class='btn btn-success export_execute_btn'> Export </button>
+                    <button class='btn btn-danger export_import_cancel_btn' > Cancel </button>
+                </span>
+
+                <span class=' import_rule_actionbtn_holder hide pull-right'>
+                    <button class='btn btn-success import_execute_btn'> Import </button>
+                    <button class='btn btn-danger export_import_cancel_btn' style='margin-left:4px'> Cancel </button>
+                </span>
                 <!-- </div> -->
             </div>
 
+            <!-- import rule box -->
+            <div class="pbd_rule_import hide">
+                <div class="box pbd_rule_import_header" style='padding:32px 32px 24px 32px;margin-bottom:0px'>
+                    <div class="box-header">
+                        Import Rule
+                    </div>
+                    <div class="box-content">
+                        <br>
+                        &emsp;<span class="required">*</span><?php echo $this->lang->line('entry_file'); ?>&emsp;:&emsp;
+                        <input id="file-import" type="file" size="100" />
+                        <br>&emsp;
+                    </div>
+                </div>
+            </div>
 
+            <!-- add rule box -->
             <div class="pbd_one_rule_holder hide">
                 <div class="box pbd_rule_header" style='padding:32px 32px 24px 32px;margin-bottom:0px'>
                     <div class="box-header">
@@ -295,6 +323,7 @@
 
                 </ul>
             </div>
+
         </div>
         <!-- end : jigsaw container -->
 
@@ -426,6 +455,7 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-sliderAccess.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rulenode_tablerow_description.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js"></script>
 <!-- TRY ADD CHZN PLUGIN - BUT NOT WORK  -->
 
 

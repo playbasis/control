@@ -763,6 +763,18 @@ class Rule_model extends MY_Model
         }
     }
 
+    public function getRuleForExport($clientId, $siteId, $rule)
+    {
+
+        $this->mongo_db->select(array(), array('_id', 'date_added', 'date_modified'));
+        $this->mongo_db->where('site_id', new MongoID($siteId));
+        $this->mongo_db->where('client_id', new MongoID($clientId));
+        $this->mongo_db->where('_id', new MongoID($rule));
+        $results = $this->mongo_db->get("playbasis_rule");
+        return $results ? $results[0] : array();
+    }
+
+
     public function deleteRule($ruleId, $siteId, $clientId)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));

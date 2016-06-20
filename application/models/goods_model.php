@@ -43,6 +43,27 @@ class Goods_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getGoodsIDByName($client_id, $site_id, $good_name, $good_group=null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->select(array('goods_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('status', true);
+
+        if($good_group){
+            $this->mongo_db->where('group', $good_group);
+        }else{
+            $this->mongo_db->where('name', $good_name);
+        }
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_goods_to_client");
+
+        return $results ? $results[0]['goods_id']."" : null;
+    }
+
     public function getGoodsList($data = array())
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -524,10 +545,10 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($goods_id));
         // $this->mongo_db->set('quantity', (int)$data['quantity']);
         $this->mongo_db->set('quantity',
-            (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null);
+            (isset($data['quantity']) && !($data['quantity'] === "")) ? (int)$data['quantity'] : null);
         // $this->mongo_db->set('per_user', (int)$data['per_user']);
         $this->mongo_db->set('per_user',
-            (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
+            (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
@@ -589,10 +610,10 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         // $this->mongo_db->set('quantity', (int)$data['quantity']);
         $this->mongo_db->set('quantity',
-            (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null);
+            (isset($data['quantity']) && !($data['quantity'] === "")) ? (int)$data['quantity'] : null);
         // $this->mongo_db->set('per_user', (int)$data['per_user']);
         $this->mongo_db->set('per_user',
-            (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null);
+            (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
@@ -655,6 +676,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('group', $data['name']);
+        $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);

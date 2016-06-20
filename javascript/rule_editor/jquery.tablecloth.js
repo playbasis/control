@@ -105,7 +105,12 @@
             3: {
                 // disable it by setting the property sorter to false 
                 sorter: false 
-            } 
+            },
+
+            5: {
+              // disable it by setting the property sorter to false
+              sorter: false
+            }
           },
           sortList: [[0,0]]
         });

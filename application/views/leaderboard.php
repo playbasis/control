@@ -73,12 +73,12 @@
                                 </td>
                                 <td class="right"><?php echo ($leaderboard['status']) ? "Enabled" : "Disabled"; ?></td>
                                 <td class="right">
-                                    [ <?php if ($client_id) {
-                                        echo anchor('leaderboard/update/' . $leaderboard['_id'], 'Edit');
-                                    } else {
-                                        echo anchor('leaderboard/update/' . $leaderboard['_id'], 'Edit');
-                                    }
-                                    ?> ]
+                                    <?php echo anchor('leaderboard/update/'.$leaderboard['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                        array('class'=>'tooltips',
+                                            'title' => 'Edit',
+                                            'data-placement' => 'top'
+                                        ));
+                                    ?>
                                 </td>
                             </tr>
                         <?php }

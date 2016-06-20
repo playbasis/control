@@ -256,6 +256,7 @@ ul.pbd_ul_group.ui-sortable li.ui-state-highlight{
   .tb_rule_date{ width: 120px}
   .tb_rule_status{ width: 40px}
   .tb_rule_action{ width: 18px}
+  .tb_hilight{ width: 18px; align: center;background-color: indianred;}
 
 
 /*start : slider button -> toggle*/
@@ -343,6 +344,14 @@ border-radius: 12px;
 }
 
 
+.pbd_rule_import{
+    margin-top:54px;
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: inset 0px 0px 10px rgba(0,0,0,0.7);
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    border-radius: 12px;
+}
 
 
 /*node styling*/

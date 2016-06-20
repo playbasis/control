@@ -820,7 +820,7 @@ class Workflow extends MY_Controller
 
     private function validateModify()
     {
-        if ($this->User_model->hasPermission('modify', 'user')) {
+        if ($this->User_model->hasPermission('modify', 'workflow')) {
             return true;
         } else {
             return false;

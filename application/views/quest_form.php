@@ -95,9 +95,9 @@
                                     <li class="add-level"><a tabindex="-1" href="javascript:void(0)" >LEVEL</a></li>
                                     <li class="add-quest"><a tabindex="-1" href="javascript:void(0)" >QUEST</a></li>
                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
-                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CURRENCY</a></li>
                                     <li class="add-quiz"><a tabindex="-1" href="javascript:void(0)">QUIZ</a></li>
-                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">ITEM</a></li>
                                 </ul>
                                 <span class="break"></span>
                                 <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>
@@ -190,7 +190,7 @@
                                 <?php } ?>
                                 <?php if(isset($editCustomPointsCon)){ ?>
                                     <div class="custompoints-wrapper condition-type well">
-                                        <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
+                                        <h3>Currency  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Currency</a></h3>
                                         <?php foreach($editCustomPointsCon as $point){ ?>
                                             <div class="item-container">
                                                 <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['condition_id'] ?>">                                
@@ -229,7 +229,7 @@
                                 <?php } ?>
                                 <?php if(isset($editBadgeCon)){ ?>
                                     <div class="badges-wrapper condition-type well">
-                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
+                                        <h3>Items  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Items</a></h3>
                                         <div class="item-container">
                                             <?php foreach($editBadgeCon as $badge){ ?>    
                                                 <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['condition_id'] ?>">                                    
@@ -260,9 +260,9 @@
                                 <ul class="dropdown-menu add-rewards-menu" role="menu" aria-labelledby="dropdownMenu">
                                   <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
                                   <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>
-                                  <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                  <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CURRENCY</a></li>
                                   <li class="add-goods"><a tabindex="-1" href="javascript:void(0)">GOODS</a></li>
-                                  <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                                  <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">ITEM</a></li>
                                 <?php if( $emails !== null ){ ?>
                                   <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
                                   <?php } ?>
@@ -300,7 +300,7 @@
                                 <?php } ?>
                                 <?php if(isset($editCustomPointsRew)){ ?>
                                     <div class="custompoints-wrapper rewards-type well">
-                                        <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
+                                        <h3>Currency  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Currency</a></h3>
                                         <?php foreach($editCustomPointsRew as $point){ ?>
                                             <div class="item-container">
                                                 <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['reward_id'] ?>">
@@ -339,7 +339,7 @@
                                 <?php } ?>
                                 <?php if(isset($editBadgeRew)){ ?>
                                     <div class="badges-wrapper rewards-type well">
-                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
+                                        <h3>Items  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Items</a></h3>
                                         <div class="item-container">
                                             <?php foreach($editBadgeRew as $badge){ ?>    
                                                 <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['reward_id'] ?>">                                    
@@ -504,9 +504,9 @@
                                                 <ul class="dropdown-menu add-completion-menu" role="menu" aria-labelledby="dropdownMenu">                                                
                                                     <li class="add-action"><a tabindex="-1" href="javascript:void(0)">ACTION</a></li>                                                
                                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)">POINT</a></li>                                                
-                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CURRENCY</a></li>
                                                     <li class="add-quiz"><a tabindex="-1" href="javascript:void(0)">QUIZ</a></li>                                                
-                                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>                                            
+                                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">ITEM</a></li>
                                                 </ul>                                            
                                                 <span class="break"></span>                                            
                                                 <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>                                        
@@ -623,7 +623,7 @@
 
                                                 <?php if(isset($mission['editCustomPoint'])){ ?>
                                                     <div class="custompoints-wrapper completion-type well">
-                                                        <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
+                                                        <h3>Currency  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Currency</a></h3>
                                                         <div class="item-container">
 
                                                         <?php foreach ($mission['editCustomPoint'] as $cp){ ?>
@@ -649,7 +649,7 @@
 
                                                 <?php if(isset($mission['editBadge'])){ ?>
                                                     <div class="badges-wrapper completion-type well">
-                                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
+                                                        <h3>Items  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Items</a></h3>
                                                         <div class="item-container">
 
                                                             <?php foreach($mission['editBadge'] as $eBadge){ ?>
@@ -713,9 +713,9 @@
                                                 <ul class="dropdown-menu add-rewards-menu" role="menu" aria-labelledby="dropdownMenu">
                                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)">POINT</a></li>                                              
                                                     <li class="add-exp"><a tabindex="-1" href="javascript:void(0)">EXP</a></li>                                              
-                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CURRENCY</a></li>
                                                     <li class="add-goods"><a tabindex="-1" href="javascript:void(0)">GOODS</a></li>
-                                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">ITEM</a></li>
                                                     <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
                                                     <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>
                                                     <li class="add-push"><a tabindex="-1" href="javascript:void(0)">PUSH</a></li>
@@ -748,7 +748,7 @@
 
                                                 <?php if(isset($mission['editCustomPointRew'])){ ?>
                                                     <div class="custompoints-wrapper rewards-type well">
-                                                        <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
+                                                        <h3>Currency  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Currency</a></h3>
                                                         <div class="item-container">
 
                                                             <?php foreach($mission['editCustomPointRew'] as $eCustomPoint){ ?>
@@ -770,7 +770,7 @@
 
                                                 <?php if(isset($mission['editGoodsRew'])){ ?>
                                                     <div class="goods-wrapper rewards-type well">
-                                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-goods-btn">+ Add Goods</a></h3>
+                                                        <h3>Goods  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-goods-btn">+ Add Goods</a></h3>
                                                         <div class="item-container">
                                                             <?php foreach($mission['editGoodsRew'] as $eGoods){ ?>
                                                                 <div class="clearfix item-wrapper goods-item-wrapper" data-id-goods="<?php echo $eGoods['reward_id'] ?>">
@@ -792,13 +792,15 @@
 
                                                 <?php if(isset($mission['editBadgeRew'])){ ?>
                                                     <div class="badges-wrapper rewards-type well">
-                                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
+                                                        <h3>Items  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Items</a></h3>
                                                         <div class="item-container">
                                                             <?php foreach($mission['editBadgeRew'] as $eBadge){ ?>
                                                             <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $eBadge['reward_id'] ?>">                                    
                                                                 <div class="span2 text-center"><img src="<?php echo $eBadge['reward_data']['image'] ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                                 </div>                                    
-                                                                <div class="span7"><?php echo $eBadge['reward_data']['name'] ?></div>                                    
+                                                                <div class="span7">
+                                                                    <?php echo $eBadge['reward_data']['name'] ?>
+                                                                </div>                                    
                                                                 <div class="span1">                                    
                                                                 <small>value</small>                                    
                                                                 <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eBadge['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $eBadge['reward_value'] ?>">
@@ -913,7 +915,7 @@
 <div id="modal-select-badge" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Select Badge</h3>
+        <h3 id="myModalLabel">Select Item</h3>
     </div>
     <div class="modal-body">
         <div class="select-list">
@@ -958,7 +960,7 @@
                         <div class="span2 image text-center">
                             <img height="50" width="50" src="<?php echo S3_IMAGE.$goods_items[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                         </div>
-                        <div class="span9 title"><?php echo $goods_items[$i]['name'];?></div>
+                        <div class="span9 title"><?php echo isset($goods_items[$i]['group']) ? $goods_items[$i]['group'] : $goods_items[$i]['name'];?></div>
                     </div>
                 </label>
             <?php } ?>
@@ -1134,7 +1136,7 @@
 <div id="modal-select-custompoint" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Select Custom Point</h3>
+        <h3 id="myModalLabel">Select Currency</h3>
     </div>
     <div class="modal-body">
         <div class="select-list">
@@ -1357,9 +1359,9 @@
                                             <ul class="dropdown-menu add-completion-menu" role="menu" aria-labelledby="dropdownMenu">\
                                                 <li class="add-action"><a tabindex="-1" href="javascript:void(0)" >ACTION</a></li>\
                                                 <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>\
-                                                <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>\
+                                                <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CURRENCY</a></li>\
                                                 <li class="add-quiz"><a tabindex="-1" href="javascript:void(0)">QUIZ</a></li>\
-                                                <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>\
+                                                <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">ITEM</a></li>\
                                             </ul>\
                                             <span class="break"></span>\
                                             <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>\
@@ -1378,9 +1380,9 @@
                                             <ul class="dropdown-menu add-rewards-menu" role="menu" aria-labelledby="dropdownMenu">\
                                               <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>\
                                               <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>\
-                                              <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>\
+                                              <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CURRENCY</a></li>\
                                               <li class="add-goods"><a tabindex="-1" href="javascript:void(0)">GOODS</a></li>\
-                                              <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>\
+                                              <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">ITEM</a></li>\
                                             <?php if( $emails !== null ){ ?>
                                                <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>\
                                             <?php } ?>
@@ -1900,7 +1902,7 @@ function addCustompoints(target){
     var id = target.id || null;
     var parent = target.parent || 'quest';
 
-    var customPointsHead = '<h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>';
+    var customPointsHead = '<h3>Currency  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Currency</a></h3>';
     var customPointsHtml = '<div class="custompoints-wrapper '+type+'-type well">'+customPointsHead+'<div class="item-container"></div></div>';
     
     target.html = customPointsHtml;
@@ -1925,7 +1927,7 @@ function addBadges(target){
     var id = target.id || null;
     var parent = target.parent || 'quest';
 
-    var badgesHead = '<h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>';
+    var badgesHead = '<h3>Items  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Items</a></h3>';
     var badgesHtml = '<div class="badges-wrapper '+type+'-type well">'+badgesHead+'<div class="item-container"></div></div>';
 
     target.html = badgesHtml;

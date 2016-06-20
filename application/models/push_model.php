@@ -22,6 +22,18 @@ class Push_model extends MY_Model
         return $this->mongo_db->count("playbasis_push_to_client");
     }
 
+    public function getTemplateIDByName($site_id, $name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->where('deleted', false);
+        $results = $this->mongo_db->get("playbasis_push_to_client");
+
+        return $results ? $results[0]['_id']."" : null;
+    }
+
     public function listTemplatesBySiteId($site_id, $data = array())
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));

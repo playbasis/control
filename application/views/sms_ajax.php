@@ -29,8 +29,13 @@
                                 <td class="left"><?php echo ($sms['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $sms['sort_order']; ?></td>
                                 <td class="right">
-                                    
-                                    [ <?php echo anchor('sms/update/'.$sms['_id'], 'Edit'); ?> ]
+
+                                    <?php echo anchor('sms/update/'.$sms['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                        array('class'=>'tooltips',
+                                            'title' => 'Edit',
+                                            'data-placement' => 'top'
+                                        ));
+                                    ?>
                                     <?php echo anchor('sms/inscrease_order/'.$sms['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$sms['_id'], 'style'=>'text-decoration:none'));?>
                                     <?php echo anchor('sms/decrease_order/'.$sms['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$sms['_id'], 'style'=>'text-decoration:none' ));?>
                                 </td>

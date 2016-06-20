@@ -47,13 +47,25 @@
                                         <td class="right"><?php echo (isset($quest['organize_name']) && !is_null($quest['organize_name']))?$quest['organize_name']:''; ?></td>
                                     <?php }?>
                                     <td class="right"><?php echo $quest['sort_order'];?></td>
-                                    <td class="right">[ <?php if($client_id){
-                                            // echo anchor('quest/update/'.$quest['action_id'], 'Edit');
-                                            echo anchor('quest/edit/'.$quest['_id'], 'Edit');
-                                        }else{
-                                            echo anchor('action/edit/'.$quest['_id'], 'Edit');
-                                        }
-                                        ?> ]
+                                    
+                                    <td class="right">
+                                        <a class="quest_play" href="#" title="Play" data-quest_id="<?php echo $quest["_id"]; ?>"><i class='fa fa-play fa-lg''></i> </a>
+                                        <?php 
+                                            if($client_id){
+                                                // echo anchor('quest/update/'.$quest['action_id'], 'Edit');
+                                                echo anchor('quest/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                                    array('class'=>'tooltips',
+                                                        'title' => 'Edit',
+                                                        'data-placement' => 'top'
+                                                    ));
+                                            }else{
+                                                echo anchor('action/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                                    array('class'=>'tooltips',
+                                                        'title' => 'Edit',
+                                                        'data-placement' => 'top'
+                                                    ));
+                                            }
+                                        ?>
 
                                         <?php if($client_id){
                                             // echo anchor('action/increase_order/'.$quest['action_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['action_id'], 'style'=>'text-decoration:none'));

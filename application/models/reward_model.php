@@ -138,6 +138,21 @@ class Reward_model extends MY_Model
         $this->mongo_db->where('name', $name);
         return $this->mongo_db->get('playbasis_reward');
     }
+
+    public function getClientRewardIDByName($client_id, $site_id, $name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('reward_id'));
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('name', $name);
+        $result =  $this->mongo_db->get('playbasis_reward_to_client');
+
+        return $result ? $result[0]['reward_id']."" : null;
+    }
 }
 
 ?>

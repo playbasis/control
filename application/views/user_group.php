@@ -63,7 +63,14 @@
                                     <?php } ?>
                                 </td>
                                 <td class="left"><?php echo $user_group['name'];?></td>
-                                <td class="right">[ <?php echo anchor('user_group/update/'.$user_group['_id'], "Edit");?> ]</td>
+                                <td class="right">
+                                    <?php echo anchor('user_group/update/'.$user_group['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                        array('class'=>'tooltips',
+                                            'title' => 'Edit',
+                                            'data-placement' => 'top'
+                                        ));
+                                    ?>
+                                </td>
                             </tr>
                             <?php }?>
                         <?php }else{?>

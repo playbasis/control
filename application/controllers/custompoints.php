@@ -73,7 +73,7 @@ class Custompoints extends MY_Controller
         $this->data['message'] = null;
 
         if ($limit_custompoints && $custom_points >= $limit_custompoints) {
-            $this->data['message'] = $this->lang->line('error_custompoint_limit');
+            $this->data['message'] = $this->lang->line('error_currency_limit');
         }
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
