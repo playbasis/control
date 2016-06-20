@@ -66,6 +66,67 @@ class Store_org_model extends MY_Model
         // Searching
         if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['search'])) . "/i");
+            $this->mongo_db->where('name', $regex);
+        }
+        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+            //make sure 'id' is valid before passing here
+            try {
+                $id = new MongoId($optionalParams['id']);
+                $this->mongo_db->where('_id', $id);
+            } catch (Exception $e) {
+            };
+        }
+        if (isset($optionalParams['organize']) && !is_null($optionalParams['organize'])) {
+            //make sure 'id' is valid before passing here
+            try {
+                $organize = new MongoId($optionalParams['organize']);
+                $this->mongo_db->where('organize', $organize);
+            } catch (Exception $e) {
+            };
+        }
+
+        // Sorting
+        $sort_data = array('_id', 'name', 'status', 'description');
+
+        if (isset($optionalParams['order']) && (utf8_strtolower($optionalParams['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
+        // Paging
+        if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
+            if ($optionalParams['offset'] < 0) {
+                $optionalParams['offset'] = 0;
+            }
+
+            if ($optionalParams['limit'] < 1) {
+                $optionalParams['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$optionalParams['limit']);
+            $this->mongo_db->offset((int)$optionalParams['offset']);
+        }
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->get("playbasis_store_organize_to_client");
+    }
+
+    public function retrieveNode_search($client_id, $site_id, $optionalParams = array())
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        // Searching
+        if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['search'])) . "/i");
 
             $store_org = $this->retrieveOrganize($client_id,$site_id,$optionalParams);
             $store_query = array();
