@@ -304,6 +304,56 @@ class Goods extends REST2_Controller
         }
         return $ret;
     }
+
+    public function couponVerify_post()
+    {
+        $required = $this->input->checkParam(array(
+            'goods_id',
+            'coupon_code'
+        ));
+
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        $group_id = $this->input->post('goods_id');
+        $code = $this->input->post('coupon_code');
+
+        $query_data = array('client_id' => new MongoID($this->client_id), 'site_id' => new MongoID($this->site_id),'goods_id' => new MongoID($group_id));
+        $goods_info = $this->goods_model->getGoods($query_data);
+
+        if(!$goods_info){
+            $this->response($this->error->setError('GOODS_ID_INVALID'), 200);
+        }
+
+        if(isset($goods_info['group'])){
+            $goods_group_info = $this->goods_model->getAllAvailableGoodsByGroupAndCode($this->client_id, $this->site_id, $goods_info['group'], $code);
+
+            if (!$goods_group_info) {
+                $this->response($this->error->setError('REDEEM_INVALID_COUPON_CODE'), 200);
+            }
+
+            $goods_group_info = $this->goods_model->getAllAvailableGoodsByGroupAndCode($this->client_id, $this->site_id, $goods_info['group'], $code , true);
+            foreach($goods_group_info as $goods){
+                $goods_available = $this->goods_model->checkGoodsAvailable($this->client_id, $this->site_id, $goods['goods_id']);
+                if(!$goods_available){
+                    $this->response($this->resp->setRespond($goods['goods_id']), 200);
+                }
+            }
+            $this->response($this->error->setError('COUPON_NOT_AVAILABLE'), 200);
+        }
+        else{
+            if($goods_info['code'] == $code){
+                if($goods_info['quantity'] > 0){
+                    $this->response($this->resp->setRespond($goods_info['goods_id']), 200);
+                }
+                else{
+                    $this->response($this->error->setError('COUPON_NOT_AVAILABLE'), 200);
+                }
+            }
+            $this->response($this->error->setError('REDEEM_INVALID_COUPON_CODE'), 200);
+        }
+    }
 }
 
 ?>

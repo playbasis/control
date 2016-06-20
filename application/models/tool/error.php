@@ -250,6 +250,14 @@ class Error extends CI_Model
                 $errorData['message'] = "Goods is not yet redeemed";
                 $errorData['error_code'] = '0502';
                 break;
+            case 'GOODS_ID_INVALID':
+                $errorData['message'] = "Invalid goods id";
+                $errorData['error_code'] = '0503';
+                break;
+            case 'COUPON_NOT_AVAILABLE':
+                $errorData['message'] = "Coupon is not available";
+                $errorData['error_code'] = '0504';
+                break;
             case 'OVER_LIMIT_REDEEM':
                 $errorData['message'] = "User has exceeded redeem limit";
                 $errorData['error_code'] = '0601';
@@ -280,7 +288,15 @@ class Error extends CI_Model
                 break;
             case 'BRANCH_IS_NOT_ALLOW_TO_VERIFY_GOODS':
                 $errorData['message'] = "This branch(pincode) is not allowed to verify the goods";
-                $errorData['error_code'] = '0603';
+                $errorData['error_code'] = '0608';
+                break;
+            case 'GIFT_NOT_ENOUGH':
+                $errorData['message'] = "Gift to send is not enough";
+                $errorData['error_code'] = '0609';
+                break;
+            case 'GIFT_NOT_EXIST':
+                $errorData['message'] = "Gift to send is not exist";
+                $errorData['error_code'] = '0610';
                 break;
             case "QUEST_JOINED":
                 $errorData["message"] = "User has already join this quest";
@@ -487,6 +503,30 @@ class Error extends CI_Model
             case 'STORE_ORG_NODE_NOT_FOUND_IN_ORGANIZE':
                 $errorData['message'] = "Node is not found in this organize type";
                 $errorData['error_code'] = '2424';
+                break;
+            case 'TRIP_NOT_EXIST':
+                $errorData['message'] = "The specified trip does not exist";
+                $errorData['error_code'] = '2501';
+                break;
+            case 'TRIP_ALTREADY_STARTED':
+                $errorData['message'] = "Trip has already been started";
+                $errorData['error_code'] = '2502';
+                break;
+            case 'TRIP_NOT_STARTED':
+                $errorData['message'] = "Cannot find a trip that is currently started by this player";
+                $errorData['error_code'] = '2503';
+                break;
+            case 'FITBIT_TOKEN_EXPIRED':
+                $errorData['message'] = "FitBit Token is expired";
+                $errorData['error_code'] = '2601';
+                break;
+            case 'FITBIT_PLAYER_NOT_EXIST':
+                $errorData['message'] = "FitBit Player is not exist";
+                $errorData['error_code'] = '2602';
+                break;
+            case 'FITBIT_PLAYER_ALREADY_EXIST':
+                $errorData['message'] = "FitBit Player already exist";
+                $errorData['error_code'] = '2602';
                 break;
             case 'LINK_CONFIG_NOT_FOUND':
                 $errorData['message'] = "Link configuration is not found";

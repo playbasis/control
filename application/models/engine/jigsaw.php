@@ -802,8 +802,8 @@ class jigsaw extends MY_Model
             return false;
         }
         $badgeInfo = $badgeInfo[0];
-        $max = (isset($badgeInfo['per_user']) && !empty($badgeInfo['per_user'])) ? $badgeInfo['per_user']: null;
-        if (!$badgeInfo['quantity']) {
+        $max = (isset($badgeInfo['per_user']) && !is_null($badgeInfo['per_user'])) ? $badgeInfo['per_user']: null;
+        if (!$badgeInfo['quantity'] && !is_null($badgeInfo['quantity'])) {
             return false;
         }
         /* will handle quantity in client model updateplayerBadge()
@@ -819,6 +819,9 @@ class jigsaw extends MY_Model
                         return false;
                     }
                 }
+            }
+            elseif (!is_null($max)){
+                return false;
             }
             return true;
         }
@@ -850,18 +853,18 @@ class jigsaw extends MY_Model
             return false;
         }
         $total = isset($goods['group']) ? $this->getGroupQuantity($site_id, $goods['group']) : $goods['quantity'];
-        $max = $goods['per_user'];
-        $used = $this->getPlayerGoods($site_id, $goodsId, $pb_player_id);
+        $max = isset($goods['per_user']) ? $goods['per_user'] : null;
+        $used = isset($goods['group']) ? $this->getPlayerGoodsGroup($site_id, $goods['group'], $pb_player_id) : $this->getPlayerGoods($site_id, $goodsId, $pb_player_id);
         if ($total === 0 || $max === 0) {
             return false;
         }
-        if ($total && $quantity > $total) {
-            return false;
-        }
-        if (!$max) {
+        if(!$max){
             return true;
         }
-        return $used + $quantity <= $max;
+        if ($used >= $max) {
+            return false;
+        }
+        return true;
     }
 
     private function checkReward($rewardId, $siteId, $quantity = 0)
@@ -959,6 +962,17 @@ class jigsaw extends MY_Model
         $this->mongo_db->limit(1);
         $goods = $this->mongo_db->get('playbasis_goods_to_player');
         return isset($goods[0]) ? $goods[0]['value'] : null;
+    }
+
+    private function getPlayerGoodsGroup($site_id, $goods_group, $pb_player_id)
+    {
+        $this->mongo_db->where(array(
+            'site_id' => $site_id,
+            'group' => $goods_group,
+            'pb_player_id' => $pb_player_id
+        ));
+        $goods = $this->mongo_db->count('playbasis_goods_to_player');
+        return $goods;
     }
 
     private function checkRedeemPoint($site_id, $rewardId, $pb_player_id, $quantity = 0)

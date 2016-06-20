@@ -156,6 +156,8 @@ $route['Player/questAll/'.ANY_STRING] = 'quest/questAll/$1';
 
 $route['Player/'.ANY_STRING.'/deduct'] = 'player/deduct_reward/$1';
 
+$route['Player/'.ANY_STRING.'/giveGift/'.ANY_STRING] = 'player/giveGift/$1/$2';          // ANY_STRING = sent_player_id/gift_type
+
 $route['Player/rankuser/'.ANY_STRING.'/'.ANY_STRING] = 'player/rankuser/$1/$2';
 
 $route['Player/'.ANY_STRING.'/contact'] = 'player/contact/$1/10';
@@ -186,6 +188,8 @@ $route['Goods'] = 'goods/index';
 $route['Goods/sponsor/'.ANY_STRING] = 'goods/sponsor/$1';
 $route['Goods/sponsor'] = 'goods/sponsor';
 $route['Goods/ad'] = 'goods/personalizedSponsor';
+$route['Goods/couponVerify'] = 'goods/couponVerify';
+
 
 //engine API
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
@@ -249,6 +253,7 @@ $route['Quest/'.ANY_STRING.'/available'] = 'quest/available/$1';
 $route['Quest/'.ANY_STRING.'/mission/'.ANY_STRING] = 'quest/mission/$1/$2';
 $route['Quest/joinAll'] = 'quest/joinAll';
 $route['Quest/reset'] = 'quest/reset';
+$route['Quest/leader'] = 'quest/leaderBoard';
 
 //quiz API
 $route['Quiz/list'] = 'quiz/list';
@@ -352,6 +357,20 @@ $route['CMS/getArticle/'.ANY_STRING] = 'cms/getArticle/$1';
 //Link API
 $route['Link'] = 'link/view';
 $route['Link/generate'] = 'link/generate';
+
+//Trip API
+$route['Trip'] = 'trip/getTrip';
+$route['Trip/startTrip'] = 'trip/startTrip';
+$route['Trip/finishTrip'] = 'trip/finishTrip';
+$route['Trip/addTripLog'] = 'trip/addTripLog';
+$route['Trip/getTripLog'] = 'trip/getTripLog';
+
+//FitBit API
+$route['Fitbit'] = 'fitbit/getFitBitPlayer';
+$route['Fitbit/add'] = 'fitbit/addFitBitPlayer';
+$route['Fitbit/'.ANY_STRING.'/update'] = 'fitbit/updateFitBitPlayer/$1';
+$route['Fitbit/'.ANY_STRING.'/delete'] = 'fitbit/deleteFitBitPlayer/$1';
+$route['Fitbit/'.ANY_STRING.'/data'] = 'fitbit/getFitBitPlayerData/$1';
 
 //File API
 $route['File/upload'] = 'file/upload';

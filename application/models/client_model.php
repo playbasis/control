@@ -388,13 +388,15 @@ class Client_model extends MY_Model
                 }
             }
 
-            $remainingQuantity = (int)$badgeInfo['quantity'] - (int)$quantity;
-            if ($remainingQuantity < 0) {
-                $remainingQuantity = 0;
-                $quantity = $badgeInfo['quantity'];
+            if(!is_null($badgeInfo['quantity'])){
+                $remainingQuantity = (int)$badgeInfo['quantity'] - (int)$quantity;
+                if ($remainingQuantity < 0) {
+                    $remainingQuantity = 0;
+                    $quantity = $badgeInfo['quantity'];
+                }
+                $this->mongo_db->set('quantity', $remainingQuantity);
             }
 
-            $this->mongo_db->set('quantity', $remainingQuantity);
             $this->mongo_db->set('date_modified', $mongoDate);
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('site_id', $site_id);
@@ -568,6 +570,7 @@ class Client_model extends MY_Model
         //update badge master table
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
+            'group',
             'quantity'
         ));
         $this->mongo_db->where(array(
@@ -634,6 +637,7 @@ class Client_model extends MY_Model
                 'client_id' => $client_id,
                 'site_id' => $site_id,
                 'goods_id' => $goodsId,
+                'group' => isset($goodsInfo['group']) ? $goodsInfo['group'] : "",
                 'is_sponsor' => $is_sponsor,
                 'value' => intval($quantity),
                 'date_added' => $mongoDate,

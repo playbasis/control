@@ -106,6 +106,33 @@ class Goods_model extends MY_Model
         return $result ? $result[0] : null;
     }
 
+    public function getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $group, $code, $quantity=false)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('code', $code);
+        if($quantity){
+            $this->mongo_db->where_gt('quantity', 0);
+        }
+
+        $result = $this->mongo_db->get('playbasis_goods_to_client');
+        return $result;
+    }
+
+    public function checkGoodsAvailable($client_id, $site_id, $goods_id)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'goods_id' => $goods_id
+        ));
+        $playerRecord = $this->mongo_db->count('playbasis_goods_to_player');
+        return $playerRecord;
+    }
+
     public function getGoods($data, $is_sponsor = false)
     {
         //get goods id
@@ -320,8 +347,32 @@ class Goods_model extends MY_Model
         $this->mongo_db->where_gt('quantity', 0);
         return $this->mongo_db->count('playbasis_goods_to_client');
     }
+    
+    public function getPlayerGoods($site_id, $goodsId, $pb_player_id)
+    {
+        $this->mongo_db->select(array('value'));
+        $this->mongo_db->where(array(
+            'site_id' => new MongoID($site_id),
+            'goods_id' => new MongoID($goodsId),
+            'pb_player_id' => new MongoID($pb_player_id)
+        ));
+        $this->mongo_db->limit(1);
+        $goods = $this->mongo_db->get('playbasis_goods_to_player');
+        return isset($goods[0]) ? $goods[0]['value'] : null;
+    }
+    
+    public function getPlayerGoodsGroup($site_id, $goods_group, $pb_player_id)
+    {
+        $this->mongo_db->where(array(
+            'site_id' => new MongoID($site_id),
+            'group' => $goods_group,
+            'pb_player_id' => new MongoID($pb_player_id)
+        ));
+        $goods = $this->mongo_db->count('playbasis_goods_to_player');
+        return $goods;
+    }
 
-    public function getGoodsByGroup($client_id, $site_id, $group, $offset = null, $limit = null)
+    public function getGoodsByGroup($client_id, $site_id, $group, $offset = null, $limit = null , $quantity = null)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
@@ -334,6 +385,7 @@ class Goods_model extends MY_Model
             'quantity',
             'per_user',
             'redeem',
+            'group',
             'code',
             'organize_id',
             'organize_role'
@@ -352,6 +404,10 @@ class Goods_model extends MY_Model
         if ($limit !== null) {
             $this->mongo_db->limit($limit);
         }
+        if ($quantity != null){
+            $this->mongo_db->where('quantity', (int)$quantity);
+        }
+
         return $this->mongo_db->get('playbasis_goods_to_client');
     }
 

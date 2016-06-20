@@ -2396,6 +2396,133 @@ class Player_model extends MY_Model
         return $result;
     }
 
+    public function giveGift($client_id, $site_id, $sent_pb_player_id, $received_pb_player_id, $received_player_id, $gift_id, $gift_type, $value){
+
+        $this->set_site_mongodb($site_id);
+        
+        //update sent player
+        $this->mongo_db->where('client_id' , $client_id);
+        $this->mongo_db->where('site_id' , $site_id);
+        $this->mongo_db->where('pb_player_id' , $sent_pb_player_id);
+        $this->mongo_db->set('date_modified', new MongoDate());
+        $this->mongo_db->dec('value', intval($value));
+
+        if($gift_type == "BADGE"){
+            $this->mongo_db->where('badge_id', $gift_id);
+            $sent_rewardInfo = $this->mongo_db->update('playbasis_reward_to_player');
+        } elseif ($gift_type == "CUSTOM_POINT") {
+            $this->mongo_db->where('reward_id', $gift_id);
+            $sent_rewardInfo = $this->mongo_db->update('playbasis_reward_to_player');
+        } elseif ($gift_type == "GOODS") {
+            $this->mongo_db->where('goods_id', $gift_id);
+            $sent_rewardInfo = $this->mongo_db->update('playbasis_goods_to_player');
+        }
+        
+        if(!$sent_rewardInfo){
+            return;
+        }
+
+        $rewardInfo = array();
+        $this->mongo_db->where('pb_player_id', $received_pb_player_id);
+        $this->mongo_db->limit(1);
+
+        if($gift_type == "BADGE"){
+            $this->mongo_db->where('badge_id', $gift_id);
+            $rewardInfo = $this->mongo_db->get('playbasis_reward_to_player');
+        } elseif ($gift_type == "CUSTOM_POINT") {
+            $this->mongo_db->where('reward_id', $gift_id);
+            $rewardInfo = $this->mongo_db->get('playbasis_reward_to_player');
+        } elseif ($gift_type == "GOODS") {
+            $this->mongo_db->where('goods_id', $gift_id);
+            $rewardInfo = $this->mongo_db->get('playbasis_goods_to_player');
+        }
+
+        if ($rewardInfo) {
+            $this->mongo_db->where('pb_player_id', $received_pb_player_id);
+            $this->mongo_db->set('date_modified', new MongoDate());
+            $this->mongo_db->inc('value', intval($value));
+            if($gift_type == "BADGE"){
+                $this->mongo_db->where('badge_id', $gift_id);
+                $receive_rewardInfo = $this->mongo_db->update('playbasis_reward_to_player');
+            } elseif ($gift_type == "CUSTOM_POINT") {
+                $this->mongo_db->where('reward_id', $gift_id);
+                $receive_rewardInfo = $this->mongo_db->update('playbasis_reward_to_player');
+            } elseif ($gift_type == "GOODS") {
+                $this->mongo_db->where('goods_id', $gift_id);
+                $receive_rewardInfo = $this->mongo_db->update('playbasis_goods_to_player');
+            }
+        } else {
+            $data = array(
+                'pb_player_id' => $received_pb_player_id,
+                'cl_player_id' => $received_player_id,
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'redeemed' => 0,
+                'date_added' => new MongoDate(),
+                'date_modified' => new MongoDate()
+            );
+            $data['value'] = intval($value);
+            if($gift_type == "BADGE"){
+                $data['badge_id'] = $gift_id;
+                $receive_rewardInfo = $this->mongo_db->insert('playbasis_reward_to_player',$data);
+            } elseif ($gift_type == "CUSTOM_POINT") {
+                $data['reward_id'] = $gift_id;
+                $receive_rewardInfo = $this->mongo_db->insert('playbasis_reward_to_player',$data);
+            } elseif ($gift_type == "GOODS") {
+                $data['goods_id'] = $gift_id;
+                $receive_rewardInfo = $this->mongo_db->insert('playbasis_goods_to_player', $data);
+            }
+        }
+        return $receive_rewardInfo;
+    }
+    public function checkPlayerWithEnoughGoods($client_id, $site_id, $pb_player_id, $goods_id, $n)
+    {
+        $this->set_site_mongodb($site_id);
+        $query = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'goods_id' => new MongoId($goods_id),
+            'pb_player_id' => new MongoId($pb_player_id),
+            'value' => array('$gte' => intval($n))
+        );
+
+        $this->mongo_db->where($query);
+        $result = $this->mongo_db->get('playbasis_goods_to_player');
+        return $result ? $result[0] : array();
+    }
+
+    public function checkPlayerWithEnoughPoint($client_id, $site_id, $pb_player_id, $reward_id, $n)
+    {
+        $this->set_site_mongodb($site_id);
+        $query = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'reward_id' => new MongoId($reward_id),
+            'pb_player_id' => new MongoId($pb_player_id),
+            'value' => array('$gte' => intval($n))
+        );
+
+        $this->mongo_db->where($query);
+        $result = $this->mongo_db->get('playbasis_reward_to_player');
+        return $result ? $result[0] : array();
+    }
+
+    public function checkPlayerWithEnoughBadge($client_id, $site_id, $pb_player_id, $badge_id, $n)
+    {
+        $this->set_site_mongodb($site_id);
+        $query = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'badge_id' => new MongoId($badge_id),
+            'pb_player_id' => new MongoId($pb_player_id),
+            'value' => array('$gte' => intval($n))
+        );
+        
+        $this->mongo_db->where($query);
+        $result = $this->mongo_db->get('playbasis_reward_to_player');
+        return $result ? $result[0] : array();
+    }
+
     public function playerWithEnoughBadge($data, $badge_id, $n)
     {
         $this->set_site_mongodb($data['site_id']);
