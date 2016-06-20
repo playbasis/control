@@ -85,8 +85,7 @@
             </div>
 
             <div class="control-group">
-                <label class="control-label"><?php echo $this->lang->line('entry_date_range'); ?><span
-                        class="required">&nbsp;*</span>
+                <label class="control-label"><?php echo $this->lang->line('entry_date_range'); ?>
                 </label>
                 <div class="controls">
                     <span>
@@ -405,33 +404,11 @@
         $("[name='status']").bootstrapSwitch();
 
         $startDateTextBox.datepicker({
-            onClose: function (dateText, inst) {
-                if ($endDateTextBox.val() != '') {
-                    var testStartDate = $startDateTextBox.datepicker('getDate');
-                    var testEndDate = $endDateTextBox.datepicker('getDate');
-                    if (testStartDate > testEndDate)
-                        $endDateTextBox.datepicker('setDate', testStartDate);
-                }
-                else {
-                    $endDateTextBox.val(dateText);
-                }
-            },
             onSelect: function (selectedDateTime) {
                 $endDateTextBox.datepicker('option', 'minDate', $startDateTextBox.datepicker('getDate'));
             }
         });
         $endDateTextBox.datepicker({
-            onClose: function (dateText, inst) {
-                if ($startDateTextBox.val() != '') {
-                    var testStartDate = $startDateTextBox.datepicker('getDate');
-                    var testEndDate = $endDateTextBox.datepicker('getDate');
-                    if (testStartDate > testEndDate)
-                        $startDateTextBox.datepicker('setDate', testEndDate);
-                }
-                else {
-                    $startDateTextBox.val(dateText);
-                }
-            },
             onSelect: function (selectedDateTime) {
                 $startDateTextBox.datepicker('option', 'maxDate', $endDateTextBox.datepicker('getDate'));
             }

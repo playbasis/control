@@ -104,9 +104,8 @@ class Content extends MY_Controller
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[4096000]|xss_clean');
-        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
-            'trim|required|xss_clean');
-        $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'), 'trim|xss_clean');
+        $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|xss_clean');
         $this->form_validation->set_rules('category', $this->lang->line('entry_category'), 'trim|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -214,9 +213,8 @@ class Content extends MY_Controller
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[4096000]|xss_clean');
-        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
-            'trim|required|xss_clean');
-        $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'), 'trim|xss_clean');
+        $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|xss_clean');
         $this->form_validation->set_rules('category', $this->lang->line('entry_category'), 'trim|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
