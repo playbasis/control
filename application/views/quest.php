@@ -28,7 +28,7 @@
                     <?php }?>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_tags'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_sort_order'); ?></td>
-                    <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
+                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,14 +65,22 @@
                                     <td class="right"><?php echo (isset($quest['tags']) && $quest['tags']) ? implode($quest['tags'],',') : null; ?></td>
                                     <td class="right"><?php echo $quest['sort_order'];?></td>
                                     <td class="right">
-                                    [<a class="quest_play" href="#" data-quest_id="<?php echo $quest["_id"]; ?>">Play</a>]
-                                        [ <?php if($client_id){
+                                        <a class="quest_play" href="#" title="Play" data-quest_id="<?php echo $quest["_id"]; ?>"><i class='fa fa-play fa-lg''></i> </a>
+                                        <?php if($client_id){
                                             // echo anchor('quest/update/'.$quest['action_id'], 'Edit');
-                                            echo anchor('quest/edit/'.$quest['_id'], 'Edit');
+                                            echo anchor('quest/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                                array('class'=>'tooltips',
+                                                    'title' => 'Edit',
+                                                    'data-placement' => 'top'
+                                                ));
                                         }else{
-                                            echo anchor('action/edit/'.$quest['_id'], 'Edit');
+                                            echo anchor('action/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                                array('class'=>'tooltips',
+                                                    'title' => 'Edit',
+                                                    'data-placement' => 'top'
+                                                ));
                                         }
-                                        ?> ]
+                                        ?>
 
                                         <?php if($client_id){
                                             // echo anchor('action/increase_order/'.$quest['action_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['action_id'], 'style'=>'text-decoration:none'));

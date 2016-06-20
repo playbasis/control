@@ -46,18 +46,17 @@
                                                 <input type="checkbox"
                                                        onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                                             </td>
-                                            <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_id'); ?></td>
+                                            <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('column_id'); ?></td>
                                             <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
-                                            <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('column_category'); ?></td>
-                                            <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('column_author'); ?></td>
-                                            <td rowspan="2" class="center"
-                                                style="width:150px;"><?php echo $this->lang->line('column_date_range'); ?></td>
+                                            <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_category'); ?></td>
+                                            <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_author'); ?></td>
+                                            <td rowspan="2" class="center" style="width:135px;"><?php echo $this->lang->line('column_date_range'); ?></td>
                                             <td rowspan="2" class="center" style="width:150px;"><?php echo $this->lang->line('column_tags'); ?></td>
-                                            <td rowspan="2" class="center" style="width:60px;"><?php echo $this->lang->line('column_status'); ?></td>
+                                            <td rowspan="2" class="center" style="width:30px;"><?php echo $this->lang->line('column_status'); ?></td>
                                             <?php if($org_status){?>
-                                                <td colspan="3" class="center" style="width:180px;"><?php echo $this->lang->line('column_organization'); ?></td>
+                                                <td colspan="3" class="center" style="width:150px;"><?php echo $this->lang->line('column_organization'); ?></td>
                                             <?php }?>
-                                            <td rowspan="2" class="center" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
+                                            <td rowspan="2" class="center" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
                                         </tr>
 
                                         <?php if($org_status){?>
@@ -121,18 +120,23 @@
                                                         <td class="right"><?php echo (isset($content['organization_type']) && !is_null($content['organization_type']))?$content['organization_type']:''; ?></td>
                                                         <td class="right"><?php echo (isset($content['organization_role']) && !is_null($content['organization_role']))?$content['organization_role']:''; ?></td>
                                                     <?php }?>
-                                                    <td class="right">
+                                                    <td class="center">
                                                         <?php if ($push_feature_existed) { ?>
-                                                            <span>[ <?php echo anchor('#confirmModal', 'Send push',
+                                                            <span><?php echo anchor('#confirmModal', "<i class='fa fa-bell fa-lg'></i>",
                                                                     array(
+
                                                                         'class' => 'open-confirmModal',
                                                                         'title' => 'Send push notification to all players',
                                                                         'data-toggle' => 'modal',
                                                                         'data-target' => '#confirmModal',
                                                                         'data-id' => $content['_id'],
-                                                                    )); ?> ]</span>
+                                                                    )); ?></span>
                                                         <?php } ?>
-                                                        <span>[ <?php echo anchor('content/update/' . $content['_id'], 'Edit'); ?> ]</span>
+                                                        <span><?php echo anchor('content/update/' . $content['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                                                array('class'=>'tooltips',
+                                                                      'title' => 'Edit',
+                                                                      'data-placement' => 'top'
+                                                                )); ?></span>
                                                     </td>
                                                 </tr>
                                             <?php }

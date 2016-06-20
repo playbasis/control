@@ -49,13 +49,15 @@
                                 <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $badge['sort_order']; ?></td>
                                 <td class="right">
-                                    <?php if(!$client_id){?>
-                                        [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
-                                    <?php }else{?>
-                                        <?php if(!(isset($badge['sponsor']) && $badge['sponsor'])){?> 
-                                            [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
-                                        <?php }?>
-                                    <?php }?>
+                                    <?php
+                                    if((!$client_id) || (!(isset($badge['sponsor']) && $badge['sponsor']))) {
+                                        echo anchor('badge/update/'.$badge['badge_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                            array('class'=>'tooltips',
+                                                'title' => 'Edit',
+                                                'data-placement' => 'top'
+                                            ));
+                                    }
+                                    ?>
                                     <?php echo anchor('badge/increase_order/'.$badge['badge_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$badge['badge_id'], 'style'=>'text-decoration:none'));?>
                                     <?php echo anchor('badge/decrease_order/'.$badge['badge_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$badge['badge_id'], 'style'=>'text-decoration:none' ));?>
                                 </td>

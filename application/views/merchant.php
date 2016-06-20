@@ -61,8 +61,12 @@
                                         </span><?php } ?></td>
                                 <td class="right"><?php echo ($merchant['status']) ? "Enabled" : "Disabled"; ?></td>
                                 <td class="right">
-                                    [ <?php echo anchor('merchant/update/' . $merchant['_id'], 'Edit');
-                                    ?> ]
+                                    <?php echo anchor('merchant/update/'.$merchant['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                        array('class'=>'tooltips',
+                                            'title' => 'Edit',
+                                            'data-placement' => 'top'
+                                        ));
+                                    ?>
                                 </td>
                             </tr>
                         <?php }

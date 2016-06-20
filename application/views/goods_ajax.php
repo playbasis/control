@@ -61,13 +61,15 @@ echo form_open('goods/delete',$attributes);
                     <td class="left"><?php echo ($goods['status'])? "Enabled" : "Disabled"; ?></td>
                     <td class="right"><?php echo $goods['sort_order']; ?></td>
                     <td class="right">
-                        <?php if($client_id){?>
-                            <?php if(!(isset($goods['sponsor']) && $goods['sponsor'])){?>
-                                [ <?php echo anchor('goods/update/'.$goods['goods_id'], 'Edit'); ?> ]
-                            <?php } ?>
-                        <?php }else{ ?>
-                            [ <?php echo anchor('goods/update/'.$goods['goods_id'], 'Edit'); ?> ]
-                        <?php } ?>
+                        <?php
+                            if((!$client_id) || (!(isset($goods['sponsor']) && $goods['sponsor']))) {
+                                echo anchor('goods/update/' . $goods['goods_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                    array('class'=>'tooltips',
+                                        'title' => 'Edit',
+                                        'data-placement' => 'top'
+                                    ));
+                            }
+                        ?>
                         <?php echo anchor('goods/increase_order/'.$goods['goods_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$goods['goods_id'], 'style'=>'text-decoration:none'));?>
                         <?php echo anchor('goods/decrease_order/'.$goods['goods_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$goods['goods_id'], 'style'=>'text-decoration:none' ));?>
                     </td>

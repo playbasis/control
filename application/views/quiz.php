@@ -53,12 +53,13 @@
                                 <td class="right"><?php echo ($quiz['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo (isset($quiz['tags'])? implode($quiz['tags'],',') : null); ?></td>
                                 <td class="right">
-                                    [ <?php if($client_id){
-                                        echo anchor('quiz/edit/'.$quiz['_id'], 'Edit');
-                                    }else{
-                                        echo anchor('quiz/edit/'.$quiz['_id'], 'Edit');
-                                    }
-                                    ?> ]
+                                    <?php
+                                        echo anchor('quiz/edit/'.$quiz['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                            array('class'=>'tooltips',
+                                                'title' => 'Edit',
+                                                'data-placement' => 'top'
+                                            ));
+                                    ?>
                                 </td>
 
                             </tr>

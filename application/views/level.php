@@ -67,7 +67,11 @@
                             <td class="right"><?php echo $level['exp']; ?></td>
                             <td class="left"><?php echo $level['status']; ?></td>
                             <td class="right">
-                                [ <?php echo anchor('level/update/'.$level['level_id'], 'Edit'); ?> ]
+                                <?php echo anchor('level/update/'.$level['level_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                    array('class'=>'tooltips',
+                                        'title' => 'Edit',
+                                        'data-placement' => 'top'
+                                    )); ?>
                              </td>
                         </tr>
                             <?php } ?>

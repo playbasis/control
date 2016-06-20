@@ -47,11 +47,13 @@
                                 <td class="left"><?php echo $cs['name']; ?></td>
                                 <td class="right" width="20%"><?php echo (((isset($cs['tags'])) && $cs['tags'])? implode($cs['tags'],',') : null); ?></td>
                                 <td class="right" width="10%">
-                                    <?php if(!$client_id){?>
-                                        [ <?php echo anchor('custompoints/update/'.$cs['reward_id'], 'Edit'); ?> ]
-                                    <?php }else{?>
-                                        [ <?php echo anchor('custompoints/update/'.$cs['reward_id'], 'Edit'); ?> ]
-                                    <?php }?>
+                                    <?php
+                                        echo anchor('custompoints/update/'.$cs['reward_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                                    array('class'=>'tooltips',
+                                                        'title' => 'Edit',
+                                                        'data-placement' => 'top'
+                                                    ));
+                                    ?>
                                 </td>
                             </tr>
                                 <?php } ?>

@@ -63,7 +63,14 @@
                             <td class="left"><?php echo $user['username']; ?></td>
                             <td class="left"><?php echo ($user['status'])? "Enabled" : "Disabled"; ?></td>
                             <td class="right"><?php echo datetimeMongotoReadable($user['date_added']); ?></td>
-                            <td class="right">[ <?php echo anchor('user/update/'.$user['_id'], 'Edit'); ?> ]</td>
+                            <td class="right">
+                                <?php echo anchor('user/update/'.$user['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                    array('class'=>'tooltips',
+                                        'title' => 'Edit',
+                                        'data-placement' => 'top'
+                                    ));
+                                ?>
+                            </td>
                         </tr>
                             <?php } ?>
                     <?php } else { ?>
