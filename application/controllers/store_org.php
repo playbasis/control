@@ -262,7 +262,7 @@ class Store_org extends MY_Controller
                 } else {
                     $query_data = $this->input->get(null, true);
 
-                    $result = $this->Store_org_model->retrieveNode_search($client_id, $site_id, $query_data);
+                    $result = $this->Store_org_model->retrieveNode($client_id, $site_id, $query_data);
                     foreach ($result as &$document) {
                         if (isset($document['_id'])) {
                             $document['_id'] = $document['_id'] . "";
