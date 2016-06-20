@@ -208,6 +208,7 @@ class Image_model extends MY_Model
             "file_size",
             "url"
         ));
+        $this->mongo_db->where_exists('pb_player_id', false);
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         return $this->mongo_db->get("playbasis_file");
