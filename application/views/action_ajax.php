@@ -34,12 +34,14 @@
                                     <td class="right"><?php echo $action['name']; ?></td>
                                     <td class="right"><?php echo datetimeMongotoReadable($action['date_added']); ?></td>
                                     <td class="right"><?php echo ($action['status'])? "Enabled" : "Disabled"; ?></td>
-                                    <td class="right">[ <?php if($client_id){
-                                            echo anchor('action/update/'.$action['action_id'], 'Edit');
-                                        }else{
-                                            echo anchor('action/update/'.$action['_id'], 'Edit');
-                                        }
-                                        ?> ]
+                                    <td class="right">
+                                        <?php
+                                            $action_id = $client_id ? $action['action_id'] : $action['_id'];
+                                            echo anchor('action/update/'.$action_id,
+                                                $client_id ? "<i class='fa fa-eye fa-lg''></i>" : "<i class='fa fa-edit fa-lg''></i>",
+                                                $client_id ? array('class'=>'tooltips', 'title' => 'View', 'data-placement' => 'top') :
+                                                    array('class'=>'tooltips', 'title' => 'Edit', 'data-placement' => 'top'));
+                                        ?>
 
                                         <?php if($client_id){
 

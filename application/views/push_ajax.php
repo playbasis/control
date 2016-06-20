@@ -35,7 +35,7 @@
                                             'title' => 'Edit',
                                             'data-placement' => 'top'
                                         ));
-                                    ?>s
+                                    ?>
                                     <?php echo anchor('push/inscrease_order/'.$each['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$each['_id'], 'style'=>'text-decoration:none'));?>
                                     <?php echo anchor('push/decrease_order/'.$each['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$each['_id'], 'style'=>'text-decoration:none' ));?>
                                 </td>

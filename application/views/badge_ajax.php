@@ -11,10 +11,13 @@
                             <?php if(!$client_id){?>
                                 <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
                             <?php }?>
-                            <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
-                            <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
+                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_category'); ?></td>
+                            <td class="right" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
+                            <td class="right" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
+                            <td class="right" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
                             <td class="right" style="width:100px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
-                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
+                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_tags'); ?></td>
+                            <td class="right" style="width:150px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>
                         <tbody>
@@ -48,6 +51,7 @@
                                 <td class="right"><?php echo (isset($badge['quantity']) && !is_null($badge['quantity'])) ? $badge['quantity'] : 'Unlimited'; ?></td>
                                 <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $badge['sort_order']; ?></td>
+                                <td class="right"><?php echo (((isset($badge['tags'])) && $badge['tags'])? implode($badge['tags'],',') : null); ?></td>
                                 <td class="right">
                                     <?php
                                     if((!$client_id) || (!(isset($badge['sponsor']) && $badge['sponsor']))) {

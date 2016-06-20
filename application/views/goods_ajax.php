@@ -21,6 +21,7 @@ echo form_open('goods/delete',$attributes);
             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
             <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
+            <td class="right" style="width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
             <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
         </tr>
         </thead>
@@ -60,6 +61,7 @@ echo form_open('goods/delete',$attributes);
                     <td class="right"><?php echo (isset($goods['quantity']) && !is_null($goods['quantity']))?$goods['quantity']:'Unlimited'; ?></td>
                     <td class="left"><?php echo ($goods['status'])? "Enabled" : "Disabled"; ?></td>
                     <td class="right"><?php echo $goods['sort_order']; ?></td>
+                    <td class="right"><?php echo (isset($goods['tags'])? implode($goods['tags'],',') : null); ?></td>
                     <td class="right">
                         <?php
                             if((!$client_id) || (!(isset($goods['sponsor']) && $goods['sponsor']))) {
