@@ -122,15 +122,17 @@ class Goods_model extends MY_Model
         return $result;
     }
 
-    public function checkGoodsAvailable($client_id, $site_id, $goods_id)
+    public function checkPlayerGoodsGroupById($client_id, $site_id, $goods_list, $pb_player_id)
     {
-        $this->mongo_db->where(array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
-            'goods_id' => $goods_id
-        ));
-        $playerRecord = $this->mongo_db->count('playbasis_goods_to_player');
-        return $playerRecord;
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_in('goods_id', $goods_list);
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        
+        $result = $this->mongo_db->get('playbasis_goods_to_player');
+        return $result;
     }
 
     public function getGoods($data, $is_sponsor = false)

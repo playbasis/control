@@ -1739,6 +1739,36 @@
         {
           "MethodName": "Coupon code verification",
           "Synopsis": "verify coupon code available.",
+          "HTTPMethod": "GET",
+          "URI": "/Goods/couponVerify",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "goods_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "goods id"
+            },
+            {
+              "Name": "coupon_code",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "coupon code of goods to verify"
+            },
+            {
+              "Name": "player_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            }
+          ]
+        },
+        {
+          "MethodName": "Coupon code verification with redeem",
+          "Synopsis": "verify coupon code available and redeem.",
           "HTTPMethod": "POST",
           "URI": "/Goods/couponVerify",
           "RequiresOAuth": "N",
@@ -1763,6 +1793,13 @@
               "Default": "",
               "Type": "string",
               "Description": "coupon code of goods to verify"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
             }
           ]
         }

@@ -575,8 +575,8 @@ class Client_model extends MY_Model
         ));
         $this->mongo_db->where(array(
             //'client_id' => $is_sponsor ? null : $client_id,
-            'site_id' => $is_sponsor ? null : $site_id,
-            'goods_id' => $goodsId,
+            'site_id' => $is_sponsor ? null : new MongoId($site_id),
+            'goods_id' => new MongoId($goodsId),
             'deleted' => false
         ));
         $this->mongo_db->limit(1);
@@ -611,32 +611,32 @@ class Client_model extends MY_Model
         // END NEW -->
         $this->mongo_db->set('quantity', $remainingQuantity);
         $this->mongo_db->set('date_modified', $mongoDate);
-        $this->mongo_db->where('client_id', $is_sponsor ? null : $client_id);
-        $this->mongo_db->where('site_id', $is_sponsor ? null : $site_id);
-        $this->mongo_db->where('goods_id', $goodsId);
+        $this->mongo_db->where('client_id', $is_sponsor ? null : new MongoId($client_id));
+        $this->mongo_db->where('site_id', $is_sponsor ? null : new MongoId($site_id));
+        $this->mongo_db->where('goods_id', new MongoId($goodsId));
         $this->mongo_db->update('playbasis_goods_to_client', array("w" => 0, "j" => false));
 
         //update player badge table
         $this->mongo_db->where(array(
-            'pb_player_id' => $pbPlayerId,
-            'goods_id' => $goodsId
+            'pb_player_id' => new MongoId($pbPlayerId),
+            'goods_id' => new MongoId($goodsId)
         ));
         $hasBadge = $this->mongo_db->count('playbasis_goods_to_player');
         if ($hasBadge) {
             $this->mongo_db->where(array(
-                'pb_player_id' => $pbPlayerId,
-                'goods_id' => $goodsId
+                'pb_player_id' => new MongoId($pbPlayerId),
+                'goods_id' => new MongoId($goodsId)
             ));
             $this->mongo_db->set('date_modified', $mongoDate);
             $this->mongo_db->inc('value', intval($quantity));
             $this->mongo_db->update('playbasis_goods_to_player', array("w" => 0, "j" => false));
         } else {
             $this->mongo_db->insert('playbasis_goods_to_player', array(
-                'pb_player_id' => $pbPlayerId,
+                'pb_player_id' => new MongoId($pbPlayerId),
                 'cl_player_id' => $clPlayerId,
-                'client_id' => $client_id,
-                'site_id' => $site_id,
-                'goods_id' => $goodsId,
+                'client_id' => new MongoId($client_id),
+                'site_id' => new MongoId($site_id),
+                'goods_id' => new MongoId($goodsId),
                 'group' => isset($goodsInfo['group']) ? $goodsInfo['group'] : "",
                 'is_sponsor' => $is_sponsor,
                 'value' => intval($quantity),
