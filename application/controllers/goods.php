@@ -305,7 +305,7 @@ class Goods extends REST2_Controller
         return $ret;
     }
 
-    public function couponVerify_post()
+    public function couponVerify_get()
     {
         $required = $this->input->checkParam(array(
             'goods_id',
@@ -316,38 +316,151 @@ class Goods extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         }
 
-        $group_id = $this->input->post('goods_id');
-        $code = $this->input->post('coupon_code');
-
-        $query_data = array('client_id' => new MongoID($this->client_id), 'site_id' => new MongoID($this->site_id),'goods_id' => new MongoID($group_id));
+        $group_id = $this->input->get('goods_id');
+        $code = $this->input->get('coupon_code');
+        $client_id = $this->client_id;
+        $site_id = $this->site_id;
+        $query_data = array('client_id' => new MongoID($client_id), 'site_id' => new MongoID($site_id),'goods_id' => new MongoID($group_id));
         $goods_info = $this->goods_model->getGoods($query_data);
 
         if(!$goods_info){
             $this->response($this->error->setError('GOODS_ID_INVALID'), 200);
         }
 
-        if(isset($goods_info['group'])){
-            $goods_group_info = $this->goods_model->getAllAvailableGoodsByGroupAndCode($this->client_id, $this->site_id, $goods_info['group'], $code);
+        if($this->input->get('player_id')){
+            $cl_player_id = $this->input->get('player_id');
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id' => new MongoId($client_id),
+                'site_id' => new MongoId($site_id),
+                'cl_player_id' => $cl_player_id
+            ));
+            if (empty($pb_player_id)) {
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            }
+        }
+
+        if(isset($goods_info['group'])) {
+            $goods_group_info = $this->goods_model->getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $goods_info['group'], $code);
 
             if (!$goods_group_info) {
                 $this->response($this->error->setError('REDEEM_INVALID_COUPON_CODE'), 200);
             }
 
-            $goods_group_info = $this->goods_model->getAllAvailableGoodsByGroupAndCode($this->client_id, $this->site_id, $goods_info['group'], $code , true);
-            foreach($goods_group_info as $goods){
-                $goods_available = $this->goods_model->checkGoodsAvailable($this->client_id, $this->site_id, $goods['goods_id']);
-                if(!$goods_available){
-                    $this->response($this->resp->setRespond($goods['goods_id']), 200);
+            $available_goods = $this->goods_model->getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $goods_info['group'], $code, true);
+            if($available_goods){
+                $i = rand(0,count($available_goods));
+                $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_AVAILABLE', 'goos_data' => $available_goods[$i] , 'value' => 1))), 200);
+            }
+            else{
+                if($pb_player_id){
+                    $goods_list = array();
+                    foreach($goods_group_info as $good){
+                        array_push($goods_list, $good['goods_id']);
+                    }
+                    $player_goods = $this->goods_model->checkPlayerGoodsGroupById($client_id, $site_id, $goods_list, $pb_player_id);
+                    if($player_goods){
+                        $goods_info = $this->goods_model->getGoods(array('client_id' => new MongoID($client_id), 'site_id' => new MongoID($site_id),'goods_id' => new MongoID($player_goods[0]['goods_id'])));
+                        $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_REDEEMED', 'goos_data' => $goods_info , 'value' => 1))), 200);
+                    }
                 }
             }
             $this->response($this->error->setError('COUPON_NOT_AVAILABLE'), 200);
         }
         else{
             if($goods_info['code'] == $code){
-                if($goods_info['quantity'] > 0){
-                    $this->response($this->resp->setRespond($goods_info['goods_id']), 200);
+                if(is_null($goods_info['quantity']) || ($goods_info['quantity'] > 0)){
+                    $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_AVAILABLE', 'goos_data' => $goods_info , 'value' => 1))), 200);
                 }
                 else{
+                    if($pb_player_id){
+                        $player_goods = $this->goods_model->getPlayerGoods($site_id, $goods_info['goods_id'],$pb_player_id);
+                        if($player_goods){
+                            $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_REDEEMED', 'goos_data' => $goods_info , 'value' => 1))), 200);
+                        }
+                    }
+                    $this->response($this->error->setError('COUPON_NOT_AVAILABLE'), 200);
+                }
+            }
+            $this->response($this->error->setError('REDEEM_INVALID_COUPON_CODE'), 200);
+        }
+    }
+
+    public function couponVerify_post()
+    {
+        $required = $this->input->checkParam(array(
+            'goods_id',
+            'coupon_code',
+            'player_id'
+        ));
+
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        $group_id = $this->input->post('goods_id');
+        $code = $this->input->post('coupon_code');
+        $client_id = $this->client_id;
+        $site_id = $this->site_id;
+        $query_data = array('client_id' => new MongoID($client_id), 'site_id' => new MongoID($site_id),'goods_id' => new MongoID($group_id));
+        $goods_info = $this->goods_model->getGoods($query_data);
+        $sponsor = isset($goods_info['sponsor']) ? $goods_info['sponsor'] : false;
+        if(!$goods_info){
+            $this->response($this->error->setError('GOODS_ID_INVALID'), 200);
+        }
+
+        if($this->input->post('player_id')){
+            $cl_player_id = $this->input->post('player_id');
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id' => new MongoId($client_id),
+                'site_id' => new MongoId($site_id),
+                'cl_player_id' => $cl_player_id
+            ));
+            if (empty($pb_player_id)) {
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            }
+        }
+
+        if(isset($goods_info['group'])){
+            $goods_group_info = $this->goods_model->getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $goods_info['group'], $code);
+
+            if (!$goods_group_info) {
+                $this->response($this->error->setError('REDEEM_INVALID_COUPON_CODE'), 200);
+            }
+
+            $available_goods = $this->goods_model->getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $goods_info['group'], $code, true);
+            if($available_goods){
+                $i = rand(0,count($available_goods));
+                $this->client_model->updateplayerGoods($available_goods[$i]['goods_id'], 1, $pb_player_id, $cl_player_id, $client_id, $site_id, $sponsor);
+                $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_RECEIVED', 'goos_data' => $available_goods[$i] , 'value' => 1))), 200);
+            }
+            else{
+                if($pb_player_id){
+                    $goods_list = array();
+                    foreach($goods_group_info as $good){
+                        array_push($goods_list, $good['goods_id']);
+                    }
+                    $player_goods = $this->goods_model->checkPlayerGoodsGroupById($client_id, $site_id, $goods_list, $pb_player_id);
+                    if($player_goods){
+                        $goods_info = $this->goods_model->getGoods(array('client_id' => new MongoID($client_id), 'site_id' => new MongoID($site_id),'goods_id' => new MongoID($player_goods[0]['goods_id'])));
+                        $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_REDEEMED', 'goos_data' => $goods_info , 'value' => 1))), 200);
+                    }
+                }
+            }
+            $this->response($this->error->setError('COUPON_NOT_AVAILABLE'), 200);
+        }
+        else{
+            if($goods_info['code'] == $code){
+                if(is_null($goods_info['quantity']) || ($goods_info['quantity'] > 0)){
+                    $this->client_model->updateplayerGoods($goods_info['goods_id'], 1, $pb_player_id, $cl_player_id, $client_id, $site_id, $sponsor);
+                    $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_RECEIVED', 'goos_data' => $goods_info , 'value' => 1))), 200);
+                }
+                else{
+                    if($pb_player_id){
+                        $player_goods = $this->goods_model->getPlayerGoods($site_id, $goods_info['goods_id'], $pb_player_id);
+                        if($player_goods){
+                            $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_REDEEMED', 'goos_data' => $goods_info , 'value' => 1))), 200);
+                        }
+                    }
                     $this->response($this->error->setError('COUPON_NOT_AVAILABLE'), 200);
                 }
             }
