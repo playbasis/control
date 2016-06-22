@@ -1712,7 +1712,7 @@ class Quest extends REST2_Controller
 
 
         $quest_data = $this->quest_model->getQuest($query_data);
-        if (is_array($quest_data['condition'])) foreach($quest_data['condition'] as $condition){
+        if (isset($quest_data['condition']) && is_array($quest_data['condition'])) foreach($quest_data['condition'] as $condition){
             if($condition['condition_type'] == 'DATETIME_START'){
                 $query_data['starttime'] = $condition['condition_value'];
             }
