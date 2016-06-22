@@ -49,17 +49,17 @@
                                     <td class="right"><?php echo $quest['sort_order'];?></td>
                                     
                                     <td class="right">
-                                        <a class="quest_play" href="#" title="Play" data-quest_id="<?php echo $quest["_id"]; ?>"><i class='fa fa-play fa-lg''></i> </a>
+                                        <a class="quest_play" href="#" title="Play" data-quest_id="<?php echo $quest["_id"]; ?>"><i class='fa fa-play fa-lg'></i></a>
                                         <?php 
                                             if($client_id){
                                                 // echo anchor('quest/update/'.$quest['action_id'], 'Edit');
-                                                echo anchor('quest/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                                echo anchor('quest/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg'></i>",
                                                     array('class'=>'tooltips',
                                                         'title' => 'Edit',
                                                         'data-placement' => 'top'
                                                     ));
                                             }else{
-                                                echo anchor('action/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                                echo anchor('action/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg'></i>",
                                                     array('class'=>'tooltips',
                                                         'title' => 'Edit',
                                                         'data-placement' => 'top'
