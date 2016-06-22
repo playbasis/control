@@ -934,6 +934,7 @@ $('#new_group_btn').live('click',function(event){
 
 //Event : Select option between 'Create Condition Node' and 'Create Reward Node'
 $('.dropdown-toggle').live('click',function(){
+    cancelEdit();
     oneRuleMan.nodeInsertAfterPosition = $(this).attr('id');
 })
 
@@ -987,6 +988,7 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
         /* Append new node  */
         if(type=='ACTION'){
             // Force add item to sort_index 0
+            cancelEdit();
             chainMan.addNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition)
             oneRuleMan.nodeInsertAfterPosition = undefined;
 
@@ -1036,6 +1038,21 @@ $('.pbd_one_rule_holder .slider-frame').live('click',function(){
 
     }
 })
+
+function cancelEdit() {
+    var $rule_param = $('.pbd_rule_param');
+    var $rule_action = $('.pbd_rule_action');
+    var $rule_data = $('.pbd_rule_data');
+
+    $rule_param.removeClass('state_field');
+    $rule_param.addClass('state_text');
+    $rule_action.find('span#pbd_rule_action_edit').show();
+    $rule_action.find('span#pbd_rule_action_save').hide();
+    $rule_action.find('span#pbd_rule_action_cancel').hide();
+    $rule_data.find('pbd_rule_field').hide();
+    $rule_data.find('pbd_rule_text').show();
+
+}
 
 //Event : rule_header_edit -> Only for rule_header
 $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('click',function(){
