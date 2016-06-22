@@ -2137,6 +2137,61 @@
               "Description": "quest id"
             }
           ]
+        },
+        {
+          "MethodName": "Quest Leader Board",
+          "Synopsis": "Quest Leader Board",
+          "HTTPMethod": "GET",
+          "URI": "/Quest/leader",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "quest_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "quest id"
+            },
+            {
+              "Name": "completion_element_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "quest complete element id"
+            },
+            {
+              "Name": "player_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "offset",
+              "Required": "N",
+              "Default": "0",
+              "Type": "integer",
+              "Description": "number of records starting"
+            },
+            {
+              "Name": "limit",
+              "Required": "N",
+              "Default": "20",
+              "Type": "integer",
+              "Description": "number of results to return"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "",
+              "Type": "enumerated",
+              "Description": "status of quest, default is all",
+              "EnumeratedList": [
+                "finish",
+                "join"
+              ]
+            }
+          ]
         }
       ]
     },
