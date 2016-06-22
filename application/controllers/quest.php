@@ -1722,6 +1722,7 @@ class Quest extends REST2_Controller
         }
         
         if(isset($query_data['completion_element_id']) && !empty($query_data['completion_element_id'])){
+            $result = array();
             foreach ($quest_data['missions'][0]['completion'] as $quest){
                 if($quest['completion_element_id'] == $query_data['completion_element_id']){
                     $quest_data = $quest;
@@ -1754,7 +1755,6 @@ class Quest extends REST2_Controller
                     $player_join_quest = $this->quest_model->getAllPlayerByQuestId($query_data);
                     $Leader_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
                         strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_data);
-                    $result = array();
 
                     if($Leader_data) {
                         $result = $Leader_data;
@@ -1804,10 +1804,10 @@ class Quest extends REST2_Controller
                             $result = array_merge(array_values($result), array_values($adjust_player));
                         }
                     }
+                    array_walk_recursive($result, array($this, "convert_mongo_object"));
                     break;
                 }
             }
-            array_walk_recursive($result, array($this, "convert_mongo_object"));
             $response = isset($player_data) ? array('result' => $result , 'player_data' => $player_data) : array('result' => $result);
             $this->response($this->resp->setRespond($response), 200);
         } else {
