@@ -211,16 +211,31 @@ class Email extends MY_Controller
 
         $domain = $this->Email_model->getClientDomain($client_id, $site_id, true);
         if($domain){
-            $email = explode("@",$domain['email']);
-            $domain_name = $email[1];
+            if($domain['verification_status']=="Success"){
+                $this->data['domain'] = array(
+                    'email' => (isset($domain['email']) && $domain['email'] ? $domain['email'] : ""),
+                    'verification_status' => "Success" ,
+                );
+            }else {
+                $email = explode("@", $domain['email']);
+                $domain_name = $email[1];
 
-            // check domain's status from amazon ses
-            $domain_verification = $this->amazon_ses->get_identity_verification($domain_name);
+                // check domain's status from amazon ses
+                $domain_verification = $this->amazon_ses->get_identity_verification($domain_name);
+                if (isset($domain_verification['VerificationStatus']) && $domain_verification['VerificationStatus'] == "Success") {
+                    $data = array('client_id'=>$client_id,
+                        'site_id'=>$site_id,
+                        'verification_token'=>$domain_verification['VerificationToken'],
+                        'verification_status'=>$domain_verification['VerificationStatus']);
 
-            $this->data['domain'] = array(
-                'email' => (isset($domain['email']) && $domain['email'] ? $domain['email'] : ""),
-                'verification_status' => (isset($domain_verification['VerificationStatus']) && $domain_verification['VerificationStatus'] ? $domain_verification['VerificationStatus'] : "Not verified"),
-            );
+                    $this->Email_model->editDomain($data);
+                }
+
+                $this->data['domain'] = array(
+                    'email' => $domain['email'],
+                    'verification_status' => (isset($domain_verification['VerificationStatus']) && $domain_verification['VerificationStatus'] ? $domain_verification['VerificationStatus'] : "Not verified"),
+                );
+            }
         }else{
             $this->data['domain'] = array(
                 'email' => EMAIL_FROM,
