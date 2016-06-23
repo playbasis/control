@@ -419,22 +419,22 @@ class Quest extends REST2_Controller
         if ($quest && isset($quest["condition"])) {
 
             foreach ($quest["condition"] as $c) {
-                if ($c["condition_type"] == "DATETIME_START") {
+                if ($c["condition_type"] == "DATEJOIN_START") {
 //                    if($c["condition_value"]->sec > time()){
                     if (strtotime($c["condition_value"]) > time()) {
                         $event = array(
                             'event_type' => 'QUEST_DID_NOT_START',
-                            'message' => 'quest did not start'
+                            'message' => 'time to join quest did not start'
                         );
                         array_push($questEvent, $event);
                     }
                 } else {
-                    if ($c["condition_type"] == "DATETIME_END") {
+                    if ($c["condition_type"] == "DATEJOIN_END") {
 //                    if($c["condition_value"]->sec < time()){
                         if (strtotime($c["condition_value"]) < time()) {
                             $event = array(
                                 'event_type' => 'QUEST_ALREADY_FINISHED',
-                                'message' => 'quest already finished'
+                                'message' => 'time to join quest already finished'
                             );
                             array_push($questEvent, $event);
                         }
