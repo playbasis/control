@@ -45,6 +45,8 @@ $lang = array(
 	'form_organize_name'				=> 'Organize Type',
 	'form_global_quest'					=> 'Global Quest?',
     'error_quest_limit'                 => 'You have reached Quest Limit.',
+	'error_date_start_to_join'          => 'Date start to join should be set before start date to play',
+	'error_date_end_to_join'            => 'Date end to join should be set before end date to play',
     'error_mission_limit'               => 'You have reached Mission Limit.',
     'text_fail_set_role'                => 'Please select node before setting role'
 );
