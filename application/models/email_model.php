@@ -184,6 +184,36 @@ class Email_model extends MY_Model
         $this->mongo_db->order_by(array('date_added' => -1));
         return $this->mongo_db->get('playbasis_email_log');
     }
+
+    public function getClientDomain($client_id, $site_id)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_domain_to_client");
+
+        return $results ? $results[0] : null;
+    }
+
+    public function editDomain($data)
+    {
+        $this->set_site_mongodb($data['site_id']);
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+
+        if(isset($data["email"])) $this->mongo_db->set("email", $data["email"]);
+        if(isset($data["verification_token"])) $this->mongo_db->set('verification_token', $data['verification_token']);
+        if(isset($data["verification_status"])) $this->mongo_db->set('verification_status', $data['verification_status']);
+
+        $this->mongo_db->set('status', isset($data['status']) ? (bool)$data['status'] : true);
+        $this->mongo_db->set("date_modified", new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->update('playbasis_domain_to_client');
+        return true;
+    }
 }
 
 ?>
