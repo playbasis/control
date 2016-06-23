@@ -348,7 +348,7 @@ class Goods extends REST2_Controller
 
             $available_goods = $this->goods_model->getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $goods_info['group'], $code, true);
             if($available_goods){
-                $i = rand(0,count($available_goods));
+                $i = rand(0,(count($available_goods)-1));
                 $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_AVAILABLE', 'goos_data' => $available_goods[$i] , 'value' => 1))), 200);
             }
             else{
@@ -429,7 +429,7 @@ class Goods extends REST2_Controller
 
             $available_goods = $this->goods_model->getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $goods_info['group'], $code, true);
             if($available_goods){
-                $i = rand(0,count($available_goods));
+                $i = rand(0,(count($available_goods)-1));
                 $this->client_model->updateplayerGoods($available_goods[$i]['goods_id'], 1, $pb_player_id, $cl_player_id, $client_id, $site_id, $sponsor);
                 $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_RECEIVED', 'goos_data' => $available_goods[$i] , 'value' => 1))), 200);
             }
