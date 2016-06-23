@@ -1713,6 +1713,7 @@ class Quest extends REST2_Controller
 
 
         $quest_data = $this->quest_model->getQuest($query_data);
+        $select = array('cl_player_id', 'first_name', 'last_name', 'username', 'image');
         if (isset($quest_data['condition']) && is_array($quest_data['condition'])) foreach($quest_data['condition'] as $condition){
             if($condition['condition_type'] == 'DATETIME_START'){
                 $query_data['starttime'] = $condition['condition_value'];
@@ -1739,7 +1740,7 @@ class Quest extends REST2_Controller
                             else{
                                 $player_data = $player_data[0];
                             }
-                            $player_data['cl_player_id'] = $this->player_model->getClientPlayerId($pb_player_id,$query_data['site_id']);
+                            $player_data['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $pb_player_id, $select);
                             $player_data['status'] = (int)$quest['completion_value'] <= (int)$player_data['current'] ? 'finish' : 'join';
                             $player_data['goal'] = (int)$quest['completion_value'];
                             $rank_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
@@ -1762,7 +1763,7 @@ class Quest extends REST2_Controller
                         foreach ($Leader_data as $leader_index => $leader) {
                             foreach ($player_join_quest as $player_index => $player) {
                                 if ($leader['_id'] == $player['pb_player_id']) {
-                                    $result[$leader_index]['cl_player_id'] = $this->player_model->getClientPlayerId($player['pb_player_id'], $query_data['site_id']);
+                                    $result[$leader_index]['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select);
                                     $result[$leader_index]['status'] = (int)$quest['completion_value'] <= (int)$Leader_data[$leader_index]['current'] ? 'finish' : 'join';
                                     $result[$leader_index]['goal'] = (int)$quest['completion_value'];
                                     array_push($filter_id, $result[$leader_index]['_id']);
@@ -1775,7 +1776,7 @@ class Quest extends REST2_Controller
                                     break;
                                 }
                             }
-                            if (!isset($result[$leader_index]['cl_player_id'])) {
+                            if (!isset($result[$leader_index]['player'])) {
                                 unset($result[$leader_index]);
                             }
                         }
@@ -1791,13 +1792,13 @@ class Quest extends REST2_Controller
                                 array_push($adjust_player, array(
                                     'current' => 0,
                                     'date_completed' => $player['missions'][0]['date_modified'],
-                                    'cl_player_id' => $this->player_model->getClientPlayerId($player['pb_player_id'],$query_data['site_id']),
+                                    'player' => $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select),
                                     'status' => 'join',
                                     'goal' => (int)$quest['completion_value']
                                 ));
                             }
                             foreach ($adjust_player as $key => $row) {
-                                $cl_player[$key]  = $row['cl_player_id'];
+                                $cl_player[$key]  = $row['player']['cl_player_id'];
                             }
                             if(count($adjust_player) > 1){
                                 array_multisort($cl_player, SORT_ASC, $adjust_player);
@@ -1824,7 +1825,7 @@ class Quest extends REST2_Controller
                         }
                         $player_data['date_completed'] = !$player_data['date_completed'] ?
                             $mission['date_modified'] : max($player_data['date_completed'],$mission['date_modified']);
-                        $player_data['cl_player_id'] = $this->player_model->getClientPlayerId($pb_player_id,$query_data['site_id']);
+                        $player_data['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $pb_player_id, $select);
                         $player_data['status'] = (int)$player_data['current'] == count($player_quest['missions']) ? 'finish' : 'join';
                         $player_data['goal'] = count($player_quest['missions']);
                         $player_data['rank'] = 1;
@@ -1845,7 +1846,7 @@ class Quest extends REST2_Controller
                     $result[$player_index]['date_completed'] = !$result[$player_index]['date_completed'] ?
                         $mission['date_modified'] : max($result[$player_index]['date_completed'],$mission['date_modified']);
                 }
-                $result[$player_index]['cl_player_id'] = $this->player_model->getClientPlayerId($player['pb_player_id'],$query_data['site_id']);
+                $result[$player_index]['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select);
                 $result[$player_index]['status'] = (int)$result[$player_index]['current'] == count($player['missions']) ? 'finish' : 'join';
                 $result[$player_index]['goal'] = count($player['missions']);
 
