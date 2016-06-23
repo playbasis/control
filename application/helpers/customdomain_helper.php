@@ -1,5 +1,5 @@
 <?php
-function verify_custom_domain($client_id, $site_id)
+function get_verified_custom_domain($client_id, $site_id)
 {
     $CI = get_instance();
     $CI->load->model('email_model');

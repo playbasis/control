@@ -137,7 +137,7 @@ class Email extends REST2_Controller
         /* variables */
         $email = $player['email'];
         /* before send, check whether custom domain was set by user or not*/
-        $from = verify_custom_domain($this->client_id, $this->site_id);
+        $from = get_verified_custom_domain($this->client_id, $this->site_id);
         $to = array($email);
         $subject = $this->input->post('subject');
 
@@ -209,7 +209,7 @@ class Email extends REST2_Controller
         /* variables */
         $email = $player['email'];
         /* before send, check whether custom domain was set by user or not*/
-        $from = verify_custom_domain($this->client_id, $this->site_id);
+        $from = get_verified_custom_domain($this->client_id, $this->site_id);
         $to = array($email);
         $subject = $this->input->post('subject');
 
