@@ -92,6 +92,7 @@
                                 <a href="javascript:void(0)" class="btn btn-primary right add-condition-btn dropdown-toggle" data-toggle="dropdown"> + Add Condition</a>
                                 <ul class="dropdown-menu add-condition-menu" role="menu" aria-labelledby="dropdownMenu">
                                     <li class="add-datetime"><a tabindex="-1" href="javascript:void(0)" >DATE TIME</a></li>
+                                    <li class="add-datejoin"><a tabindex="-1" href="javascript:void(0)" >JOIN</a></li>
                                     <li class="add-level"><a tabindex="-1" href="javascript:void(0)" >LEVEL</a></li>
                                     <li class="add-quest"><a tabindex="-1" href="javascript:void(0)" >QUEST</a></li>
                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
@@ -107,15 +108,29 @@
                             <div class = 'condition-container'>
                                 <?php if(isset($editDateStartCon) && isset($editDateEndCon)){ ?>
                                     <div class="datetime-wrapper condition-type well">
-                                        <h3>Data time <a class="remove"><i class="icon-remove-sign"></i></a></h3>
+                                        <h3>Play Time <a class="remove"><i class="icon-remove-sign"></i></a></h3>
                                         <label class="span4">Date Start:</label> 
-                                        <input type="text" name="condition[datetimestart][condition_value]" class="date" placeholder="datetime start" id="dp1401709709268" value="<?php echo dateMongotoReadable($editDateStartCon['condition_value']) ?>">  
-                                        <input type="hidden" name="condition[datetimestart][condition_type]" value="DATETIME_START">                        
+                                        <input type="text" name="condition[datetimestart][condition_value]" class="date" placeholder="date start to play" id="dp1401709709268" value="<?php echo dateMongotoReadable($editDateStartCon['condition_value']) ?>">
+                                        <input type="hidden" name="condition[datetimestart][condition_type]" value="DATETIME_START">
                                         <input type="hidden" name="condition[datetimestart][condition_id]" value=""><br>
                                         <label class="span4">Date End:</label> 
-                                        <input type="text" name="condition[datetimeend][condition_value]" class="date" placeholder="datetime end" id="dp1401709709269" value="<?php echo dateMongotoReadable($editDateEndCon['condition_value']) ?>">                    
-                                        <input type="hidden" name="condition[datetimeend][condition_type]" value="DATETIME_END">                    
+                                        <input type="text" name="condition[datetimeend][condition_value]" class="date" placeholder="date end to play" id="dp1401709709269" value="<?php echo dateMongotoReadable($editDateEndCon['condition_value']) ?>">
+                                        <input type="hidden" name="condition[datetimeend][condition_type]" value="DATETIME_END">
                                         <input type="hidden" name="condition[datetimeend][condition_id]" value="">
+                                    </div>
+                                <?php } ?>
+
+                                <?php if(isset($editDateJoinStartCon) && isset($editDateJoinEndCon)){ ?>
+                                    <div class="datejoin-wrapper condition-type well">
+                                        <h3>Join Time<a class="remove"><i class="icon-remove-sign"></i></a></h3>
+                                        <label class="span4">Date Start:</label>
+                                        <input type="text" name="condition[datejoinstart][condition_value]" class="date" placeholder="date start to join" id="condition[datejoinstart][condition_id]" value="<?php echo dateMongotoReadable($editDateJoinStartCon['condition_value']) ?>">
+                                        <input type="hidden" name="condition[datejoinstart][condition_type]" value="DATEJOIN_START">
+                                        <input type="hidden" name="condition[datejoinstart][condition_id]" value=""><br>
+                                        <label class="span4">Date End:</label>
+                                        <input type="text" name="condition[datejoinend][condition_value]" class="date" placeholder="date end to join" id="condition[datejoinend][condition_id]" value="<?php echo dateMongotoReadable($editDateJoinEndCon['condition_value']) ?>">
+                                        <input type="hidden" name="condition[datejoinend][condition_type]" value="DATEJOIN_END">
+                                        <input type="hidden" name="condition[datejoinend][condition_id]" value="">
                                     </div>
                                 <?php } ?>
 
@@ -1469,6 +1484,7 @@
             menuObj = wrapperObj.find('.add-'+type+'-menu'),
 
             addDatetimeObj = menuObj.find('.add-datetime'),
+            addDatejoinObj = menuObj.find('.add-datejoin'),
             addLevelObj = menuObj.find('.add-level'),
             addQuestObj = menuObj.find('.add-quest'),
             addGoodsObj = menuObj.find('.add-goods'),
@@ -1500,6 +1516,16 @@
                 addDatetimeObj.removeClass('disabled');
                 addDatetimeObj.unbind().bind('click',function(data){
                     addDatetime(target);
+                });
+            }
+
+            if(containerObj.has('.datejoin-wrapper').length){
+                addDatejoinObj.addClass('disabled');
+                addDatejoinObj.unbind();
+            }else{
+                addDatejoinObj.removeClass('disabled');
+                addDatejoinObj.unbind().bind('click',function(data){
+                    addDatejoin(target);
                 });
             }
 
@@ -1780,13 +1806,13 @@ function addDatetime(target){
     var parent = target.parent || 'quest';
     var inputHtml = '';
 
-    var datetimeHead = '<h3>Data time <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
+    var datetimeHead = '<h3>Play Time <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
 
-    var datetimestart = '<label class="span4">Date Start:</label> <input type="text" name ="'+type+'[datetimestart][condition_value]"  class="date" placeholder = "datetime start">\
+    var datetimestart = '<label class="span4">Date Start:</label> <input type="text" name ="'+type+'[datetimestart][condition_value]"  class="date" placeholder = "date start to play">\
                         <input type="hidden" name = "'+type+'[datetimestart][condition_type]" value="DATETIME_START">\
                         <input type = "hidden" name = "'+type+'[datetimestart][condition_id]" value="">';
 
-    var datetimeend = '<label class="span4">Date End:</label> <input type="text" name = "'+type+'[datetimeend][condition_value]"  class="date" placeholder = "datetime end" >\
+    var datetimeend = '<label class="span4">Date End:</label> <input type="text" name = "'+type+'[datetimeend][condition_value]"  class="date" placeholder = "date start to play" >\
                     <input type="hidden" name = "'+type+'[datetimeend][condition_type]" value="DATETIME_END">\
                     <input type = "hidden" name = "'+type+'[datetimeend][condition_id]" value="">';
     var datetimeHtml = '<div class="datetime-wrapper '+type+'-type well">'+datetimeHead+datetimestart+'<br>'+datetimeend+'</div>';
@@ -1796,6 +1822,31 @@ function addDatetime(target){
 
     $('.date').datepicker({dateFormat: 'yy-mm-dd'});
 
+}
+
+function addDatejoin(target){
+    var type = target.type;
+    var id = target.id || null;
+    var parent = target.parent || 'quest';
+    var inputHtml = '';
+
+
+    var datejoinHead = '<h3>Join Time <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
+
+
+
+    var datejoinstart = '<label class="span4">Date Start:</label> <input type="text" name ="'+type+'[datejoinstart][condition_value]"  class="date" placeholder = "date start to join">\
+                        <input type="hidden" name = "'+type+'[datejoinstart][condition_type]" value="DATEJOIN_START">\
+                        <input type = "hidden" name = "'+type+'[datejoinstart][condition_id]" value="">';
+    var datejoinend = '<label class="span4">Date End:</label> <input type="text" name ="'+type+'[datejoinend][condition_value]"  class="date" placeholder = "date end to join">\
+                        <input type="hidden" name = "'+type+'[datejoinend][condition_type]" value="DATEJOIN_END">\
+                        <input type = "hidden" name = "'+type+'[datejoinend][condition_id]" value="">';
+
+    var datejoinHtml = '<div class="datejoin-wrapper '+type+'-type well">'+datejoinHead+datejoinstart+'<br>'+datejoinend+'</div>';
+
+    target.html = datejoinHtml;
+
+    render(target);
 }
 
 function addLevel(target){
