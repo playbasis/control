@@ -3020,6 +3020,18 @@ class Player_model extends MY_Model
         return $results ? $results[0] : array();
     }
 
+    public function getPlayerByPlayer($site_id, $pb_player_id ,$select=null)
+    {
+        if($select) $this->mongo_db->select($select);
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('_id', new MongoId($pb_player_id));
+        $results = $this->mongo_db->get('playbasis_player');
+        if($results){
+            unset($results[0]['_id']);
+        }
+        return $results ? $results[0] : array();
+    }
+
     public function getPlayerByUsernameButNotID($site_id, $username, $pb_player_id)
     {
         $this->mongo_db->select(array('_id', 'cl_player_id'));
