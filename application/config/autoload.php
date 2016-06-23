@@ -63,7 +63,7 @@ $autoload['libraries'] = array('session','amazon_ses');
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('url','date', 'mongodbdatetime','random','security','utf8');
+$autoload['helper'] = array('url','date', 'mongodbdatetime','random','security','utf8','customdomain');
 
 
 /*

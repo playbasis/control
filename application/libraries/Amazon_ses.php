@@ -299,6 +299,37 @@ class Amazon_ses {
     }
 
     /**
+     * Verify domain
+     *
+     * Given a list of identities (email addresses and/or domains), returns the verification status and (for domain identities) the verification token for each identity.
+     * @link 	http://http://docs.aws.amazon.com/ses/latest/APIReference/API_GetIdentityVerificationAttributes.html
+     * @param 	string	The name of the domain to be verified
+     * @return 	VerificationStatus => Identity verification status
+     *          VerificationToken => A TXT record that must be placed in the DNS settings for the domain, in order to complete domain verification.
+     * @author 	Ben Hartard
+     */
+    public function get_identity_verification($domain)
+    {
+        // Prep our query string
+        $query_string = array(
+            'Action' => 'GetIdentityVerificationAttributes',
+            'Identities.member.1' => $domain
+        );
+
+        // Hand it off to Amazon
+        $result = $this->_api_request($query_string,true);
+        $result = json_decode(json_encode(simplexml_load_string($result)),TRUE);
+
+        if(isset($result['GetIdentityVerificationAttributesResult']['VerificationAttributes']['entry']['value'])){
+            return array(   'VerificationStatus'=>$result['GetIdentityVerificationAttributesResult']['VerificationAttributes']['entry']['value']['VerificationStatus'],
+                'VerificationToken'=>$result['GetIdentityVerificationAttributesResult']['VerificationAttributes']['entry']['value']['VerificationToken']
+            );
+        }else{
+            return null;
+        }
+    }
+
+    /**
      * Verify address
      *
      * Verifies a from address as a valid sender

@@ -1947,7 +1947,8 @@ class Quest extends REST2_Controller
         }
 
         /* send email */
-        $from = EMAIL_FROM;
+        /* before send, check whether custom domain was set by user or not*/
+        $from = verify_custom_domain($input['client_id'], $input['site_id']);
         $to = $email;
         $subject = $input['input']['subject'];
         if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) {
