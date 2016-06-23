@@ -354,7 +354,7 @@ class Goods extends REST2_Controller
                 $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_AVAILABLE', 'goos_data' => $available_goods[$i] , 'value' => 1))), 200);
             }
             else{
-                if($pb_player_id){
+                if(isset($pb_player_id) && !empty($pb_player_id)){
                     $goods_list = array();
                     foreach($goods_group_info as $good){
                         array_push($goods_list, $good['goods_id']);
@@ -374,7 +374,7 @@ class Goods extends REST2_Controller
                     $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_AVAILABLE', 'goos_data' => $goods_info , 'value' => 1))), 200);
                 }
                 else{
-                    if($pb_player_id){
+                    if(isset($pb_player_id) && !empty($pb_player_id)){
                         $player_goods = $this->goods_model->getPlayerGoods($site_id, $goods_info['goods_id'],$pb_player_id);
                         if($player_goods){
                             $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_REDEEMED', 'goos_data' => $goods_info , 'value' => 1))), 200);
@@ -438,7 +438,7 @@ class Goods extends REST2_Controller
                 $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_RECEIVED', 'goos_data' => $available_goods[$i] , 'value' => 1))), 200);
             }
             else{
-                if($pb_player_id){
+                if(isset($pb_player_id) && !empty($pb_player_id)){
                     $goods_list = array();
                     foreach($goods_group_info as $good){
                         array_push($goods_list, $good['goods_id']);
@@ -459,7 +459,7 @@ class Goods extends REST2_Controller
                     $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_RECEIVED', 'goos_data' => $goods_info , 'value' => 1))), 200);
                 }
                 else{
-                    if($pb_player_id){
+                    if(isset($pb_player_id) && !empty($pb_player_id)){
                         $player_goods = $this->goods_model->getPlayerGoods($site_id, $goods_info['goods_id'], $pb_player_id);
                         if($player_goods){
                             $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_REDEEMED', 'goos_data' => $goods_info , 'value' => 1))), 200);
