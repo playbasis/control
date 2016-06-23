@@ -109,7 +109,23 @@ class Goods_model extends MY_Model
     public function getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $group, $code, $quantity=false)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
+        $this->mongo_db->select(array(
+            'goods_id',
+            'image',
+            'name',
+            'code',
+            'description',
+            'quantity',
+            'redeem',
+            'group',
+            'tags',
+            'date_start',
+            'date_expire',
+            'sponsor',
+            'sort_order',
+            'organize_id',
+            'organize_role'
+        ));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('group', $group);
