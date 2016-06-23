@@ -424,7 +424,8 @@ class Quest extends REST2_Controller
                     if (strtotime($c["condition_value"]) > time()) {
                         $event = array(
                             'event_type' => 'QUEST_DID_NOT_START',
-                            'message' => 'time to join quest did not start'
+                            'message' => 'quest did not start'
+
                         );
                         array_push($questEvent, $event);
                     }
@@ -434,7 +435,7 @@ class Quest extends REST2_Controller
                         if (strtotime($c["condition_value"]) < time()) {
                             $event = array(
                                 'event_type' => 'QUEST_ALREADY_FINISHED',
-                                'message' => 'time to join quest already finished'
+                                'message' => 'quest already finished'
                             );
                             array_push($questEvent, $event);
                         }
