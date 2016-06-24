@@ -1740,7 +1740,8 @@ class Quest extends REST2_Controller
                     }
 
                     $Leader_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
-                        strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_data, $query_players);
+                        strtolower($quest_data['completion_filter']), $query_data,
+                        isset($quest_data['completion_op']) && !empty($quest_data['completion_op']) ? $quest_data['completion_op'] : "sum", $query_players);
 
                     if(isset($pb_player_id)){
                         $player_quest = $this->quest_model->getPlayerQuest(array('site_id' => $this->validToken['site_id'], 'quest_id' => new MongoId($query_data['quest_id']), 'pb_player_id' => $pb_player_id));
@@ -1751,22 +1752,23 @@ class Quest extends REST2_Controller
                             $query_rank['endtime'] = (isset($query_data['endtime']) && !empty($query_data['endtime'])) ? $query_data['endtime'] : null;
                             $query_rank['site_id'] = $query_data['site_id'];
                             $player_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
-                                strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_rank ,$query_player);
+                                strtolower($quest_data['completion_filter']), $query_rank,
+                                isset($quest_data['completion_op']) && !empty($quest_data['completion_op']) ? $quest_data['completion_op'] : "sum" ,$query_player);
                             if(!$player_data){
                                 $player_data['current'] = 0;
                                 $player_data['date_completed'] = $player_quest['date_added'];
-                            }
-                            else{
+                            } else {
                                 $player_data = $player_data[0];
                             }
                             $player_data['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $pb_player_id, $select);
                             $player_data['goal'] = (int)$quest['completion_value'];
                             $rank_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
-                                strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_rank , $query_players, (int)$player_data['current']);
+                                strtolower($quest_data['completion_filter']), $query_rank,
+                                isset($quest_data['completion_op']) && !empty($quest_data['completion_op']) ? $quest_data['completion_op'] : "sum", $query_players, (int)$player_data['current']);
                             $player_data['rank'] = (isset($query_data['status']) && !empty($query_data['status']) && ($player_quest['status'] != $query_data['status'])) ? null : count($rank_data)+1;
                             unset($player_data['_id']);
                             array_walk_recursive($player_data, array($this, "convert_mongo_object"));
-                        } else{
+                        } else {
                             $player_data['result'] = "Player did not join quest";
                         }
                     }
