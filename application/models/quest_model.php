@@ -145,7 +145,7 @@ class Quest_model extends MY_Model
         return $this->mongo_db->get('playbasis_quest_to_player');
     }
 
-    public function getLeaderboardCompletion($activity, $completion_filter, $completion_option, $filter, $query_player=array(), $gt=0)
+    public function getLeaderboardCompletion($activity, $completion_filter, $completion_option='sum', $filter, $query_player=array(), $gt=0)
     {
         $match_condition = array(
             'site_id' => new MongoId($filter['site_id']),
