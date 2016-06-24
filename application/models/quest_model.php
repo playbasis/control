@@ -145,7 +145,7 @@ class Quest_model extends MY_Model
         return $this->mongo_db->get('playbasis_quest_to_player');
     }
 
-    public function getLeaderboardCompletion($activity, $completion_filter, $completion_option, $filter,$pb_player_id=null,$gt=0)
+    public function getLeaderboardCompletion($activity, $completion_filter, $completion_option, $filter, $query_player=array(), $gt=0)
     {
         $match_condition = array(
             'site_id' => new MongoId($filter['site_id']),
@@ -162,8 +162,8 @@ class Quest_model extends MY_Model
         if ((isset($filter['starttime']) && !empty($filter['starttime']))|| (isset($filter['starttime']) && !empty($filter['endtime']))) {
             $match_condition = array_merge($match_condition, array('date_added' => $datecondition));
         }
-        if ($pb_player_id) {
-            $match_condition = array_merge($match_condition, array('pb_player_id' => $pb_player_id));
+        if ($query_player) {
+            $match_condition = array_merge($match_condition, array('pb_player_id' => array('$in' => $query_player)));
         }
         
         if($completion_option == 'sum'){
