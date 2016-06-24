@@ -1746,8 +1746,12 @@ class Quest extends REST2_Controller
                         $player_quest = $this->quest_model->getPlayerQuest(array('site_id' => $this->validToken['site_id'], 'quest_id' => new MongoId($query_data['quest_id']), 'pb_player_id' => $pb_player_id));
                         if($player_quest){
                             array_push($query_player, new MongoId($pb_player_id));
+                            $query_rank = array();
+                            $query_rank['starttime'] = (isset($query_data['starttime']) && !empty($query_data['starttime'])) ? $query_data['starttime'] : null;
+                            $query_rank['endtime'] = (isset($query_data['endtime']) && !empty($query_data['endtime'])) ? $query_data['endtime'] : null;
+                            $query_rank['site_id'] = $query_data['site_id'];
                             $player_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
-                                strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_data ,$query_player);
+                                strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_rank ,$query_player);
                             if(!$player_data){
                                 $player_data['current'] = 0;
                                 $player_data['date_completed'] = $player_quest['date_added'];
@@ -1758,7 +1762,7 @@ class Quest extends REST2_Controller
                             $player_data['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $pb_player_id, $select);
                             $player_data['goal'] = (int)$quest['completion_value'];
                             $rank_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
-                                strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_data , $query_players, (int)$player_data['current']);
+                                strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_rank , $query_players, (int)$player_data['current']);
                             $player_data['rank'] = (isset($query_data['status']) && !empty($query_data['status']) && ($player_quest['status'] != $query_data['status'])) ? null : count($rank_data)+1;
                             unset($player_data['_id']);
                             array_walk_recursive($player_data, array($this, "convert_mongo_object"));
@@ -1846,8 +1850,7 @@ class Quest extends REST2_Controller
                 }
                 $result[$player_index]['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select);
                 $result[$player_index]['goal'] = count($player['missions']);
-                if((!(isset($query_data['status']) && !empty($query_data['status']) && ($player_quest['status'] != $query_data['status']))) &&
-                    isset($player_data) && !empty($player_data) && $player['pb_player_id'] != $pb_player_id) $player_data['rank'] += 1;
+                if(isset($player_data['rank']) && !is_null($player_data['rank']) && (!isset($pb_player_id) || $player['pb_player_id'] != $pb_player_id)) $player_data['rank'] += 1;
             }
             if(isset($result) && !empty($result)){
                 foreach ($result as $key => $row) {

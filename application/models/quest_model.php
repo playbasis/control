@@ -156,10 +156,10 @@ class Quest_model extends MY_Model
         if (isset($filter['starttime']) && !empty($filter['starttime'])) {
             $datecondition = array_merge($datecondition, array('$gt' => new MongoDate(strtotime($filter['starttime']))));
         }
-        if (isset($filter['starttime']) && !empty($filter['endtime'])) {
+        if (isset($filter['endtime']) && !empty($filter['endtime'])) {
             $datecondition = array_merge($datecondition, array('$lte' => new MongoDate(strtotime($filter['endtime']))));
         }
-        if ((isset($filter['starttime']) && !empty($filter['starttime']))|| (isset($filter['starttime']) && !empty($filter['endtime']))) {
+        if ((isset($filter['starttime']) && !empty($filter['starttime']))|| (isset($filter['endtime']) && !empty($filter['endtime']))) {
             $match_condition = array_merge($match_condition, array('date_added' => $datecondition));
         }
         if ($query_player) {
