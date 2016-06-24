@@ -322,6 +322,10 @@ class Error extends CI_Model
                 $errorData["message"] = "Mission not found";
                 $errorData["error_code"] = "0706";
                 break;
+            case "COMPLETION_ELEMENT_ID_NOT_FOUND":
+                $errorData["message"] = "Completion element id not found";
+                $errorData["error_code"] = "0707";
+                break;
             case 'QUIZ_NOT_FOUND':
                 $errorData['message'] = "Quiz not found";
                 $errorData['error_code'] = '1001';
