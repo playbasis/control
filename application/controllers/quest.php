@@ -1689,13 +1689,12 @@ class Quest extends REST2_Controller
         if ($required) {
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         }
-        
+
         $query_data = $this->input->get();
         $query_data['client_id'] = $this->validToken['client_id'];
         $query_data['site_id'] = $this->validToken['site_id'];
         $query_data['quest_id'] = new MongoId($query_data['quest_id']);
 
-        
         if($this->input->get('player_id')){
             $cl_player_id = $this->input->get('player_id');
             $pb_player_id = $this->player_model->getPlaybasisId(array(
@@ -1707,32 +1706,36 @@ class Quest extends REST2_Controller
                 $this->response($this->error->setError('USER_NOT_EXIST'), 200);
             }
             $query_data['pb_player_id'] = $pb_player_id;
-            $player_quest = $this->quest_model->getPlayerQuest(array('site_id' => $this->validToken['site_id'], 'quest_id' => new MongoId($query_data['quest_id']), 'pb_player_id' => $pb_player_id));
         }
-
-
 
         $quest_data = $this->quest_model->getQuest($query_data);
         $select = array('cl_player_id', 'first_name', 'last_name', 'username', 'image');
         if (isset($quest_data['condition']) && is_array($quest_data['condition'])) foreach($quest_data['condition'] as $condition){
-            if($condition['condition_type'] == 'DATETIME_START'){
-                $query_data['starttime'] = $condition['condition_value'];
-            }
-            elseif ($condition['condition_type'] == 'DATETIME_END'){
-                $query_data['endtime'] = $condition['condition_value'];
-            }
+            if($condition['condition_type'] == 'DATETIME_START') $query_data['starttime'] = $condition['condition_value'];
+            elseif ($condition['condition_type'] == 'DATETIME_END') $query_data['endtime'] = $condition['condition_value'];
         }
-        
+
+        $result = $player_data = array();
         if(isset($query_data['completion_element_id']) && !empty($query_data['completion_element_id'])){
-            $result = array();
-            foreach ($quest_data['missions'][0]['completion'] as $quest){
+            if (isset($quest_data['missions'][0]['completion']) && is_array($quest_data['missions'][0]['completion'])) foreach ($quest_data['missions'][0]['completion'] as $quest){
                 if($quest['completion_element_id'] == $query_data['completion_element_id']){
                     $quest_data = $quest;
-                    $filter_id = array();
-                    if(isset($player_quest)){
+                    $filter_id = $query_players = $query_player = array();
+
+                    $player_join_quest = $this->quest_model->getAllPlayerByQuestId($query_data, null, isset($query_data['status']) ? $query_data['status'] : null);
+                    if (isset($player_join_quest) && is_array($player_join_quest)) foreach ($player_join_quest as $player){
+                        array_push($query_players, new MongoId($player['pb_player_id']));
+                    }
+
+                    $Leader_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
+                        strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_data, $query_players);
+
+                    if(isset($pb_player_id)){
+                        $player_quest = $this->quest_model->getPlayerQuest(array('site_id' => $this->validToken['site_id'], 'quest_id' => new MongoId($query_data['quest_id']), 'pb_player_id' => $pb_player_id));
                         if($player_quest){
+                            array_push($query_player, new MongoId($pb_player_id));
                             $player_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
-                                strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_data ,$pb_player_id);
+                                strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_data ,$query_player);
                             if(!$player_data){
                                 $player_data['current'] = 0;
                                 $player_data['date_completed'] = $player_quest['date_added'];
@@ -1741,11 +1744,10 @@ class Quest extends REST2_Controller
                                 $player_data = $player_data[0];
                             }
                             $player_data['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $pb_player_id, $select);
-                            $player_data['status'] = (int)$quest['completion_value'] <= (int)$player_data['current'] ? 'finish' : 'join';
                             $player_data['goal'] = (int)$quest['completion_value'];
                             $rank_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
-                                strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_data , null, (int)$player_data['current']);
-                            $player_data['rank'] = count($rank_data)+1;
+                                strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_data , $query_players, (int)$player_data['current']);
+                            $player_data['rank'] = (isset($query_data['status']) && !empty($query_data['status']) && ($player_quest['status'] != $query_data['status'])) ? null : count($rank_data)+1;
                             unset($player_data['_id']);
                             array_walk_recursive($player_data, array($this, "convert_mongo_object"));
                             array_push($filter_id, $pb_player_id);
@@ -1754,41 +1756,27 @@ class Quest extends REST2_Controller
                         }
                     }
 
-                    $player_join_quest = $this->quest_model->getAllPlayerByQuestId($query_data);
-                    $Leader_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
-                        strtolower($quest_data['completion_filter']), $quest_data['completion_op'], $query_data);
-
                     if($Leader_data) {
                         $result = $Leader_data;
-                        foreach ($Leader_data as $leader_index => $leader) {
-                            foreach ($player_join_quest as $player_index => $player) {
+                        if (isset($Leader_data) && is_array($Leader_data)) foreach ($Leader_data as $leader_index => $leader) {
+                            if (isset($player_join_quest) && is_array($player_join_quest)) foreach ($player_join_quest as $player_index => $player) {
                                 if ($leader['_id'] == $player['pb_player_id']) {
                                     $result[$leader_index]['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select);
-                                    $result[$leader_index]['status'] = (int)$quest['completion_value'] <= (int)$Leader_data[$leader_index]['current'] ? 'finish' : 'join';
                                     $result[$leader_index]['goal'] = (int)$quest['completion_value'];
                                     array_push($filter_id, $result[$leader_index]['_id']);
                                     unset($result[$leader_index]['_id']);
-                                    if(isset($query_data['status']) && !empty($query_data['status'])){
-                                        if($result[$leader_index]['status'] != $query_data['status']){
-                                            unset($result[$leader_index]);
-                                        }
-                                    }
                                     break;
                                 }
                             }
-                            if (!isset($result[$leader_index]['player'])) {
-                                unset($result[$leader_index]);
-                            }
+                            if(!isset($result[$leader_index]['player'])) unset($result[$leader_index]);
                         }
                     }
-                    if(!isset($query_data['status']) || (isset($query_data['status']) && $query_data['status'] == 'finish')){
+                    if(!isset($query_data['status']) || (isset($query_data['status']) && $query_data['status'] != 'finish')){
                         if(!isset($query_data['limit']) || count($result) < $query_data['limit']){
-                            if(isset($query_data['limit'])){
-                                $query_data['limit_adjust'] = (int)$query_data['limit'] - count($result);
-                            }
+                            if(isset($query_data['limit'])) $query_data['limit_adjust'] = (int)$query_data['limit'] - count($result);
                             $adjust_player = array();
-                            $player_quest = $this->quest_model->getAllPlayerByQuestId($query_data,$filter_id);
-                            foreach ($player_quest as $player_index => $player){
+                            $player_quest = $this->quest_model->getAllPlayerByQuestId($query_data,$filter_id, isset($query_data['status']) ? $query_data['status'] : null);
+                            if (isset($player_quest) && is_array($player_quest)) foreach ($player_quest as $player_index => $player){
                                 array_push($adjust_player, array(
                                     'current' => 0,
                                     'date_completed' => $player['missions'][0]['date_modified'],
@@ -1800,9 +1788,7 @@ class Quest extends REST2_Controller
                             foreach ($adjust_player as $key => $row) {
                                 $cl_player[$key]  = $row['player']['cl_player_id'];
                             }
-                            if(count($adjust_player) > 1){
-                                array_multisort($cl_player, SORT_ASC, $adjust_player);
-                            }
+                            if(count($adjust_player) > 1) array_multisort($cl_player, SORT_ASC, $adjust_player);
                             $result = array_merge(array_values($result), array_values($adjust_player));
                         }
                     }
@@ -1810,58 +1796,54 @@ class Quest extends REST2_Controller
                     break;
                 }
             }
+            else $this->response($this->error->setError('MISSION_NOT_FOUND'), 200);
+            if(!isset($Leader_data)) $this->response($this->error->setError('COMPLETION_ELEMENT_ID_NOT_FOUND'), 200);
+
             $response = isset($player_data) ? array('result' => $result , 'player_data' => $player_data) : array('result' => $result);
             $this->response($this->resp->setRespond($response), 200);
         } else {
-            $result = array();
-            if(isset($player_quest)){
-                $player_data = array();
+            if(isset($pb_player_id)){
+                $player_quest = $this->quest_model->getPlayerQuest(array('site_id' => $this->validToken['site_id'], 'quest_id' => new MongoId($query_data['quest_id']), 'pb_player_id' => $pb_player_id));
                 if($player_quest){
                     $player_data['current'] = 0;
                     $player_data['date_completed'] = null;
-                    foreach ($player_quest['missions'] as $mission_index => $mission){
-                        if($mission['status'] == 'finish') {
-                            $player_data['current'] += 1;
-                        }
+                    if (isset($player_quest['missions']) && is_array($player_quest['missions'])) foreach ($player_quest['missions'] as $mission_index => $mission){
+                        if($mission['status'] == 'finish') $player_data['current'] += 1;
                         $player_data['date_completed'] = !$player_data['date_completed'] ?
                             $mission['date_modified'] : max($player_data['date_completed'],$mission['date_modified']);
                         $player_data['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $pb_player_id, $select);
-                        $player_data['status'] = (int)$player_data['current'] == count($player_quest['missions']) ? 'finish' : 'join';
                         $player_data['goal'] = count($player_quest['missions']);
-                        $player_data['rank'] = 1;
+                        $player_data['rank'] = (isset($query_data['status']) && !empty($query_data['status']) && ($player_quest['status'] != $query_data['status'])) ? null : 1;
                     }
+                    else $this->response($this->error->setError('MISSION_NOT_FOUND'), 200);
                     array_walk_recursive($player_data, array($this, "convert_mongo_object"));
-                } else{
+                } else {
                     $player_data['result'] = "Player did not join quest";
                 }
             }
+
             $player_join_quest = $this->quest_model->getAllPlayerByQuestId($query_data, null, isset($query_data['status']) ? $query_data['status'] : null);
-            foreach ($player_join_quest as $player_index => $player){
+
+            if (isset($player_join_quest) && is_array($player_join_quest)) foreach ($player_join_quest as $player_index => $player){
                 $result[$player_index]['current'] = 0;
                 $result[$player_index]['date_completed'] = null;
-                foreach ($player['missions'] as $mission_index => $mission){
-                    if($mission['status'] == 'finish') {
-                        $result[$player_index]['current'] += 1;
-                    }
+                if (isset($player['missions']) && is_array($player['missions'])) foreach ($player['missions'] as $mission_index => $mission){
+                    if($mission['status'] == 'finish') $result[$player_index]['current'] += 1;
                     $result[$player_index]['date_completed'] = !$result[$player_index]['date_completed'] ?
                         $mission['date_modified'] : max($result[$player_index]['date_completed'],$mission['date_modified']);
                 }
                 $result[$player_index]['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select);
-                $result[$player_index]['status'] = (int)$result[$player_index]['current'] == count($player['missions']) ? 'finish' : 'join';
                 $result[$player_index]['goal'] = count($player['missions']);
-
-                if(isset($player_data) && !empty($player_data)){
-                    if($player_data['current']< $result[$player_index]['current']){
-                        $player_data['rank'] += 1;
-                    }
+                if((!(isset($query_data['status']) && !empty($query_data['status']) && ($player_quest['status'] != $query_data['status']))) &&
+                    isset($player_data) && !empty($player_data) && $player['pb_player_id'] != $pb_player_id) $player_data['rank'] += 1;
+            }
+            if(isset($result) && !empty($result)){
+                foreach ($result as $key => $row) {
+                    $current[$key]  = $row['current'];
+                    $date_completed[$key] = $row['date_completed'];
                 }
+                if(count($result) > 1) array_multisort($current, SORT_DESC, $date_completed, SORT_ASC, $result);
             }
-            foreach ($result as $key => $row) {
-                $current[$key]  = $row['current'];
-                $date_completed[$key] = $row['date_completed'];
-            }
-
-            array_multisort($current, SORT_DESC, $date_completed, SORT_ASC, $result);
 
             $offset = isset($query_data['offset']) && !empty($query_data['offset']) ? (int)$query_data['offset'] : 0;
             $limit = isset($query_data['limit']) && !empty($query_data['limit']) && $query_data['limit'] <= count($result) - $offset ? (int)$query_data['limit']:null;
@@ -1869,7 +1851,7 @@ class Quest extends REST2_Controller
             $result = array_slice($result, $offset, $limit);
             array_walk_recursive($result, array($this, "convert_mongo_object"));
 
-            $response = isset($player_data) ? array('result' => $result , 'player_data' => $player_data) : array('result' => $result);
+            $response = isset($player_data) ? array('result' => $result, 'player_data' => $player_data) : array('result' => $result);
             $this->response($this->resp->setRespond($response), 200);
         }
     }
