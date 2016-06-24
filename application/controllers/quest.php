@@ -1766,7 +1766,6 @@ class Quest extends REST2_Controller
                             $player_data['rank'] = (isset($query_data['status']) && !empty($query_data['status']) && ($player_quest['status'] != $query_data['status'])) ? null : count($rank_data)+1;
                             unset($player_data['_id']);
                             array_walk_recursive($player_data, array($this, "convert_mongo_object"));
-                            array_push($filter_id, $pb_player_id);
                         } else{
                             $player_data['result'] = "Player did not join quest";
                         }
