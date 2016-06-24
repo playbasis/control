@@ -1690,6 +1690,10 @@ class Quest extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         }
 
+        if(!MongoId::isValid ($this->input->get('quest_id'))){
+            $this->response($this->error->setError('PARAMETER_INVALID', array('quest_id')), 200);
+        }
+
         $query_data = $this->input->get();
         $query_data['client_id'] = $this->validToken['client_id'];
         $query_data['site_id'] = $this->validToken['site_id'];
@@ -1717,6 +1721,9 @@ class Quest extends REST2_Controller
 
         $result = $player_data = array();
         if(isset($query_data['completion_element_id']) && !empty($query_data['completion_element_id'])){
+            if(!MongoId::isValid ($this->input->get('completion_element_id'))){
+                $this->response($this->error->setError('PARAMETER_INVALID', array('completion_element_id')), 200);
+            }
             if (isset($quest_data['missions'][0]['completion']) && is_array($quest_data['missions'][0]['completion'])) foreach ($quest_data['missions'][0]['completion'] as $quest){
                 if($quest['completion_element_id'] == $query_data['completion_element_id']){
                     $quest_data = $quest;
