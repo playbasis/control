@@ -168,20 +168,22 @@ class Content extends REST2_Controller
                 }
             }
             if (isset($query_data['_limit'])) $query_data['limit'] = $query_data['_limit'];
-            $m = count($contents);
-            $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data, $exclude_ids);
-            if (isset($query_data['limit']) && $query_data['limit'] < $n) $n = $query_data['limit'];
-            if (!isset($query_data['offset']) || $query_data['offset'] < 0) $query_data['offset'] = 0;
-            $numbers = range(0, $m-1);
-            shuffle($numbers);
-            $c = 0;
-            foreach ($numbers as $i) {
-                if (!is_array($exclude_ids) || !in_array($contents[$i]['_id'], $exclude_ids)) {
-                    if (!isset($query_data['offset']) || $c >= $query_data['offset']) {
-                        $result[] = $contents[$i];
-                        if (count($result) >= $n) break;
+            if(count($contents) > 0){
+                $m = count($contents);
+                $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data, $exclude_ids);
+                if (isset($query_data['limit']) && $query_data['limit'] < $n) $n = $query_data['limit'];
+                if (!isset($query_data['offset']) || $query_data['offset'] < 0) $query_data['offset'] = 0;
+                $numbers = range(0, $m-1);
+                shuffle($numbers);
+                $c = 0;
+                foreach ($numbers as $i) {
+                    if (!is_array($exclude_ids) || !in_array($contents[$i]['_id'], $exclude_ids)) {
+                        if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
+                            $result[] = $contents[$i];
+                            if (count($result) >= $n) break;
+                        }
+                        $c++;
                     }
-                    $c++;
                 }
             }
         }else{
