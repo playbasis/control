@@ -51,25 +51,60 @@
                         <td><span class="text"></span> <?php echo $this->lang->line('entry_body'); ?>:</td>
                         <td>
 
-                            <div class="span8">
-                                <textarea name="body" id="body" rows="4" style="min-width:400px;"><?php echo isset($body) ? $body : set_value('body'); ?></textarea>
-                            </div>
-                            <div class="span4">
-                                <h4> Example</h4>
-                                <table cellpadding="5">
-                                    <tbody>
-                                    <tr>
-                                        <td width="50%" align="right"><small>Player First Name:</small></td>
-                                        <td>{{first_name}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td align="right"><small>Player Last Name:</small></td>
-                                        <td>{{last_name}}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <div class="span8 http-body-wrapper">
+                                <!--<textarea name="body" id="body" rows="4" style="min-width:400px;"><?php echo isset($body) ? $body : set_value('body'); ?></textarea>-->
 
+                                        <table class="table table-bordered table-hover table-sortable" id="tab_logic">
+                                            <thead>
+                                            <tr >
+                                                <th class="text-center">
+                                                    Key
+                                                </th>
+                                                <th class="text-center">
+                                                    Value
+                                                </th>
+
+                                                <th class="text-center" style="border-top: 1px solid #ffffff; border-right: 1px solid #ffffff;">
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr id='htmlBody0' data-id="0" class="hidden">
+                                                <td data-name="body_key">
+                                                    <input type="text" name='body_key[]'  placeholder='Key' class="form-control"/>
+                                                </td>
+                                                <td data-name="body_value">
+                                                    <input type="text" name='body_value[]' placeholder='Value' class="form-control"/>
+                                                </td>
+
+                                                <td data-name="del">
+                                                    <a href="javascript:void(0)" data-name="del0" class='btn btn-danger row-remove'><i class="fa fa-times"></i></a>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                            $body_key = isset($body) && is_array($body) ? array_keys($body) : array();
+                                            $body_value = isset($body) && is_array($body) ? array_values($body) : array();
+                                            ?>
+                                            <?php foreach( $body_key as $index => $key_name): ?>
+                                                <?php $rowIndex = $index+1; ?>
+                                                <tr id='htmlBody<?php echo $rowIndex; ?>' data-id="<?php echo $rowIndex; ?>" >
+                                                    <td data-name="body_key">
+                                                        <input type="text" name='body_key[]' value="<?php echo $key_name ?>" placeholder='Key' class="form-control"/>
+                                                    </td>
+                                                    <td data-name="body_value">
+                                                        <input type="text" name='body_value[]' value="<?php echo $body_value[$index] ?>" placeholder='Value' class="form-control"/>
+                                                    </td>
+
+                                                    <td data-name="del">
+                                                        <a href="javascript:void(0)" data-name="del<?php echo $rowIndex; ?>" class='btn btn-danger row-remove'><i class="fa fa-times"></i></a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+
+                                <a id="add_row" class="btn btn-default pull-right">Add Row</a>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -100,3 +135,61 @@
 </div>
 
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#add_row").on("click", function() {
+            // Dynamic Rows Code
+            // Get max row id and set new id
+            var newid = 0;
+            $.each($("#tab_logic tr"), function() {
+                if (parseInt($(this).data("id")) > newid) {
+                    newid = parseInt($(this).data("id"));
+                }
+            });
+            newid++;
+
+            var tr = $("<tr></tr>", {
+                id: "htmlBody"+newid,
+                "data-id": newid
+            });
+
+            // loop through each td and create new elements with name of newid
+            $.each($("#tab_logic tbody tr:nth(0) td"), function() {
+                var cur_td = $(this);
+
+                var children = cur_td.children();
+
+                // add new td and element if it has a nane
+                if ($(this).data("name") != undefined) {
+                    var td = $("<td></td>", {
+                        "data-name": $(cur_td).data("name")
+                    });
+
+                    var c = $(cur_td).find($(children[0]).prop('tagName')).clone().val("");
+                    c.attr("name", $(cur_td).data("name") +'[]');
+                    c.appendTo($(td));
+                    td.appendTo($(tr));
+                } else {
+                    var td = $("<td></td>", {
+                        'text': $('#tab_logic tr').length
+                    }).appendTo($(tr));
+                }
+            });
+
+            // add the new row
+            $(tr).appendTo($('#tab_logic'));
+
+            $(tr).find("td a.row-remove").on("click", function() {
+                $(this).closest("tr").remove();
+            });
+        });
+
+        $("#add_row").trigger("click");
+
+        $('.http-body-wrapper').find("td a.row-remove").on("click", function() {
+            $(this).closest("tr").remove();
+        });
+
+    });
+
+</script>
