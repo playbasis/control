@@ -481,6 +481,82 @@ class Rule_model extends MY_Model
         return $output;
     }
 
+    public function checkBadgeValidById($site_id, $client_id, $badge_id){
+        $this->mongo_db->select(array(
+            'badge_id',
+            'name',
+            'description',
+            'sort_order',
+            'image',
+            'status',
+        ));
+        $this->mongo_db->where(array('$or' => array(array("status" => false) , array("deleted" => true))));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('badge_id', new MongoId($badge_id));
+        $goods = $this->mongo_db->get("playbasis_badge_to_client");
+        return $goods ? $goods[0] : array();
+    }
+
+    public function checkGoodsValidById($site_id, $client_id, $goods_id){
+        $this->mongo_db->select(array(
+            'goods_id',
+            'name',
+            'description',
+            'sort_order',
+            'image',
+            'status',
+        ));
+        $this->mongo_db->where(array('$or' => array(array("status" => false) , array("deleted" => true))));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('goods_id', new MongoId($goods_id));
+        $goods = $this->mongo_db->get("playbasis_goods_to_client");
+        return $goods ? $goods[0] : array();
+    }
+
+    public function checkSMSValidById($site_id, $client_id, $sms_id){
+        $this->mongo_db->select(array(
+            'name',
+            'sort_order',
+            'status'
+        ));
+        $this->mongo_db->where(array('$or' => array(array("status" => false) , array("deleted" => true))));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('_id', new MongoId($sms_id));
+        $sms = $this->mongo_db->get("playbasis_sms_to_client");
+        return $sms ? $sms[0] : array();
+    }
+
+    public function checkPushValidById($site_id, $client_id, $push_id){
+        $this->mongo_db->select(array(
+            'name',
+            'sort_order',
+            'status'
+        ));
+        $this->mongo_db->where(array('$or' => array(array("status" => false) , array("deleted" => true))));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('_id', new MongoId($push_id));
+        $push = $this->mongo_db->get("playbasis_push_to_client");
+        return $push ? $push[0] : array();
+    }
+
+    public function checkEmailValidById($site_id, $client_id, $email_id){
+        $this->mongo_db->select(array(
+            'name',
+            'sort_order',
+            'status'
+        ));
+        $this->mongo_db->where(array('$or' => array(array("status" => false) , array("deleted" => true))));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('_id', new MongoId($email_id));
+        $email = $this->mongo_db->get("playbasis_email_to_client");
+        return $email ? $email[0] : array();
+    }
+
     public function getGoodsJigsawList($siteId, $clientId)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -889,7 +965,7 @@ class Rule_model extends MY_Model
                     $value['action_name'] = array_key_exists(strval($value["action_id"]),
                         $params['actionNameDict']) ? $params['actionNameDict'][strval($value["action_id"])] : $this->getActionName($value['jigsaw_set']) . '<span style="color: red">*</span>';
                     $value['usage'] = array_key_exists($value['rule_id'], $rules) ? $rules[$value['rule_id']] : 0;
-                    $value['error'] = implode(', ', $this->checkRuleError($value['jigsaw_set'], $params));
+                    $value['error'] = implode(', ', $this->checkRuleError($value['jigsaw_set'], $params, $siteId ,$clientId));
                     unset($value['jigsaw_set']);
                     foreach ($value as $k2 => &$v2) {
                         if ($k2 == "date_added") {
@@ -1034,7 +1110,7 @@ class Rule_model extends MY_Model
         return null;
     }
 
-    private function checkRuleError($jigsaw_set, $params)
+    private function checkRuleError($jigsaw_set, $params, $site_id, $client_id)
     {
         $actionList = $params['actionList'];
         $actionNameDict = $params['actionNameDict'];
@@ -1090,14 +1166,46 @@ class Rule_model extends MY_Model
                         if (empty($each['specific_id'])) {
                             $error[] = '[reward_id] for ' . $each['config']['reward_name'] . ' is missing';
                         } else {
-                            if (!$rewardList || !in_array($each['specific_id'], $rewardList)) {
-                                $error[] = 'reward [' . $each['config']['reward_name'] . '] is invalid [' . $each['specific_id'] . ']';
+                            if($each['specific_id'] == 'goods') {
+                                $goods = $this->checkGoodsValidById($site_id, $client_id, $each['config']['item_id']);
+                                if ($goods) {
+                                    $error[] = 'reward [' . $each['config']['reward_name'] . '] is invalid [' . $goods['name'] . ']';
+                                }
+                            } elseif($each['name'] == 'badge') {
+                                $badge = $this->checkBadgeValidById($site_id, $client_id, $each['config']['item_id']);
+                                if ($badge) {
+                                    $error[] = 'reward [' . $each['config']['reward_name'] . '] is invalid [' . $badge['name'] . ']';
+                                }
+                            } else {
+                                if (!$rewardList || !in_array($each['specific_id'], $rewardList)) {
+                                    $error[] = 'reward [' . $each['config']['reward_name'] . '] is invalid [' . $each['name'] . ']';
+                                }
                             }
                         }
                         break;
                     case 'FEEDBACK':
                         $is_condition = false;
                         $check_reward = true;
+                        if (empty($each['specific_id'])) {
+                            $error[] = '[feedback] for ' . $each['config']['feedback_name'] . ' is missing';
+                        } else {
+                            if ($each['specific_id'] == 'sms') {
+                                $sms = $this->checkSMSValidById($site_id, $client_id, $each['config']['template_id']);
+                                if ($sms) {
+                                    $error[] = 'feedback [' . $each['config']['feedback_name'] . '] is invalid [' . $sms['name'] . ']';
+                                }
+                            } elseif ($each['specific_id'] == 'push') {
+                                $push = $this->checkPushValidById($site_id, $client_id, $each['config']['template_id']);
+                                if ($push) {
+                                    $error[] = 'feedback [' . $each['config']['feedback_name'] . '] is invalid [' . $push['name'] . ']';
+                                }
+                            } elseif ($each['specific_id'] == 'email') {
+                                $email = $this->checkEmailValidById($site_id, $client_id, $each['config']['template_id']);
+                                if ($email) {
+                                    $error[] = 'feedback [' . $each['config']['feedback_name'] . '] is invalid [' . $email['name'] . ']';
+                                }
+                            }
+                        }
                         break;
                     case 'GROUP':
                         $is_condition = false;
@@ -1106,7 +1214,7 @@ class Rule_model extends MY_Model
                         foreach ($each['dataSet'] as $data) {
                             if ($data['field_type'] == 'group_container') {
                                 // recursive call
-                                $error = array_merge($error, $this->checkRuleError($data['value'], $params));
+                                $error = array_merge($error, $this->checkRuleError($data['value'], $params, $site_id, $client_id));
                             }
                         }
                         break;
