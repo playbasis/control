@@ -1166,15 +1166,29 @@ class Rule_model extends MY_Model
                         if (empty($each['specific_id'])) {
                             $error[] = '[reward_id] for ' . $each['config']['reward_name'] . ' is missing';
                         } else {
-                            if($each['specific_id'] == 'goods') {
-                                $goods = $this->checkGoodsValidById($site_id, $client_id, $each['config']['item_id']);
-                                if ($goods) {
-                                    $error[] = 'reward [' . $each['config']['reward_name'] . '] is invalid [' . $goods['name'] . ']';
+                            if ($each['specific_id'] == 'goods') {
+                                try{
+                                    $goods_id = new MongoId($each['config']['item_id']);
+                                } catch (Exception $e) {
+                                    $error[] = 'reward [' . $each['config']['reward_name'] . '] id is invalid [N/A]';
                                 }
-                            } elseif($each['name'] == 'badge') {
-                                $badge = $this->checkBadgeValidById($site_id, $client_id, $each['config']['item_id']);
-                                if ($badge) {
-                                    $error[] = 'reward [' . $each['config']['reward_name'] . '] is invalid [' . $badge['name'] . ']';
+                                if(isset($goods_id)){
+                                    $goods = $this->checkGoodsValidById($site_id, $client_id, $goods_id);
+                                    if ($goods) {
+                                        $error[] = 'reward [' . $each['config']['reward_name'] . '] is invalid [' . $goods['name'] . ']';
+                                    }
+                                }
+                            } elseif ($each['name'] == 'badge') {
+                                try{
+                                    $badge_id = new MongoId($each['config']['item_id']);
+                                } catch (Exception $e) {
+                                    $error[] = 'reward [' . $each['config']['reward_name'] . '] id is invalid [N/A]';
+                                }
+                                if(isset($badge_id)) {
+                                    $badge = $this->checkBadgeValidById($site_id, $client_id, $badge_id);
+                                    if ($badge) {
+                                        $error[] = 'reward [' . $each['config']['reward_name'] . '] is invalid [' . $badge['name'] . ']';
+                                    }
                                 }
                             } else {
                                 if (!$rewardList || !in_array($each['specific_id'], $rewardList)) {
@@ -1189,20 +1203,41 @@ class Rule_model extends MY_Model
                         if (empty($each['specific_id'])) {
                             $error[] = '[feedback] for ' . $each['config']['feedback_name'] . ' is missing';
                         } else {
-                            if ($each['specific_id'] == 'sms') {
-                                $sms = $this->checkSMSValidById($site_id, $client_id, $each['config']['template_id']);
-                                if ($sms) {
-                                    $error[] = 'feedback [' . $each['config']['feedback_name'] . '] is invalid [' . $sms['name'] . ']';
+                            if (isset($each['specific_id']) && $each['specific_id'] == 'sms') {
+                                try{
+                                    $sms_id = new MongoId($each['config']['template_id']);
+                                } catch (Exception $e) {
+                                    $error[] = 'feedback [' . $each['config']['feedback_name'] . '] id is invalid [N/A]';
                                 }
-                            } elseif ($each['specific_id'] == 'push') {
-                                $push = $this->checkPushValidById($site_id, $client_id, $each['config']['template_id']);
-                                if ($push) {
-                                    $error[] = 'feedback [' . $each['config']['feedback_name'] . '] is invalid [' . $push['name'] . ']';
+                                if(isset($sms_id)) {
+                                    $sms = $this->checkSMSValidById($site_id, $client_id, $sms_id);
+                                    if ($sms) {
+                                        $error[] = 'feedback [' . $each['config']['feedback_name'] . '] is invalid [' . $sms['name'] . ']';
+                                    }
                                 }
-                            } elseif ($each['specific_id'] == 'email') {
-                                $email = $this->checkEmailValidById($site_id, $client_id, $each['config']['template_id']);
-                                if ($email) {
-                                    $error[] = 'feedback [' . $each['config']['feedback_name'] . '] is invalid [' . $email['name'] . ']';
+                            } elseif (isset($each['specific_id']) && $each['specific_id'] == 'push') {
+                                try{
+                                    $push_id = new MongoId($each['config']['template_id']);
+                                } catch (Exception $e) {
+                                    $error[] = 'feedback [' . $each['config']['feedback_name'] . '] id is invalid [N/A]';
+                                }
+                                if(isset($push_id)) {
+                                    $push = $this->checkPushValidById($site_id, $client_id, $push_id);
+                                    if ($push) {
+                                        $error[] = 'feedback [' . $each['config']['feedback_name'] . '] is invalid [' . $push['name'] . ']';
+                                    }
+                                }
+                            } elseif (isset($each['specific_id']) && $each['specific_id'] == 'email') {
+                                try{
+                                    $email_id = new MongoId($each['config']['template_id']);
+                                } catch (Exception $e) {
+                                    $error[] = 'feedback [' . $each['config']['feedback_name'] . '] id is invalid [N/A]';
+                                }
+                                if(isset($email_id)) {
+                                    $email = $this->checkEmailValidById($site_id, $client_id, $email_id);
+                                    if ($email) {
+                                        $error[] = 'feedback [' . $each['config']['feedback_name'] . '] is invalid [' . $email['name'] . ']';
+                                    }
                                 }
                             }
                         }
