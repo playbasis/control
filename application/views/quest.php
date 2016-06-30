@@ -257,7 +257,7 @@ function quest_import() {
                                         $('#successModal').find('#myModalLabel').html("Success with some warning below !".fontcolor( '12984C' ));
 
                                     }else{
-                                        $('#successModal .modal-body').html('Import rule successfully');
+                                        $('#successModal .modal-body').html('Import quest(s) successfully');
                                         $('#successModal').find('#myModalLabel').html("Success !".fontcolor( '12984C' ));
 
                                     }
@@ -323,7 +323,7 @@ function quest_export() {
         array_quests.push($(this).val());
     });
     if(array_quests.length == 0){
-        preventUnusual.message('Please select at least 1 rule to export!');
+        preventUnusual.message('Please select at least 1 quest to export!');
     }
     else{
         var export_status = false;
