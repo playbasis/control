@@ -34,6 +34,21 @@ class Quest_model extends MY_Model
         return $this->mongo_db->get('playbasis_quest_to_client');
     }
 
+    public function getQuestsByName($client_id, $site_id, $name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('quest_name','description','hint','image'));
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where_not_in('deleted', array(true));
+        $this->mongo_db->where('quest_name', $name);
+        $result =  $this->mongo_db->get('playbasis_quest_to_client');
+
+        return $result ? $result[0] : null;
+    }
+
     public function getTotalMissionsClientSite($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));

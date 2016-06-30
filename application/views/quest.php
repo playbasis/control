@@ -3,8 +3,11 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-            <button class="btn btn-info" onclick="location =  baseUrlPath+'quest/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
+                <button class="btn btn-info" onclick="location =  baseUrlPath+'quest/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
+                <button class="btn btn-info" onclick="$('#questImportModal').modal({'backdrop': true});$('#file-import').val('');" type="button"><?php echo $this->lang->line('button_import'); ?></button>
+                <button class="btn btn-info" onclick="quest_export();" type="button"><?php echo $this->lang->line('button_export'); ?></button>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
+
             </div>
         </div><!-- .heading -->
         <div class="content">
@@ -16,7 +19,7 @@
             <div id="actions">
         <?php $attributes = array('id'=>'form');?>
         <?php echo form_open('quest/delete', $attributes);?>
-            <table class="list">
+            <table id="questTable" class="list">
                 <thead>
                     <tr>
                     <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
@@ -48,65 +51,65 @@
                         </td>
                     </tr>
                     
-                        <?php if(isset($quests) && $quests){?>
-                            <?php foreach($quests as $quest){?>
-                                <tr>
-                                    <td style="text-align: center;"><?php if (isset($quest['selected'])) { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $quest['_id']; ?>" checked="checked" />
-                                        <?php } else { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $quest['_id']; ?>" />
-                                        <?php } ?></td>
-                                    <td class="left"><img src="<?php echo $quest['image']; ?>" alt="" id="quest_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></td>
-                                    <td class="right"><?php echo $quest['quest_name']; ?> <?php if (!empty($quest['error'])) { ?><span class="red"><a herf="javascript:void(0)" class="error-icon" title="<?php echo $quest['error']; ?>" data-toggle="tooltip"><i class="icon-warning-sign" ></i></a></span><?php } ?></td>
-                                    <td class="right"><?php echo ($quest['status'])?'Active':'Inactive';?></td>
-                                    <?php if($org_status){?>
-                                        <td class="right"><?php echo (isset($quest['organize_name']) && !is_null($quest['organize_name']))?$quest['organize_name']:''; ?></td>
-                                    <?php }?>
-                                    <td class="right"><?php echo (isset($quest['tags']) && $quest['tags']) ? implode($quest['tags'],',') : null; ?></td>
-                                    <td class="right"><?php echo $quest['sort_order'];?></td>
-                                    <td class="right">
+                    <?php if(isset($quests) && $quests){?>
+                        <?php foreach($quests as $quest){?>
+                            <tr>
+                                <td style="text-align: center;"><?php if (isset($quest['selected'])) { ?>
+                                    <input type="checkbox" name="selected[]" value="<?php echo $quest['_id']; ?>" checked="checked" />
+                                    <?php } else { ?>
+                                    <input type="checkbox" name="selected[]" value="<?php echo $quest['_id']; ?>" />
+                                    <?php } ?></td>
+                                <td class="left"><img src="<?php echo $quest['image']; ?>" alt="" id="quest_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></td>
+                                <td class="right"><?php echo $quest['quest_name']; ?> <?php if (!empty($quest['error'])) { ?><span class="red"><a herf="javascript:void(0)" class="error-icon" title="<?php echo $quest['error']; ?>" data-toggle="tooltip"><i class="icon-warning-sign" ></i></a></span><?php } ?></td>
+                                <td class="right"><?php echo ($quest['status'])?'Active':'Inactive';?></td>
+                                <?php if($org_status){?>
+                                    <td class="right"><?php echo (isset($quest['organize_name']) && !is_null($quest['organize_name']))?$quest['organize_name']:''; ?></td>
+                                <?php }?>
+                                <td class="right"><?php echo (isset($quest['tags']) && $quest['tags']) ? implode($quest['tags'],',') : null; ?></td>
+                                <td class="right"><?php echo $quest['sort_order'];?></td>
+                                <td class="right">
 
-                                        <!--<a class="quest_play" href="#" title="Play" data-quest_id="<?php echo $quest["_id"]; ?>"><i class='fa fa-play fa-lg'></i></a>-->
-                                        <?php if($client_id){
-                                            // echo anchor('quest/update/'.$quest['action_id'], 'Edit');
-                                            echo anchor('quest/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg'></i>",
-                                                array('class'=>'tooltips',
-                                                    'title' => 'Edit',
-                                                    'data-placement' => 'top'
-                                                ));
-                                        }else{
-                                            echo anchor('action/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg'></i>",
-                                                array('class'=>'tooltips',
-                                                    'title' => 'Edit',
-                                                    'data-placement' => 'top'
-                                                ));
-                                        }
-                                        ?>
+                                    <!--<a class="quest_play" href="#" title="Play" data-quest_id="<?php echo $quest["_id"]; ?>"><i class='fa fa-play fa-lg'></i></a>-->
+                                    <?php if($client_id){
+                                        // echo anchor('quest/update/'.$quest['action_id'], 'Edit');
+                                        echo anchor('quest/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg'></i>",
+                                            array('class'=>'tooltips',
+                                                'title' => 'Edit',
+                                                'data-placement' => 'top'
+                                            ));
+                                    }else{
+                                        echo anchor('action/edit/'.$quest['_id'], "<i class='fa fa-edit fa-lg'></i>",
+                                            array('class'=>'tooltips',
+                                                'title' => 'Edit',
+                                                'data-placement' => 'top'
+                                            ));
+                                    }
+                                    ?>
 
-                                        <?php if($client_id){
-                                            // echo anchor('action/increase_order/'.$quest['action_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['action_id'], 'style'=>'text-decoration:none'));
-                                            echo anchor('action/increase_order/'.$quest['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
-                                        }else{
-                                            echo anchor('action/increase_order/'.$quest['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
-                                        }
-                                        ?>
-                                        <?php if($client_id){
-                                            // echo anchor('action/decrease_order/'.$quest['action_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$quest['action_id'], 'style'=>'text-decoration:none'));
-                                            echo anchor('action/decrease_order/'.$quest['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
-                                        }else{
-                                            echo anchor('action/decrease_order/'.$quest['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
-                                        }
-                                        ?>
-                                        </td>   
-                                </tr>
-                            <?php }?>
-                        <?php }else{?>
-                                <tr>
-                                    <td class="center" colspan="8">
-                                        No quest
+                                    <?php if($client_id){
+                                        // echo anchor('action/increase_order/'.$quest['action_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['action_id'], 'style'=>'text-decoration:none'));
+                                        echo anchor('action/increase_order/'.$quest['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
+                                    }else{
+                                        echo anchor('action/increase_order/'.$quest['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
+                                    }
+                                    ?>
+                                    <?php if($client_id){
+                                        // echo anchor('action/decrease_order/'.$quest['action_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$quest['action_id'], 'style'=>'text-decoration:none'));
+                                        echo anchor('action/decrease_order/'.$quest['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
+                                    }else{
+                                        echo anchor('action/decrease_order/'.$quest['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
+                                    }
+                                    ?>
                                     </td>
-                                </tr>
+                            </tr>
                         <?php }?>
+                    <?php }else{?>
+                            <tr>
+                                <td class="center" colspan="8">
+                                    No quest
+                                </td>
+                            </tr>
+                    <?php }?>
                 </tbody>
             </table>
         <?php echo form_close();?>
@@ -122,6 +125,259 @@
     </div><!-- .box -->
 </div><!-- #content .span10 -->
 
+<!-- Error Modal -->
+<div id="errorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Warning !</h3>
+    </div>
+    <div class="modal-body red">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div id="successModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Warning !</h3>
+    </div>
+    <div class="modal-body">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<!-- Import Modal -->
+<div id="questImportModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="questImportLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="questImportLabel">Import Quest</h3>
+    </div>
+    <div class="modal-body">
+        <br>
+        &emsp;<span class="required">*</span><?php echo $this->lang->line('entry_file'); ?>&emsp;:&emsp;
+        <input id="file-import" type="file" size="100" value=""/>
+        <br>&emsp;
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" onclick="quest_import();" type="button"><?php echo $this->lang->line('button_import'); ?></button>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<style type="text/css">
+    .modal {
+        width: 40%;
+        margin-left:-20%;
+    }
+</style>
+
+<script type="text/javascript">
+
+preventUnusual ={
+    message:function(msg,title){
+        if(msg=='' || msg== undefined)return;
+
+        if(title!='' && title!= undefined) {
+            $('#errorModal').find('#myModalLabel').html(title);
+        }else{
+            $('#errorModal').find('#myModalLabel').html("Warning !");
+        }
+        $('#errorModal').modal({'backdrop': true});
+        $('#errorModal .modal-body').html(msg);
+    }
+}
+
+var progressDialog = (function($){
+    var obj = {};
+    obj.show = function(text){
+
+        $('body').prepend('<div class="custom_blackdrop"><img src="./image/white_loading.gif" /><br><span>'+text+'</span></div>');
+    }
+
+    obj.hide = function(){
+
+        setTimeout(function(){
+            $('.custom_blackdrop').remove();
+        },1000)
+    }
+
+    return obj;
+}(jQuery))
+
+$("#successModal").on("hidden.bs.modal", function () {
+    window.location.replace(baseUrlPath+'quest');
+});
+
+function quest_import() {
+    var myfile = document.getElementById("file-import");
+
+    if(myfile.files[0] != undefined){
+        //
+        //var textType = 'text/csv';
+
+        if (myfile.value.match(/\.json/gi)==".json") {
+            var file = myfile.files[0];
+            var reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = (function (theFile) {
+                return function (e) {
+                    try {
+                        json = JSON.parse(e.target.result);
+                        var array_quests =  JSON.stringify(json);
+                        var import_status = false;
+
+                        $.ajax({
+                            url: baseUrlPath+'quest/ImportQuest',
+                            data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','array_quests': array_quests},
+                            type:'POST',
+                            // dataType:'json',
+                            beforeSend:function(){
+                                $('#questImportModal').modal('hide');
+                                progressDialog.show('Importing quest ...');
+                            },
+                            success:function(data){
+
+                                if($.parseJSON(data).status=='success'){
+                                    if($.parseJSON(data).results!=null) {
+                                        //var msg = "Organization name below are not found in this site<br>".fontcolor( '570420' ).bold();
+                                        var msg = "";
+                                        for (var k in $.parseJSON(data).results){
+                                            if ($.parseJSON(data).results.hasOwnProperty(k)) {
+                                                msg += "Organization name \'"+($.parseJSON(data).results[k]).bold() + "\' is not found \(Quest : " + k.bold() +"\)<br>";
+                                            }
+                                        }
+                                        $('#successModal .modal-body').html(msg.fontcolor( 'D53A3A' ));
+                                        $('#successModal').find('#myModalLabel').html("Success with some warning below !".fontcolor( '12984C' ));
+
+                                    }else{
+                                        $('#successModal .modal-body').html('Import quest(s) successfully');
+                                        $('#successModal').find('#myModalLabel').html("Success !".fontcolor( '12984C' ));
+
+                                    }
+                                    import_status = true;
+
+
+                                }
+                                else if($.parseJSON(data).status=='fail') {
+                                    var msg = "";
+                                    for (var k in $.parseJSON(data).results){
+                                        if ($.parseJSON(data).results.hasOwnProperty(k)) {
+                                            msg += k.fontcolor( '570420' ).bold() + " : " + $.parseJSON(data).results[k] +"<br>";
+                                        }
+                                    }
+
+                                    preventUnusual.message(msg,'Error to import, The following item(s) are not found in this site.');
+
+                                }else{
+                                    preventUnusual.message($.parseJSON(data).msg);
+
+                                }
+
+                            },
+                            error:function(){
+                                //console.log('on error')
+                                dialogMsg = 'Unable to import quest to server,\n Please try again later';
+
+                            },
+                            complete:function(){
+                                //console.log('on complete')
+                                progressDialog.hide();
+
+                                if(import_status){
+
+                                    $('#successModal').modal({'backdrop': true});
+
+                                }
+                            }
+                        });
+                    } catch (ex) {
+
+                        preventUnusual.message('Error when trying to parse json : ' + ex+'<br><br><br>');
+                    }
+                }
+            })(file);
+            reader.onerror = function() {
+                preventUnusual.message('Unable to read ' + file.fileName+'<br><br><br>');
+            };
+
+
+        } else {
+            preventUnusual.message('File type is invalid! ( only JSON file is supported)<br><br><br>');
+        }
+
+    }else{
+        preventUnusual.message('Please choose a file to execute!<br><br><br>');
+    }
+}
+
+function quest_export() {
+    var array_quests = new Array();
+    $("input:checkbox[name=selected[]]:checked").each(function(){
+        array_quests.push($(this).val());
+    });
+    if(array_quests.length == 0){
+        preventUnusual.message('Please select at least 1 quest to export!');
+    }
+    else{
+        var export_status = false;
+
+        $.ajax({
+            url: baseUrlPath+'quest/exportQuest',
+            data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','array_quests': array_quests},
+            type:'POST',
+            // dataType:'json',
+            beforeSend:function(){
+                progressDialog.show('Exporting quest ...');
+            },
+            success:function(data){
+
+                if(($.parseJSON(data)).success==false) {
+                    dialogMsg = ($.parseJSON(data)).msg;
+                }else {
+                    if (($.parseJSON(data))) {
+                        var output_data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($.parseJSON(data),null, 2));
+                        link = document.createElement('a');
+                        link.setAttribute('href', 'data:' + output_data);
+                        link.setAttribute('download', 'quests.json');
+                        link.click();
+                        export_status = true;
+                        dialogMsg = 'Export quest successfully';
+                    }
+                    else {
+                        dialogMsg = 'Unable to export quest from server ';
+                    }
+                }
+
+            },
+            error:function(){
+                //console.log('on error')
+                dialogMsg = 'Unable to export quest from server,\n Please try again later';
+
+            },
+            complete:function(){
+                //console.log('on complete')
+                progressDialog.hide();
+
+                if(export_status){
+                    preventUnusual.message(dialogMsg.fontcolor( '010040' ), "Success !".fontcolor( '12984C' ));
+
+                }else{
+                    preventUnusual.message(dialogMsg, "Error !!!");
+                }
+            }
+        });
+    }
+    return true;
+}
+
+</script>
 
 <script type="text/javascript"><!--
 function filter() {
@@ -253,3 +509,5 @@ $(document).ready(function() {
 	$('.error-icon').tooltip();
 });
 </script>
+
+<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/blackdrop/blackdrop.css" />
