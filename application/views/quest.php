@@ -251,16 +251,15 @@ function quest_import() {
                                         for (var k in $.parseJSON(data).results){
                                             if ($.parseJSON(data).results.hasOwnProperty(k)) {
                                                 msg += "Organization name \'"+($.parseJSON(data).results[k]).bold() + "\' is not found \(Quest : " + k.bold() +"\)<br>";
-                                                //msg += "quest \'"+k.bold() + "\' : " + $.parseJSON(data).results[k] +"<br>";
                                             }
                                         }
                                         $('#successModal .modal-body').html(msg.fontcolor( 'D53A3A' ));
-                                        $('#successModal').find('#myModalLabel').html("Success with some warning below !");
-                                        //preventUnusual.message(msg, "Success with some warning below !");
+                                        $('#successModal').find('#myModalLabel').html("Success with some warning below !".fontcolor( '12984C' ));
+
                                     }else{
                                         $('#successModal .modal-body').html('Import rule successfully');
-                                        $('#successModal').find('#myModalLabel').html("Success !");
-                                        //preventUnusual.message('Import rule successfully'.fontcolor( '010040' ), "Success !");
+                                        $('#successModal').find('#myModalLabel').html("Success !".fontcolor( '12984C' ));
+
                                     }
                                     import_status = true;
 
@@ -367,7 +366,7 @@ function quest_export() {
                 progressDialog.hide();
 
                 if(export_status){
-                    preventUnusual.message(dialogMsg.fontcolor( '010040' ), "Success !");
+                    preventUnusual.message(dialogMsg.fontcolor( '010040' ), "Success !".fontcolor( '12984C' ));
 
                 }else{
                     preventUnusual.message(dialogMsg, "Error !!!");
