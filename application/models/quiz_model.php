@@ -15,6 +15,20 @@ class Quiz_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getQuizByName($client_id, $site_id, $quiz_name)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('name','image','description'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('name', $quiz_name);
+        $this->mongo_db->where('deleted', false);
+        $results = $this->mongo_db->get("playbasis_quiz_to_client");
+
+        return $results ? $results[0] : null;
+    }
+
     public function getQuizs($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));

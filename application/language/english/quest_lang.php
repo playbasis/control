@@ -32,6 +32,8 @@ $lang = array(
 	'column_quest_tags'                 => 'Tag(s)',
 	'button_clear_filter'				=> 'Clear Filter',
 	'button_filter'						=> 'Filter',
+	'button_import'						=> 'Import',
+	'button_export'						=> 'Export',
 	'tab_general'						=> 'General',
 	'tab_mission'						=> 'Manage Mission',
 	'text_confirm'						=> 'Are you sure you want to delete?',
@@ -48,10 +50,13 @@ $lang = array(
 	'error_date_start_to_join'          => 'Date start to join should be set before start date to play',
 	'error_date_end_to_join'            => 'Date end to join should be set before end date to play',
     'error_mission_limit'               => 'You have reached Mission Limit.',
-    'text_fail_set_role'                => 'Please select node before setting role'
+    'text_fail_set_role'                => 'Please select node before setting role',
+	'entry_file'	                 	=> 'JSON File To Import'
 );
 
-$lang['error_permission']       = 'Warning: You do not have permission to modify quest!';
-$lang['error_access']       	= 'Warning: You do not have permission to access this page!';
+$lang['error_permission']       		= 'Warning: You do not have permission to modify quest!';
+$lang['error_access']       			= 'Warning: You do not have permission to access this page!';
+$lang['error_permission_export']       	= 'Warning: You do not have permission to export quest!';
+$lang['error_permission_import']       	= 'Warning: You do not have permission to import quest!';
 
 

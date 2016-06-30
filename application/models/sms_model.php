@@ -22,7 +22,7 @@ class Sms_model extends MY_Model
         return $this->mongo_db->count("playbasis_sms_to_client");
     }
 
-    public function getTemplateIDByName($site_id, $name)
+    public function getTemplateIDByName($site_id, $name, $getInfo = false)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -31,7 +31,11 @@ class Sms_model extends MY_Model
         $this->mongo_db->where('deleted', false);
         $results = $this->mongo_db->get("playbasis_sms_to_client");
 
-        return $results ? $results[0]['_id']."" : null;
+        if($getInfo){
+            return $results ? $results[0] : null;
+        }else {
+            return $results ? $results[0]['_id'] . "" : null;
+        }
     }
 
     public function listTemplatesBySiteId($site_id, $data = array())

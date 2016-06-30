@@ -345,18 +345,22 @@ dataMan = {
             },
             success:function(data){
 
-                if(($.parseJSON(data))){
-                    var output_data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($.parseJSON(data)));
-                    link = document.createElement('a');
-                    link.setAttribute('href', 'data:' +output_data);
-                    link.setAttribute('download', 'rules.json');
-                    link.click();
-                    export_status = true;
-                    dialogMsg = 'Export rule successfully';}
-                else {
-                    dialogMsg = 'Unable to Export rule from server ';
+                if(($.parseJSON(data)).success==false) {
+                    dialogMsg = ($.parseJSON(data)).msg;
+                }else{
+                    if (($.parseJSON(data))) {
+                        var output_data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($.parseJSON(data),null, 2));
+                        link = document.createElement('a');
+                        link.setAttribute('href', 'data:' + output_data);
+                        link.setAttribute('download', 'rules.json');
+                        link.click();
+                        export_status = true;
+                        dialogMsg = 'Export rule successfully';
+                    }
+                    else {
+                        dialogMsg = 'Unable to Export rule from server ';
+                    }
                 }
-
 
             },
             error:function(){
@@ -401,7 +405,7 @@ dataMan = {
                     import_status = true;
                     dialogMsg = 'Import rule successfully';
                 }
-                else {
+                else if($.parseJSON(data).status=='fail') {
                     var msg = "";
                     for (var k in $.parseJSON(data).results){
                         if ($.parseJSON(data).results.hasOwnProperty(k)) {
@@ -410,6 +414,9 @@ dataMan = {
                     }
 
                     preventUnusual.message(msg,'Error to import, The following item(s) are not found in this site.');
+                    dialogMsg = 'Failed to import rule';
+                }else{
+                    preventUnusual.message($.parseJSON(data).msg);
                     dialogMsg = 'Failed to import rule';
                 }
 

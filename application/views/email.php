@@ -390,4 +390,4 @@ $('.push_up').live("click", function(){
 
 </script>
 
-<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/email/email.css" />
+<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/blackdrop/blackdrop.css" />

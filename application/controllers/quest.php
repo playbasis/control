@@ -25,6 +25,8 @@ class Quest extends MY_Controller
         $this->load->model('Permission_model');
         $this->load->model('Store_org_model');
         $this->load->model('Feature_model');
+        $this->load->model('Reward_model');
+        $this->load->model('Quiz_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -102,12 +104,11 @@ class Quest extends MY_Controller
             $AllQuests = $this->Quest_model->getQuestsByClientSiteId(array('client_id' => $client_id, 'site_id' => $site_id ));
             /* query required variables for validation of quest & mission */
             $questList = $this->makeListOfId($AllQuests, '_id');
-            $actionList = $this->makeListOfId($this->Rule_model->getActionJigsawList($site_id, $client_id),
-                'specific_id');
-            $rewardList = $this->makeListOfId($this->Rule_model->getRewardJigsawList($site_id, $client_id),
-                'specific_id');
-            $badgeList = $this->makeListOfId($this->Badge_model->getBadgeBySiteId(array('site_id' => $site_id->{'$id'})),
-                'badge_id');
+            $actionList = $this->makeListOfId($this->Rule_model->getActionJigsawList($site_id, $client_id), 'specific_id');
+            $rewardList = $this->makeListOfId($this->Rule_model->getRewardJigsawList($site_id, $client_id), 'specific_id');
+            $badgeList = $this->makeListOfId($this->Badge_model->getBadgeBySiteId(array('site_id' => $site_id->{'$id'})), 'badge_id');
+            $quizList = $this->makeListOfId($this->Quest_model->getQuizsByClientSiteId(array('client_id' => $client_id,'site_id' => $site_id)), '_id');
+            $goodlist = $this->makeListOfId($this->Goods_model->getGoodsBySiteId(array( 'site_id' => $site_id )),'goods_id');
 
             foreach ($this->data['quests'] as &$quest) {
 //                $quest['image'] = $this->Image_model->resize($quest['image'], 100, 100);
@@ -126,6 +127,8 @@ class Quest extends MY_Controller
                     'actionList' => $actionList,
                     'rewardList' => $rewardList,
                     'badgeList' => $badgeList,
+                    'quizList' => $quizList,
+                    'goodList' => $goodlist,
                 ));
 
                 $org_name = null;
@@ -1643,6 +1646,8 @@ class Quest extends MY_Controller
         $actionList = $params['actionList'];
         $rewardList = $params['rewardList'];
         $badgeList = $params['badgeList'];
+        $quizList = $params['quizList'];
+        $goodList = $params['goodList'];
         $error = array();
         /* check condition of the quest */
         if (array_key_exists('condition', $quest) && is_array($quest['condition'])) {
@@ -1684,6 +1689,15 @@ class Quest extends MY_Controller
                             }
                         }
                         break;
+                    case 'QUIZ':
+                        if (empty($condition['condition_id'])) {
+                            $error[] = '[CONDITION] [condition_id] for ' . $condition['condition_data']['name'] . ' is missing';
+                        } else {
+                            if (!$quizList || !in_array($condition['condition_id']->{'$id'}, $quizList)) {
+                                $error[] = '[CONDITION] ' . $condition['condition_type'] . ' [' . $condition['condition_data']['name'] . '] is invalid';
+                            }
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -1710,6 +1724,16 @@ class Quest extends MY_Controller
                         } else {
                             if (!$badgeList || !in_array($reward['reward_id']->{'$id'}, $badgeList)) {
                                 $error[] = '[REWARD] ' . $reward['reward_type'] . ' [' . $reward['reward_data']['name'] . '] is invalid';
+                            }
+                        }
+                        break;
+                    case 'GOODS':
+                        // TODO: must get the good group/name from goods data
+                        if (empty($reward['reward_id'])) {
+                            $error[] = '[REWARD] [reward_id] for ' . (isset($reward['reward_data']['group']) ? $reward['reward_data']['group'] : $reward['reward_data']['name']) . ' is missing';
+                        } else {
+                            if (!$goodList || !in_array($reward['reward_id']->{'$id'}, $goodList)) {
+                                $error[] = '[REWARD] ' . $reward['reward_type'] . ' [' . (isset($reward['reward_data']['group']) ? $reward['reward_data']['group'] : $reward['reward_data']['name']) . '] is invalid';
                             }
                         }
                         break;
@@ -1753,6 +1777,15 @@ class Quest extends MY_Controller
                                     }
                                 }
                                 break;
+                            case 'QUIZ':
+                                if (empty($completion['completion_id'])) {
+                                    $error[] = '[M' . strval($i) . ',' . strval($j) . ':COMPLETION] [completion_id] for ' . $completion['completion_data']['name'] . ' is missing';
+                                } else {
+                                    if (!$quizList || !in_array($completion['completion_id']->{'$id'}, $quizList)) {
+                                        $error[] = '[M' . strval($i) . ',' . strval($j) . ':COMPLETION] ' . $completion['completion_type'] . ' [' . $completion['completion_data']['name'] . '] is invalid';
+                                    }
+                                }
+                                break;
                             default:
                                 break;
                         }
@@ -1779,6 +1812,17 @@ class Quest extends MY_Controller
                                 } else {
                                     if (!$badgeList || !in_array($reward['reward_id']->{'$id'}, $badgeList)) {
                                         $error[] = '[M' . strval($i) . ',' . strval($j) . ':REWARD] ' . $reward['reward_type'] . ' [' . (isset($reward['reward_data']['name']) ? $reward['reward_data']['name'] : '#no-name') . '] is invalid';
+                                    }
+                                }
+                                break;
+                            case 'GOODS':
+                                // TODO: must get the good group/name from goods data
+                                $goods_name = isset($reward['reward_data']['group']) ? $reward['reward_data']['group'] : $reward['reward_data']['name'];
+                                if (empty($reward['reward_id'])) {
+                                    $error[] = '[M' . strval($i) . ',' . strval($j) . ':REWARD] [reward_id] for ' . $goods_name . ' is missing';
+                                } else {
+                                    if (!$goodList || !in_array($reward['reward_id']->{'$id'}, $goodList)) {
+                                        $error[] = '[M' . strval($i) . ',' . strval($j) . ':REWARD] ' . $reward['reward_type'] . ' [' . $goods_name . '] is invalid';
                                     }
                                 }
                                 break;
@@ -1816,6 +1860,520 @@ class Quest extends MY_Controller
         $server_output = curl_exec($ch);
         curl_close($ch);
         return $server_output;
+    }
+
+    function jsonErrorResponse($msg = 'Error, invalid request format or missing parameter')
+    {
+        echo json_encode(
+            array(
+                'error' => 1,
+                'success' => false,
+                'msg' => $msg
+            )
+        );
+    }
+
+    private function push_validation_error(&$array,$key,$value){
+        if(isset($array[$key])){
+            $array[$key] = array_keys(array_flip(array_merge($array[$key],array($value))));
+        }else{
+            $array[$key] = array($value);
+        }
+    }
+
+    private function convertData(&$quest_info,$function = 'export',&$validation_result = null){
+        $client_id = $quest_info['client_id'];
+        $site_id = $quest_info['site_id'];
+        $qdata = array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+        );
+
+        if (array_key_exists('rewards', $quest_info) && is_array($quest_info['condition'])) {
+            foreach ($quest_info['condition'] as &$condition) {
+
+                switch ($condition['condition_type']) {
+                    case 'DATETIME_START':
+                    case 'DATETIME_END':
+                    case 'DATEJOIN_START':
+                    case 'DATEJOIN_END':
+                    case 'LEVEL_START':
+                    case 'LEVEL_END':
+                        /* nothing to convert */
+                        break;
+                    case 'QUEST':
+                        if($function == 'export') {
+                            $dataInfo = $this->questObjectData($condition, "condition_type", "condition_id", $qdata);
+                            $condition['condition_data']['quest_name'] = $dataInfo['quest_name'];
+                        }else{
+                            $questInfo = $this->Quest_model->getQuestsByName($client_id, $site_id, $condition['condition_data']['quest_name']);
+                            if($questInfo){
+                                $condition['condition_id'] = $questInfo['_id'];
+                                unset($questInfo['_id']);
+                                $condition['condition_data'] = $questInfo;
+                            }else{
+                                $this->push_validation_error($validation_result, $condition['condition_type'], $condition['condition_data']['quest_name']);
+                            }
+                        }
+                        break;
+                    case 'POINT':
+                    case 'CUSTOM_POINT':
+                        if($function == 'export') {
+                            $dataInfo = $this->questObjectData($condition, "condition_type", "condition_id", $qdata);
+                            $condition['condition_data']['name'] = $dataInfo['name'];
+                        }else{
+                            $customPoint_id = $this->Reward_model->getClientRewardIDByName($client_id, $site_id, $condition['condition_data']['name']);
+                            if($customPoint_id){
+                                $condition['condition_id'] = new MongoId($customPoint_id);
+
+                            }else{
+                                $this->push_validation_error($validation_result, $condition['condition_type'], $condition['condition_data']['name']);
+                            }
+                        }
+                        break;
+                    case 'BADGE':
+                        if($function == 'export') {
+                            $dataInfo = $this->questObjectData($condition, "condition_type", "condition_id", $qdata);
+                            $condition['condition_data']['name'] = $dataInfo['name'];
+                        }else{
+                            $badgeInfo = $this->Badge_model->getBadgeByName($client_id, $site_id, $condition['condition_data']['name']);
+                            if($badgeInfo){
+                                $condition['condition_id'] = $badgeInfo['badge_id'];
+                                unset($badgeInfo['_id']);
+                                $condition['condition_data'] = $badgeInfo;
+
+                            }else{
+                                $this->push_validation_error($validation_result, $condition['condition_type'], $condition['condition_data']['name']);
+                            }
+                        }
+                        break;;
+                    case 'QUIZ':
+                        if($function == 'export') {
+                            $dataInfo = $this->questObjectData($condition, "condition_type", "condition_id", $qdata);
+                            $condition['condition_data']['name'] = $dataInfo['name'];
+                        }else{
+                            $quizInfo = $this->Quiz_model->getQuizByName($client_id, $site_id, $condition['condition_data']['name']);
+                            if($quizInfo){
+                                $condition['condition_id'] = $quizInfo['_id'];
+                                unset($quizInfo['_id']);
+                                $condition['condition_data'] = $quizInfo;
+
+                            }else{
+                                $this->push_validation_error($validation_result, $condition['condition_type'], $condition['condition_data']['name']);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        if (array_key_exists('rewards', $quest_info) && is_array($quest_info['rewards'])) {
+            foreach ($quest_info['rewards'] as &$reward) {
+                switch ($reward['reward_type']) {
+                    case 'EXP':
+                    case 'POINT':
+                    case 'CUSTOM_POINT':
+                        if($function == 'export') {
+                            $dataInfo = $this->questObjectData($reward, "reward_type", "reward_id", $qdata);
+                            $reward['reward_data']['name'] = $dataInfo['name'];
+                        }else{
+                            $customPoint_id = $this->Reward_model->getClientRewardIDByName($client_id, $site_id, $reward['reward_data']['name']);
+                            if($customPoint_id){
+                                $reward['reward_id'] = new MongoId($customPoint_id);
+
+                            }else{
+                                $this->push_validation_error($validation_result, $reward['reward_type'], $reward['reward_data']['name']);
+                            }
+                        }
+                        break;
+                    case 'BADGE':
+                        if($function == 'export') {
+                            $dataInfo = $this->questObjectData($reward, "reward_type", "reward_id", $qdata);
+                            $reward['reward_data']['name'] = $dataInfo['name'];
+                        }else{
+                            $badgeInfo = $this->Badge_model->getBadgeByName($client_id, $site_id, $reward['reward_data']['name']);
+                            if($badgeInfo){
+                                $reward['reward_id'] = $badgeInfo['badge_id'];
+                                unset($badgeInfo['_id']);
+                                $reward['reward_data'] = $badgeInfo;
+
+                            }else{
+                                $this->push_validation_error($validation_result, $reward['reward_type'], $reward['reward_data']['name']);
+                            }
+                        }
+
+                        break;
+                    case 'GOODS':
+                        if($function == 'export') {
+                            $dataInfo = $this->questObjectData($reward, "reward_type", "reward_id", $qdata);
+                            unset($reward['reward_data']);
+                            $reward['reward_data']['name'] = $dataInfo['name'];
+                            $reward['reward_data']['group'] = isset($dataInfo['group']) ? $dataInfo['group'] : null;
+                        }else{
+                            $goods_id = $this->Goods_model->getGoodsIDByName($client_id, $site_id, $reward['reward_data']['name'],$reward['reward_data']['group']);
+                            if($goods_id){
+                                $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
+                                unset($goods_detail['redeem']);
+                                $reward['reward_id'] = new MongoId($goods_id);
+                                $reward['reward_data'] = $goods_detail;
+                            }else{
+                                $this->push_validation_error($validation_result, $reward['reward_type'], $reward['reward_data']['group'] ? $reward['reward_data']['group'] : $reward['reward_data']['name']);
+                            }
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        }
+        if (array_key_exists('feedbacks', $quest_info) && is_array($quest_info['feedbacks'])) {
+            foreach ($quest_info['feedbacks'] as &$feedback) {
+                switch ($feedback['feedback_type']) {
+                    case 'EMAIL':
+                        if($function == 'export') {
+                            $dataInfo = $this->questObjectData($feedback, "feedback_type", "template_id", $qdata);
+                            $feedback['feedback_data']['name'] = $dataInfo['name'];
+                        }else{
+                            $emailInfo = $this->Email_model->getTemplateIDByName($site_id, $feedback['feedback_data']['name'], true);
+                            if($emailInfo){
+                                $feedback['template_id'] = $emailInfo['_id'];
+                                $feedback['feedback_data']['name'] = $emailInfo['name'];
+                                $feedback['feedback_data']['message'] = $emailInfo['body'];
+                            }else{
+                                $this->push_validation_error($validation_result, $feedback['feedback_type'], $feedback['feedback_data']['name'] );
+                            }
+                        }
+
+                        break;
+                    case 'SMS':
+                        if($function == 'export') {
+                            $dataInfo = $this->questObjectData($feedback, "feedback_type", "template_id", $qdata);
+                            $feedback['feedback_data']['name'] = $dataInfo['name'];
+                        }else{
+                            $smsInfo = $this->Sms_model->getTemplateIDByName($site_id, $feedback['feedback_data']['name'], true);
+                            if($smsInfo){
+                                $feedback['template_id'] = $smsInfo['_id'];
+                                $feedback['feedback_data']['name'] = $smsInfo['name'];
+                                $feedback['feedback_data']['message'] = $smsInfo['body'];
+                            }else{
+                                $this->push_validation_error($validation_result, $feedback['feedback_type'], $feedback['feedback_data']['name'] );
+                            }
+                        }
+
+                        break;
+                    case 'PUSH':
+                        if($function == 'export') {
+                            $dataInfo = $this->questObjectData($feedback, "feedback_type", "template_id", $qdata);
+                            $feedback['feedback_data']['name'] = $dataInfo['name'];
+                        }else{
+                            $pushInfo = $this->Push_model->getTemplateIDByName($site_id, $feedback['feedback_data']['name'], true);
+                            if($pushInfo){
+                                $feedback['template_id'] = $pushInfo['_id'];
+                                $feedback['feedback_data']['name'] = $pushInfo['name'];
+                                $feedback['feedback_data']['message'] = $pushInfo['body'];
+                            }else{
+                                $this->push_validation_error($validation_result, $feedback['feedback_type'], $feedback['feedback_data']['name'] );
+                            }
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        if (array_key_exists('missions', $quest_info) && is_array($quest_info['missions'])) {
+            foreach ($quest_info['missions'] as &$mission) {
+                if($function != 'export') {
+                    $mission['mission_id'] = new MongoId($mission['mission_id']['$id']);
+                }
+                /* check missions's completion */
+                if (array_key_exists('completion', $mission) && is_array($mission['completion'])) {
+                    foreach ($mission['completion'] as &$completion) {
+                        switch ($completion['completion_type']) {
+                            case 'ACTION':
+                                if($function == 'export') {
+                                    $dataInfo = $this->questObjectData($completion, "completion_type", "completion_id", $qdata);
+                                    $completion['completion_data']['name'] = $dataInfo['name'];
+                                }else{
+                                    $query_data['client_id'] = $client_id;
+                                    $query_data['site_id'] = $site_id;
+                                    $query_data['action_id'] = new MongoId($completion['completion_data']['action_id']['$id']);
+                                    $actionInfo = $this->Quest_model->getAction($query_data);
+                                    //$actionInfo = $this->questObjectData($completion, "completion_type", "completion_id", $qdata);
+                                    if($actionInfo){
+                                        $completion['completion_id'] = new MongoId($actionInfo['action_id']);
+                                        $completion['completion_element_id'] = new MongoId($completion['completion_element_id']['$id']);
+                                        $completion['completion_data'] = $actionInfo;
+                                    }else{
+                                        $this->push_validation_error($validation_result, $completion['completion_type'], $completion['completion_data']['name']);
+                                    }
+                                }
+
+                                break;
+                            case 'POINT':
+                            case 'CUSTOM_POINT':
+                                if($function == 'export') {
+                                    $dataInfo = $this->questObjectData($completion, "completion_type", "completion_id", $qdata);
+                                    $completion['completion_data']['name'] = $dataInfo['name'];
+                                }else{
+                                    $customPoint_id = $this->Reward_model->getClientRewardIDByName($client_id, $site_id, $completion['completion_data']['name']);
+                                    if($customPoint_id){
+                                        $completion['completion_id'] = new MongoId($customPoint_id);
+
+                                    }else{
+                                        $this->push_validation_error($validation_result, $completion['completion_type'], $completion['completion_data']['name']);
+                                    }
+                                }
+
+                                break;
+                            case 'BADGE':
+                                if($function == 'export') {
+                                    $dataInfo = $this->questObjectData($completion, "completion_type", "completion_id", $qdata);
+                                    $completion['completion_data']['name'] = $dataInfo['name'];
+                                }else{
+                                    $badgeInfo = $this->Badge_model->getBadgeByName($client_id, $site_id, $completion['completion_data']['name']);
+                                    if($badgeInfo){
+                                        $completion['completion_id'] = $badgeInfo['badge_id'];
+                                        unset($badgeInfo['_id']);
+                                        $completion['completion_data'] = $badgeInfo;
+
+                                    }else{
+                                        $this->push_validation_error($validation_result, $completion['completion_type'], $completion['completion_data']['name']);
+                                    }
+                                }
+
+                                break;
+                            case 'QUIZ':
+                                if($function == 'export') {
+                                    $dataInfo = $this->questObjectData($completion, "completion_type", "completion_id", $qdata);
+                                    $completion['completion_data']['name'] = $dataInfo['name'];
+                                }else{
+                                    $quizInfo = $this->Quiz_model->getQuizByName($client_id, $site_id, $completion['completion_data']['name']);
+                                    if($quizInfo){
+                                        $completion['completion_id'] = $quizInfo['_id'];
+                                        unset($quizInfo['_id']);
+                                        $completion['completion_data'] = $quizInfo;
+
+                                    }else{
+                                        $this->push_validation_error($validation_result, $completion['completion_type'], $completion['completion_data']['name']);
+                                    }
+                                }
+
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                /* check missions's rewards */
+                if (array_key_exists('rewards', $mission) && is_array($mission['rewards'])) {
+                    foreach ($mission['rewards'] as &$reward) {
+                        switch ($reward['reward_type']) {
+                            case 'EXP':
+                            case 'POINT':
+                            case 'CUSTOM_POINT':
+                                if($function == 'export') {
+                                    $dataInfo = $this->questObjectData($reward, "reward_type", "reward_id", $qdata);
+                                    $reward['reward_data']['name'] = $dataInfo['name'];
+                                }else{
+                                    $customPoint_id = $this->Reward_model->getClientRewardIDByName($client_id, $site_id, $reward['reward_data']['name']);
+                                    if($customPoint_id){
+                                        $reward['reward_id'] = new MongoId($customPoint_id);
+
+                                    }else{
+                                        $this->push_validation_error($validation_result, $reward['reward_type'], $reward['reward_data']['name']);
+                                    }
+                                }
+
+                                break;
+                            case 'BADGE':
+                                if($function == 'export') {
+                                    $dataInfo = $this->questObjectData($reward, "reward_type", "reward_id", $qdata);
+                                    $reward['reward_data']['name'] = $dataInfo['name'];
+                                }else{
+                                    $badgeInfo = $this->Badge_model->getBadgeByName($client_id, $site_id, $reward['reward_data']['name']);
+                                    if($badgeInfo){
+                                        $reward['reward_id'] = $badgeInfo['badge_id'];
+                                        unset($badgeInfo['_id']);
+                                        $reward['reward_data'] = $badgeInfo;
+
+                                    }else{
+                                        $this->push_validation_error($validation_result, $reward['reward_type'], $reward['reward_data']['name']);
+                                    }
+                                }
+
+                                break;
+                            case 'GOODS':
+                                if($function == 'export') {
+                                    $dataInfo = $this->questObjectData($reward, "reward_type", "reward_id", $qdata);
+                                    unset($reward['reward_data']);
+                                    $reward['reward_data']['name'] = $dataInfo['name'];
+                                    $reward['reward_data']['group'] = isset($dataInfo['group']) ? $dataInfo['group'] : null;
+                                }else{
+                                    $goods_id = $this->Goods_model->getGoodsIDByName($client_id, $site_id, $reward['reward_data']['name'],$reward['reward_data']['group']);
+                                    if($goods_id){
+                                        $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
+                                        unset($goods_detail['redeem']);
+                                        $reward['reward_id'] = new MongoId($goods_id);
+                                        $reward['reward_data'] = $goods_detail;
+                                    }else{
+                                        $this->push_validation_error($validation_result, $reward['reward_type'], $reward['reward_data']['group'] ? $reward['reward_data']['group'] : $reward['reward_data']['name']);
+                                    }
+                                }
+
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                /* check missions's feedbacks */
+                if (array_key_exists('feedbacks', $mission) && is_array($mission['feedbacks'])) {
+                    foreach ($mission['feedbacks'] as &$feedback) {
+                        switch ($feedback['feedback_type']) {
+                            case 'EMAIL':
+                                if($function == 'export') {
+                                    $dataInfo = $this->questObjectData($feedback, "feedback_type", "template_id", $qdata);
+                                    $feedback['feedback_data']['name'] = $dataInfo['name'];
+                                }else{
+                                    $emailInfo = $this->Email_model->getTemplateIDByName($site_id, $feedback['feedback_data']['name'], true);
+                                    if($emailInfo){
+                                        $feedback['template_id'] = $emailInfo['_id'];
+                                        $feedback['feedback_data']['name'] = $emailInfo['name'];
+                                        $feedback['feedback_data']['message'] = $emailInfo['body'];
+                                    }else{
+                                        $this->push_validation_error($validation_result, $feedback['feedback_type'], $feedback['feedback_data']['name'] );
+                                    }
+                                }
+
+                                break;
+                            case 'SMS':
+                                if($function == 'export') {
+                                    $dataInfo = $this->questObjectData($feedback, "feedback_type", "template_id", $qdata);
+                                    $feedback['feedback_data']['name'] = $dataInfo['name'];
+                                }else{
+                                    $smsInfo = $this->Sms_model->getTemplateIDByName($site_id, $feedback['feedback_data']['name'], true);
+                                    if($smsInfo){
+                                        $feedback['template_id'] = $smsInfo['_id'];
+                                        $feedback['feedback_data']['name'] = $smsInfo['name'];
+                                        $feedback['feedback_data']['message'] = $smsInfo['body'];
+                                    }else{
+                                        $this->push_validation_error($validation_result, $feedback['feedback_type'], $feedback['feedback_data']['name'] );
+                                    }
+                                }
+
+                                break;
+                            case 'PUSH':
+                                if($function == 'export') {
+                                    $dataInfo = $this->questObjectData($feedback, "feedback_type", "template_id", $qdata);
+                                    $feedback['feedback_data']['name'] = $dataInfo['name'];
+                                }else{
+                                    $pushInfo = $this->Push_model->getTemplateIDByName($site_id, $feedback['feedback_data']['name'], true);
+                                    if($pushInfo){
+                                        $feedback['template_id'] = $pushInfo['_id'];
+                                        $feedback['feedback_data']['name'] = $pushInfo['name'];
+                                        $feedback['feedback_data']['message'] = $pushInfo['body'];
+                                    }else{
+                                        $this->push_validation_error($validation_result, $feedback['feedback_type'], $feedback['feedback_data']['name'] );
+                                    }
+                                }
+
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function importQuest()
+    {
+        if (!$this->input->post('array_quests')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission_import'));
+            return;
+        }
+
+        $array_quests = json_decode($this->input->post('array_quests'),true);
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $validation_result = array();
+        $organize_validate = null;
+        foreach($array_quests as &$quest){
+
+            $quest['client_id'] = $client_id;
+            $quest['site_id'] = $site_id;
+            $quest['date_added'] = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+            if(isset($quest['date_modified']))$quest['date_modified'] = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+            $this->convertData($quest, 'import', $validation_result);
+            if (array_key_exists('organize_name', $quest) && !is_null($quest['organize_name'])) {
+                $org = $this->Store_org_model->retrieveOrganizeByName($client_id, $site_id, $quest['organize_name']);
+                if($org){
+                    $quest['organize_id'] = $org[0]['_id'];
+                }else {
+                    $quest['organize_id'] = null;
+                    $organize_validate[$quest['quest_name']] = $quest['organize_name'];
+                }
+                unset($quest['organize_name']);
+            }
+
+        }
+        if(!$validation_result){ // passed data validation
+            foreach($array_quests as $quest2) {
+                $import_result = $this->Quest_model->addQuestToClient($quest2);
+            }
+            $this->output->set_output(json_encode(array('status'=>'success','results'=>$organize_validate)));
+        }else{ // failed data validation
+            $this->output->set_output(json_encode(array('status'=>'fail','results'=>$validation_result)));
+        }
+
+        //$this->output->set_output(json_encode($array_quests));
+    }
+
+    public function exportQuest()
+    {
+        if (!$this->input->post('array_quests')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission_export'));
+            return;
+        }
+
+        $data['client_id'] = $this->User_model->getClientId();
+        $data['site_id'] = $this->User_model->getSiteId();
+
+        $array_quests = array();
+        foreach($this->input->post('array_quests') as $quest_id){
+            $data['quest_id'] = $quest_id;
+            $quest_info = $this->Quest_model->getQuestByClientSiteId($data);
+            unset($quest_info['_id']);
+
+            $this->convertData($quest_info);
+            if (array_key_exists('organize_id', $quest_info) && !is_null($quest_info['organize_id'])) {
+                $org = $this->Store_org_model->retrieveOrganizeById($quest_info['organize_id']);
+                $quest_info['organize_name'] = $org['name'];
+            }
+
+            $quest_info['client_id'] = null;
+            $quest_info['site_id'] = null;
+
+            $array_quests[] = $quest_info;
+        }
+
+        $this->output->set_output(json_encode($array_quests));
     }
 
 }
