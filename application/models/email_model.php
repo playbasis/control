@@ -22,7 +22,7 @@ class Email_model extends MY_Model
         return $this->mongo_db->count("playbasis_email_to_client");
     }
 
-    public function getTemplateIDByName($site_id, $name)
+    public function getTemplateIDByName($site_id, $name, $getInfo = false)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -31,7 +31,11 @@ class Email_model extends MY_Model
         $this->mongo_db->where('deleted', false);
         $results = $this->mongo_db->get("playbasis_email_to_client");
 
-        return $results ? $results[0]['_id']."" : null;
+        if($getInfo){
+            return $results ? $results[0] : null;
+        }else {
+            return $results ? $results[0]['_id'] . "" : null;
+        }
     }
 
     public function listTemplatesBySiteId($site_id, $data = array())
@@ -180,6 +184,53 @@ class Email_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($template_id));
         $this->mongo_db->set('sort_order', $templates[0]['sort_order'] - 1);
         $this->mongo_db->update('playbasis_email_to_client');
+        return true;
+    }
+
+    public function getClientDomain($client_id, $site_id, $status=null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        if(!is_null($status))$this->mongo_db->where('status', $status);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_domain_to_client");
+
+        return $results ? $results[0] : null;
+    }
+
+    public function addDomain($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $dt = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        return $this->mongo_db->insert('playbasis_domain_to_client', array(
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id']),
+            'email' => $data['email'],
+            'verification_status' => isset($data['verification_status']) ? $data['verification_status'] : "",
+            'verification_token' => isset($data['verification_token']) ? $data['verification_token'] : "",
+            'date_modified' => $dt,
+            'date_added' => $dt,
+            'status' => true,
+        ));
+    }
+
+    public function editDomain($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+
+        if(isset($data["email"])) $this->mongo_db->set("email", $data["email"]);
+        if(isset($data["verification_token"])) $this->mongo_db->set('verification_token', $data['verification_token']);
+        if(isset($data["verification_status"])) $this->mongo_db->set('verification_status', $data['verification_status']);
+
+        $this->mongo_db->set('status', isset($data['status']) ? (bool)$data['status'] : true);
+        $this->mongo_db->set("date_modified", new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->update('playbasis_domain_to_client');
         return true;
     }
 }

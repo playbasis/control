@@ -3,9 +3,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Content_model extends MY_Model
 {
-    public function countContents($client_id, $site_id)
+    public function countContents($client_id, $site_id, $optionalParams = array())
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        if (isset($optionalParams['title']) && !is_null($optionalParams['title'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['title'])) . "/i");
+            $this->mongo_db->where('title', $regex);
+        }
+
+        if (isset($optionalParams['author'])) {
+            if(!empty($optionalParams['author'])){
+                $this->mongo_db->where('pb_player_id', new MongoId($optionalParams['author']));
+            }
+            else{
+                return 0;
+            }
+        }
+
+        if (isset($optionalParams['category']) && !is_null($optionalParams['category'])) {
+            $this->mongo_db->where('category', new MongoId($optionalParams['category']));
+        }
+
+        if (isset($optionalParams['status']) && !is_null($optionalParams['status'])) {
+            $bool = $optionalParams['status'] == 'enable' ? true : false;
+            $this->mongo_db->where('status', $bool);
+        }
 
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
@@ -24,8 +47,21 @@ class Content_model extends MY_Model
             $this->mongo_db->where('title', $regex);
         }
 
+        if (isset($optionalParams['author'])) {
+            if(!empty($optionalParams['author'])){
+                $this->mongo_db->where('pb_player_id', new MongoId($optionalParams['author']));
+            }
+            else{
+                return array();
+            }
+        }
+
+        if (isset($optionalParams['category']) && !is_null($optionalParams['category'])) {
+            $this->mongo_db->where('category', new MongoId($optionalParams['category']));
+        }
+
         if (isset($optionalParams['status']) && !is_null($optionalParams['status'])) {
-            $bool = filter_var($optionalParams['status'], FILTER_VALIDATE_BOOLEAN);
+            $bool = $optionalParams['status'] == 'enable' ? true : false;
             $this->mongo_db->where('status', $bool);
         }
 

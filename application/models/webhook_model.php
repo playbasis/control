@@ -91,7 +91,7 @@ class Webhook_model extends MY_Model
             'site_id' => new MongoID($data['site_id']),
             'name' => $data['name'] | '',
             'url' => $data['url'] | '',
-            'body' => $data['body'] | '',
+            'body' => isset($data['body']) && !empty($data['body']) ? $data['body'] : null,
             'status' => (bool)$data['status'],
             'sort_order' => (int)$data['sort_order'] | 1,
             'deleted' => false,

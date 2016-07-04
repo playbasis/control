@@ -52,7 +52,7 @@
                                             <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_author'); ?></td>
                                             <td rowspan="2" class="center" style="width:135px;"><?php echo $this->lang->line('column_date_range'); ?></td>
                                             <td rowspan="2" class="center" style="width:150px;"><?php echo $this->lang->line('column_tags'); ?></td>
-                                            <td rowspan="2" class="center" style="width:30px;"><?php echo $this->lang->line('column_status'); ?></td>
+                                            <td rowspan="2" class="center" style="width:65px;"><?php echo $this->lang->line('column_status'); ?></td>
                                             <?php if($org_status){?>
                                                 <td colspan="3" class="center" style="width:150px;"><?php echo $this->lang->line('column_organization'); ?></td>
                                             <?php }?>
@@ -72,12 +72,18 @@
                                         <tr class="filter">
                                             <td></td>
                                             <td></td>
-                                            <td class="right"><input title="name" type="text" name="filter_title" value="<?php echo isset($_GET['title']) ? $_GET['title'] : "" ?>" style="width:50%;"/></td>
+                                            <td class="center"><input title="title" type="text" name="filter_title" value="<?php echo isset($_GET['title']) ? $_GET['title'] : "" ?>" style="width:90%;"></td>
+                                            <td class="center"><input title="category" type="text" name="filter_category" value="<?php echo isset($_GET['category']) ? $_GET['category'] : "" ?>" style="width:90%;"></td>
+                                            <td class="center"><input title="author" type="text" name="filter_author" value="<?php echo isset($_GET['author']) ? $_GET['author'] : "" ?>" style="width:90%;"></td>
                                             <td></td>
                                             <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="center">
+                                                <select name="filter_status" id="filter_status" title="status" style="width:100%;">
+                                                    <option value="" <?php if (isset($_GET['status']) && is_null($_GET['status']))  { ?>selected<?php }?>>    </option>
+                                                    <option value="enable" <?php if (isset($_GET['status']) && $_GET['status'] == "enable")  { ?>selected<?php }?>>Enable</option>
+                                                    <option value="disable" <?php if (isset($_GET['status']) && $_GET['status'] == "disable")  { ?>selected<?php }?>>Disable</option>
+                                                </select>
+                                            </td>
                                             <?php if($org_status){?>
                                                 <td></td>
                                                 <td></td>
@@ -594,10 +600,14 @@
         url = baseUrlPath + 'content';
 
         var filter_title = $('input[name=\'filter_title\']').attr('value');
+        var filter_category = $('input[name=\'filter_category\']').attr('value');
+        var filter_author = $('input[name=\'filter_author\']').attr('value');
+        var filter_status= document.getElementById('filter_status').value;
 
-        if (filter_title) {
-            url += '?title=' + encodeURIComponent(filter_title);
-        }
+        url += '?title=' + encodeURIComponent(filter_title)+
+            '&category=' + encodeURIComponent(filter_category)+
+            '&author=' + encodeURIComponent(filter_author)+
+            '&status=' + encodeURIComponent(filter_status);
 
         location = url;
     }

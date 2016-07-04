@@ -66,7 +66,15 @@ class Store_org_model extends MY_Model
         // Searching
         if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['search'])) . "/i");
-            $this->mongo_db->where('name', $regex);
+
+            $store_org = $this->retrieveOrganize($client_id,$site_id,$optionalParams);
+            $store_query = array();
+            foreach ($store_org as $store){
+                array_push($store_query, $store['_id']);
+            }
+
+            $query = array( '$or' => array( array( "name" => $regex ), array( "organize"=> array('$in' => $store_query))));
+            $this->mongo_db->where($query);
         }
         if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
             //make sure 'id' is valid before passing here

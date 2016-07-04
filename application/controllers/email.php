@@ -209,6 +209,40 @@ class Email extends MY_Controller
             }
         }
 
+        $domain = $this->Email_model->getClientDomain($client_id, $site_id, true);
+        if($domain){
+            if($domain['verification_status']=="Success"){
+                $this->data['domain'] = array(
+                    'email' => (isset($domain['email']) && $domain['email'] ? $domain['email'] : ""),
+                    'verification_status' => "Success" ,
+                );
+            }else {
+                $email = explode("@", $domain['email']);
+                $domain_name = $email[1];
+
+                // check domain's status from amazon ses
+                $domain_verification = $this->amazon_ses->get_identity_verification($domain_name);
+                if (isset($domain_verification['VerificationStatus']) && $domain_verification['VerificationStatus'] == "Success") {
+                    $data = array('client_id'=>$client_id,
+                        'site_id'=>$site_id,
+                        'verification_token'=>$domain_verification['VerificationToken'],
+                        'verification_status'=>$domain_verification['VerificationStatus']);
+
+                    $this->Email_model->editDomain($data);
+                }
+
+                $this->data['domain'] = array(
+                    'email' => $domain['email'],
+                    'verification_status' => (isset($domain_verification['VerificationStatus']) && $domain_verification['VerificationStatus'] ? $domain_verification['VerificationStatus'] : "Not verified"),
+                );
+            }
+        }else{
+            $this->data['domain'] = array(
+                'email' => EMAIL_FROM,
+                'verification_status' => "Success",
+            );
+        }
+
         if (isset($this->error['warning'])) {
             $this->data['error_warning'] = $this->error['warning'];
         } else {
@@ -321,6 +355,138 @@ class Email extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    private function updateDomainToClient($client_id, $site_id, $data){
+        $domain = $this->Email_model->getClientDomain($client_id, $site_id);
+        if ($domain) {
+            $this->Email_model->editDomain($data);
+        } else {
+            $this->Email_model->addDomain($data);
+        }
+    }
+
+    private function sendEmailDomainVerification($to, $token){
+        $this->load->library('email');
+        $this->load->library('parser');
+
+        $data = array(
+            'verification_token' => $token,
+            'base_url' => site_url()
+        );
+
+        $config['mailtype'] = 'html';
+        $config['charset'] = 'utf-8';
+        $subject = "[Playbasis] Domain verification token";
+        $htmlMessage = $this->parser->parse('emails/user_domainverification.html', $data, true);
+
+        $this->amazon_ses->from(EMAIL_FROM, 'Playbasis');
+        $this->amazon_ses->to($to);
+        // $this->amazon_ses->bcc(EMAIL_FROM);
+        $this->amazon_ses->subject($subject);
+        $this->amazon_ses->message($htmlMessage);
+        $this->amazon_ses->send();
+    }
+
+    public function setDomain()
+    {
+        if ($this->session->userdata('user_id') /*&& $this->input->is_ajax_request()*/) {
+
+
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+
+                $this->form_validation->set_rules('email', $this->lang->line('form_email'),
+                    'trim|valid_email|xss_clean|required|check_space');
+
+                if ($this->form_validation->run()){
+                    $data = $this->input->post();
+                    $data['client_id'] = $client_id;
+                    $data['site_id'] = $site_id;
+
+                    $email = explode("@",$data['email']);
+                    $domain_name = $email[1];
+                    $email_sent = false;
+
+                    // check if the domain has been set by other site
+                    $domain_verification = $this->amazon_ses->get_identity_verification($domain_name);
+                    if($domain_verification) {
+                        $data['verification_status'] = $domain_verification['VerificationStatus'];
+                        $data['verification_token'] = $domain_verification['VerificationToken'];
+                        if($data['verification_status'] != "Success") {
+                            $this->sendEmailDomainVerification($data['email'], $domain_verification['VerificationToken']);
+                            // set $email_sent after sent email to user in order to trigger warning response
+                            $email_sent = EMAIL_FROM;
+                        }
+                    }else{
+                        // set the domain
+                        $result = $this->amazon_ses->verify_domain($domain_name);
+                        if(isset($result['Error']) || $result == false){
+                            echo json_encode(array('status' => 'error', 'message' => isset($response['Error']) ? $response['Error']['Message'] : $this->lang->line('error_setting_domain')));
+                            die();
+                        }else {
+                            $this->sendEmailDomainVerification($data['email'], $result);
+                            // set $email_sent after sent email to user in order to trigger warning response
+                            $email_sent = EMAIL_FROM;
+                            $data['verification_status'] = "Pending";
+                            $data['verification_token'] = $result;
+                        }
+                    }
+
+                    $this->updateDomainToClient($client_id, $site_id, $data);
+                    echo json_encode(array('status' => 'success', 'data'=> array('email'=>$data['email'], 'status'=>$data['verification_status'], 'email_sent'=>$email_sent)));
+                    exit();
+
+                }else{
+                    echo json_encode(array('status' => 'error', 'message' => validation_errors()));
+                    die();
+                }
+            }
+        }else {
+            $this->output->set_status_header('403');
+            echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access')));
+            die();
+        }
+    }
+
+    public function setDefaultDomain(){
+        if ($this->session->userdata('user_id') /*&& $this->input->is_ajax_request()*/) {
+
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+                $domain = $this->Email_model->getClientDomain($client_id, $site_id, true);
+                if($domain){
+                    $data = array('client_id'=>$client_id,
+                                    'site_id'=>$site_id,
+                                    'status'=>false);
+
+                    $this->Email_model->editDomain($data);
+                    echo json_encode(array('status' => 'success', 'data'=> array('email'=>EMAIL_FROM, 'status'=>"Success")));
+                    exit();
+                }else{
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_domain_already_default')));
+                    die();
+                }
+            }
+        }else {
+            $this->output->set_status_header('403');
+            echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access')));
+            die();
+        }
     }
 
     public function increase_order($template_id)

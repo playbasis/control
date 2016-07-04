@@ -105,6 +105,7 @@ $lang['text_level']									= 'Level';
 $lang['text_chart_player']								= 'Players';
 
 // Button
+$lang['button_home']             = 'Back to main';
 $lang['button_insert']           = 'Insert';
 $lang['button_delete']           = 'Delete';
 $lang['button_save']             = 'Save';

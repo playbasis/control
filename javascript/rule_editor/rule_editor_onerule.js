@@ -646,9 +646,12 @@ perventDialogMan = {
 preventUnusual ={
     message:function(msg,title){
         if(msg=='' || msg== undefined)return;
-
-        if(title!='' && title!= undefined)
+        if(title!='' && title!= undefined) {
             $('#errorModal').find('#myModalLabel').html(title);
+        }else{
+            $('#errorModal').find('#myModalLabel').html("Warning !");
+        }
+
         $('#errorModal').modal({'backdrop': false});
         $('#errorModal .modal-body').html(msg);
     }

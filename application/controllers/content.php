@@ -104,9 +104,8 @@ class Content extends MY_Controller
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[4096000]|xss_clean');
-        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
-            'trim|required|xss_clean');
-        $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'), 'trim|xss_clean');
+        $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|xss_clean');
         $this->form_validation->set_rules('category', $this->lang->line('entry_category'), 'trim|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -214,9 +213,8 @@ class Content extends MY_Controller
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[4096000]|xss_clean');
-        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
-            'trim|required|xss_clean');
-        $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'), 'trim|xss_clean');
+        $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|xss_clean');
         $this->form_validation->set_rules('category', $this->lang->line('entry_category'), 'trim|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -358,6 +356,8 @@ class Content extends MY_Controller
 
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
+        $parameter_url = "?";
+
         $filter = array(
             'limit' => $config['per_page'],
             'offset' => $offset,
@@ -366,11 +366,31 @@ class Content extends MY_Controller
             'sort' => 'sort_order'
         );
 
-        if (isset($_GET['title'])) {
+        if (isset($_GET['title']) && !empty($_GET['title'])) {
             $filter['title'] = $_GET['title'];
+            $parameter_url += "&title=" . $_GET['title'];
+        }
+
+        if (isset($_GET['category']) && !empty($_GET['category'])) {
+            $category_data = $this->Content_model->retrieveContentCategoryByName($client_id, $site_id, $_GET['category']);
+            $filter['category'] = $category_data['_id'];
+            $parameter_url += "&category=" . $_GET['category'];
+        }
+
+        if (isset($_GET['author']) && !empty($_GET['author'])) {
+            $pb_player_id = $this->Player_model->getPlaybasisId(array('client_id' => $client_id, 'site_id' => $site_id, 'cl_player_id' => $_GET['author']));
+            $filter['author'] = $pb_player_id ? $pb_player_id : "";
+            $parameter_url += "&author=" . $_GET['author'];
+        }
+
+        if (isset($_GET['status']) && !empty($_GET['status'])) {
+            $filter['status'] = $_GET['status'];
+            $parameter_url += "&staus=" . $_GET['status'];
         }
 
         $config['base_url'] = site_url('content/page');
+        $config['suffix'] =  $parameter_url;
+        $config['first_url'] = $config['base_url'].$parameter_url;
         $config["uri_segment"] = 3;
         $config['total_rows'] = 0;
 
@@ -432,7 +452,7 @@ class Content extends MY_Controller
             }
 
             $this->data['contents'] = $contents;
-            $config['total_rows'] = $this->Content_model->countContents($client_id, $site_id);
+            $config['total_rows'] = $this->Content_model->countContents($client_id, $site_id, $filter);
         }
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
@@ -466,6 +486,7 @@ class Content extends MY_Controller
         $this->data['pagination_total_rows'] = $config["total_rows"];
 
         $this->data['main'] = 'content';
+        $this->load->vars($this->data);
         $this->render_page('template');
     }
 

@@ -75,8 +75,25 @@ class Webhook extends MY_Controller
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
-                if (!$this->Webhook_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'))) {
-                    $template_id = $this->Webhook_model->addTemplate(array_merge($this->input->post(), array(
+                $postData = $this->input->post();
+                if (isset($postData['body_key']) && isset($postData['body_value'])){
+                    $body = array();
+                    foreach ($postData['body_key'] as $key => $val){
+                        if (!empty($val)) {
+                            $body = array_merge($body, array(
+                                $val => $postData['body_value'][$key]
+                            ));
+                        }
+                    }
+                    unset($postData['body_key']);
+                    unset($postData['body_value']);
+                    $postData = array_merge($postData, array(
+                        'body' => $body
+                    ));
+                }
+
+                if (!$this->Webhook_model->getTemplateByName($this->User_model->getSiteId(), $postData['name'])) {
+                    $template_id = $this->Webhook_model->addTemplate(array_merge($postData, array(
                         'client_id' => $this->User_model->getClientId(),
                         'site_id' => $this->User_model->getSiteId(),
                     )));
@@ -122,10 +139,27 @@ class Webhook extends MY_Controller
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
+                $postData = $this->input->post();
+                if (isset($postData['body_key']) && isset($postData['body_value'])){
+                    $body = array();
+                    foreach ($postData['body_key'] as $key => $val){
+                        if (!empty($val)) {
+                            $body = array_merge($body, array(
+                                $val => $postData['body_value'][$key]
+                            ));
+                        }
+                    }
+                    unset($postData['body_key']);
+                    unset($postData['body_value']);
+                    $postData = array_merge($postData, array(
+                        'body' => $body
+                    ));
+                }
+
                 $c = $this->Webhook_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'));
                 $info = $this->Webhook_model->getTemplate($template_id);
                 if ($c === 0 || ($c === 1 && $info && $info['name'] == $this->input->post('name'))) {
-                    $success = $this->Webhook_model->editTemplate($template_id, array_merge($this->input->post(), array(
+                    $success = $this->Webhook_model->editTemplate($template_id, array_merge($postData, array(
                         'client_id' => $this->User_model->getClientId(),
                         'site_id' => $this->User_model->getSiteId(),
                     )));
@@ -197,7 +231,11 @@ class Webhook extends MY_Controller
                     '_id' => $template['_id'],
                     'name' => $template['name'],
                     'url' => $template['url'],
-                    'body' => $template['body'],
+                    'body' => (isset($template['body']) && is_array($template['body'])) ?
+                        implode(',', array_map(function ($v, $k) {
+                            return sprintf('%s=%s', $k, $v);
+                        }, $template['body'], array_keys($template['body'])
+                        )) : null,
                     'status' => $template['status'],
                     'sort_order' => $template['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($template['_id'],
