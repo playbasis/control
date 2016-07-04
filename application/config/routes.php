@@ -348,6 +348,9 @@ $route['File/list']   = 'file/list';
 //Import API
 $route['Import/importSetting'] = 'import/importSetting';
 
+// Game API
+$route['Game'] = 'game/list';
+
 //misc
 //$route['test']	= 'playbasis/test';
 $route['test']	= 'notification/index';
