@@ -1160,7 +1160,8 @@ class Player extends REST2_Controller
         $site_data = $this->client_model->findBySiteId($this->site_id);
 
         // send email
-        $from = EMAIL_FROM;
+        /* before send, check whether custom domain was set by user or not*/
+        $from = get_verified_custom_domain($this->client_id, $this->site_id);
         $to = $email;
         $subject = 'Reset Your Password';
         $html = $this->parser->parse('player_forgotpassword.html', array(
@@ -1194,7 +1195,8 @@ class Player extends REST2_Controller
         $site_data = $this->client_model->findBySiteId($this->site_id);
 
         // send email
-        $from = EMAIL_FROM;
+        /* before send, check whether custom domain was set by user or not*/
+        $from = get_verified_custom_domain($this->client_id, $this->site_id);
         $to = $player['email'];
         $subject = 'Verify Your Email';
         $html = $this->parser->parse('player_verifyemail.html', array(

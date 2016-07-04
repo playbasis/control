@@ -25,6 +25,7 @@ class Quest extends REST2_Controller
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
         $this->load->model('tool/node_stream', 'node');
+        $this->load->model('webhook_model');
     }
 
     public function QuestProcess($pb_player_id, $validToken, $test_id = null)
@@ -1884,6 +1885,9 @@ class Quest extends REST2_Controller
             case 'push':
                 $this->processPushNotification($input);
                 break;
+            case 'webhook':
+                $this->processWebhook($input);
+                break;
             default:
                 log_message('error', 'Unknown feedback type: ' . $type);
                 break;
@@ -1946,7 +1950,8 @@ class Quest extends REST2_Controller
         }
 
         /* send email */
-        $from = EMAIL_FROM;
+        /* before send, check whether custom domain was set by user or not*/
+        $from = get_verified_custom_domain($input['client_id'], $input['site_id']);
         $to = $email;
         $subject = $input['input']['subject'];
         if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) {
@@ -2029,6 +2034,37 @@ class Quest extends REST2_Controller
         $response = $this->twiliomini->sms($from, $to, $message);
         $this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
         return $response->IsError;
+    }
+
+    protected function processWebhook($input)
+    {
+        /* check valid template_id */
+        $template = $this->webhook_model->getTemplateById($input['site_id'], $input['input']['template_id']);
+        if (!$template) {
+            return false;
+        }
+
+        $posts = http_build_query($template['body']);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $template['url']);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$posts);
+        curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 1); // set timeout to 1 second cURL would not proceed next process immediately after 1 second
+        curl_exec($ch);
+        curl_close ($ch);
+
+        $this->webhook_model->log($input['client_id'], $input['site_id'], array(
+            'pb_player_id' => new MongoId($input['pb_player_id']),
+            'template_id' => $input['input']['template_id'],
+            'url' => isset($template['url']) ? $template['url'] : null,
+            'body' => isset($template['body']) ? $template['body'] : null,
+        ));
+
+        return true;
     }
 
     protected function processPushNotification($input)

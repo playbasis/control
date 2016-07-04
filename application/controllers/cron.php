@@ -2288,7 +2288,8 @@ class Cron extends CI_Controller
             }
 
             /* send email */
-            $from = EMAIL_FROM;
+            /* before send, check whether custom domain was set by user or not*/
+            $from = get_verified_custom_domain($input['client_id'], $input['site_id']);
             $to = $email;
             $subject = $email_template['subject'];
             if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) {
