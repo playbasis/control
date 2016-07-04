@@ -1889,7 +1889,7 @@ class Quest extends MY_Controller
             'site_id' => $site_id,
         );
 
-        if (array_key_exists('rewards', $quest_info) && is_array($quest_info['condition'])) {
+        if (array_key_exists('condition', $quest_info) && is_array($quest_info['condition'])) {
             foreach ($quest_info['condition'] as &$condition) {
 
                 switch ($condition['condition_type']) {
@@ -2336,8 +2336,6 @@ class Quest extends MY_Controller
         }else{ // failed data validation
             $this->output->set_output(json_encode(array('status'=>'fail','results'=>$validation_result)));
         }
-
-        //$this->output->set_output(json_encode($array_quests));
     }
 
     public function exportQuest()

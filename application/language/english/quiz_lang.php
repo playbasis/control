@@ -34,7 +34,8 @@ $lang['entry_subject']              = 'Subject';
 $lang['entry_sms']                  = 'Sms';
 $lang['entry_push']                 = 'Push';
 $lang['entry_question_order']       = 'Sort Question in Order';
-$lang['entry_tags'] = 'Tag(s)';
+$lang['entry_tags']                 = 'Tag(s)';
+$lang['entry_file']	                = 'JSON File To Import';
 
 $lang['column_date_added']          = 'Date Added';
 $lang['column_action']              = 'Action';
@@ -45,8 +46,12 @@ $lang['column_tags']                = 'Tag(s)';
 
 $lang['button_filter']              = 'Filter';
 $lang['button_clear_filter']        = 'Clear filter';
+$lang['button_import']				= 'Import';
+$lang['button_export']				= 'Export';
 
 $lang['error_permission']           = 'Warning: You do not have permission to modify quiz!';
 $lang['error_access']               = 'Warning: You do not have permission to access this page!';
 $lang['error_quiz_limit']           = 'You have reached Quiz Limit.';
+$lang['error_permission_export']       	= 'Warning: You do not have permission to export quiz!';
+$lang['error_permission_import']       	= 'Warning: You do not have permission to import quiz!';
 ?>

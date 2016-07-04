@@ -139,7 +139,7 @@
     </div>
 </div>
 
-<!-- Error Modal -->
+<!-- Success Modal -->
 <div id="successModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -240,7 +240,7 @@ function quest_import() {
                             // dataType:'json',
                             beforeSend:function(){
                                 $('#questImportModal').modal('hide');
-                                progressDialog.show('Importing quest ...');
+                                progressDialog.show('Importing quest(s) ...');
                             },
                             success:function(data){
 
@@ -283,7 +283,7 @@ function quest_import() {
                             },
                             error:function(){
                                 //console.log('on error')
-                                dialogMsg = 'Unable to import quest to server,\n Please try again later';
+                                dialogMsg = 'Unable to import quest(s) to server,\n Please try again later';
 
                             },
                             complete:function(){
@@ -334,7 +334,7 @@ function quest_export() {
             type:'POST',
             // dataType:'json',
             beforeSend:function(){
-                progressDialog.show('Exporting quest ...');
+                progressDialog.show('Exporting quest(s) ...');
             },
             success:function(data){
 
@@ -348,17 +348,17 @@ function quest_export() {
                         link.setAttribute('download', 'quests.json');
                         link.click();
                         export_status = true;
-                        dialogMsg = 'Export quest successfully';
+                        dialogMsg = 'Export quest(s) successfully';
                     }
                     else {
-                        dialogMsg = 'Unable to export quest from server ';
+                        dialogMsg = 'Unable to export(s) quest from server ';
                     }
                 }
 
             },
             error:function(){
                 //console.log('on error')
-                dialogMsg = 'Unable to export quest from server,\n Please try again later';
+                dialogMsg = 'Unable to export quest(s) from server,\n Please try again later';
 
             },
             complete:function(){
