@@ -198,12 +198,6 @@ class Quest_model extends MY_Model
                 )
             );
         }
-        if(isset($filter['limit']) && !empty($filter['limit'])){
-            array_push($query_array, array('$limit' => (int)$filter['limit'] + (int)$filter['offset']));
-        }
-        if(isset($filter['offset']) && !empty($filter['offset'])){
-            array_push($query_array, array('$skip' => (int)$filter['offset']));
-        }
 
         $results = $this->mongo_db->aggregate('playbasis_validated_action_log', $query_array);
         return $results['result'];
