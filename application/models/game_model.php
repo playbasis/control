@@ -79,12 +79,11 @@ class Game_model extends MY_Model
             'status',
             'date_added',
             'date_modified',
-
         ));
 
         $this->mongo_db->where(array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
             'deleted' => false
         ));
 
@@ -94,6 +93,55 @@ class Game_model extends MY_Model
 
         $result = $this->mongo_db->get('playbasis_game_to_client');
 
+        return !empty($result) ? $result : array();
+    }
+
+    public function retrieveStage($client_id, $site_id, $game_id, $query_data)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('game_id', new MongoId($game_id));
+
+        if(isset($query_data['stage_name']) && !empty($query_data['stage_name'])){
+            $this->mongo_db->where('stage_name', $query_data['stage_name']);
+        }
+
+        if(isset($query_data['stage_level']) && !empty($query_data['stage_level'])){
+            $this->mongo_db->where('stage_level', (int)$query_data['stage_level']);
+        }
+
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'deleted' => false
+        ));
+
+        $result = $this->mongo_db->get('playbasis_game_stage_to_client');
+        return !empty($result) ? $result : array();
+    }
+
+    public function retrieveItem($client_id, $site_id, $game_id, $query_data, $item_id_list = null)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('game_id', new MongoId($game_id));
+
+        if (isset($query_data['game_item_name']) && !empty($query_data['game_item_name'])){
+            $this->mongo_db->where('game_item_name', $query_data['game_item_name']);
+        }
+        if (isset($query_data['game_item_id']) && !empty($query_data['game_item_id'])){
+            $this->mongo_db->where('_id', new MongoId($query_data['game_item_id']));
+        }
+
+        if (isset($item_id_list) && !empty($item_id_list)){
+            $this->mongo_db->where_in('item_id', $item_id_list);
+        }
+
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'deleted' => false
+        ));
+
+        $result = $this->mongo_db->get('playbasis_game_item_to_client');
         return !empty($result) ? $result : array();
     }
 }

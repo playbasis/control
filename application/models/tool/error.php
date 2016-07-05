@@ -552,6 +552,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Link cannot be found in branch.io";
                 $errorData['error_code'] = '3004';
                 break;
+            case 'GAME_NOT_FOUND':
+                $errorData['message'] = "Game input not found";
+                $errorData['error_code'] = '4000';
+                break;
             default:
                 $errorData['message'] = "Unknown";
                 $errorData['error_code'] = '9999';

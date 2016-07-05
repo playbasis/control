@@ -5265,7 +5265,7 @@
             {
               "Name": "sort",
               "Required": "N",
-              "Default": "title",
+              "Default": "",
               "Type": "string",
               "Description": "Specific field to sort ('game_name', 'date_added', 'date_modified', 'random')"
             },
@@ -5303,6 +5303,80 @@
               "Default": "",
               "Type": "string",
               "Description": "Specify status of the content to find. Possible values are true, false and all. The default value is true"
+            }
+          ]
+        },
+        {
+          "MethodName": "Retrieve Game stage setting",
+          "Synopsis": "Retrieve game stage setting by specified filter fields",
+          "HTTPMethod": "GET",
+          "URI": "/Game/stage",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "game_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific game_name"
+            },
+            {
+              "Name": "stage_level",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific stage level of game"
+            },
+            {
+              "Name": "stage_name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific stage name of game"
+            }
+          ]
+        },
+        {
+          "MethodName": "Retrieve Game item setting",
+          "Synopsis": "Retrieve game item setting by specified filter fields",
+          "HTTPMethod": "GET",
+          "URI": "/Game/item",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "game_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific game_name"
+            },
+            {
+              "Name": "game_item_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific game item id"
+            },
+            {
+              "Name": "game_item_name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific game item name"
+            },
+            {
+              "Name": "stage_level",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific stage level of game"
+            },
+            {
+              "Name": "stage_name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific stage name of game"
             }
           ]
         }

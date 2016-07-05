@@ -350,6 +350,8 @@ $route['Import/importSetting'] = 'import/importSetting';
 
 // Game API
 $route['Game'] = 'game/list';
+$route['Game/item'] = 'game/itemList/';
+$route['Game/stage'] = 'game/stageList';
 
 //misc
 //$route['test']	= 'playbasis/test';
