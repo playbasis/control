@@ -737,6 +737,9 @@ class Quest extends REST2_Controller
                 {
                     $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $reward['reward_data']['group'] , null , null , 1 );
                     $rand_goods = array_rand($goods_group_rewards, (int)$reward['reward_value']);
+                    if(!is_array($rand_goods)){
+                        $rand_goods = array($rand_goods);
+                    }
                     $i = 1;
                     foreach($rand_goods as $index){
                         $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $reward['reward_data']['group'] ,$player_id);
@@ -793,6 +796,9 @@ class Quest extends REST2_Controller
                 {
                     $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $reward['reward_data']['group'] , null , null , 1 );
                     $rand_goods = array_rand($goods_group_rewards, (int)$reward['reward_value']);
+                    if(!is_array($rand_goods)){
+                        $rand_goods = array($rand_goods);
+                    }
                     $i = 1;
                     foreach($rand_goods as $index){
                         $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $reward['reward_data']['group'] ,$player_id);
