@@ -139,9 +139,6 @@ class Quest_model extends MY_Model
         if ($filter_id) {
             $this->mongo_db->where_not_in('pb_player_id', $filter_id);
         }
-        if(isset($data['limit_adjust'])){
-            $this->mongo_db->limit((int)$data['limit_adjust']);
-        }
         return $this->mongo_db->get('playbasis_quest_to_player');
     }
 

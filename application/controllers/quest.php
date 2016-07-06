@@ -1796,25 +1796,21 @@ class Quest extends REST2_Controller
                         }
                     }
                     if(!isset($query_data['status']) || (isset($query_data['status']) && $query_data['status'] != 'finish')){
-                        if(!isset($query_data['limit']) || count($result) < $query_data['limit']){
-                            if(isset($query_data['limit'])) $query_data['limit_adjust'] = (int)$query_data['limit'] - count($result);
-                            $adjust_player = array();
-                            $player_quest = $this->quest_model->getAllPlayerByQuestId($query_data,$filter_id, isset($query_data['status']) ? $query_data['status'] : null);
-                            if (isset($player_quest) && is_array($player_quest)) foreach ($player_quest as $player_index => $player){
-                                array_push($adjust_player, array(
-                                    'current' => 0,
-                                    'date_completed' => $player['missions'][0]['date_modified'],
-                                    'player' => $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select),
-                                    'status' => 'join',
-                                    'goal' => (int)$quest['completion_value']
-                                ));
-                            }
-                            foreach ($adjust_player as $key => $row) {
-                                $cl_player[$key]  = $row['player']['cl_player_id'];
-                            }
-                            if(count($adjust_player) > 1) array_multisort($cl_player, SORT_ASC, $adjust_player);
-                            $result = array_merge(array_values($result), array_values($adjust_player));
+                        $adjust_player = array();
+                        $player_quest = $this->quest_model->getAllPlayerByQuestId($query_data,$filter_id, isset($query_data['status']) ? $query_data['status'] : null);
+                        if (isset($player_quest) && is_array($player_quest)) foreach ($player_quest as $player_index => $player){
+                            array_push($adjust_player, array(
+                                'current' => 0,
+                                'date_completed' => $player['missions'][0]['date_modified'],
+                                'player' => $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select),
+                                'goal' => (int)$quest['completion_value']
+                            ));
                         }
+                        foreach ($adjust_player as $key => $row) {
+                            $cl_player[$key]  = $row['player']['cl_player_id'];
+                        }
+                        if(count($adjust_player) > 1) array_multisort($cl_player, SORT_ASC, $adjust_player);
+                        $result = array_merge(array_values($result), array_values($adjust_player));
                     }
                     $offset = isset($query_data['offset']) && !empty($query_data['offset']) ? (int)$query_data['offset'] : 0;
                     $limit = isset($query_data['limit']) && !empty($query_data['limit']) && $query_data['limit'] <= count($result) - $offset ? (int)$query_data['limit']:null;
