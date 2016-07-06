@@ -1320,6 +1320,9 @@ class Engine extends Quest
         if(isset($goodsData['group']) && !empty($goodsData['group'])){
             $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $goodsData['group'] , null , null , 1 );
             $rand_goods = array_rand($goods_group_rewards, (int)$jigsawConfig['quantity']);
+            if(!is_array($rand_goods)){
+                $rand_goods = array($rand_goods);
+            }
             foreach($rand_goods as $index){
                 $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $goodsData['group'] , $input['pb_player_id']);
                 if(($goods_group_rewards[$index]['per_user'] > $player_goods) || ($goods_group_rewards[$index]['per_user'] == null)) {
