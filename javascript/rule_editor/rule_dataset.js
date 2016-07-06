@@ -188,9 +188,9 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                 ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+v.value+'</span>');
 
                 if(v.field_type == "collection"){
-                    ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+BadgeSet.getBadgeImage(v.value)+'</span>');
+                    ruleText = $('<span class="pbd_rule_text' + '">'+BadgeSet.getBadgeImage(v.value)+'</span>');
                 }else if(v.field_type == "collection-goods"){
-                    ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+GoodsSet.getGoodsImage(v.value)+'</span>');
+                    ruleText = $('<span class="pbd_rule_text' + '">'+GoodsSet.getGoodsImage(v.value)+'</span>');
                 }else if(v.field_type == "select"){
                     var template;
                     switch (v.type)
