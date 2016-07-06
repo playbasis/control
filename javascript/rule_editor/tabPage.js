@@ -107,13 +107,14 @@
                     var tableRow = $targetObj.parent().parent();
                     tableRow.find('img').remove();
                     tableRow.prepend( GoodsSet.getGoodsImage(send_data));
+                    tableRow.find('.pbd_rule_text').addClass('view_as_collection-goods');
                 }else{
                     $(opts.output_data).val(send_data);
                     //Append Goods Images here
                     var tableRow = $(opts.output_data).parent().parent();
                     tableRow.find('img').remove();
-                    // tableRow.find('input').hide();
                     tableRow.prepend( GoodsSet.getGoodsImage(send_data));
+                    tableRow.find('.pbd_rule_text').addClass('view_as_collection-goods');
                 }
             });
         }else{
@@ -128,13 +129,14 @@
                     var tableRow = $targetObj.parent().parent();
                     tableRow.find('img').remove();
                     tableRow.prepend( BadgeSet.getBadgeImage(send_data));
+                    tableRow.find('.pbd_rule_text').addClass('view_as_collection');
                 }else{
                     $(opts.output_data).val(send_data);
                     //Append Badges Images here
                     var tableRow = $(opts.output_data).parent().parent();
                     tableRow.find('img').remove();
-                    // tableRow.find('input').hide();
                     tableRow.prepend( BadgeSet.getBadgeImage(send_data));
+                    tableRow.find('.pbd_rule_text').addClass('view_as_collection');
                 }
             });
         }

@@ -188,6 +188,9 @@ function pb_sweapNodeDataRow() {
         tableRow.find('.pbd_rule_action span#pbd_rule_action_save').hide();
         tableRow.find('.pbd_rule_action span#pbd_rule_action_cancel').hide();
         tableRow.find('.pbd_rule_data .pbd_rule_text').show();
+
+        tableRow.find('.pbd_rule_data .view_as_collection').hide();
+        tableRow.find('.pbd_rule_data .view_as_collection-goods').hide();
         tableRow.find('.pbd_rule_data .pbd_rule_field').hide();
         pb_trace('pb_sweapNodeDataRow > display Text');
     }
