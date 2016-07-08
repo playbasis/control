@@ -42,7 +42,9 @@ class Game extends REST2_Controller
                     'date_end' => isset($template['date_end']) && !empty($template['date_end']) ? $template['date_end'] : null,
                 );
             }
+            unset($game['_id']);
         }
+        array_walk_recursive($games, array($this, "convert_mongo_object_and_optional"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -83,6 +85,7 @@ class Game extends REST2_Controller
         }else{
             $item = array();
         }
+        array_walk_recursive($item, array($this, "convert_mongo_object_and_optional"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -109,6 +112,8 @@ class Game extends REST2_Controller
         }
 
         $stage = $this->game_model->retrieveStage($this->client_id, $this->site_id, $game[0]['_id'], $query_data);
+        array_walk_recursive($stage, array($this, "convert_mongo_object_and_optional"));
+
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -128,5 +133,25 @@ class Game extends REST2_Controller
             }
         }
         return $list;
+    }
+
+    /**
+     * Use with array_walk and array_walk_recursive.
+     * Recursive iterable items to modify array's value
+     * from MongoId to string and MongoDate to readable date
+     * @param mixed $item this is reference
+     * @param string $key
+     */
+    private function convert_mongo_object_and_optional(&$item, $key)
+    {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else {
+                if (get_class($item) === 'MongoDate') {
+                    $item = datetimeMongotoReadable($item);
+                }
+            }
+        }
     }
 }

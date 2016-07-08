@@ -67,9 +67,6 @@ class Game_model extends MY_Model
         }
 
         $this->mongo_db->select(array(
-            '_id',
-            'client_id',
-            'site_id',
             'game_name',
             'item_category_id',
             'item_list',
@@ -80,6 +77,7 @@ class Game_model extends MY_Model
             'date_added',
             'date_modified',
         ));
+        //$this->mongo_db->select(array(), array('_id'));
 
         $this->mongo_db->where(array(
             'client_id' => new MongoId($client_id),
@@ -109,6 +107,17 @@ class Game_model extends MY_Model
             $this->mongo_db->where('stage_level', (int)$query_data['stage_level']);
         }
 
+        $this->mongo_db->select(array(
+            'game_id',
+            'stage_name',
+            'stage_level',
+            'item_id',
+            'status',
+            'date_added',
+            'date_modified',
+        ));
+        $this->mongo_db->select(array(), array('_id'));
+
         $this->mongo_db->where(array(
             'client_id' => new MongoId($client_id),
             'site_id' => new MongoId($site_id),
@@ -134,6 +143,16 @@ class Game_model extends MY_Model
         if (isset($item_id_list) && !empty($item_id_list)){
             $this->mongo_db->where_in('item_id', $item_id_list);
         }
+
+        $this->mongo_db->select(array(
+            'game_id',
+            'item_id',
+            'game_item_name',
+            'status',
+            'date_added',
+            'date_modified',
+        ));
+        $this->mongo_db->select(array(), array('_id'));
 
         $this->mongo_db->where(array(
             'client_id' => new MongoId($client_id),
