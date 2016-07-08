@@ -8,6 +8,7 @@ class Game extends REST2_Controller
     {
         parent::__construct();
         $this->load->model('game_model');
+        $this->load->model('template_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -28,6 +29,20 @@ class Game extends REST2_Controller
         }
 
         $games = $this->game_model->retrieveGame($this->client_id, $this->site_id, $query_data);
+
+        // Find game template
+        foreach ($games as &$game){
+            $template = $this->template_model->getTemplateById($this->client_id, $this->site_id, array(
+                'game_id' => $game['_id']
+            ));
+            if (isset($template) && !empty($template)) {
+                $game['template'] = array(
+                    'config' => isset($template['config']) && !empty($template['config']) ? $template['config'] : null,
+                    'date_start' => isset($template['date_start']) && !empty($template['date_start']) ? $template['date_start'] : null,
+                    'date_end' => isset($template['date_end']) && !empty($template['date_end']) ? $template['date_end'] : null,
+                );
+            }
+        }
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
