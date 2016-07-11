@@ -108,7 +108,7 @@ class Game_model extends MY_Model
         }
 
         $this->mongo_db->select(array(
-            'game_id',
+            //'game_id',
             'stage_name',
             'stage_level',
             'item_id',
@@ -145,7 +145,7 @@ class Game_model extends MY_Model
         }
 
         $this->mongo_db->select(array(
-            'game_id',
+            //'game_id',
             'item_id',
             'game_item_name',
             'status',

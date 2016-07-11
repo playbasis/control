@@ -42,6 +42,20 @@ class Game extends REST2_Controller
                     'date_end' => isset($template['date_end']) && !empty($template['date_end']) ? $template['date_end'] : null,
                 );
             }
+
+            if (isset($query_data['game_name']) && !empty($query_data['game_name'])){
+                $stages = $this->game_model->retrieveStage($this->client_id, $this->site_id, $game['_id'], array(
+                    'stage_level' => isset($query_data['stage_level']) && !empty($query_data['stage_level']) ? $query_data['stage_level'] : null,
+                    'stage_name' => isset($query_data['stage_name']) && !empty($query_data['stage_name']) ? $query_data['stage_name'] : null,
+                ));
+
+                foreach ($stages as &$stage){
+                    $stage['item'] = $this->game_model->retrieveItem($this->client_id, $this->site_id, $game['_id'], $query_data, $stage['item_id']);
+                    unset($stage['item_id']);
+                }
+                $game['stage'] = $stages;
+
+            }
             unset($game['_id']);
         }
         array_walk_recursive($games, array($this, "convert_mongo_object_and_optional"));
