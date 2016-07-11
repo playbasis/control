@@ -150,7 +150,7 @@ Node.prototype.getHTML = function(){
     this.mRuleHTML += '<div class="box-header"><h2><span class="icon-holder">' +
         '<i class="'+boxIcon+' icon-white"></i></span><span class="break"></span>' +
         '<span class="pbd_rulebox_name"><span class="name_only">' +
-        '<span class="name_type">'+this.category+'</span>&nbsp;:&nbsp;'+this.jigsawName.toUpperCase()+'</span>  </span></h2>' +
+        '<span class="name_type">'+this.category+'</span>&nbsp;:&nbsp;'+(this.jigsawName == "badge" ? "ITEM" : this.jigsawName.toUpperCase())+'</span>  </span></h2>' +
         '<div class="rule-mini"></div><div class="box-icon"><a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>' +
         '<a href="#" class="pbd_btn_close"><i class="icon-remove"></i></a></div></div>';
     //node body content

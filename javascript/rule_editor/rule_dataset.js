@@ -137,7 +137,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                 jigsaw.addClass('table-group');
             }
 
-            _pushDatasetRowToJigsaw = function(k,v){
+            _pushDatasetRowToJigsaw = function(k,v,badge_id){
                 var row = $('<tr>').addClass('pbd_rule_param state_text parent_id_'+parent_id),
                     labelColumn = $('<td>').addClass('pbd_rule_label'),
                     dataColumn = $('<td>').addClass('pbd_rule_data');
@@ -185,7 +185,12 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                 // console.log(inputType);
 
                 ruleField = $('<span class="pbd_rule_field">').append(inputType);
-                ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+v.value+'</span>');
+                if(badge_id != "0" && badge_id != undefined){
+                    ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+BadgeSet.getBadgeName(badge_id)+'</span>');
+                }else{
+                    ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+(v.value == "badge" ? "item" : v.value)+'</span>');
+                }
+
 
                 if(v.field_type == "collection"){
                     ruleText = $('<span class="pbd_rule_text' + '">'+BadgeSet.getBadgeImage(v.value)+'</span>');
@@ -299,8 +304,9 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                     _pushGroupContainerRowToJigsaw(k, v, parent_id);
                 }else if (v.field_type == 'condition_group_container') {
                     _pushConditionGroupContainerRowToJigsaw(k, v, parent_id);
-                }
-                else{
+                }else if(v.field_type == 'read_only' && v.value == 'badge'){
+                    _pushDatasetRowToJigsaw(k, v, jsonArray[k+1].value);
+                }else{
                     _pushDatasetRowToJigsaw(k, v);
                 }
             });
@@ -806,6 +812,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         rowText.hide();
                         rowText.parent().find('img').remove();
                         rowText.parent().prepend(BadgeSet.getBadgeImage(key))
+                        rowText.parent().parent().parent().find('.view_as_read_only').html(BadgeSet.getBadgeName(key));
                     }
 
                     else if($thisrow.find('.collection_goods').length > 0) {

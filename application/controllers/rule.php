@@ -594,6 +594,7 @@ class Rule extends MY_Controller
     {
         $this->load->model('Badge_model');
 
+        $client_id = $this->User_model->isAdmin() ? null : $this->User_model->getClientId();
         $site_id = $this->User_model->isAdmin() ? null : $this->User_model->getSiteId();
         //if ($site_id) {
         $badge_data = array(
@@ -601,17 +602,29 @@ class Rule extends MY_Controller
             'sort' => 'sort_order'
         );
 
+        $itemCategory = $this->Badge_model->retrieveItemCategoryName($client_id, $site_id);
+        $categoryName = array();
+        foreach ($itemCategory as &$c) {
+            $categoryName[$c['_id'] . ""] = $c['name'];
+        }
+
         $badges = $site_id ? $this->Badge_model->getBadgeBySiteId($badge_data) : $this->Badge_model->listBadgesTemplate();
+        $badgeToCategory[''] = array();
 
         foreach ($badges as &$b) {
             $b['_id'] = $b['_id'] . "";
             $b['badge_id'] = isset($b['badge_id']) ? $b['badge_id'] . "" : $b['_id'];
             $b['client_id'] = isset($b['client_id']) ? $b['client_id'] . "" : null;
             $b['site_id'] = isset($b['site_id']) ? $b['site_id'] . "" : null;
-        }
-        $json['badges'] = $badges;
+            if(array_key_exists($b['category']."",$categoryName)){
+                $badgeToCategory[$categoryName[$b['category'].""]][] = $b;
+            }else{
+                $badgeToCategory[''][] = $b;
+            }
 
-        $this->output->set_output(json_encode($json));
+        }
+
+        $this->output->set_output(json_encode($badgeToCategory));
         //}
     }
 
