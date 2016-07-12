@@ -73,7 +73,6 @@ class Game_model extends MY_Model
             'image',
             'game_config',
             'tags',
-            'status',
             'date_added',
             'date_modified',
         ));
@@ -111,10 +110,12 @@ class Game_model extends MY_Model
             //'game_id',
             'stage_name',
             'stage_level',
+            'descriptrion',
+            'stage_config',
+            'image',
             'item_id',
-            'status',
-            'date_added',
-            'date_modified',
+            //'date_added',
+            //'date_modified',
         ));
         $this->mongo_db->select(array(), array('_id'));
 
@@ -147,10 +148,9 @@ class Game_model extends MY_Model
         $this->mongo_db->select(array(
             //'game_id',
             'item_id',
-            'game_item_name',
-            'status',
-            'date_added',
-            'date_modified',
+            'item_config',
+            //'date_added',
+            //'date_modified',
         ));
         $this->mongo_db->select(array(), array('_id'));
 
