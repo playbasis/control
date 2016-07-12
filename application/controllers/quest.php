@@ -1153,6 +1153,8 @@ class Quest extends REST2_Controller
                 } else {
                     $quests[$quest]["quest_id"] = $quests[$quest]["_id"];
                     unset($quests[$quest]["_id"]);
+                    unset($quests[$quest]['client_id']);
+                    unset($quests[$quest]['site_id']);
                     array_push($resp["quests"], $quests[$quest]);
                 }
             }
@@ -1190,6 +1192,8 @@ class Quest extends REST2_Controller
                 $resp['quest'] = $quest;
                 $resp['quest']['quest_id'] = $quest['_id'];
                 unset($resp['quest']['_id']);
+                unset($resp['quest']['client_id']);
+                unset($resp['quest']['site_id']);
             } else {
                 $this->response($this->error->setError("QUEST_JOIN_OR_CANCEL_NOTFOUND"), 200);
             }
@@ -1207,6 +1211,8 @@ class Quest extends REST2_Controller
             foreach ($quest as $key => $value) {
                 $quest[$key]['quest_id'] = $quest[$key]['_id'];
                 unset($quest[$key]['_id']);
+                unset($quest[$key]['client_id']);
+                unset($quest[$key]['site_id']);
             }
             $resp['quests'] = $quest;
         }
