@@ -164,7 +164,7 @@ class Game_model extends MY_Model
         return !empty($result) ? $result : array();
     }
 
-    public function getTemplateById($client_id, $site_id, $query_data)
+    public function getTemplateByCurrentDate($client_id, $site_id, $query_data)
     {
         $this->set_site_mongodb($site_id);
         if (isset($query_data['game_id']) && !empty($query_data['game_id'])) {
@@ -178,13 +178,13 @@ class Game_model extends MY_Model
                 array(
                     '$or' => array(
                         array('date_start' => array('$lt' => new MongoDate())),
-                        array('date_start' => null)
+                        //array('date_start' => null)
                     )
                 ),
                 array(
                     '$or' => array(
                         array('date_end' => array('$gte' => new MongoDate())),
-                        array('date_end' => null)
+                        //array('date_end' => null)
                     )
                 )
             )
@@ -200,5 +200,50 @@ class Game_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_game_template_to_client');
         return !empty($result) ? $result[0] : array();
 
+    }
+
+    public function getTemplate($client_id, $site_id, $query_data)
+    {
+        $this->set_site_mongodb($site_id);
+        if (isset($query_data['game_id']) && !empty($query_data['game_id'])) {
+            $this->mongo_db->where('game_id', new MongoId($query_data['game_id']));
+        }else{
+            return false;
+        }
+
+        if (isset($query_data['template_id']) && !empty($query_data['template_id'])){
+            $this->mongo_db->where('_id', new MongoId($query_data['template_id']));
+        }
+        if (isset($query_data['template_name']) && !empty($query_data['template_name'])){
+            $this->mongo_db->where('template_name', $query_data['template_name']);
+        }
+
+        $this->mongo_db->limit(1);
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'deleted' => false
+        ));
+
+        $result = $this->mongo_db->get('playbasis_game_template_to_client');
+        return !empty($result) ? $result[0] : array();
+
+    }
+
+    public function getItemTemplate($client_id, $site_id, $query_data)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'game_id' => new MongoId($query_data['game_id']),
+            'item_id' => new MongoId($query_data['item_id']),
+            'template_id' => new MongoId($query_data['template_id']),
+            'deleted' => false
+        ));
+
+        $result = $this->mongo_db->get('playbasis_game_item_to_template');
+        return !empty($result) ? $result[0] : array();
     }
 }

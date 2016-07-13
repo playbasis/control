@@ -32,16 +32,24 @@ class Game extends REST2_Controller
 
         // Find game template
         foreach ($games as &$game){
-            $template = $this->game_model->getTemplateById($this->client_id, $this->site_id, array(
+
+            $template = $this->game_model->getTemplateByCurrentDate($this->client_id, $this->site_id, array(
                 'game_id' => $game['_id']
             ));
-            if (isset($template)) {
-                $game['template'] = array(
-                    'config' => isset($template['config']) && !empty($template['config']) ? $template['config'] : null,
-                    //'date_start' => isset($template['date_start']) && !empty($template['date_start']) ? $template['date_start'] : null,
-                    //'date_end' => isset($template['date_end']) && !empty($template['date_end']) ? $template['date_end'] : null,
-                );
+
+            // Get 'default' template if template not found
+            if (empty($template)) {
+                $template = $this->game_model->getTemplate($this->client_id, $this->site_id, array(
+                    'game_id' => $game['_id'],
+                    'template_name' => 'default',
+                ));
             }
+            $game['template'] = array(
+                'template_name' => isset($template['template_name']) && !empty($template['template_name']) ? $template['template_name'] : null,
+                'config' => isset($template['config']) && !empty($template['config']) ? $template['config'] : null,
+                //'date_start' => isset($template['date_start']) && !empty($template['date_start']) ? $template['date_start'] : null,
+                //'date_end' => isset($template['date_end']) && !empty($template['date_end']) ? $template['date_end'] : null,
+            );
 
             // Show stage and item config if required
             if (isset($query_data['game_name']) && !empty($query_data['game_name'])){
@@ -66,6 +74,15 @@ class Game extends REST2_Controller
                             'site_id' => $this->site_id,
                             'badge_id' => new MongoId($item['item_id']),
                         ))['name'];
+
+                        // Get item template
+                        $item_template = $this->game_model->getItemTemplate($this->client_id, $this->site_id, array(
+                            'game_id' => $game['_id'],
+                            'item_id' => $item['item_id'],
+                            'template_id' => $template['_id'],
+                        ));
+                        $item['images'] = isset($item_template['images']) && !empty($item_template['images']) ? $item_template['images'] : null;
+
                         unset($item['item_id']);
                     }
                     $stage['item'] = $items;
