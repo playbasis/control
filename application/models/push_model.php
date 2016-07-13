@@ -105,20 +105,20 @@ class Push_model extends MY_Model
                 break;
 
             case "android":
-                $setup = $this->getAndroidSetup();
+                $setup = $this->getAndroidSetup($data['data']['client_id'], $data['data']['site_id']);
                 if (!$setup) {
                     break;
                 } // suppress the error for now
 
                 $api_access_key = $setup['api_key'];
 
-
                 //define( 'API_ACCESS_KEY', 'AIzaSyCeCZPwysyiPnP4A-PWKFiSgz_QbWYPFtE' );
-                $registrationIds = $data['device_token'];
+                //$registrationIds = $data['device_token'];
+                $registrationIds =  array($data['device_token']);
                 $msg = array
                 (
                     'message' => $data['messages'],
-                    //'title'       => $data['title'],
+                    'title'  => 'Playbasis API',
                     //'subtitle'    => $data['subtitle'],
                     //'tickerText'  => $data['description'],
                     'badge' => $data['badge_number'],
@@ -126,8 +126,7 @@ class Push_model extends MY_Model
                     'sound' => 1,
                     'largeIcon' => 'large_icon',
                     'smallIcon' => 'small_icon',
-                    'dataInfo',
-                    $data['data']
+                    'dataInfo' => $data['data']
                 );
 
                 $fields = array
