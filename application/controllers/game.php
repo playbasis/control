@@ -7,8 +7,8 @@ class Game extends REST2_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('badge_model');
         $this->load->model('game_model');
-        $this->load->model('template_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -32,29 +32,46 @@ class Game extends REST2_Controller
 
         // Find game template
         foreach ($games as &$game){
-            $template = $this->template_model->getTemplateById($this->client_id, $this->site_id, array(
+            $template = $this->game_model->getTemplateById($this->client_id, $this->site_id, array(
                 'game_id' => $game['_id']
             ));
-            if (isset($template) && !empty($template)) {
+            if (isset($template)) {
                 $game['template'] = array(
                     'config' => isset($template['config']) && !empty($template['config']) ? $template['config'] : null,
-                    'date_start' => isset($template['date_start']) && !empty($template['date_start']) ? $template['date_start'] : null,
-                    'date_end' => isset($template['date_end']) && !empty($template['date_end']) ? $template['date_end'] : null,
+                    //'date_start' => isset($template['date_start']) && !empty($template['date_start']) ? $template['date_start'] : null,
+                    //'date_end' => isset($template['date_end']) && !empty($template['date_end']) ? $template['date_end'] : null,
                 );
             }
 
+            // Show stage and item config if required
             if (isset($query_data['game_name']) && !empty($query_data['game_name'])){
                 $stages = $this->game_model->retrieveStage($this->client_id, $this->site_id, $game['_id'], array(
                     'stage_level' => isset($query_data['stage_level']) && !empty($query_data['stage_level']) ? $query_data['stage_level'] : null,
                     'stage_name' => isset($query_data['stage_name']) && !empty($query_data['stage_name']) ? $query_data['stage_name'] : null,
                 ));
+                if ((isset($query_data['stage_level']) && !empty($query_data['stage_level'])) || (isset($query_data['stage_name']) && !empty($query_data['stage_name']))){
+                    if (empty($stages)){
+                        $this->response($this->error->setError('GAME_STAGE_NOT_FOUND'), 200);
+                    }
+                }
 
+                // Get stage setting
                 foreach ($stages as &$stage){
-                    $stage['item'] = $this->game_model->retrieveItem($this->client_id, $this->site_id, $game['_id'], $query_data, $stage['item_id']);
+                    $items = $this->game_model->retrieveItem($this->client_id, $this->site_id, $game['_id'], $query_data, $stage['item_id']);
+
+                    // Get item name
+                    foreach ($items as &$item){
+                        $item['item_name'] = $this->badge_model->getBadge(array(
+                            'client_id' => $this->client_id,
+                            'site_id' => $this->site_id,
+                            'badge_id' => new MongoId($item['item_id']),
+                        ))['name'];
+                        unset($item['item_id']);
+                    }
+                    $stage['item'] = $items;
                     unset($stage['item_id']);
                 }
                 $game['stage'] = $stages;
-
             }
             unset($game['_id']);
         }
@@ -62,7 +79,7 @@ class Game extends REST2_Controller
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $games, 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond($games), 200);
     }
 
     public function itemList_get()
