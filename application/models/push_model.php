@@ -114,8 +114,7 @@ class Push_model extends MY_Model
 
                 //define( 'API_ACCESS_KEY', 'AIzaSyCeCZPwysyiPnP4A-PWKFiSgz_QbWYPFtE' );
                 //$registrationIds = $data['device_token'];
-                $registrationIds = array();
-                array_push($registrationIds, $data['device_token']);
+                $registrationIds =  array($data['device_token']);
                 $msg = array
                 (
                     'message' => $data['messages'],
