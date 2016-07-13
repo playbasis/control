@@ -9,7 +9,6 @@ class Game extends REST2_Controller
         parent::__construct();
         $this->load->model('badge_model');
         $this->load->model('game_model');
-        $this->load->model('template_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -33,7 +32,7 @@ class Game extends REST2_Controller
 
         // Find game template
         foreach ($games as &$game){
-            $template = $this->template_model->getTemplateById($this->client_id, $this->site_id, array(
+            $template = $this->game_model->getTemplateById($this->client_id, $this->site_id, array(
                 'game_id' => $game['_id']
             ));
             if (isset($template)) {
