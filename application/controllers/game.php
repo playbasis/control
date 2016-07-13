@@ -50,6 +50,11 @@ class Game extends REST2_Controller
                     'stage_level' => isset($query_data['stage_level']) && !empty($query_data['stage_level']) ? $query_data['stage_level'] : null,
                     'stage_name' => isset($query_data['stage_name']) && !empty($query_data['stage_name']) ? $query_data['stage_name'] : null,
                 ));
+                if ((isset($query_data['stage_level']) && !empty($query_data['stage_level'])) || (isset($query_data['stage_name']) && !empty($query_data['stage_name']))){
+                    if (empty($stages)){
+                        $this->response($this->error->setError('GAME_STAGE_NOT_FOUND'), 200);
+                    }
+                }
 
                 // Get stage setting
                 foreach ($stages as &$stage){
@@ -75,7 +80,7 @@ class Game extends REST2_Controller
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $games, 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond($games), 200);
     }
 
     public function itemList_get()

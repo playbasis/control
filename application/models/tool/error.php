@@ -556,6 +556,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Game input not found";
                 $errorData['error_code'] = '4000';
                 break;
+            case 'GAME_STAGE_NOT_FOUND':
+                $errorData['message'] = "Game stage not found";
+                $errorData['error_code'] = '4001';
+                break;
             default:
                 $errorData['message'] = "Unknown";
                 $errorData['error_code'] = '9999';
