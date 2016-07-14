@@ -113,7 +113,7 @@ class Game_model extends MY_Model
             'descriptrion',
             'stage_config',
             'image',
-            'item_id',
+            'item_list',
             //'date_added',
             //'date_modified',
         ));
@@ -245,5 +245,30 @@ class Game_model extends MY_Model
 
         $result = $this->mongo_db->get('playbasis_game_item_to_template');
         return !empty($result) ? $result[0] : array();
+    }
+
+    public function getStageToPlayer($client_id, $site_id, $game_id, $pb_player_id, $query_data)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'game_id' => new MongoId($game_id),
+            'pb_player_id' => new MongoId($pb_player_id),
+        ));
+
+        if(isset($query_data['stage_level']) && !empty($query_data['stage_level'])){
+            $this->mongo_db->where('stage_level', (int)$query_data['stage_level']);
+        }
+        if (isset($query_data['is_current']) && !empty($query_data['is_current'])){
+            $this->mongo_db->where('is_current', (bool)$query_data['is_current']);
+            $this->mongo_db->limit(1);
+        }
+        $this->mongo_db->order_by(array('stage_level' => 'asc'));
+
+
+        $result = $this->mongo_db->get('playbasis_game_stage_to_player');
+        return $result ? $result[0] : null;
     }
 }

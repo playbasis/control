@@ -560,6 +560,18 @@ class Error extends CI_Model
                 $errorData['message'] = "Game stage not found";
                 $errorData['error_code'] = '4001';
                 break;
+            case 'GAME_ITEM_NOT_IN_STAGE':
+                $errorData['message'] = "Item does not exist in this game stage";
+                $errorData['error_code'] = '4002';
+                break;
+            case 'GAME_STAGE_NEVER_BEEN_SET':
+                $errorData['message'] = "Game stage has never been set";
+                $errorData['error_code'] = '4003';
+                break;
+            case 'GAME_ITEM_NOT_IN_CURRENT_STAGE':
+                $errorData['message'] = "Item does not exist in current game stage";
+                $errorData['error_code'] = '4004';
+                break;
             default:
                 $errorData['message'] = "Unknown";
                 $errorData['error_code'] = '9999';

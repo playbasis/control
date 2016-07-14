@@ -9,6 +9,8 @@ class Game extends REST2_Controller
         parent::__construct();
         $this->load->model('badge_model');
         $this->load->model('game_model');
+        $this->load->model('reward_model');
+        $this->load->model('player_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -65,7 +67,7 @@ class Game extends REST2_Controller
 
                 // Get stage setting
                 foreach ($stages as &$stage){
-                    $items = $this->game_model->retrieveItem($this->client_id, $this->site_id, $game['_id'], $query_data, $stage['item_id']);
+                    $items = $this->game_model->retrieveItem($this->client_id, $this->site_id, $game['_id'], $query_data, $stage['item_list']);
 
                     // Get item name
                     foreach ($items as &$item){
@@ -86,7 +88,7 @@ class Game extends REST2_Controller
                         unset($item['item_id']);
                     }
                     $stage['item'] = $items;
-                    unset($stage['item_id']);
+                    unset($stage['item_list']);
                 }
                 $game['stage'] = $stages;
             }
@@ -124,7 +126,7 @@ class Game extends REST2_Controller
         if ((isset($query_data['stage_level']) && !empty($query_data['stage_level'])) ||
             (isset($query_data['stage_name']) && !empty($query_data['stage_name']))) {
             $stage = $this->game_model->retrieveStage($this->client_id, $this->site_id, $game[0]['_id'], $query_data);
-            $item_id_list = (isset($stage[0]['item_id']) && !empty($stage[0]['item_id']) ? $stage[0]['item_id'] : null);
+            $item_id_list = (isset($stage[0]['item_list']) && !empty($stage[0]['item_list']) ? $stage[0]['item_list'] : null);
         }
 
         // Return empty array if item_id_list is null which means invalid stage input
@@ -202,4 +204,168 @@ class Game extends REST2_Controller
             }
         }
     }
+
+    private function getPlayerItemStatus($game_id, $pb_player_id, $harvested_item, $item_id){
+        $item_status = array();
+        $item_status['item_id'] = $item_id;
+        $item_status['item_name'] = $this->badge_model->getBadgeName($this->client_id, $this->site_id, $item_id);
+        // get item config
+        $item_info = $this->game_model->retrieveItem($this->client_id, $this->site_id, $game_id, null, array(new MongoId($item_id)));
+        if($item_info){
+            $item_status['item_config'] = $item_info[0]['item_config'];
+        }else{
+            $item_status['item_config'] = null;
+        }
+
+
+        if (in_array(new MongoId($item_id), $harvested_item)) {
+            $item_status['item_status'] = "harvested";
+            $item_status['item_image'] = null;
+        }else{
+            $item_record = $this->reward_model->getItemToPlayerRecords($this->client_id, $this->site_id, $pb_player_id, $item_id);
+            if ($item_record) {
+                /* $now = new Datetime('now');
+                 $updated_date = new Datetime(datetimeMongotoReadable(isset($item_record['date_modified'] ) ? $item_record['date_modified'] : $item_records['date_added']));
+                 $interval = $now->diff($updated_date);*/
+
+                $item_status['item_status'] = $item_record['value'] . "";
+            } else {
+                $item_status['item_status'] = "0";
+            }
+
+            // Get current game template
+            $template = $this->game_model->getTemplateByCurrentDate($this->client_id, $this->site_id, array(
+                'game_id' => $game_id
+            ));
+
+            // Get 'default' template if current template not found
+            if (empty($template)) {
+                $template = $this->game_model->getTemplate($this->client_id, $this->site_id, array(
+                    'game_id' => $game_id,
+                    'template_name' => 'default',
+                ));
+            }
+
+            // Get item template
+            $item_template = $this->game_model->getItemTemplate($this->client_id, $this->site_id, array(
+                'game_id' => $game_id,
+                'item_id' => $item_id,
+                'template_id' => $template['_id'],
+            ));
+            $item_level = (int)$item_status['item_status'];
+            $item_status['item_image'] = isset($item_template['images'][$item_level]) && $item_template['images'][$item_level] ? $item_template['images'][$item_level] : null;
+        }
+
+        return $item_status;
+    }
+
+    public function playerItemStatus_get()
+    {
+        //$this->benchmark->mark('start');
+        $query_data = $this->input->get(null, true);
+        $required = $this->input->checkParam(array(
+            'game_name',
+            'player_id',
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        //validate playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $query_data['player_id']
+        )));
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        //validate game name
+        $game = $this->game_model->retrieveGame($this->client_id, $this->site_id, array(
+            'game_name' => $query_data['game_name'],
+            'order' => 'desc'
+        ));
+        if (empty($game)){
+            $this->response($this->error->setError('GAME_NOT_FOUND'), 200);
+        }
+        $game_id = $game[0]['_id'];
+
+        $response = array();
+
+        if(strtolower($query_data['game_name']) == "farm") {
+
+            if( (isset($query_data['stage_level']) && $query_data['stage_level']) ){
+
+                $stage_info = $this->game_model->retrieveStage($this->client_id, $this->site_id, $game_id, array('stage_level' =>   $query_data['stage_level'] ));
+                if ($stage_info){
+                    $stage_info = $stage_info[0];
+
+                    $harvested_item = array();
+                    $stage_to_player = $this->game_model->getStageToPlayer($this->client_id, $this->site_id, $game_id, $pb_player_id, array('stage_level' => $query_data['stage_level']));
+                    if (isset($stage_to_player['harvested_item']) && $stage_to_player['harvested_item']) {
+                        $harvested_item = $stage_to_player['harvested_item'];
+                    }
+
+                    if((isset($query_data['item_id']) && $query_data['item_id'])){
+                        if (!in_array(new MongoId($query_data['item_id']), $stage_info['item_list'])) {
+                            $this->response($this->error->setError('GAME_ITEM_NOT_IN_STAGE'), 200);
+                        }
+                        $response = $this->getPlayerItemStatus($game_id, $pb_player_id, $harvested_item, $query_data['item_id']);
+                    }
+                    else{
+                        $list_item_id = $stage_info['item_list'];
+
+                        $response['stage_level'] = $stage_info['stage_level'];
+                        $response['stage_name'] = $stage_info['stage_name'];
+                        $response['items_status'] = array();
+                        foreach ($list_item_id as $item_id) {
+                            $response['items_status'][]  = $this->getPlayerItemStatus($game_id, $pb_player_id, $harvested_item, $item_id."");
+                        }
+                    }
+                }else{
+                    $this->response($this->error->setError('GAME_STAGE_NOT_FOUND'), 200);
+                }
+            }
+            else{
+                $harvested_item = array();
+                $stage_to_player = $this->game_model->getStageToPlayer($this->client_id, $this->site_id, $game_id, $pb_player_id, array('is_current' => true));
+                if ($stage_to_player) {
+                    $current_stage = $stage_to_player['stage_level'];
+                    $harvested_item = $stage_to_player['harvested_item'];
+                } else {
+                    $current_stage = 1;
+                    $stage_1 = $this->game_model->getStageToPlayer($this->client_id, $this->site_id, $game_id, $pb_player_id,array('stage_level' => $current_stage));
+                    if ($stage_1) {
+                        $harvested_item = $stage_1['harvested_item'];
+                    }
+                }
+                $stage_info = $this->game_model->retrieveStage($this->client_id, $this->site_id, $game_id, array('stage_level' =>   $current_stage ));
+                if ($stage_info) {
+                    $stage_info = $stage_info[0];
+                    if ((isset($query_data['item_id']) && $query_data['item_id'])) {
+                        if (!in_array(new MongoId($query_data['item_id']), $stage_info['item_list'])) {
+                            $this->response($this->error->setError('GAME_ITEM_NOT_IN_CURRENT_STAGE'), 200);
+                        }
+                        $response = $this->getPlayerItemStatus($game_id, $pb_player_id, $harvested_item, $query_data['item_id']);
+                    } else {
+                        $list_item_id = $stage_info['item_list'];
+
+                        $response['stage_level'] = $stage_info['stage_level'];
+                        $response['stage_name'] = $stage_info['stage_name'];
+                        $response['items_status'] = array();
+                        foreach ($list_item_id as $item_id) {
+                            $response['items_status'][] = $this->getPlayerItemStatus($game_id, $pb_player_id, $harvested_item, $item_id . "");
+                        }
+                    }
+                }else{
+                    $this->response($this->error->setError('GAME_STAGE_NEVER_BEEN_SET'), 200);
+                }
+            }
+        }
+
+        //$this->benchmark->mark('end');
+        //$t = $this->benchmark->elapsed_time('start', 'end');
+        //$this->response($this->resp->setRespond(array( 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond($response), 200);
+    }
+
 }
