@@ -83,6 +83,64 @@
     </div>
 </div>
 
+<div class="modal hide" id="savedDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h1>Data Saved</h1>
+    </div>
+    <div class="modal-body">
+        <div>
+            <i class="fa fa-save"></i>&nbsp;<span>Data has been saved!</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <h1>Please Wait</h1>
+    </div>
+    <div class="modal-body">
+        <div class="offset5 ">
+            <i class="fa fa-spinner fa-spin fa-5x"></i>
+        </div>
+    </div>
+</div>
+
+<div id="pleaseWaitSpanDiv" class="hide">
+    <span id="pleaseWaitSpan"><i class="fa fa-spinner fa-spin"></i></span>
+</div>
+
+<!-- Error Modal -->
+<div id="errorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Warning !</h3>
+    </div>
+    <div class="modal-body red">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Warning !</h3>
+    </div>
+    <div class="modal-body">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
 <div id="formItemModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formItemModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -185,66 +243,9 @@
     </div>
 </div>
 
-<div class="modal hide" id="savedDialog" data-backdrop="static" data-keyboard="false">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h1>Data Saved</h1>
-    </div>
-    <div class="modal-body">
-        <div>
-            <i class="fa fa-save"></i>&nbsp;<span>Data has been saved!</span>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    </div>
-</div>
-
-<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
-    <div class="modal-header">
-        <h1>Please Wait</h1>
-    </div>
-    <div class="modal-body">
-        <div class="offset5 ">
-            <i class="fa fa-spinner fa-spin fa-5x"></i>
-        </div>
-    </div>
-</div>
-
-<div id="pleaseWaitSpanDiv" class="hide">
-    <span id="pleaseWaitSpan"><i class="fa fa-spinner fa-spin"></i></span>
-</div>
-
-<!-- Error Modal -->
-<div id="errorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Warning !</h3>
-    </div>
-    <div class="modal-body red">
-        <p>One fine body…</p>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
-    </div>
-</div>
-
-<!-- Success Modal -->
-<div id="successModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Warning !</h3>
-    </div>
-    <div class="modal-body">
-        <p>One fine body…</p>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
-    </div>
-</div>
 
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="<?php echo base_url(); ?>javascript/custom/bootstrap-switch.min.js"></script>
+<script src="<?php echo base_url(); ?>javascript/custom/bootstrap-switch.min.js" type="text/javascript" ></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
@@ -284,7 +285,9 @@
             }else{
                 $('#errorModal').find('#myModalLabel').html("Warning !");
             }
-            $('#errorModal').modal({'backdrop': true});
+            $('#errorModal').removeClass('hide');
+            $('#errorModal').removeClass('in');
+            $('#errorModal').modal();
             $('#errorModal .modal-body').html(msg);
         }
     }
@@ -642,8 +645,8 @@
         var dialogMsg = "";
 
         if(template_id == "tab-end"){
-            for(var i=0; i< templateData.size;){
-
+            for(var i=0; i< templateData.length; i++){
+                if(template_name == templateData[i].name) dialogMsg += '- Template Name is required uniuqe name<br>';
             }
         }
 
@@ -651,7 +654,6 @@
         if (template_weight < 0) dialogMsg += '- Level is required at least 1<br>';
         if (template_start > template_end) dialogMsg += '- Date start should be less than date end<br>';
 
-        if(!check_level) dialogMsg += '- Level 1 is require<br>';
         if(dialogMsg != ""){
             preventUnusual.message(dialogMsg , "Fail!");
         } else {
