@@ -1800,4 +1800,403 @@ class Player_model extends MY_Model
         $this->mongo_db->where_in('pb_player_id', $pb_player_id_list);
         return $this->mongo_db->get("playbasis_store_organize_to_player");
     }
+
+    public function findLatestProcessActionLogTime()
+    {
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->get('playbasis_player_dau_latest');
+    }
+
+
+    public function listActionLog($d)
+    {
+        $this->mongo_db->select(array(
+            'pb_player_id',
+            'client_id',
+            'site_id',
+            'action_id',
+            'date_modified',
+        ));
+        if ($d) {
+            $this->mongo_db->where_gt('date_modified', $d);
+        }
+        $this->mongo_db->order_by(array('date_modified' => 'ASC'));
+        return $this->mongo_db->get('playbasis_action_log', true);
+    }
+
+    public function computeDau($action, $d)
+    {
+        $this->mongo_db->select(array());
+        $this->mongo_db->where(array(
+            'pb_player_id' => $action['pb_player_id'],
+            'client_id' => $action['client_id'],
+            'site_id' => $action['site_id'],
+            'action_id' => $action['action_id'],
+            'date_added' => new MongoDate($d)
+        ));
+        $this->mongo_db->limit(1);
+        $r = $this->mongo_db->get('playbasis_player_dau');
+        if ($r) {
+            $r = $r[0];
+            $this->mongo_db->where(array('_id' => $r['_id']));
+            $this->mongo_db->inc('count', 1);
+            $this->mongo_db->update('playbasis_player_dau', array("w" => 0, "j" => false));
+        } else {
+            $this->mongo_db->insert('playbasis_player_dau', array(
+                'pb_player_id' => $action['pb_player_id'],
+                'client_id' => $action['client_id'],
+                'site_id' => $action['site_id'],
+                'action_id' => $action['action_id'],
+                'count' => 1,
+                'date_added' => new MongoDate($d)
+            ), array("w" => 0, "j" => false));
+        }
+    }
+
+    public function updateLatestProcessActionLogTime($d)
+    {
+        $this->mongo_db->limit(1);
+        $r = $this->mongo_db->get('playbasis_player_dau_latest');
+        if ($r) {
+            $r = $r[0];
+            if ($d->sec < $r['date_added']->sec) {
+                return false;
+            }
+            $this->mongo_db->where(array('_id' => $r['_id']));
+            $this->mongo_db->set('date_added', $d);
+            $this->mongo_db->update('playbasis_player_dau_latest', array("w" => 0, "j" => false));
+        } else {
+            $this->mongo_db->insert('playbasis_player_dau_latest', array('date_added' => $d),
+                array("w" => 0, "j" => false));
+        }
+        return true;
+    }
+
+    public function computeMau($action, $d)
+    {
+        $data = array();
+        $end = strtotime(date('Y-m-d', strtotime('+30 day', $d)));
+        $cur = $d;
+        while ($cur != $end) {
+            $data[] = array(
+                'pb_player_id' => $action['pb_player_id'],
+                'client_id' => $action['client_id'],
+                'site_id' => $action['site_id'],
+                'date_added' => new MongoDate($cur)
+            );
+            $cur = strtotime(date('Y-m-d', strtotime('+1 day', $cur)));
+        }
+        return $this->mongo_db->batch_insert('playbasis_player_mau', $data, array("w" => 0, "j" => false, "continueOnError" => true));
+    }
+
+    public function countActionLog($last=null)
+    {
+        $this->mongo_db->select(array(
+            'pb_player_id',
+            'client_id',
+            'site_id',
+            'action_id',
+            'date_added',
+        ));
+        if ($last) {
+            $this->mongo_db->where_gt('_id', $last);
+        }
+        return $this->mongo_db->count('playbasis_action_log');
+    }
+
+    public function streamActionLog($last, $limit=1000000, $return_cursor=false)
+    {
+        $this->mongo_db->select(array(
+            'pb_player_id',
+            'client_id',
+            'site_id',
+            'action_id',
+            'date_added',
+        ));
+        if ($last) {
+            $this->mongo_db->where_gt('_id', $last);
+        }
+        $this->mongo_db->limit($limit); // https://scalegrid.io/blog/fast-paging-with-mongodb/
+        $this->mongo_db->order_by(array('date_added' => 'ASC'));
+        return $this->mongo_db->get('playbasis_action_log', $return_cursor);
+    }
+
+    public function findRecentPlayers($days)
+    {
+        $this->set_site_mongodb(0);
+        $d = strtotime("-" . $days . " day");
+        $this->mongo_db->where_gt('date_added', new MongoDate($d));
+        return $this->mongo_db->distinct('pb_player_id', 'playbasis_action_log');
+    }
+
+    public function findDistinctEmails($pb_player_ids)
+    {
+        $this->mongo_db->where_in('_id', $pb_player_ids);
+        return $this->mongo_db->distinct('email', 'playbasis_player');
+    }
+
+    public function findProcessedEmails($emails)
+    {
+        $this->mongo_db->select(array());
+        $this->mongo_db->where_in('_id', $emails);
+        return $this->mongo_db->get('playbasis_player_fc');
+    }
+
+    public function findNewEmails($emails)
+    {
+        return array_diff($emails, array_merge(array('no-reply@playbasis.com', 'info@playbasis.com'),
+            array_map('index_id', $this->findProcessedEmails($emails))));
+    }
+
+    public function findPlayersBySiteId($site_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('email', 'cl_player_id', 'username'));
+        $this->mongo_db->where('site_id', $site_id);
+        return $this->mongo_db->get('playbasis_player');
+    }
+
+    public function getClientPlayerId($pb_player_id, $site_id)
+    {
+        if (!$pb_player_id) {
+            return null;
+        }
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('cl_player_id'));
+        $this->mongo_db->where('_id', $pb_player_id);
+        $id = $this->mongo_db->get('playbasis_player');
+        return ($id) ? $id[0]['cl_player_id'] : null;
+    }
+
+    public function readPlayer($id, $site_id, $fields = null)
+    {
+        if (!$id) {
+            return array();
+        }
+        $this->set_site_mongodb($site_id);
+        if ($fields) {
+            $this->mongo_db->select($fields);
+        }
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where('_id', $id);
+        $result = $this->mongo_db->get('playbasis_player');
+        if (!$result) {
+            return $result;
+        }
+        $result = $result[0];
+        if (isset($result['date_added'])) {
+            // $result['registered'] = date('Y-m-d H:i:s', $result['date_added']->sec);
+            $result['registered'] = datetimeMongotoReadable($result['date_added']);
+            unset($result['date_added']);
+        }
+        if (isset($result['birth_date']) && $result['birth_date']) {
+            $result['birth_date'] = date('Y-m-d', $result['birth_date']->sec);
+        }
+        return $result;
+    }
+
+    public function generateCode($pb_player_id)
+    {
+        $code = null;
+        for ($i = 0; $i < 2; $i++) {
+            $code = get_random_password(8, 8, true, true);
+            if (!$this->existsCode($code)) {
+                break;
+            }
+        }
+        if (!$code) {
+            throw new Exception('Cannot generate unique player code');
+        }
+        $this->mongo_db->where('_id', $pb_player_id);
+        $this->mongo_db->set('code', $code);
+        $this->mongo_db->update('playbasis_player');
+        return $code;
+    }
+
+    public function getMonthLeaderboardsByCustomParameter($input, $client_id, $site_id)
+    {
+
+        $rankBy = $input['param'];
+        $limit = $input['limit'];
+        $group_by = $input['group_by'];
+        $param_str = "$" . "parameters" . "." . $rankBy;
+        $group_by_str = "$" . $group_by;
+
+        // default is present month
+        if (isset($input['year']) && isset($input['month'])) {
+            $selected_time = strtotime($input['year'] . "-" . $input['month']);
+        } else {
+            $selected_time = time();
+        }
+
+        // Aggregate the data
+        $first = date('Y-m-01', $selected_time);
+        $from = strtotime($first . ' 00:00:00');
+
+        $last = date('Y-m-t', $selected_time);
+        $to = strtotime($last . ' 23:59:59');
+        $raw_result = $this->mongo_db->aggregate('playbasis_validated_action_log', array(
+            array(
+                '$match' => array(
+                    'action_name' => $input['action_name'],
+                    'site_id' => $site_id,
+                    'client_id' => $client_id,
+                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to))
+                ),
+            ),
+            array(
+                '$group' => array(
+                    '_id' => array($group_by => $group_by_str),
+                    $rankBy => array('$push' => $param_str)
+                )
+            ),
+            array(
+                '$sort' => array($rankBy => -1),
+            ),
+            array(
+                '$limit' => $limit + 20,
+            )
+        ));
+        // This function will remove the deleted player and also name key to $rankBy
+        //$raw_result = $raw_result ? $this->removeDeletedPlayers($raw_result['result'], $limit, $rankBy) : array();
+
+        // Sort the leader !
+        $result = array();
+        foreach ($raw_result['result'] as $key => $raw) {
+            $result[$key][$group_by] = $raw['_id'][$group_by];
+
+            $temp_name[$key] = $raw['_id'][$group_by];
+            if ($input['mode'] == "sum") {
+                $temp_value[$key] = array_sum($raw[$rankBy]);
+            } else {
+                $temp_value[$key] = count($raw[$rankBy]);
+            }
+            $result[$key][$rankBy] = $temp_value[$key];
+        }
+        if (isset($temp_value) && isset($temp_name)) {
+            array_multisort($temp_value, SORT_DESC, $temp_name, SORT_ASC, $result);
+        }
+
+        return $result;
+    }
+
+    public function getMonthlyLeaderboard($ranked_by, $limit, $client_id, $site_id)
+    {
+        $limit = intval($limit);
+        $this->set_site_mongodb($site_id);
+        /* get reward_id */
+        $reward_id = $this->getRewardIdByName($client_id, $site_id, $ranked_by);
+        /* get latest RESET event for that reward_id (if exists) */
+        $reset = $this->getResetRewardEvent($site_id, $reward_id);
+        $resetTime = null;
+        if ($reset) {
+            $reset_time = array_values($reset);
+            $resetTime = $reset_time[0]->sec;
+        }
+        /* list top players */
+        $now = time();
+        $first = date('Y-m-01', $now);
+        $from = strtotime($first . ' 00:00:00');
+        if ($resetTime && $resetTime > $from) {
+            $from = $resetTime;
+        }
+        $results = $this->mongo_db->aggregate('playbasis_event_log', array(
+            array(
+                '$match' => array(
+                    'event_type' => 'REWARD',
+                    'site_id' => $site_id,
+                    'reward_id' => $reward_id,
+                    'date_added' => array('$gte' => new MongoDate($from)),
+                ),
+            ),
+            array(
+                '$group' => array(
+                    '_id' => array('pb_player_id' => '$pb_player_id'),
+                    'value' => array('$sum' => '$value')
+                )
+            ),
+            array(
+                '$sort' => array('value' => -1),
+            ),
+            array(
+                '$limit' => $limit + 5,
+            ),
+        ));
+        return $results ? $this->removeDeletedPlayers($results['result'], $limit, $ranked_by) : array();
+    }
+
+    private function getRewardIdByName($client_id, $site_id, $name)
+    {
+        $this->mongo_db->select(array('reward_id'));
+        $this->mongo_db->where(array(
+            'name' => $name,
+            'site_id' => $site_id,
+            'client_id' => $client_id
+        ));
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_reward_to_client');
+        return $results ? $results[0]['reward_id'] : null;
+    }
+
+    public function getResetRewardEvent($site_id, $reward_id = null)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->select(array('reward_id', 'date_added'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('event_type', 'RESET');
+        if ($reward_id) {
+            $this->mongo_db->where('reward_id', $reward_id);
+            $this->mongo_db->limit(1);
+        }
+        $this->mongo_db->order_by(array('date_added' => 'DESC')); // use 'date_added' instead of '_id'
+        $results = $this->mongo_db->get('playbasis_event_log');
+        $ret = array();
+        if ($results) {
+            foreach ($results as $result) {
+                $reward_id = $result['reward_id']->{'$id'};
+                if (array_key_exists($reward_id, $ret)) {
+                    continue;
+                }
+                $ret[$reward_id] = $result['date_added'];
+            }
+        }
+
+        return $ret;
+    }
+
+    private function removeDeletedPlayers($results, $limit, $rankedBy)
+    {
+        $total = count($results);
+        $c = 0;
+        for ($i = 0; $i < $total; $i++) {
+            if ($c < $limit) {
+                $this->mongo_db->select(array('cl_player_id'));
+                if (isset($results[$i]['_id']['pb_player_id'])) {
+                    $results[$i]['pb_player_id'] = $results[$i]['_id']['pb_player_id'];
+                    unset($results[$i]['_id']);
+                }
+                $this->mongo_db->where(array('_id' => $results[$i]['pb_player_id']));
+                $p = $this->mongo_db->get('playbasis_player');
+                if ($p) {
+                    $p = $p[0];
+                    $results[$i]['player_id'] = $p['cl_player_id'];
+                    $results[$i][$rankedBy] = $results[$i]['value'];
+                    unset($results[$i]['cl_player_id']);
+                    unset($results[$i]['value']);
+                    $c++;
+                } else {
+                    unset($results[$i]);
+                }
+            } else {
+                unset($results[$i]);
+            }
+        }
+        return array_values($results);
+    }
+}
+
+function index_id($obj)
+{
+    return $obj['_id'];
 }
