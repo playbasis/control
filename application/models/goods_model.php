@@ -952,4 +952,87 @@ class Goods_model extends MY_Model
         $this->mongo_db->where_in('goods_id', $goods_id_list);
         return $this->mongo_db->get('playbasis_goods_to_client');
     }
+
+    // Using in CRON
+    public function getGoodsDetails($data, $is_sponsor = false)
+    {
+        //get goods id
+        $this->set_site_mongodb($data['site_id']);
+        // $this->mongo_db->select(array('goods_id','image','name','description','quantity','redeem','date_start','date_expire','sponsor'));
+        $this->mongo_db->select(array(
+            'goods_id',
+            'image',
+            'name',
+            'description',
+            'quantity',
+            'per_user',
+            'redeem',
+            'date_start',
+            'date_expire',
+            'sponsor',
+            'sort_order',
+            'group',
+            'code',
+            'tags',
+            'organize_id',
+            'organize_role'
+        ));
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where(array(
+            'client_id' => $is_sponsor ? null : $data['client_id'],
+            'site_id' => $is_sponsor ? null : $data['site_id'],
+            'goods_id' => $data['goods_id'],
+            'deleted' => false
+        ));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_goods_to_client');
+
+        if (isset($result[0]['redeem'])) {
+            if (isset($result[0]['redeem']['badge'])) {
+                $redeem = array();
+                foreach ($result[0]['redeem']['badge'] as $k => $v) {
+                    $redeem_inside = array();
+                    $redeem_inside["badge_id"] = $k;
+                    $redeem_inside["badge_value"] = $v;
+                    $redeem[] = $redeem_inside;
+                }
+                $result[0]['redeem']['badge'] = $redeem;
+            }
+            if (isset($result[0]['redeem']['custom'])) {
+                $redeem = array();
+                foreach ($result[0]['redeem']['custom'] as $k => $v) {
+                    $this->mongo_db->select(array('name'));
+                    $this->mongo_db->select(array(), array('_id'));
+                    $this->mongo_db->where(array(
+                        'client_id' => $data['client_id'],
+                        'site_id' => $data['site_id'],
+                        'reward_id' => new MongoId($k),
+                    ));
+                    $this->mongo_db->limit(1);
+                    $custom = $this->mongo_db->get('playbasis_reward_to_client');
+                    if (isset($custom[0]['name'])) {
+                        $redeem_inside = array();
+                        $redeem_inside["custom_id"] = $k;
+                        $redeem_inside["custom_name"] = $custom[0]['name'];
+                        $redeem_inside["custom_value"] = $v;
+                        $redeem[] = $redeem_inside;
+                    }
+                }
+                $result[0]['redeem']['custom'] = $redeem;
+            }
+        }
+        if (isset($result[0]['goods_id'])) {
+            $result[0]['goods_id'] = $result[0]['goods_id'] . "";
+        }
+        if (isset($result[0]['date_start'])) {
+            $result[0]['date_start'] = datetimeMongotoReadable($result[0]['date_start']);
+        }
+        if (isset($result[0]['date_expire'])) {
+            $result[0]['date_expire'] = datetimeMongotoReadable($result[0]['date_expire']);
+        }
+        if (isset($result[0]['image'])) {
+            $result[0]['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
+        }
+        return $result ? $result[0] : array();
+    }
 }

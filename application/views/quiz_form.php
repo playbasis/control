@@ -949,7 +949,7 @@ function find_template($data, $type, $template_id) {
                             ?>
                             <div class="each-email-template">\
                             <label>\
-                            <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>]" > <?php echo $email['name']; ?></h3>\
+                            <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>][checked]" > <?php echo $email['name']; ?></h3>\
                             </label>\
                              <span class="label label-primary"><?php echo $this->lang->line('entry_subject'); ?></span>\
                               <input type="text" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="" /><br/>\
@@ -976,7 +976,7 @@ function find_template($data, $type, $template_id) {
                             ?>
                             <div class="each-sms-template">\
                             <label>\
-                            <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][sms][<?php echo $sms['_id']; ?>]" > <?php echo $sms['name']; ?></h3>\
+                            <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][sms][<?php echo $sms['_id']; ?>][checked]" > <?php echo $sms['name']; ?></h3>\
                               </label>\
                             </div>\
                         <?php
@@ -1001,7 +1001,7 @@ function find_template($data, $type, $template_id) {
                         ?>
                         <div class="each-push-template">\
                         <label>\
-                        <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][push][<?php echo $push['_id']; ?>]" > <?php echo $push['name']; ?></h3>\
+                        <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][push][<?php echo $push['_id']; ?>][checked]" > <?php echo $push['name']; ?></h3>\
                         </label>\
                         </div>\
                     <?php

@@ -264,11 +264,11 @@ toolstip = {
 			}
 		},
 		badge:{ 
-			description:'Reward a badge to a user',
+			description:'Reward a item to a user',
 			field_desc:{
-				reward_name:'badge to award',
-				item_id:'which badge to give to user',
-				quantity:'amount to award (this is usually one, however, the same badge can be acquired more than once)'
+				reward_name:'item to award',
+				item_id:'which item to give to user',
+				quantity:'amount to award (this is usually one, however, the same item can be acquired more than once)'
 			}
 		},
 		level:{ 

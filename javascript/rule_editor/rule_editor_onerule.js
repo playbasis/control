@@ -170,7 +170,7 @@ oneRuleMan = {
                 }
                 detail.append('<li id="'+listItem.specific_id+'" title="'+
                     listItem.description+'" class="mini-round jigsaw_select_btn line" > <i class="fa '+ic+'"/>' +
-                    '<div class="text">'+listItem.name+'</div><div class="text_description">'+listItem.description+
+                    '<div class="text">'+(listItem.name == "badge" ? "item" : listItem.name)+'</div><div class="text_description">'+listItem.description+
                     '</div></li>');
             }
 

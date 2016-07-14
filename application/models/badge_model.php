@@ -140,6 +140,17 @@ class Badge_model extends MY_Model
         return $this->mongo_db->get("playbasis_badge_category_to_client");
     }
 
+    public function retrieveItemCategoryName($client_id, $site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('name'));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->get("playbasis_badge_category_to_client");
+    }
+
     public function retrieveItemCategoryByName($client_id, $site_id, $name)
     {
         $this->mongo_db->where('client_id', $client_id);
@@ -325,7 +336,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->where('badge_id', new MongoID($badge_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where('client_id', new MongoID($client_id));
-        $this->mongo_db->where('deleted', false);
+        //$this->mongo_db->where('deleted', false);
         $this->mongo_db->where('status', true);
         $result = $this->mongo_db->get('playbasis_badge_to_client');
         return $result ? $result[0]['name'] : null;

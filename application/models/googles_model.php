@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+define('EXPIRED_WITHIN_SEC', 2 * 24 * 60 * 60);
+
 class Googles_model extends MY_Model
 {
 
@@ -91,6 +93,29 @@ class Googles_model extends MY_Model
         $this->mongo_db->where('channel_id', $channel_id);
         $this->mongo_db->where('resource_id', $resource_id);
         $this->mongo_db->delete_all('playbasis_google_subscription');
+    }
+
+    public function listAlmostExpiredCalendarChannels()
+    {
+        $ret = array();
+        foreach ($this->mongo_db->get("playbasis_google_subscription") as $each) {
+            $key = $each['site_id'] . '-' . $each['channel_id'];
+            if (!array_key_exists($key, $ret)) {
+                $ret[$key] = $each;
+            } else {
+                if (!$each['date_expire'] || $each['date_expire']->sec >= $ret[$key]['date_expire']->sec) { // store latest one (greatest "date_expire")
+                    $ret[$key] = $each;
+                }
+            }
+        }
+        $t = time();
+        $_ret = array();
+        foreach ($ret as $key => $each) {
+            if ($each['date_expire'] && $each['date_expire']->sec < $t + EXPIRED_WITHIN_SEC) { // check if even the latest one is expired
+                array_push($_ret, $each);
+            }
+        }
+        return $_ret;
     }
 }
 

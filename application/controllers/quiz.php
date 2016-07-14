@@ -19,6 +19,9 @@ class Quiz extends MY_Controller
         $this->load->model('Quiz_model');
         $this->load->model('Badge_model');
         $this->load->model('Reward_model');
+        $this->load->model('Email_model');
+        $this->load->model('Sms_model');
+        $this->load->model('Push_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -428,6 +431,264 @@ class Quiz extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    function jsonErrorResponse($msg = 'Error, invalid request format or missing parameter')
+    {
+        echo json_encode(
+            array(
+                'error' => 1,
+                'success' => false,
+                'msg' => $msg
+            )
+        );
+    }
+
+    private function push_validation_error(&$array,$key,$value){
+        if(isset($array[$key])){
+            $array[$key] = array_keys(array_flip(array_merge($array[$key],array($value))));
+        }else{
+            $array[$key] = array($value);
+        }
+    }
+
+    private function convertData(&$quiz_info,$function = 'export',&$validation_result = null)
+    {
+        $client_id = $quiz_info['client_id'];
+        $site_id = $quiz_info['site_id'];
+        $qdata = array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+        );
+
+        if (isset($quiz_info['grades']) && $quiz_info['grades']) {
+            foreach($quiz_info['grades'] as &$grade){
+                if($function=='import') {
+                    $grade['grade_id'] = new MongoId($grade['grade_id']['$id']);
+                }
+
+                // convert Rewards
+                if(isset($grade['rewards']) && $grade['rewards']){
+
+                    // convert Badge
+                    if(isset($grade['rewards']['badge']) && $grade['rewards']['badge']){
+                        foreach($grade['rewards']['badge'] as &$badge){
+                            if($function == 'export') {
+                                $badge_name = $this->Badge_model->getNameOfBadgeID($client_id, $site_id, $badge['badge_id']);
+                                $badge['badge_name'] = $badge_name;
+                            }else{
+                                $badgeInfo = $this->Badge_model->getBadgeByName($client_id, $site_id, $badge['badge_name']);
+                                if($badgeInfo){
+                                    $badge['badge_id'] = $badgeInfo['badge_id'];
+                                    unset($badge['badge_name']);
+                                }else{
+                                    $this->push_validation_error($validation_result, 'BADGE', $badge['badge_name']);
+                                }
+                            }
+                        }
+                    }
+
+                    // convert Custom point
+                    if(isset($grade['rewards']['custom']) && $grade['rewards']['custom']){
+                        foreach($grade['rewards']['custom'] as &$custom){
+                            if($function == 'export') {
+                                $custom_name = $this->Reward_model->getClientRewardNameByRewardID($client_id, $site_id, $custom['custom_id']);
+                                $custom['custom_name'] = $custom_name;
+                            }else{
+                                $customPoint_id = $this->Reward_model->getClientRewardIDByName($client_id, $site_id, $custom['custom_name']);
+                                if($customPoint_id){
+                                    $custom['custom_id'] = new MongoId($customPoint_id);
+                                    unset($custom['custom_name']);
+                                }else{
+                                    $this->push_validation_error($validation_result, 'CUSTOM_POINT', $custom['custom_name']);
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+
+                // convert Feedbacks
+                if(isset($grade['feedbacks']) && $grade['feedbacks']){
+
+                    // convert Email
+                    if(isset($grade['feedbacks']['email']) && $grade['feedbacks']['email']){
+                        $import_data = array();
+                        foreach($grade['feedbacks']['email'] as $email => &$value){
+                            if($function == 'export') {
+                                if(isset($value['checked']) && $value['checked'] == "on") {
+                                    $info = $this->Email_model->getTemplate($email);
+                                    $value['template_name'] = $info['name'];
+                                }else{
+                                    unset($grade['feedbacks']['email'][$email]);
+                                }
+                            }else{
+                                $email_template_id = $this->Email_model->getTemplateIDByName($site_id, $value['template_name']);
+                                if($email_template_id){
+                                    //unset($grade['feedbacks']['email'][$email]);
+                                    $import_data[$email_template_id]['checked'] = "on";
+                                    $import_data[$email_template_id]['subject'] = $value['subject'];
+
+                                }else{
+                                    $this->push_validation_error($validation_result, 'EMAIL', $value['template_name']);
+                                }
+                            }
+                        }
+
+                        if($function != 'export' ){
+                            $grade['feedbacks']['email'] = $import_data;
+                        }
+                    }
+
+                    // convert SMS
+                    if(isset($grade['feedbacks']['sms']) && $grade['feedbacks']['sms']){
+                        $import_data = array();
+                        foreach($grade['feedbacks']['sms'] as $sms => &$value){
+                            if($function == 'export') {
+                                if(isset($value['checked']) && $value['checked'] == "on") {
+                                    $info = $this->Sms_model->getTemplate($sms);
+                                    $value['template_name'] = $info['name'];
+                                }else{
+                                    unset($grade['feedbacks']['sms'][$sms]);
+                                }
+                            }else{
+                                $sms_template_id = $this->Sms_model->getTemplateIDByName($site_id, $value['template_name']);
+                                if($sms_template_id){
+
+                                    $import_data[$sms_template_id]['checked'] = "on";
+                                    //unset($grade['feedbacks']['sms'][$sms]);
+                                }else{
+                                    $this->push_validation_error($validation_result, 'SMS', $value['template_name']);
+                                }
+                            }
+                        }
+
+                        if($function != 'export' ){
+                            $grade['feedbacks']['sms'] = $import_data;
+                        }
+                    }
+
+                    // convert Push
+                    if(isset($grade['feedbacks']['push']) && $grade['feedbacks']['push']){
+                        $import_data = array();
+                        foreach($grade['feedbacks']['push'] as $push => &$value){
+                            if($function == 'export') {
+                                if(isset($value['checked']) && $value['checked'] == "on") {
+                                    $info = $this->Push_model->getTemplate($push);
+                                    $value['template_name'] = $info['name'];
+                                }else{
+                                    unset($grade['feedbacks']['push'][$push]);
+                                }
+                            }else{
+                                $push_template_id = $this->Push_model->getTemplateIDByName($site_id, $value['template_name']);
+                                if($push_template_id){
+
+                                    $import_data[$push_template_id]['checked'] = "on";
+                                    //unset($grade['feedbacks']['push'][$push]);
+                                }else{
+                                    $this->push_validation_error($validation_result, 'PUSH', $value['template_name']);
+                                }
+                            }
+                        }
+
+                        if($function != 'export' ){
+                            $grade['feedbacks']['push'] = $import_data;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    public function importQuiz()
+    {
+        if (!$this->input->post('array_quizs')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission_import'));
+            return;
+        }
+
+        $array_quizs = json_decode($this->input->post('array_quizs'),true);
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $validation_result = array();
+        foreach($array_quizs as &$quiz){
+
+            $quiz['client_id'] = $client_id;
+            $quiz['site_id'] = $site_id;
+
+            if (isset($quiz['questions']) && $quiz['questions']) {
+                foreach ($quiz['questions'] as &$question) {
+                    $question['question_id'] = new MongoId($question['question_id']['$id']);
+                    if (isset($question['options']) && $question['options']) {
+                        foreach ($question['options'] as &$option) {
+                            $option['option_id'] = new MongoId($option['option_id']['$id']);
+                        }
+                    }
+                }
+            }
+
+            $this->convertData($quiz, 'import', $validation_result);
+        }
+
+        if(!$validation_result){ // passed data validation
+            foreach($array_quizs as $quiz2) {
+                $import_result = $this->Quiz_model->addQuizToClient($quiz2);
+            }
+            $this->output->set_output(json_encode(array('status'=>'success')));
+        }else{ // failed data validation
+            $this->output->set_output(json_encode(array('status'=>'fail','results'=>$validation_result)));
+        }
+    }
+
+    public function exportQuiz()
+    {
+        if (!$this->input->post('array_quizs')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission_export'));
+            return;
+        }
+
+        $array_quizs = array();
+        foreach($this->input->post('array_quizs') as $quiz_id){
+            $quiz_info = $this->Quiz_model->getQuiz($quiz_id);
+            unset($quiz_info['_id']);
+
+            $this->convertData($quiz_info);
+
+            $quiz_info['client_id'] = null;
+            $quiz_info['site_id'] = null;
+            $quiz_info['date_start'] = $this->datetimeMongotoReadable($quiz_info['date_start']);
+            $quiz_info['date_expire'] = $this->datetimeMongotoReadable($quiz_info['date_expire']);
+
+            $array_quizs[] = $quiz_info;
+        }
+
+        $this->output->set_output(json_encode($array_quizs));
+    }
+
+    private function datetimeMongotoReadable($dateTimeMongo)
+    {
+        if ($dateTimeMongo) {
+            if (isset($dateTimeMongo->sec)) {
+                $dateTimeMongo = date("Y-m-d", $dateTimeMongo->sec);
+            } else {
+                $dateTimeMongo = $dateTimeMongo;
+            }
+        } else {
+            $dateTimeMongo = null;
+        }
+        return $dateTimeMongo;
     }
 }
 

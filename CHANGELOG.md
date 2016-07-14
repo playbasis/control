@@ -1,7 +1,27 @@
 # Change Log
 
-## [2.13.0](https://github.com/playbasis/control/tree/2.13.0)
+## [2.14.0](https://github.com/playbasis/control/tree/2.14.0)
 
+[Full Changelog](https://github.com/playbasis/control/compare/2.13.1/id_shown_in_engine...2.14.0)
+
+**Implemented enhancements:**
+
+- Move Cron job from API to dashboard instance. [\#242](https://github.com/playbasis/control/pull/242) ([niti-playbasis](https://github.com/niti-playbasis))
+- Categorize item\(badge\) for reward selection [\#241](https://github.com/playbasis/control/pull/241) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.13.1/id_shown_in_engine](https://github.com/playbasis/control/tree/2.13.1/id_shown_in_engine) (2016-07-06)
+[Full Changelog](https://github.com/playbasis/control/compare/2.13.0...2.13.1/id_shown_in_engine)
+
+**Implemented enhancements:**
+
+- import.export quiz [\#238](https://github.com/playbasis/control/pull/238) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.13.1/id shown in engine [\#239](https://github.com/playbasis/control/pull/239) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- import.export quiz [\#238](https://github.com/playbasis/control/pull/238) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.13.0](https://github.com/playbasis/control/tree/2.13.0) (2016-07-04)
 [Full Changelog](https://github.com/playbasis/control/compare/2.12.12/disable_play_quest_button_in_ajax...2.13.0)
 
 **Implemented enhancements:**
@@ -10,32 +30,27 @@
 - to check id is mongo id for old document [\#236](https://github.com/playbasis/control/pull/236) ([piya-playbasis](https://github.com/piya-playbasis))
 - Update webhook form and data store [\#235](https://github.com/playbasis/control/pull/235) ([niti-playbasis](https://github.com/niti-playbasis))
 - check reward valid and return warning in rule [\#234](https://github.com/playbasis/control/pull/234) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.12.12/disable_play_quest_button_in_ajax](https://github.com/playbasis/control/tree/2.12.12/disable_play_quest_button_in_ajax) (2016-06-23)
-[Full Changelog](https://github.com/playbasis/control/compare/2.12.11/disable_play_quest_button...2.12.12/disable_play_quest_button_in_ajax)
+- update custom domain in playbasis\_domain\_to\_client if verification was updated to be "Success" [\#231](https://github.com/playbasis/control/pull/231) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.12.10/add join date in quest [\#230](https://github.com/playbasis/control/pull/230) ([piya-playbasis](https://github.com/piya-playbasis))
+- Support custom domain when sending an email from customer to the end user [\#229](https://github.com/playbasis/control/pull/229) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Show only images uploaded by customer admin in Media Manager [\#226](https://github.com/playbasis/control/pull/226) ([piya-playbasis](https://github.com/piya-playbasis))
+- Add filter category,author,status in content list [\#225](https://github.com/playbasis/control/pull/225) ([piya-playbasis](https://github.com/piya-playbasis))
+- Support null value of date range in content list [\#224](https://github.com/playbasis/control/pull/224) ([piya-playbasis](https://github.com/piya-playbasis))
 
 **Fixed bugs:**
 
 - Hotfix/2.12.12/bugs in quest feature [\#233](https://github.com/playbasis/control/pull/233) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.12.11/disable play quest button [\#232](https://github.com/playbasis/control/pull/232) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.12.9/fix bug to enable editing reward name as editing engine rule [\#228](https://github.com/playbasis/control/pull/228) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.12.12/disable_play_quest_button_in_ajax](https://github.com/playbasis/control/tree/2.12.12/disable_play_quest_button_in_ajax) (2016-06-23)
+[Full Changelog](https://github.com/playbasis/control/compare/2.12.11/disable_play_quest_button...2.12.12/disable_play_quest_button_in_ajax)
 
 ## [2.12.11/disable_play_quest_button](https://github.com/playbasis/control/tree/2.12.11/disable_play_quest_button) (2016-06-23)
 [Full Changelog](https://github.com/playbasis/control/compare/2.12.10/add_join_date_in_quest...2.12.11/disable_play_quest_button)
 
-**Implemented enhancements:**
-
-- update custom domain in playbasis\_domain\_to\_client if verification was updated to be "Success" [\#231](https://github.com/playbasis/control/pull/231) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/2.12.11/disable play quest button [\#232](https://github.com/playbasis/control/pull/232) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.12.10/add_join_date_in_quest](https://github.com/playbasis/control/tree/2.12.10/add_join_date_in_quest) (2016-06-23)
 [Full Changelog](https://github.com/playbasis/control/compare/2.12.9/fix_bug_to_enable_editing_reward_name_as_editing_engine_rule...2.12.10/add_join_date_in_quest)
-
-**Implemented enhancements:**
-
-- Hotfix/2.12.10/add join date in quest [\#230](https://github.com/playbasis/control/pull/230) ([piya-playbasis](https://github.com/piya-playbasis))
-- Support custom domain when sending an email from customer to the end user [\#229](https://github.com/playbasis/control/pull/229) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.12.9/fix_bug_to_enable_editing_reward_name_as_editing_engine_rule](https://github.com/playbasis/control/tree/2.12.9/fix_bug_to_enable_editing_reward_name_as_editing_engine_rule) (2016-06-22)
 [Full Changelog](https://github.com/playbasis/control/compare/2.12.0...2.12.9/fix_bug_to_enable_editing_reward_name_as_editing_engine_rule)
@@ -43,13 +58,6 @@
 **Implemented enhancements:**
 
 - Adding organize\_id filter in StoreOrg [\#227](https://github.com/playbasis/control/pull/227) ([piya-playbasis](https://github.com/piya-playbasis))
-- Show only images uploaded by customer admin in Media Manager [\#226](https://github.com/playbasis/control/pull/226) ([piya-playbasis](https://github.com/piya-playbasis))
-- Add filter category,author,status in content list [\#225](https://github.com/playbasis/control/pull/225) ([piya-playbasis](https://github.com/piya-playbasis))
-- Support null value of date range in content list [\#224](https://github.com/playbasis/control/pull/224) ([piya-playbasis](https://github.com/piya-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/2.12.9/fix bug to enable editing reward name as editing engine rule [\#228](https://github.com/playbasis/control/pull/228) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.12.0](https://github.com/playbasis/control/tree/2.12.0) (2016-06-20)
 [Full Changelog](https://github.com/playbasis/control/compare/2.12.8...2.12.0)

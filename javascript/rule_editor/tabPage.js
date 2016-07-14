@@ -36,7 +36,11 @@
                     }
                     var c = 0;
                     for (i in json) {
-                        html += '<li id="tab-'+c+'">'+i+'</li>';
+                        if(i == ''){
+                            html += '<li id="tab-' + c + '">&nbsp</li>';
+                        }else {
+                            html += '<li id="tab-' + c + '">' + i + '</li>';
+                        }
                         c++;
                     }
                     html += '</ul></div><div class="collection_basket span6">';
@@ -85,6 +89,8 @@
             var cursor = c.split('-');
             $(".tab-page").hide();
             $("#page-"+cursor[1]).show();
+            $(opts.main_panel+" .collection_nav ul.nav-tabs li").removeClass("active");
+            $("#"+c).addClass("active");
         });
 
         $(".badge-reward").live('click', function(){
@@ -130,6 +136,9 @@
                     tableRow.find('img').remove();
                     tableRow.prepend( BadgeSet.getBadgeImage(send_data));
                     tableRow.find('.pbd_rule_text').addClass('view_as_collection');
+
+                    tableRow = $targetObj.parent().parent().parent().parent();
+                    tableRow.find('.view_as_read_only').html(BadgeSet.getBadgeName(send_data));
                 }else{
                     $(opts.output_data).val(send_data);
                     //Append Badges Images here
@@ -183,7 +192,12 @@ $(document).ready(function() {
         url: urlConfig.URL_getBadges(),
         dataType:"json",
         success: function(json) {
-            BadgeSet.list = json.badges;
+
+            for (var category in json) {
+                if (json.hasOwnProperty(category)) {
+                    BadgeSet.list = BadgeSet.list.concat( json[category]);
+                }
+            }
         }
     });
 
@@ -212,6 +226,22 @@ BadgeSet = {
                     break;
                 }else{
                     output =  '<img src="'+imageUrlPath+'cache/data/no_image-100x100.jpg"/>';
+                }
+            }//end for
+        }//end if
+        return output;
+    },//end function
+
+    getBadgeName:function(id){
+        var output  = '';
+        if(this.list && this.list.length > 0){
+            for(var index in this.list){
+                var b = this.list[index];
+                if(b.badge_id == id){
+                    output =  b.name;
+                    break;
+                }else{
+                    output =  'item';
                 }
             }//end for
         }//end if

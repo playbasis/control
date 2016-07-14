@@ -948,6 +948,65 @@ class Mongo_db
 	}
 
 	/**
+	 * Distinct.
+	 *
+	 * Return the found documents
+	 *
+	 * <code>
+	 * $this->mongo_db->distinct('field', 'foo');
+	 * </code>
+	 *
+	 * @param string $field    Name of the field for distinction
+	 * @param string $collection    Name of the collection
+	 * @param bool   $return_cursor Return the native document cursor
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function distinct($field, $collection = '', $return_cursor = FALSE)
+	{
+		if (empty($field))
+		{
+			$this->_show_error('In order to retrieve documents from MongoDB, a field name must be passed', 500);
+		}
+
+		if (empty($collection))
+		{
+			$this->_show_error('In order to retrieve documents from MongoDB, a collection name must be passed', 500);
+		}
+
+		$cursor = $this->_dbhandle
+			->{$collection}
+			->distinct($field, $this->wheres);
+
+		// Clear
+		$this->_clear($collection, 'distinct');
+
+		// Return the raw cursor if wanted
+		if ($return_cursor === TRUE)
+		{
+			return $cursor;
+		}
+
+		$documents = array();
+
+		if (is_array($cursor)) foreach ($cursor as $each)
+		{
+			try
+			{
+				$documents[] = $each;
+			}
+
+			catch (MongoCursorException $exception)
+			{
+				$this->_show_error($exception->getMessage(), 500);
+			}
+		}
+
+		return $documents;
+	}
+
+	/**
 	* Count.
 	*
 	* Count the number of found documents
@@ -1533,6 +1592,41 @@ class Mongo_db
 		try
 		{
 			$this->_dbhandle->{$collection}->remove($this->wheres, array($this->_query_safety => TRUE, 'justOne' => FALSE));
+			$this->_clear($collection, 'delete_all');
+			return TRUE;
+		}
+
+		catch (MongoCursorException $exception)
+		{
+			$this->_show_error('Delete of data into MongoDB failed: ' . $exception->getMessage(), 500);
+		}
+	}
+
+	/**
+	 * Delete all given a list of MongoIds.
+	 *
+	 * Delete all documents from the passed collection based upon certain criteria
+	 *
+	 * <code>
+	 * $this->mongo_db->delete_all_with_ids('foo', $data = array());
+	 * </code>
+	 *
+	 * @param string $collection Name of the collection
+	 *
+	 * @access public
+	 * @return object
+	 */
+	public function delete_all_with_ids($collection = '')
+	{
+		if (empty($collection))
+		{
+			$this->_show_error('No Mongo collection selected to delete from', 500);
+		}
+
+		try
+		{
+			/* $this->_dbhandle->{$collection}->remove($this->wheres, array($this->_query_safety => TRUE, 'justOne' => FALSE)); */
+			$this->_dbhandle->{$collection}->remove($this->wheres, array('justOne' => FALSE));
 			$this->_clear($collection, 'delete_all');
 			return TRUE;
 		}
