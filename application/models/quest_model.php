@@ -394,7 +394,7 @@ class Quest_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $quests = $this->mongo_db->get('playbasis_quest_to_client');
         $quest = $quests ? $quests[0] : null;
-        $mission_ids_old = array_map('index_mission_id', isset($quest['missions']) ? $quest['missions'] : array());
+        $mission_ids_old = array_map('index_mission_id', isset($quest['missions']) && is_array($quest['missions']) ? $quest['missions'] : array());
 
         /* update fields in playbasis_quest_to_client */
         $this->mongo_db->where('_id', new MongoID($quest_id));
