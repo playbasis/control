@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function index_id($obj)
+function action_model_index_id($obj)
 {
     return $obj['_id'];
 }
@@ -90,7 +90,7 @@ class Action_model extends MY_Model
             $users2 = $this->mongo_db->get("playbasis_player");
 
             $this->mongo_db->where_in('pb_player_id',
-                array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
+                array_merge(array_map('action_model_index_id', $users1), array_map('action_model_index_id', $users2)));
         }
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -328,7 +328,7 @@ class Action_model extends MY_Model
             $users2 = $this->mongo_db->get("playbasis_player");
 
             $this->mongo_db->where_in('pb_player_id',
-                array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
+                array_merge(array_map('action_model_index_id', $users1), array_map('action_model_index_id', $users2)));
         }
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
