@@ -1146,16 +1146,29 @@ class Quest extends REST2_Controller
             // get all available quests related to clients
             $resp["quests"] = array();
             $quests = $this->quest_model->getQuests($data);
-            foreach ($quests as $quest => $value) {
+            foreach ($quests as $key => $quest) {
                 // condition failed
-                if ($this->checkConditionQuest($quests[$quest], $pb_player_id, $this->validToken)) {
+                if ($this->checkConditionQuest($quests[$key], $pb_player_id, $this->validToken)) {
                     continue;
                 } else {
-                    $quests[$quest]["quest_id"] = $quests[$quest]["_id"];
-                    unset($quests[$quest]["_id"]);
-                    unset($quests[$quest]['client_id']);
-                    unset($quests[$quest]['site_id']);
-                    array_push($resp["quests"], $quests[$quest]);
+                    $quests[$key]["quest_id"] = $quests[$key]["_id"];
+                    unset($quests[$key]["_id"]);
+                    unset($quests[$key]['client_id']);
+                    unset($quests[$key]['site_id']);
+                    if(isset($quest['rewards']) && is_array($quest['rewards'])){
+                        foreach ($quest['rewards'] as $index => $reward){
+                            if(isset($reward['reward_data']['_id'])) unset($quests[$key]['rewards'][$index]['reward_data']['_id']);
+                            if(isset($reward['reward_data']['client_id'])) unset($quests[$key]['rewards'][$index]['reward_data']['client_id']);
+                            if(isset($reward['reward_data']['site_id'])) unset($quests[$key]['rewards'][$index]['reward_data']['site_id']);
+                            if($reward['reward_type'] == 'GOODS'){
+                                if(isset($reward['reward_data']['group'])) {
+                                    $quests[$key]['rewards'][$index]['reward_data']['name'] = $quests[$key]['rewards'][$index]['reward_data']['group'];
+                                }
+                                unset($quests[$key]['rewards'][$index]['reward_data']['code']);
+                            }
+                        }
+                    }
+                    array_push($resp["quests"], $quests[$key]);
                 }
             }
             array_walk_recursive($resp["quests"], array($this, "convert_mongo_object"));
@@ -1188,6 +1201,19 @@ class Quest extends REST2_Controller
             $data['quest_id'] = $quest_id;
             $quest = $this->quest_model->getQuest($data);
             if ($quest) {
+                if(isset($quest['rewards']) && is_array($quest['rewards'])){
+                    foreach ($quest['rewards'] as $index => $reward){
+                        if(isset($reward['reward_data']['_id'])) unset($quest['rewards'][$index]['reward_data']['_id']);
+                        if(isset($reward['reward_data']['client_id'])) unset($quest['rewards'][$index]['reward_data']['client_id']);
+                        if(isset($reward['reward_data']['site_id'])) unset($quest['rewards'][$index]['reward_data']['site_id']);
+                        if($reward['reward_type'] == 'GOODS'){
+                            if(isset($reward['reward_data']['group'])) {
+                                $quest['rewards'][$index]['reward_data']['name'] = $quest['rewards'][$index]['reward_data']['group'];
+                            }
+                            unset($quest['rewards'][$index]['reward_data']['code']);
+                        }
+                    }
+                }
                 array_walk_recursive($quest, array($this, "convert_mongo_object"));
                 $resp['quest'] = $quest;
                 $resp['quest']['quest_id'] = $quest['_id'];
@@ -1206,15 +1232,29 @@ class Quest extends REST2_Controller
             }
 
             // get all questss related to clients
-            $quest = $this->quest_model->getQuests($data);
-            array_walk_recursive($quest, array($this, "convert_mongo_object"));
-            foreach ($quest as $key => $value) {
-                $quest[$key]['quest_id'] = $quest[$key]['_id'];
-                unset($quest[$key]['_id']);
-                unset($quest[$key]['client_id']);
-                unset($quest[$key]['site_id']);
+            $quests = $this->quest_model->getQuests($data);
+            array_walk_recursive($quests, array($this, "convert_mongo_object"));
+            foreach ($quests as $key => $quest) {
+                if(isset($quest['rewards']) && is_array($quest['rewards'])){
+                    foreach ($quest['rewards'] as $index => $reward){
+                        if(isset($reward['reward_data']['_id'])) unset($quests[$key]['rewards'][$index]['reward_data']['_id']);
+                        if(isset($reward['reward_data']['client_id'])) unset($quests[$key]['rewards'][$index]['reward_data']['client_id']);
+                        if(isset($reward['reward_data']['site_id'])) unset($quests[$key]['rewards'][$index]['reward_data']['site_id']);
+                        if($reward['reward_type'] == 'GOODS'){
+                            if(isset($reward['reward_data']['group'])) {
+                                $quests[$key]['rewards'][$index]['reward_data']['name'] = $quests[$key]['rewards'][$index]['reward_data']['group'];
+                            }
+                            unset($quests[$key]['rewards'][$index]['reward_data']['code']);
+                        }
+                    }
+                }
+                $quests[$key]['quest_id'] = $quests[$key]['_id'];
+                unset($quests[$key]['_id']);
+                unset($quests[$key]['client_id']);
+                unset($quests[$key]['site_id']);
             }
-            $resp['quests'] = $quest;
+
+            $resp['quests'] = $quests;
         }
         $this->response($this->resp->setRespond($resp), 200);
     }
@@ -1545,6 +1585,20 @@ class Quest extends REST2_Controller
                 $quest['quest_id'] = $quest_player['quest_id'];
                 unset($quest['_id']);
 
+                if(isset($quest['rewards']) && is_array($quest['rewards'])){
+                    foreach ($quest['rewards'] as $index => $reward){
+                        if(isset($reward['reward_data']['_id'])) unset($quest['rewards'][$index]['reward_data']['_id']);
+                        if(isset($reward['reward_data']['client_id'])) unset($quest['rewards'][$index]['reward_data']['client_id']);
+                        if(isset($reward['reward_data']['site_id'])) unset($quest['rewards'][$index]['reward_data']['site_id']);
+                        if($reward['reward_type'] == 'GOODS'){
+                            if(isset($reward['reward_data']['group'])) {
+                                $quest['rewards'][$index]['reward_data']['name'] = $quest['rewards'][$index]['reward_data']['group'];
+                            }
+                            unset($quest['rewards'][$index]['reward_data']['code']);
+                        }
+                    }
+                }
+
                 array_walk_recursive($quest, array($this, "convert_mongo_object"));
                 $resp['quest'] = $quest;
             }
@@ -1585,6 +1639,19 @@ class Quest extends REST2_Controller
                 $quest['quest_id'] = $q['quest_id'];
                 unset($quest['_id']);
 
+                if(isset($quest['rewards']) && is_array($quest['rewards'])){
+                    foreach ($quest['rewards'] as $index => $reward){
+                        if(isset($reward['reward_data']['_id'])) unset($quest['rewards'][$index]['reward_data']['_id']);
+                        if(isset($reward['reward_data']['client_id'])) unset($quest['rewards'][$index]['reward_data']['client_id']);
+                        if(isset($reward['reward_data']['site_id'])) unset($quest['rewards'][$index]['reward_data']['site_id']);
+                        if($reward['reward_type'] == 'GOODS'){
+                            if(isset($reward['reward_data']['group'])) {
+                                $quest['rewards'][$index]['reward_data']['name'] = $quest['rewards'][$index]['reward_data']['group'];
+                            }
+                            unset($quest['rewards'][$index]['reward_data']['code']);
+                        }
+                    }
+                }
                 $quests[] = $quest;
             }
 
@@ -1653,6 +1720,19 @@ class Quest extends REST2_Controller
                         $quest["missions"][$k]["status"] = isset($m["status"]) ? $m["status"] : "";
                         $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id,
                             $this->validToken, $badge_player_check, $m);
+                    }
+                }
+            }
+            if(isset($quest['rewards']) && is_array($quest['rewards'])){
+                foreach ($quest['rewards'] as $index => $reward){
+                    if(isset($reward['reward_data']['_id'])) unset($quest['rewards'][$index]['reward_data']['_id']);
+                    if(isset($reward['reward_data']['client_id'])) unset($quest['rewards'][$index]['reward_data']['client_id']);
+                    if(isset($reward['reward_data']['site_id'])) unset($quest['rewards'][$index]['reward_data']['site_id']);
+                    if($reward['reward_type'] == 'GOODS'){
+                        if(isset($reward['reward_data']['group'])) {
+                            $quest['rewards'][$index]['reward_data']['name'] = $quest['rewards'][$index]['reward_data']['group'];
+                        }
+                        unset($quest['rewards'][$index]['reward_data']['code']);
                     }
                 }
             }
