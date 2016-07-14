@@ -1475,6 +1475,18 @@ class Client_model extends MY_Model
         $this->mongo_db->inc("usage." . $type . "." . $field, $inc);
         $this->mongo_db->update('playbasis_permission', array("w" => 0, "j" => false));
     }
+
+    public function listSites()
+    {
+        $this->set_site_mongodb(0);
+        $where = array(
+            'status' => true,
+            'deleted' => false
+        );
+        $this->mongo_db->select(array('client_id', 'site_name'));
+        $this->mongo_db->where($where);
+        return $this->mongo_db->get('playbasis_client_site');
+    }
 }
 
 ?>

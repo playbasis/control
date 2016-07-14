@@ -2194,6 +2194,173 @@ class Player_model extends MY_Model
         }
         return array_values($results);
     }
+
+    private function _new_registration_all_customers($from = null, $to = null)
+    {
+        $this->mongo_db->where('status', true);
+        if ($from) {
+            $this->mongo_db->where_gte('date_added', $this->new_mongo_date($from));
+        }
+        if ($to) {
+            $this->mongo_db->where_lte('date_added', $this->new_mongo_date($to, '23:59:59'));
+        }
+        return $this->mongo_db->count('playbasis_player');
+    }
+
+    public function new_registration_all_customers($from = null, $to = null, $site_ids = array())
+    {
+        $this->set_site_mongodb(0);
+        $n = $this->_new_registration_all_customers($from, $to);
+        if (is_array($site_ids)) {
+            foreach ($site_ids as $site_id) {
+                $this->set_site_mongodb(new MongoId($site_id)); // set to dedicated DB (if any)
+                $n += $this->_new_registration_all_customers($from, $to);
+            }
+        }
+        return $n;
+    }
+
+    public function new_registration($data, $from = null, $to = null)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $action_id = $this->findAction(array_merge($data, array('action_name' => 'register')));
+        if (!$action_id) {
+            return array();
+        }
+        $match = array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'action_id' => $action_id,
+        );
+        if (($from || $to) && !isset($match['date_added'])) {
+            $match['date_added'] = array();
+        }
+        if ($from) {
+            $match['date_added']['$gte'] = new MongoDate(strtotime($from . ' 00:00:00'));
+        }
+        if ($to) {
+            $match['date_added']['$lte'] = new MongoDate(strtotime($to . ' 23:59:59'));
+        }
+        $_result = $this->mongo_db->aggregate('playbasis_player_dau', array(
+            array(
+                '$match' => $match,
+            ),
+            array(
+                '$group' => array('_id' => '$date_added', 'value' => array('$sum' => 1))
+            ),
+        ));
+        $_result = $_result ? $_result['result'] : array();
+        $result = array();
+        if (is_array($_result)) {
+            foreach ($_result as $key => $value) {
+                array_push($result, array('_id' => date('Y-m-d', $value['_id']->sec), 'value' => $value['value']));
+            }
+        }
+        usort($result, 'cmp1');
+        if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) {
+            array_unshift($result, array('_id' => $from, 'value' => 0));
+        }
+        if ($to && (!isset($result[count($result) - 1]['_id']) || $result[count($result) - 1]['_id'] != $to)) {
+            array_push($result, array('_id' => $to, 'value' => 0));
+        }
+        return $result;
+    }
+
+    public function findAction($data)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(array('action_id'));
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'name' => strtolower($data['action_name'])
+        ));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_action_to_client');
+        return $result ? $result[0]['action_id'] : array();
+    }
+
+    public function daily_active_user_per_day($data, $from = null, $to = null)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $match = array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+        );
+        if (($from || $to) && !isset($match['date_added'])) {
+            $match['date_added'] = array();
+        }
+        if ($from) {
+            $match['date_added']['$gte'] = new MongoDate(strtotime($from . ' 00:00:00'));
+        }
+        if ($to) {
+            $match['date_added']['$lte'] = new MongoDate(strtotime($to . ' 23:59:59'));
+        }
+        $_result = $this->mongo_db->aggregate('playbasis_player_dau', array(
+            array(
+                '$match' => $match,
+            ),
+            array(
+                '$group' => array('_id' => '$date_added', 'value' => array('$sum' => '$count'))
+            ),
+        ));
+        $_result = $_result ? $_result['result'] : array();
+        $result = array();
+        if (is_array($_result)) {
+            foreach ($_result as $key => $value) {
+                array_push($result, array('_id' => date('Y-m-d', $value['_id']->sec), 'value' => $value['value']));
+            }
+        }
+        usort($result, 'cmp1');
+        if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) {
+            array_unshift($result, array('_id' => $from, 'value' => 0));
+        }
+        if ($to && (!isset($result[count($result) - 1]['_id']) || $result[count($result) - 1]['_id'] != $to)) {
+            array_push($result, array('_id' => $to, 'value' => 0));
+        }
+        return $result;
+    }
+
+    public function monthy_active_user_per_day($data, $from = null, $to = null)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $match = array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+        );
+        if (($from || $to) && !isset($match['date_added'])) {
+            $match['date_added'] = array();
+        }
+        if ($from) {
+            $match['date_added']['$gte'] = new MongoDate(strtotime($from . ' 00:00:00'));
+        }
+        if ($to) {
+            $match['date_added']['$lte'] = new MongoDate(strtotime($to . ' 23:59:59'));
+        }
+        $_result = $this->mongo_db->aggregate('playbasis_player_mau', array(
+            array(
+                '$match' => $match,
+            ),
+            array(
+                '$group' => array('_id' => '$date_added', 'value' => array('$sum' => 1))
+            ),
+        ));
+        $_result = $_result ? $_result['result'] : array();
+        $result = array();
+        if (is_array($_result)) {
+            foreach ($_result as $key => $value) {
+                array_push($result, array('_id' => date('Y-m-d', $value['_id']->sec), 'value' => $value['value']));
+            }
+        }
+        usort($result, 'cmp1');
+        if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) {
+            array_unshift($result, array('_id' => $from, 'value' => 0));
+        }
+        if ($to && (!isset($result[count($result) - 1]['_id']) || $result[count($result) - 1]['_id'] != $to)) {
+            array_push($result, array('_id' => $to, 'value' => 0));
+        }
+        return $result;
+    }
 }
 
 function index_id($obj)

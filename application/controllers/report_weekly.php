@@ -95,7 +95,7 @@ class Report_weekly extends CI_Controller
             if (array_key_exists((string)$client_id, $clients)) {
                 continue;
             }
-            $clients[(string)$client_id] = $this->client_model->getById($client_id);
+            $clients[(string)$client_id] = $this->client_model->getClient($client_id);
         }
         log_message('debug', 'clients = ' . print_r($clients, true));
 
