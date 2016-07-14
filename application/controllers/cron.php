@@ -594,8 +594,8 @@ class Cron extends CI_Controller
 
     public function listClientRegistration()
     {
-        $this->load->library('RestClient');
-        $this->restclient->initialize(array('server' => GECKO_URL));
+        $this->load->library('Rest');
+        $this->rest->initialize(array('server' => GECKO_URL));
 
         /* init */
         set_time_limit(0);
@@ -686,7 +686,7 @@ class Cron extends CI_Controller
                 ),
             )
         );
-        $result = $this->restclient->post(WIDGET_NUMBER_OF_CUSTOMERS, json_encode($data), 'json');
+        $result = $this->rest->post(WIDGET_NUMBER_OF_CUSTOMERS, json_encode($data), 'json');
 
         /* stat: active usage customers */
         $data = array(
@@ -700,7 +700,7 @@ class Cron extends CI_Controller
                 ),
             )
         );
-        $result = $this->restclient->post(WIDGET_NUMBER_OF_ACTIVE_USAGE_CUSTOMERS, json_encode($data), 'json');
+        $result = $this->rest->post(WIDGET_NUMBER_OF_ACTIVE_USAGE_CUSTOMERS, json_encode($data), 'json');
 
         /* stat: active paying customers */
         $data = array(
@@ -714,7 +714,7 @@ class Cron extends CI_Controller
                 ),
             )
         );
-        $result = $this->restclient->post(WIDGET_NUMBER_OF_ACTIVE_PAYING_CUSTOMERS, json_encode($data), 'json');
+        $result = $this->rest->post(WIDGET_NUMBER_OF_ACTIVE_PAYING_CUSTOMERS, json_encode($data), 'json');
 
         /* stat: top countries */
         $items = array();
@@ -728,7 +728,7 @@ class Cron extends CI_Controller
                 'items' => $items,
             )
         );
-        $result = $this->restclient->post(WIDGET_TOP_COUNTRIES, json_encode($data), 'json');
+        $result = $this->rest->post(WIDGET_TOP_COUNTRIES, json_encode($data), 'json');
 
         /* calculate registration frequency */
         $f_daily = array();
@@ -784,7 +784,7 @@ class Cron extends CI_Controller
                 )
             )
         );
-        $result = $this->restclient->post(WIDGET_DAILY_REGISTRATION, json_encode($data), 'json');
+        $result = $this->rest->post(WIDGET_DAILY_REGISTRATION, json_encode($data), 'json');
 
         /* stat: total customers trend */
         $data = array(
@@ -802,7 +802,7 @@ class Cron extends CI_Controller
                 )
             )
         );
-        $result = $this->restclient->post(WIDGET_TOTAL_CUSTOMERS_TREND, json_encode($data), 'json');
+        $result = $this->rest->post(WIDGET_TOTAL_CUSTOMERS_TREND, json_encode($data), 'json');
 
         /* CSV 3 */
         $fp = fopen($csv3, 'w');
@@ -848,7 +848,7 @@ class Cron extends CI_Controller
                 )
             )
         );
-        $result = $this->restclient->post(WIDGET_MONTHLY_REGISTRATION, json_encode($data), 'json');
+        $result = $this->rest->post(WIDGET_MONTHLY_REGISTRATION, json_encode($data), 'json');
 
         /* stat: % growth (month over month) */
         $data = array(
@@ -866,7 +866,7 @@ class Cron extends CI_Controller
                 )
             )
         );
-        $result = $this->restclient->post(WIDGET_PERCENT_GROWTH, json_encode($data), 'json');
+        $result = $this->rest->post(WIDGET_PERCENT_GROWTH, json_encode($data), 'json');
 
         /* email */
         $from = EMAIL_FROM;
@@ -1457,7 +1457,7 @@ class Cron extends CI_Controller
 
     public function processImportTransaction()
     {
-        $this->load->library('RestClient');
+        $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
 
@@ -1498,7 +1498,7 @@ class Cron extends CI_Controller
 
                                         // Set Date at HTTP header
                                         if (isset($val['date']) && !is_null($val['date'])) {
-                                            $this->restclient->http_header('Date', $val['date']);
+                                            $this->rest->http_header('Date', $val['date']);
                                         }
 
                                         // Check if custom parameter is set
@@ -1518,7 +1518,7 @@ class Cron extends CI_Controller
 
                                         if($customs_valid){
 
-                                            $result = $this->restclient->post(API_SERVER . '/Engine/rule',
+                                            $result = $this->rest->post('Engine/rule',
                                                 array_merge($val,
                                                     array(
                                                         'api_key' => $returnImportData['api_key'],
@@ -1548,7 +1548,7 @@ class Cron extends CI_Controller
 
     public function processImportPlayer()
     {
-        $this->load->library('RestClient');
+        $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
 
@@ -1578,7 +1578,7 @@ class Cron extends CI_Controller
                                 foreach ($returnData['importData'] as $key => $val) {
 
                                     if($val) {
-                                        $result = $this->restclient->post(API_SERVER . '/Player/' . $val['player_id'] . '/register',
+                                        $result = $this->rest->post('Player/' . $val['player_id'] . '/register',
                                             array_merge($val,
                                                 array(
                                                     'api_key' => $returnImportData['api_key'],
@@ -1603,7 +1603,8 @@ class Cron extends CI_Controller
 
     public function processImportStoreOrg()
     {
-        $this->load->library('RestClient');
+        $this->load->library('Rest');
+
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
 
         if ($clients) {
@@ -1632,7 +1633,7 @@ class Cron extends CI_Controller
                                 foreach ($returnData['importData'] as $key => $val) {
 
                                     if($val) {
-                                        $result = $this->restclient->post(API_SERVER . '/StoreOrg/nodes/name/' . $val['node_name'] . '/type/' . $val['organize_type'] . '/addPlayer/' . $val['player_id'],
+                                        $result = $this->rest->post('StoreOrg/nodes/name/' . $val['node_name'] . '/type/' . $val['organize_type'] . '/addPlayer/' . $val['player_id'],
                                             array_merge($val,
                                                 array(
                                                     'api_key' => $returnImportData['api_key'],
@@ -1641,7 +1642,7 @@ class Cron extends CI_Controller
                                         if($result->message == "Success" && isset($val['role']) && !is_null($val['role'])){
                                             $roles = explode('|', $val['role']);
                                             foreach($roles as $role) {
-                                                $this->restclient->post(API_SERVER . '/StoreOrg/nodes/' . $result->response->node_id->{'$id'} . '/setPlayerRole/' . $val['player_id'],
+                                                $this->rest->post('StoreOrg/nodes/' . $result->response->node_id->{'$id'} . '/setPlayerRole/' . $val['player_id'],
                                                     array_merge(array('role' => $role),
                                                         array(
                                                             'api_key' => $returnImportData['api_key'],
@@ -1669,7 +1670,7 @@ class Cron extends CI_Controller
 
     public function processImportContent()
     {
-        $this->load->library('RestClient');
+        $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
 
@@ -1699,7 +1700,7 @@ class Cron extends CI_Controller
                                 foreach ($returnData['importData'] as $key => $val) {
 
                                     if($val) {
-                                        $result = $this->restclient->post(API_SERVER . '/Content/addContent',
+                                        $result = $this->rest->post('Content/addContent',
                                             array_merge($val,
                                                 array(
                                                     'api_key' => $returnImportData['api_key'],
@@ -1724,7 +1725,7 @@ class Cron extends CI_Controller
 
     private function getImportData($client, $importType)
     {
-        $this->load->library('RestClient');
+        $this->load->library('Rest');
 
         $platformData = $this->auth_model->getOnePlatform($client['client_id'], $client['site_id']);
 
@@ -1732,7 +1733,7 @@ class Cron extends CI_Controller
             'api_key'    => isset($platformData['api_key'])?$platformData['api_key']:null,
             'api_secret' => isset($platformData['api_secret'])?$platformData['api_secret']:null
         );
-        $token = json_decode(json_encode($this->restclient->post(API_SERVER.'/Auth', $data)->response),true)['token'];
+        $token = json_decode(json_encode($this->rest->post('Auth', $data)->response),true)['token'];
 
         $data = array(
             'api_key'     => isset($platformData['api_key'])?$platformData['api_key']:null,
@@ -1741,7 +1742,7 @@ class Cron extends CI_Controller
             'site_id'     => json_decode(json_encode($client['site_id']), True)['$id'],
             'import_type' => $importType
         );
-        return $data = array_merge($data, json_decode(json_encode($this->restclient->get(API_SERVER.'/Import/importSetting', $data)), true));
+        return $data = array_merge($data, json_decode(json_encode($this->rest->get('Import/importSetting', $data)), true));
     }
 
     private function getDataFromURL($importData)
