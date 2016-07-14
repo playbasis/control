@@ -74,6 +74,26 @@ class Badge_model extends MY_Model
         }
         return $result ? $result[0] : array();
     }
+
+    public function getBadgeName($client_id, $site_id, $badge_id)
+    {
+        //get badge name by $badge_id
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array(
+            'name',
+        ));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'badge_id' => new MongoId($badge_id),
+            'deleted' => false
+        ));
+
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_badge_to_client');
+
+        return $result ? $result[0]['name'] : null;
+    }
 }
 
 ?>

@@ -66,6 +66,19 @@ class Reward_model extends MY_Model
         return $result ? $result[0] : array();
     }
 
+    public function getItemToPlayerRecords($client_id, $site_id, $pb_player_id, $badge_id)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'pb_player_id' => new MongoId($pb_player_id),
+            'badge_id' => new MongoId($badge_id)
+        ));
+
+        $result = $this->mongo_db->get('playbasis_reward_to_player');
+        return $result ? $result[0] : null;
+    }
+
     public function setPlayerReward($client_id, $site_id, $pb_player_id, $reward_id, $value)
     {
         $d = new MongoDate(time());
