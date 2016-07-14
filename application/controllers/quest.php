@@ -1855,10 +1855,7 @@ class Quest extends REST2_Controller
                             }
                             $player_data['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $pb_player_id, $select);
                             $player_data['goal'] = (int)$quest['completion_value'];
-                            $rank_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
-                                strtolower($quest_data['completion_filter']), $query_rank,
-                                (isset($quest_data['completion_op']) && !empty($quest_data['completion_op'])) ? $quest_data['completion_op'] : "sum", $query_players, (int)$player_data['current']);
-                            $player_data['rank'] = (isset($query_data['status']) && !empty($query_data['status']) && ($player_quest['status'] != $query_data['status'])) ? null : count($rank_data)+1;
+                            $player_data['rank'] = (isset($query_data['status']) && !empty($query_data['status']) && ($player_quest['status'] != $query_data['status'])) ? null : 1;
                             unset($player_data['_id']);
                             array_walk_recursive($player_data, array($this, "convert_mongo_object"));
                         } else {
@@ -1898,6 +1895,18 @@ class Quest extends REST2_Controller
                         if(count($adjust_player) > 1) array_multisort($cl_player, SORT_ASC, $adjust_player);
                         $result = array_merge(array_values($result), array_values($adjust_player));
                     }
+
+                    $check_adjust_rank = true;
+                    if(isset($player_data['rank']) && !is_null($player_data['rank'])) {
+                        foreach ($result as $res) {
+                            if (($res['player']['cl_player_id'] != $cl_player_id) && $check_adjust_rank) {
+                                $player_data['rank'] += 1;
+                            } else {
+                                $check_adjust_rank = false;
+                            }
+                        }
+                    }
+
                     $offset = isset($query_data['offset']) && !empty($query_data['offset']) ? (int)$query_data['offset'] : 0;
                     $limit = isset($query_data['limit']) && !empty($query_data['limit']) && $query_data['limit'] <= count($result) - $offset ? (int)$query_data['limit']:null;
 
@@ -1944,7 +1953,6 @@ class Quest extends REST2_Controller
                 }
                 $result[$player_index]['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select);
                 $result[$player_index]['goal'] = count($player['missions']);
-                if(isset($player_data['rank']) && !is_null($player_data['rank']) && (!isset($pb_player_id) || $player['pb_player_id'] != $pb_player_id)) $player_data['rank'] += 1;
             }
             if(isset($result) && !empty($result)){
                 foreach ($result as $key => $row) {
@@ -1953,7 +1961,17 @@ class Quest extends REST2_Controller
                 }
                 if(count($result) > 1) array_multisort($current, SORT_DESC, $date_completed, SORT_ASC, $result);
             }
-
+            $check_adjust_rank = true;
+            if(isset($player_data['rank']) && !is_null($player_data['rank'])) {
+                foreach ($result as $res) {
+                    if (($res['player']['cl_player_id'] != $cl_player_id) && $check_adjust_rank) {
+                        $player_data['rank'] += 1;
+                    } else {
+                        $check_adjust_rank = false;
+                    }
+                }
+            }
+            
             $offset = isset($query_data['offset']) && !empty($query_data['offset']) ? (int)$query_data['offset'] : 0;
             $limit = isset($query_data['limit']) && !empty($query_data['limit']) && $query_data['limit'] <= count($result) - $offset ? (int)$query_data['limit']:null;
 
