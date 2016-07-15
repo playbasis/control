@@ -55,16 +55,12 @@ class game extends MY_Controller
             $site_id = $this->User_model->getSiteId();
             $data = $this->input->post();
 
-            log_message('error', print_r($data,true));
-
             $game_data['name']      = $data['name'];
             $game_data['image']     = $data['image'];
             $game_data['status']    = $data['status'] && $data['status'] == "on" ? true : false;
             $game_data['template']  = $data['template'];
 
             $game_id = $this->Game_model->updateGameSetting($client_id, $site_id, $game_data);
-            log_message('error', 'game');
-            log_message('error', print_r($game_id,true));
             if($game_id){
                 foreach($data['worlds'] as $world){
                     $item_array = array();
@@ -83,6 +79,7 @@ class game extends MY_Controller
                         }
                     }
 
+                    $stage_data['id']                     = $world['world_id'];
                     $stage_data['name']                   = $world['world_name'];
                     $stage_data['level']                  = (int)$world['world_level'];
                     $stage_data['image']                  = $world['world_image'];
@@ -101,7 +98,7 @@ class game extends MY_Controller
         $this->getList();
     }
 
-    public function template()
+    public function template($template_id = null)
     {
         if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
             $client_id = $this->User_model->getClientId();
@@ -114,106 +111,54 @@ class game extends MY_Controller
                     die();
                 }
 
-                $category = $this->input->get('filter_category');
-
-                $result = $this->Badge_model->getAllBadgeByCategory($client_id, $site_id, $category);
-                foreach ($result as &$document) {
-                    if (isset($document['_id']) && isset($document['badge_id'])) {
-                        $document['_id'] = $document['badge_id'] . "";
-                        unset($document['badge_id']);
-                    }
+                $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('name' => 'Farm'));
+                $template = $this->Game_model->getGameTemplate($client_id, $site_id, $game_id['_id']);
+                if(!$template){
+                    $template_data['name']       = "default";
+                    $template_data['weight']     = null;
+                    $template_data['start'] = null;
+                    $template_data['end']   = null;
+                    $template_data['status']     = true;
+                    $template_id = $this->Game_model->updateGameTemplate($client_id, $site_id, $game_id['_id'], $template_data);
+                    $template = $this->Game_model->getGameTemplate($client_id, $site_id, $game_id['_id']);
+                    log_message('error', print_r($template,true));
                 }
 
-                $count_category = $this->Badge_model->countAllBadgeByCategory($client_id, $site_id, $category);
+                $count_template = $this->Game_model->countGameTemplate($client_id, $site_id, $game_id['_id']);
+                log_message('error', $count_template);
 
                 $this->output->set_status_header('200');
                 $response = array(
-                    'total' => $count_category,
-                    'rows' => $result
+                    'total' => $count_template,
+                    'rows' => $template
                 );
-
+                echo json_encode($response);
+                die();
 
             } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                if (!$this->validateModify()) {
-                    $this->output->set_status_header('403');
-                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
-                    die();
-                }
+                $data = $this->input->post();
+                log_message('error', "post");
+                if ($template_id) $template_data['id']       = $template_id;
+                $template_data['name']       = $data['template_name'];
+                $template_data['weight']     = (int)$data['template_weight'];
+                $template_data['date_start'] = $data['template_start'];
+                $template_data['date_end']   = $data['template_end'];
+                $template_data['status']     = (isset($data['template_status']) && ($data['template_status'] == "on")) ? true : false;
 
-                //todo: Add validation here
-                $category_data = $this->input->post();
-
-                $name = !empty($category_data['category-name']) ? $category_data['category-name'] : null;
-
-                $result = null;
-                if (!empty($category_data) && !isset($categoryId)) {
-                    if (isset($category_data['action']) && $category_data['action'] == 'delete' && isset($category_data['id']) && !empty($category_data['id'])) {
-                        foreach ($category_data['id'] as &$id_entry) {
-                            try {
-                                $id_entry = new MongoId($id_entry);
-                            } catch (Exception $e) {
-                                $this->output->set_status_header('400');
-                                echo json_encode(array('status' => 'error'));
-                                die;
-                            }
-                        }
-                        $result = $this->Badge_model->deleteItemCategoryByIdArray($client_id, $site_id, $category_data['id']);
-                    } else {
-                        $chk_name = $this->Badge_model->retrieveItemCategoryByName($client_id, $site_id, $name);
-                        if($chk_name){
-                            $this->output->set_status_header('400');
-                            echo json_encode(array('status' => 'name duplicate'));
-                            die;
-                        }else {
-                            $result = $this->Badge_model->createItemCategory($client_id, $site_id, $name);
-                        }
-                    }
-                } else {
-                    try {
-                        $categoryId = new MongoId($categoryId);
-                        if (isset($category_data['action']) && $category_data['action'] == 'delete') {
-                            $result = $this->Badge_model->deleteItemCategory($client_id, $site_id, $categoryId);
-                        } else {
-                            $chk_name = $this->Badge_model->retrieveItemCategoryByNameButNotID($client_id, $site_id, $name, $categoryId);
-                            if($chk_name){
-                                $this->output->set_status_header('400');
-                                echo json_encode(array('status' => 'name duplicate'));
-                                die;
-                            }else {
-                                $result = $this->Badge_model->updateItemCategory($categoryId, array(
-                                    'client_id' => $client_id,
-                                    'site_id' => $site_id,
-                                    'name' => $name
-                                ));
-                            }
-                        }
-                    } catch (Exception $e) {
-                        $this->output->set_status_header('400');
-                        echo json_encode(array('status' => 'error'));
-                        die;
-                    }
-                }
-
-                if (!$result) {
+                $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('name' => 'Farm'));
+                $template_id = $this->Game_model->updateGameTemplate($client_id, $site_id, $game_id['_id'], $template_data);
+                log_message('error', $template_id);
+                if (!$template_id) {
                     $this->output->set_status_header('400');
                     echo json_encode(array('status' => 'error'));
-                } elseif (!isset($categoryId) && !isset($category_data['action'])) {
-                    $this->output->set_status_header('201');
-                    // todo: should return newly create object
-                    $category_result = $this->Badge_model->retrieveItemCategoryById($result);
-                    if (isset($category_result['_id'])) {
-                        $category_result['_id'] = $category_result['_id'] . "";
-                    }
-                    echo json_encode(array('status' => 'success', 'rows' => $category_result));
+                    die();
                 } else {
                     $this->output->set_status_header('200');
                     // todo: should return update object
                     echo json_encode(array('status' => 'success'));
+                    die();
                 }
             }
-
-            echo json_encode($response);
-            die();
         }
     }
 

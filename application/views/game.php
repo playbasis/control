@@ -61,9 +61,7 @@
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('entry_template'); ?>:</td>
-                        <td><input type="text" name="template" size="100" value="">&nbsp;
-                            <a href="javascript:void(0)" class="btn btn-primary template-setting-btn btn-lg">Template Setting</a>
-                        </td>
+                        <td><a href="javascript:void(0)" class="btn btn-primary template-setting-btn btn-lg">Template Setting</a></td>
                         <td></td>
                     </tr>
                 </table>
@@ -198,10 +196,10 @@
             <?php echo form_open(null, array('class' => 'form-horizontal template-form')); ?>
             <div class="row-fluid">
                 <div class="template-wrapper span12">
-                    <div class="template-nav well span3" style="height: 300px">
+                    <div class="overflow-visible template-nav well span4 " style="height: 300px; overflow-y: scroll">
                         <ul class="nav nav-tabs nav-stacked" id="template_nav"></ul>
                     </div>
-                    <div class="span9 well" id ="template_body" style="height: 300px">
+                    <div class="span8 well" id ="template_body" style="height: 300px">
                         <div class="control-group">
                             <label for="template_name" class="control-label span3"><span class="required">*</span><?php echo $this->lang->line('entry_template_name'); ?></label>
                             <div class="controls span6">
@@ -468,31 +466,7 @@
     });
 
     $('.template-setting-btn').click(function () {
-
-        $.ajax({
-            url : baseUrlPath+ "badge/category",
-            dataType: "json"
-        }).done(function(data) {
-            $('#template_nav').empty();
-            for(var i=0; i< data.total; i++){
-                if(data.rows[i] != undefined){
-                    var templateHtml = '<li id="tab-'+i+'" ><a onclick="set_template('+i+')" data-toggle="tab" data-interest="'+i+'">'+data.rows[i].name+'</a></li>';
-                    $('#template_nav').append(templateHtml);
-                }
-            }
-            templateData = data.rows;
-            if(!data.total){
-                var templateHtml = '<li id="tab-0" ><a onclick="set_template(0);" data-toggle="tab" data-interest="'+0+'">Default</a></li>';
-                $('#template_nav').append(templateHtml);
-            } else {
-                document.getElementById('template_name').value =  templateData[0].name;
-            }
-            var templateHtml = '<li id="tab-end" ><a onclick="set_template(99)" data-toggle="tab" data-interest="'+99+'">+Template</a></li>';
-            $('#template_nav').append(templateHtml);
-            $('#tab-0').addClass("active");
-
-        });
-        $('#formTemplateModal').modal('show');
+        show_template();
     });
 
     function init_world_event(id) {
@@ -623,6 +597,12 @@
             var check = templateData[index].status ? templateData[index].status : false;
             $('#template_status').attr('checked', check);
             $("#template_status").bootstrapSwitch('state', check);
+            if(index == 0){
+                set_disable_template(true);
+            }
+            else{
+                set_disable_template(false);
+            }
         }
         else{
             document.getElementById('template_name').value = "";
@@ -631,7 +611,44 @@
             document.getElementById('template_end').value = "";
             $('#template_status').attr('checked', false);
             $("#template_status").bootstrapSwitch('state', false);
+            set_disable_template(false);
         }
+
+    }
+
+    function set_disable_template(setting){
+        $('#template_name').attr('disabled', setting);
+        $('#template_weight').attr('disabled', setting);
+        $('#template_start').attr('disabled', setting);
+        $('#template_end').attr('disabled', setting);
+        $("#template_status").bootstrapSwitch('disabled', setting);
+    }
+
+    function show_template(){
+        $.ajax({
+            url : baseUrlPath+ "game/template",
+            dataType: "json"
+        }).done(function(data) {
+            $('#template_nav').empty();
+            var templateHtml ='';
+            for(var i=0; i< data.total; i++){
+                if(data.rows[i] != undefined){
+                    templateHtml += '<li id="tab-'+i+'" ><a onclick="set_template('+i+')" data-toggle="tab" data-interest="'+i+'">'+data.rows[i].name+'</a></li>';
+                }
+            }
+            templateHtml += '<li id="tab-end" ><a onclick="set_template(99)" data-toggle="tab" data-interest="'+99+'">+Template</a></li>';
+            $('#template_nav').append(templateHtml);
+            templateData = data.rows;
+            document.getElementById('template_name').value =  templateData[0].name;
+            document.getElementById('template_weight').value =  templateData[0].weight;
+            document.getElementById('template_start').value =  templateData[0].date_start;
+            document.getElementById('template_end').value =  templateData[0].date_end;
+            $('#template_status').attr('checked', templateData[0].status);
+            $("#template_status").bootstrapSwitch('state', templateData[0].status);
+            set_disable_template(true);
+            $('#tab-0').addClass("active");
+            $('#formTemplateModal').modal('show');
+        });
 
     }
 
@@ -643,7 +660,6 @@
             template_end = $('#template_end').val();
 
         var dialogMsg = "";
-
         if(template_id == "tab-end"){
             for(var i=0; i< templateData.length; i++){
                 if(template_name == templateData[i].name) dialogMsg += '- Template Name is required uniuqe name<br>';
@@ -657,29 +673,53 @@
         if(dialogMsg != ""){
             preventUnusual.message(dialogMsg , "Fail!");
         } else {
-           /* var formData = $('form.game-form').serialize();
-            $.ajax({
-                type: "POST",
-                url: baseUrlPath + "game/edit/",
-                data: formData,
-                beforeSend: function (xhr) {
-                    $waitDialog.modal();
-                }
-            }).done(function (data) {
-                $waitDialog.modal('hide');
-            }).fail(function (xhr, textStatus, errorThrown) {
-                if(JSON.parse(xhr.responseText).status == "error") {
-                    $('form.game-form').trigger("reset");
-                    alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
-                }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+            var formData = $('form.template-form').serialize();
+            if(template_id == "tab-end"){
+
+                $.ajax({
+                    type: "POST",
+                    url: baseUrlPath + "game/template/",
+                    data: formData,
+                    timeout: 3000,
+                    beforeSend: function (xhr) {
+                        $('#formTemplateModal').modal('hide');
+                        $waitDialog.modal('show');
+                    }
+                }).done(function (data) {
                     $waitDialog.modal('hide');
-
-                }
-            }).always(function () {
-                $waitDialog.modal('hide');
-            });*/
+                    show_template();
+                }).fail(function (xhr, textStatus, errorThrown) {
+                    if(JSON.parse(xhr.responseText).status == "error") {
+                        $('form.template-form').trigger("reset");
+                        alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+                    }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                        $waitDialog.modal('hide');
+                    }
+                }).always(function () {
+                    $waitDialog.modal('hide');
+                });
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: baseUrlPath + "game/template/" + template_id,
+                    data: formData,
+                    beforeSend: function (xhr) {
+                        $waitDialog.modal();
+                    }
+                }).done(function (data) {
+                    $waitDialog.modal('hide');
+                }).fail(function (xhr, textStatus, errorThrown) {
+                    if(JSON.parse(xhr.responseText).status == "error") {
+                        $('form.template-form').trigger("reset");
+                        alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+                    }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                        $waitDialog.modal('hide');
+                    }
+                }).always(function () {
+                    $waitDialog.modal('hide');
+                });
+            }
         }
-
     }
 
     function submitItemModalForm() {

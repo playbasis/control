@@ -18,36 +18,6 @@ class Game_model extends MY_Model
         return $results;
     }
 
-    public function getGameStageItem($client_id, $site_id, $game_id, $data)
-    {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-        
-        $this->mongo_db->where('client_id', new MongoID($client_id));
-        $this->mongo_db->where('site_id', new MongoID($site_id));
-        $this->mongo_db->where('game_id', new MongoID($game_id));
-        $this->mongo_db->where('item_id', $data['item_id']);
-
-        $results = $this->mongo_db->get("playbasis_game_item_to_client");
-        $results = $results ? $results[0] : null;
-
-        return $results;
-    }
-
-    public function getGameStage($client_id, $site_id, $game_id, $data)
-    {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-        
-        $this->mongo_db->where('client_id', new MongoID($client_id));
-        $this->mongo_db->where('site_id', new MongoID($site_id));
-        $this->mongo_db->where('game_id', new MongoID($game_id));
-        $this->mongo_db->where('level', $data['level']);
-
-        $results = $this->mongo_db->get("playbasis_game_stage_to_client");
-        $results = $results ? $results[0] : null;
-        
-        return $results;
-    }
-
     public function updateGameSetting($client_id, $site_id, $data)
     {
         $game = $this->getGameSetting($client_id, $site_id, $data);
@@ -84,8 +54,21 @@ class Game_model extends MY_Model
         }
 
         return $result;
-        
-        
+    }
+
+    public function getGameStageItem($client_id, $site_id, $game_id, $data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('game_id', new MongoID($game_id));
+        $this->mongo_db->where('item_id', new MongoID($data['item_id']));
+
+        $results = $this->mongo_db->get("playbasis_game_item_to_client");
+        $results = $results ? $results[0] : null;
+
+        return $results;
     }
 
     public function updateGameStageItem($client_id, $site_id, $game_id, $data)
@@ -104,7 +87,7 @@ class Game_model extends MY_Model
             $this->mongo_db->where('client_id', new MongoID($client_id));
             $this->mongo_db->where('site_id', new MongoID($site_id));
             $this->mongo_db->where('game_id', new MongoID($game_id));
-            $this->mongo_db->where('item_id', $data['item_id']);
+            $this->mongo_db->where('item_id', new MongoID($data['item_id']));
 
             $result = $this->mongo_db->update('playbasis_game_item_to_client');
 
@@ -128,9 +111,24 @@ class Game_model extends MY_Model
         return $result;
     }
 
+    public function getGameStage($client_id, $site_id, $game_id, $data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('game_id', new MongoID($game_id));
+        $this->mongo_db->where('_id', new MongoID($data['id']));
+
+        $results = $this->mongo_db->get("playbasis_game_stage_to_client");
+        $results = $results ? $results[0] : null;
+
+        return $results;
+    }
+
     public function updateGameStage($client_id, $site_id, $game_id, $data)
     {
-        if ($this->getGameStage($client_id, $site_id, $game_id, $data)) {
+        if (isset($data['id']) && $this->getGameStage($client_id, $site_id, $game_id, $data)) {
             $date = new MongoDate();
             $date_array = array(
                 'date_modified' => $date
@@ -145,7 +143,7 @@ class Game_model extends MY_Model
             $this->mongo_db->where('client_id', new MongoID($client_id));
             $this->mongo_db->where('site_id', new MongoID($site_id));
             $this->mongo_db->where('game_id', new MongoID($game_id));
-            $this->mongo_db->where('level', $data['level']);
+            $this->mongo_db->where('_id', new MongoID($data['id']));
 
             $result = $this->mongo_db->update('playbasis_game_stage_to_client');
 
@@ -164,6 +162,78 @@ class Game_model extends MY_Model
             $insert_data = array_merge($data, $date_array);
 
             $result = $this->mongo_db->insert('playbasis_game_stage_to_client', $insert_data);
+        }
+
+        return $result;
+    }
+
+    public function countGameTemplate($client_id, $site_id, $game_id, $data=null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('game_id', new MongoID($game_id));
+        if(isset($data['id'])){
+            $this->mongo_db->where('_id', new MongoID($data['id']));
+        }
+
+        $results = $this->mongo_db->count("playbasis_game_template_to_client");
+
+        return $results;
+    }
+
+    public function getGameTemplate($client_id, $site_id, $game_id, $data=null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('game_id', new MongoID($game_id));
+        if(isset($data['id'])){
+            $this->mongo_db->where('_id', new MongoID($data['id']));
+        }
+        $results = $this->mongo_db->get("playbasis_game_template_to_client");
+
+        return $results;
+    }
+
+    public function updateGameTemplate($client_id, $site_id, $game_id, $data)
+    {
+        if (isset($data['id']) && $this->getGameTemplate($client_id, $site_id, $game_id, $data)) {
+            $date = new MongoDate();
+            $date_array = array(
+                'date_modified' => $date
+            );
+
+            $update_data = array_merge($data, $date_array);
+
+            foreach ($update_data as $key => $value) {
+                $this->mongo_db->set($key, $value);
+            }
+
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('game_id', new MongoID($game_id));
+            $this->mongo_db->where('_id', new MongoID($data['id']));
+
+            $result = $this->mongo_db->update('playbasis_game_template_to_client');
+
+        } else {
+            $this->set_site_mongodb($this->session->userdata('site_id'));
+
+            $date = new MongoDate();
+            $date_array = array(
+                'client_id'     => $client_id,
+                'site_id'       => $site_id,
+                'game_id'       => $game_id,
+                'date_added'    => $date,
+                'date_modified' => $date,
+                'deleted'       => false
+            );
+            $insert_data = array_merge($data, $date_array);
+
+            $result = $this->mongo_db->insert('playbasis_game_template_to_client', $insert_data);
         }
 
         return $result;
