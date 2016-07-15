@@ -572,6 +572,14 @@ class Error extends CI_Model
                 $errorData['message'] = "Item does not exist in current game stage";
                 $errorData['error_code'] = '4004';
                 break;
+            case 'GAME_ITEM_STATUS_NOT_SUPPORT':
+                if($dataArray == "farm"){
+                    $errorData['message'] = "The input item status is not supported. ( available status for this game is 'harvested' )";
+                }else{
+                    $errorData['message'] = "The input item status is not supported: " ;
+                }
+                $errorData['error_code'] = '4005';
+                break;
             default:
                 $errorData['message'] = "Unknown";
                 $errorData['error_code'] = '9999';
