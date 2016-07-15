@@ -419,7 +419,7 @@ class Quest extends MY_Controller
 
     private function questObjectData($object_data, $key_type, $key_id, $query_data)
     {
-        $condition_data = array();
+        $condition_data = null;
         switch ($object_data[$key_type]) {
             case "QUEST":
                 $query_data['quest_id'] = $object_data[$key_id];
