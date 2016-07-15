@@ -993,4 +993,37 @@ class Badge_model extends MY_Model
     {
         $value = new MongoId($value);
     }
+
+    public function getAllBadges($data)
+    {
+        //get badge ids
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(array(
+            'badge_id',
+            'image',
+            'name',
+            'description',
+            'hint',
+            'sponsor',
+            'tags',
+            'sort_order'
+        ));
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'deleted' => false
+        ));
+        if (isset($data['tags'])) {
+            $this->mongo_db->where_in('tags', $data['tags']);
+        }
+        $badges = $this->mongo_db->get('playbasis_badge_to_client');
+        if ($badges) {
+            foreach ($badges as &$badge) {
+                $badge['badge_id'] = $badge['badge_id'] . "";
+                $badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
+            }
+        }
+        return $badges;
+    }
 }

@@ -2367,3 +2367,11 @@ function index_id($obj)
 {
     return $obj['_id'];
 }
+
+function cmp1($a, $b)
+{
+    if ($a['_id'] == $b['_id']) {
+        return 0;
+    }
+    return ($a['_id'] < $b['_id']) ? -1 : 1;
+}
