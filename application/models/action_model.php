@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function index_id($obj)
+function action_model_index_id($obj)
 {
     return $obj['_id'];
 }
@@ -90,7 +90,7 @@ class Action_model extends MY_Model
             $users2 = $this->mongo_db->get("playbasis_player");
 
             $this->mongo_db->where_in('pb_player_id',
-                array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
+                array_merge(array_map('action_model_index_id', $users1), array_map('action_model_index_id', $users2)));
         }
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -328,7 +328,7 @@ class Action_model extends MY_Model
             $users2 = $this->mongo_db->get("playbasis_player");
 
             $this->mongo_db->where_in('pb_player_id',
-                array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
+                array_merge(array_map('action_model_index_id', $users1), array_map('action_model_index_id', $users2)));
         }
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -733,6 +733,91 @@ class Action_model extends MY_Model
         }
         return $temp;
     }
+
+    public function listActions($data)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(array('name', 'icon'));
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'status' => true
+        ));
+        $result = $this->mongo_db->get('playbasis_action_to_client');
+        if (!$result) {
+            $result = array();
+        }
+        return $result;
+    }
+
+    public function actionLogPerAction($data, $action_name, $from = null, $to = null)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $action_id = $this->findAction(array_merge($data, array('action_name' => $action_name)));
+        if (!$action_id) {
+            return array();
+        }
+        $match = array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'action_id' => $action_id,
+        );
+        if (($from || $to) && !isset($match['date_added'])) {
+            $match['date_added'] = array();
+        }
+        if ($from) {
+            $match['date_added']['$gte'] = new MongoDate(strtotime($from . ' 00:00:00'));
+        }
+        if ($to) {
+            $match['date_added']['$lte'] = new MongoDate(strtotime($to . ' 23:59:59'));
+        }
+        $_result = $this->mongo_db->aggregate('playbasis_player_dau', array(
+            array(
+                '$match' => $match,
+            ),
+            array(
+                '$group' => array('_id' => '$date_added', 'value' => array('$sum' => '$count'))
+            ),
+        ));
+        $_result = $_result ? $_result['result'] : array();
+        $result = array();
+        if (is_array($_result)) {
+            foreach ($_result as $key => $value) {
+                array_push($result, array('_id' => date('Y-m-d', $value['_id']->sec), 'value' => $value['value']));
+            }
+        }
+        usort($result, 'cmp_id');
+        if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) {
+            array_unshift($result, array('_id' => $from, 'value' => 'SKIP'));
+        }
+        if ($to && (!isset($result[count($result) - 1]['_id']) || $result[count($result) - 1]['_id'] != $to)) {
+            array_push($result, array('_id' => $to, 'value' => 'SKIP'));
+        }
+        return $result;
+    }
+
+    public function findAction($data)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(array('action_id'));
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'name' => strtolower($data['action_name'])
+        ));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_action_to_client');
+        return $result ? $result[0]['action_id'] : array();
+    }
+}
+
+function cmp_id($a, $b)
+{
+    if ($a['_id'] == $b['_id']) {
+        return 0;
+    }
+    return ($a['_id'] < $b['_id']) ? -1 : 1;
 }
 
 ?>

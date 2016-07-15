@@ -88,5 +88,34 @@ define('MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH', 80);
 define('MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT', 80);
 define('MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH', 240);
 define('MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT', 240);
+
+define('EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS', 'notifyInactiveClients');
+define('EMAIL_BCC_PLAYBASIS_EMAIL', 'pascal@playbasis.com');
+define('EMAIL_DEBUG_MODE', true);
+define('EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION', 'remindClientsToSetupSubscription');
+define('EMAIL_TYPE_CLIENT_REGISTRATION', 'listClientRegistration');
+define('EMAIL_TYPE_USER', 'user');
+
+define('GRACE_PERIOD_IN_DAYS', 5);
+
+define('FULLCONTACT_API', 'https://api.fullcontact.com');
+define('FULLCONTACT_API_KEY', '8f10cefa2030457a');
+define('FULLCONTACT_RATE_LIMIT', 1); // per sec
+define('FULLCONTACT_CALLBACK_URL', 'https://api.pbapp.net/notification/%s');
+define('FULLCONTACT_REQUEST_OK', 200);
+define('FULLCONTACT_REQUEST_WEBHOOK_ACCEPTED', 202);
+define('FULLCONTACT_USER_AGENT', 'FullContact');
+
+define('DEMO_SITE_ID', '52ea1eac8d8c89401c0000e5');
+
+define('GECKO_API_KEY', '3b28853ec6792fb3cc0e94ad891d1659');
+define('GECKO_URL', 'https://push.geckoboard.com/v1/send/');
+
+define('DATE_FREE_ACCOUNT_SHOULD_SETUP_MOBILE', '2015-06-01');
+
+define('CACHE_ADAPTER', 'file');
+define('CACHE_KEY_VERSION', 'version-api');
+define('CACHE_TTL_IN_SEC', 10*60);
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
