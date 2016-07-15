@@ -56,7 +56,7 @@
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('entry_status'); ?>:</td>
-                        <td><input type="checkbox" name="status" id="status"" checked></td>
+                        <td><input type="checkbox" name="status" id="status" <?php echo  $status == true ? 'checked' : ''; ?>></td>
                         <td></td>
                     </tr>
                     <tr>
@@ -72,7 +72,92 @@
                         <a href="javascript:void(0)" class="btn btn-primary add-world-btn btn-lg">+ New World</a>
                     </div><br>
                     <div class="world-wrapper">
-
+                        <?php if(isset($worlds)){
+                            foreach($worlds as $key => $world){ $index = $key +1;?>
+                                <div class="world-item-wrapper" data-world-id="'+ itemWorldId +'">
+                                    <div class="box-header box-world-header overflow-visible" style="height: 30px;">
+                                        <h2><img src="<?php echo base_url();?>image/default-image.png" width="30"> <?php echo $world['world_name'] ?></h2>
+                                        <div class="box-icon">
+                                            <a href="javascript:void(0)" class="btn btn-danger right remove-world-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
+                                            <span class="break"></span>
+                                            <a href="javaScript:void()" ><i class="icon-chevron-up"></i></a>
+                                        </div>
+                                    </div>
+                                <div class="box-content clearfix">
+                                    <div class="row-fluid">
+                                        <div class="span12 well" style="min-height:500px">
+                                            <div class="span6">
+                                                <table class="form">
+                                                <tr>
+                                                    <td><?php echo $this->lang->line("entry_world_name"); ?>:</td>
+                                                    <td><input type="text" name="worlds[<?php echo $index ?>][world_name]" id="worlds_<?php echo $index ?>_name" size="100" value="<?php echo $world['world_name'] ?>"></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><?php echo $this->lang->line("entry_world_level"); ?>:</td>
+                                                    <td><input type="number" name="worlds[<?php echo $index ?>][world_level]" id="worlds_<?php echo $index ?>_level" size="100" min="1" value="<?php echo $world['world_level'] ?>"></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><?php echo $this->lang->line("entry_image"); ?>:</td>
+                                                    <td> <img src="<?php echo $world['world_thumb'] ?>" alt="" id="world_<?php echo $index ?>_thumb" onerror="$(this).attr("src","<?php echo base_url(); ?>image/default-image.png");"/>
+                                                        <input type="hidden" name="worlds[<?php echo $index ?>][world_image]" value="<?php echo $world['world_image'] ?>" id="world_<?php echo $index ?>_image"/>
+                                                        <br/>
+                                                        <a onclick="image_upload('#world_<?php echo $index ?>_image', 'world_<?php echo $index ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                                        <a onclick="$('world_<?php echo $index ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('world_<?php echo $index ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><?php echo $this->lang->line('entry_category'); ?>:</td>
+                                                    <td><input type="text" name="worlds[<?php echo $index ?>][world_category]" id="worlds_<?php echo $index ?>_category" size="100" value="<?php echo $world['world_category'] ?>"></td>
+                                                    <td></td>
+                                                </tr>
+                                                </table>
+                                            </div>
+                                            <div class="span6">
+                                                <table class="form">
+                                                    <tr>
+                                                        <td><?php echo $this->lang->line("entry_world_width"); ?>:</td>
+                                                        <td><input type="number" name=worlds[<?php echo $index ?>][world_width] id="worlds_<?php echo $index ?>_world_width" value="<?php echo $world['world_width'] ?>" size="100" min="1" value="1" onchange="add_thumbnail(<?php echo $index ?>)"></td>
+                                                        <td><input type="hidden" id="worlds_<?php echo $index ?>_world_width_temp" size="100" value="0"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><?php echo $this->lang->line("entry_world_height"); ?>:</td>
+                                                        <td><input type="number" name=worlds[<?php echo $index ?>][world_height] id="worlds_<?php echo $index ?>_world_height" value="<?php echo $world['world_height'] ?>" size="100" min="1" value="1" onchange="add_thumbnail(<?php echo $index ?>)"></td>
+                                                        <td><input type="hidden" id="worlds_<?php echo $index ?>_world_height_temp" size="100" value="0"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><?php echo $this->lang->line("entry_world_description"); ?>:</td>
+                                                        <td><textarea name="worlds[<?php echo $index ?>][world_description]" rows="4"></textarea></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="span12">Item:</div>
+                                            <div class="well" id="worlds_<?php echo $index ?>_thumbnails_grids" style="overflow-y:scroll; overflow-x:scroll; height:500px; width:98%;">
+                                            <?php for($i = 0;$i < $world['world_height'];$i++){?>
+                                                    <ul id="thumbnails_grid_<?php echo $index+'_'+$i ?>" class="thumbnails">
+                                                    <?php for($j = 0;$j < $world['world_width'];$j++){?>
+                                                        <li id="thumbnails_grid_<?php echo $index+'_'+$i+'_'+$j ?>">
+                                                            <div class="thumbnail tooltips" data-placement="top" title="<?php echo '['+$i+']['+$j+']' ?>" style="width:120px;height:120px;">
+                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_id]" id="worlds_<?php echo $index ?>_item_id_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo isset($world['world_item'][$i][$j]['item_id']) ? $world['world_item'][$i][$j]['item_id'] : ""?>">
+                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_harvest]" id="worlds_<?php echo $index ?>_item_harvest_<?php echo $i?>_<?php echo $j?>" size="100" value=<?php echo isset($world['world_item'][$i][$j]['item_harvest']) ? $world['world_item'][$i][$j]['item_harvest'] : ""?>>
+                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_deduct]" id="worlds_<?php echo $index ?>_item_deduct_<?php echo $i?>_<?php echo $j?>" size="100" value=<?php echo isset($world['world_item'][$i][$j]['item_deduct']) ? $world['world_item'][$i][$j]['item_deduct'] : ""?>>
+                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_description]" id="worlds_<?php echo $index ?>_item_description_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo isset($world['world_item'][$i][$j]['item_description']) ? $world['world_item'][$i][$j]['item_description'] : ""?>">
+                                                                <i class="fa fa-plus-circle fa-5x fa-align-center" onclick="showItemModalForm(<?php echo $index ?>,<?php echo $i ?>,<?php echo $j ?>)" class="tooltips" data-placement="top" title="<?php echo '['+$i+']['+$j+']' ?>" id="add" style="padding: 30px" aria-hidden="true"></i>
+                                                            </div>
+                                                        </li>
+                                                    <?php } ?>
+                                                    </ul>
+                                            <?php } ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                      <?php }
+                        } ?>
                     </div><!-- .world-wrapper -->
                 </div>
             <?php echo form_close();?>
@@ -382,6 +467,9 @@
         countWorldId++;
     })
 
+    for(var iWorld=1;iWorld <= countWorldId;iWorld++){
+        init_world_event(iWorld);
+    }
     $('.open-world-btn').click(function () {
         $('.world-item-wrapper>.box-content').show();
     })
@@ -418,8 +506,8 @@
                                                 </tr>\
                                                 <tr>\
                                                     <td><?php echo $this->lang->line("entry_image"); ?>:</td>\
-                                                    <td> <img src="<?php echo $thumb; ?>" alt="" id="world_'+itemWorldId+'_thumb" onerror="$(this).attr("src","<?php echo base_url(); ?>image/default-image.png");"/>\
-                                                        <input type="hidden" name="worlds['+itemWorldId+'][world_image]" value="<?php echo $image; ?>" id="world_'+itemWorldId+'_image"/>\
+                                                    <td> <img src="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>" alt="" id="world_'+itemWorldId+'_thumb" onerror="$(this).attr("src","<?php echo base_url(); ?>image/default-image.png");"/>\
+                                                        <input type="hidden" name="worlds['+itemWorldId+'][world_image]" value="no_image.jpg" id="world_'+itemWorldId+'_image"/>\
                                                         <br/>\
                                                         <a onclick="image_upload(\'#world_'+itemWorldId+'_image\', \'world_'+itemWorldId+'_thumb\');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;\
                                                         <a onclick="$(\'world_'+itemWorldId+'_thumb\').attr(\'src\', \'<?php echo $this->lang->line('no_image'); ?>\'); $(\'world_'+itemWorldId+'_image\').attr(\'value\', \'\');"><?php echo $this->lang->line('text_clear'); ?></a>\
@@ -488,9 +576,11 @@
                 init_world_event(id);
             }
         });
+        get_item_category(id);
+    }
 
-
-        $inputCategory = $('#worlds_'+id+'_category');
+    function get_item_category(world){
+        $inputCategory = $('#worlds_'+world+'_category');
         $inputCategory.select2({
             width: '220px',
             allowClear: true,
@@ -752,7 +842,6 @@
     }
 
     function showItemModalForm(world_id,row,column) {
-        $('#formItemModal').modal('show');
         var $world_category = $('#worlds_'+world_id+'_category');
         var $world_width = $('#worlds_'+ world_id +'_world_width');
         var $world_height = $('#worlds_'+ world_id +'_world_height');
@@ -768,7 +857,8 @@
             document.getElementById('item-desc').value = $('#worlds_'+ world_id +'_item_desc_'+ row +'_' + column).val();
         }
 
-        if ($world_category.val() != null){
+        if ($world_category.val() != ""){
+            $('#formItemModal').modal('show');
             $inputCategory = $('#item_id');
             $inputCategory.select2({
                 width: '220px',
@@ -825,8 +915,7 @@
             });
         }
         else{
-            alert("please select category");
-            $('#formItemModal').modal('hide');
+            preventUnusual.message("please select category" , "Fail!");
         }
     }
 

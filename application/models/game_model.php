@@ -56,17 +56,18 @@ class Game_model extends MY_Model
         return $result;
     }
 
-    public function getGameStageItem($client_id, $site_id, $game_id, $data)
+    public function getGameStageItem($client_id, $site_id, $game_id, $data=null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where('game_id', new MongoID($game_id));
-        $this->mongo_db->where('item_id', new MongoID($data['item_id']));
+        if(isset($data['item_id'])){
+            $this->mongo_db->where('item_id', new MongoID($data['item_id']));
+        }
 
         $results = $this->mongo_db->get("playbasis_game_item_to_client");
-        $results = $results ? $results[0] : null;
 
         return $results;
     }
@@ -111,17 +112,18 @@ class Game_model extends MY_Model
         return $result;
     }
 
-    public function getGameStage($client_id, $site_id, $game_id, $data)
+    public function getGameStage($client_id, $site_id, $game_id, $data=null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where('game_id', new MongoID($game_id));
-        $this->mongo_db->where('_id', new MongoID($data['id']));
+        if(isset($data['_id'])){
+            $this->mongo_db->where('_id', new MongoID($data['id']));
+        }
 
         $results = $this->mongo_db->get("playbasis_game_stage_to_client");
-        $results = $results ? $results[0] : null;
 
         return $results;
     }

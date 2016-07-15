@@ -47,14 +47,13 @@ class game extends MY_Controller
         $this->data['form'] = 'game/edit/';
         $this->error['warning'] = null;
 
-
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->data['message'] = null;
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
             $data = $this->input->post();
 
+            log_message('error', print_r($data,true));
             $game_data['name']      = $data['name'];
             $game_data['image']     = $data['image'];
             $game_data['status']    = $data['status'] && $data['status'] == "on" ? true : false;
@@ -92,7 +91,6 @@ class game extends MY_Controller
                     $stage = $this->Game_model->updateGameStage($client_id, $site_id, $game_id, $stage_data);
                 }
             }
-
         }
 
         $this->getList();
@@ -172,12 +170,93 @@ class game extends MY_Controller
         $site_id = $this->User_model->getSiteId();
         $this->data['name'] = "Farm";
 
-        $setting = $this->Game_model->getGameSetting($client_id, $site_id, $this->data);
+        $game_data = $this->Game_model->getGameSetting($client_id, $site_id, $this->data);
+        $game_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_data['_id']);
+
+        foreach ($game_stage as $index => $stage){
+            if(isset($stage['name'])) {
+                $this->data['worlds'][$index]['world_name'] = $stage['name'];;
+            } else {
+                $this->data['worlds'][$index]['world_name'] = "";
+            }
+
+            if (isset($stage['level'])) {
+                $this->data['worlds'][$index]['world_level'] = $stage['level'];;
+            } else {
+                $this->data['worlds'][$index]['world_level'] = "";
+            }
+
+            if (isset($stage['image'])) {
+                $this->data['worlds'][$index]['world_image'] = $stage['image'];;
+            } else {
+                $this->data['worlds'][$index]['world_image'] = "";
+            }
+
+            if ($this->data['worlds'][$index]['world_image']) {
+                $info = pathinfo($this->data['worlds'][$index]['world_image']);
+                if (isset($info['extension'])) {
+                    $extension = $info['extension'];
+                    $new_image = 'cache/' . utf8_substr($this->data['worlds'][$index]['world_image'], 0,
+                            utf8_strrpos($this->data['worlds'][$index]['world_image'], '.')) . '-100x100.' . $extension;
+                    $this->data['worlds'][$index]['world_thumb'] = S3_IMAGE . $new_image;
+                } elsE {
+                    $this->data['worlds'][$index]['world_thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+                }
+            } else {
+                $this->data['worlds'][$index]['world_thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+            }
+
+            if (isset($stage['category'])) {
+                $this->data['worlds'][$index]['world_category'] = $stage['category'] . "";
+            } else {
+                $this->data['worlds'][$index]['world_category'] = "";
+            }
+
+            if (isset($stage['stage_config']['width'])) {
+                $this->data['worlds'][$index]['world_width'] = $stage['stage_config']['width'];;
+            } else {
+                $this->data['worlds'][$index]['world_width'] = "";
+            }
+
+            if (isset($stage['stage_config']['height'])) {
+                $this->data['worlds'][$index]['world_height'] = $stage['stage_config']['height'];;
+            } else {
+                $this->data['worlds'][$index]['world_height'] = "";
+            }
+
+            if (isset($stage['description'])) {
+                $this->data['worlds'][$index]['world_description'] = $stage['description'];;
+            } else {
+                $this->data['worlds'][$index]['world_description'] = "";
+            }
+
+            if (isset($stage['item_list'])) {
+                $game_item = $this->Game_model->getGameStageItem($client_id, $site_id, $game_data['_id'], $stage);
+                foreach($game_item as $item){
+                    $row = $item['item_config']['row'];
+                    $column = $item['item_config']['column'];
+                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_id'] = $item['item_id'] . "";
+                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_harvest'] = $item['item_config']['amount_to_harvest'];
+                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_deduct'] = $item['item_config']['days_to_deduct'];
+                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_description'] = $item['description'];
+                }
+            } else {
+                $this->data['worlds'][$index]['world_item'] = "";
+            }
+        }
+
+        if ($this->input->post('status')) {
+            $this->data['status'] = $this->input->post('status');
+        } elseif (isset($game_data['status'])) {
+            $this->data['status'] = $game_data['status'];
+        } else {
+            $this->data['status'] = '';
+        }
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-        } elseif (isset($setting['image']) && !empty($setting['image'])) {
-            $this->data['image'] = $setting['image'];
+        } elseif (isset($game_data['image']) && !empty($game_data['image'])) {
+            $this->data['image'] = $game_data['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
         }
