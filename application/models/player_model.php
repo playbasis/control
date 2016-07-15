@@ -2361,6 +2361,157 @@ class Player_model extends MY_Model
         }
         return $result;
     }
+
+    public function playerWithEnoughCriteria($data, $criteria)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+        $ids = array();
+        if (is_array($criteria)) {
+            foreach ($criteria as $k => $v) {
+                switch ($k) {
+                    case 'exp':
+                        if (is_array($v)) {
+                            foreach ($v as $n) {
+                                $query['exp'] = array('$gte' => $n);
+                                break;
+                            }
+                        }
+                        break;
+                    case 'level':
+                        if (is_array($v)) {
+                            foreach ($v as $n) {
+                                $query['level'] = array('$gte' => $n);
+                                break;
+                            }
+                        }
+                        break;
+                    case 'point':
+                        $reward_id = $this->get_reward_id_of_point($data);
+                        if (is_array($v)) {
+                            foreach ($v as $n) {
+                                array_push($ids, $this->playerWithEnoughReward($data, $reward_id, $n));
+                                break;
+                            }
+                        }
+                        break;
+                    case 'badge':
+                        if (is_array($v)) {
+                            foreach ($v as $id => $n) {
+                                array_push($ids, $this->playerWithEnoughBadge($data, $id, $n));
+                                break;
+                            }
+                        }
+                        break;
+                    case 'custom':
+                        if (is_array($v)) {
+                            foreach ($v as $id => $n) {
+                                array_push($ids, $this->playerWithEnoughReward($data, $id, $n));
+                                break;
+                            }
+                        }
+                        break;
+                    default:
+                        /* error, not support type */
+                        break;
+                }
+            }
+        }
+        //echo 'YYY'; var_dump($ids); echo 'YYY';
+        $ids_intersect = null;
+        if (is_array($ids)) {
+            foreach ($ids as $each) {
+                if ($ids_intersect == null) {
+                    $ids_intersect = $each;
+                } else {
+                    $ids_intersect = array_intersect($ids_intersect, $each);
+                }
+            }
+        }
+        //echo 'AAA'; var_dump($ids_intersect); echo 'AAA';
+        if (!empty($ids)) {
+            $query['_id'] = array('$in' => $ids_intersect);
+        }
+        //echo 'BBB'; var_dump($query); echo 'BBB';
+        $result = $this->mongo_db->command(array(
+            'count' => 'playbasis_player',
+            'query' => $query
+        ));
+        return $result['n'];
+    }
+
+    public function get_reward_id_of_point($data)
+    {
+        return $this->get_reward_id_by_name($data, 'point');
+    }
+
+    public function get_reward_id_by_name($data, $name)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'name' => $name);
+        $this->mongo_db->select(array('reward_id'));
+        $this->mongo_db->where($query);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_reward_to_client');
+        return $results ? $results[0]['reward_id'] : null;
+    }
+
+    public function playerWithEnoughReward($data, $reward_id, $n)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $query = array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'reward_id' => $reward_id,
+            'value' => array('$gte' => $n)
+        );
+        $this->mongo_db->select(array('pb_player_id'));
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where($query);
+        $result = array();
+        $arr = $this->mongo_db->get('playbasis_reward_to_player');
+        if (is_array($arr)) {
+            foreach ($arr as $each) {
+                array_push($result, $each['pb_player_id']);
+            }
+        }
+        return $result;
+    }
+
+    public function playerWithEnoughBadge($data, $badge_id, $n)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $query = array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'badge_id' => $badge_id,
+            'value' => array('$gte' => $n)
+        );
+        $this->mongo_db->select(array('pb_player_id'));
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where($query);
+        $result = array();
+        $arr = $this->mongo_db->get('playbasis_reward_to_player');
+        if (is_array($arr)) {
+            foreach ($arr as $each) {
+                array_push($result, $each['pb_player_id']);
+            }
+        }
+        return $result;
+    }
+
+    public function getLeaderboardByLevelForReport($limit, $client_id, $site_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('cl_player_id', 'first_name', 'last_name', 'username', 'image', 'exp', 'level'));
+        $this->mongo_db->where(array(
+            'site_id' => $site_id,
+            'client_id' => $client_id
+        ));
+        $this->mongo_db->order_by(array('level' => -1, 'exp' => -1));
+        $this->mongo_db->limit($limit);
+        return $this->mongo_db->get('playbasis_player');
+    }
 }
 
 function index_id($obj)
