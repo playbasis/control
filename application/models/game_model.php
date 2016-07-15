@@ -125,6 +125,8 @@ class Game_model extends MY_Model
             'deleted' => false
         ));
 
+        $this->mongo_db->order_by(array('stage_level' => "asc"));
+
         $result = $this->mongo_db->get('playbasis_game_stage_to_client');
         return !empty($result) ? $result : array();
     }
@@ -270,5 +272,48 @@ class Game_model extends MY_Model
 
         $result = $this->mongo_db->get('playbasis_game_stage_to_player');
         return $result ? $result[0] : null;
+    }
+
+    public function setStageToPlayer($client_id, $site_id, $game_id, $stage_level, $pb_player_id, $data)
+    {
+        $d = new MongoDate(time());
+        $this->set_site_mongodb($site_id);
+
+        $insert_data['client_id'] = new MongoId($client_id);
+        $insert_data['site_id'] = new MongoId($site_id);
+        $insert_data['game_id'] = new MongoId($game_id);
+        $insert_data['stage_level'] = (int)$stage_level;
+        $insert_data['pb_player_id'] = new MongoId($pb_player_id);
+
+        $insert_data['harvested_item'] = (isset($data['harvested_item']) && $data['harvested_item']) ? $data['harvested_item'] : array();
+
+        if(isset($data['is_current']) && $data['is_current']){
+            $insert_data['is_current'] = (bool)$data['is_current'] ;
+        }
+        $insert_data['date_added'] = $d;
+        $insert_data['date_modified'] = $d;
+        return $this->mongo_db->insert('playbasis_game_stage_to_player', $insert_data);
+    }
+
+    public function updateStageToPlayer($client_id, $site_id, $game_id, $stage_level, $pb_player_id, $data)
+    {
+        $d = new MongoDate(time());
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'game_id' => new MongoId($game_id),
+            'stage_level' => (int)$stage_level,
+            'pb_player_id' => new MongoId($pb_player_id)
+        ));
+        if(isset($data['harvested_item']) && $data['harvested_item']){
+            $this->mongo_db->set('harvested_item', $data['harvested_item'] );
+        }
+
+        if(isset($data['is_current'])){
+            $this->mongo_db->set('is_current', (bool)$data['is_current'] );
+        }
+        $this->mongo_db->set('date_modified', $d);
+        $this->mongo_db->update('playbasis_game_stage_to_player');
     }
 }
