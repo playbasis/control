@@ -52,16 +52,14 @@ class game extends MY_Controller
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
             $data = $this->input->post();
-
-            log_message('error', print_r($data,true));
-            $game_data['name']      = $data['name'];
+            $game_data['game_name'] = $data['name'];
             $game_data['image']     = $data['image'];
-            $game_data['status']    = $data['status'] && $data['status'] == "on" ? true : false;
-            $game_data['template']  = $data['template'];
+            $game_data['status']    = (isset($data['status']) && ($data['status'] == "on")) ? true : false;
 
             $game_id = $this->Game_model->updateGameSetting($client_id, $site_id, $game_data);
+            $exist_world = array();
             if($game_id){
-                foreach($data['worlds'] as $world){
+                foreach($data['worlds'] as $index => $world){
                     $item_array = array();
                     foreach($world['world_item'] as $row_index => $row){
                         foreach($row as $column_index => $column) {
@@ -78,19 +76,41 @@ class game extends MY_Controller
                         }
                     }
 
-                    $stage_data['id']                     = $world['world_id'];
-                    $stage_data['name']                   = $world['world_name'];
-                    $stage_data['level']                  = (int)$world['world_level'];
+                    if(isset($world['world_id'])){
+                        try{
+                            array_push($exist_world, new MongoId($world['world_id']));
+                        } catch (Exception $e){
+
+                        }
+                        $stage_data['id']                     = $world['world_id'];
+                    }
+                    $stage_data['stage_name']             = $world['world_name'];
+                    $stage_data['stage_level']            = (int)$world['world_level'];
                     $stage_data['image']                  = $world['world_image'];
-                    $stage_data['category']               = new MongoId($world['world_category']);
+                    $stage_data['category']               = isset($world['world_category']) && !empty($world['world_category']) ? new MongoId($world['world_category']): "";
                     $stage_data['description']            = $world['world_description'];
+                    $stage_data['stage_config']['height'] = (int)$world['world_height'];
                     $stage_data['item_list']              = $item_array;
+
                     $stage_data['stage_config']['width']  = (int)$world['world_width'];
                     $stage_data['stage_config']['height'] = (int)$world['world_height'];
-
+                    
                     $stage = $this->Game_model->updateGameStage($client_id, $site_id, $game_id, $stage_data);
+                    if($stage){
+                        try{
+                            array_push($exist_world, new MongoId($stage));
+                        } catch (Exception $e){
+
+                        }
+                    }
+                    $stage_data = array();
+                }
+                if($exist_world){
+                    $delete_stage_data['exclude_id'] = $exist_world;
+                    $this->Game_model->deleteGameStage($client_id, $site_id, $game_id, $delete_stage_data);
                 }
             }
+
         }
 
         $this->getList();
@@ -109,14 +129,14 @@ class game extends MY_Controller
                     die();
                 }
 
-                $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('name' => 'Farm'));
+                $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('game_name' => 'farm'));
                 $template = $this->Game_model->getGameTemplate($client_id, $site_id, $game_id['_id']);
                 if(!$template){
-                    $template_data['name']       = "default";
-                    $template_data['weight']     = null;
-                    $template_data['start'] = null;
-                    $template_data['end']   = null;
-                    $template_data['status']     = true;
+                    $template_data['template_name']     = "default";
+                    $template_data['weight']            = null;
+                    $template_data['date_start']        = null;
+                    $template_data['date_added']        = null;
+                    $template_data['status']            = true;
                     $template_id = $this->Game_model->updateGameTemplate($client_id, $site_id, $game_id['_id'], $template_data);
                     $template = $this->Game_model->getGameTemplate($client_id, $site_id, $game_id['_id']);
                     log_message('error', print_r($template,true));
@@ -136,14 +156,14 @@ class game extends MY_Controller
             } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $data = $this->input->post();
                 log_message('error', "post");
-                if ($template_id) $template_data['id']       = $template_id;
-                $template_data['name']       = $data['template_name'];
-                $template_data['weight']     = (int)$data['template_weight'];
-                $template_data['date_start'] = $data['template_start'];
-                $template_data['date_end']   = $data['template_end'];
-                $template_data['status']     = (isset($data['template_status']) && ($data['template_status'] == "on")) ? true : false;
+                if ($template_id) $template_data['id']  = $template_id;
+                $template_data['template_name']         = $data['template_name'];
+                $template_data['weight']                = (int)$data['template_weight'];
+                $template_data['date_start']            = $data['template_start'];
+                $template_data['date_end']              = $data['template_end'];
+                $template_data['status']                = (isset($data['template_status']) && ($data['template_status'] == "on")) ? true : false;
 
-                $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('name' => 'Farm'));
+                $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('game_name' => 'farm'));
                 $template_id = $this->Game_model->updateGameTemplate($client_id, $site_id, $game_id['_id'], $template_data);
                 log_message('error', $template_id);
                 if (!$template_id) {
@@ -168,26 +188,32 @@ class game extends MY_Controller
         }
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
-        $this->data['name'] = "Farm";
+        $this->data['game_name'] = "farm";
 
         $game_data = $this->Game_model->getGameSetting($client_id, $site_id, $this->data);
         $game_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_data['_id']);
 
         foreach ($game_stage as $index => $stage){
-            if(isset($stage['name'])) {
-                $this->data['worlds'][$index]['world_name'] = $stage['name'];;
+            if(isset($stage['_id'])) {
+                $this->data['worlds'][$index]['world_id'] = $stage['_id'];
+            } else {
+                $this->data['worlds'][$index]['world_id'] = "";
+            }
+
+            if(isset($stage['stage_name'])) {
+                $this->data['worlds'][$index]['world_name'] = $stage['stage_name'];
             } else {
                 $this->data['worlds'][$index]['world_name'] = "";
             }
 
-            if (isset($stage['level'])) {
-                $this->data['worlds'][$index]['world_level'] = $stage['level'];;
+            if (isset($stage['stage_level'])) {
+                $this->data['worlds'][$index]['world_level'] = $stage['stage_level'];
             } else {
                 $this->data['worlds'][$index]['world_level'] = "";
             }
 
             if (isset($stage['image'])) {
-                $this->data['worlds'][$index]['world_image'] = $stage['image'];;
+                $this->data['worlds'][$index]['world_image'] = $stage['image'];
             } else {
                 $this->data['worlds'][$index]['world_image'] = "";
             }
@@ -213,32 +239,33 @@ class game extends MY_Controller
             }
 
             if (isset($stage['stage_config']['width'])) {
-                $this->data['worlds'][$index]['world_width'] = $stage['stage_config']['width'];;
+                $this->data['worlds'][$index]['world_width'] = $stage['stage_config']['width'];
             } else {
                 $this->data['worlds'][$index]['world_width'] = "";
             }
 
             if (isset($stage['stage_config']['height'])) {
-                $this->data['worlds'][$index]['world_height'] = $stage['stage_config']['height'];;
+                $this->data['worlds'][$index]['world_height'] = $stage['stage_config']['height'];
             } else {
                 $this->data['worlds'][$index]['world_height'] = "";
             }
 
             if (isset($stage['description'])) {
-                $this->data['worlds'][$index]['world_description'] = $stage['description'];;
+                $this->data['worlds'][$index]['world_description'] = $stage['description'];
             } else {
                 $this->data['worlds'][$index]['world_description'] = "";
             }
 
             if (isset($stage['item_list'])) {
-                $game_item = $this->Game_model->getGameStageItem($client_id, $site_id, $game_data['_id'], $stage);
-                foreach($game_item as $item){
-                    $row = $item['item_config']['row'];
-                    $column = $item['item_config']['column'];
-                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_id'] = $item['item_id'] . "";
-                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_harvest'] = $item['item_config']['amount_to_harvest'];
-                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_deduct'] = $item['item_config']['days_to_deduct'];
-                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_description'] = $item['description'];
+                foreach($stage['item_list'] as $item){
+                    $item_data['item_id'] = $item;
+                    $game_item = $this->Game_model->getGameStageItem($client_id, $site_id, $game_data['_id'], $item_data);
+                    $row = $game_item[0]['item_config']['row'];
+                    $column = $game_item[0]['item_config']['column'];
+                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_id'] = $game_item[0]['item_id'] . "";
+                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_harvest'] = $game_item[0]['item_config']['amount_to_harvest'];
+                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_deduct'] = $game_item[0]['item_config']['days_to_deduct'];
+                    $this->data['worlds'][$index]['world_item'][$row][$column]['item_description'] = $game_item[0]['description'];
                 }
             } else {
                 $this->data['worlds'][$index]['world_item'] = "";
