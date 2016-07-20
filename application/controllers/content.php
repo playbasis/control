@@ -198,7 +198,7 @@ class Content extends REST2_Controller
             }
         }elseif (isset($query_data['sort']) && $query_data['sort'] == 'followup'){
             foreach ($contents as $key => $val){
-                $val['number_followup'] = $this->content_model->countContentFollowup($this->client_id, $this->site_id, $val['_id']);;
+                $val['number_followup'] = $this->content_model->countContentFollowup($this->client_id, $this->site_id, $val['_id']);
 
                 if (isset($pb_player_id) && !empty($pb_player_id)){
                     $player_action = $this->content_model->retrieveExistingPlayerContent(array(

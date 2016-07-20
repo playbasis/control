@@ -469,6 +469,7 @@ class Content_model extends MY_Model
         } catch (Exception $e) {
             return false;
         };
-        return $this->mongo_db->count('playbasis_content_feedback');
+        $followup = $this->mongo_db->distinct('pb_player_id', 'playbasis_content_feedback');
+        return count($followup);
     }
 }
