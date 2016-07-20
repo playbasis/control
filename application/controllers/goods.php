@@ -82,6 +82,7 @@ class Goods extends REST2_Controller
             }
 
             $goods['goods']['is_group'] = array_key_exists('group', $goods['goods']);
+            unset($goods['goods']['code']);
             if ($goods['goods']['is_group']) {
                 $group = $goods['goods']['group'];
                 $goods['goods']['name'] = $goods['goods']['group'];
@@ -93,13 +94,15 @@ class Goods extends REST2_Controller
                 }
                 if ($player_id !== false) {
                     $goods['amount'] = isset($m[$group]) ? $m[$group]['amount'] : 0;
+                    if(isset($m[$group]['code'])) $goods['goods']['code'] = $m[$group]['code'];
                 }
             } else {
                 if ($player_id !== false) {
                     $goods['amount'] = isset($m[$goodsId]) ? $m[$goodsId]['amount'] : 0;
+                    if(isset($m[$goodsId]['code'])) $goods['goods']['code'] = $m[$goodsId]['code'];
                 }
             }
-            unset($goods['goods']['code']);
+
             $this->response($this->resp->setRespond($goods), 200);
         } else // list all
         {
@@ -116,20 +119,23 @@ class Goods extends REST2_Controller
                 foreach ($goodsList['goods_list'] as $key => &$goods) {
                     $goods_id = $goods['_id'];
                     $is_group = array_key_exists('group', $goods);
+                    unset($goods['code']);
                     if ($is_group) {
                         $goods['is_group'] = true;
                         $goods['name'] = $group_name[$goods_id]['group'];
                         $goods['quantity'] = $group_name[$goods_id]['quantity'];
                         if ($player_id !== false) {
                             $goods['amount'] = isset($m[$goods['name']]) ? $m[$goods['name']]['amount'] : 0;
+                            if(isset($m[$goods['name']]['code'])) $goods['code'] = $m[$goods['name']]['code'];
                         }
                     } else {
                         if ($player_id !== false) {
                             $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
+                            if(isset($m[$goods['name']]['code'])) $goods['code'] = $m[$goods['name']]['code'];
                         }
                     }
                     unset($goods['_id']);
-                    unset($goods['code']);
+                    
                     // unset the result if
                     // 1. good id is set organize and player_id is not in that organize
                     // Or 2. organize role is set and player role is not matched
@@ -300,8 +306,10 @@ class Goods extends REST2_Controller
             $key = isset($goods['group']) ? $goods['group'] : $goods['goods_id'];
             if (!isset($ret[$key])) {
                 $ret[$key] = $goods;
+                $ret[$key]['code'] = isset($goods['group']) ? array($goods['code']) : $goods['code'];
             } else {
                 $ret[$key]['amount'] += $goods['amount'];
+                if(isset($goods['group'])) $ret[$key]['code'][] = $goods['code'];
             }
         }
         return $ret;
