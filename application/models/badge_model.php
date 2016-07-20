@@ -886,7 +886,7 @@ class Badge_model extends MY_Model
      * @param $client_id string
      * @return array
      */
-    public function getAllBadgeIdByClientId($client_id, $site_id)
+    public function getAllBadgeIdByClientId($client_id, $site_id, $filter_data=array())
     {
         $this->mongo_db->where(array(
             'client_id' => $client_id,
@@ -895,6 +895,62 @@ class Badge_model extends MY_Model
         return $this->mongo_db->get("playbasis_badge_to_client");
     }
 
+    public function countAllBadgeByCategory($client_id, $site_id, $category)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false,
+            'status' => true,
+        ));
+
+        if(isset($category) && !empty($category)){
+            try {
+                $id = new MongoId($category);
+                $this->mongo_db->where('category' , $id);
+            } catch (Exception $e) {}
+        }
+
+        return $this->mongo_db->count("playbasis_badge_to_client");
+    }
+
+    public function getAllBadgeByCategory($client_id, $site_id, $category)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false,
+            'status' => true,
+        ));
+
+        if(isset($category) && !empty($category)){
+            try {
+                $id = new MongoId($category);
+                $this->mongo_db->where('category' , $id);
+            } catch (Exception $e) {}
+        }
+
+        return $this->mongo_db->get("playbasis_badge_to_client");
+    }
+
+    public function getBadgeById($client_id, $site_id, $badge_id)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false,
+            'status' => true,
+        ));
+
+        if(isset($badge_id) && !empty($badge_id)){
+            try {
+                $id = new MongoId($badge_id);
+                $this->mongo_db->where('badge_id' , $id);
+            } catch (Exception $e) {}
+        }
+        $badge = $this->mongo_db->get("playbasis_badge_to_client");
+        return $badge ? $badge[0]:array();
+    }
     /*
      * getTemplate
      *
