@@ -4120,7 +4120,7 @@
               "Required": "N",
               "Default": "title",
               "Type": "string",
-              "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified', 'random')"
+              "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified', 'random', 'followup')"
             },
             {
               "Name": "order",

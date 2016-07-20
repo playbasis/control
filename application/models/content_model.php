@@ -460,4 +460,15 @@ class Content_model extends MY_Model
         }
         return $return;
     }
+
+    public function countContentFollowup($client_id, $site_id, $content_id){
+        try {
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('content_id', new MongoID($content_id));
+        } catch (Exception $e) {
+            return false;
+        };
+        return $this->mongo_db->count('playbasis_content_feedback');
+    }
 }
