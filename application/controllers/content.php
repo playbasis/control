@@ -20,6 +20,7 @@ class Content extends REST2_Controller
         $this->benchmark->mark('start');
         $query_data = $this->input->get(null, true);
         $exclude_ids = array();
+        $pb_player_id = null;
 
         if (isset($query_data['player_id']) && !empty($query_data['player_id'])) {
             $pb_player_id = $this->player_model->getPlaybasisId(array(
@@ -161,31 +162,68 @@ class Content extends REST2_Controller
         array_walk_recursive($contents, array($this, "convert_mongo_object_and_optional"));
 
         $result = array();
-        if (isset($query_data['sort']) && $query_data['sort'] == "random") {
+        if (isset($query_data['sort']) && $query_data['sort'] == 'random') {
             if (isset($query_data['order'])) {
                 if (is_numeric($query_data['order'])) {
                     srand(intval($query_data['order']));
                 }
             }
-            if (isset($query_data['_limit'])) $query_data['limit'] = $query_data['_limit'];
-            if(count($contents) > 0){
+            if (isset($query_data['_limit'])) {
+                $query_data['limit'] = $query_data['_limit'];
+            }
+            if (count($contents) > 0) {
                 $m = count($contents);
-                $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data, $exclude_ids);
-                if (isset($query_data['limit']) && $query_data['limit'] < $n) $n = $query_data['limit'];
-                if (!isset($query_data['offset']) || $query_data['offset'] < 0) $query_data['offset'] = 0;
-                $numbers = range(0, $m-1);
+                $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data,
+                    $exclude_ids);
+                if (isset($query_data['limit']) && $query_data['limit'] < $n) {
+                    $n = $query_data['limit'];
+                }
+                if (!isset($query_data['offset']) || $query_data['offset'] < 0) {
+                    $query_data['offset'] = 0;
+                }
+                $numbers = range(0, $m - 1);
                 shuffle($numbers);
                 $c = 0;
                 foreach ($numbers as $i) {
                     if (!is_array($exclude_ids) || !in_array($contents[$i]['_id'], $exclude_ids)) {
                         if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
                             $result[] = $contents[$i];
-                            if (count($result) >= $n) break;
+                            if (count($result) >= $n) {
+                                break;
+                            }
                         }
                         $c++;
                     }
                 }
             }
+        }elseif (isset($query_data['sort']) && $query_data['sort'] == 'followup'){
+            foreach ($contents as $key => $val){
+                $val['number_followup'] = $this->content_model->countContentFollowup($this->client_id, $this->site_id, $val['_id']);
+
+                if (isset($pb_player_id) && !empty($pb_player_id)){
+                    $player_action = $this->content_model->retrieveExistingPlayerContent(array(
+                        'client_id' => $this->client_id,
+                        'site_id' => $this->site_id,
+                        'content_id' => $val['_id'],
+                        'pb_player_id' => $pb_player_id,
+                    ));
+                    $val['player_action'] = isset($player_action[0]) && !empty($player_action[0]) ? array(
+                        'action' => $player_action[0]['action'],
+                        'custom' => $player_action[0]['custom'],
+                    ) : null;
+                }
+                $result[] = $val;
+            }
+            usort($result, function ($a, $b) use ($query_data) {
+                if ($a['number_followup'] == $b['number_followup']) {
+                    return 0;
+                }
+                if (isset($query_data['order']) && (strtolower($query_data['order']) === 'desc')) {
+                    return $a['number_followup'] < $b['number_followup'] ? 1 : -1;
+                } else {
+                    return $a['number_followup'] < $b['number_followup'] ? -1 : 1;
+                }
+            });
         }else{
             $result = $contents;
         }
