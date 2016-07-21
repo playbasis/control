@@ -1872,7 +1872,7 @@ class Quest extends REST2_Controller
                                 if ($leader['_id'] == $player['pb_player_id']) {
                                     foreach($leader['date'] as $index => $date_data){
                                         if($date_data <= $player['missions'][0]['date_modified']){
-                                            $result[$leader_index]['current'] -= $leader['data'][$index];
+                                            if(is_numeric($leader['data'][$index])) $result[$leader_index]['current'] -= $leader['data'][$index];
                                         }
                                     }
                                     $result[$leader_index]['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select);
