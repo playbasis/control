@@ -151,10 +151,10 @@ class Quest_model extends MY_Model
 
         $datecondition = array();
         if (isset($filter['starttime']) && !empty($filter['starttime'])) {
-            $datecondition = array_merge($datecondition, array('$gt' => new MongoDate(strtotime($filter['starttime']))));
+            $datecondition = array_merge($datecondition, array('$gt' => $filter['starttime']));
         }
         if (isset($filter['endtime']) && !empty($filter['endtime'])) {
-            $datecondition = array_merge($datecondition, array('$lte' => new MongoDate(strtotime($filter['endtime']))));
+            $datecondition = array_merge($datecondition, array('$lte' => $filter['endtime']));
         }
         if ((isset($filter['starttime']) && !empty($filter['starttime']))|| (isset($filter['endtime']) && !empty($filter['endtime']))) {
             $match_condition = array_merge($match_condition, array('date_added' => $datecondition));
@@ -169,7 +169,11 @@ class Quest_model extends MY_Model
                     '$match' => $match_condition
                 ),
                 array(
-                    '$group' => array('_id' => '$pb_player_id', 'current' => array('$sum' => '$parameters.'.$completion_filter.POSTFIX_NUMERIC_PARAM), 'date_completed' => array('$max' => '$date_added'))
+                    '$group' => array('_id' => '$pb_player_id', 
+                                      'current' => array('$sum' => '$parameters.'.$completion_filter.POSTFIX_NUMERIC_PARAM),
+                                      'data' => array('$push' => '$parameters.'.$completion_filter.POSTFIX_NUMERIC_PARAM),
+                                      'date' => array('$push' => '$date_added'),
+                                      'date_completed' => array('$max' => '$date_added'))
                 ),
                 array(
                     '$match' => array('current' => array('$gt' => $gt))
@@ -185,7 +189,11 @@ class Quest_model extends MY_Model
                     '$match' => $match_condition
                 ),
                 array(
-                    '$group' => array('_id' => '$pb_player_id', 'current' => array('$sum' => 1), 'date_completed' => array('$max' => '$date_added'))
+                    '$group' => array('_id' => '$pb_player_id',
+                                      'current' => array('$sum' => 1),
+                                      'data' => array('$push' => 1),
+                                      'date' => array('$push' => '$date_added'),
+                                      'date_completed' => array('$max' => '$date_added'))
                 ),
                 array(
                     '$match' => array('current' => array('$gt' => $gt))
