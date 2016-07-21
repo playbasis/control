@@ -74,7 +74,7 @@
                     <div class="world-wrapper">
                         <?php if(isset($worlds)){
                             foreach($worlds as $key => $world){ $index = $key +1;?>
-                                <div class="world-item-wrapper" data-world-id="'+ itemWorldId +'">
+                                <div class="world-item-wrapper" data-world-id="<?php echo $index?>" id="world_<?php echo $index?>_item_wrapper">
                                     <div class="box-header box-world-header overflow-visible" style="height: 30px;">
                                         <h2><img src="<?php echo base_url();?>image/default-image.png" width="30"> <?php echo $world['world_name'] ?></h2>
                                         <div class="box-icon">
@@ -222,6 +222,22 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<div class="modal hide fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <h3 id="myModalLabel">Warning !</h3>
+        <input type="hidden" name="confirm_event" id="confirm_event" value="">
+        <input type="hidden" name="confirm_world" id="confirm_world" value="">
+        <input type="hidden" name="confirm_param" id="confirm_param" value="">
+    </div>
+    <div class="modal-body">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="confirm_cancel_button" data-dismiss="modal">Cancel</button>
+        <a class="btn btn-danger btn-ok" id="confirm_del_button">Delete</a>
     </div>
 </div>
 
@@ -482,7 +498,7 @@
     $('.add-world-btn').click(function () {
         countWorldId++;
         var itemWorldId = countWorldId;
-        var itemWorldHtml = '<div class="world-item-wrapper" data-world-id="'+ itemWorldId +'">\
+        var itemWorldHtml = '<div class="world-item-wrapper" data-world-id="'+ itemWorldId +'" id="world_'+ itemWorldId +'_item_wrapper">\
                                 <div class="box-header box-world-header overflow-visible" style="height: 30px;">\
                                     <h2><img src="<?php echo base_url();?>image/default-image.png" width="30"> World</h2>\
                                     <div class="box-icon">\
@@ -570,16 +586,24 @@
         });
 
         $('.remove-world-btn').unbind().bind('click', function (data) {
-            var $target = $(this).parent().parent().parent();
+            $('#confirm-delete .modal-body').html('Are you sure to remove!!');
+            document.getElementById('confirm_event').value = "world";
+            document.getElementById('confirm_world').value = $(this).parent().parent().parent().data('world-id');
+            ;
+            $('#confirm-delete').modal('show');
+
+            /*var $target = $(this).parent().parent().parent();
 
             var r = confirm("Are you sure to remove!");
             if (r == true) {
                 $target.remove();
                 init_world_event(id);
-            }
+            }*/
         });
         get_item_category(id);
     }
+
+    var temp_category;
 
     function get_item_category(world){
         $inputCategory = $('#worlds_'+world+'_category');
@@ -633,6 +657,22 @@
             },
             formatResult: categoryFormatResult,
             formatSelection: categoryFormatSelection,
+        }).on('select2-clearing', function (e) {
+            temp_category = $('#worlds_'+world+'_category').val();
+            $('#confirm-delete .modal-body').html('Select new catagory will be clear all selected items');
+            document.getElementById('confirm_event').value = "category";
+            document.getElementById('confirm_world').value = world;
+            $('#confirm-delete').modal('show');
+        }).on('select2-selecting', function (e) {
+            temp_category = $('#worlds_'+world+'_category').val();
+        }).on('select2-selected', function (e) {
+            var category = $('#worlds_'+world+'_category').val();
+            if (category != temp_category){
+                $('#confirm-delete .modal-body').html('Select new catagory will be clear all selected items');
+                document.getElementById('confirm_event').value = "category";
+                document.getElementById('confirm_world').value = world;
+                $('#confirm-delete').modal('show');
+            }
         });
     }
 
@@ -678,6 +718,44 @@
 
     $('#page-render').on('click', 'button#template-modal-submit', submitTemplateModalForm);
     $('#page-render').on('click', 'button#item-modal-submit', submitItemModalForm);
+    $('#page-render').on('click', 'button#confirm_cancel_button', cancelConfirm);
+    $('#page-render').on('click', 'a#confirm_del_button', deleteConfirm);
+
+    function deleteConfirm(){
+        var event = $('#confirm_event').val();
+        var world = $('#confirm_world').val();
+        var $world_widths = $('#worlds_'+ world +'_world_width'),
+            $world_heights = $('#worlds_'+ world +'_world_height');
+
+        if(event == "category"){
+            for(var i =0;i<$world_heights.val();i++){
+                for(var j=0;j<$world_widths.val();j++){
+                    document.getElementById('worlds_'+ world +'_item_id_' + i + '_' + j).value =  "";
+                    document.getElementById('worlds_'+ world +'_item_harvest_' + i + '_' + j).value =  1;
+                    document.getElementById('worlds_'+ world +'_item_deduct_' + i + '_' + j).value =  1;
+                    document.getElementById('worlds_'+ world +'_item_description_' + i + '_' + j).value =  "";
+                }
+            }
+            $('#confirm-delete').modal('hide');
+        }
+        if(event == "world"){
+            $('#world_'+world+'_item_wrapper').remove();
+            init_world_event(world);
+            $('#confirm-delete').modal('hide');
+        }
+    }
+
+    function cancelConfirm(){
+        var event = $('#confirm_event').val();
+        var world = $('#confirm_world').val();
+        var param = $('#confirm_parameter').val();
+
+        if(event == 'category'){
+            document.getElementById('worlds_'+world+'_category').value = temp_category;
+            get_item_category(world);
+            $('#confirm-delete').modal('hide');
+        }
+    }
 
     function set_template(index) {
         var previous_tab_id = $("#template_nav .active").attr('id');

@@ -107,7 +107,19 @@ class game extends MY_Controller
                 }
                 if($exist_world){
                     $delete_stage_data['exclude_id'] = $exist_world;
-                    $this->Game_model->deleteGameStage($client_id, $site_id, $game_id, $delete_stage_data);
+                    $to_delete_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_id, $delete_stage_data);
+                    if($to_delete_stage){
+                        foreach($to_delete_stage as $del_stage){
+                            if(!empty($del_stage['item_list'])){
+                                $delete_item_data['del_items'] = $del_stage['item_list'];
+                                $this->Game_model->deleteGameStageItem($client_id, $site_id, $game_id, $delete_item_data);
+                            }
+                        }
+                        
+                        $this->Game_model->deleteGameStage($client_id, $site_id, $game_id, $delete_stage_data);
+                    }
+                    
+                    
                 }
             }
 

@@ -115,6 +115,28 @@ class Game_model extends MY_Model
         return $result;
     }
 
+    public function deleteGameStageItem($client_id, $site_id, $game_id, $data)
+    {
+        $this->mongo_db->set('date_modified', new MongoDate());
+        $this->mongo_db->set('deleted', true);
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('game_id', new MongoId($game_id));
+
+        if(isset($data['id'])){
+            $this->mongo_db->where('item_id', new MongoId($data['id']));
+        }
+
+        if(isset($data['del_items'])){
+            $this->mongo_db->where_in('item_id', $data['del_items']);
+        }
+
+        $result = $this->mongo_db->update_all('playbasis_game_item_to_client');
+
+        return $result;
+    }
+
     public function getGameStage($client_id, $site_id, $game_id, $data=null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -125,6 +147,10 @@ class Game_model extends MY_Model
         $this->mongo_db->where('deleted', false);
         if(isset($data['id'])){
             $this->mongo_db->where('_id', new MongoId($data['id']));
+        }
+
+        if(isset($data['exclude_id'])){
+            $this->mongo_db->where_not_in('_id', $data['exclude_id']);
         }
 
         $results = $this->mongo_db->get("playbasis_game_stage_to_client");
