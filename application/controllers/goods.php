@@ -94,12 +94,12 @@ class Goods extends REST2_Controller
                 }
                 if ($player_id !== false) {
                     $goods['amount'] = isset($m[$group]) ? $m[$group]['amount'] : 0;
-                    if(isset($m[$group]['code'])) $goods['goods']['code'] = $m[$group]['code'];
+                    if(isset($m[$group]['code']) && $goods['amount'] > 0) $goods['goods']['code'] = $m[$group]['code'];
                 }
             } else {
                 if ($player_id !== false) {
                     $goods['amount'] = isset($m[$goodsId]) ? $m[$goodsId]['amount'] : 0;
-                    if(isset($m[$goodsId]['code'])) $goods['goods']['code'] = $m[$goodsId]['code'];
+                    if(isset($m[$goodsId]['code'])  && $goods['amount'] > 0) $goods['goods']['code'] = $m[$goodsId]['code'];
                 }
             }
 
@@ -126,12 +126,12 @@ class Goods extends REST2_Controller
                         $goods['quantity'] = $group_name[$goods_id]['quantity'];
                         if ($player_id !== false) {
                             $goods['amount'] = isset($m[$goods['name']]) ? $m[$goods['name']]['amount'] : 0;
-                            if(isset($m[$goods['name']]['code'])) $goods['code'] = $m[$goods['name']]['code'];
+                            if(isset($m[$goods['name']]['code'])  && $goods['amount'] > 0) $goods['code'] = $m[$goods['name']]['code'];
                         }
                     } else {
                         if ($player_id !== false) {
                             $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
-                            if(isset($m[$goods['name']]['code'])) $goods['code'] = $m[$goods['name']]['code'];
+                            if(isset($m[$goods['name']]['code'])  && $goods['amount'] > 0) $goods['code'] = $m[$goods['name']]['code'];
                         }
                     }
                     unset($goods['_id']);
@@ -306,10 +306,22 @@ class Goods extends REST2_Controller
             $key = isset($goods['group']) ? $goods['group'] : $goods['goods_id'];
             if (!isset($ret[$key])) {
                 $ret[$key] = $goods;
-                $ret[$key]['code'] = isset($goods['group']) ? array($goods['code']) : $goods['code'];
+                if(isset($goods['group'])){
+                    if($goods['amount'] > 0){
+                        $ret[$key]['code'] = array($goods['code']);
+                    } else {
+                        $ret[$key]['code'] = array();
+                    }
+                } else {
+                    if($goods['amount'] > 0){
+                        $ret[$key]['code'] = $goods['code'];
+                    } else {
+                        $ret[$key]['code'] = "";
+                    }
+                }
             } else {
                 $ret[$key]['amount'] += $goods['amount'];
-                if(isset($goods['group'])) $ret[$key]['code'][] = $goods['code'];
+                if((isset($goods['group'])) && ($goods['amount'] > 0)) $ret[$key]['code'][] = $goods['code'];
             }
         }
         return $ret;
