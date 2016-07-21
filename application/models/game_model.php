@@ -289,4 +289,33 @@ class Game_model extends MY_Model
 
         return $result;
     }
+
+    public function getItemToPlayerById($client_id, $site_id, $player_id, $item_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where_ne('badge_id', null);
+        $this->mongo_db->where('badge_id', new MongoID($item_id));
+        $this->mongo_db->where('pb_player_id', new MongoID($player_id));
+        $result = $this->mongo_db->get('playbasis_reward_to_player');
+
+        return $result ? $result[0] : null;
+    }
+
+    public function deductItemToPlayerById($client_id, $site_id, $player_id, $item_id, $quantity)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $date = new MongoDate();
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where(array(
+            'pb_player_id' => new MongoID($player_id),
+            'badge_id' => new MongoID($item_id)
+        ));
+        $this->mongo_db->set('date_modified', $date);
+        $this->mongo_db->inc('value', intval($quantity));
+        $this->mongo_db->update('playbasis_reward_to_player');
+    }
 }

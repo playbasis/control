@@ -57,6 +57,7 @@ class Cron extends CI_Controller
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/node_stream', 'node');
         $this->load->model('import_model');
+        $this->load->model('game_model');
         $this->load->library('parser');
     }
 
@@ -2505,6 +2506,74 @@ class Cron extends CI_Controller
             'leaderboard name' => $config['name'],
             'Rank no ' . $rank_no => $result
         ));
+    }
+
+    private function getPlayerCurrentStage($client, $game_name, $cl_player_id)
+    {
+        $this->load->library('Rest');
+
+        $platformData = $this->auth_model->getOnePlatform($client['client_id'], $client['site_id']);
+
+        $data = array(
+            'api_key'    => isset($platformData['api_key'])?$platformData['api_key']:null,
+            'game_name'  => $game_name,
+            'player_id'  => $cl_player_id
+        );
+        //$token = json_decode(json_encode($this->rest->post('Auth', $data)->response),true)['token'];
+        $result = json_decode(json_encode($this->rest->get('Game/playerItemStatus', $data)), true);
+
+        if(isset($result['success']) && $result['success'] == true ){
+            return $result['response'];
+        }else{
+            return null;
+        }
+
+    }
+
+    public function processGameItemDeduct()
+    {
+
+
+        $clients = $this->client_model->listClientActiveFeatureByFeatureName('Game');
+
+        if ($clients) {
+
+            foreach ($clients as $client) {
+                // deduct item of farm game
+                $game_id = $this->game_model->getGameSetting($client['client_id'], $client['site_id'], array('game_name' => 'farm'));
+                if($game_id){
+                    // check if game item are not set then no need to do anything for this client
+                    $game_items = $this->game_model->getGameStageItem($client['client_id'], $client['site_id'], $game_id['_id'], array('filter_status' => true));
+                    if($game_items){
+                        $players = $this->player_model->findPlayersBySiteId($client['site_id']);
+                        if($players){
+                            foreach($players as $player){
+                                // check if can find current stage that player is playing
+                                $current_stage_info = $this->getPlayerCurrentStage($client, 'farm', $player['cl_player_id']);
+                                if($current_stage_info){
+                                    if(isset($current_stage_info['items_status']) && $current_stage_info['items_status']){
+                                        foreach($current_stage_info['items_status'] as $item_status){
+                                            if($item_status['item_status'] != 0 && $item_status['item_status'] != "harvested"){
+                                                $player_item = $this->game_model->getItemToPlayerById($client['client_id'], $client['site_id'], $player['_id'], $item_status['item_id']);
+                                                if($player_item){
+                                                    $now = new Datetime('now');
+                                                    $updated_date = new Datetime(datetimeMongotoReadable(isset($player_item['date_modified'] ) ? $player_item['date_modified'] : $player_item['date_added']));
+                                                    $interval = $now->diff($updated_date);
+                                                    // check if item was latest updated more than days_to_deduct then perform deduct the item
+                                                    if($interval->invert == 1 && $interval->days >= $item_status['item_config']['days_to_deduct']){
+                                                        $this->game_model->deductItemToPlayerById($client['client_id'], $client['site_id'], $player['_id'], $item_status['item_id'],-1);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
