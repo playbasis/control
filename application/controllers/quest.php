@@ -1826,10 +1826,9 @@ class Quest extends REST2_Controller
                 if($quest['completion_element_id'] == $query_data['completion_element_id']){
                     $quest_data = $quest;
                     $filter_id = $query_players = $query_player = array();
-
                     $player_join_quest = $this->quest_model->getAllPlayerByQuestId($query_data, null, isset($query_data['status']) ? $query_data['status'] : null);
                     if (isset($player_join_quest) && is_array($player_join_quest)) foreach ($player_join_quest as $player){
-                        array_push($query_players, new MongoId($player['pb_player_id']));
+                        array_push($query_players, array('id' => new MongoId($player['pb_player_id']), 'date_join' =>  $player['missions'][0]['date_modified']));
                     }
 
                     $Leader_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
@@ -1839,9 +1838,9 @@ class Quest extends REST2_Controller
                     if(isset($pb_player_id)){
                         $player_quest = $this->quest_model->getPlayerQuest(array('site_id' => $this->validToken['site_id'], 'quest_id' => new MongoId($query_data['quest_id']), 'pb_player_id' => $pb_player_id));
                         if($player_quest){
-                            array_push($query_player, new MongoId($pb_player_id));
+                            array_push($query_player, array('id' => new MongoId($pb_player_id), 'date_join' =>  $player_quest['missions'][0]['date_modified']));
                             $query_rank = array();
-                            $query_rank['starttime'] = (isset($query_data['starttime']) && !empty($query_data['starttime'])) ? max($query_data['starttime'] ,$player_quest['missions'][0]['date_modified']) : null;
+                            $query_rank['starttime'] = (isset($query_data['starttime']) && !empty($query_data['starttime'])) ? $query_data['starttime'] : null;
                             $query_rank['endtime'] = (isset($query_data['endtime']) && !empty($query_data['endtime'])) ? $query_data['endtime'] : null;
                             $query_rank['site_id'] = $query_data['site_id'];
                             $player_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
@@ -1851,8 +1850,6 @@ class Quest extends REST2_Controller
                                 $player_data['current'] = 0;
                                 $player_data['date_completed'] = null;
                             } else {
-                                unset($player_data[0]['data']);
-                                unset($player_data[0]['date']);
                                 $player_data = $player_data[0];
                             }
                             $player_data['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $pb_player_id, $select);
@@ -1870,16 +1867,9 @@ class Quest extends REST2_Controller
                         if (isset($Leader_data) && is_array($Leader_data)) foreach ($Leader_data as $leader_index => $leader) {
                             if (isset($player_join_quest) && is_array($player_join_quest)) foreach ($player_join_quest as $player_index => $player) {
                                 if ($leader['_id'] == $player['pb_player_id']) {
-                                    foreach($leader['date'] as $index => $date_data){
-                                        if($date_data <= $player['missions'][0]['date_modified']){
-                                            if(is_numeric($leader['data'][$index])) $result[$leader_index]['current'] -= $leader['data'][$index];
-                                        }
-                                    }
                                     $result[$leader_index]['player'] = $this->player_model->getPlayerByPlayer($query_data['site_id'], $player['pb_player_id'], $select);
                                     $result[$leader_index]['goal'] = (int)$quest['completion_value'];
                                     array_push($filter_id, $result[$leader_index]['_id']);
-                                    unset($result[$leader_index]['data']);
-                                    unset($result[$leader_index]['date']);
                                     unset($result[$leader_index]['_id']);
                                     break;
                                 }
