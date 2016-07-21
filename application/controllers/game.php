@@ -151,11 +151,9 @@ class game extends MY_Controller
                     $template_data['status']            = true;
                     $template_id = $this->Game_model->updateGameTemplate($client_id, $site_id, $game_id['_id'], $template_data);
                     $template = $this->Game_model->getGameTemplate($client_id, $site_id, $game_id['_id']);
-                    log_message('error', print_r($template,true));
                 }
 
                 $count_template = $this->Game_model->countGameTemplate($client_id, $site_id, $game_id['_id']);
-                log_message('error', $count_template);
 
                 $this->output->set_status_header('200');
                 $response = array(
@@ -167,7 +165,6 @@ class game extends MY_Controller
 
             } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $data = $this->input->post();
-                log_message('error', "post");
                 if ($template_id) $template_data['id']  = $template_id;
                 $template_data['template_name']         = $data['template_name'];
                 $template_data['weight']                = (int)$data['template_weight'];
@@ -177,7 +174,6 @@ class game extends MY_Controller
 
                 $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('game_name' => 'farm'));
                 $template_id = $this->Game_model->updateGameTemplate($client_id, $site_id, $game_id['_id'], $template_data);
-                log_message('error', $template_id);
                 if (!$template_id) {
                     $this->output->set_status_header('400');
                     echo json_encode(array('status' => 'error'));

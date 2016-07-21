@@ -159,8 +159,6 @@ class Game_model extends MY_Model
 
     public function updateGameStage($client_id, $site_id, $game_id, $data)
     {
-        log_message('error', 'data');
-        log_message('error', print_r($data,true));
         if ((isset($data['id']) && !empty($data['id']))) {
             $date = new MongoDate();
             $date_array = array(
