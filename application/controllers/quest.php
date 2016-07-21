@@ -149,8 +149,11 @@ class Quest extends REST2_Controller
                                 if (!$test_id) {
                                     $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"],
                                         $validToken, "finish");
-                                    $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"],
-                                        $validToken, $questResult);
+                                    try{
+                                        $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"],
+                                            $validToken, $questResult);
+                                    } catch (Exception $e){}
+                                    
                                     /* process "feedbacks" */
                                     if (isset($m["feedbacks"]) && is_array($m["feedbacks"])) {
                                         foreach ($m["feedbacks"] as $feedback) {
@@ -233,8 +236,11 @@ class Quest extends REST2_Controller
                                 if (!$test_id) {
                                     $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"],
                                         $validToken, "finish");
-                                    $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"],
-                                        $validToken, $questResult);
+                                    try{
+                                        $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"],
+                                            $validToken, $questResult);
+                                    } catch (Exception $e){}
+                                    
                                     /* process "feedbacks" */
                                     if (isset($m["feedbacks"]) && is_array($m["feedbacks"])) {
                                         foreach ($m["feedbacks"] as $feedback) {
