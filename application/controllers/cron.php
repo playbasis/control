@@ -2532,8 +2532,6 @@ class Cron extends CI_Controller
 
     public function processGameItemDeduct()
     {
-
-
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Game');
 
         if ($clients) {
