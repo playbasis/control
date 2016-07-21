@@ -224,10 +224,6 @@ class Game extends REST2_Controller
         }else{
             $item_record = $this->reward_model->getItemToPlayerRecords($this->client_id, $this->site_id, $pb_player_id, $item_id);
             if ($item_record) {
-                /* $now = new Datetime('now');
-                 $updated_date = new Datetime(datetimeMongotoReadable(isset($item_record['date_modified'] ) ? $item_record['date_modified'] : $item_records['date_added']));
-                 $interval = $now->diff($updated_date);*/
-
                 $item_status['item_status'] = $item_record['value'] . "";
             } else {
                 $item_status['item_status'] = "0";
@@ -357,7 +353,7 @@ class Game extends REST2_Controller
                         }
                     }
                 }else{
-                    $this->response($this->error->setError('GAME_STAGE_NEVER_BEEN_SET'), 200);
+                    $this->response($this->error->setError('GAME_STAGE_NEVER_BEEN_SET', $current_stage), 200);
                 }
             }
         }
