@@ -21,6 +21,19 @@ class Game_model extends MY_Model
         return $results;
     }
 
+    public function getGameList($client_id, $site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('status', true);
+
+        $results = $this->mongo_db->get("playbasis_game_to_client");
+
+        return $results;
+    }
+
     public function updateGameSetting($client_id, $site_id, $data)
     {
         $game = $this->getGameSetting($client_id, $site_id, $data);
