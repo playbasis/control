@@ -290,8 +290,8 @@ class Quest extends REST2_Controller
             if ($mission_count == $player_finish_count) {
                 //echo "finish all mission";
                 if (!$test_id) {
-                    $this->updateQuestRewardPlayer($pb_player_id, $q["quest_id"], $validToken, $questResult);
                     $this->updateQuestStatusOfPlayer($pb_player_id, $q["quest_id"], $validToken, "finish");
+                    $this->updateQuestRewardPlayer($pb_player_id, $q["quest_id"], $validToken, $questResult);
                     /* process "feedbacks" */
                     if (isset($quest["feedbacks"]) && is_array($quest["feedbacks"])) {
                         foreach ($quest["feedbacks"] as $feedback) {
