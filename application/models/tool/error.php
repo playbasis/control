@@ -565,7 +565,7 @@ class Error extends CI_Model
                 $errorData['error_code'] = '4002';
                 break;
             case 'GAME_STAGE_NEVER_BEEN_SET':
-                $errorData['message'] = "Game stage has never been set";
+                $errorData['message'] = "Game stage [". $dataArray ."] not found or never been set";
                 $errorData['error_code'] = '4003';
                 break;
             case 'GAME_ITEM_NOT_IN_CURRENT_STAGE':
