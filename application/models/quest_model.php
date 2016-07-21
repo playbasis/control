@@ -151,7 +151,7 @@ class Quest_model extends MY_Model
 
         $datecondition = array();
         if (isset($filter['starttime']) && !empty($filter['starttime'])) {
-            $datecondition = array_merge($datecondition, array('$gt' => $filter['starttime']));
+            $datecondition = array_merge($datecondition, array('$gte' => $filter['starttime']));
         }
         if (isset($filter['endtime']) && !empty($filter['endtime'])) {
             $datecondition = array_merge($datecondition, array('$lte' => $filter['endtime']));
@@ -160,9 +160,13 @@ class Quest_model extends MY_Model
             $match_condition = array_merge($match_condition, array('date_added' => $datecondition));
         }
         if ($query_player) {
-            $match_condition = array_merge($match_condition, array('pb_player_id' => array('$in' => $query_player)));
+            $player_where = array();
+            foreach($query_player as $player){
+                $player_where[] = array('pb_player_id' => $player['id'], 'date_added' => array('$gte' => $player['date_join']));
+            }
+            $match_condition = array_merge($match_condition, array('$or' => $player_where));
         }
-        
+
         if($completion_option == 'sum'){
             $query_array = array(
                 array(
@@ -171,8 +175,6 @@ class Quest_model extends MY_Model
                 array(
                     '$group' => array('_id' => '$pb_player_id', 
                                       'current' => array('$sum' => '$parameters.'.$completion_filter.POSTFIX_NUMERIC_PARAM),
-                                      'data' => array('$push' => '$parameters.'.$completion_filter.POSTFIX_NUMERIC_PARAM),
-                                      'date' => array('$push' => '$date_added'),
                                       'date_completed' => array('$max' => '$date_added'))
                 ),
                 array(
@@ -191,8 +193,6 @@ class Quest_model extends MY_Model
                 array(
                     '$group' => array('_id' => '$pb_player_id',
                                       'current' => array('$sum' => 1),
-                                      'data' => array('$push' => 1),
-                                      'date' => array('$push' => '$date_added'),
                                       'date_completed' => array('$max' => '$date_added'))
                 ),
                 array(
