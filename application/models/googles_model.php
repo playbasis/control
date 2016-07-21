@@ -33,21 +33,6 @@ class Googles_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function insertWebhook($client_id, $site_id, $calendar_id, $channel_id, $callback_url)
-    {
-        $this->set_site_mongodb($site_id);
-        $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
-        return $this->mongo_db->insert('playbasis_google_subscription', array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
-            'channel_id' => $channel_id,
-            'calendar_id' => $calendar_id,
-            'callback_url' => $callback_url,
-            'date_added' => $d,
-            'date_modified' => $d
-        ));
-    }
-
     public function updateWebhook($site_id, $channel_id, $resource_id, $resource_uri, $date_expire)
     {
         $this->set_site_mongodb($site_id);
@@ -59,16 +44,6 @@ class Googles_model extends MY_Model
         $this->mongo_db->set('date_expire', $date_expire);
         $this->mongo_db->set('date_modified', $d);
         $this->mongo_db->update('playbasis_google_subscription');
-    }
-
-    public function removeWebhook($client_id, $site_id, $channel_id, $resource_id)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->where('client_id', $client_id);
-        $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('channel_id', $channel_id);
-        $this->mongo_db->where('resource_id', $resource_id);
-        $this->mongo_db->delete_all('playbasis_google_subscription');
     }
 
     public function insertEvents($site_id, $calendar_id, $events)
@@ -164,29 +139,6 @@ class Googles_model extends MY_Model
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_calendar_token");
         return $results ? $results[0]['sync_token'] : null;
-    }
-
-    public function listAlmostExpiredCalendarChannels()
-    {
-        $ret = array();
-        foreach ($this->mongo_db->get("playbasis_google_subscription") as $each) {
-            $key = $each['site_id'] . '-' . $each['channel_id'];
-            if (!array_key_exists($key, $ret)) {
-                $ret[$key] = $each;
-            } else {
-                if (!$each['date_expire'] || $each['date_expire']->sec >= $ret[$key]['date_expire']->sec) { // store latest one (greatest "date_expire")
-                    $ret[$key] = $each;
-                }
-            }
-        }
-        $t = time();
-        $_ret = array();
-        foreach ($ret as $key => $each) {
-            if ($each['date_expire'] && $each['date_expire']->sec < $t + EXPIRED_WITHIN_SEC) { // check if even the latest one is expired
-                array_push($_ret, $each);
-            }
-        }
-        return $_ret;
     }
 }
 

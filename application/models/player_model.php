@@ -882,19 +882,6 @@ class Player_model extends MY_Model
         return $ret;
     }
 
-    public function getLeaderboardByLevelForReport($limit, $client_id, $site_id)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('cl_player_id', 'first_name', 'last_name', 'username', 'image', 'exp', 'level'));
-        $this->mongo_db->where(array(
-            'site_id' => $site_id,
-            'client_id' => $client_id
-        ));
-        $this->mongo_db->order_by(array('level' => -1, 'exp' => -1));
-        $this->mongo_db->limit($limit);
-        return $this->mongo_db->get('playbasis_player');
-    }
-
     public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
     {
         $limit = intval($limit);
@@ -1369,125 +1356,6 @@ class Player_model extends MY_Model
         return $results && isset($results['result'][0]) ? $results['result'][0]['value'] : 0;
     }
 
-    public function findLatestProcessActionLogTime()
-    {
-        $this->mongo_db->limit(1);
-        return $this->mongo_db->get('playbasis_player_dau_latest');
-    }
-
-    public function updateLatestProcessActionLogTime($d)
-    {
-        $this->mongo_db->limit(1);
-        $r = $this->mongo_db->get('playbasis_player_dau_latest');
-        if ($r) {
-            $r = $r[0];
-            if ($d->sec < $r['date_added']->sec) {
-                return false;
-            }
-            $this->mongo_db->where(array('_id' => $r['_id']));
-            $this->mongo_db->set('date_added', $d);
-            $this->mongo_db->update('playbasis_player_dau_latest', array("w" => 0, "j" => false));
-        } else {
-            $this->mongo_db->insert('playbasis_player_dau_latest', array('date_added' => $d),
-                array("w" => 0, "j" => false));
-        }
-        return true;
-    }
-
-    public function listActionLog($d)
-    {
-        $this->mongo_db->select(array(
-            'pb_player_id',
-            'client_id',
-            'site_id',
-            'action_id',
-            'date_modified',
-        ));
-        if ($d) {
-            $this->mongo_db->where_gt('date_modified', $d);
-        }
-        $this->mongo_db->order_by(array('date_modified' => 'ASC'));
-        return $this->mongo_db->get('playbasis_action_log', true);
-    }
-
-    public function streamActionLog($last, $limit=1000000, $return_cursor=false)
-    {
-        $this->mongo_db->select(array(
-            'pb_player_id',
-            'client_id',
-            'site_id',
-            'action_id',
-            'date_added',
-        ));
-        if ($last) {
-            $this->mongo_db->where_gt('_id', $last);
-        }
-        $this->mongo_db->limit($limit); // https://scalegrid.io/blog/fast-paging-with-mongodb/
-        $this->mongo_db->order_by(array('date_added' => 'ASC'));
-        return $this->mongo_db->get('playbasis_action_log', $return_cursor);
-    }
-
-    public function countActionLog($last=null)
-    {
-        $this->mongo_db->select(array(
-            'pb_player_id',
-            'client_id',
-            'site_id',
-            'action_id',
-            'date_added',
-        ));
-        if ($last) {
-            $this->mongo_db->where_gt('_id', $last);
-        }
-        return $this->mongo_db->count('playbasis_action_log');
-    }
-
-    public function computeDau($action, $d)
-    {
-        $this->mongo_db->select(array());
-        $this->mongo_db->where(array(
-            'pb_player_id' => $action['pb_player_id'],
-            'client_id' => $action['client_id'],
-            'site_id' => $action['site_id'],
-            'action_id' => $action['action_id'],
-            'date_added' => new MongoDate($d)
-        ));
-        $this->mongo_db->limit(1);
-        $r = $this->mongo_db->get('playbasis_player_dau');
-        if ($r) {
-            $r = $r[0];
-            $this->mongo_db->where(array('_id' => $r['_id']));
-            $this->mongo_db->inc('count', 1);
-            $this->mongo_db->update('playbasis_player_dau', array("w" => 0, "j" => false));
-        } else {
-            $this->mongo_db->insert('playbasis_player_dau', array(
-                'pb_player_id' => $action['pb_player_id'],
-                'client_id' => $action['client_id'],
-                'site_id' => $action['site_id'],
-                'action_id' => $action['action_id'],
-                'count' => 1,
-                'date_added' => new MongoDate($d)
-            ), array("w" => 0, "j" => false));
-        }
-    }
-
-    public function computeMau($action, $d)
-    {
-        $data = array();
-        $end = strtotime(date('Y-m-d', strtotime('+30 day', $d)));
-        $cur = $d;
-        while ($cur != $end) {
-            $data[] = array(
-                'pb_player_id' => $action['pb_player_id'],
-                'client_id' => $action['client_id'],
-                'site_id' => $action['site_id'],
-                'date_added' => new MongoDate($cur)
-            );
-            $cur = strtotime(date('Y-m-d', strtotime('+1 day', $cur)));
-        }
-        return $this->mongo_db->batch_insert('playbasis_player_mau', $data, array("w" => 0, "j" => false, "continueOnError" => true));
-    }
-
     private function checkClientUserLimitWarning($client_id, $site_id, $limit)
     {
         if (!$limit) {
@@ -1832,31 +1700,6 @@ class Player_model extends MY_Model
         $this->mongo_db->where('action_log_id', new MongoID($action_log_id));
         $returnThis = $this->mongo_db->get('playbasis_validated_action_log');
         return ($returnThis) ? $returnThis[0] : array();
-    }
-
-    private function _new_registration_all_customers($from = null, $to = null)
-    {
-        $this->mongo_db->where('status', true);
-        if ($from) {
-            $this->mongo_db->where_gte('date_added', $this->new_mongo_date($from));
-        }
-        if ($to) {
-            $this->mongo_db->where_lte('date_added', $this->new_mongo_date($to, '23:59:59'));
-        }
-        return $this->mongo_db->count('playbasis_player');
-    }
-
-    public function new_registration_all_customers($from = null, $to = null, $site_ids = array())
-    {
-        $this->set_site_mongodb(0);
-        $n = $this->_new_registration_all_customers($from, $to);
-        if (is_array($site_ids)) {
-            foreach ($site_ids as $site_id) {
-                $this->set_site_mongodb(new MongoId($site_id)); // set to dedicated DB (if any)
-                $n += $this->_new_registration_all_customers($from, $to);
-            }
-        }
-        return $n;
     }
 
     public function new_registration1($data, $from = null, $to = null)
@@ -2523,50 +2366,6 @@ class Player_model extends MY_Model
         return $result ? $result[0] : array();
     }
 
-    public function playerWithEnoughBadge($data, $badge_id, $n)
-    {
-        $this->set_site_mongodb($data['site_id']);
-        $query = array(
-            'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
-            'badge_id' => $badge_id,
-            'value' => array('$gte' => $n)
-        );
-        $this->mongo_db->select(array('pb_player_id'));
-        $this->mongo_db->select(array(), array('_id'));
-        $this->mongo_db->where($query);
-        $result = array();
-        $arr = $this->mongo_db->get('playbasis_reward_to_player');
-        if (is_array($arr)) {
-            foreach ($arr as $each) {
-                array_push($result, $each['pb_player_id']);
-            }
-        }
-        return $result;
-    }
-
-    public function playerWithEnoughReward($data, $reward_id, $n)
-    {
-        $this->set_site_mongodb($data['site_id']);
-        $query = array(
-            'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
-            'reward_id' => $reward_id,
-            'value' => array('$gte' => $n)
-        );
-        $this->mongo_db->select(array('pb_player_id'));
-        $this->mongo_db->select(array(), array('_id'));
-        $this->mongo_db->where($query);
-        $result = array();
-        $arr = $this->mongo_db->get('playbasis_reward_to_player');
-        if (is_array($arr)) {
-            foreach ($arr as $each) {
-                array_push($result, $each['pb_player_id']);
-            }
-        }
-        return $result;
-    }
-
     public function get_reward_id_by_name($data, $name)
     {
         $this->set_site_mongodb($data['site_id']);
@@ -2576,89 +2375,6 @@ class Player_model extends MY_Model
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_reward_to_client');
         return $results ? $results[0]['reward_id'] : null;
-    }
-
-    public function get_reward_id_of_point($data)
-    {
-        return $this->get_reward_id_by_name($data, 'point');
-    }
-
-    public function playerWithEnoughCriteria($data, $criteria)
-    {
-        $this->set_site_mongodb($data['site_id']);
-        $query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
-        $ids = array();
-        if (is_array($criteria)) {
-            foreach ($criteria as $k => $v) {
-                switch ($k) {
-                    case 'exp':
-                        if (is_array($v)) {
-                            foreach ($v as $n) {
-                                $query['exp'] = array('$gte' => $n);
-                                break;
-                            }
-                        }
-                        break;
-                    case 'level':
-                        if (is_array($v)) {
-                            foreach ($v as $n) {
-                                $query['level'] = array('$gte' => $n);
-                                break;
-                            }
-                        }
-                        break;
-                    case 'point':
-                        $reward_id = $this->get_reward_id_of_point($data);
-                        if (is_array($v)) {
-                            foreach ($v as $n) {
-                                array_push($ids, $this->playerWithEnoughReward($data, $reward_id, $n));
-                                break;
-                            }
-                        }
-                        break;
-                    case 'badge':
-                        if (is_array($v)) {
-                            foreach ($v as $id => $n) {
-                                array_push($ids, $this->playerWithEnoughBadge($data, $id, $n));
-                                break;
-                            }
-                        }
-                        break;
-                    case 'custom':
-                        if (is_array($v)) {
-                            foreach ($v as $id => $n) {
-                                array_push($ids, $this->playerWithEnoughReward($data, $id, $n));
-                                break;
-                            }
-                        }
-                        break;
-                    default:
-                        /* error, not support type */
-                        break;
-                }
-            }
-        }
-        //echo 'YYY'; var_dump($ids); echo 'YYY';
-        $ids_intersect = null;
-        if (is_array($ids)) {
-            foreach ($ids as $each) {
-                if ($ids_intersect == null) {
-                    $ids_intersect = $each;
-                } else {
-                    $ids_intersect = array_intersect($ids_intersect, $each);
-                }
-            }
-        }
-        //echo 'AAA'; var_dump($ids_intersect); echo 'AAA';
-        if (!empty($ids)) {
-            $query['_id'] = array('$in' => $ids_intersect);
-        }
-        //echo 'BBB'; var_dump($query); echo 'BBB';
-        $result = $this->mongo_db->command(array(
-            'count' => 'playbasis_player',
-            'query' => $query
-        ));
-        return $result['n'];
     }
 
     public function getActiveQuests($site_id, $fields)
@@ -2794,14 +2510,6 @@ class Player_model extends MY_Model
         return $player && isset($player['phone_number']) ? $player['phone_number'] : null;
     }
 
-    public function findPlayersBySiteId($site_id)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('email', 'cl_player_id', 'username'));
-        $this->mongo_db->where('site_id', $site_id);
-        return $this->mongo_db->get('playbasis_player');
-    }
-
     public function findPlayerByCode($site_id, $code, $fields)
     {
         $this->set_site_mongodb($site_id);
@@ -2813,33 +2521,6 @@ class Player_model extends MY_Model
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_player');
         return $results ? $results[0] : array();
-    }
-
-    public function findRecentPlayers($days)
-    {
-        $this->set_site_mongodb(0);
-        $d = strtotime("-" . $days . " day");
-        $this->mongo_db->where_gt('date_added', new MongoDate($d));
-        return $this->mongo_db->distinct('pb_player_id', 'playbasis_action_log');
-    }
-
-    public function findDistinctEmails($pb_player_ids)
-    {
-        $this->mongo_db->where_in('_id', $pb_player_ids);
-        return $this->mongo_db->distinct('email', 'playbasis_player');
-    }
-
-    public function findProcessedEmails($emails)
-    {
-        $this->mongo_db->select(array());
-        $this->mongo_db->where_in('_id', $emails);
-        return $this->mongo_db->get('playbasis_player_fc');
-    }
-
-    public function findNewEmails($emails)
-    {
-        return array_diff($emails, array_merge(array('no-reply@playbasis.com', 'info@playbasis.com'),
-            array_map('index_id', $this->findProcessedEmails($emails))));
     }
 
     public function insertOrUpdateFullContact($email, $detail)

@@ -64,40 +64,4 @@ class Import_model extends MY_Model
         $data = $this->mongo_db->get('playbasis_import');
         return $data ? $data:null;
     }
-
-    public function insertMD5($import_id, $site_id, $md5_id)
-    {
-        if (!$import_id) {
-            return null;
-        }
-        $this->mongo_db->where('_id', new MongoId($import_id));
-        $this->mongo_db->set('md5_id', $md5_id);
-        return $this->mongo_db->update('playbasis_import');
-    }
-
-    public function updateCompleteImport($client_id, $site_id, $import_id, $importResult, $importKey, $import_type)
-    {
-        if (!$import_id) {
-            return null;
-        }
-        $mongoDate = new MongoDate(time());
-        $result = array('import_key' => $importKey);
-        $result += array_merge($importResult, array(
-            'client_id' => new MongoId($client_id),
-            'site_id' => new MongoId($site_id),
-            'import_type' => $import_type,
-            'import_id' => $import_id,
-            'date_added' => $mongoDate
-        ));
-        return $this->mongo_db->insert('playbasis_import_log', $result);
-    }
-
-    public function retrieveLatestImportResult($import_id)
-    {
-        $this->mongo_db->where('import_id', $import_id);
-        $this->mongo_db->order_by(array('date_added' => 'desc'));
-        $this->mongo_db->limit(1);
-        $return = $this->mongo_db->get("playbasis_import_log");
-        return $return ? $return[0] : null;
-    }
 }
