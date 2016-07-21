@@ -43,7 +43,7 @@
             ?>
             <div id="actions">
                 <table class="form">
-                    <input type="hidden" name="name" size="100" value="Farm">
+                    <input type="hidden" name="name" size="100" value="farm">
                     <tr>
                         <td><?php echo $this->lang->line('entry_image'); ?>:</td>
                         <td> <img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
@@ -74,7 +74,7 @@
                     <div class="world-wrapper">
                         <?php if(isset($worlds)){
                             foreach($worlds as $key => $world){ $index = $key +1;?>
-                                <div class="world-item-wrapper" data-world-id="'+ itemWorldId +'">
+                                <div class="world-item-wrapper" data-world-id="<?php echo $index?>" id="world_<?php echo $index?>_item_wrapper">
                                     <div class="box-header box-world-header overflow-visible" style="height: 30px;">
                                         <h2><img src="<?php echo base_url();?>image/default-image.png" width="30"> <?php echo $world['world_name'] ?></h2>
                                         <div class="box-icon">
@@ -88,6 +88,7 @@
                                         <div class="span12 well" style="min-height:500px">
                                             <div class="span6">
                                                 <table class="form">
+                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_id]" id="worlds_<?php echo $index ?>_id" size="100" value="<?php echo $world['world_id'] ?>">
                                                 <tr>
                                                     <td><?php echo $this->lang->line("entry_world_name"); ?>:</td>
                                                     <td><input type="text" name="worlds[<?php echo $index ?>][world_name]" id="worlds_<?php echo $index ?>_name" size="100" value="<?php echo $world['world_name'] ?>"></td>
@@ -137,15 +138,15 @@
                                             <div class="span12">Item:</div>
                                             <div class="well" id="worlds_<?php echo $index ?>_thumbnails_grids" style="overflow-y:scroll; overflow-x:scroll; height:500px; width:98%;">
                                             <?php for($i = 0;$i < $world['world_height'];$i++){?>
-                                                    <ul id="thumbnails_grid_<?php echo $index+'_'+$i ?>" class="thumbnails">
+                                                    <ul id="thumbnails_grid_<?php echo $index?>_<?php echo $i ?>" class="thumbnails">
                                                     <?php for($j = 0;$j < $world['world_width'];$j++){?>
-                                                        <li id="thumbnails_grid_<?php echo $index+'_'+$i+'_'+$j ?>">
-                                                            <div class="thumbnail tooltips" data-placement="top" title="<?php echo '['+$i+']['+$j+']' ?>" style="width:120px;height:120px;">
+                                                        <li id="thumbnails_grid_<?php echo $index?>_<?php echo $i ?>_<?php echo $j ?>">
+                                                            <div class="thumbnail tooltips" data-placement="top" title="[<?php echo $i ?>][<?php echo $j ?>]" style="width:120px;height:120px;">
                                                                 <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_id]" id="worlds_<?php echo $index ?>_item_id_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo isset($world['world_item'][$i][$j]['item_id']) ? $world['world_item'][$i][$j]['item_id'] : ""?>">
                                                                 <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_harvest]" id="worlds_<?php echo $index ?>_item_harvest_<?php echo $i?>_<?php echo $j?>" size="100" value=<?php echo isset($world['world_item'][$i][$j]['item_harvest']) ? $world['world_item'][$i][$j]['item_harvest'] : ""?>>
                                                                 <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_deduct]" id="worlds_<?php echo $index ?>_item_deduct_<?php echo $i?>_<?php echo $j?>" size="100" value=<?php echo isset($world['world_item'][$i][$j]['item_deduct']) ? $world['world_item'][$i][$j]['item_deduct'] : ""?>>
                                                                 <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_description]" id="worlds_<?php echo $index ?>_item_description_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo isset($world['world_item'][$i][$j]['item_description']) ? $world['world_item'][$i][$j]['item_description'] : ""?>">
-                                                                <i class="fa fa-plus-circle fa-5x fa-align-center" onclick="showItemModalForm(<?php echo $index ?>,<?php echo $i ?>,<?php echo $j ?>)" class="tooltips" data-placement="top" title="<?php echo '['+$i+']['+$j+']' ?>" id="add" style="padding: 30px" aria-hidden="true"></i>
+                                                                <i class="fa fa-plus-circle fa-5x fa-align-center" onclick="showItemModalForm(<?php echo $index ?>,<?php echo $i ?>,<?php echo $j ?>)" class="tooltips" data-placement="top" title="[<?php echo $i ?>][<?php echo $j ?>]" id="add" style="padding: 30px" aria-hidden="true"></i>
                                                             </div>
                                                         </li>
                                                     <?php } ?>
@@ -224,6 +225,22 @@
     </div>
 </div>
 
+<div class="modal hide fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <h3 id="myModalLabel">Warning !</h3>
+        <input type="hidden" name="confirm_event" id="confirm_event" value="">
+        <input type="hidden" name="confirm_world" id="confirm_world" value="">
+        <input type="hidden" name="confirm_param" id="confirm_param" value="">
+    </div>
+    <div class="modal-body">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="confirm_cancel_button" data-dismiss="modal">Cancel</button>
+        <a class="btn btn-danger btn-ok" id="confirm_del_button">Delete</a>
+    </div>
+</div>
+
 <div id="formItemModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formItemModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -285,6 +302,7 @@
                         <ul class="nav nav-tabs nav-stacked" id="template_nav"></ul>
                     </div>
                     <div class="span8 well" id ="template_body" style="height: 300px">
+                        <input type="hidden" name="template_id" id="template_id">
                         <div class="control-group">
                             <label for="template_name" class="control-label span3"><span class="required">*</span><?php echo $this->lang->line('entry_template_name'); ?></label>
                             <div class="controls span6">
@@ -320,7 +338,7 @@
             <?php echo form_close(); ?>
         </div>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" id="template_footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         <button class="btn btn-primary" id="template-modal-submit"><i class="fa fa-plus">&nbsp;</i>Save</button>
     </div>
@@ -389,8 +407,8 @@
             for (var j=i+1; j<= countWorldId; j++){
                 var $world_name_temp = $('#worlds_'+ j +'_name').val(),
                     $world_level_temp = $('#worlds_'+ j +'_level').val();
-                if ($world_name == $world_name_temp) dialogMsg += '- Name is required unique value, Name of world '+ i + ' is same as world ' + j + '<br>';
-                if ($world_level == $world_level_temp) dialogMsg += '- Level is required unique value, Level of world '+ i + ' is same as world ' + j + '<br>';
+                if (($world_name == $world_name_temp) && ($world_name != null)) dialogMsg += '- Name is required unique value, Name of world '+ i + ' is same as world ' + j + '<br>';
+                if (($world_level == $world_level_temp) && ($world_name != null)) dialogMsg += '- Level is required unique value, Level of world '+ i + ' is same as world ' + j + '<br>';
             }
             if ($world_level == 1) check_level = true;
             if ($world_level < 0) dialogMsg += '- Level is require at least 1<br>';
@@ -411,7 +429,7 @@
                     $waitDialog.modal();
                 }
             }).done(function (data) {
-                $waitDialog.modal('hide');
+                location.reload();
             }).fail(function (xhr, textStatus, errorThrown) {
                 if(JSON.parse(xhr.responseText).status == "error") {
                     $('form.game-form').trigger("reset");
@@ -480,7 +498,7 @@
     $('.add-world-btn').click(function () {
         countWorldId++;
         var itemWorldId = countWorldId;
-        var itemWorldHtml = '<div class="world-item-wrapper" data-world-id="'+ itemWorldId +'">\
+        var itemWorldHtml = '<div class="world-item-wrapper" data-world-id="'+ itemWorldId +'" id="world_'+ itemWorldId +'_item_wrapper">\
                                 <div class="box-header box-world-header overflow-visible" style="height: 30px;">\
                                     <h2><img src="<?php echo base_url();?>image/default-image.png" width="30"> World</h2>\
                                     <div class="box-icon">\
@@ -568,16 +586,24 @@
         });
 
         $('.remove-world-btn').unbind().bind('click', function (data) {
-            var $target = $(this).parent().parent().parent();
+            $('#confirm-delete .modal-body').html('Are you sure to remove!!');
+            document.getElementById('confirm_event').value = "world";
+            document.getElementById('confirm_world').value = $(this).parent().parent().parent().data('world-id');
+            ;
+            $('#confirm-delete').modal('show');
+
+            /*var $target = $(this).parent().parent().parent();
 
             var r = confirm("Are you sure to remove!");
             if (r == true) {
                 $target.remove();
                 init_world_event(id);
-            }
+            }*/
         });
         get_item_category(id);
     }
+
+    var temp_category;
 
     function get_item_category(world){
         $inputCategory = $('#worlds_'+world+'_category');
@@ -631,6 +657,22 @@
             },
             formatResult: categoryFormatResult,
             formatSelection: categoryFormatSelection,
+        }).on('select2-clearing', function (e) {
+            temp_category = $('#worlds_'+world+'_category').val();
+            $('#confirm-delete .modal-body').html('Select new catagory will be clear all selected items');
+            document.getElementById('confirm_event').value = "category";
+            document.getElementById('confirm_world').value = world;
+            $('#confirm-delete').modal('show');
+        }).on('select2-selecting', function (e) {
+            temp_category = $('#worlds_'+world+'_category').val();
+        }).on('select2-selected', function (e) {
+            var category = $('#worlds_'+world+'_category').val();
+            if (category != temp_category){
+                $('#confirm-delete .modal-body').html('Select new catagory will be clear all selected items');
+                document.getElementById('confirm_event').value = "category";
+                document.getElementById('confirm_world').value = world;
+                $('#confirm-delete').modal('show');
+            }
         });
     }
 
@@ -676,25 +718,67 @@
 
     $('#page-render').on('click', 'button#template-modal-submit', submitTemplateModalForm);
     $('#page-render').on('click', 'button#item-modal-submit', submitItemModalForm);
+    $('#page-render').on('click', 'button#confirm_cancel_button', cancelConfirm);
+    $('#page-render').on('click', 'a#confirm_del_button', deleteConfirm);
+
+    function deleteConfirm(){
+        var event = $('#confirm_event').val();
+        var world = $('#confirm_world').val();
+        var $world_widths = $('#worlds_'+ world +'_world_width'),
+            $world_heights = $('#worlds_'+ world +'_world_height');
+
+        if(event == "category"){
+            for(var i =0;i<$world_heights.val();i++){
+                for(var j=0;j<$world_widths.val();j++){
+                    document.getElementById('worlds_'+ world +'_item_id_' + i + '_' + j).value =  "";
+                    document.getElementById('worlds_'+ world +'_item_harvest_' + i + '_' + j).value =  1;
+                    document.getElementById('worlds_'+ world +'_item_deduct_' + i + '_' + j).value =  1;
+                    document.getElementById('worlds_'+ world +'_item_description_' + i + '_' + j).value =  "";
+                }
+            }
+            $('#confirm-delete').modal('hide');
+        }
+        if(event == "world"){
+            $('#world_'+world+'_item_wrapper').remove();
+            init_world_event(world);
+            $('#confirm-delete').modal('hide');
+        }
+    }
+
+    function cancelConfirm(){
+        var event = $('#confirm_event').val();
+        var world = $('#confirm_world').val();
+        var param = $('#confirm_parameter').val();
+
+        if(event == 'category'){
+            document.getElementById('worlds_'+world+'_category').value = temp_category;
+            get_item_category(world);
+            $('#confirm-delete').modal('hide');
+        }
+    }
 
     function set_template(index) {
         var previous_tab_id = $("#template_nav .active").attr('id');
         if((index != 99) && (templateData.length != 0)){
-            document.getElementById('template_name').value =  templateData[index].name? templateData[index].name : "";
+            document.getElementById('template_id').value =  templateData[index]._id? templateData[index]._id : "";
+            document.getElementById('template_name').value =  templateData[index].template_name? templateData[index].template_name : "";
             document.getElementById('template_weight').value = templateData[index].weight ? templateData[index].weight : "";
-            document.getElementById('template_start').value = templateData[index].start ? templateData[index].start: "";
-            document.getElementById('template_end').value = templateData[index].end ? templateData[index].end : "";
+            document.getElementById('template_start').value = templateData[index].date_start ? templateData[index].date_start: "";
+            document.getElementById('template_end').value = templateData[index].date_end ? templateData[index].date_end : "";
             var check = templateData[index].status ? templateData[index].status : false;
             $('#template_status').attr('checked', check);
             $("#template_status").bootstrapSwitch('state', check);
             if(index == 0){
                 set_disable_template(true);
+                $('#template_footer').addClass("hide");
             }
             else{
                 set_disable_template(false);
+                $('#template_footer').removeClass("hide");
             }
         }
         else{
+            document.getElementById('template_id').value = "";
             document.getElementById('template_name').value = "";
             document.getElementById('template_weight').value = "";
             document.getElementById('template_start').value = "";
@@ -702,6 +786,7 @@
             $('#template_status').attr('checked', false);
             $("#template_status").bootstrapSwitch('state', false);
             set_disable_template(false);
+            $('#template_footer').removeClass("hide");
         }
 
     }
@@ -715,6 +800,7 @@
     }
 
     function show_template(){
+        $waitDialog.modal('show');
         $.ajax({
             url : baseUrlPath+ "game/template",
             dataType: "json"
@@ -723,13 +809,15 @@
             var templateHtml ='';
             for(var i=0; i< data.total; i++){
                 if(data.rows[i] != undefined){
-                    templateHtml += '<li id="tab-'+i+'" ><a onclick="set_template('+i+')" data-toggle="tab" data-interest="'+i+'">'+data.rows[i].name+'</a></li>';
+                    templateHtml += '<li id="tab-'+i+'" ><a onclick="set_template('+i+')" data-toggle="tab" data-interest="'+i+'">'+data.rows[i].template_name+'</a></li>';
                 }
             }
             templateHtml += '<li id="tab-end" ><a onclick="set_template(99)" data-toggle="tab" data-interest="'+99+'">+Template</a></li>';
             $('#template_nav').append(templateHtml);
             templateData = data.rows;
-            document.getElementById('template_name').value =  templateData[0].name;
+
+            document.getElementById('template_id').value =  templateData[0]._id;
+            document.getElementById('template_name').value =  templateData[0].template_name;
             document.getElementById('template_weight').value =  templateData[0].weight;
             document.getElementById('template_start').value =  templateData[0].date_start;
             document.getElementById('template_end').value =  templateData[0].date_end;
@@ -737,22 +825,25 @@
             $("#template_status").bootstrapSwitch('state', templateData[0].status);
             set_disable_template(true);
             $('#tab-0').addClass("active");
+            $('#template_footer').addClass("hide");
             $('#formTemplateModal').modal('show');
+            $waitDialog.modal('hide');
         });
 
     }
 
     function submitTemplateModalForm() {
-        var template_id = $("#template_nav .active").attr('id'),
+        var tab_id = $("#template_nav .active").attr('id'),
+            template_id = $('#template_id').val(),
             template_name = $('#template_name').val(),
             template_weight = $('#template_weight').val(),
             template_start = $('#template_start').val(),
             template_end = $('#template_end').val();
 
         var dialogMsg = "";
-        if(template_id == "tab-end"){
+        if(tab_id == "tab-end"){
             for(var i=0; i< templateData.length; i++){
-                if(template_name == templateData[i].name) dialogMsg += '- Template Name is required uniuqe name<br>';
+                if(template_name == templateData[i].template_name) dialogMsg += '- Template Name is required uniuqe name<br>';
             }
         }
 
@@ -764,7 +855,7 @@
             preventUnusual.message(dialogMsg , "Fail!");
         } else {
             var formData = $('form.template-form').serialize();
-            if(template_id == "tab-end"){
+            if(tab_id == "tab-end"){
 
                 $.ajax({
                     type: "POST",
@@ -850,12 +941,11 @@
         document.getElementById('item_world_id').value = world_id;
         document.getElementById('item_row').value = row;
         document.getElementById('item_column').value = column;
-        document.getElementById('item_id').value = $('#worlds_'+ world_id +'_item_id_'+ row +'_' + column).val();
-        document.getElementById('item_harvest').value = $('#worlds_'+ world_id +'_item_harvest_'+ row +'_' + column).val();
-        document.getElementById('item_deduct').value  = $('#worlds_'+ world_id +'_item_deduct_' + row +'_' + column).val();
-        if ($('#worlds_'+ world_id +'_item_desc_'+ row +'_' + column).val() != null){
-            document.getElementById('item-desc').value = $('#worlds_'+ world_id +'_item_desc_'+ row +'_' + column).val();
-        }
+        document.getElementById('item_id').value = ($('#worlds_'+ world_id +'_item_id_'+ row +'_' + column).val() != "") ? $('#worlds_'+ world_id +'_item_id_'+ row +'_' + column).val() : "";
+        document.getElementById('item_harvest').value = ($('#worlds_'+ world_id +'_item_harvest_'+ row +'_' + column).val() != "") ? $('#worlds_'+ world_id +'_item_harvest_'+ row +'_' + column).val() : 1;
+        document.getElementById('item_deduct').value  = ($('#worlds_'+ world_id +'_item_deduct_' + row +'_' + column).val() != "") ? $('#worlds_'+ world_id +'_item_deduct_'+ row +'_' + column).val() : 1;
+        document.getElementById('item-desc').value = ($('#worlds_'+ world_id +'_item_desc_'+ row +'_' + column).val() != null) ? $('#worlds_'+ world_id +'_item_desc_'+ row +'_' + column).val() : "";
+
 
         if ($world_category.val() != ""){
             $('#formItemModal').modal('show');
