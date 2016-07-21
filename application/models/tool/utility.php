@@ -50,29 +50,6 @@ class Utility extends CI_Model
         return $ret;
     }
 
-    public function url_exists($url, $prefix = '')
-    {
-        if (substr($url, 0, 4) != 'http') {
-            $url = $prefix . $url;
-        }
-        $file_headers = @get_headers($url);
-        log_message('debug', 'url = ' . print_r($url, true) . ', header = ' . print_r($file_headers[0], true));
-        return strpos($file_headers[0], ' 20') || strpos($file_headers[0], ' 30');
-    }
-
-    public function save_dir($dir, $mode = 0755)
-    {
-        if (!is_dir($dir)) {
-            mkdir($dir, $mode, true);
-        }
-    }
-
-    public function save_file($dir, $file, $content, $mode = 0755)
-    {
-        $this->save_dir($dir, $mode);
-        file_put_contents("$dir/$file", $content);
-    }
-
     /* http://stackoverflow.com/questions/19083175/generate-random-string-in-php-for-file-name */
     public function random_string($length)
     {
@@ -182,28 +159,6 @@ class Utility extends CI_Model
         $response = $this->amazon_ses->send();
         log_message('info', 'response = ' . $response);
         return $response;
-    }
-
-    /* http://mpdf1.com/manual/index.php?tid=125 */
-    public function html2mpdf($html, $output = false)
-    {
-        require_once(APPPATH . '/libraries/mpdf/mpdf.php');
-        $mpdf = new mPDF('s', 'A4', '', '', 25, 15, 21, 22, 10, 10);
-        $mpdf->WriteHTML($html);
-        return $output ? $mpdf->Output('', 'S') : null;
-    }
-
-    public function find_diff_in_days($from, $to)
-    {
-        return intval($this->find_diff_in_fmt($from, $to, '%r%a'));
-    }
-
-    public function find_diff_in_fmt($from, $to, $fmt)
-    {
-        $_from = new DateTime(date("Y-m-d", $from));
-        $_to = new DateTime(date("Y-m-d", $to));
-        $interval = $_from->diff($_to);
-        return $interval->format($fmt);
     }
 
     public function replace_template_vars($template, $data)

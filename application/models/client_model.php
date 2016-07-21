@@ -660,18 +660,6 @@ class Client_model extends MY_Model
         return $result ? $result[0]['name'] : null;
     }
 
-    public function listSites()
-    {
-        $this->set_site_mongodb(0);
-        $where = array(
-            'status' => true,
-            'deleted' => false
-        );
-        $this->mongo_db->select(array('client_id', 'site_name'));
-        $this->mongo_db->where($where);
-        return $this->mongo_db->get('playbasis_client_site');
-    }
-
     public function getById($client_id)
     {
         $this->set_site_mongodb(0);
@@ -956,35 +944,6 @@ class Client_model extends MY_Model
         ), array("w" => 0, "j" => false));
     }
 
-    public function listAllActiveClients($refDate = null, $site_id = 0)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array(
-            '_id',
-            'first_name',
-            'last_name',
-            'email',
-            'mobile',
-            'company',
-            'date_added',
-            'paying_ever'
-        ));
-        $this->mongo_db->where(array('status' => true, 'deleted' => false));
-        if ($refDate) {
-            $this->mongo_db->where_lt('date_added', new MongoDate($refDate));
-        }
-        return $this->mongo_db->get('playbasis_client');
-    }
-
-    public function listAllActiveClientsWithoutMobile($site_id = 0)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('_id', 'first_name', 'last_name', 'email', 'company', 'date_added', 'mobile'));
-        $this->mongo_db->where(array('status' => true, 'deleted' => false));
-        $this->mongo_db->where('mobile', array('$not' => new MongoRegex("/^\+[0-9]+/")));
-        return $this->mongo_db->get('playbasis_client');
-    }
-
     public function hasSetUpMobile($client_id, $site_id = 0)
     {
         $this->set_site_mongodb($site_id);
@@ -994,25 +953,11 @@ class Client_model extends MY_Model
         return $this->mongo_db->count('playbasis_client') > 0;
     }
 
-    public function listAllActivesSites($site_id = 0)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('client_id', '_id'));
-        $this->mongo_db->where(array('status' => true, 'deleted' => false));
-        return $this->mongo_db->get('playbasis_client_site');
-    }
-
     public function findActiveSites($client_id)
     {
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where(array('status' => true, 'deleted' => false));
         return $this->mongo_db->get('playbasis_client_site');
-    }
-
-    public function countActionLog($site_id)
-    {
-        $this->mongo_db->where('site_id', $site_id);
-        return $this->mongo_db->count('playbasis_action_log');
     }
 
     public function getPlanById($plan_id)
@@ -1041,30 +986,6 @@ class Client_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function listClientsWithDateBilling($site_id = 0)
-    {
-        return $this->listClientsUsingExistsDateBilling(true);
-    }
-
-    public function listClientsWithoutDateBilling($site_id = 0)
-    {
-        return $this->listClientsUsingExistsDateBilling(false);
-    }
-
-    private function listClientsUsingExistsDateBilling($exist, $site_id = 0)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->where('date_billing', array('$exists' => $exist));
-        return $this->mongo_db->get('playbasis_client');
-    }
-
-    public function listExpiredClients($d, $site_id = 0)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->where('date_expire', array('$exists' => true, '$lt' => new MongoDate($d)));
-        return $this->mongo_db->get('playbasis_client');
-    }
-
     public function findBySiteId($site_id)
     {
         $this->set_site_mongodb($site_id);
@@ -1089,16 +1010,6 @@ class Client_model extends MY_Model
         } else {
             return false;
         }
-    }
-
-    public function listClientActiveFeatureByFeatureName($featureName)
-    {
-        $this->mongo_db->where(array(
-            'name' => $featureName
-        ));
-        //$id = $this->mongo_db->get('playbasis_feature_to_client');
-
-        return $this->mongo_db->get('playbasis_feature_to_client');
     }
 }
 

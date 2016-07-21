@@ -491,23 +491,6 @@ class Store_org_model extends MY_Model
 
     }
 
-    public function getlistByOrgId($client_id, $site_id, $org_id)
-    {
-        $this->mongo_db->where(array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
-            'organize' => $org_id,
-        ));
-
-        $result = $this->mongo_db->get('playbasis_store_organize_to_client');
-        if (empty($result)) {
-            return null;
-        } else {
-            return $result;
-        }
-
-    }
-
     public function getSaleHistoryOfNode(
         $client_id,
         $site_id,

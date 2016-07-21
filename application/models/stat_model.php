@@ -22,42 +22,6 @@ class Stat_model extends MY_Model
         $this->insertMAUs = $f('playbasis_stat_mau');
     }
 
-    public function getLastProcessedAction()
-    {
-        $this->mongo_db->limit(1);
-        $res = $this->mongo_db->get('playbasis_stat_latest');
-        return $res ? $res[0]['last'] : null;
-    }
-
-    public function setLastProcessedAction($last)
-    {
-        $this->mongo_db->limit(1);
-        $r = $this->mongo_db->get('playbasis_stat_latest');
-        if ($r) {
-            $this->mongo_db->where(array('_id' => $r[0]['_id']));
-            $this->mongo_db->set('last', $last);
-            $this->mongo_db->update('playbasis_stat_latest');
-        } else {
-            $this->mongo_db->insert('playbasis_stat_latest', array('last' => $last));
-        }
-    }
-
-    public function upsertAction($doc, $async=true)
-    {
-        $this->mongo_db->where(array(
-            'd' => $doc['d'],
-            'client_id' => $doc['client_id'],
-            'site_id' => $doc['site_id'],
-            'action_id' => $doc['action_id'],
-        ));
-        $this->mongo_db->set('d', $doc['d']);
-        $this->mongo_db->set('client_id', $doc['client_id']);
-        $this->mongo_db->set('site_id', $doc['site_id']);
-        $this->mongo_db->set('action_id', $doc['action_id']);
-        $this->mongo_db->inc('c', $doc['c']); // https://gist.github.com/rantav/3001646
-        return $this->mongo_db->update('playbasis_stat_action', array('upsert' => true));
-    }
-
     public function insertDAUs($arr, $async=true)
     {
         $f = $this->insertDAUs;
