@@ -29,6 +29,7 @@ class Engine extends Quest
         $this->load->model('tool/node_stream', 'node');
         $this->load->model('energy_model');
         $this->load->model('level_model');
+        $this->load->model('game_model');
     }
 
     public function getActionConfig_get()
@@ -858,6 +859,18 @@ class Engine extends Quest
                     $level = $this->level_model->getLevelByExp($player['player']['exp'], $this->validToken['client_id'],
                         $this->validToken['site_id']);
                     $input['level'] = $level['level'];
+                }
+
+                // Game level condition
+                if (($input['jigsaw_name']) == 'gameLevel') {
+                    //get current game stage of player
+                    $stage_to_player = $this->game_model->getStageToPlayer($this->client_id, $this->site_id, $jigsawConfig['game_id'], $input['pb_player_id'], array('is_current' => true));
+                    if ($stage_to_player) {
+                        $input['game_current_stage'] = $stage_to_player['stage_level'];
+                    } else {
+                        $input['game_current_stage'] = 1;
+                    }
+
                 }
 
                 // Badge condition
