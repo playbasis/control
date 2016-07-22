@@ -60,47 +60,44 @@ class Workflow extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if (!$this->validateModify()) {
-            $this->error['warning'] = $this->lang->line('error_permission');
-        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        // incase: click delete direct player
-        if ($this->input->post('user_id')) {
-            $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
-            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
-            if (isset($result->success)) {
-                if ($result->success) {
-                    $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-                } else {
-                    $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
-                }
-            } else {
-                $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
-            }
-            redirect('/workflow', 'refresh');
-        } // incase: select player(s) to delete
-        elseif ($this->input->post('selected') && $this->error['warning'] == null) {
-            $selectedUsers = $this->input->post('selected');
-
-            if ($this->input->post('action') == "delete") {
-                foreach ($selectedUsers as $selectedUser) {
-                    $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+            if (!$this->validateModify()) {
+                $this->error['warning'] = $this->lang->line('error_permission');
+            }else{
+                // incase: click delete direct player
+                if ($this->input->post('user_id')) {
+                    $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
                     $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
-                    if (!$result->success) {
-                        $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                    if (isset($result->success)) {
+                        if ($result->success) {
+                            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                        } else {
+                            $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                        }
+                    } else {
+                        $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
+                    }
+                    redirect('/workflow', 'refresh');
+                } // incase: select player(s) to delete
+                elseif ($this->input->post('selected') ) {
+                    $selectedUsers = $this->input->post('selected');
+
+                    if ($this->input->post('action') == "delete") {
+                        foreach ($selectedUsers as $selectedUser) {
+                            $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+                            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+                            if (!$result->success) {
+                                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                                redirect('/workflow', 'refresh');
+                            }
+                        }
+
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
                         redirect('/workflow', 'refresh');
                     }
                 }
-
-                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-                redirect('/workflow', 'refresh');
             }
-        }
-
-        if (isset($this->error['warning'])) {
-            $this->data['error_warning'] = $this->error['warning'];
-        } else {
-            $this->data['error_warning'] = '';
         }
 
         $this->getPlayerList("approved", 0);
@@ -124,43 +121,40 @@ class Workflow extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if (!$this->validateModify()) {
-            $this->error['warning'] = $this->lang->line('error_permission');
-        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        // incase: click delete direct player
-        if ($this->input->post('user_id')) {
-            $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
-            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
-            if ($result->success) {
-                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            } else {
-                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
-            }
-            redirect('/workflow/rejected', 'refresh');
-        } // incase: select player(s) to delete
-        elseif ($this->input->post('selected') && $this->error['warning'] == null) {
-            $selectedUsers = $this->input->post('selected');
-
-            if ($this->input->post('action') == "delete") {
-                foreach ($selectedUsers as $selectedUser) {
-                    $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+            if (!$this->validateModify()) {
+                $this->error['warning'] = $this->lang->line('error_permission');
+            }else{
+                // incase: click delete direct player
+                if ($this->input->post('user_id')) {
+                    $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
                     $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
-                    if (!$result->success) {
+                    if ($result->success) {
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                    } else {
                         $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
-                        redirect('/workflow', 'refresh');
+                    }
+                    redirect('/workflow/rejected', 'refresh');
+                } // incase: select player(s) to delete
+                elseif ($this->input->post('selected')) {
+                    $selectedUsers = $this->input->post('selected');
+
+                    if ($this->input->post('action') == "delete") {
+                        foreach ($selectedUsers as $selectedUser) {
+                            $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+                            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+                            if (!$result->success) {
+                                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                                redirect('/workflow', 'refresh');
+                            }
+                        }
+
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                        redirect('/workflow/rejected', 'refresh');
                     }
                 }
-
-                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-                redirect('/workflow/rejected', 'refresh');
             }
-        }
-
-        if (isset($this->error['warning'])) {
-            $this->data['error_warning'] = $this->error['warning'];
-        } else {
-            $this->data['error_warning'] = '';
         }
 
         $this->getPlayerList("rejected", $offset);
@@ -184,57 +178,54 @@ class Workflow extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if (!$this->validateModify()) {
-            $this->error['warning'] = $this->lang->line('error_permission');
-        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        // incase: click delete direct player
-        if ($this->input->post('user_id')) {
-            $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
-            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
-            if ($result->success) {
-                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            } else {
-                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
-            }
-            redirect('/workflow/pending', 'refresh');
-        } // incase: select player(s) to approve/reject/delete
-        elseif ($this->input->post('selected') && $this->error['warning'] == null) {
-            $selectedUsers = $this->input->post('selected');
-
-            if ($this->input->post('action') == "approve") {
-                foreach ($selectedUsers as $selectedUser) {
-                    $this->Workflow_model->approvePlayer($client_id, $site_id, $selectedUser);
-                }
-
-                $this->session->set_flashdata('success', $this->lang->line('text_success_approve'));
-                redirect('/workflow/pending', 'refresh');
-            } elseif ($this->input->post('action') == "reject") {
-                foreach ($selectedUsers as $selectedUser) {
-                    $this->Workflow_model->rejectPlayer($client_id, $site_id, $selectedUser);
-                }
-
-                $this->session->set_flashdata('success', $this->lang->line('text_success_reject'));
-                redirect('/workflow/pending', 'refresh');
-            } elseif ($this->input->post('action') == "delete") {
-                foreach ($selectedUsers as $selectedUser) {
-                    $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+            if (!$this->validateModify()) {
+                $this->error['warning'] = $this->lang->line('error_permission');
+            }else{
+                // incase: click delete direct player
+                if ($this->input->post('user_id')) {
+                    $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
                     $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
-                    if (!$result->success) {
+                    if ($result->success) {
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                    } else {
                         $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
-                        redirect('/workflow', 'refresh');
+                    }
+                    redirect('/workflow/pending', 'refresh');
+                } // incase: select player(s) to approve/reject/delete
+                elseif ($this->input->post('selected')) {
+                    $selectedUsers = $this->input->post('selected');
+
+                    if ($this->input->post('action') == "approve") {
+                        foreach ($selectedUsers as $selectedUser) {
+                            $this->Workflow_model->approvePlayer($client_id, $site_id, $selectedUser);
+                        }
+
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_approve'));
+                        redirect('/workflow/pending', 'refresh');
+                    } elseif ($this->input->post('action') == "reject") {
+                        foreach ($selectedUsers as $selectedUser) {
+                            $this->Workflow_model->rejectPlayer($client_id, $site_id, $selectedUser);
+                        }
+
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_reject'));
+                        redirect('/workflow/pending', 'refresh');
+                    } elseif ($this->input->post('action') == "delete") {
+                        foreach ($selectedUsers as $selectedUser) {
+                            $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+                            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+                            if (!$result->success) {
+                                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                                redirect('/workflow', 'refresh');
+                            }
+                        }
+
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                        redirect('/workflow/pending', 'refresh');
                     }
                 }
-
-                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-                redirect('/workflow/pending', 'refresh');
             }
-        }
-
-        if (isset($this->error['warning'])) {
-            $this->data['error_warning'] = $this->error['warning'];
-        } else {
-            $this->data['error_warning'] = '';
         }
 
         $this->getPlayerList("pending",$offset);
@@ -258,50 +249,48 @@ class Workflow extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if (!$this->validateModify()) {
-            $this->error['warning'] = $this->lang->line('error_permission');
-        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        // incase: click delete direct player
-        if ($this->input->post('user_id')) {
-            $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
-            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
-            if ($result->success) {
-                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            } else {
-                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
-            }
-            redirect('/workflow/locked', 'refresh');
-        } // incase: select player(s) to delete
-        elseif ($this->input->post('selected') && $this->error['warning'] == null) {
-            $selectedUsers = $this->input->post('selected');
+            if (!$this->validateModify()) {
+                $this->error['warning'] = $this->lang->line('error_permission');
+            }else{
 
-            if ($this->input->post('action') == "unlock") {
-                foreach ($selectedUsers as $selectedUser) {
-                    $this->Workflow_model->unlockPlayer($client_id, $site_id, $selectedUser);
-                }
-
-                $this->session->set_flashdata('success', $this->lang->line('text_success_approve'));
-                redirect('/workflow/locked', 'refresh');
-            } elseif ($this->input->post('action') == "delete") {
-                foreach ($selectedUsers as $selectedUser) {
-                    $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+                // incase: click delete direct player
+                if ($this->input->post('user_id')) {
+                    $player = $this->Player_model->getPlayerById($this->input->post('user_id'), $site_id);
                     $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
-                    if (!$result->success) {
+                    if ($result->success) {
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                    } else {
                         $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
-                        redirect('/workflow', 'refresh');
+                    }
+                    redirect('/workflow/locked', 'refresh');
+                } // incase: select player(s) to delete
+                elseif ($this->input->post('selected') ) {
+                    $selectedUsers = $this->input->post('selected');
+
+                    if ($this->input->post('action') == "unlock") {
+                        foreach ($selectedUsers as $selectedUser) {
+                            $this->Workflow_model->unlockPlayer($client_id, $site_id, $selectedUser);
+                        }
+
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_approve'));
+                        redirect('/workflow/locked', 'refresh');
+                    } elseif ($this->input->post('action') == "delete") {
+                        foreach ($selectedUsers as $selectedUser) {
+                            $player = $this->Player_model->getPlayerById($selectedUser, $site_id);
+                            $result = $this->Workflow_model->deletePlayer($player['cl_player_id']);
+                            if (!$result->success) {
+                                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                                redirect('/workflow', 'refresh');
+                            }
+                        }
+
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                        redirect('/workflow/locked', 'refresh');
                     }
                 }
-
-                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-                redirect('/workflow/locked', 'refresh');
             }
-        }
-
-        if (isset($this->error['warning'])) {
-            $this->data['error_warning'] = $this->error['warning'];
-        } else {
-            $this->data['error_warning'] = '';
         }
 
         $this->getPlayerList("approved", $offset, true);
@@ -517,115 +506,126 @@ class Workflow extends MY_Controller
 
         $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|xss_clean|alpha_dash');
 
+        $this->error['warning'] = null;
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
-            $check_status = true;
+            if (!$this->validateModify()) {
+                $this->error['warning'] = $this->lang->line('error_permission');
+                if (!isset($_POST['organize_node'][0])) {
+                    $_POST['organize_node'][0] = "";
+                }
+            } else {
 
-            // initial validate whether role is set without node selection
-            if ($this->User_model->hasPermission('access',
-                    'store_org') && $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(),
-                    'store_org')
-            ) {
-                foreach ($data['organize_id'] as $i => $node) {
-                    if ((isset($data['organize_role'][$i]) && !empty($data['organize_role'][$i])) && !(isset($data['organize_node'][$i]) && !empty($data['organize_node'][$i]))) {
-                        //$_POST['organize_id'][$i] = "";
-                        $_POST['organize_node'][$i] = "";
-                        $check_status = false;
-                        $this->data['message'] = $this->lang->line('text_fail_set_role');
-                        break;
+                $check_status = true;
+
+                // initial validate whether role is set without node selection
+                if ($this->User_model->hasPermission('access',
+                        'store_org') && $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(),
+                        'store_org')
+                ) {
+                    foreach ($data['organize_id'] as $i => $node) {
+                        if ((isset($data['organize_role'][$i]) && !empty($data['organize_role'][$i])) && !(isset($data['organize_node'][$i]) && !empty($data['organize_node'][$i]))) {
+                            //$_POST['organize_id'][$i] = "";
+                            $_POST['organize_node'][$i] = "";
+                            $check_status = false;
+                            $this->data['message'] = $this->lang->line('text_fail_set_role');
+                            break;
+                        }
                     }
                 }
-            }
 
-            if ($check_status == true) {
-                if (!$this->form_validation->run()) {
-                    if (!isset($_POST['organize_node'][0])) {
-                        $_POST['organize_node'][0] = "";
-                    }
-                    $this->data['message'] = $this->lang->line('text_fail_username');
-                } else {
-                    $status = $this->Workflow_model->editPlayer($client_id, $site_id, $data['cl_player_id'], $data);
-                    if (isset($status->success)) {
-                        if ($status->success) {
-                            if ($this->User_model->hasPermission('access', 'store_org') &&
-                                $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(),
-                                    'store_org')
-                            ) {
-                                foreach ($data['organize_id'] as $i => $org_id) {
-                                    //Add player to node
-                                    if (isset($data['organize_node'][$i]) && !empty($data['organize_node'][$i]) && $status->success) {
+                if ($check_status == true) {
+                    if (!$this->form_validation->run()) {
+                        if (!isset($_POST['organize_node'][0])) {
+                            $_POST['organize_node'][0] = "";
+                        }
+                        $this->data['message'] = $this->lang->line('text_fail_username');
+                    } else {
+                        $status = $this->Workflow_model->editPlayer($client_id, $site_id, $data['cl_player_id'], $data);
+                        if (isset($status->success)) {
+                            if ($status->success) {
+                                if ($this->User_model->hasPermission('access', 'store_org') &&
+                                    $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(),
+                                        'store_org')
+                                ) {
+                                    foreach ($data['organize_id'] as $i => $org_id) {
+                                        //Add player to node
+                                        if (isset($data['organize_node'][$i]) && !empty($data['organize_node'][$i]) && $status->success) {
 
-                                        $pb_player_id = $this->findPbPlayerId($data['cl_player_id']);
-                                        if ($org_id == "") {// this player has never been added to any node
-                                            $this->Workflow_model->addPlayerToNode($data['cl_player_id'],
-                                                $data['organize_node'][$i]);
-                                        } else { //this player has been added to some node
-                                            $this->Workflow_model->editOrganizationOfPlayer($client_id, $site_id,
-                                                $data['organize_id'][$i], $pb_player_id, $data['organize_node'][$i]);
-                                        }
-
-                                        //set role of content
-                                        if (isset($data['organize_role'][$i])) {
-
-                                            $temp = $this->Workflow_model->getRole($client_id, $site_id, $pb_player_id,
-                                                $data['organize_node'][$i]);
-
-                                            $role_array = explode(",", $data['organize_role'][$i]);
-
-                                            if (isset($temp[0]['roles'])){
-                                                // Unset role which different from input
-                                                foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff){
-                                                    $status = $this->Workflow_model->clearPlayerRole($data['cl_player_id'], $data['organize_node'][$i], $diff);
-                                                    if (!$status->success) {
-                                                        break;
-                                                    }
-                                                }
+                                            $pb_player_id = $this->findPbPlayerId($data['cl_player_id']);
+                                            if ($org_id == "") {// this player has never been added to any node
+                                                $this->Workflow_model->addPlayerToNode($data['cl_player_id'],
+                                                    $data['organize_node'][$i]);
+                                            } else { //this player has been added to some node
+                                                $this->Workflow_model->editOrganizationOfPlayer($client_id, $site_id,
+                                                    $data['organize_id'][$i], $pb_player_id, $data['organize_node'][$i]);
                                             }
 
-                                            // Set content role if input is not empty
-                                            if (!empty($data['organize_role'][$i])) {
+                                            //set role of content
+                                            if (isset($data['organize_role'][$i])) {
 
-                                                foreach ($role_array as $role) {
+                                                $temp = $this->Workflow_model->getRole($client_id, $site_id, $pb_player_id,
+                                                    $data['organize_node'][$i]);
 
-                                                    // Only set if input is not in existing role
-                                                    if (!in_array($role, array_keys($temp[0]['roles']))) {
-                                                        $status = $this->Workflow_model->setPlayerRole($data['cl_player_id'],
-                                                            $data['organize_node'][$i], $role);
+                                                $role_array = explode(",", $data['organize_role'][$i]);
+
+                                                if (isset($temp[0]['roles'])) {
+                                                    // Unset role which different from input
+                                                    foreach (array_diff(array_keys($temp[0]['roles']), $role_array) as $diff) {
+                                                        $status = $this->Workflow_model->clearPlayerRole($data['cl_player_id'], $data['organize_node'][$i], $diff);
                                                         if (!$status->success) {
                                                             break;
+                                                        }
+                                                    }
+                                                }
+
+                                                // Set content role if input is not empty
+                                                if (!empty($data['organize_role'][$i])) {
+
+                                                    foreach ($role_array as $role) {
+
+                                                        // Only set if input is not in existing role
+                                                        if ( !isset($temp[0]['roles']) || !in_array($role, array_keys($temp[0]['roles'])) ) {
+                                                            $status = $this->Workflow_model->setPlayerRole($data['cl_player_id'],
+                                                                $data['organize_node'][$i], $role);
+                                                            if (!$status->success) {
+                                                                break;
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                }
-                                if ($status->success) {
-                                    // created player, added player to the node and set role of the player
+                                    if ($status->success) {
+                                        // created player, added player to the node and set role of the player
+                                        $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
+                                        redirect('/workflow', 'refresh');
+                                    } else {
+                                        // failed to set role of player
+                                        $this->data['message'] = $status->message;
+                                    }
+
+                                } else {
                                     $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
                                     redirect('/workflow', 'refresh');
-                                } else {
-                                    // failed to set role of player
-                                    $this->data['message'] = $status->message;
                                 }
-
                             } else {
-                                $this->session->set_flashdata('success', $this->lang->line('text_success_edit'));
-                                redirect('/workflow', 'refresh');
+                                if (!isset($_POST['organize_node'][0])) {
+                                    $_POST['organize_node'][0] = "";
+                                }
+                                $this->data['message'] = $status->message;
                             }
                         } else {
-                            if (!isset($_POST['organize_node'][0])) {
-                                $_POST['organize_node'][0] = "";
-                            }
-                            $this->data['message'] = $status->message;
+                            $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
+                            redirect('/workflow', 'refresh');
                         }
-                    } else {
-                        $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
-                        redirect('/workflow', 'refresh');
                     }
                 }
             }
         }
+
         $this->getForm($user_id);
     }
 
@@ -646,90 +646,98 @@ class Workflow extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
-
-            if ($data['password'] != $data['confirm_password']) {
-                $this->data['message'] = $this->lang->line('text_fail_confirm_password');
-                if (!isset($_POST['organize_node'][0])) {
-                    $_POST['organize_node'][0] = "";
-                }
-            } elseif ($this->User_model->hasPermission('access', 'store_org') &&
-                $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org') &&
-                (isset($data['organize_role'][0]) && !empty($data['organize_role'][0])) &&
-                !(isset($data['organize_node'][0]) && !empty($data['organize_node'][0]))
-            ) {
-                $_POST['organize_node'][0] = "";
-                $this->data['message'] = $this->lang->line('text_fail_set_role');
-
-            } elseif (!$this->form_validation->run()){
-                $this->data['message'] = $this->lang->line('text_fail_username');
+            if (!$this->validateModify()) {
+                $this->error['warning'] = $this->lang->line('error_permission');
                 if (!isset($_POST['organize_node'][0])) {
                     $_POST['organize_node'][0] = "";
                 }
             } else {
-                $status = $this->Workflow_model->createPlayer($client_id, $site_id, $data);
-                if (isset($status->success)) {
-                    if ($status->success) {
-                        if ($this->User_model->hasPermission('access', 'store_org') &&
-                            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(),
-                                'store_org')
-                        ) {
-                            //Add player to node
-                            if (isset($data['organize_node'][0]) && !empty($data['organize_node'][0])) {
-                                $status = $this->Workflow_model->addPlayerToNode($data['cl_player_id'],
-                                    $data['organize_node'][0]);
-                                if ($status->success) {
-                                    //set role of player
-                                    if (isset($data['organize_role'][0]) && !empty($data['organize_role'][0])) {
-                                        $role_array = explode(",", $data['organize_role'][0]);
-                                        $status1 = null;
-                                        foreach ($role_array as $role) {
-                                            $role = str_replace(' ', '', $role);
-                                            $status1 = $this->Workflow_model->setPlayerRole($data['cl_player_id'],
-                                                $data['organize_node'][0], $role);
-                                            if (!$status1->success) {
-                                                break;
+                $data = $this->input->post();
+
+                if ($data['password'] != $data['confirm_password']) {
+                    $this->data['message'] = $this->lang->line('text_fail_confirm_password');
+                    if (!isset($_POST['organize_node'][0])) {
+                        $_POST['organize_node'][0] = "";
+                    }
+                } elseif ($this->User_model->hasPermission('access', 'store_org') &&
+                    $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org') &&
+                    (isset($data['organize_role'][0]) && !empty($data['organize_role'][0])) &&
+                    !(isset($data['organize_node'][0]) && !empty($data['organize_node'][0]))
+                ) {
+                    $_POST['organize_node'][0] = "";
+                    $this->data['message'] = $this->lang->line('text_fail_set_role');
+
+                } elseif (!$this->form_validation->run()) {
+                    $this->data['message'] = $this->lang->line('text_fail_username');
+                    if (!isset($_POST['organize_node'][0])) {
+                        $_POST['organize_node'][0] = "";
+                    }
+                } else {
+                    $status = $this->Workflow_model->createPlayer($client_id, $site_id, $data);
+                    if (isset($status->success)) {
+                        if ($status->success) {
+                            if ($this->User_model->hasPermission('access', 'store_org') &&
+                                $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(),
+                                    'store_org')
+                            ) {
+                                //Add player to node
+                                if (isset($data['organize_node'][0]) && !empty($data['organize_node'][0])) {
+                                    $status = $this->Workflow_model->addPlayerToNode($data['cl_player_id'],
+                                        $data['organize_node'][0]);
+                                    if ($status->success) {
+                                        //set role of player
+                                        if (isset($data['organize_role'][0]) && !empty($data['organize_role'][0])) {
+                                            $role_array = explode(",", $data['organize_role'][0]);
+                                            $status1 = null;
+                                            foreach ($role_array as $role) {
+                                                $role = str_replace(' ', '', $role);
+                                                $status1 = $this->Workflow_model->setPlayerRole($data['cl_player_id'],
+                                                    $data['organize_node'][0], $role);
+                                                if (!$status1->success) {
+                                                    break;
+                                                }
                                             }
-                                        }
-                                        if ($status1->success) {
-                                            // created player, added player to the node and set role of the player
-                                            $this->session->set_flashdata('success',
-                                                $this->lang->line('text_success_create'));
-                                            redirect('/workflow', 'refresh');
+                                            if ($status1->success) {
+                                                // created player, added player to the node and set role of the player
+                                                $this->session->set_flashdata('success',
+                                                    $this->lang->line('text_success_create'));
+                                                redirect('/workflow', 'refresh');
+                                            } else {
+                                                // failed to set role of player
+                                                $this->data['message'] = $status1->message;
+                                            }
                                         } else {
-                                            // failed to set role of player
-                                            $this->data['message'] = $status1->message;
+                                            //created player and added player to the node but did not set role of the player
+                                            $this->session->set_flashdata('success',
+                                                $this->lang->line('text_success_create_without_role_setting'));
+                                            redirect('/workflow', 'refresh');
                                         }
                                     } else {
-                                        //created player and added player to the node but did not set role of the player
-                                        $this->session->set_flashdata('success',
-                                            $this->lang->line('text_success_create_without_role_setting'));
-                                        redirect('/workflow', 'refresh');
+                                        //failed to add player to node
+                                        $this->data['message'] = $status->message;
                                     }
                                 } else {
-                                    //failed to add player to node
-                                    $this->data['message'] = $status->message;
+                                    //created player with enabled store org feature but did not add the player to any node
+                                    $this->session->set_flashdata('success',
+                                        $this->lang->line('text_success_create_without_org_setting'));
+                                    redirect('/workflow', 'refresh');
                                 }
                             } else {
-                                //created player with enabled store org feature but did not add the player to any node
-                                $this->session->set_flashdata('success',
-                                    $this->lang->line('text_success_create_without_org_setting'));
+                                // created player with disabled store org feature
+                                $this->session->set_flashdata('success', $this->lang->line('text_success_create'));
                                 redirect('/workflow', 'refresh');
                             }
                         } else {
-                            // created player with disabled store org feature
-                            $this->session->set_flashdata('success', $this->lang->line('text_success_create'));
-                            redirect('/workflow', 'refresh');
+                            // failed to create player
+                            if (!isset($_POST['organize_node'][0])) {
+                                $_POST['organize_node'][0] = "";
+                            }
+                            $this->data['message'] = $status->message;
                         }
                     } else {
-                        // failed to create player
-                        if (!isset($_POST['organize_node'][0])) {
-                            $_POST['organize_node'][0] = "";
-                        }
-                        $this->data['message'] = $status->message;
+                        $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
+                        redirect('/workflow', 'refresh');
                     }
-                } else {
-                    $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
-                    redirect('/workflow', 'refresh');
                 }
             }
         }
@@ -812,6 +820,12 @@ class Workflow extends MY_Controller
                 $this->data['organize_node'][] = "";
                 $this->data['organize_role'][] = "";
             }
+        }
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
         }
 
         $this->data['main'] = 'workflow_form';
