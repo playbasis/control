@@ -102,6 +102,7 @@ class Quest_model extends MY_Model
                     $m["status"] = "join";
                 }
                 $m["date_modified"] = new MongoDate(time());
+                $m["date_join"] = new MongoDate(time());
             }
         }
 
@@ -254,8 +255,10 @@ class Quest_model extends MY_Model
             'pb_player_id' => $data['pb_player_id'],
             'quest_id' => $data['quest_id']
         ));
+
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->set(array('status' => $status));
+        $this->mongo_db->set(array('date_'.$status  => new MongoDate(time())));
         $this->mongo_db->set(array('date_modified' => new MongoDate(time())));
         $this->mongo_db->update('playbasis_quest_to_player');
     }
@@ -282,6 +285,7 @@ class Quest_model extends MY_Model
             $this->mongo_db->where_ne('deleted', true);
             $this->mongo_db->set(array('missions.$.status' => $status));
             $this->mongo_db->set(array('missions.$.date_modified' => new MongoDate(time())));
+            $this->mongo_db->set(array('missions.$.date_'.$status  => new MongoDate(time())));
             $this->mongo_db->update('playbasis_quest_to_player');
         }
     }
