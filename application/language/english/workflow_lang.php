@@ -64,4 +64,8 @@ $lang['column_type']                    = 'Type';
 $lang['column_role']                    = 'Role';
 $lang['column_action']          		= 'Action';
 
+// Error
+$lang['error_permission']       		= 'Warning: You do not have permission to modify Workflow';
+$lang['error_access']       			= 'Warning: You do not have permission to access this page';
+
 ?>

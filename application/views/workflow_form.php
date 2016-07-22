@@ -13,6 +13,9 @@
                     <div class="warning"><?php echo $message; ?></div>
                 </div>
             <?php }?>
+            <?php if ($error_warning) { ?>
+                <div class="warning"><?php echo $error_warning; ?></div>
+            <?php } ?>
 
             <?php
             $attributes = array('id' => 'form');

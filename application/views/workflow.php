@@ -3,14 +3,6 @@
         src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
 <div class="cover"></div>
 <div id="content" class="span10">
-
-
-    <?php if ($error_warning) { ?>
-    <div class="warning"><?php echo $error_warning; ?></div>
-    <?php } ?>
-    <?php if ($success) { ?>
-    <div class="success"><?php echo $success; ?></div>
-    <?php } ?>
     <div class="box">
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
@@ -40,6 +32,12 @@
                     <?php } ?>
                 </a>
             </div>
+            <?php if ($error_warning) { ?>
+                <div class="warning"><?php echo $error_warning; ?></div>
+            <?php } ?>
+            <?php if ($success) { ?>
+                <div class="success"><?php echo $success; ?></div>
+            <?php } ?>
 
             <?php if($this->session->flashdata('success')){ ?>
                 <div class="content messages half-width">
