@@ -109,15 +109,7 @@ class jigsaw extends MY_Model
         assert(is_array($config));
         assert(isset($config['game_level']));
 
-        $result = false;
-
-        if (isset($input['game_current_stage'])) {
-            if ($config['game_level'] == $input['game_current_stage']) {
-                $result = true;
-            }
-        }
-
-        return $result;
+        return isset($input['game_current_stage']) && ($config['game_level'] == $input['game_current_stage']);
     }
 
     public function badgeCondition($config, $input, &$exInfo = array())
