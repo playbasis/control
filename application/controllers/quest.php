@@ -1834,7 +1834,7 @@ class Quest extends REST2_Controller
                     $filter_id = $query_players = $query_player = array();
                     $player_join_quest = $this->quest_model->getAllPlayerByQuestId($query_data, null, isset($query_data['status']) ? $query_data['status'] : null);
                     if (isset($player_join_quest) && is_array($player_join_quest)) foreach ($player_join_quest as $player){
-                        array_push($query_players, array('id' => new MongoId($player['pb_player_id']), 'date_join' =>  $player['missions'][0]['date_modified']));
+                        array_push($query_players, array('id' => new MongoId($player['pb_player_id']), 'date_join' =>  $player['missions'][0]['date_join']));
                     }
 
                     $Leader_data = $this->quest_model->getLeaderboardCompletion($quest_data['completion_data']['action_id'],
@@ -1844,7 +1844,7 @@ class Quest extends REST2_Controller
                     if(isset($pb_player_id)){
                         $player_quest = $this->quest_model->getPlayerQuest(array('site_id' => $this->validToken['site_id'], 'quest_id' => new MongoId($query_data['quest_id']), 'pb_player_id' => $pb_player_id));
                         if($player_quest){
-                            array_push($query_player, array('id' => new MongoId($pb_player_id), 'date_join' =>  $player_quest['missions'][0]['date_modified']));
+                            array_push($query_player, array('id' => new MongoId($pb_player_id), 'date_join' =>  $player_quest['missions'][0]['date_join']));
                             $query_rank = array();
                             $query_rank['starttime'] = (isset($query_data['starttime']) && !empty($query_data['starttime'])) ? $query_data['starttime'] : null;
                             $query_rank['endtime'] = (isset($query_data['endtime']) && !empty($query_data['endtime'])) ? $query_data['endtime'] : null;
