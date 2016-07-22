@@ -208,7 +208,7 @@ class Store_org extends REST2_Controller
         if ($existed_player_organize) {
             if (isset($existed_player_organize['roles']) && is_array($existed_player_organize['roles'])) {
                 foreach ($existed_player_organize['roles'] as $key => $value) {
-                    if ($key === $role_name) {
+                    if ($key == $role_name) {
                         $is_updated = $this->store_org_model->unsetPlayerRoleToNode($this->client_id, $this->site_id,
                             $pb_player_id, $node_id, $role_name);
 
