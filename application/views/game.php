@@ -339,7 +339,8 @@
         </div>
     </div>
     <div class="modal-footer" id="template_footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true" id="template-modal-close">Close</button>
+        <button class="btn btn-danger" id="template-modal-delete">Delete </button>
         <button class="btn btn-primary" id="template-modal-submit"><i class="fa fa-plus">&nbsp;</i>Save</button>
     </div>
 </div>
@@ -589,16 +590,7 @@
             $('#confirm-delete .modal-body').html('Are you sure to remove!!');
             document.getElementById('confirm_event').value = "world";
             document.getElementById('confirm_world').value = $(this).parent().parent().parent().data('world-id');
-            ;
             $('#confirm-delete').modal('show');
-
-            /*var $target = $(this).parent().parent().parent();
-
-            var r = confirm("Are you sure to remove!");
-            if (r == true) {
-                $target.remove();
-                init_world_event(id);
-            }*/
         });
         get_item_category(id);
     }
@@ -717,6 +709,7 @@
     }
 
     $('#page-render').on('click', 'button#template-modal-submit', submitTemplateModalForm);
+    $('#page-render').on('click', 'button#template-modal-delete', deleteTemplateModalForm);
     $('#page-render').on('click', 'button#item-modal-submit', submitItemModalForm);
     $('#page-render').on('click', 'button#confirm_cancel_button', cancelConfirm);
     $('#page-render').on('click', 'a#confirm_del_button', deleteConfirm);
@@ -770,11 +763,15 @@
             $("#template_status").bootstrapSwitch('state', check);
             if(index == 0){
                 set_disable_template(true);
-                $('#template_footer').addClass("hide");
+                $('#template-modal-delete').addClass("hide");
+                $('#template-modal-close').addClass("hide");
+                $('#template-modal-submit').addClass("hide");
             }
             else{
                 set_disable_template(false);
-                $('#template_footer').removeClass("hide");
+                $('#template-modal-delete').removeClass("hide");
+                $('#template-modal-close').removeClass("hide");
+                $('#template-modal-submit').removeClass("hide");
             }
         }
         else{
@@ -786,7 +783,9 @@
             $('#template_status').attr('checked', false);
             $("#template_status").bootstrapSwitch('state', false);
             set_disable_template(false);
-            $('#template_footer').removeClass("hide");
+            $('#template-modal-close').removeClass("hide");
+            $('#template-modal-submit').removeClass("hide");
+            $('#template-modal-delete').addClass("hide");
         }
 
     }
@@ -825,7 +824,9 @@
             $("#template_status").bootstrapSwitch('state', templateData[0].status);
             set_disable_template(true);
             $('#tab-0').addClass("active");
-            $('#template_footer').addClass("hide");
+            $('#template-modal-delete').addClass("hide");
+            $('#template-modal-close').addClass("hide");
+            $('#template-modal-submit').addClass("hide");
             $('#formTemplateModal').modal('show');
             $waitDialog.modal('hide');
         });
@@ -885,10 +886,12 @@
                     url: baseUrlPath + "game/template/" + template_id,
                     data: formData,
                     beforeSend: function (xhr) {
-                        $waitDialog.modal();
+                        $('#formTemplateModal').modal('hide');
+                        $waitDialog.modal('show');
                     }
                 }).done(function (data) {
                     $waitDialog.modal('hide');
+                    show_template();
                 }).fail(function (xhr, textStatus, errorThrown) {
                     if(JSON.parse(xhr.responseText).status == "error") {
                         $('form.template-form').trigger("reset");
@@ -901,6 +904,27 @@
                 });
             }
         }
+    }
+
+    function deleteTemplateModalForm() {
+        var template_id = $('#template_id').val();
+
+        $.ajax({
+            url: baseUrlPath + "game/template/" + template_id,
+            type: "DELETE",
+            dataType: "json",
+            beforeSend: function (xhr) {
+                $('#formTemplateModal').modal('hide');
+                $waitDialog.modal('show');
+            }
+        }).done(function (data) {
+            $waitDialog.modal('hide');
+            show_template();
+        }).fail(function (xhr, status, error) {
+            alert("Deletion Error!")
+        }).always(function () {
+            $waitDialog.modal('hide');
+        });
     }
 
     function submitItemModalForm() {

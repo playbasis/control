@@ -47,6 +47,10 @@ class game extends MY_Controller
         $this->data['form'] = 'game/edit/';
         $this->error['warning'] = null;
 
+        if (!$this->validateModify()) {
+            $this->data['message'] = $this->lang->line('error_permission');
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->data['message'] = null;
             $client_id = $this->User_model->getClientId();
@@ -82,7 +86,6 @@ class game extends MY_Controller
                         } catch (Exception $e){
 
                         }
-                        $stage_data['id']                     = $world['world_id'];
                     }
                     $stage_data['stage_name']             = $world['world_name'];
                     $stage_data['stage_level']            = (int)$world['world_level'];
@@ -95,7 +98,7 @@ class game extends MY_Controller
                     $stage_data['stage_config']['width']  = (int)$world['world_width'];
                     $stage_data['stage_config']['height'] = (int)$world['world_height'];
                     
-                    $stage = $this->Game_model->updateGameStage($client_id, $site_id, $game_id, $stage_data);
+                    $stage = $this->Game_model->updateGameStage($client_id, $site_id, $game_id, $stage_data, isset($world['world_id']) ? $world['world_id'] : null );
                     if($stage){
                         try{
                             array_push($exist_world, new MongoId($stage));
@@ -153,6 +156,12 @@ class game extends MY_Controller
                     $template = $this->Game_model->getGameTemplate($client_id, $site_id, $game_id['_id']);
                 }
 
+                foreach ($template as &$document) {
+                    if (isset($document['_id'])) {
+                        $document['_id'] = $document['_id'] . "";
+                    }
+                }
+
                 $count_template = $this->Game_model->countGameTemplate($client_id, $site_id, $game_id['_id']);
 
                 $this->output->set_status_header('200');
@@ -173,8 +182,8 @@ class game extends MY_Controller
                 $template_data['status']                = (isset($data['template_status']) && ($data['template_status'] == "on")) ? true : false;
 
                 $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('game_name' => 'farm'));
-                $template_id = $this->Game_model->updateGameTemplate($client_id, $site_id, $game_id['_id'], $template_data);
-                if (!$template_id) {
+                $template = $this->Game_model->updateGameTemplate($client_id, $site_id, $game_id['_id'], $template_data);
+                if (!$template) {
                     $this->output->set_status_header('400');
                     echo json_encode(array('status' => 'error'));
                     die();
@@ -182,6 +191,36 @@ class game extends MY_Controller
                     $this->output->set_status_header('200');
                     // todo: should return update object
                     echo json_encode(array('status' => 'success'));
+                    die();
+                }
+            }  elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+
+                if ($template_id) {
+                    try {
+                        $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('game_name' => 'farm'));
+                        $result = $this->Game_model->deleteGameTemplate($client_id, $site_id, $game_id['_id'], $template_id);
+                        if (!$result) {
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'error', 'message' => $this->lang->line('')));
+                            die();
+                        } else {
+                            $this->output->set_status_header('200');
+                            echo json_encode(array('status' => 'success'));
+                            die();
+                        }
+                    } catch (Exception $e) {
+                        $this->output->set_status_header('400');
+                        echo json_encode(array('status' => 'error', 'message' => $this->lang->line('')));
+                        die();
+                    }
+                } else {
+                    $this->output->set_status_header('400');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('')));
                     die();
                 }
             }
@@ -316,6 +355,15 @@ class game extends MY_Controller
         $this->render_page('template');
     }
 
+    private function validateModify()
+    {
+        if ($this->User_model->hasPermission('modify', 'game')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private function validateAccess()
     {
         if ($this->User_model->isAdmin()) {
@@ -324,7 +372,7 @@ class game extends MY_Controller
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'setting') && $this->Feature_model->getFeatureExistByClientId($client_id, 'setting')
+        if ($this->User_model->hasPermission('access', 'game') && $this->Feature_model->getFeatureExistByClientId($client_id, 'game')
         ) {
             return true;
         } else {
