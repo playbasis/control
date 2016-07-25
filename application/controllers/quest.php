@@ -2287,20 +2287,16 @@ class Quest extends REST2_Controller
         }
 
         /* get devices */
-        $player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
         $devices = $this->player_model->listDevices($input['client_id'], $input['site_id'], $input['pb_player_id'],
             array('device_token', 'os_type'));
         if (!$devices) {
             return false;
         }
 
-        /* check valid template_id */
-
         foreach ($devices as $device) {
             $this->push_model->initial(array(
                 'device_token' => $device['device_token'],
                 'messages' => $message,
-                //'item_info' => $item_info,
                 'badge_number' => 1,
                 'data' => array('client_id'=>$input['client_id'], 'site_id'=>$input['site_id'],'item_info'=>$item_info),
             ), $device['os_type']);
