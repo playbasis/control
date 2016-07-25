@@ -2265,6 +2265,49 @@ class Quest extends REST2_Controller
         return true;
     }
 
+    protected function processItemNotification($input, $message, $item_info)
+    {
+        /* check permission according to billing cycle */
+        $access = true;
+        try {
+            $this->client_model->permissionProcess(
+                $this->client_data,
+                $input['client_id'],
+                $input['site_id'],
+                "notifications",
+                "push"
+            );
+        } catch (Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED") {
+                $access = false;
+            }
+        }
+        if (!$access) {
+            return false;
+        }
+
+        /* get devices */
+        $player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+        $devices = $this->player_model->listDevices($input['client_id'], $input['site_id'], $input['pb_player_id'],
+            array('device_token', 'os_type'));
+        if (!$devices) {
+            return false;
+        }
+
+        /* check valid template_id */
+
+        foreach ($devices as $device) {
+            $this->push_model->initial(array(
+                'device_token' => $device['device_token'],
+                'messages' => $message,
+                //'item_info' => $item_info,
+                'badge_number' => 1,
+                'data' => array('client_id'=>$input['client_id'], 'site_id'=>$input['site_id'],'item_info'=>$item_info),
+            ), $device['os_type']);
+        }
+        return true;
+    }
+
     /**
      * Use with array_walk and array_walk_recursive.
      * Recursive iterable items to modify array's value
