@@ -30,6 +30,7 @@ class Engine extends Quest
         $this->load->model('energy_model');
         $this->load->model('level_model');
         $this->load->model('game_model');
+        $this->load->model('badge_model');
     }
 
     public function getActionConfig_get()
@@ -1158,6 +1159,16 @@ class Engine extends Quest
                                                     $fbData['facebook_id'],
                                                     $eventMessage,
                                                     '');
+                                            }
+
+                                            $auto_notify = $this->badge_model->getBadgeNotificationFlag($client_id, $site_id, $jigsawConfig['item_id']);
+                                            if ($auto_notify){
+                                                $item_info = array(
+                                                    'item_name' => $badgeData['name'],
+                                                    'item_id' => $badgeData['badge_id'],
+                                                    'amount' => $jigsawConfig['quantity']
+                                                );
+                                                $this->processItemNotification($input,'item received', $item_info);
                                             }
                                             break;
                                         }  // close if (!$input["test"])
