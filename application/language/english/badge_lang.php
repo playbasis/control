@@ -50,6 +50,7 @@ $lang['entry_sponsor']                  = 'Sponsor';
 $lang['entry_claim']                    = 'Claim';
 $lang['entry_redeem']                   = 'Redeem';
 $lang['entry_tags']                     = 'Tag(s)';
+$lang['entry_auto_notify']              = 'Auto Notify';
 
 $lang['column_client_image']            = 'Logo';
 $lang['column_client_name']             = 'Name';

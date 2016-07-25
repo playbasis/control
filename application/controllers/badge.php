@@ -813,6 +813,14 @@ class Badge extends MY_Controller
             $this->data['status'] = 1;
         }
 
+        if ($this->input->post('auto_notify')) {
+            $this->data['auto_notify'] = $this->input->post('auto_notify');
+        } elseif (!empty($badge_info) && isset($badge_info['auto_notify'])) {
+            $this->data['auto_notify'] = $badge_info['auto_notify'];
+        } else {
+            $this->data['auto_notify'] = 0;
+        }
+
         if ($this->input->post('stackable')) {
             $this->data['stackable'] = $this->input->post('stackable');
         } elseif (!empty($badge_info)) {
