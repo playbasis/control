@@ -363,7 +363,7 @@ class Quest extends REST2_Controller
         return $questResult;
     }
 
-    private function checkConditionQuest($quest, $pb_player_id, $validToken)
+    private function checkConditionQuest($quest, $pb_player_id, $validToken , $type=null)
     {
         if (empty($quest)) {
             $event = array(
@@ -424,19 +424,41 @@ class Quest extends REST2_Controller
         if ($quest && isset($quest["condition"])) {
 
             foreach ($quest["condition"] as $c) {
-                if ($c["condition_type"] == "DATEJOIN_START") {
-//                    if($c["condition_value"]->sec > time()){
-                    if (strtotime($c["condition_value"]) > time()) {
-                        $event = array(
-                            'event_type' => 'QUEST_DID_NOT_START',
-                            'message' => 'quest did not start'
+                switch ($c["condition_type"]){
+                    case "DATETIME_START":
+                        if($type != "join"){
+                            if (strtotime($c["condition_value"]) > time()) {
+                                $event = array(
+                                    'event_type' => 'QUEST_DID_NOT_START',
+                                    'message' => 'quest did not start'
+    
+                                );
+                                array_push($questEvent, $event);
+                            }
+                        }
+                        break;
+                    case "DATETIME_END":
+                        if($type != "join"){
+                            if (strtotime($c["condition_value"]) < time()) {
+                                $event = array(
+                                    'event_type' => 'QUEST_ALREADY_FINISHED',
+                                    'message' => 'quest already finished'
+                                );
+                                array_push($questEvent, $event);
+                            }
+                        }
+                        break;
+                    case "DATEJOIN_START":
+                        if (strtotime($c["condition_value"]) > time()) {
+                            $event = array(
+                                'event_type' => 'QUEST_DID_NOT_START',
+                                'message' => 'quest did not start'
 
-                        );
-                        array_push($questEvent, $event);
-                    }
-                } else {
-                    if ($c["condition_type"] == "DATEJOIN_END") {
-//                    if($c["condition_value"]->sec < time()){
+                            );
+                            array_push($questEvent, $event);
+                        }
+                        break;
+                    case "DATEJOIN_END":
                         if (strtotime($c["condition_value"]) < time()) {
                             $event = array(
                                 'event_type' => 'QUEST_ALREADY_FINISHED',
@@ -444,95 +466,88 @@ class Quest extends REST2_Controller
                             );
                             array_push($questEvent, $event);
                         }
-                    } else {
-                        if ($c["condition_type"] == "LEVEL_START") {
-                            if ((int)$c["condition_value"] > (int)$player['level']) {
-                                $event = array(
-                                    'event_type' => 'LEVEL_IS_LOWER',
-                                    'message' => 'Your level is under satisfied'
-                                );
-                                array_push($questEvent, $event);
-                            }
-                        } else {
-                            if ($c["condition_type"] == "LEVEL_END") {
-                                if ((int)$c["condition_value"] < (int)$player['level']) {
-                                    $event = array(
-                                        'event_type' => 'LEVEL_IS_HIGHER',
-                                        'message' => 'Your level is abrove satisfied'
-                                    );
-                                    array_push($questEvent, $event);
-                                }
-                            } else {
-                                if ($c["condition_type"] == "POINT") {
-                                    $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["condition_id"],
-                                        $validToken['site_id']);
-
-                                    if (isset($point_a[0]['value'])) {
-                                        $point = $point_a[0]['value'];
-                                    } else {
-                                        $point = 0;
-                                    }
-                                    if ((int)$c["condition_value"] > (int)$point) {
-                                        $event = array(
-                                            'event_type' => 'POINT_NOT_ENOUGH',
-                                            'message' => 'Your point not enough',
-                                            'incomplete' => array($c["condition_id"] . "" => ((int)$c["condition_value"] - (int)$point))
-                                        );
-                                        array_push($questEvent, $event);
-                                    }
-                                } else {
-                                    if ($c["condition_type"] == "CUSTOM_POINT") {
-                                        $point_a = $this->player_model->getPlayerPoint($pb_player_id,
-                                            $c["condition_id"], $validToken['site_id']);
-
-                                        if (isset($point_a[0]['value'])) {
-                                            $custom_point = $point_a[0]['value'];
-                                        } else {
-                                            $custom_point = 0;
-                                        }
-                                        if ((int)$c["condition_value"] > (int)$custom_point) {
-                                            $event = array(
-                                                'event_type' => 'CUSTOM_POINT_NOT_ENOUGH',
-                                                'message' => 'Your point not enough',
-                                                'incomplete' => array($c["condition_id"] . "" => ((int)$c["condition_value"] - (int)$custom_point))
-                                            );
-                                            array_push($questEvent, $event);
-                                        }
-                                    } else {
-                                        if ($c["condition_type"] == "QUIZ") {
-
-                                            $complete_quiz = $this->action_model->actionLogByURL($validToken,
-                                                ACTION_COMPLETE_QUIZ, $c['condition_id'], $pb_player_id);
-                                            if ($complete_quiz == null) {
-                                                $event = array(
-                                                    'event_type' => 'QUIZ_NOT_ENOUGH',
-                                                    'message' => 'user quiz not enough',
-                                                );
-                                                array_push($questEvent, $event);
-                                            }
-
-                                        } else {
-                                            if ($c["condition_type"] == "BADGE") {
-                                                if (isset($badge_player_check[$c["condition_id"] . ""])) {
-                                                    $badge = $badge_player_check[$c["condition_id"] . ""];
-                                                } else {
-                                                    $badge = 0;
-                                                }
-                                                if ((int)$badge < (int)$c["condition_value"]) {
-                                                    $event = array(
-                                                        'event_type' => 'BADGE_NOT_ENOUGH',
-                                                        'message' => 'user badge not enough',
-                                                        'incomplete' => array($c["condition_id"] . "" => ((int)$c["condition_value"] - (int)$badge))
-                                                    );
-                                                    array_push($questEvent, $event);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                        break;
+                    case "LEVEL_START":
+                        if ((int)$c["condition_value"] > (int)$player['level']) {
+                            $event = array(
+                                'event_type' => 'LEVEL_IS_LOWER',
+                                'message' => 'Your level is under satisfied'
+                            );
+                            array_push($questEvent, $event);
                         }
-                    }
+                        break;
+                    case "LEVEL_END":
+                        if ((int)$c["condition_value"] < (int)$player['level']) {
+                            $event = array(
+                                'event_type' => 'LEVEL_IS_HIGHER',
+                                'message' => 'Your level is abrove satisfied'
+                            );
+                            array_push($questEvent, $event);
+                        }
+                        break;
+                    case "POINT":
+                        $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["condition_id"],
+                            $validToken['site_id']);
+
+                        if (isset($point_a[0]['value'])) {
+                            $point = $point_a[0]['value'];
+                        } else {
+                            $point = 0;
+                        }
+                        if ((int)$c["condition_value"] > (int)$point) {
+                            $event = array(
+                                'event_type' => 'POINT_NOT_ENOUGH',
+                                'message' => 'Your point not enough',
+                                'incomplete' => array($c["condition_id"] . "" => ((int)$c["condition_value"] - (int)$point))
+                            );
+                            array_push($questEvent, $event);
+                        }
+                        break;
+                    case "CUSTOM_POINT":
+                        $point_a = $this->player_model->getPlayerPoint($pb_player_id,
+                            $c["condition_id"], $validToken['site_id']);
+
+                        if (isset($point_a[0]['value'])) {
+                            $custom_point = $point_a[0]['value'];
+                        } else {
+                            $custom_point = 0;
+                        }
+                        if ((int)$c["condition_value"] > (int)$custom_point) {
+                            $event = array(
+                                'event_type' => 'CUSTOM_POINT_NOT_ENOUGH',
+                                'message' => 'Your point not enough',
+                                'incomplete' => array($c["condition_id"] . "" => ((int)$c["condition_value"] - (int)$custom_point))
+                            );
+                            array_push($questEvent, $event);
+                        }
+                        break;
+                    case "QUIZ":
+                        $complete_quiz = $this->action_model->actionLogByURL($validToken, ACTION_COMPLETE_QUIZ, $c['condition_id'], $pb_player_id);
+                        if ($complete_quiz == null) {
+                            $event = array(
+                                'event_type' => 'QUIZ_NOT_ENOUGH',
+                                'message' => 'user quiz not enough',
+                            );
+                            array_push($questEvent, $event);
+                        }
+                        break;
+                    case "BADGE":
+                        if (isset($badge_player_check[$c["condition_id"] . ""])) {
+                            $badge = $badge_player_check[$c["condition_id"] . ""];
+                        } else {
+                            $badge = 0;
+                        }
+                        if ((int)$badge < (int)$c["condition_value"]) {
+                            $event = array(
+                                'event_type' => 'BADGE_NOT_ENOUGH',
+                                'message' => 'user badge not enough',
+                                'incomplete' => array($c["condition_id"] . "" => ((int)$c["condition_value"] - (int)$badge))
+                            );
+                            array_push($questEvent, $event);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -799,22 +814,24 @@ class Quest extends REST2_Controller
                 if(isset($reward['reward_data']['group']) && ($reward['reward_type'] == 'GOODS') && ($reward['reward_value'] > 0))
                 {
                     $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $reward['reward_data']['group'] , null , null , 1 );
-                    $rand_goods = array_rand($goods_group_rewards, (int)$reward['reward_value']);
-                    if(!is_array($rand_goods)){
-                        $rand_goods = array($rand_goods);
-                    }
-                    $i = 1;
-                    foreach($rand_goods as $index){
-                        $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $reward['reward_data']['group'] ,$player_id);
-                        if(($goods_group_rewards[$index]['per_user'] >= ($player_goods + $i)) && ($i < $reward['reward_value'])){
-                            $goods_data = array('reward_value' => "1",
-                                'reward_id' => $goods_group_rewards[$index]['goods_id'],
-                                'reward_type' => "GOODS",
-                            );
-                            $goods_data['reward_data'] = $goods_group_rewards[$index];
-                            array_push($quest["rewards"], $goods_data);
+                    if($goods_group_rewards) {
+                        $rand_goods = array_rand($goods_group_rewards, (int)$reward['reward_value']);
+                        if(!is_array($rand_goods)){
+                            $rand_goods = array($rand_goods);
                         }
-                        $i++;
+                        $i = 1;
+                        foreach($rand_goods as $index){
+                            $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $reward['reward_data']['group'] ,$player_id);
+                            if(($goods_group_rewards[$index]['per_user'] >= ($player_goods + $i)) && ($i < $reward['reward_value'])){
+                                $goods_data = array('reward_value' => "1",
+                                    'reward_id' => $goods_group_rewards[$index]['goods_id'],
+                                    'reward_type' => "GOODS",
+                                );
+                                $goods_data['reward_data'] = $goods_group_rewards[$index];
+                                array_push($quest["rewards"], $goods_data);
+                            }
+                            $i++;
+                        }
                     }
                 }
             }
@@ -886,8 +903,10 @@ class Quest extends REST2_Controller
                 else{
                     $quantity = $r["reward_value"];
                 }
-                $this->client_model->updateplayerGoods($r["reward_id"], $quantity, $player_id, $cl_player_id,
-                    $validToken['client_id'], $validToken['site_id']);
+                try {
+                    $this->client_model->updateplayerGoods($r["reward_id"], $quantity, $player_id, $cl_player_id,
+                        $validToken['client_id'], $validToken['site_id']);
+                } catch (Exception $e){}
                 $goods = $this->goods_model->getGoods(array_merge($validToken, array(
                     'goods_id' => new MongoId($r["reward_id"])
                 )));
@@ -1322,7 +1341,7 @@ class Quest extends REST2_Controller
 
         // not join yet, let check condition
         if (!$player_quest) {
-            $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $this->validToken);
+            $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $this->validToken, "join");
             // condition passed
             if (!$condition_quest) {
                 $this->quest_model->joinQuest(array_merge($data, $quest));
@@ -1386,7 +1405,7 @@ class Quest extends REST2_Controller
 
             // not join yet, let check condition
             if (!$player_quest) {
-                $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $this->validToken);
+                $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $this->validToken, "join");
                 // condition passed
                 if (!$condition_quest) {
                     $this->quest_model->joinQuest(array_merge($data_sub, $quest));
