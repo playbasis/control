@@ -873,8 +873,7 @@ class Cron extends CI_Controller
         $to = array(
             'pechpras@playbasis.com',
             'pascal@playbasis.com',
-            'napada.w@playbasis.com',
-            'mariya.v@playbasis.com'
+            'siriporn.p@playbasis.com'
         );
         $subject = '[Playbasis] Dashboard User Registration';
         $message = 'The attachment includes 3 CSV files for (1) list of customers (2) statistics of daily registration and (3) statistics of monthly registration (as of ' . date('Y-m-d') . ').';
