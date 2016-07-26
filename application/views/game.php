@@ -237,10 +237,10 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" id="confirm_cancel_button" data-dismiss="modal">Cancel</button>
-        <a class="btn btn-danger btn-ok" id="confirm_del_button">Delete</a>
+        <a class="btn btn-primary btn-ok" id="confirm_del_button">Confirm</a>
     </div>
 </div>
-
+        
 <div id="formItemModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formItemModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -659,7 +659,7 @@
             temp_category = $('#worlds_'+world+'_category').val();
         }).on('select2-selected', function (e) {
             var category = $('#worlds_'+world+'_category').val();
-            if (category != temp_category){
+            if (category != temp_category && temp_category != ""){
                 $('#confirm-delete .modal-body').html('Select new catagory will be clear all selected items');
                 document.getElementById('confirm_event').value = "category";
                 document.getElementById('confirm_world').value = world;
