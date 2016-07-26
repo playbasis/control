@@ -48,81 +48,81 @@ class game extends MY_Controller
         $this->error['warning'] = null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->data['message'] = null;
-            $client_id = $this->User_model->getClientId();
-            $site_id = $this->User_model->getSiteId();
-            $data = $this->input->post();
-            $game_data['game_name'] = $data['name'];
-            $game_data['image']     = $data['image'];
-            $game_data['status']    = (isset($data['status']) && ($data['status'] == "on")) ? true : false;
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            } else {
+                $this->data['message'] = null;
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+                $data = $this->input->post();
+                $game_data['game_name'] = $data['name'];
+                $game_data['image']     = $data['image'];
+                $game_data['status']    = (isset($data['status']) && ($data['status'] == "on")) ? true : false;
 
-            $game_id = $this->Game_model->updateGameSetting($client_id, $site_id, $game_data);
-            $exist_world = array();
-            if($game_id){
-                foreach($data['worlds'] as $index => $world){
-                    $item_array = array();
-                    foreach($world['world_item'] as $row_index => $row){
-                        foreach($row as $column_index => $column) {
-                            if(!empty($column['item_id'])){
-                                $item_data['item_id']                          = new MongoId($column['item_id']);
-                                $item_data['description']                      = $column['item_description'];
-                                $item_data['item_config']['row']               = $row_index;
-                                $item_data['item_config']['column']            = $column_index;
-                                $item_data['item_config']['days_to_deduct']    = (int)$column['item_deduct'];
-                                $item_data['item_config']['amount_to_harvest'] = (int)$column['item_harvest'];
-                                $this->Game_model->updateGameStageItem($client_id, $site_id, $game_id, $item_data);
-                                array_push($item_array, $item_data['item_id']);
+                $game_id = $this->Game_model->updateGameSetting($client_id, $site_id, $game_data);
+                $exist_world = array();
+                if($game_id){
+                    foreach($data['worlds'] as $index => $world){
+                        $item_array = array();
+                        foreach($world['world_item'] as $row_index => $row){
+                            foreach($row as $column_index => $column) {
+                                if(!empty($column['item_id'])){
+                                    $item_data['item_id']                          = new MongoId($column['item_id']);
+                                    $item_data['description']                      = $column['item_description'];
+                                    $item_data['item_config']['row']               = $row_index;
+                                    $item_data['item_config']['column']            = $column_index;
+                                    $item_data['item_config']['days_to_deduct']    = (int)$column['item_deduct'];
+                                    $item_data['item_config']['amount_to_harvest'] = (int)$column['item_harvest'];
+                                    $this->Game_model->updateGameStageItem($client_id, $site_id, $game_id, $item_data);
+                                    array_push($item_array, $item_data['item_id']);
+                                }
                             }
                         }
-                    }
 
-                    if(isset($world['world_id'])){
-                        try{
-                            array_push($exist_world, new MongoId($world['world_id']));
-                        } catch (Exception $e){
+                        if(isset($world['world_id'])){
+                            try{
+                                array_push($exist_world, new MongoId($world['world_id']));
+                            } catch (Exception $e){
 
-                        }
-                        $stage_data['id']                     = $world['world_id'];
-                    }
-                    $stage_data['stage_name']             = $world['world_name'];
-                    $stage_data['stage_level']            = (int)$world['world_level'];
-                    $stage_data['image']                  = $world['world_image'];
-                    $stage_data['category']               = isset($world['world_category']) && !empty($world['world_category']) ? new MongoId($world['world_category']): "";
-                    $stage_data['description']            = $world['world_description'];
-                    $stage_data['stage_config']['height'] = (int)$world['world_height'];
-                    $stage_data['item_list']              = $item_array;
-
-                    $stage_data['stage_config']['width']  = (int)$world['world_width'];
-                    $stage_data['stage_config']['height'] = (int)$world['world_height'];
-                    
-                    $stage = $this->Game_model->updateGameStage($client_id, $site_id, $game_id, $stage_data);
-                    if($stage){
-                        try{
-                            array_push($exist_world, new MongoId($stage));
-                        } catch (Exception $e){
-
-                        }
-                    }
-                    $stage_data = array();
-                }
-                if($exist_world){
-                    $delete_stage_data['exclude_id'] = $exist_world;
-                    $to_delete_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_id, $delete_stage_data);
-                    if($to_delete_stage){
-                        foreach($to_delete_stage as $del_stage){
-                            if(!empty($del_stage['item_list'])){
-                                $delete_item_data['del_items'] = $del_stage['item_list'];
-                                $this->Game_model->deleteGameStageItem($client_id, $site_id, $game_id, $delete_item_data);
                             }
                         }
-                        
-                        $this->Game_model->deleteGameStage($client_id, $site_id, $game_id, $delete_stage_data);
+                        $stage_data['stage_name']             = $world['world_name'];
+                        $stage_data['stage_level']            = (int)$world['world_level'];
+                        $stage_data['image']                  = $world['world_image'];
+                        $stage_data['category']               = isset($world['world_category']) && !empty($world['world_category']) ? new MongoId($world['world_category']): "";
+                        $stage_data['description']            = $world['world_description'];
+                        $stage_data['stage_config']['height'] = (int)$world['world_height'];
+                        $stage_data['item_list']              = $item_array;
+
+                        $stage_data['stage_config']['width']  = (int)$world['world_width'];
+                        $stage_data['stage_config']['height'] = (int)$world['world_height'];
+
+                        $stage = $this->Game_model->updateGameStage($client_id, $site_id, $game_id, $stage_data, isset($world['world_id']) ? $world['world_id'] : null );
+                        if($stage){
+                            try{
+                                array_push($exist_world, new MongoId($stage));
+                            } catch (Exception $e){
+
+                            }
+                        }
+                        $stage_data = array();
                     }
-                    
-                    
+                    if($exist_world){
+                        $delete_stage_data['exclude_id'] = $exist_world;
+                        $to_delete_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_id, $delete_stage_data);
+                        if($to_delete_stage){
+                            foreach($to_delete_stage as $del_stage){
+                                if(!empty($del_stage['item_list'])){
+                                    $delete_item_data['del_items'] = $del_stage['item_list'];
+                                    $this->Game_model->deleteGameStageItem($client_id, $site_id, $game_id, $delete_item_data);
+                                }
+                            }
+
+                            $this->Game_model->deleteGameStage($client_id, $site_id, $game_id, $delete_stage_data);
+                        }
+                    }
                 }
             }
-
         }
 
         $this->getList();
@@ -153,6 +153,12 @@ class game extends MY_Controller
                     $template = $this->Game_model->getGameTemplate($client_id, $site_id, $game_id['_id']);
                 }
 
+                foreach ($template as &$document) {
+                    if (isset($document['_id'])) {
+                        $document['_id'] = $document['_id'] . "";
+                    }
+                }
+
                 $count_template = $this->Game_model->countGameTemplate($client_id, $site_id, $game_id['_id']);
 
                 $this->output->set_status_header('200');
@@ -164,6 +170,12 @@ class game extends MY_Controller
                 die();
 
             } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+
                 $data = $this->input->post();
                 if ($template_id) $template_data['id']  = $template_id;
                 $template_data['template_name']         = $data['template_name'];
@@ -173,8 +185,8 @@ class game extends MY_Controller
                 $template_data['status']                = (isset($data['template_status']) && ($data['template_status'] == "on")) ? true : false;
 
                 $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('game_name' => 'farm'));
-                $template_id = $this->Game_model->updateGameTemplate($client_id, $site_id, $game_id['_id'], $template_data);
-                if (!$template_id) {
+                $template = $this->Game_model->updateGameTemplate($client_id, $site_id, $game_id['_id'], $template_data);
+                if (!$template) {
                     $this->output->set_status_header('400');
                     echo json_encode(array('status' => 'error'));
                     die();
@@ -182,6 +194,36 @@ class game extends MY_Controller
                     $this->output->set_status_header('200');
                     // todo: should return update object
                     echo json_encode(array('status' => 'success'));
+                    die();
+                }
+            }  elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+
+                if ($template_id) {
+                    try {
+                        $game_id = $this->Game_model->getGameSetting($client_id, $site_id, array('game_name' => 'farm'));
+                        $result = $this->Game_model->deleteGameTemplate($client_id, $site_id, $game_id['_id'], $template_id);
+                        if (!$result) {
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'error', 'message' => $this->lang->line('')));
+                            die();
+                        } else {
+                            $this->output->set_status_header('200');
+                            echo json_encode(array('status' => 'success'));
+                            die();
+                        }
+                    } catch (Exception $e) {
+                        $this->output->set_status_header('400');
+                        echo json_encode(array('status' => 'error', 'message' => $this->lang->line('')));
+                        die();
+                    }
+                } else {
+                    $this->output->set_status_header('400');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('')));
                     die();
                 }
             }
@@ -316,6 +358,15 @@ class game extends MY_Controller
         $this->render_page('template');
     }
 
+    private function validateModify()
+    {
+        if ($this->User_model->hasPermission('modify', 'game')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private function validateAccess()
     {
         if ($this->User_model->isAdmin()) {
@@ -324,7 +375,7 @@ class game extends MY_Controller
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'setting') && $this->Feature_model->getFeatureExistByClientId($client_id, 'setting')
+        if ($this->User_model->hasPermission('access', 'game') && $this->Feature_model->getFeatureExistByClientId($client_id, 'game')
         ) {
             return true;
         } else {
