@@ -1326,8 +1326,10 @@ class Engine extends Quest
             foreach($rand_goods as $index){
                 $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $goodsData['group'] , $input['pb_player_id']);
                 if(($goods_group_rewards[$index]['per_user'] > $player_goods) || ($goods_group_rewards[$index]['per_user'] == null)) {
+                    try {
                     $this->client_model->updateplayerGoods($goods_group_rewards[$index]['goods_id'], 1,
                         $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
+                    } catch (Exception $e){}
                     $this->tracker_model->trackGoods(array_merge($validToken, array(
                         'pb_player_id' => $input['pb_player_id'],
                         'goods_id' => new MongoId($goods_group_rewards[$index]['goods_id']),
@@ -1350,9 +1352,10 @@ class Engine extends Quest
             else{
                 $quantity = $jigsawConfig['quantity'];
             }
-            
-            $this->client_model->updateplayerGoods($jigsawConfig['item_id'], $quantity,
-                $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
+            try {
+                $this->client_model->updateplayerGoods($jigsawConfig['item_id'], $quantity,
+                    $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
+            } catch (Exception $e){}
             // log event - goods
             $this->tracker_model->trackGoods(array_merge($validToken, array(
                 'pb_player_id' => $input['pb_player_id'],
