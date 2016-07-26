@@ -434,7 +434,9 @@ class Goods extends REST2_Controller
             $available_goods = $this->goods_model->getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $goods_info['group'], $code, true);
             if($available_goods){
                 $i = rand(0,(count($available_goods)-1));
-                $this->client_model->updateplayerGoods($available_goods[$i]['goods_id'], 1, $pb_player_id, $cl_player_id, $client_id, $site_id, $sponsor);
+                try {
+                    $this->client_model->updateplayerGoods($available_goods[$i]['goods_id'], 1, $pb_player_id, $cl_player_id, $client_id, $site_id, $sponsor);
+                } catch (Exception $e){}
                 unset($available_goods[$i]['_id']);
                 array_walk_recursive($available_goods[$i], array($this, "convert_mongo_object"));
                 $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_RECEIVED', 'goos_data' => $available_goods[$i] , 'value' => 1))), 200);
@@ -457,7 +459,9 @@ class Goods extends REST2_Controller
         else{
             if($goods_info['code'] == $code){
                 if(is_null($goods_info['quantity']) || ($goods_info['quantity'] > 0)){
-                    $this->client_model->updateplayerGoods($goods_info['goods_id'], 1, $pb_player_id, $cl_player_id, $client_id, $site_id, $sponsor);
+                    try {
+                        $this->client_model->updateplayerGoods($goods_info['goods_id'], 1, $pb_player_id, $cl_player_id, $client_id, $site_id, $sponsor);
+                    } catch (Exception $e){}
                     $this->response($this->resp->setRespond(array('events' => array('event_type' => 'GOODS_RECEIVED', 'goos_data' => $goods_info , 'value' => 1))), 200);
                 }
                 else{

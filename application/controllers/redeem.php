@@ -693,9 +693,10 @@ class Redeem extends REST2_Controller
         $this->load->model('client_model');
 
         $goods_id = new MongoId($goods['goods_id']);
-        $this->client_model->updateplayerGoods($goods_id, $amount, $pb_player_id, $validToken['cl_player_id'],
-            $validToken['client_id'], $validToken['site_id'], $is_sponsor);
-
+        try {
+            $this->client_model->updateplayerGoods($goods_id, $amount, $pb_player_id, $validToken['cl_player_id'],
+                $validToken['client_id'], $validToken['site_id'], $is_sponsor);
+        } catch (Exception $e){}
         if (isset($goods['redeem']['point']["point_value"]) && ($goods['redeem']['point']["point_value"] > 0)) {
             $input = array_merge($validToken, array(
                 'reward_name' => "point"
