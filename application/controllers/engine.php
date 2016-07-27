@@ -901,11 +901,20 @@ class Engine extends Quest
                     }
                 }
 
-                //get class path to precess jigsaw
+                //get class path to process jigsaw
                 $processor = ($jigsaw_id ? $this->client_model->getJigsawProcessorWithCache($cache_jigsaw, $jigsaw_id,
                     $site_id) : $jigsaw['id']);
                 if ($processor == 'goods') {
                     $processor = 'reward';
+                }
+
+                if($processor=="groupNot" || $processor=="groupOr"){
+                    // check if condition group containing item group
+                    if(array_search("badge", array_column($jigsawConfig['condition_group_container'], 'param_name')) !== false){
+                        //read player badge information
+                        $badge = $this->player_model->getBadge($input['pb_player_id'], $this->site_id);
+                        $input['player_badge'] = $badge;
+                    }
                 }
 
                 if (!$input["test"]) {
