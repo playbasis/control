@@ -463,4 +463,59 @@ class Game extends REST2_Controller
         $this->response($this->resp->setRespond(array('stage_finished'=>$stage_finished , 'next_stage'=>$next_stage)), 200);
     }
 
+    public function setCurrentStage_post()
+    {
+        //$this->benchmark->mark('start');
+        $query_data = $this->input->post();
+        $required = $this->input->checkParam(array(
+            'game_name',
+            'player_id',
+            'stage_level',
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        //validate playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $query_data['player_id']
+        )));
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        //validate game name
+        $game = $this->game_model->retrieveGame($this->client_id, $this->site_id, array(
+            'game_name' => $query_data['game_name'],
+            'order' => 'desc'
+        ));
+        if (!$game){
+            $this->response($this->error->setError('GAME_NOT_FOUND'), 200);
+        }
+        $game_id = $game[0]['_id'];
+
+        $stage_info = $this->game_model->retrieveStage($this->client_id, $this->site_id, $game_id, array('stage_level' =>   $query_data['stage_level'] ));
+        if (!$stage_info){
+            $this->response($this->error->setError('GAME_STAGE_NOT_FOUND'), 200);
+        }
+
+        if(strtolower($query_data['game_name']) == "farm") {
+
+            $this->game_model->clearAllStageToPlayer($this->client_id, $this->site_id, $game_id, $pb_player_id);
+            $stage_to_player = $this->game_model->getStageToPlayer($this->client_id, $this->site_id, $game_id, $pb_player_id, array('stage_level' => $query_data['stage_level']));
+            if ($stage_to_player) {
+                $this->game_model->updateStageToPlayer($this->client_id, $this->site_id, $game_id, $query_data['stage_level'], $pb_player_id,
+                        array( 'is_current'=> true ));
+            }else{
+                $this->game_model->setStageToPlayer($this->client_id, $this->site_id, $game_id, $query_data['stage_level'], $pb_player_id,
+                    array( 'is_current'=> true ));
+            }
+
+        }
+
+        //$this->benchmark->mark('end');
+        //$t = $this->benchmark->elapsed_time('start', 'end');
+        //$this->response($this->resp->setRespond(array( 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond(), 200);
+    }
 }

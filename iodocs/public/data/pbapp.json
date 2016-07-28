@@ -5350,6 +5350,44 @@
               "Description": "Specific item id in the game"
             }
           ]
+        },
+        {
+          "MethodName": "Set Game Current Stage",
+          "Synopsis": "Set current stage for player to play the game",
+          "HTTPMethod": "POST",
+          "URI": "/Game/setCurrentStage",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "game_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific name of game to retrieve details of game"
+            },
+            {
+              "Name": "stage_level",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific stage level of game"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+
+            }
+          ]
         }
       ]
     }
