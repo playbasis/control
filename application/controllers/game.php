@@ -251,8 +251,9 @@ class game extends MY_Controller
         $this->data['game_name'] = "farm";
 
         $game_data = $this->Game_model->getGameSetting($client_id, $site_id, $this->data);
-        $game_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_data['_id']);
-        $count_template = $this->Game_model->countGameTemplate($client_id, $site_id, $game_data['_id']);
+        $game_id = $game_data ? $game_data['_id'] : $this->Game_model->updateGameSetting($client_id, $site_id, array('game_name' => 'farm'));
+        $game_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_id);
+        $count_template = $this->Game_model->countGameTemplate($client_id, $site_id, $game_id);
 
         if (isset($count_template)) {
             $this->data['total_template'] = $count_template;
@@ -326,7 +327,7 @@ class game extends MY_Controller
             if (isset($stage['item_list'])) {
                 foreach($stage['item_list'] as $item){
                     $item_data['item_id'] = $item;
-                    $game_item = $this->Game_model->getGameStageItem($client_id, $site_id, $game_data['_id'], $item_data);
+                    $game_item = $this->Game_model->getGameStageItem($client_id, $site_id, $game_id, $item_data);
                     $row = $game_item[0]['item_config']['row'];
                     $column = $game_item[0]['item_config']['column'];
                     $this->data['worlds'][$index]['world_item'][$row][$column]['item_id'] = $game_item[0]['item_id'] . "";
@@ -334,7 +335,7 @@ class game extends MY_Controller
                     $this->data['worlds'][$index]['world_item'][$row][$column]['item_deduct'] = $game_item[0]['item_config']['days_to_deduct'];
                     $this->data['worlds'][$index]['world_item'][$row][$column]['item_description'] = $game_item[0]['description'];
 
-                    $game_item_template = $this->Game_model->getGameItemTemplate($client_id, $site_id, $game_data['_id'], $item_data);
+                    $game_item_template = $this->Game_model->getGameItemTemplate($client_id, $site_id, $game_id, $item_data);
                     if($game_item_template && is_array($game_item_template)) foreach ($game_item_template as $template){
                         if(isset($template['images'])){
                             $this->data['worlds'][$index]['world_item'][$row][$column]['item_image'][$template['template_id'].""] = $template['images'];
