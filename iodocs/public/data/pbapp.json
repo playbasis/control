@@ -5352,10 +5352,10 @@
           ]
         },
         {
-          "MethodName": "Set Game Item status",
-          "Synopsis": "Set player's item(s) status in game",
+          "MethodName": "Set Game Current Stage",
+          "Synopsis": "Set current stage for player to play the game",
           "HTTPMethod": "POST",
-          "URI": "/Game/playerItemStatus",
+          "URI": "/Game/setCurrentStage",
           "RequiresOAuth": "N",
           "parameters": [
             {
@@ -5386,20 +5386,6 @@
               "Type": "string",
               "Description": "player id as used in client's website"
 
-            },
-            {
-              "Name": "item_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "Specific item id in the game"
-            },
-            {
-              "Name": "item_status",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "Status setting for the specific item"
             }
           ]
         }

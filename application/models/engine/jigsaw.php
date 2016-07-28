@@ -103,6 +103,15 @@ class jigsaw extends MY_Model
         return $result;
     }
 
+    public function gameLevel($config, $input, &$exInfo = array())
+    {
+        assert($config != false);
+        assert(is_array($config));
+        assert(isset($config['game_level']));
+
+        return isset($input['game_current_stage']) && ($config['game_level'] == $input['game_current_stage']);
+    }
+
     public function badgeCondition($config, $input, &$exInfo = array())
     {
         assert($config != false);
@@ -1124,68 +1133,6 @@ class jigsaw extends MY_Model
         //inputurl domain/forum/hello-my-new-notebook
         //input domain/forum/test1234
         //url = domain/forum/(a-zA-Z0-9\_\-)+
-    }
-
-    public function calculateFrequency($from = null, $to = null)
-    {
-        ini_set('memory_limit', -1);
-        $date_added = array();
-        if ($from) {
-            $date_added['$gt'] = $from;
-        }
-        if ($to) {
-            $date_added['$lt'] = $to;
-        }
-        $default = array('action_log_id' => array('$exists' => 1));
-        $match = array_merge($date_added ? array('date_added' => $date_added) : array(), $default);
-        $results = $this->mongo_db->aggregate('jigsaw_log',
-            array(
-                array(
-                    '$match' => $match
-                ),
-                array(
-                    '$project' => array(
-                        'client_id' => 1,
-                        'site_id' => 1,
-                        'action_log_id' => 1,
-                        'rule_id' => 1,
-                        'date_added' => 1
-                    )
-                ),
-                array(
-                    '$group' => array(
-                        '_id' => array('action_log_id' => '$action_log_id', 'rule_id' => '$rule_id'),
-                        'n' => array('$sum' => 1),
-                        'client_id' => array('$first' => '$client_id'),
-                        'site_id' => array('$first' => '$site_id'),
-                        'date_added' => array('$max' => '$date_added')
-                    )
-                ),
-            )
-        );
-        return $results ? $results['result'] : array();
-    }
-
-    public function storeFrequency($data)
-    {
-        return $this->mongo_db->insert('jigsaw_log_precomp', array(
-            'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
-            'action_log_id' => $data['_id']['action_log_id'],
-            'rule_id' => $data['_id']['rule_id'],
-            'n' => $data['n'],
-            'date_added' => $data['date_added'],
-            'date_modified' => $data['date_added'],
-        ), array('w' => 0, 'j' => false));
-    }
-
-    public function getLastCalculateFrequencyTime()
-    {
-        $this->mongo_db->select(array('date_added'));
-        $this->mongo_db->order_by(array('date_added' => -1));
-        $this->mongo_db->limit(1);
-        $results = $this->mongo_db->get('jigsaw_log_precomp');
-        return $results ? $results[0]['date_added'] : array();
     }
 
     public function groupOr($config, $input, &$exInfo = array())

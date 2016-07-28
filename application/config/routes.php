@@ -351,6 +351,7 @@ $route['Import/importSetting'] = 'import/importSetting';
 // Game API
 $route['Game'] = 'game/list';
 $route['Game/playerItemStatus'] = 'game/playerItemStatus';
+$route['Game/setCurrentStage'] = 'game/setCurrentStage';
 
 //misc
 //$route['test']	= 'playbasis/test';

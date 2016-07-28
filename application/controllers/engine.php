@@ -29,6 +29,8 @@ class Engine extends Quest
         $this->load->model('tool/node_stream', 'node');
         $this->load->model('energy_model');
         $this->load->model('level_model');
+        $this->load->model('game_model');
+        $this->load->model('badge_model');
     }
 
     public function getActionConfig_get()
@@ -860,6 +862,18 @@ class Engine extends Quest
                     $input['level'] = $level['level'];
                 }
 
+                // Game level condition
+                if (($input['jigsaw_name']) == 'gameLevel') {
+                    //get current game stage of player
+                    $stage_to_player = $this->game_model->getStageToPlayer($this->client_id, $this->site_id, $jigsawConfig['game_id'], $input['pb_player_id'], array('is_current' => true));
+                    if ($stage_to_player) {
+                        $input['game_current_stage'] = $stage_to_player['stage_level'];
+                    } else {
+                        $input['game_current_stage'] = 1;
+                    }
+
+                }
+
                 // Badge condition
                 if (($input['jigsaw_name']) == 'badge') {
                     //read player badge information
@@ -887,11 +901,20 @@ class Engine extends Quest
                     }
                 }
 
-                //get class path to precess jigsaw
+                //get class path to process jigsaw
                 $processor = ($jigsaw_id ? $this->client_model->getJigsawProcessorWithCache($cache_jigsaw, $jigsaw_id,
                     $site_id) : $jigsaw['id']);
                 if ($processor == 'goods') {
                     $processor = 'reward';
+                }
+
+                if($processor=="groupNot" || $processor=="groupOr"){
+                    // check if condition group containing item group
+                    if(array_search("badge", array_column($jigsawConfig['condition_group_container'], 'param_name')) !== false){
+                        //read player badge information
+                        $badge = $this->player_model->getBadge($input['pb_player_id'], $this->site_id);
+                        $input['player_badge'] = $badge;
+                    }
                 }
 
                 if (!$input["test"]) {
@@ -1145,6 +1168,16 @@ class Engine extends Quest
                                                     $fbData['facebook_id'],
                                                     $eventMessage,
                                                     '');
+                                            }
+
+                                            $auto_notify = $this->badge_model->getBadgeNotificationFlag($client_id, $site_id, $jigsawConfig['item_id']);
+                                            if ($auto_notify){
+                                                $item_info = array(
+                                                    'item_name' => $badgeData['name'],
+                                                    'item_id' => $badgeData['badge_id'],
+                                                    'amount' => $jigsawConfig['quantity']
+                                                );
+                                                $this->processItemNotification($input,'item received', $item_info);
                                             }
                                             break;
                                         }  // close if (!$input["test"])

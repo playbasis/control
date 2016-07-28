@@ -205,7 +205,7 @@ class Game extends REST2_Controller
         }
     }
 
-    private function getPlayerItemStatus($game_id, $pb_player_id, $harvested_item, $item_id){
+    private function getPlayerItemStatus($game_id, $pb_player_id, $item_id){
         $item_status = array();
         $item_status['item_id'] = $item_id;
         $item_status['item_name'] = $this->badge_model->getBadgeName($this->client_id, $this->site_id, $item_id);
@@ -217,8 +217,10 @@ class Game extends REST2_Controller
             $item_status['item_config'] = null;
         }
 
-
-        if (in_array(new MongoId($item_id), $harvested_item)) {
+        // check if item is harvested
+        $item_harvested_id = $this->badge_model->getBadgeIDByName($this->client_id, $this->site_id, $item_status['item_name']."_harvested");
+        $item_harvested_record = $this->reward_model->getItemToPlayerRecords($this->client_id, $this->site_id, $pb_player_id, $item_harvested_id);
+        if ($item_harvested_record) {
             $item_status['item_status'] = "harvested";
             $item_status['item_image'] = null;
         }else{
@@ -295,17 +297,11 @@ class Game extends REST2_Controller
                 if ($stage_info){
                     $stage_info = $stage_info[0];
 
-                    $harvested_item = array();
-                    $stage_to_player = $this->game_model->getStageToPlayer($this->client_id, $this->site_id, $game_id, $pb_player_id, array('stage_level' => $query_data['stage_level']));
-                    if (isset($stage_to_player['harvested_item']) && $stage_to_player['harvested_item']) {
-                        $harvested_item = $stage_to_player['harvested_item'];
-                    }
-
                     if((isset($query_data['item_id']) && $query_data['item_id'])){
                         if (!in_array(new MongoId($query_data['item_id']), $stage_info['item_list'])) {
                             $this->response($this->error->setError('GAME_ITEM_NOT_IN_STAGE'), 200);
                         }
-                        $response = $this->getPlayerItemStatus($game_id, $pb_player_id, $harvested_item, $query_data['item_id']);
+                        $response = $this->getPlayerItemStatus($game_id, $pb_player_id, $query_data['item_id']);
                     }
                     else{
                         $list_item_id = $stage_info['item_list'];
@@ -314,7 +310,7 @@ class Game extends REST2_Controller
                         $response['stage_name'] = $stage_info['stage_name'];
                         $response['items_status'] = array();
                         foreach ($list_item_id as $item_id) {
-                            $response['items_status'][]  = $this->getPlayerItemStatus($game_id, $pb_player_id, $harvested_item, $item_id."");
+                            $response['items_status'][]  = $this->getPlayerItemStatus($game_id, $pb_player_id, $item_id."");
                         }
                     }
                 }else{
@@ -322,18 +318,13 @@ class Game extends REST2_Controller
                 }
             }
             else{
-                $harvested_item = array();
+
+                $current_stage = 1;
                 $stage_to_player = $this->game_model->getStageToPlayer($this->client_id, $this->site_id, $game_id, $pb_player_id, array('is_current' => true));
                 if ($stage_to_player) {
                     $current_stage = $stage_to_player['stage_level'];
-                    $harvested_item = $stage_to_player['harvested_item'];
-                } else {
-                    $current_stage = 1;
-                    $stage_1 = $this->game_model->getStageToPlayer($this->client_id, $this->site_id, $game_id, $pb_player_id,array('stage_level' => $current_stage));
-                    if ($stage_1) {
-                        $harvested_item = $stage_1['harvested_item'];
-                    }
                 }
+
                 $stage_info = $this->game_model->retrieveStage($this->client_id, $this->site_id, $game_id, array('stage_level' =>   $current_stage ));
                 if ($stage_info) {
                     $stage_info = $stage_info[0];
@@ -341,7 +332,7 @@ class Game extends REST2_Controller
                         if (!in_array(new MongoId($query_data['item_id']), $stage_info['item_list'])) {
                             $this->response($this->error->setError('GAME_ITEM_NOT_IN_CURRENT_STAGE'), 200);
                         }
-                        $response = $this->getPlayerItemStatus($game_id, $pb_player_id, $harvested_item, $query_data['item_id']);
+                        $response = $this->getPlayerItemStatus($game_id, $pb_player_id, $query_data['item_id']);
                     } else {
                         $list_item_id = $stage_info['item_list'];
 
@@ -349,7 +340,7 @@ class Game extends REST2_Controller
                         $response['stage_name'] = $stage_info['stage_name'];
                         $response['items_status'] = array();
                         foreach ($list_item_id as $item_id) {
-                            $response['items_status'][] = $this->getPlayerItemStatus($game_id, $pb_player_id, $harvested_item, $item_id . "");
+                            $response['items_status'][] = $this->getPlayerItemStatus($game_id, $pb_player_id, $item_id . "");
                         }
                     }
                 }else{
@@ -472,4 +463,59 @@ class Game extends REST2_Controller
         $this->response($this->resp->setRespond(array('stage_finished'=>$stage_finished , 'next_stage'=>$next_stage)), 200);
     }
 
+    public function setCurrentStage_post()
+    {
+        //$this->benchmark->mark('start');
+        $query_data = $this->input->post();
+        $required = $this->input->checkParam(array(
+            'game_name',
+            'player_id',
+            'stage_level',
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        //validate playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $query_data['player_id']
+        )));
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        //validate game name
+        $game = $this->game_model->retrieveGame($this->client_id, $this->site_id, array(
+            'game_name' => $query_data['game_name'],
+            'order' => 'desc'
+        ));
+        if (!$game){
+            $this->response($this->error->setError('GAME_NOT_FOUND'), 200);
+        }
+        $game_id = $game[0]['_id'];
+
+        $stage_info = $this->game_model->retrieveStage($this->client_id, $this->site_id, $game_id, array('stage_level' =>   $query_data['stage_level'] ));
+        if (!$stage_info){
+            $this->response($this->error->setError('GAME_STAGE_NOT_FOUND'), 200);
+        }
+
+        if(strtolower($query_data['game_name']) == "farm") {
+
+            $this->game_model->clearAllStageToPlayer($this->client_id, $this->site_id, $game_id, $pb_player_id);
+            $stage_to_player = $this->game_model->getStageToPlayer($this->client_id, $this->site_id, $game_id, $pb_player_id, array('stage_level' => $query_data['stage_level']));
+            if ($stage_to_player) {
+                $this->game_model->updateStageToPlayer($this->client_id, $this->site_id, $game_id, $query_data['stage_level'], $pb_player_id,
+                        array( 'is_current'=> true ));
+            }else{
+                $this->game_model->setStageToPlayer($this->client_id, $this->site_id, $game_id, $query_data['stage_level'], $pb_player_id,
+                    array( 'is_current'=> true ));
+            }
+
+        }
+
+        //$this->benchmark->mark('end');
+        //$t = $this->benchmark->elapsed_time('start', 'end');
+        //$this->response($this->resp->setRespond(array( 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond(), 200);
+    }
 }

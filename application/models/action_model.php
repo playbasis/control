@@ -175,52 +175,6 @@ class Action_model extends MY_Model
 
     }
 
-    public function actionLogPerAction($data, $action_name, $from = null, $to = null)
-    {
-        $this->set_site_mongodb($data['site_id']);
-        $action_id = $this->findAction(array_merge($data, array('action_name' => $action_name)));
-        if (!$action_id) {
-            return array();
-        }
-        $match = array(
-            'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
-            'action_id' => $action_id,
-        );
-        if (($from || $to) && !isset($match['date_added'])) {
-            $match['date_added'] = array();
-        }
-        if ($from) {
-            $match['date_added']['$gte'] = new MongoDate(strtotime($from . ' 00:00:00'));
-        }
-        if ($to) {
-            $match['date_added']['$lte'] = new MongoDate(strtotime($to . ' 23:59:59'));
-        }
-        $_result = $this->mongo_db->aggregate('playbasis_player_dau', array(
-            array(
-                '$match' => $match,
-            ),
-            array(
-                '$group' => array('_id' => '$date_added', 'value' => array('$sum' => '$count'))
-            ),
-        ));
-        $_result = $_result ? $_result['result'] : array();
-        $result = array();
-        if (is_array($_result)) {
-            foreach ($_result as $key => $value) {
-                array_push($result, array('_id' => date('Y-m-d', $value['_id']->sec), 'value' => $value['value']));
-            }
-        }
-        usort($result, 'cmp_id');
-        if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) {
-            array_unshift($result, array('_id' => $from, 'value' => 'SKIP'));
-        }
-        if ($to && (!isset($result[count($result) - 1]['_id']) || $result[count($result) - 1]['_id'] != $to)) {
-            array_push($result, array('_id' => $to, 'value' => 'SKIP'));
-        }
-        return $result;
-    }
-
     public function actionLog($data, $from = null, $to = null)
     {
         $this->set_site_mongodb($data['site_id']);

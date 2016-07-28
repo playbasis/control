@@ -9,31 +9,6 @@ class Leaderboard_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
-    public function listLeaderBoards($query_date_check = false)
-    {
-
-        $this->mongo_db->where(array(
-            'status' => true,
-        ));
-
-        if ($query_date_check == true) {
-            $selected_time = time();
-
-            $first = date('Y-m-01', $selected_time);
-            $from = strtotime($first . ' 00:00:00');
-
-            $last = date('Y-m-t', $selected_time);
-            $to = strtotime($last . ' 23:59:59');
-            $this->mongo_db->where(array(
-                'month' => array('$gte' => $this->new_mongo_date($from), '$lte' => $this->new_mongo_date($to))
-            ));
-        }
-
-        $result = $this->mongo_db->get('playbasis_leaderboard');
-
-        return !empty($result) ? $result : array();
-    }
-
     public function getLeaderBoard($data, $query_date_check = false)
     {
         $this->set_site_mongodb($data['site_id']);

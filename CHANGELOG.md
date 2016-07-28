@@ -1,8 +1,141 @@
 # Change Log
 
-## [2.13.0](https://github.com/playbasis/api/tree/2.13.0)
+## [2.14.0](https://github.com/playbasis/api/tree/2.14.0)
 
-[Full Changelog](https://github.com/playbasis/api/compare/2.12.24/fix_player_rank_in_leader_board...2.13.0)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.12/fix_quest_not_started_is_processed_in_rule...2.14.0)
+
+**Implemented enhancements:**
+
+- new endpoint to set current stage for player to play the specific game [\#346](https://github.com/playbasis/api/pull/346) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- modify api to get game item status [\#345](https://github.com/playbasis/api/pull/345) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- modify api to get game item status [\#345](https://github.com/playbasis/api/pull/345) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.13.12/fix_quest_not_started_is_processed_in_rule](https://github.com/playbasis/api/tree/2.13.12/fix_quest_not_started_is_processed_in_rule) (2016-07-26)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.0-alpha.8...2.13.12/fix_quest_not_started_is_processed_in_rule)
+
+**Implemented enhancements:**
+
+- automatically notify when player receive the item [\#343](https://github.com/playbasis/api/pull/343) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.13.12/fix quest not started is processed in rule [\#344](https://github.com/playbasis/api/pull/344) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.14.0-alpha.8](https://github.com/playbasis/api/tree/2.14.0-alpha.8) (2016-07-25)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.11/fix_response_date_completed_as_null_for_unfinish_quest...2.14.0-alpha.8)
+
+## [2.13.11/fix_response_date_completed_as_null_for_unfinish_quest](https://github.com/playbasis/api/tree/2.13.11/fix_response_date_completed_as_null_for_unfinish_quest) (2016-07-25)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.0-alpha.7...2.13.11/fix_response_date_completed_as_null_for_unfinish_quest)
+
+**Implemented enhancements:**
+
+- Hotfix/2.13.11/fix response date completed as null for unfinish quest [\#342](https://github.com/playbasis/api/pull/342) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.14.0-alpha.7](https://github.com/playbasis/api/tree/2.14.0-alpha.7) (2016-07-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.10/fix_date_join_in_leader_board...2.14.0-alpha.7)
+
+## [2.13.10/fix_date_join_in_leader_board](https://github.com/playbasis/api/tree/2.13.10/fix_date_join_in_leader_board) (2016-07-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.9/fail_to_unset_role...2.13.10/fix_date_join_in_leader_board)
+
+**Fixed bugs:**
+
+- Hotfix/2.13.10/fix date join in leader board [\#341](https://github.com/playbasis/api/pull/341) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.13.9/fail_to_unset_role](https://github.com/playbasis/api/tree/2.13.9/fail_to_unset_role) (2016-07-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.0-alpha.6...2.13.9/fail_to_unset_role)
+
+**Fixed bugs:**
+
+- Hotfix/2.13.9/fail to unset role [\#340](https://github.com/playbasis/api/pull/340) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.14.0-alpha.6](https://github.com/playbasis/api/tree/2.14.0-alpha.6) (2016-07-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.8/add_try_catch_to_update_reward_in_quest_process...2.14.0-alpha.6)
+
+**Implemented enhancements:**
+
+- new condition \(game level\) in engine rule [\#339](https://github.com/playbasis/api/pull/339) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.13.8/add_try_catch_to_update_reward_in_quest_process](https://github.com/playbasis/api/tree/2.13.8/add_try_catch_to_update_reward_in_quest_process) (2016-07-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.7/fix_quest_did_not_update_status_correctly_due_to_error_to_reward...2.13.8/add_try_catch_to_update_reward_in_quest_process)
+
+**Fixed bugs:**
+
+- Hotfix/2.13.8/add try catch to update reward in quest process [\#338](https://github.com/playbasis/api/pull/338) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.13.7/fix_quest_did_not_update_status_correctly_due_to_error_to_reward](https://github.com/playbasis/api/tree/2.13.7/fix_quest_did_not_update_status_correctly_due_to_error_to_reward) (2016-07-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.6/move_code_to_check_date_join_to_aggregate_in_quest_leader_board...2.13.7/fix_quest_did_not_update_status_correctly_due_to_error_to_reward)
+
+**Fixed bugs:**
+
+- Hotfix/2.13.7/fix quest did not update status correctly due to error to reward [\#337](https://github.com/playbasis/api/pull/337) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.13.6/move_code_to_check_date_join_to_aggregate_in_quest_leader_board](https://github.com/playbasis/api/tree/2.13.6/move_code_to_check_date_join_to_aggregate_in_quest_leader_board) (2016-07-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.5/fix_operate_data_which_is_not_numeric_in_quest_leader_board...2.13.6/move_code_to_check_date_join_to_aggregate_in_quest_leader_board)
+
+**Implemented enhancements:**
+
+- Hotfix/2.13.6/move code to check date join to aggregate in quest leader board [\#336](https://github.com/playbasis/api/pull/336) ([piya-playbasis](https://github.com/piya-playbasis))
+- Remove cron and report from API [\#335](https://github.com/playbasis/api/pull/335) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.13.5/fix_operate_data_which_is_not_numeric_in_quest_leader_board](https://github.com/playbasis/api/tree/2.13.5/fix_operate_data_which_is_not_numeric_in_quest_leader_board) (2016-07-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.0-alpha.5...2.13.5/fix_operate_data_which_is_not_numeric_in_quest_leader_board)
+
+**Fixed bugs:**
+
+- Hotfix/2.13.5/fix operate data which is not numeric in quest leader board [\#334](https://github.com/playbasis/api/pull/334) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.14.0-alpha.5](https://github.com/playbasis/api/tree/2.14.0-alpha.5) (2016-07-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.4/check_date_to_join_quest_in_quest_leader_board...2.14.0-alpha.5)
+
+## [2.13.4/check_date_to_join_quest_in_quest_leader_board](https://github.com/playbasis/api/tree/2.13.4/check_date_to_join_quest_in_quest_leader_board) (2016-07-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.3/change_error_message...2.13.4/check_date_to_join_quest_in_quest_leader_board)
+
+**Fixed bugs:**
+
+- Hotfix/2.13.4/check date to join quest in quest leader board [\#332](https://github.com/playbasis/api/pull/332) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.13.3/change_error_message](https://github.com/playbasis/api/tree/2.13.3/change_error_message) (2016-07-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.0-alpha.4...2.13.3/change_error_message)
+
+**Implemented enhancements:**
+
+- Hotfix/2.13.3/change error message [\#331](https://github.com/playbasis/api/pull/331) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.14.0-alpha.4](https://github.com/playbasis/api/tree/2.14.0-alpha.4) (2016-07-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.0-alpha.3...2.14.0-alpha.4)
+
+**Implemented enhancements:**
+
+- To return goods code for get by player [\#330](https://github.com/playbasis/api/pull/330) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.14.0-alpha.3](https://github.com/playbasis/api/tree/2.14.0-alpha.3) (2016-07-20)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.13.2/new_followup_sort_for_content...2.14.0-alpha.3)
+
+## [v2.13.2/new_followup_sort_for_content](https://github.com/playbasis/api/tree/v2.13.2/new_followup_sort_for_content) (2016-07-20)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.0-alpha.2...v2.13.2/new_followup_sort_for_content)
+
+**Implemented enhancements:**
+
+- Hotfix/2.13.2/new followup sort for content [\#329](https://github.com/playbasis/api/pull/329) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.14.0-alpha.2](https://github.com/playbasis/api/tree/2.14.0-alpha.2) (2016-07-15)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.1/set_game_item_of_player...2.14.0-alpha.2)
+
+## [2.13.1/set_game_item_of_player](https://github.com/playbasis/api/tree/2.13.1/set_game_item_of_player) (2016-07-15)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.0-alpha.1...2.13.1/set_game_item_of_player)
+
+**Implemented enhancements:**
+
+- new end point to set game items status of player [\#328](https://github.com/playbasis/api/pull/328) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.14.0-alpha.1](https://github.com/playbasis/api/tree/2.14.0-alpha.1) (2016-07-14)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.13.0...2.14.0-alpha.1)
+
+## [v2.13.0](https://github.com/playbasis/api/tree/v2.13.0) (2016-07-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.12.24/fix_player_rank_in_leader_board...v2.13.0)
 
 **Implemented enhancements:**
 
@@ -1189,16 +1322,16 @@
 - Feature/run rule in bg [\#144](https://github.com/playbasis/api/pull/144) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [2.3.0-alpha.5](https://github.com/playbasis/api/tree/2.3.0-alpha.5) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.2.4...2.3.0-alpha.5)
-
-## [2.2.4](https://github.com/playbasis/api/tree/2.2.4) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/Bug_rankPeerByAccAction_wrong_month_type...2.2.4)
+[Full Changelog](https://github.com/playbasis/api/compare/Bug_rankPeerByAccAction_wrong_month_type...2.3.0-alpha.5)
 
 ## [Bug_rankPeerByAccAction_wrong_month_type](https://github.com/playbasis/api/tree/Bug_rankPeerByAccAction_wrong_month_type) (2016-02-05)
 [Full Changelog](https://github.com/playbasis/api/compare/2.3.4...Bug_rankPeerByAccAction_wrong_month_type)
 
 ## [2.3.4](https://github.com/playbasis/api/tree/2.3.4) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.4...2.3.4)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.4...2.3.4)
+
+## [2.2.4](https://github.com/playbasis/api/tree/2.2.4) (2016-02-05)
+[Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.4...2.2.4)
 
 ## [2.3.0-alpha.4](https://github.com/playbasis/api/tree/2.3.0-alpha.4) (2016-02-03)
 [Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.3...2.3.0-alpha.4)
