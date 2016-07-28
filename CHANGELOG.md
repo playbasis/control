@@ -1,25 +1,66 @@
 # Change Log
 
-## [2.14.0](https://github.com/playbasis/control/tree/2.14.0)
+## [2.15.0](https://github.com/playbasis/control/tree/2.15.0)
 
+[Full Changelog](https://github.com/playbasis/control/compare/2.14.3/Remove_resign_employee_email...2.15.0)
+
+**Implemented enhancements:**
+
+- set item image to template [\#252](https://github.com/playbasis/control/pull/252) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- fix bug item template [\#253](https://github.com/playbasis/control/pull/253) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.14.3/Remove_resign_employee_email](https://github.com/playbasis/control/tree/2.14.3/Remove_resign_employee_email) (2016-07-26)
+[Full Changelog](https://github.com/playbasis/control/compare/2.14.2/workflow_error...2.14.3/Remove_resign_employee_email)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.3/remove resign employee email [\#251](https://github.com/playbasis/control/pull/251) ([niti-playbasis](https://github.com/niti-playbasis))
+- Feature/game/add delete template and fix edit template [\#250](https://github.com/playbasis/control/pull/250) ([piya-playbasis](https://github.com/piya-playbasis))
+- automatically notify when player receive the item [\#249](https://github.com/playbasis/control/pull/249) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.14.2/workflow_error](https://github.com/playbasis/control/tree/2.14.2/workflow_error) (2016-07-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.14.1/Move_report_instance_to_dashboard...2.14.2/workflow_error)
+
+**Implemented enhancements:**
+
+- new condition \(game level\) in engine rule [\#247](https://github.com/playbasis/control/pull/247) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- new Cron function to deduct item [\#246](https://github.com/playbasis/control/pull/246) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.14.2/workflow error [\#248](https://github.com/playbasis/control/pull/248) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Merged pull requests:**
+
+- Feature/game combine code version [\#245](https://github.com/playbasis/control/pull/245) ([piya-playbasis](https://github.com/piya-playbasis))
+- Feature/game [\#244](https://github.com/playbasis/control/pull/244) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.14.1/Move_report_instance_to_dashboard](https://github.com/playbasis/control/tree/2.14.1/Move_report_instance_to_dashboard) (2016-07-15)
+[Full Changelog](https://github.com/playbasis/control/compare/2.14.0...2.14.1/Move_report_instance_to_dashboard)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.1/move report instance to dashboard [\#243](https://github.com/playbasis/control/pull/243) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.14.0](https://github.com/playbasis/control/tree/2.14.0) (2016-07-14)
 [Full Changelog](https://github.com/playbasis/control/compare/2.13.1/id_shown_in_engine...2.14.0)
 
 **Implemented enhancements:**
 
 - Move Cron job from API to dashboard instance. [\#242](https://github.com/playbasis/control/pull/242) ([niti-playbasis](https://github.com/niti-playbasis))
 - Categorize item\(badge\) for reward selection [\#241](https://github.com/playbasis/control/pull/241) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.13.1/id_shown_in_engine](https://github.com/playbasis/control/tree/2.13.1/id_shown_in_engine) (2016-07-06)
-[Full Changelog](https://github.com/playbasis/control/compare/2.13.0...2.13.1/id_shown_in_engine)
-
-**Implemented enhancements:**
-
 - import.export quiz [\#238](https://github.com/playbasis/control/pull/238) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 **Fixed bugs:**
 
 - Hotfix/2.13.1/id shown in engine [\#239](https://github.com/playbasis/control/pull/239) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - import.export quiz [\#238](https://github.com/playbasis/control/pull/238) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.13.1/id_shown_in_engine](https://github.com/playbasis/control/tree/2.13.1/id_shown_in_engine) (2016-07-06)
+[Full Changelog](https://github.com/playbasis/control/compare/2.13.0...2.13.1/id_shown_in_engine)
 
 ## [2.13.0](https://github.com/playbasis/control/tree/2.13.0) (2016-07-04)
 [Full Changelog](https://github.com/playbasis/control/compare/2.12.12/disable_play_quest_button_in_ajax...2.13.0)
