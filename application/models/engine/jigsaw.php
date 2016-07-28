@@ -826,7 +826,7 @@ class jigsaw extends MY_Model
         */
         if ($badgeInfo['stackable']) {
             if($max){
-                if($rewardInfo[0]){
+                if(isset($rewardInfo[0])){
                     $rewardInfo = $rewardInfo[0];
                     if ($rewardInfo['value'] >= $max){
                         return false;
@@ -839,7 +839,7 @@ class jigsaw extends MY_Model
             return true;
         }
         else{
-            if($rewardInfo[0]){
+            if(isset($rewardInfo[0])){
                 return false;
             }
         }
