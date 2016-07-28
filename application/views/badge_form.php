@@ -139,7 +139,7 @@
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_status'); ?></td>
+                            <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td><select name="status">
                                 <?php if ($status) { ?>
                                 <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
@@ -147,6 +147,18 @@
                                 <?php } else { ?>
                                 <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
                                 <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                <?php } ?>
+                            </select></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_auto_notify'); ?>:</td>
+                            <td><select name="auto_notify">
+                                <?php if ($auto_notify) { ?>
+                                    <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                    <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                <?php } else { ?>
+                                    <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                    <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
                                 <?php } ?>
                             </select></td>
                         </tr>

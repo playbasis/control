@@ -598,6 +598,7 @@ class Badge_model extends MY_Model
             'per_user' => (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
+            'auto_notify' => (bool)$data['auto_notify'],
             'sort_order' => (int)$data['sort_order'] | 1,
             'date_modified' => $d,
             'date_added' => $d,
@@ -635,6 +636,7 @@ class Badge_model extends MY_Model
             'per_user' => (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
+            'auto_notify' => (bool)$data['auto_notify'],
             'sort_order' => (int)$data['sort_order'] | 1,
             'date_modified' => $d,
             'date_added' => $d,
@@ -664,6 +666,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('category', (isset($data['category']) && !empty($data['category'])) ? new MongoID($data['category']) : null);
         $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('auto_notify', (bool)$data['auto_notify']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate());
         $this->mongo_db->set('name', $data['name']);
@@ -712,6 +715,7 @@ class Badge_model extends MY_Model
                 $this->mongo_db->set('category', (isset($data['category']) && !empty($data['category'])) ? new MongoID($data['category']) : null);
                 $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
                 $this->mongo_db->set('status', (bool)$data['status']);
+                $this->mongo_db->set('auto_notify', (bool)$data['auto_notify']);
                 $this->mongo_db->set('sort_order', (int)$data['sort_order']);
                 $this->mongo_db->set('description', $data['description']);
                 $this->mongo_db->set('tags', $data['tags']);
@@ -748,6 +752,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('category', (isset($data['category']) && !empty($data['category'])) ?  new MongoID($data['category']) : null);
         $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('auto_notify', (bool)$data['auto_notify']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate());
         $this->mongo_db->set('name', $data['name']);
@@ -886,7 +891,7 @@ class Badge_model extends MY_Model
      * @param $client_id string
      * @return array
      */
-    public function getAllBadgeIdByClientId($client_id, $site_id)
+    public function getAllBadgeIdByClientId($client_id, $site_id, $filter_data=array())
     {
         $this->mongo_db->where(array(
             'client_id' => $client_id,
@@ -895,6 +900,62 @@ class Badge_model extends MY_Model
         return $this->mongo_db->get("playbasis_badge_to_client");
     }
 
+    public function countAllBadgeByCategory($client_id, $site_id, $category)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false,
+            'status' => true,
+        ));
+
+        if(isset($category) && !empty($category)){
+            try {
+                $id = new MongoId($category);
+                $this->mongo_db->where('category' , $id);
+            } catch (Exception $e) {}
+        }
+
+        return $this->mongo_db->count("playbasis_badge_to_client");
+    }
+
+    public function getAllBadgeByCategory($client_id, $site_id, $category)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false,
+            'status' => true,
+        ));
+
+        if(isset($category) && !empty($category)){
+            try {
+                $id = new MongoId($category);
+                $this->mongo_db->where('category' , $id);
+            } catch (Exception $e) {}
+        }
+
+        return $this->mongo_db->get("playbasis_badge_to_client");
+    }
+
+    public function getBadgeById($client_id, $site_id, $badge_id)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false,
+            'status' => true,
+        ));
+
+        if(isset($badge_id) && !empty($badge_id)){
+            try {
+                $id = new MongoId($badge_id);
+                $this->mongo_db->where('badge_id' , $id);
+            } catch (Exception $e) {}
+        }
+        $badge = $this->mongo_db->get("playbasis_badge_to_client");
+        return $badge ? $badge[0]:array();
+    }
     /*
      * getTemplate
      *
@@ -969,6 +1030,7 @@ class Badge_model extends MY_Model
     {
         $badge2["claim"] = isset($badge2["claim"]) ? (bool)$badge2["claim"] : false;
         $badge2["redeem"] = isset($badge2["redeem"]) ? (bool)$badge2["redeem"] : false;
+        $badge2["auto_notify"] = isset($badge2["auto_notify"]) ? (bool)$badge2["auto_notify"] : false;
         $badge2["image"] = html_entity_decode($badge2['image'], ENT_QUOTES, "UTF-8");
 
         return ($badge1["stackable"] == (int)$badge2["stackable"] &&
@@ -987,7 +1049,9 @@ class Badge_model extends MY_Model
             $badge1["claim"] == $badge2["claim"] &&
             $badge1["redeem"] == $badge2["redeem"] &&
             $badge1["image"] == $badge2["image"] &&
-            $badge1["status"] == (bool)$badge2["status"]);
+            $badge1["status"] == (bool)$badge2["status"] &&
+            ((isset($badge1["auto_notify"]) ? (bool)$badge1["auto_notify"] : false) == $badge2["auto_notify"])
+        );
     }
     function makeMongoIdObj(&$value)
     {

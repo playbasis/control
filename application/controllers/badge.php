@@ -813,6 +813,14 @@ class Badge extends MY_Controller
             $this->data['status'] = 1;
         }
 
+        if ($this->input->post('auto_notify')) {
+            $this->data['auto_notify'] = $this->input->post('auto_notify');
+        } elseif (!empty($badge_info) && isset($badge_info['auto_notify'])) {
+            $this->data['auto_notify'] = $badge_info['auto_notify'];
+        } else {
+            $this->data['auto_notify'] = 0;
+        }
+
         if ($this->input->post('stackable')) {
             $this->data['stackable'] = $this->input->post('stackable');
         } elseif (!empty($badge_info)) {
@@ -1169,4 +1177,58 @@ class Badge extends MY_Controller
         }
     }
 
+    public function items($itemId=null)
+    {
+        if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                if (!$this->validateAccess()) {
+                    $this->output->set_status_header('401');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_access')));
+                    die();
+                }
+
+                if (isset($itemId)) {
+                    try {
+                        $result = $this->Badge_model->getBadgeById($client_id, $site_id, $itemId);
+                        if (isset($result['_id']) && isset($result['badge_id'])) {
+                            $result['_id'] = $result['badge_id'] . "";
+                            unset($result['badge_id']);
+                        }
+
+                        $this->output->set_status_header('200');
+                        $response = $result;
+
+                    } catch (Exception $e) {
+                        $this->output->set_status_header('404');
+                        $response = array('status' => 'error', 'message' => $this->lang->line('text_empty_item'));
+                    }
+                } else {
+                    $category = $this->input->get('filter_category');
+
+                    $result = $this->Badge_model->getAllBadgeByCategory($client_id, $site_id, $category);
+                    foreach ($result as &$document) {
+                        if (isset($document['_id']) && isset($document['badge_id'])) {
+                            $document['_id'] = $document['badge_id'] . "";
+                            unset($document['badge_id']);
+                        }
+                    }
+
+                    $count_category = $this->Badge_model->countAllBadgeByCategory($client_id, $site_id, $category);
+
+                    $this->output->set_status_header('200');
+                    $response = array(
+                        'total' => $count_category,
+                        'rows' => $result
+                    );
+                }
+
+            }
+
+            echo json_encode($response);
+            die();
+        }
+    }
 }
