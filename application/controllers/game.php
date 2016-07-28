@@ -75,7 +75,17 @@ class game extends MY_Controller
                                     $item_data['item_config']['amount_to_harvest'] = (int)$column['item_harvest'];
                                     $this->Game_model->updateGameStageItem($client_id, $site_id, $game_id, $item_data);
                                     array_push($item_array, $item_data['item_id']);
+                                    if(isset($column['item_image'])){
+                                        foreach ($column['item_image'] as $template_index => $template){
+                                            $item_template_data['template_id'] = new MongoId($template_index);
+                                            $item_template_data['item_id']     = new MongoId($column['item_id']);
+                                            $item_template_data['images']      = $template;
+                                            $item_template_data['thumb']       = $column['item_thumb'][$template_index];
+                                            $this->Game_model->updateGameItemTemplate($client_id, $site_id, $game_id, $item_template_data);
+                                        }
+                                    }
                                 }
+
                             }
                         }
 
@@ -242,7 +252,14 @@ class game extends MY_Controller
 
         $game_data = $this->Game_model->getGameSetting($client_id, $site_id, $this->data);
         $game_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_data['_id']);
+        $count_template = $this->Game_model->countGameTemplate($client_id, $site_id, $game_data['_id']);
 
+        if (isset($count_template)) {
+            $this->data['total_template'] = $count_template;
+        } else {
+            $this->data['total_template'] = 0;
+        }
+        
         foreach ($game_stage as $index => $stage){
             if(isset($stage['_id'])) {
                 $this->data['worlds'][$index]['world_id'] = $stage['_id'];
@@ -316,6 +333,23 @@ class game extends MY_Controller
                     $this->data['worlds'][$index]['world_item'][$row][$column]['item_harvest'] = $game_item[0]['item_config']['amount_to_harvest'];
                     $this->data['worlds'][$index]['world_item'][$row][$column]['item_deduct'] = $game_item[0]['item_config']['days_to_deduct'];
                     $this->data['worlds'][$index]['world_item'][$row][$column]['item_description'] = $game_item[0]['description'];
+
+                    $game_item_template = $this->Game_model->getGameItemTemplate($client_id, $site_id, $game_data['_id'], $item_data);
+                    if($game_item_template && is_array($game_item_template)) foreach ($game_item_template as $template){
+                        if(isset($template['images'])){
+                            $this->data['worlds'][$index]['world_item'][$row][$column]['item_image'][$template['template_id'].""] = $template['images'];
+                        } else {
+                            $this->data['worlds'][$index]['world_item'][$row][$column]['item_image'][$template['template_id'].""] = 'no_image.jpg';
+                        }
+                        if(isset($template['thumb'])){
+                            $this->data['worlds'][$index]['world_item'][$row][$column]['item_thumb'][$template['template_id'].""] = $template['thumb'];
+                        } else {
+                            $this->data['worlds'][$index]['world_item'][$row][$column]['item_thumb'][$template['template_id'].""] = S3_IMAGE . "cache/no_image-100x100.jpg";
+                        }
+                    } else {
+                        $this->data['worlds'][$index]['world_item'][$row][$column]['item_image'] = array();
+                        $this->data['worlds'][$index]['world_item'][$row][$column]['item_thumb'] = array();
+                    }
                 }
             } else {
                 $this->data['worlds'][$index]['world_item'] = "";

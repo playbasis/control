@@ -137,16 +137,30 @@
                                             </div>
                                             <div class="span12">Item:</div>
                                             <div class="well" id="worlds_<?php echo $index ?>_thumbnails_grids" style="overflow-y:scroll; overflow-x:scroll; height:500px; width:98%;">
-                                            <?php for($i = 0;$i < $world['world_height'];$i++){?>
-                                                    <ul id="thumbnails_grid_<?php echo $index?>_<?php echo $i ?>" class="thumbnails">
-                                                    <?php for($j = 0;$j < $world['world_width'];$j++){?>
-                                                        <li id="thumbnails_grid_<?php echo $index?>_<?php echo $i ?>_<?php echo $j ?>">
-                                                            <div class="thumbnail tooltips" data-placement="top" title="[<?php echo $i ?>][<?php echo $j ?>]" style="width:120px;height:120px;">
-                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_id]" id="worlds_<?php echo $index ?>_item_id_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo isset($world['world_item'][$i][$j]['item_id']) ? $world['world_item'][$i][$j]['item_id'] : ""?>">
-                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_harvest]" id="worlds_<?php echo $index ?>_item_harvest_<?php echo $i?>_<?php echo $j?>" size="100" value=<?php echo isset($world['world_item'][$i][$j]['item_harvest']) ? $world['world_item'][$i][$j]['item_harvest'] : ""?>>
-                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_deduct]" id="worlds_<?php echo $index ?>_item_deduct_<?php echo $i?>_<?php echo $j?>" size="100" value=<?php echo isset($world['world_item'][$i][$j]['item_deduct']) ? $world['world_item'][$i][$j]['item_deduct'] : ""?>>
-                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $i?>][<?php echo $j ?>][item_description]" id="worlds_<?php echo $index ?>_item_description_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo isset($world['world_item'][$i][$j]['item_description']) ? $world['world_item'][$i][$j]['item_description'] : ""?>">
-                                                                <i class="fa fa-plus-circle fa-5x fa-align-center" onclick="showItemModalForm(<?php echo $index ?>,<?php echo $i ?>,<?php echo $j ?>)" class="tooltips" data-placement="top" title="[<?php echo $i ?>][<?php echo $j ?>]" id="add" style="padding: 30px" aria-hidden="true"></i>
+                                            <?php for($row = 0;$row < $world['world_height'];$row++){?>
+                                                    <ul id="thumbnails_grid_<?php echo $index?>_<?php echo $row ?>" class="thumbnails">
+                                                    <?php for($column = 0;$column < $world['world_width'];$column++){?>
+                                                        <li id="thumbnails_grid_<?php echo $index?>_<?php echo $row ?>_<?php echo $column ?>">
+                                                            <div class="thumbnail tooltips" data-placement="top" title="[<?php echo $row ?>][<?php echo $column ?>]" style="width:120px;height:120px;">
+                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_id]" id="worlds_<?php echo $index ?>_item_id_<?php echo $row?>_<?php echo $column?>" size="100" value="<?php echo isset($world['world_item'][$row][$column]['item_id']) ? $world['world_item'][$row][$column]['item_id'] : ""?>">
+                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_harvest]" id="worlds_<?php echo $index ?>_item_harvest_<?php echo $row?>_<?php echo $column?>" size="100" value=<?php echo isset($world['world_item'][$row][$column]['item_harvest']) ? $world['world_item'][$row][$column]['item_harvest'] : ""?>>
+                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_deduct]" id="worlds_<?php echo $index ?>_item_deduct_<?php echo $row?>_<?php echo $column?>" size="100" value=<?php echo isset($world['world_item'][$row][$column]['item_deduct']) ? $world['world_item'][$row][$column]['item_deduct'] : ""?>>
+                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_description]" id="worlds_<?php echo $index ?>_item_description_<?php echo $row?>_<?php echo $column?>" size="100" value="<?php echo isset($world['world_item'][$row][$column]['item_description']) ? $world['world_item'][$row][$column]['item_description'] : ""?>">
+                                                                <i class="fa fa-plus-circle fa-5x fa-align-center" onclick="showItemModalForm(<?php echo $index ?>,<?php echo $row ?>,<?php echo $column ?>)" class="tooltips" data-placement="top" title="[<?php echo $row ?>][<?php echo $column ?>]" id="add" style="padding: 30px" aria-hidden="true"></i>
+                                                            </div>
+                                                            <div id="world_<?php echo $index ?>_item_image_<?php echo $row?>_<?php echo $column?>">
+                                                                <?php if(isset($world['world_item'][$row][$column]['item_deduct'])) {
+                                                                    $i = 0;
+                                                                    if(isset($world['world_item'][$row][$column]['item_image']) && is_array($world['world_item'][$row][$column]['item_image'])) foreach($world['world_item'][$row][$column]['item_image'] as $template_index => $template){
+                                                                        for($j = 0;$j < $world['world_item'][$row][$column]['item_deduct'];$j++){?>
+                                                                            <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_image][<?php echo $template_index ?>][<?php echo $j ?>]" id="worlds_<?php echo $index ?>_item_image_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo $template[$j] ?>">
+                                                                            <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_thumb][<?php echo $template_index ?>][<?php echo $j ?>]" id="worlds_<?php echo $index ?>_item_thumb_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo $world['world_item'][$row][$column]['item_thumb'][$template_index][$j] ?>">
+                                                                            <input type="hidden" id="worlds_<?php echo $index ?>_item_image_temp_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100" value="">
+                                                                            <input type="hidden" id="worlds_<?php echo $index ?>_item_thumb_temp_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>">
+                                                                <?php   }
+                                                                        $i++;
+                                                                    }
+                                                                }?>
                                                             </div>
                                                         </li>
                                                     <?php } ?>
@@ -241,6 +255,35 @@
     </div>
 </div>
         
+<div id="formItemImageModal" class="modal hide fade"  tabindex="-1" role="dialog" aria-labelledby="formItemImageModalLabel" aria-hidden="true" style="width: 700px">
+    <div class="modal-header">
+        <button type="button" id="ItemImage-modal-close2" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="formItemImageModalLabel">Items Image</h3>
+    </div>
+    <div class="modal-body" id="formItemImageModal-body">
+        <div class="container-fluid">
+            <?php echo form_open(null, array('class' => 'form-horizontal ItemImage-form')); ?>
+            <div class="row-fluid">
+                <div class="ItemImage-wrapper span12">
+                    <div class="overflow-visible ItemImage-nav well span4 " style="height: 300px; overflow-y: scroll">
+                        <ul class="nav nav-tabs nav-stacked" id="ItemImage_nav"></ul>
+                    </div>
+                    <div class="span8 well overflow-visible left" id ="ItemImage_body" style="overflow-y:scroll; height: 300px">
+                        <table id="ItemImageTable">
+
+                        </table>
+                    </div>
+                </div><!-- .template-wrapper -->
+            </div>
+            <?php echo form_close(); ?>
+        </div>
+    </div>
+    <div class="modal-footer" id="ItemImage_footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true" id="ItemImage-modal-close">Close</button>
+        <button class="btn btn-primary" id="ItemImage-modal-submit"><i class="fa fa-plus">&nbsp;</i>Save</button>
+    </div>
+</div>
+
 <div id="formItemModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formItemModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -263,6 +306,7 @@
                     <label for="item_harvest" class="control-label"><span class="required">*</span><?php echo $this->lang->line('entry_item_harvest'); ?></label>
                     <div class="controls">
                         <input type="number" name="item_harvest" id="item_harvest" min="1" placeholder="<?php echo $this->lang->line('entry_item_harvest'); ?>">
+                        <a title="Set Images" class="btn btn-primary tooltips" data-placement="top" id="item_image"><i class="fa fa-file-image-o fa-lg"></i></a>
                     </div>
                 </div>
                 <div class="control-group">
@@ -334,7 +378,8 @@
                             </div>
                         </div>
                     </div>
-                </div><!-- .world-wrapper -->
+                </div><!-- .template-wrapper -->
+            </div>
             <?php echo form_close(); ?>
         </div>
     </div>
@@ -689,6 +734,7 @@
                                                         <input type="hidden" name=worlds['+world_id+'][world_item]['+i+']['+j+'][item_description] id="worlds_'+world_id+'_item_description_' + i + '_' + j + '" size="100" value="">\
                                                         <i class="fa fa-plus-circle fa-5x fa-align-center" onclick="showItemModalForm('+world_id+','+i+','+j+')" class="tooltips" data-placement="top" title="['+i+']['+j+']" id="add" style="padding: 30px" aria-hidden="true"></i>\
                                                     </div>\
+                                                    <div id="world_'+ world_id +'_item_image_' + i + '_' + j + '"></div>\
                                                  </li>');
                 }
                 if (myElemi === null) $thumbnails_grids.append('</ul>');
@@ -713,7 +759,117 @@
     $('#page-render').on('click', 'button#item-modal-submit', submitItemModalForm);
     $('#page-render').on('click', 'button#confirm_cancel_button', cancelConfirm);
     $('#page-render').on('click', 'a#confirm_del_button', deleteConfirm);
+    $('#page-render').on('click', 'a#item_image', showItemImage);
+    $('#page-render').on('click', 'button#ItemImage-modal-close', closeItemImage);
+    $('#page-render').on('click', 'button#ItemImage-modal-close2', closeItemImage);
+    $('#page-render').on('click', 'button#ItemImage-modal-submit', submitItemImage);
 
+    var itemImageTemplate;
+
+    function closeItemImage(){
+        for(var i=0; i< itemImageTemplate.total; i++){
+            if(itemImageTemplate.rows[i] != undefined){
+                for(var j=0; j<item_harvest; j++) {
+                    $('#worlds_'+world_id+'_item_image_'+ row +'_'+ column+'_' + i + '_' + j).val($('#worlds_'+world_id+'_item_image_temp_'+ row +'_'+ column+'_' + i + '_' + j).val());
+                    $('#worlds_'+world_id+'_item_thumb_'+ row +'_'+ column+'_' + i + '_' + j).val($('#worlds_'+world_id+'_item_thumb_temp_'+ row +'_'+ column+'_' + i + '_' + j).val());
+                }
+            }
+        }
+        $('#formItemModal').modal('show');
+    }
+
+    function showItemImage(){
+        $.ajax({
+            url : baseUrlPath+ "game/template",
+            dataType: "json",
+            beforeSend: function (xhr) {
+                $('#formItemModal').modal('hide');
+                $waitDialog.modal('show');
+            }
+        }).done(function(data) {
+            $('#ItemImage_nav').empty();
+            $('#ItemImageTable').empty();
+            var world_id   = $('#item_world_id').val(),
+                row    = $('#item_row').val(),
+                column    = $('#item_column').val(),
+                item_harvest = $('#item_harvest').val();
+            var itemHtml ='';
+            var templateHtml ='';
+            var thumbnailHtml = '';
+            itemImageTemplate = data;
+            for(var i=0; i< data.total; i++){
+                if(data.rows[i] != undefined){
+                    templateHtml += '<li id="tab-'+i+'" value="'+data.rows[i]._id+'"><a onclick="setItemImage('+i+')" data-toggle="tab" data-value="'+data.rows[i]._id+'" data-num="'+i+'">'+data.rows[i].template_name+'</a></li>';
+                    for(var j=0; j<item_harvest; j++) {
+                        thumbnailHtml += '<input type="hidden" name="worlds['+world_id+'][world_item]['+row+']['+column+'][item_image]['+data.rows[i]._id+']['+j+']" id="worlds_'+world_id+'_item_image_'+ row +'_'+ column+'_' + i + '_' + j + '" size="100" value="">\
+                                          <input type="hidden" name="worlds['+world_id+'][world_item]['+row+']['+column+'][item_thumb]['+data.rows[i]._id+']['+j+']" id="worlds_'+world_id+'_item_thumb_'+ row +'_'+ column+'_' + i + '_' + j + '" size="100" value="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>">\
+                                          <input type="hidden" id="worlds_'+world_id+'_item_image_temp_'+ row +'_'+ column+'_' + i + '_' + j + '" size="100" value="">\
+                                          <input type="hidden" id="worlds_'+world_id+'_item_thumb_temp_'+ row +'_'+ column+'_' + i + '_' + j + '" size="100" value="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>">';
+                    }
+                }
+            }
+            $('#world_'+ world_id +'_item_image_' + row + '_' + column).append(thumbnailHtml);
+
+            $('#ItemImage_nav').append(templateHtml);
+            for(var i=0;i < item_harvest; i++){
+                itemHtml += '<tr class="well">\
+                                <td class="span2 text-center" ><label>  Step '+i+' : </label></td>\
+                                <td class="span2 text-center">\
+                                    <img src="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>" alt="" id="world_'+world_id+'_'+row+'_'+column+'_'+i+'_thumb" onerror="$(this).attr("src","<?php echo base_url(); ?>image/default-image.png");"/>\
+                                    <input type="hidden" value="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>" id="world_'+world_id+'_'+row+'_'+column+'_'+i+'_image"/>\
+                                </td>\
+                                <td class="span2 text-left">\
+                                    <a onclick="image_upload(\'#world_'+world_id+'_'+row+'_'+column+'_'+i+'_image\', \'world_'+world_id+'_'+row+'_'+column+'_'+i+'_thumb\');" title="Browse Files" class="tooltips" data-placement="top"><i class="fa fa-folder-open-o  fa-lg"></i></a><br>\
+                                    <a onclick="$(\'#world_'+world_id+'_'+row+'_'+column+'_'+i+'_thumb\').attr(\'src\', \'<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>\');$(\'#world_'+world_id+'_'+row+'_'+column+'_'+i+'_image\').attr(\'value\', \'\');" title="Clear Images" class="tooltips" data-placement="top"><i class="fa fa-close fa-lg" style="color:#FF0000;"></i></a>\
+                                </td>\
+                            </tr>';
+            }
+            $('#ItemImageTable').append(itemHtml);
+            for(var i=0; i< data.total; i++){
+                if(data.rows[i] != undefined){
+                    for(var j=0; j<item_harvest; j++) {
+                        $('#worlds_'+world_id+'_item_image_temp_'+ row +'_'+ column+'_' + i + '_' + j).val($('#worlds_'+world_id+'_item_image_'+ row +'_'+ column+'_' + i + '_' + j).val());
+                    }
+                    $('#worlds_'+world_id+'_item_thumb_temp_'+ row +'_'+ column+'_' + i + '_' + j).val($('#worlds_'+world_id+'_item_thumb_'+ row +'_'+ column+'_' + i + '_' + j).val());
+                }
+            }
+            for(var i=0;i < item_harvest; i++) {
+                $('#world_' + world_id + '_' + row + '_' + column + '_' + i + '_image').val($('#worlds_' + world_id + '_item_image_' + row + '_' + column + '_0_' + i).val());
+                $('#world_' + world_id + '_' + row + '_' + column + '_' + i + '_thumb').attr('src', $('#worlds_' + world_id + '_item_thumb_' + row + '_' + column + '_0_' + i).val());
+            }
+            $('#tab-0').addClass("active");
+            $('#formItemImageModal').modal('show');
+            $waitDialog.modal('hide');
+        });
+    }
+
+    function setItemImage(tab){
+        var previous_tab_num = $("#ItemImage_nav .active").children().data('num');
+        var world_id   = $('#item_world_id').val(),
+            row    = $('#item_row').val(),
+            column    = $('#item_column').val(),
+            item_harvest = $('#item_harvest').val();
+        for(var i=0;i < item_harvest; i++) {
+            $('#worlds_' + world_id + '_item_image_' + row + '_' + column + '_' + previous_tab_num + '_' + i).val($('#world_' + world_id + '_' + row + '_' + column + '_' + i + '_image').val());
+            $('#worlds_' + world_id + '_item_thumb_' + row + '_' + column + '_' + previous_tab_num + '_' + i).val($('#world_' + world_id + '_' + row + '_' + column + '_' + i + '_thumb').attr('src'));
+            $('#world_' + world_id + '_' + row + '_' + column + '_' + i + '_image').val($('#worlds_' + world_id + '_item_image_' + row + '_' + column + '_' + tab + '_' + i).val());
+            $('#world_' + world_id + '_' + row + '_' + column + '_' + i + '_thumb').attr('src', $('#worlds_' + world_id + '_item_thumb_' + row + '_' + column + '_' + tab + '_' + i).val());
+        }
+    }
+
+    function submitItemImage(){
+        var tab = $("#ItemImage_nav .active").children().data('num');
+        var world_id   = $('#item_world_id').val(),
+            row    = $('#item_row').val(),
+            column    = $('#item_column').val(),
+            item_harvest = $('#item_harvest').val();
+        for(var i=0;i < item_harvest; i++) {
+            $('#worlds_' + world_id + '_item_image_' + row + '_' + column + '_' + tab + '_' + i).val($('#world_' + world_id + '_' + row + '_' + column + '_' + i + '_image').val());
+            $('#worlds_' + world_id + '_item_thumb_' + row + '_' + column + '_' + tab + '_' + i).val($('#world_' + world_id + '_' + row + '_' + column + '_' + i + '_thumb').attr('src'));
+        }
+        $('#formItemImageModal').modal('hide');
+        $('#formItemModal').modal('show');
+    }
     function deleteConfirm(){
         var event = $('#confirm_event').val();
         var world = $('#confirm_world').val();
@@ -751,7 +907,6 @@
     }
 
     function set_template(index) {
-        var previous_tab_id = $("#template_nav .active").attr('id');
         if((index != 99) && (templateData.length != 0)){
             document.getElementById('template_id').value =  templateData[index]._id? templateData[index]._id : "";
             document.getElementById('template_name').value =  templateData[index].template_name? templateData[index].template_name : "";

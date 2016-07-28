@@ -81,7 +81,7 @@ class Game_model extends MY_Model
         $this->mongo_db->where('game_id', new MongoID($game_id));
         $this->mongo_db->where('deleted', false);
         if(isset($data['item_id'])){
-            $this->mongo_db->where('item_id', $data['item_id']);
+            $this->mongo_db->where('item_id', new MongoID($data['item_id']));
         }
 
         $results = $this->mongo_db->get("playbasis_game_item_to_client");
@@ -318,6 +318,68 @@ class Game_model extends MY_Model
 
         $result = $this->mongo_db->update('playbasis_game_template_to_client');
         log_message('error', $result );
+        return $result;
+    }
+
+    public function getGameItemTemplate($client_id, $site_id, $game_id, $data=null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('game_id', new MongoID($game_id));
+        $this->mongo_db->where('item_id', new MongoID($data['item_id']));
+        $this->mongo_db->where('deleted', false);
+        
+        if(isset($data['template_id'])){
+            $this->mongo_db->where('template_id', new MongoID($data['template_id']));
+        }
+
+        $results = $this->mongo_db->get("playbasis_game_item_to_template");
+
+        return $results;
+    }
+
+    public function updateGameItemTemplate($client_id, $site_id, $game_id, $data)
+    {
+        if (isset($data['id']) && $this->getGameItemTemplate($client_id, $site_id, $game_id, $data)) {
+            $date = new MongoDate();
+            $date_array = array(
+                'date_modified' => $date
+            );
+
+            $update_data = array_merge($data, $date_array);
+
+            foreach ($update_data as $key => $value) {
+                $this->mongo_db->set($key, $value);
+            }
+
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('game_id', new MongoID($game_id));
+            $this->mongo_db->where('template_id', new MongoID($data['template_id']));
+            $this->mongo_db->where('item_id', new MongoID($data['item_id']));
+            $this->mongo_db->where('deleted', false);
+
+            $result = $this->mongo_db->update('playbasis_game_item_to_template');
+
+        } else {
+            $this->set_site_mongodb($this->session->userdata('site_id'));
+
+            $date = new MongoDate();
+            $date_array = array(
+                'client_id'     => $client_id,
+                'site_id'       => $site_id,
+                'game_id'       => $game_id,
+                'date_added'    => $date,
+                'date_modified' => $date,
+                'deleted'       => false
+            );
+            $insert_data = array_merge($data, $date_array);
+
+            $result = $this->mongo_db->insert('playbasis_game_item_to_template', $insert_data);
+        }
+
         return $result;
     }
 
