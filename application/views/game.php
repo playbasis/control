@@ -152,11 +152,17 @@
                                                                 <?php if(isset($world['world_item'][$row][$column]['item_deduct'])) {
                                                                     $i = 0;
                                                                     if(isset($world['world_item'][$row][$column]['item_image']) && is_array($world['world_item'][$row][$column]['item_image'])) foreach($world['world_item'][$row][$column]['item_image'] as $template_index => $template){
-                                                                        for($j = 0;$j < $world['world_item'][$row][$column]['item_deduct'];$j++){?>
-                                                                            <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_image][<?php echo $template_index ?>][<?php echo $j ?>]" id="worlds_<?php echo $index ?>_item_image_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo $template[$j] ?>">
-                                                                            <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_thumb][<?php echo $template_index ?>][<?php echo $j ?>]" id="worlds_<?php echo $index ?>_item_thumb_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo $world['world_item'][$row][$column]['item_thumb'][$template_index][$j] ?>">
-                                                                            <input type="hidden" id="worlds_<?php echo $index ?>_item_image_temp_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100" value="">
-                                                                            <input type="hidden" id="worlds_<?php echo $index ?>_item_thumb_temp_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100" value="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>">
+                                                                        for($j = 0;$j < $world['world_item'][$row][$column]['item_harvest'];$j++){?>
+                                                                            <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_image][<?php echo $template_index ?>][<?php echo $j ?>]"
+                                                                                   id="worlds_<?php echo $index ?>_item_image_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100"
+                                                                                   value="<?php echo isset($template[$j]) ? $template[$j] : "" ?>">
+                                                                            <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_thumb][<?php echo $template_index ?>][<?php echo $j ?>]"
+                                                                                   id="worlds_<?php echo $index ?>_item_thumb_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100"
+                                                                                   value="<?php echo isset($world['world_item'][$row][$column]['item_thumb'][$template_index][$j]) ? $world['world_item'][$row][$column]['item_thumb'][$template_index][$j] : S3_IMAGE . "cache/no_image-100x100.jpg"?>">
+                                                                            <input type="hidden" id="worlds_<?php echo $index ?>_item_image_temp_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100"
+                                                                                   value="<?php echo isset($template[$j]) ? $template[$j] : "" ?>">
+                                                                            <input type="hidden" id="worlds_<?php echo $index ?>_item_thumb_temp_<?php echo $row?>_<?php echo $column ?>_<?php echo $i?>_<?php echo $j?>" size="100"
+                                                                                   value="<?php echo isset($world['world_item'][$row][$column]['item_thumb'][$template_index][$j]) ? $world['world_item'][$row][$column]['item_thumb'][$template_index][$j] : S3_IMAGE . "cache/no_image-100x100.jpg"?>">
                                                                 <?php   }
                                                                         $i++;
                                                                     }
@@ -719,7 +725,7 @@
             $world_heights = $('#worlds_'+ world_id +'_world_height'),
             $world_heights_temp = $('#worlds_'+ world_id +'_world_height_temp'),
             $thumbnails_grids = $('#worlds_'+ world_id +'_thumbnails_grids');
-
+        $waitDialog.modal('show');
         if($world_heights.val() > $world_heights_temp.val() || $world_widths.val() > $world_widths_temp.val()){
             for(var i =0;i<$world_heights.val();i++){
                 var myElemi = document.getElementById('thumbnails_grid_'+ world_id +'_'+ i);
@@ -752,6 +758,7 @@
             if($world_heights.val() < $world_heights_temp.val()) document.getElementById('worlds_'+world_id+'_world_height_temp').value = $world_heights.val();
             if($world_widths.val() < $world_widths_temp.val()) document.getElementById('worlds_'+world_id+'_world_width_temp').value = $world_widths.val();
         }
+        $waitDialog.modal('hide');
     }
 
     $('#page-render').on('click', 'button#template-modal-submit', submitTemplateModalForm);
@@ -801,10 +808,11 @@
                 if(data.rows[i] != undefined){
                     templateHtml += '<li id="tab-'+i+'" value="'+data.rows[i]._id+'"><a onclick="setItemImage('+i+')" data-toggle="tab" data-value="'+data.rows[i]._id+'" data-num="'+i+'">'+data.rows[i].template_name+'</a></li>';
                     for(var j=0; j<item_harvest; j++) {
-                        thumbnailHtml += '<input type="hidden" name="worlds['+world_id+'][world_item]['+row+']['+column+'][item_image]['+data.rows[i]._id+']['+j+']" id="worlds_'+world_id+'_item_image_'+ row +'_'+ column+'_' + i + '_' + j + '" size="100" value="">\
-                                          <input type="hidden" name="worlds['+world_id+'][world_item]['+row+']['+column+'][item_thumb]['+data.rows[i]._id+']['+j+']" id="worlds_'+world_id+'_item_thumb_'+ row +'_'+ column+'_' + i + '_' + j + '" size="100" value="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>">\
-                                          <input type="hidden" id="worlds_'+world_id+'_item_image_temp_'+ row +'_'+ column+'_' + i + '_' + j + '" size="100" value="">\
-                                          <input type="hidden" id="worlds_'+world_id+'_item_thumb_temp_'+ row +'_'+ column+'_' + i + '_' + j + '" size="100" value="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>">';
+                        var myElemj = document.getElementById('worlds_' + world_id + '_item_image_' + row + '_' + column + '_' + i + '_' + j);
+                        if (myElemj === null) thumbnailHtml += '<input type="hidden" name="worlds[' + world_id + '][world_item][' + row + '][' + column + '][item_image][' + data.rows[i]._id + '][' + j + ']" id="worlds_' + world_id + '_item_image_' + row + '_' + column + '_' + i + '_' + j + '" size="100" value="">\
+                                          <input type="hidden" name="worlds[' + world_id + '][world_item][' + row + '][' + column + '][item_thumb][' + data.rows[i]._id + '][' + j + ']" id="worlds_' + world_id + '_item_thumb_' + row + '_' + column + '_' + i + '_' + j + '" size="100" value="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>">\
+                                          <input type="hidden" id="worlds_' + world_id + '_item_image_temp_' + row + '_' + column + '_' + i + '_' + j + '" size="100" value="">\
+                                          <input type="hidden" id="worlds_' + world_id + '_item_thumb_temp_' + row + '_' + column + '_' + i + '_' + j + '" size="100" value="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>">';
                     }
                 }
             }

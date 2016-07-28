@@ -342,7 +342,7 @@ class Game_model extends MY_Model
 
     public function updateGameItemTemplate($client_id, $site_id, $game_id, $data)
     {
-        if (isset($data['id']) && $this->getGameItemTemplate($client_id, $site_id, $game_id, $data)) {
+        if ($this->getGameItemTemplate($client_id, $site_id, $game_id, $data)) {
             $date = new MongoDate();
             $date_array = array(
                 'date_modified' => $date
