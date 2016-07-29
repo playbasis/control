@@ -779,6 +779,16 @@ class Player extends REST2_Controller
                 $playerInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
             }
         }
+
+        // Add _numeric for numeric value
+        if (is_array($playerInfo['custom'])) {
+            foreach ($playerInfo['custom'] as $name => $value) {
+                if (is_numeric($value)) {
+                    $playerInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
+                }
+            }
+        }
+
         $this->player_model->updatePlayer($pb_player_id, $this->validToken['site_id'], $playerInfo);
         $this->response($this->resp->setRespond(), 200);
     }
