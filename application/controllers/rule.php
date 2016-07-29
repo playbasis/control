@@ -624,7 +624,7 @@ class Rule extends MY_Controller
             $b['badge_id'] = isset($b['badge_id']) ? $b['badge_id'] . "" : $b['_id'];
             $b['client_id'] = isset($b['client_id']) ? $b['client_id'] . "" : null;
             $b['site_id'] = isset($b['site_id']) ? $b['site_id'] . "" : null;
-            if(array_key_exists($b['category']."",$categoryName)){
+            if(isset($b['category']) && array_key_exists($b['category']."",$categoryName)){
                 $badgeToCategory[$categoryName[$b['category'].""]][] = $b;
             }else{
                 $badgeToCategory[''][] = $b;
