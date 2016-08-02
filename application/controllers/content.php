@@ -720,7 +720,7 @@ class Content extends MY_Controller
 
                 $this->load->model('Push_model');
                 $this->load->model('Player_model');
-
+                $check_device = false;
                 if (isset($content_id) && (!empty($content_id))) {
                     // confirm login?
                     //if ($this->User_model->getClientId()) {
@@ -779,10 +779,11 @@ class Content extends MY_Controller
                                 );
                                 //     initial push
                                 if (!empty($device_tokens_android)) {
-                                    $this->initiateContentPush($device_tokens_android, $notificationData,
-                                        'android');
+                                    $check_device = true;
+                                    $this->initiateContentPush($device_tokens_android, $notificationData, 'android');
                                 }
                                 if (!empty($device_tokens_iOS)) {
+                                    $check_device = true;
                                     $this->initiateContentPush($device_tokens_iOS, $notificationData, 'ios');
                                 }
 
@@ -790,7 +791,7 @@ class Content extends MY_Controller
                                 $device_tokens_android = array();
                                 $device_tokens_iOS = array();
                             }
-                            if(empty($device_tokens_android) && empty($device_tokens_iOS)){
+                            if(!$check_device){
                                 $this->output->set_status_header('404');
                                 echo json_encode(array(
                                     'status' => 'error',
