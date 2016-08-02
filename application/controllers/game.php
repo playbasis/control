@@ -217,42 +217,46 @@ class Game extends REST2_Controller
             $item_status['item_config'] = null;
         }
 
-        // check if item is harvested
-        $item_harvested_id = $this->badge_model->getBadgeIDByName($this->client_id, $this->site_id, $item_status['item_name']."_harvested");
-        $item_harvested_record = $this->reward_model->getItemToPlayerRecords($this->client_id, $this->site_id, $pb_player_id, $item_harvested_id);
-        if ($item_harvested_record) {
-            $item_status['item_status'] = "harvested";
-            $item_status['item_image'] = null;
-        }else{
-            $item_record = $this->reward_model->getItemToPlayerRecords($this->client_id, $this->site_id, $pb_player_id, $item_id);
-            if ($item_record) {
+        $item_record = $this->reward_model->getItemToPlayerRecords($this->client_id, $this->site_id, $pb_player_id, $item_id);
+        if ($item_record) {
+            if($item_record['value'] == 0){
+                // check if item is dead
+                $action_log = $this->game_model->findLatestActionOfItem($this->client_id, $this->site_id, $pb_player_id, $item_status['item_name']);
+                if($action_log && $action_log['action_name'] == "died" ){
+                    $item_status['item_status'] = "died";
+                }else{
+                    $item_status['item_status'] = $item_record['value'] . "";
+                }
+
+            }else{
                 $item_status['item_status'] = $item_record['value'] . "";
-            } else {
-                $item_status['item_status'] = "0";
             }
 
-            // Get current game template
-            $template = $this->game_model->getTemplateByCurrentDate($this->client_id, $this->site_id, array(
-                'game_id' => $game_id
-            ));
-
-            // Get 'default' template if current template not found
-            if (empty($template)) {
-                $template = $this->game_model->getTemplate($this->client_id, $this->site_id, array(
-                    'game_id' => $game_id,
-                    'template_name' => 'default',
-                ));
-            }
-
-            // Get item template
-            $item_template = $this->game_model->getItemTemplate($this->client_id, $this->site_id, array(
-                'game_id' => $game_id,
-                'item_id' => $item_id,
-                'template_id' => $template['_id'],
-            ));
-            $item_level = (int)$item_status['item_status'];
-            $item_status['item_image'] = isset($item_template['images'][$item_level]) && $item_template['images'][$item_level] ? $item_template['images'][$item_level] : null;
+        } else {
+            $item_status['item_status'] = "0";
         }
+
+        // Get current game template
+        $template = $this->game_model->getTemplateByCurrentDate($this->client_id, $this->site_id, array(
+            'game_id' => $game_id
+        ));
+
+        // Get 'default' template if current template not found
+        if (empty($template)) {
+            $template = $this->game_model->getTemplate($this->client_id, $this->site_id, array(
+                'game_id' => $game_id,
+                'template_name' => 'default',
+            ));
+        }
+
+        // Get item template
+        $item_template = $this->game_model->getItemTemplate($this->client_id, $this->site_id, array(
+            'game_id' => $game_id,
+            'item_id' => $item_id,
+            'template_id' => $template['_id'],
+        ));
+        $item_level = (int)$item_status['item_status'];
+        $item_status['item_image'] = isset($item_template['images'][$item_level]) && $item_template['images'][$item_level] ? $item_template['images'][$item_level] : null;
 
         return $item_status;
     }
