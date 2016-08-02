@@ -2318,7 +2318,7 @@ class Cron extends CI_Controller
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "email"
+                "sms"
             );
         } catch (Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED") {
@@ -2398,7 +2398,7 @@ class Cron extends CI_Controller
                 $input['client_id'],
                 $input['site_id'],
                 "notifications",
-                "email"
+                "push"
             );
         } catch (Exception $e) {
             if ($e->getMessage() == "LIMIT_EXCEED") {
@@ -2578,7 +2578,19 @@ class Cron extends CI_Controller
                                                             )
                                                         );
 
-                                                        // todo: push notification
+                                                        // push notification
+                                                        $input = array(
+                                                            'client_id' => $client['client_id'],
+                                                            'site_id' => $client['site_id'],
+                                                            'pb_player_id' => $player['_id']
+                                                        );
+
+                                                        $deduct_info = array(
+                                                            'item_name' => $item_status['item_name'],
+                                                            'deduct_amount' => 1
+                                                        );
+                                                        $this->processDeductNotification($input,'item deducted', $deduct_info);
+
                                                     }
                                                 }
                                             }
@@ -2592,6 +2604,56 @@ class Cron extends CI_Controller
             }
         }
     }
+
+    protected function processDeductNotification($input, $message, $deduct_info)
+    {
+        /* check permission according to billing cycle */
+        $access = true;
+        try {
+            /* get current associated plan of the client */
+            $client_date = $this->client_model->getClientStartEndDate($input['client_id']);
+            $client_usage = $this->client_model->getClientSiteUsage($input['client_id'], $input['site_id']);
+            $client_plan = $this->client_model->getPlanByIdWithDefaultPrice($client_usage['plan_id']);
+            $free_flag = !isset($client_plan['price']) || $client_plan['price'] <= 0;
+            if ($free_flag) {
+                $client_date = $this->client_model->adjustCurrentUsageDate($client_date['date_start']);
+            }
+            $client_data = array('date' => $client_date, 'usage' => $client_usage, 'plan' => $client_plan);
+            $this->client_model->permissionProcess(
+                $client_data,
+                $input['client_id'],
+                $input['site_id'],
+                "notifications",
+                "push"
+            );
+        } catch (Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED") {
+                $access = false;
+            }
+        }
+        if (!$access) {
+            return false;
+        }
+
+        /* get devices */
+        $devices = $this->player_model->listDevices($input['client_id'], $input['site_id'], $input['pb_player_id'],
+            array('device_token', 'os_type'));
+        if (!$devices) {
+            return false;
+        }
+
+        foreach ($devices as $device) {
+            $this->push_model->initial(array(
+                'device_token' => $device['device_token'],
+                'messages' => $message,
+                'badge_number' => 1,
+                'data' => array('client_id'=>$input['client_id'], 'site_id'=>$input['site_id'],'deduction_info'=>$deduct_info),
+            ), $device['os_type']);
+        }
+        return true;
+    }
+
+
 }
 
 function urlsafe_b64encode($string)
