@@ -2550,7 +2550,7 @@ class Cron extends CI_Controller
                                 if($current_stage_info){
                                     if(isset($current_stage_info['items_status']) && $current_stage_info['items_status']){
                                         foreach($current_stage_info['items_status'] as $item_status){
-                                            if($item_status['item_status'] != 0 && $item_status['item_status'] != "harvested"){
+                                            if($item_status['item_status'] != 0 && $item_status['item_status'] != "harvested" && $item_status['item_status'] != "died"){
                                                 $player_item = $this->game_model->getItemToPlayerById($client['client_id'], $client['site_id'], $player['_id'], $item_status['item_id']);
                                                 if($player_item){
                                                     $now = new Datetime('now');
@@ -2558,7 +2558,27 @@ class Cron extends CI_Controller
                                                     $interval = $now->diff($updated_date);
                                                     // check if item was latest updated more than days_to_deduct then perform deduct the item
                                                     if($interval->invert == 1 && $interval->days >= $item_status['item_config']['days_to_deduct']){
+                                                        // deduct the item
                                                         $this->game_model->deductItemToPlayerById($client['client_id'], $client['site_id'], $player['_id'], $item_status['item_id'],-1);
+
+                                                        // call engine rule to log action "died"
+                                                        $platformData = $this->auth_model->getOnePlatform($client['client_id'], $client['site_id']);
+
+                                                        $data = array(
+                                                            'api_key'    => isset($platformData['api_key'])?$platformData['api_key']:null,
+                                                            'api_secret' => isset($platformData['api_secret'])?$platformData['api_secret']:null
+                                                        );
+                                                        $token = json_decode(json_encode($this->rest->post('Auth', $data)->response),true)['token'];
+                                                        $result = $this->rest->post('Engine/rule',
+                                                            array(
+                                                                'token' => $token,
+                                                                'player_id' => $player['cl_player_id'],
+                                                                'action' => "died",
+                                                                'item_name' => $item_status['item_name']
+                                                            )
+                                                        );
+
+                                                        // todo: push notification
                                                     }
                                                 }
                                             }
