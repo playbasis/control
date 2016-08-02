@@ -2647,7 +2647,6 @@ class Cron extends CI_Controller
                 'device_token' => $device['device_token'],
                 'messages' => $message,
                 'badge_number' => 1,
-                'title' => "Farm game",
                 'data' => array('client_id'=>$input['client_id'], 'site_id'=>$input['site_id'],'deduction_info'=>$deduct_info),
             ), $device['os_type']);
         }
