@@ -1,5 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+require APPPATH . '/libraries/MY_Controller.php';
+require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
 
 class Push_model extends MY_Model
 {
@@ -237,9 +239,8 @@ class Push_model extends MY_Model
 
     public function getAndroidSetup($client_id = null, $site_id = null)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->set_site_mongodb($site_id);
         $this->mongo_db->where('client_id', $client_id);
-        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_push_android");
         return $results ? $results[0] : null;
@@ -345,7 +346,7 @@ class Push_model extends MY_Model
 
                 // Set a custom property
                 //$message->setCustomProperty('acme2', array('bang', 'whiz'));
-                $message->setCustomProperty('DataInfo', $data['data']);
+                $message->setCustomProperty('dataInfo', $data['data']);
 
                 // Set another custom property
                 //$message->setCustomProperty('acme3', array('bing', 'bong'));
@@ -375,7 +376,7 @@ class Push_model extends MY_Model
                 break;
 
             case "android":
-                $setup = $this->getAndroidSetup();
+                $setup = $this->getAndroidSetup($data['data']['client_id'], $data['data']['site_id']);
                 if (!$setup) {
                     break;
                 } // suppress the error for now
@@ -384,11 +385,11 @@ class Push_model extends MY_Model
 
 
                 //define( 'API_ACCESS_KEY', 'AIzaSyCeCZPwysyiPnP4A-PWKFiSgz_QbWYPFtE' );
-                $registrationIds = $data['device_token'];
+                $registrationIds = array($data['device_token']);
                 $msg = array
                 (
                     'message' => $data['messages'],
-                    //'title'       => $data['title'],
+                    'title'   => 'Playbasis API',
                     //'subtitle'    => $data['subtitle'],
                     //'tickerText'  => $data['description'],
                     'badge' => $data['badge_number'],
@@ -396,8 +397,7 @@ class Push_model extends MY_Model
                     'sound' => 1,
                     'largeIcon' => 'large_icon',
                     'smallIcon' => 'small_icon',
-                    'dataInfo',
-                    $data['data']
+                    'dataInfo' => $data['data']
                 );
 
                 $fields = array
