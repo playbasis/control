@@ -331,4 +331,24 @@ class Game_model extends MY_Model
         $this->mongo_db->set('date_modified', $d);
         $this->mongo_db->update('playbasis_game_stage_to_player');
     }
+
+    public function findLatestActionOfItem($client_id, $site_id, $pb_player_id, $item_name)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'parameters.item_name' => $item_name,
+            'pb_player_id' => new MongoId($pb_player_id)
+        ));
+
+        $this->mongo_db->where_in('action_name', array('died','harvest'));
+
+        $this->mongo_db->order_by(array('_id' => -1));
+        //$this->mongo_db->limit(1);
+
+        $result = $this->mongo_db->get('playbasis_validated_action_log');
+
+        return $result ? $result[0] : null;
+    }
 }
