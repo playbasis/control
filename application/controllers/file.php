@@ -104,13 +104,13 @@ class File extends REST2_Controller
             $image['type'] = $image_info['mime'];
 
             //if($image_width < 500 || $image_width >1000){
-            if ($image_width > 2000) {
+            if ($image_width > 4000) {
                 $this->response($this->error->setError('IMAGE_WIDTH_IS_INVALID'), 200);
                 // $json['error'] = $image_height." ".$image_width;
             }
 
             //if($image_height < 500 || $image_height >1000){
-            if ($image_height > 2000) {
+            if ($image_height > 4000) {
                 $this->response($this->error->setError('IMAGE_HEIGHT_IS_INVALID'), 200);
             }
 
