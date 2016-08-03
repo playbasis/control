@@ -276,6 +276,15 @@ class Content extends REST2_Controller
         if(isset($query_data['node_id']) && $query_data['node_id'] && !$result){
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
+        foreach ($result as $index =>$res){
+            if(isset($res['custom'])){
+                foreach($res['custom'] as $custom_index => $custom){
+                    if(is_numeric($custom) && !is_string($custom)){
+                        unset($result[$index]['custom'][$custom_index]);
+                    }
+                }
+            }
+        }
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -488,6 +497,13 @@ class Content extends REST2_Controller
                 $contentInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
             }
         }
+        if (is_array($contentInfo['custom'])) {
+            foreach ($contentInfo['custom'] as $name => $value) {
+                if (is_numeric($value)) {
+                    $contentInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
+                }
+            }
+        }
 
         $insert = $this->content_model->createContent($contentInfo);
         $result_node_id = "";
@@ -562,6 +578,13 @@ class Content extends REST2_Controller
             $values = explode(',', $value);
             foreach ($keys as $i => $key) {
                 $contentInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
+            }
+        }
+        if (is_array($contentInfo['custom'])) {
+            foreach ($contentInfo['custom'] as $name => $value) {
+                if (is_numeric($value)) {
+                    $contentInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
+                }
             }
         }
 
