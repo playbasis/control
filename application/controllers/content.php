@@ -52,7 +52,7 @@ class Content extends REST2_Controller
         $exclude_ids = array_merge($exclude_ids, $exclude_feedback_ids);
         array_unique($exclude_ids);
 
-        if (isset($query_data['limit']) && isset($query_data['sort']) && (strtolower($query_data['sort']) === 'followup') || strtolower($query_data['sort'] === 'random')) {
+        if (isset($query_data['limit']) && isset($query_data['sort']) && ((strtolower($query_data['sort']) === 'followup') || strtolower($query_data['sort'] === 'random'))) {
             $query_data['_limit'] = $query_data['limit'];
             $query_data['limit'] += count($exclude_ids);
         }
