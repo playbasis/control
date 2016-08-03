@@ -4120,7 +4120,7 @@
               "Required": "N",
               "Default": "title",
               "Type": "string",
-              "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified', 'random', 'followup')"
+              "Description": "Specific field to sort ('title', 'date_start', 'date_end', 'date_added', 'date_modified', 'random', 'followup', 'action')"
             },
             {
               "Name": "order",
@@ -4183,7 +4183,18 @@
               "Required": "N",
               "Default": "false",
               "Type": "enumerated",
-              "Description": "true = Display new content with [player_id]",
+              "Description": "true = Display new content with [player_id] not playing",
+              "EnumeratedList": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "Name": "only_new_feedback",
+              "Required": "N",
+              "Default": "false",
+              "Type": "enumerated",
+              "Description": "true = Display new content with [player_id] not giving feedback",
               "EnumeratedList": [
                 "true",
                 "false"
