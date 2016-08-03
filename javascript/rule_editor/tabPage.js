@@ -114,6 +114,9 @@
                     tableRow.find('img').remove();
                     tableRow.prepend( GoodsSet.getGoodsImage(send_data));
                     tableRow.find('.pbd_rule_text').addClass('view_as_collection-goods');
+
+                    tableRow = $targetObj.parent().parent().parent().parent();
+                    tableRow.find('.view_as_read_only').html(GoodsSet.getGoodsName(send_data));
                 }else{
                     $(opts.output_data).val(send_data);
                     //Append Goods Images here
@@ -264,6 +267,26 @@ GoodsSet = {
                     break;
                 }else{
                     output =  '<img src="'+imageUrlPath+'cache/data/no_image-100x100.jpg"/>';
+                }
+            }//end for
+        }//end if
+        return output;
+    },//end function
+
+    getGoodsName:function(id){
+        var output  = '';
+        if(this.list && this.list.length > 0){
+            for(var index in this.list){
+                var b = this.list[index];
+                if(b.goods_id == id){
+                    if (typeof b.group != "undefined"){
+                        output =  b.group;
+                    }else{
+                        output =  b.name;
+                    }
+                    break;
+                }else{
+                    output =  'goods';
                 }
             }//end for
         }//end if
