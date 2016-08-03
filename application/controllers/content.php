@@ -315,6 +315,15 @@ class Content extends REST2_Controller
             $exclude_ids = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
         }
 
+        if ((isset($query_data['only_new_feedback']) && !empty($query_data['only_new_feedback'])) && (strtolower($query_data['only_new_feedback']) === 'true')) {
+            if (!isset($query_data['player_id'])){
+                $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
+            }
+            $exclude_ids = array_merge($exclude_ids, $this->content_model->getContentIDToFeedback($this->validToken['client_id'],
+                $this->validToken['site_id'], $pb_player_id));
+        }
+        array_unique($exclude_ids);
+
         // Get organize associated between player and content
         if (!empty($pb_player_id)){
             $all_content_to_node = array();
