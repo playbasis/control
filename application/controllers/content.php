@@ -20,6 +20,7 @@ class Content extends REST2_Controller
         $this->benchmark->mark('start');
         $query_data = $this->input->get(null, true);
         $exclude_ids = array();
+        $exclude_feedback_ids = array();
         $pb_player_id = null;
 
         if (isset($query_data['player_id']) && !empty($query_data['player_id'])) {
@@ -33,16 +34,27 @@ class Content extends REST2_Controller
             }
         }
 
-        if ((isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true")) {
+        if ((isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === 'true')) {
             if (!isset($query_data['player_id'])){
                 $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
             }
             $exclude_ids = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
                 $this->validToken['site_id'], $pb_player_id);
-            if (isset($query_data['limit']) && isset($query_data['sort']) && $query_data['sort'] == "random") {
-                $query_data['_limit'] = $query_data['limit'];
-                $query_data['limit'] += count($exclude_ids);
+        }
+
+        if ((isset($query_data['only_new_feedback']) && !empty($query_data['only_new_feedback'])) && (strtolower($query_data['only_new_feedback']) === 'true')) {
+            if (!isset($query_data['player_id'])){
+                $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
             }
+            $exclude_feedback_ids = $this->content_model->getContentIDToFeedback($this->validToken['client_id'],
+                $this->validToken['site_id'], $pb_player_id);
+        }
+        $exclude_ids = array_merge($exclude_ids, $exclude_feedback_ids);
+        array_unique($exclude_ids);
+
+        if (isset($query_data['limit']) && isset($query_data['sort']) && (strtolower($query_data['sort']) === 'followup') || strtolower($query_data['sort'] === 'random')) {
+            $query_data['_limit'] = $query_data['limit'];
+            $query_data['limit'] += count($exclude_ids);
         }
 
         // Get organize associated between player and content
@@ -98,7 +110,10 @@ class Content extends REST2_Controller
             unset($query_data['status']);
         }
 
-        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data, (isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true" && isset($query_data['sort']) && $query_data['sort'] == "random") ? array() : $exclude_ids);
+        $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data,
+            (isset($query_data['only_new_content']) && !empty($query_data['only_new_content']))
+            && (strtolower($query_data['only_new_content']) === "true" && isset($query_data['sort'])
+                && ((strtolower($query_data['sort'] === 'random')) || (strtolower($query_data['sort'] === 'followup')))) ? array() : $exclude_ids);
 
         foreach ($contents as &$content){
             $nodes_list = $this->store_org_model->getAssociatedNodeOfContent($this->validToken['client_id'],
@@ -197,34 +212,62 @@ class Content extends REST2_Controller
                 }
             }
         }elseif (isset($query_data['sort']) && $query_data['sort'] == 'followup'){
-            foreach ($contents as $key => $val){
-                $val['number_followup'] = $this->content_model->countContentFollowup($this->client_id, $this->site_id, $val['_id']);
 
-                if (isset($pb_player_id) && !empty($pb_player_id)){
-                    $player_action = $this->content_model->retrieveExistingPlayerContent(array(
-                        'client_id' => $this->client_id,
-                        'site_id' => $this->site_id,
-                        'content_id' => $val['_id'],
-                        'pb_player_id' => $pb_player_id,
-                    ));
-                    $val['player_action'] = isset($player_action[0]) && !empty($player_action[0]) ? array(
-                        'action' => $player_action[0]['action'],
-                        'custom' => $player_action[0]['custom'],
-                    ) : null;
+            if (isset($query_data['_limit'])) {
+                $query_data['limit'] = $query_data['_limit'];
+            }
+            if (count($contents) > 0) {
+                foreach ($contents as $key => $val) {
+                    $number_followup = $this->content_model->countValidContentFollowup($this->client_id, $this->site_id,
+                        $pb_player_id, $val['_id']);
+                    if ($number_followup == false) {
+                        break;
+                    }
+                    $val['number_followup'] = $number_followup;
+
+                    if (isset($pb_player_id) && !empty($pb_player_id)){
+                        $player_action = $this->content_model->retrieveExistingPlayerContent(array(
+                            'client_id' => $this->client_id,
+                            'site_id' => $this->site_id,
+                            'content_id' => $val['_id'],
+                            'pb_player_id' => $pb_player_id,
+                        ));
+                        $val['player_action'] = isset($player_action[0]) && !empty($player_action[0]) ? array(
+                            'action' => $player_action[0]['action'],
+                            'custom' => $player_action[0]['custom'],
+                        ) : null;
+                    }
+                    $result[] = $val;
                 }
+                usort($result, function ($a, $b) use ($query_data) {
+                    if ($a['number_followup'] == $b['number_followup']) {
+                        return 0;
+                    }
+                    if (isset($query_data['order']) && (strtolower($query_data['order']) === 'desc')) {
+                        return $a['number_followup'] < $b['number_followup'] ? 1 : -1;
+                    } else {
+                        return $a['number_followup'] < $b['number_followup'] ? -1 : 1;
+                    }
+                });
+                $result = isset($query_data['limit']) && !empty($query_data['limit']) ? array_slice($result, 0, $query_data['limit']) : $result;
+            }
+        }elseif(isset($query_data['sort']) && $query_data['sort'] == 'action'){
+            foreach ($contents as $key => $val){
+                $val['number_action'] = $this->content_model->countContentAction($this->client_id, $this->site_id, $val['_id']);
                 $result[] = $val;
             }
             usort($result, function ($a, $b) use ($query_data) {
-                if ($a['number_followup'] == $b['number_followup']) {
+                if ($a['number_action'] == $b['number_action']) {
                     return 0;
                 }
                 if (isset($query_data['order']) && (strtolower($query_data['order']) === 'desc')) {
-                    return $a['number_followup'] < $b['number_followup'] ? 1 : -1;
+                    return $a['number_action'] < $b['number_action'] ? 1 : -1;
                 } else {
-                    return $a['number_followup'] < $b['number_followup'] ? -1 : 1;
+                    return $a['number_action'] < $b['number_action'] ? -1 : 1;
                 }
             });
-        }else{
+            $result = isset($query_data['limit']) && !empty($query_data['limit']) ? array_slice($result, 0, $query_data['limit']) : $result;
+        } else{
             $result = $contents;
         }
         if(isset($query_data['pin']) && $query_data['pin'] && !$result){
