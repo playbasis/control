@@ -220,9 +220,11 @@ class Content extends REST2_Controller
                 foreach ($contents as $key => $val) {
                     $number_followup = $this->content_model->countValidContentFollowup($this->client_id, $this->site_id,
                         $pb_player_id, $val['_id']);
-                    if ($number_followup != false) {
-                        $val['number_followup'] = $number_followup;
+                    if ($number_followup == false) {
+                        break;
                     }
+                    $val['number_followup'] = $number_followup;
+
                     if (isset($pb_player_id) && !empty($pb_player_id)){
                         $player_action = $this->content_model->retrieveExistingPlayerContent(array(
                             'client_id' => $this->client_id,
@@ -251,17 +253,17 @@ class Content extends REST2_Controller
             }
         }elseif(isset($query_data['sort']) && $query_data['sort'] == 'action'){
             foreach ($contents as $key => $val){
-                $val['number_of_action'] = $this->content_model->countContentAction($this->client_id, $this->site_id, $val['_id']);
+                $val['number_action'] = $this->content_model->countContentAction($this->client_id, $this->site_id, $val['_id']);
                 $result[] = $val;
             }
             usort($result, function ($a, $b) use ($query_data) {
-                if ($a['number_of_action'] == $b['number_of_action']) {
+                if ($a['number_action'] == $b['number_action']) {
                     return 0;
                 }
                 if (isset($query_data['order']) && (strtolower($query_data['order']) === 'desc')) {
-                    return $a['number_of_action'] < $b['number_of_action'] ? 1 : -1;
+                    return $a['number_action'] < $b['number_action'] ? 1 : -1;
                 } else {
-                    return $a['number_of_action'] < $b['number_of_action'] ? -1 : 1;
+                    return $a['number_action'] < $b['number_action'] ? -1 : 1;
                 }
             });
             $result = isset($query_data['limit']) && !empty($query_data['limit']) ? array_slice($result, 0, $query_data['limit']) : $result;

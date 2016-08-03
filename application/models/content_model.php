@@ -56,7 +56,7 @@ class Content_model extends MY_Model
 
         // Paging
         if ((isset($optionalParams['offset']) || isset($optionalParams['limit'])) && !(isset($optionalParams['sort'])
-                && ($optionalParams['sort'] == 'random') || ($optionalParams['sort'] == 'followup') || ($optionalParams['sort'] == 'action'))) {
+                && (($optionalParams['sort'] == 'random') || ($optionalParams['sort'] == 'followup') || ($optionalParams['sort'] == 'action')))) {
             if (isset($optionalParams['offset']) && !empty($optionalParams['offset'])) {
                 if ($optionalParams['offset'] < 0) {
                     $optionalParams['offset'] = 0;
