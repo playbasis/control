@@ -56,7 +56,7 @@ class Content_model extends MY_Model
 
         // Paging
         if ((isset($optionalParams['offset']) || isset($optionalParams['limit'])) && !(isset($optionalParams['sort'])
-                && (($optionalParams['sort'] == "random") || ($optionalParams['sort'] == "followup")))) {
+                && ($optionalParams['sort'] == 'random') || ($optionalParams['sort'] == 'followup') || ($optionalParams['sort'] == 'action'))) {
             if (isset($optionalParams['offset']) && !empty($optionalParams['offset'])) {
                 if ($optionalParams['offset'] < 0) {
                     $optionalParams['offset'] = 0;
@@ -453,16 +453,49 @@ class Content_model extends MY_Model
             return false;
         };
 
-        $player_content = $this->mongo_db->get('playbasis_content_to_player');
-
-        $return = array();
-        foreach ($player_content as $key => $val){
-            array_push($return, $val['content_id']);
-        }
-        return $return;
+        return $this->mongo_db->distinct('content_id', 'playbasis_content_to_player');;
     }
 
-    public function countContentFollowup($client_id, $site_id, $content_id){
+    public function getContentIDToFeedback($client_id, $site_id, $pb_player_id)
+    {
+        try {
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('pb_player_id', new MongoID($pb_player_id));
+        } catch (Exception $e) {
+            return false;
+        };
+
+        return $this->mongo_db->distinct('content_id', 'playbasis_content_feedback');
+    }
+
+    public function countValidContentFollowup($client_id, $site_id,$pb_player_id, $content_id){
+        try {
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('content_id', new MongoID($content_id));
+            if (isset($pb_player_id) && !empty($pb_player_id)){
+                $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
+            }
+        } catch (Exception $e) {
+            return false;
+        };
+
+        // Not return count if player is already play this content
+        if (!empty($this->mongo_db->get('playbasis_content_to_player'))) {
+            try {
+                $this->mongo_db->where('client_id', new MongoID($client_id));
+                $this->mongo_db->where('site_id', new MongoID($site_id));
+                $this->mongo_db->where('content_id', new MongoID($content_id));
+            } catch (Exception $e) {
+                return false;
+            };
+            return count($this->mongo_db->distinct('pb_player_id', 'playbasis_content_feedback'));
+        }
+        return false;
+    }
+
+    public function countContentAction($client_id, $site_id, $content_id){
         try {
             $this->mongo_db->where('client_id', new MongoID($client_id));
             $this->mongo_db->where('site_id', new MongoID($site_id));
@@ -470,6 +503,6 @@ class Content_model extends MY_Model
         } catch (Exception $e) {
             return false;
         };
-        return count($this->mongo_db->distinct('pb_player_id', 'playbasis_content_feedback'));
+        return count($this->mongo_db->distinct('pb_player_id', 'playbasis_content_to_player'));
     }
 }
