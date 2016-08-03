@@ -750,6 +750,13 @@ class Player extends REST2_Controller
         $player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array(
             'custom',
         ));
+        if(isset($player['player']['custom'])){
+            foreach($player['player']['custom'] as $custom_index => $custom){
+                if(is_numeric($custom) && !is_string($custom)){
+                    unset($player['player']['custom'][$custom_index]);
+                }
+            }
+        }
         $this->response($this->resp->setRespond($player), 200);
     }
 
