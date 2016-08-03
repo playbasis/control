@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require APPPATH . '/libraries/MY_Controller.php';
 require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
 
 class Push_model extends MY_Model
