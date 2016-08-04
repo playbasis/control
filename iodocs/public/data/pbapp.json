@@ -4183,14 +4183,14 @@
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "true = display new content with [player_id] not participated yet, false = content participated"
+              "Description": "true = Display content which the player does not provide any action (like/dislike) yet, false = Display content which the player has already provided an action (like/dislike)"
             },
             {
               "Name": "only_new_feedback",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "true = Display new content with [player_id] not giving feedback false = feedback given"
+              "Description": "true = Display content which the player does not give feedback yet, false = Display content which the player has given the feedback"
             }
           ]
         },
@@ -4255,14 +4255,14 @@
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "true = display new content with [player_id] not participated yet, false = content participated"
+              "Description": "true = Display content which the player does not provide any action (like/dislike) yet, false = Display content which the player has already provided an action (like/dislike)"
             },
             {
               "Name": "only_new_feedback",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "true = Display new content with [player_id] not giving feedback false = feedback given"
+              "Description": "true = Display content which the player does not give feedback yet, false = Display content which the player has given the feedback"
             }
           ]
         },
