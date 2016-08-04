@@ -19,8 +19,8 @@ class Content extends REST2_Controller
     {
         $this->benchmark->mark('start');
         $query_data = $this->input->get(null, true);
-        $exclude_ids = array();
-        $exclude_feedback_ids = array();
+        $content_ids_to_player = array();
+        $content_ids_to_feedback = array();
         $pb_player_id = null;
 
         if (isset($query_data['player_id']) && !empty($query_data['player_id'])) {
@@ -34,27 +34,27 @@ class Content extends REST2_Controller
             }
         }
 
-        if ((isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === 'true')) {
+        if (isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) {
             if (!isset($query_data['player_id'])){
                 $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
             }
-            $exclude_ids = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
+            $content_ids_to_player = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
                 $this->validToken['site_id'], $pb_player_id);
         }
 
-        if ((isset($query_data['only_new_feedback']) && !empty($query_data['only_new_feedback'])) && (strtolower($query_data['only_new_feedback']) === 'true')) {
+        if (isset($query_data['only_new_feedback']) && !empty($query_data['only_new_feedback'])) {
             if (!isset($query_data['player_id'])){
                 $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
             }
-            $exclude_feedback_ids = $this->content_model->getContentIDToFeedback($this->validToken['client_id'],
+            $content_ids_to_feedback = $this->content_model->getContentIDToFeedback($this->validToken['client_id'],
                 $this->validToken['site_id'], $pb_player_id);
         }
-        $exclude_ids = array_merge($exclude_ids, $exclude_feedback_ids);
-        array_unique($exclude_ids);
+        //$content_ids_to_player = array_merge($content_ids_to_player, $content_ids_to_feedback);
+        //$content_ids_to_player = array_unique($content_ids_to_player);
 
         if (isset($query_data['limit']) && isset($query_data['sort']) && ((strtolower($query_data['sort']) === 'followup') || strtolower($query_data['sort'] === 'random'))) {
             $query_data['_limit'] = $query_data['limit'];
-            $query_data['limit'] += count($exclude_ids);
+            $query_data['limit'] += count($content_ids_to_player);
         }
 
         // Get organize associated between player and content
@@ -111,9 +111,9 @@ class Content extends REST2_Controller
         }
 
         $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data,
-            (isset($query_data['only_new_content']) && !empty($query_data['only_new_content']))
-            && (strtolower($query_data['only_new_content']) === "true" && isset($query_data['sort'])
-                && ((strtolower($query_data['sort'] === 'random')) || (strtolower($query_data['sort'] === 'followup')))) ? array() : $exclude_ids);
+            ((isset($query_data['only_new_content']) && !empty($query_data['only_new_content']))
+            && strtolower($query_data['only_new_content']) === "true") && (isset($query_data['sort'])
+                && strtolower($query_data['sort'] === 'random')) ? array() : $content_ids_to_player, $content_ids_to_feedback);
 
         foreach ($contents as &$content){
             $nodes_list = $this->store_org_model->getAssociatedNodeOfContent($this->validToken['client_id'],
@@ -189,7 +189,7 @@ class Content extends REST2_Controller
             if (count($contents) > 0) {
                 $m = count($contents);
                 $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data,
-                    $exclude_ids);
+                    $content_ids_to_player);
                 if (isset($query_data['limit']) && $query_data['limit'] < $n) {
                     $n = $query_data['limit'];
                 }
@@ -200,7 +200,7 @@ class Content extends REST2_Controller
                 shuffle($numbers);
                 $c = 0;
                 foreach ($numbers as $i) {
-                    if (!is_array($exclude_ids) || !in_array($contents[$i]['_id'], $exclude_ids)) {
+                    if (!is_array($content_ids_to_player) || !in_array($contents[$i]['_id'], $content_ids_to_player)) {
                         if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
                             $result[] = $contents[$i];
                             if (count($result) >= $n) {
@@ -295,7 +295,8 @@ class Content extends REST2_Controller
     {
         $this->benchmark->mark('start');
         $query_data = $this->input->get();
-        $exclude_ids = array();
+        $content_ids_to_player = array();
+        $content_ids_to_feedback = array();
 
         if (isset($query_data['player_id']) && !empty($query_data['player_id'])) {
             $pb_player_id = $this->player_model->getPlaybasisId(array(
@@ -308,21 +309,21 @@ class Content extends REST2_Controller
             }
         }
 
-        if ((isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) && (strtolower($query_data['only_new_content']) === "true")) {
+        if (isset($query_data['only_new_content']) && !empty($query_data['only_new_content'])) {
             if (!isset($query_data['player_id'])){
                 $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
             }
-            $exclude_ids = $this->content_model->getContentIDToPlayer($this->validToken['client_id'], $this->validToken['site_id'], $pb_player_id);
+            $content_ids_to_player = $this->content_model->getContentIDToPlayer($this->validToken['client_id'],
+                $this->validToken['site_id'], $pb_player_id);
         }
 
-        if ((isset($query_data['only_new_feedback']) && !empty($query_data['only_new_feedback'])) && (strtolower($query_data['only_new_feedback']) === 'true')) {
+        if (isset($query_data['only_new_feedback']) && !empty($query_data['only_new_feedback'])) {
             if (!isset($query_data['player_id'])){
                 $this->response($this->error->setError('PARAMETER_MISSING', 'player_id'), 200);
             }
-            $exclude_ids = array_merge($exclude_ids, $this->content_model->getContentIDToFeedback($this->validToken['client_id'],
-                $this->validToken['site_id'], $pb_player_id));
+            $content_ids_to_feedback = $this->content_model->getContentIDToFeedback($this->validToken['client_id'],
+                $this->validToken['site_id'], $pb_player_id);
         }
-        array_unique($exclude_ids);
 
         // Get organize associated between player and content
         if (!empty($pb_player_id)){
@@ -378,7 +379,8 @@ class Content extends REST2_Controller
             unset($query_data['status']);
         }
 
-        $count_value = $this->content_model->retrieveContentCount($this->validToken['client_id'], $this->validToken['site_id'], $query_data , $exclude_ids);
+        $count_value = $this->content_model->retrieveContentCount($this->validToken['client_id'], $this->validToken['site_id'],
+            $query_data , $content_ids_to_player, $content_ids_to_feedback);
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');

@@ -4181,24 +4181,16 @@
             {
               "Name": "only_new_content",
               "Required": "N",
-              "Default": "false",
-              "Type": "enumerated",
-              "Description": "true = Display new content with [player_id] not playing",
-              "EnumeratedList": [
-                "true",
-                "false"
-              ]
+              "Default": "",
+              "Type": "string",
+              "Description": "true = Display content which the player does not provide any action (like/dislike) yet, false = Display content which the player has already provided an action (like/dislike)"
             },
             {
               "Name": "only_new_feedback",
               "Required": "N",
-              "Default": "false",
-              "Type": "enumerated",
-              "Description": "true = Display new content with [player_id] not giving feedback",
-              "EnumeratedList": [
-                "true",
-                "false"
-              ]
+              "Default": "",
+              "Type": "string",
+              "Description": "true = Display content which the player does not give feedback yet, false = Display content which the player has given the feedback"
             }
           ]
         },
@@ -4261,24 +4253,16 @@
             {
               "Name": "only_new_content",
               "Required": "N",
-              "Default": "false",
-              "Type": "enumerated",
-              "Description": "true = display new content with [player_id]",
-              "EnumeratedList": [
-                "true",
-                "false"
-              ]
+              "Default": "",
+              "Type": "string",
+              "Description": "true = Display content which the player does not provide any action (like/dislike) yet, false = Display content which the player has already provided an action (like/dislike)"
             },
             {
               "Name": "only_new_feedback",
               "Required": "N",
-              "Default": "false",
-              "Type": "enumerated",
-              "Description": "true = Display new content with [player_id] not giving feedback",
-              "EnumeratedList": [
-                "true",
-                "false"
-              ]
+              "Default": "",
+              "Type": "string",
+              "Description": "true = Display content which the player does not give feedback yet, false = Display content which the player has given the feedback"
             }
           ]
         },
