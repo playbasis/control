@@ -9,7 +9,7 @@ class Content_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
-    public function retrieveContent($client_id, $site_id, $optionalParams = array(), $content_ids_to_player=null, $content_ids_to_feedback = null)
+    public function retrieveContent($client_id, $site_id, $optionalParams = array(), $content_ids_to_player=array(), $content_ids_to_feedback = array())
     {
         $this->set_site_mongodb($site_id);
         $exclude = array();
@@ -135,7 +135,7 @@ class Content_model extends MY_Model
         return !empty($result) ? $result : array();
     }
 
-    public function retrieveContentCount($client_id, $site_id, $optionalParams = array(), $content_ids_to_player=null, $content_ids_to_feedback = null)
+    public function retrieveContentCount($client_id, $site_id, $optionalParams = array(), $content_ids_to_player = array(), $content_ids_to_feedback = array())
     {
         $this->set_site_mongodb($site_id);
 
