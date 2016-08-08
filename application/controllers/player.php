@@ -779,9 +779,8 @@ class Player extends REST2_Controller
         $key = $this->input->post('key');
         if ($key) {
             $playerInfo['custom'] = array();
-            $keys = explode(',', $key);
-            $value = $this->input->post('value');
-            $values = explode(',', $value);
+            $keys = str_getcsv($this->input->post('key'));
+            $values = str_getcsv($this->input->post('value'));
             foreach ($keys as $i => $key) {
                 $playerInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
             }
