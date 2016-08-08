@@ -240,7 +240,7 @@ $config['encryption_key'] = 'playbasiscontrol';
 |
 | 'sess_cookie_name'		= the name you want for the cookie
 | 'sess_expiration'			= the number of SECONDS you want the session to last.
-|   by default sessions last 7200 seconds (two hours).  Set to zero for no expiration.
+|   by default sessions last 86400 seconds (1 day).  Set to zero for no expiration.
 | 'sess_expire_on_close'	= Whether to cause the session to expire automatically
 |   when the browser window is closed
 | 'sess_encrypt_cookie'		= Whether to encrypt the cookie
@@ -252,7 +252,7 @@ $config['encryption_key'] = 'playbasiscontrol';
 |
 */
 $config['sess_cookie_name']		= 'ci_session';
-$config['sess_expiration']		= 7200;
+$config['sess_expiration']		= 86400;
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']	= FALSE;
 $config['sess_use_database']	= FALSE;
