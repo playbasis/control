@@ -543,13 +543,13 @@ class FileManager extends MY_Controller
                 $image_height = $image_info[1];
 
                 //if($image_width < 500 || $image_width >1000){
-                if ($image_width > 2000) {
+                if ($image_width > MEDIA_MANAGER_MAX_IMAGE_WIDTH) {
                     $json['error'] = $this->lang->line('error_width');
                     // $json['error'] = $image_height." ".$image_width;
                 }
 
                 //if($image_height < 500 || $image_height >1000){
-                if ($image_height > 2000) {
+                if ($image_height > MEDIA_MANAGER_MAX_IMAGE_HEIGHT) {
                     $json['error'] = $this->lang->line('error_height');
                     // $json['error'] = $image_height." ".$image_width;
                 }
