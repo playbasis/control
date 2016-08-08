@@ -442,6 +442,7 @@ class User_model extends MY_Model
                 // $this->site_id
                 if ($this->client_id) {
                     $this->site_id = isset($row['last_app']) && !empty($row['last_app']) ? $row['last_app'] : $this->fetchSiteId($this->client_id);
+                    $this->set_last_app();
                 }
 
                 // $this->permission
@@ -663,7 +664,6 @@ class User_model extends MY_Model
     }
     public function logout()
     {
-        $this->set_last_app();
         $this->session->unset_userdata('user_id');
         $this->session->unset_userdata('username');
         $this->session->unset_userdata('client_id');
