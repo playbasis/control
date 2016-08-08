@@ -254,6 +254,13 @@
         // Complete, runs on error and success
         .complete(function(result, text) {
             var response = JSON.parse(result.responseText);
+            var method = "";
+
+            params.forEach(function(param){
+                if(param.name == "methodUri"){
+                    method = param.value;
+                }
+            });
 
             if (response.call) {
                 $('pre.call', resultContainer)
@@ -268,6 +275,19 @@
             if (response.headers) {
                 $('pre.headers', resultContainer)
                     .text(formatJSON(response.headers));
+            }
+
+            if(method == "/Auth"){
+                var result_response = JSON.parse(response.response)
+                if(result_response.success == true){
+                    var inputs, index;
+
+                    inputs = document.getElementsByName('params[token]');
+                    for (index = 0; index < inputs.length; ++index) {
+                        inputs[index].value = result_response.response.token;
+                    }
+                }
+
             }
 
             // Syntax highlighting
