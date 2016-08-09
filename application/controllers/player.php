@@ -789,6 +789,7 @@ class Player extends REST2_Controller
         // Add _numeric for numeric value
         if (is_array($playerInfo['custom'])) {
             foreach ($playerInfo['custom'] as $name => $value) {
+                $value = str_replace(',', '', $value);
                 if (is_numeric($value)) {
                     $playerInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
                 }

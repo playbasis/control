@@ -509,6 +509,7 @@ class Content extends REST2_Controller
         }
         if (is_array($contentInfo['custom'])) {
             foreach ($contentInfo['custom'] as $name => $value) {
+                $value = str_replace(',', '', $value);
                 if (is_numeric($value)) {
                     $contentInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
                 }
@@ -591,6 +592,7 @@ class Content extends REST2_Controller
         }
         if (is_array($contentInfo['custom'])) {
             foreach ($contentInfo['custom'] as $name => $value) {
+                $value = str_replace(',', '', $value);
                 if (is_numeric($value)) {
                     $contentInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
                 }
@@ -651,6 +653,7 @@ class Content extends REST2_Controller
 
         if (is_array($actionInfo['custom'])) {
             foreach ($actionInfo['custom'] as $name => $value) {
+                $value = str_replace(',', '', $value);
                 if (is_numeric($value)) {
                     $actionInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
                 }
@@ -771,6 +774,7 @@ class Content extends REST2_Controller
 
         if (is_array($data['custom'])) {
             foreach ($data['custom'] as $name => $value) {
+                $value = str_replace(',', '', $value);
                 if (is_numeric($value)) {
                     $data['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
                 }
