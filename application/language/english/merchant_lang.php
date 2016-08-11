@@ -41,6 +41,7 @@ $lang['entry_allow_branches_select'] = 'Allow branches';
 $lang['text_success'] = 'You have successfully created!';
 $lang['text_success_delete'] = 'You have successfully deleted!';
 $lang['text_success_update'] = 'You have successfully updated!';
+$lang['text_no_results']                = 'No merchant';
 
 $lang['text_goods_group_info_header'] = 'Info!';
 $lang['text_goods_group_info_text'] = 'Please select goods group and select which branches that be able to redeem';
