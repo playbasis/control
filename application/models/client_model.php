@@ -571,7 +571,9 @@ class Client_model extends MY_Model
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
             'group',
-            'quantity'
+            'quantity',
+            'date_expired_coupon',
+            'days_expire'
         ));
         $this->mongo_db->where(array(
             //'client_id' => $is_sponsor ? null : $client_id,
@@ -631,7 +633,7 @@ class Client_model extends MY_Model
             $this->mongo_db->inc('value', intval($quantity));
             $this->mongo_db->update('playbasis_goods_to_player', array("w" => 0, "j" => false));
         } else {
-            $this->mongo_db->insert('playbasis_goods_to_player', array(
+            $data = array(
                 'pb_player_id' => new MongoId($pbPlayerId),
                 'cl_player_id' => $clPlayerId,
                 'client_id' => new MongoId($client_id),
@@ -642,7 +644,13 @@ class Client_model extends MY_Model
                 'value' => intval($quantity),
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate
-            ), array("w" => 0, "j" => false));
+            );
+            if(isset($goodsInfo['date_expired_coupon']) && !empty($goodsInfo['date_expired_coupon'])){
+                $data['date_expired'] = ($goodsInfo['date_expired_coupon']);
+            } elseif (isset($goodsInfo['days_expire']) && !empty($goodsInfo['days_expire'])) {
+                $data['date_expired'] = new MongoDate(strtotime("+".$goodsInfo['days_expire']. ' day'));
+            }
+            $this->mongo_db->insert('playbasis_goods_to_player', $data, array("w" => 0, "j" => false));
         }
     }
 

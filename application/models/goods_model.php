@@ -166,6 +166,8 @@ class Goods_model extends MY_Model
             'redeem',
             'date_start',
             'date_expire',
+            'days_expire',
+            'date_expired_coupon',
             'sponsor',
             'sort_order',
             'group',

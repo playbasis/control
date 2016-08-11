@@ -2319,7 +2319,13 @@ class Player_model extends MY_Model
                 $data['reward_id'] = $gift_id;
                 $receive_rewardInfo = $this->mongo_db->insert('playbasis_reward_to_player',$data);
             } elseif ($gift_type == "GOODS") {
+                $goodsInfo = $this->Goods_model->getGoods(array('client_id' => $client_id,'site_id' => $site_id, 'goods_id' => $gift_id));
                 $data['goods_id'] = $gift_id;
+                if(isset($goodsInfo['date_expired_coupon']) && !empty($goodsInfo['date_expired_coupon'])){
+                    $data['date_expired'] = ($goodsInfo['date_expired_coupon']);
+                } elseif (isset($goodsInfo['days_expire']) && !empty($goodsInfo['days_expire'])) {
+                    $data['date_expired'] = new MongoDate(strtotime("+".$goodsInfo['days_expire']. ' day'));
+                }
                 $receive_rewardInfo = $this->mongo_db->insert('playbasis_goods_to_player', $data);
             }
         }
