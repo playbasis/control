@@ -1007,6 +1007,14 @@ class Goods extends MY_Controller
             $this->data['date_expire'] = "";
         }
 
+        if ($this->input->post('days_expire')) {
+            $this->data['days_expire'] = $this->input->post('days_expire');
+        } elseif (!empty($goods_info)) {
+            $this->data['days_expire'] = $goods_info['days_expire'];
+        } else {
+            $this->data['days_expire'] = "";
+        }
+
         if (isset($goods_id)) {
             $this->data['goods_id'] = $goods_id;
         } else {
@@ -1285,6 +1293,7 @@ class Goods extends MY_Controller
             'tags' => isset($tags) ? $tags : null,
             'date_start' => null,
             'date_expire' => null,
+            'days_expire' => isset($data['days_expire']) && !empty($data['days_expire']) ? $data['days_expire'] : null,
             'date_added' => $d,
             'date_modified' => $d,
         );
@@ -1314,7 +1323,11 @@ class Goods extends MY_Controller
             $obj = explode(',', $line);
             $name = trim($obj[0]);
             $code = trim(isset($obj[1]) ? $obj[1] : $name);
+            $date_expired_coupon = trim(isset($obj[2]) && !empty($obj[2]) ? $obj[2] : null);
             $each = array_merge($template, array('name' => $name));
+            if(!empty($date_expired_coupon)){
+                $each = array_merge($each, array('date_expired_coupon' => new MongoDate(strtotime($date_expired_coupon))));
+            }
             $goods_id = $this->Goods_model->addGoods($each);
             $each = array_merge($each, array('code' => $code));
             foreach ($list_client_id as $client_id) {
