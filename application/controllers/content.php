@@ -218,12 +218,7 @@ class Content extends REST2_Controller
             }
             if (count($contents) > 0) {
                 foreach ($contents as $key => $val) {
-                    $number_followup = $this->content_model->countValidContentFollowup($this->client_id, $this->site_id,
-                        $pb_player_id, $val['_id']);
-                    if ($number_followup == false) {
-                        break;
-                    }
-                    $val['number_followup'] = $number_followup;
+                    $val['number_followup'] = $this->content_model->countValidContentFollowup($this->client_id, $this->site_id, $val['_id']);;
 
                     if (isset($pb_player_id) && !empty($pb_player_id)){
                         $player_action = $this->content_model->retrieveExistingPlayerContent(array(

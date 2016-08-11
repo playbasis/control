@@ -12,8 +12,6 @@ class Content_model extends MY_Model
     public function retrieveContent($client_id, $site_id, $optionalParams = array(), $content_ids_to_player=null, $content_ids_to_feedback = null)
     {
         $this->set_site_mongodb($site_id);
-        $exclude = array();
-        $include = array();
 
         // Searching
         if (isset($optionalParams['node_id']) && !empty($optionalParams['node_id'])) {
@@ -36,27 +34,19 @@ class Content_model extends MY_Model
         }
 
         if (isset($optionalParams['content_id_organize_assoc'])){
-            $exclude = array_merge($exclude, $optionalParams['content_id_organize_assoc']);
+            $this->mongo_db->where_not_in('_id', $optionalParams['content_id_organize_assoc']);
         }
 
         if (isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'true'))){
-            $exclude = array_merge($exclude, $content_ids_to_player);
+            $this->mongo_db->where_not_in('_id', $content_ids_to_player);
         }elseif(isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'false'))){
-            $include = array_merge($include, $content_ids_to_player);
+            $this->mongo_db->where_in('_id', $content_ids_to_player);
         }
 
         if (isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'true'))){
-            $exclude = array_merge($exclude, $content_ids_to_feedback);
+            $this->mongo_db->where_not_in('_id', $content_ids_to_feedback);
         }elseif(isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'false'))){
-            $include = array_merge($include, $content_ids_to_feedback);
-        }
-
-        if (!empty($exclude)){
-            $this->mongo_db->where_not_in('_id', $exclude);
-        }
-
-        if (!empty($include)){
-            $this->mongo_db->where_in('_id', $include);
+            $this->mongo_db->where_in('_id', $content_ids_to_feedback);
         }
 
         // Sorting
@@ -139,9 +129,6 @@ class Content_model extends MY_Model
     {
         $this->set_site_mongodb($site_id);
 
-        $exclude = array();
-        $include = array();
-
         // Searching
         if (isset($optionalParams['node_id']) && !empty($optionalParams['node_id'])) {
             $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalParams['node_id'])) . "/i");
@@ -167,23 +154,15 @@ class Content_model extends MY_Model
         }
 
         if (isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'true'))){
-            $exclude = array_merge($exclude, $content_ids_to_player);
+            $this->mongo_db->where_not_in('_id', $content_ids_to_player);
         }elseif(isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'false'))){
-            $include = array_merge($include, $content_ids_to_player);
+            $this->mongo_db->where_in('_id', $content_ids_to_player);
         }
 
         if (isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'true'))){
-            $exclude = array_merge($exclude, $content_ids_to_feedback);
+            $this->mongo_db->where_not_in('_id', $content_ids_to_feedback);
         }elseif(isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'false'))){
-            $include = array_merge($include, $content_ids_to_feedback);
-        }
-
-        if (!empty($exclude)){
-            $this->mongo_db->where_not_in('_id', $exclude);
-        }
-
-        if (!empty($include)){
-            $this->mongo_db->where_in('_id', $include);
+            $this->mongo_db->where_in('_id', $content_ids_to_feedback);
         }
 
         $bool = filter_var(isset($optionalParams['date_check']) ? $optionalParams['date_check'] : false, FILTER_VALIDATE_BOOLEAN);
@@ -503,7 +482,7 @@ class Content_model extends MY_Model
         return $this->mongo_db->distinct('content_id', 'playbasis_content_feedback');
     }
 
-    public function countValidContentFollowup($client_id, $site_id,$pb_player_id, $content_id){
+    public function countValidContentFollowup($client_id, $site_id, $content_id){
         try {
             $this->mongo_db->where('client_id', new MongoID($client_id));
             $this->mongo_db->where('site_id', new MongoID($site_id));
