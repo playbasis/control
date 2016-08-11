@@ -804,7 +804,7 @@ class Player_model extends MY_Model
         $c = 0;
         for ($i = 0; $i < $total; $i++) {
             if ($c < $limit) {
-                $this->mongo_db->select(array('cl_player_id'));
+                $this->mongo_db->select(array('cl_player_id','first_name','last_name','image'));
                 if (isset($results[$i]['_id']['pb_player_id'])) {
                     $results[$i]['pb_player_id'] = $results[$i]['_id']['pb_player_id'];
                     unset($results[$i]['_id']);
@@ -814,7 +814,11 @@ class Player_model extends MY_Model
                 if ($p) {
                     $p = $p[0];
                     $results[$i]['player_id'] = $p['cl_player_id'];
+                    $results[$i]['first_name'] = $p['first_name'];
+                    $results[$i]['last_name'] = $p['last_name'];
+                    $results[$i]['image'] = $p['image'];
                     $results[$i][$rankedBy] = $results[$i]['value'];
+                    unset($results[$i]['pb_player_id']);
                     unset($results[$i]['cl_player_id']);
                     unset($results[$i]['value']);
                     $c++;
@@ -876,6 +880,9 @@ class Player_model extends MY_Model
         foreach ($result as $i => $each) {
             $ret[] = array(
                 'player_id' => $result[$i]['cl_player_id'],
+                'first_name' => $result[$i]['first_name'],
+                'last_name' => $result[$i]['last_name'],
+                'image' => $result[$i]['image'],
                 'level' => $result[$i]['level'],
             );
         }
