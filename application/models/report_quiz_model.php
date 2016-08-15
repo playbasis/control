@@ -1,13 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function index_id($obj)
-{
-    return $obj['_id'];
-}
-
 class Report_quiz_model extends MY_Model
 {
+
+    function index_id($obj)
+    {
+        return $obj['_id'];
+    }
 
     public function getTotalReportQuiz($data)
     {
