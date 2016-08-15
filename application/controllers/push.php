@@ -25,6 +25,25 @@ class Push extends REST2_Controller
 
     public function send_post()
     {
+        /* check permission to send push notification in this bill cycle */
+        try {
+            $this->client_model->permissionProcess(
+                $this->client_data,
+                $this->client_id,
+                $this->site_id,
+                "notifications",
+                "push"
+            );
+        } catch (Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED") {
+                $this->response($this->error->setError(
+                    "LIMIT_EXCEED", array()), 200);
+            } else {
+                $this->response($this->error->setError(
+                    "INTERNAL_ERROR", array()), 200);
+            }
+        }
+
         $player_id = $this->input->post('player_id');
         if (!$player_id) {
             $this->response($this->error->setError('PARAMETER_MISSING', array(
@@ -62,6 +81,25 @@ class Push extends REST2_Controller
 
     public function send_goods_post()
     {
+        /* check permission to send push notification in this bill cycle */
+        try {
+            $this->client_model->permissionProcess(
+                $this->client_data,
+                $this->client_id,
+                $this->site_id,
+                "notifications",
+                "push"
+            );
+        } catch (Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED") {
+                $this->response($this->error->setError(
+                    "LIMIT_EXCEED", array()), 200);
+            } else {
+                $this->response($this->error->setError(
+                    "INTERNAL_ERROR", array()), 200);
+            }
+        }
+        
         $required = $this->input->checkParam(array(
             'player_id',
             'ref_id',
