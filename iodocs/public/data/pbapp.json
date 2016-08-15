@@ -1542,6 +1542,57 @@
           ]
         },
         {
+          "MethodName": "Action report",
+          "Synopsis": "Action report of specific Player",
+          "HTTPMethod": "GET",
+          "URI": "/Player/:player_id/actionReport",
+          "RequiresOAuth": "Y",
+          "parameters": [
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "month",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Select month to get sale report(ex. 1,2,..,12)[default = current month]"
+            },
+            {
+              "Name": "year",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Select year to get sale report(ex. 2015)[default = current year]"
+            },
+            {
+              "Name": "count",
+              "Required": "N",
+              "Default": "",
+              "Type": "number",
+              "Description": "Number of months to get the report [default = 1 month]"
+            },
+            {
+              "Name": "action",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Select action name to query from action log [default = \"sell\"]"
+            },
+            {
+              "Name": "parameter",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Select parameter to report from action log [default = \"amount\"]"
+            }
+          ]
+        },
+        {
           "MethodName": "Unlock",
           "Synopsis": "Unlock player for authentication",
           "HTTPMethod": "POST",
