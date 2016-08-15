@@ -300,22 +300,51 @@ class Quiz extends REST2_Controller
         $index = -1;
         $remain_count = count($completed_questions) - count($quiz['questions']);
         foreach ($quiz['questions'] as $i => $q) {
-            if (!in_array($q['question_id'], $completed_questions)) {
-                $question = $q; // get the first question in the quiz that the player has not submitted an answer
-                $index = $i;
-                if (($remain_count != 0) && (rand() % $remain_count == 0)) {
-                    break;
+            if($this->input->get('question_id')){
+                if($q['question_id'] == $this->input->get('question_id')){
+                    $question = $q;
+                    $index = $i;
+                }
+
+            } else {
+                if (!in_array($q['question_id'], $completed_questions)) {
+                    $question = $q; // get the first question in the quiz that the player has not submitted an answer
+                    $index = $i;
+                    if (($remain_count != 0) && (rand() % $remain_count == 0)) {
+                        break;
+                    }
                 }
             }
         }
         if ($question) {
+            $timeout = false;
             $question['index'] = $index + 1;
             $question['total'] = count($quiz['questions']);
             $question = convert_MongoId_question_id($question);
+
+            if($this->input->get('question_id')) {
+                $active_qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question['question_id']);
+                $timelimit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit'] : null;
+                if ($active_qustions_timestamp) {
+                    if ($timelimit) {
+                        $timelimits = explode(':', $timelimit);
+                        $limit = (($timelimits[0] * 3600) + ($timelimits[1] * 60) + ($timelimits[2]));
+                        if ($limit) {
+                            $expect_time = new MongoDate(time() - $limit);
+                            if ($expect_time > $active_qustions_timestamp[0]['questions_timestamp']) {
+                                $timeout = true;
+                            }
+                        }
+                    }
+                }
+            }
+
             foreach ($question['options'] as &$option) {
                 $option = convert_MongoId_option_id($option);
-                unset($option['score']);
-                unset($option['explanation']);
+                if(!$timeout){
+                    unset($option['score']);
+                    unset($option['explanation']);
+                }
             }
             array_walk_recursive($question, array($this, "convert_mongo_object_and_image_path"));
 
