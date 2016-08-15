@@ -2349,6 +2349,13 @@
               "Description": "player id as used in client's website"
             },
             {
+              "Name": "question_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "question id in quiz"
+            },
+            {
               "Name": "random",
               "Required": "N",
               "Default": "",
