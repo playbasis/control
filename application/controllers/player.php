@@ -2601,6 +2601,74 @@ class Player extends REST2_Controller
         $this->response($this->resp->setRespond($result), 200);
     }
 
+    public function actionReport_get($player_id = '')
+    {
+        $result = array();
+
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        }
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $count = $this->input->get('count');
+        if (!$count) {
+            $count = 1;
+        }
+
+        $month = $this->input->get('month');
+        if (!$month) {
+            $month = date("m", time());
+        }
+        $year = $this->input->get('year');
+        if (!$year) {
+            $year = date("Y", time());
+        }
+        $action = $this->input->get('action');
+        if (!$action) {
+            $action = "sell";
+        }
+        $parameter = $this->input->get('parameter');
+        if (!$parameter) {
+            $parameter = "amount";
+        }
+
+        $table = $this->player_model->getActionHistory($this->validToken['client_id'],
+                $this->validToken['site_id'], $player_id, $action, $parameter, $month, $year, $count+1);
+
+        $this_month_time = strtotime($year . "-" . $month);
+        for ($index = 0; $index < $count; $index++) {
+            $current_month = date("m", strtotime('-' . ($index) . ' month', $this_month_time));
+            $current_year = date("Y", strtotime('-' . ($index) . ' month', $this_month_time));
+
+            $previous_month = date("m", strtotime('-' . ($index + 1) . ' month', $this_month_time));
+            $previous_year = date("Y", strtotime('-' . ($index + 1) . ' month', $this_month_time));
+
+            $current_month_sales = $table[$current_year][$current_month][$parameter];
+            $previous_month_sales = $table[$previous_year][$previous_month][$parameter];
+
+            $result[$current_year][$current_month][$parameter] = $current_month_sales;
+            $result[$current_year][$current_month]['previous_' . $parameter] = $previous_month_sales;
+
+            if ($current_month_sales == 0 && $previous_month_sales == 0) {
+                $result[$current_year][$current_month]['percent_changed'] = 0;
+            } elseif ($previous_month_sales == 0) {
+                $result[$current_year][$current_month]['percent_changed'] = 100;
+            } else {
+                $result[$current_year][$current_month]['percent_changed'] = (($current_month_sales - $previous_month_sales) * 100) / $previous_month_sales;
+            }
+        }
+
+        $this->response($this->resp->setRespond($result), 200);
+    }
+
     private function password_validation($client_id, $site_id, $inhibited_str = '')
     {
         $return_status = false;
