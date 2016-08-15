@@ -60,7 +60,6 @@
                                 <td class="left"><?php echo ($webhook['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $webhook['sort_order']; ?></td>
                                 <td class="right">
-
                                     [ <?php echo anchor('webhook/update/'.$webhook['_id'], 'Edit'); ?> ]
                                     <?php echo anchor('webhook/inscrease_order/'.$webhook['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$webhook['_id'], 'style'=>'text-decoration:none'));?>
                                     <?php echo anchor('webhook/decrease_order/'.$webhook['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$webhook['_id'], 'style'=>'text-decoration:none' ));?>
@@ -69,7 +68,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="6"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="7"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>
@@ -132,4 +131,3 @@
     });
 
 </script>
-
