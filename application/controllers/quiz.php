@@ -309,7 +309,7 @@ class Quiz extends REST2_Controller
             } else {
                 if (!in_array($q['question_id'], $completed_questions)) {
                     $qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $q['question_id']);
-                    $time_limit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit'] : null;
+                    $time_limit = (isset($q['timelimit']) && !empty($q['timelimit'])) ? $q['timelimit'] : null;
                     if ($qustions_timestamp) {
                         if ($time_limit) {
                             $time_limits = explode(':', $time_limit);
@@ -436,7 +436,7 @@ class Quiz extends REST2_Controller
             } else {
                 if (!in_array($q['question_id'], $completed_questions)) {
                     $qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $q['question_id']);
-                    $time_limit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit'] : null;
+                    $time_limit = (isset($q['timelimit']) && !empty($q['timelimit'])) ? $q['timelimit'] : null;
                     if ($qustions_timestamp) {
                         if ($time_limit) {
                             $time_limits = explode(':', $time_limit);
