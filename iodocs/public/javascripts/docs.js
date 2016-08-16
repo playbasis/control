@@ -6,6 +6,117 @@
         allMethodLists = $('ul.methods'),
         allMethodListsLength = allMethodLists.length;
 
+    $(allEndpoints[0]).addClass('active');
+
+    window.addEventListener("keydown", function(e) {
+        // space and arrow keys
+        if([27, 32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+            if(e.keyCode === 27){
+                var $focused = $(':focus');
+                $focused.blur();
+            }
+            if(e.keyCode === 32){
+                e.preventDefault();
+                var endpoint_index = $("li.endpoint.active").index();
+                if(endpoint_index != -1){
+                    $("li.endpoint.active").toggleClass('expanded');
+                    $(allEndpoints[endpoint_index].lastChild).toggle();
+                }
+                else {
+                    $("ul.methods li.active").parent().parent().toggleClass('active');
+                    $("ul.methods li.active").parent().parent().toggleClass('expanded');
+                    $("ul.methods li.active").parent().toggle();
+                    $("ul.methods li.active").toggleClass('active');
+                }
+            }
+            if(e.keyCode === 37){
+                var endpoint_index = $("li.endpoint.active").index();
+                var $focused = $(':focus');
+                $focused.blur();
+                if(endpoint_index != -1){
+                    $("li.endpoint.active").removeClass('expanded');
+                    $(allEndpoints[endpoint_index].lastChild).hide();
+                }
+                else {
+                    var method_index = $("ul.methods li.active").index();
+                    var methods = $("ul.methods li.active").parent().children();
+                    $(methods[method_index].lastChild).hide();
+                }
+            }
+
+
+            if(e.keyCode === 38){
+                var endpoint_index = $("li.endpoint.active").index();
+                if(endpoint_index != -1){
+                    if(endpoint_index != 0) {
+                        if( $(allEndpoints[endpoint_index-1]).hasClass('expanded')){
+                            $(allEndpoints[endpoint_index-1].lastChild.lastChild).addClass('active');
+                            $(allEndpoints[endpoint_index]).removeClass('active');
+                        } else {
+                            $(allEndpoints[endpoint_index-1]).addClass('active');
+                            $(allEndpoints[endpoint_index]).removeClass('active');
+                        }
+                    }
+                } else {
+                    var method_index = $("ul.methods li.active").index();
+                    var methods = $("ul.methods li.active").parent().children();
+
+                    if(method_index != 0){
+                        $(methods[method_index-1]).addClass('active');
+                        $(methods[method_index]).removeClass('active');
+                    } else {
+                        $(methods[method_index]).parent().parent().addClass('active');
+                        $(methods[method_index]).removeClass('active');
+                    }
+                }
+            }
+            if(e.keyCode === 39){
+                var endpoint_index = $("li.endpoint.active").index();
+                if(endpoint_index != -1){
+                    $("li.endpoint.active").addClass('expanded');
+                    $(allEndpoints[endpoint_index].lastChild).show();
+                }
+                else {
+                    var method_index = $("ul.methods li.active").index();
+                    var method_lengh = $("ul.methods li.active").parent().children().length;
+                    var methods = $("ul.methods li.active").parent().children();
+                    var methods_table = $(methods[method_index]).children().children().children().children();
+                    var methods_table2 = $(methods_table[1]).children();
+                    $(methods[method_index].lastChild).show();
+                    $(methods_table2[1].firstChild).focus();
+                }
+            }
+            if(e.keyCode === 40){
+                var endpoint_index = $("li.endpoint.active").index();
+                if(endpoint_index != -1){
+                    if(endpoint_index != allEndpointsLength-1) {
+                        if( $(allEndpoints[endpoint_index]).hasClass('expanded')){
+                            $(allEndpoints[endpoint_index].lastChild.firstChild).addClass('active');
+                            $(allEndpoints[endpoint_index]).removeClass('active');
+                        } else {
+                            $(allEndpoints[endpoint_index+1]).addClass('active');
+                            $(allEndpoints[endpoint_index]).removeClass('active');
+                        }
+                    }
+                } else {
+                    var method_index = $("ul.methods li.active").index();
+                    var method_lengh = $("ul.methods li.active").parent().children().length;
+                    var methods = $("ul.methods li.active").parent().children();
+
+                    if(method_index != method_lengh-1){
+                        $(methods[method_index+1]).addClass('active');
+                        $(methods[method_index]).removeClass('active');
+                    } else {
+                        var parent_index = $(methods[method_index]).parent().parent().index();
+                        $(allEndpoints[parent_index+1]).addClass('active');
+                        $(methods[method_index]).removeClass('active');
+                    }
+
+                }
+            }
+        }
+    }, false);
+
     function listMethods(context) {
         var methodsList = $('ul.methods', context || null);
 
@@ -17,12 +128,18 @@
     // Toggle show/hide of method details, form, and results
     $('li.method > div.title').click(function() {
         $('form', this.parentNode).slideToggle();
+        var $actived = $('.active');
+        $actived.toggleClass('active');
+        $(this.parentNode).toggleClass('active');
     })
 
     // Toggle an endpoint
     $('li.endpoint > h3.title span.name').click(function() {
         $('ul.methods', this.parentNode.parentNode).slideToggle();
-        $(this.parentNode.parentNode).toggleClass('expanded')
+        $(this.parentNode.parentNode).toggleClass('expanded');
+        var $actived = $('.active');
+        $actived.toggleClass('active');
+        $(this.parentNode.parentNode).toggleClass('active');
     })
 
     // Toggle all endpoints
@@ -50,6 +167,9 @@
                 var methodsList = $(endpoints[x]);
                 methodsList.slideUp();
                 methodsList.parent().toggleClass('expanded', false)
+                var $actived = $('.active');
+                $actived.toggleClass('active');
+                $(allEndpoints[0]).toggleClass('active');
             }
         }
 
@@ -113,6 +233,9 @@
         })
 
         $(endpoint).toggleClass('expanded', true);
+        var $actived = $('.active');
+        $actived.toggleClass('active');
+        $(endpoint).toggleClass('active');
 
     })
 
@@ -137,6 +260,9 @@
         })
 
         $(endpoint).toggleClass('expanded', true);
+        var $actived = $('.active');
+        $actived.toggleClass('active');
+        $(endpoint).toggleClass('active');
 
     });
 
@@ -254,6 +380,13 @@
         // Complete, runs on error and success
         .complete(function(result, text) {
             var response = JSON.parse(result.responseText);
+            var method = "";
+
+            params.forEach(function(param){
+                if(param.name == "methodUri"){
+                    method = param.value;
+                }
+            });
 
             if (response.call) {
                 $('pre.call', resultContainer)
@@ -268,6 +401,19 @@
             if (response.headers) {
                 $('pre.headers', resultContainer)
                     .text(formatJSON(response.headers));
+            }
+
+            if(method == "/Auth"){
+                var result_response = JSON.parse(response.response)
+                if(result_response.success == true){
+                    var inputs, index;
+
+                    inputs = document.getElementsByName('params[token]');
+                    for (index = 0; index < inputs.length; ++index) {
+                        inputs[index].value = result_response.response.token;
+                    }
+                }
+
             }
 
             // Syntax highlighting

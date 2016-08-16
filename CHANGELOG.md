@@ -1,8 +1,166 @@
 # Change Log
 
-## [2.14.0](https://github.com/playbasis/api/tree/2.14.0)
+## [2.15.0](https://github.com/playbasis/api/tree/2.15.0) (2016-08-16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.16/get_question_with_reset_timestamp...2.15.0)
 
-[Full Changelog](https://github.com/playbasis/api/compare/2.13.12/fix_quest_not_started_is_processed_in_rule...2.14.0)
+**Merged pull requests:**
+
+- To get available branch for goods group [\#372](https://github.com/playbasis/api/pull/372) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.14.16/get_question_with_reset_timestamp](https://github.com/playbasis/api/tree/2.14.16/get_question_with_reset_timestamp) (2016-08-16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.0-alpha.4...2.14.16/get_question_with_reset_timestamp)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.16/get question with reset timestamp [\#371](https://github.com/playbasis/api/pull/371) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.15.0-alpha.4](https://github.com/playbasis/api/tree/2.15.0-alpha.4) (2016-08-15)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.16/push_limit...2.15.0-alpha.4)
+
+## [2.14.16/push_limit](https://github.com/playbasis/api/tree/2.14.16/push_limit) (2016-08-15)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.15/action_report...2.14.16/push_limit)
+
+**Fixed bugs:**
+
+- Hotfix/2.14.16/push limit [\#370](https://github.com/playbasis/api/pull/370) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.14.15/action_report](https://github.com/playbasis/api/tree/2.14.15/action_report) (2016-08-15)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.14/return_answer_for_question_expired...2.14.15/action_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.15/action report [\#369](https://github.com/playbasis/api/pull/369) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.14.14/return_answer_for_question_expired](https://github.com/playbasis/api/tree/2.14.14/return_answer_for_question_expired) (2016-08-15)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.0-alpha.3...2.14.14/return_answer_for_question_expired)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.14/return answer for question expired [\#368](https://github.com/playbasis/api/pull/368) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.15.0-alpha.3](https://github.com/playbasis/api/tree/2.15.0-alpha.3) (2016-08-11)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.14.13/fix_get_content_by_followup...2.15.0-alpha.3)
+
+**Implemented enhancements:**
+
+- To expire player goods group [\#367](https://github.com/playbasis/api/pull/367) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [v2.14.13/fix_get_content_by_followup](https://github.com/playbasis/api/tree/v2.14.13/fix_get_content_by_followup) (2016-08-11)
+[Full Changelog](https://github.com/playbasis/api/compare/response_player_details_in_rank_api...v2.14.13/fix_get_content_by_followup)
+
+**Fixed bugs:**
+
+- Hotfix/2.14.13/fix get content by followup [\#366](https://github.com/playbasis/api/pull/366) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [response_player_details_in_rank_api](https://github.com/playbasis/api/tree/response_player_details_in_rank_api) (2016-08-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.0-alpha.2...response_player_details_in_rank_api)
+
+**Implemented enhancements:**
+
+- Hotfix/Include player's detail in output response of player ranking API [\#365](https://github.com/playbasis/api/pull/365) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- key control expand/shrink in iodoc [\#364](https://github.com/playbasis/api/pull/364) ([piya-playbasis](https://github.com/piya-playbasis))
+- Update numerical value for custom field [\#363](https://github.com/playbasis/api/pull/363) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.15.0-alpha.2](https://github.com/playbasis/api/tree/2.15.0-alpha.2) (2016-08-08)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.14.12/Update_custom_to_input_with_csv_format...2.15.0-alpha.2)
+
+## [v2.14.12/Update_custom_to_input_with_csv_format](https://github.com/playbasis/api/tree/v2.14.12/Update_custom_to_input_with_csv_format) (2016-08-08)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.14.11/Save_custom_field_in_csv_format...v2.14.12/Update_custom_to_input_with_csv_format)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.12/update custom to input with csv format [\#362](https://github.com/playbasis/api/pull/362) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [v2.14.11/Save_custom_field_in_csv_format](https://github.com/playbasis/api/tree/v2.14.11/Save_custom_field_in_csv_format) (2016-08-08)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.14.9/new_idea_of_only_new_content...v2.14.11/Save_custom_field_in_csv_format)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.11/save custom field in csv format [\#361](https://github.com/playbasis/api/pull/361) ([niti-playbasis](https://github.com/niti-playbasis))
+- modified IOdocs to automatically set token field after process Auth api [\#359](https://github.com/playbasis/api/pull/359) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [v2.14.9/new_idea_of_only_new_content](https://github.com/playbasis/api/tree/v2.14.9/new_idea_of_only_new_content) (2016-08-04)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.14.8/add_content_count_for_only_new_feedback...v2.14.9/new_idea_of_only_new_content)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.9/new idea of only new content [\#357](https://github.com/playbasis/api/pull/357) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [v2.14.8/add_content_count_for_only_new_feedback](https://github.com/playbasis/api/tree/v2.14.8/add_content_count_for_only_new_feedback) (2016-08-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.0-alpha.1...v2.14.8/add_content_count_for_only_new_feedback)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.8/add content count for only new feedback [\#356](https://github.com/playbasis/api/pull/356) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.15.0-alpha.1](https://github.com/playbasis/api/tree/2.15.0-alpha.1) (2016-08-03)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.14.7/fix_content_limit_on_random...2.15.0-alpha.1)
+
+## [v2.14.7/fix_content_limit_on_random](https://github.com/playbasis/api/tree/v2.14.7/fix_content_limit_on_random) (2016-08-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.6/To_not_return_internal_key_numeric_for_custom_field...v2.14.7/fix_content_limit_on_random)
+
+**Fixed bugs:**
+
+- Hotfix/2.14.7/fix content limit on random [\#355](https://github.com/playbasis/api/pull/355) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.14.6/To_not_return_internal_key_numeric_for_custom_field](https://github.com/playbasis/api/tree/2.14.6/To_not_return_internal_key_numeric_for_custom_field) (2016-08-03)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.14.5/new_content_search_option...2.14.6/To_not_return_internal_key_numeric_for_custom_field)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.6/to not return internal key numeric for custom field [\#354](https://github.com/playbasis/api/pull/354) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [v2.14.5/new_content_search_option](https://github.com/playbasis/api/tree/v2.14.5/new_content_search_option) (2016-08-03)
+[Full Changelog](https://github.com/playbasis/api/compare/fix_content_sort_error_key_not_exist...v2.14.5/new_content_search_option)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.5/new content search option [\#353](https://github.com/playbasis/api/pull/353) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [fix_content_sort_error_key_not_exist](https://github.com/playbasis/api/tree/fix_content_sort_error_key_not_exist) (2016-08-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.4/calculate_item_died_status...fix_content_sort_error_key_not_exist)
+
+**Fixed bugs:**
+
+- Hotfix/fix content sort error key not exist [\#352](https://github.com/playbasis/api/pull/352) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.14.4/calculate_item_died_status](https://github.com/playbasis/api/tree/2.14.4/calculate_item_died_status) (2016-08-02)
+[Full Changelog](https://github.com/playbasis/api/compare/2.11.2/fix_image_resolution...2.14.4/calculate_item_died_status)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.4/calculate item died status [\#351](https://github.com/playbasis/api/pull/351) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.11.2/fix_image_resolution](https://github.com/playbasis/api/tree/2.11.2/fix_image_resolution) (2016-08-02)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.14.3/fix_followup_to_not_support_paging...2.11.2/fix_image_resolution)
+
+**Implemented enhancements:**
+
+- Hotfix/2.11.2/fix image resolution [\#350](https://github.com/playbasis/api/pull/350) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [v2.14.3/fix_followup_to_not_support_paging](https://github.com/playbasis/api/tree/v2.14.3/fix_followup_to_not_support_paging) (2016-08-01)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.14.2/Add_numeric_field_for_player_custom_field...v2.14.3/fix_followup_to_not_support_paging)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.3/fix followup to not support paging [\#349](https://github.com/playbasis/api/pull/349) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [v2.14.2/Add_numeric_field_for_player_custom_field](https://github.com/playbasis/api/tree/v2.14.2/Add_numeric_field_for_player_custom_field) (2016-07-29)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.1/fix_badge_per_user...v2.14.2/Add_numeric_field_for_player_custom_field)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.2/add numeric field for player custom field [\#348](https://github.com/playbasis/api/pull/348) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.14.1/fix_badge_per_user](https://github.com/playbasis/api/tree/2.14.1/fix_badge_per_user) (2016-07-28)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.14.0...2.14.1/fix_badge_per_user)
+
+**Fixed bugs:**
+
+- Hotfix/2.14.1/fix badge per user [\#347](https://github.com/playbasis/api/pull/347) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [v2.14.0](https://github.com/playbasis/api/tree/v2.14.0) (2016-07-28)
+[Full Changelog](https://github.com/playbasis/api/compare/2.13.12/fix_quest_not_started_is_processed_in_rule...v2.14.0)
 
 **Implemented enhancements:**
 
@@ -1109,17 +1267,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.5.10...2.6.0-alpha.6)
 
 ## [2.5.10](https://github.com/playbasis/api/tree/2.5.10) (2016-03-15)
-[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.4...2.5.10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.5...2.5.10)
 
 **Fixed bugs:**
 
 - Hotfix/2.5.10 [\#176](https://github.com/playbasis/api/pull/176) ([narut-playbasis](https://github.com/narut-playbasis))
 
-## [2.6.0-alpha.4](https://github.com/playbasis/api/tree/2.6.0-alpha.4) (2016-03-09)
-[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.5...2.6.0-alpha.4)
-
 ## [2.6.0-alpha.5](https://github.com/playbasis/api/tree/2.6.0-alpha.5) (2016-03-09)
-[Full Changelog](https://github.com/playbasis/api/compare/2.5.9...2.6.0-alpha.5)
+[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.4...2.6.0-alpha.5)
+
+## [2.6.0-alpha.4](https://github.com/playbasis/api/tree/2.6.0-alpha.4) (2016-03-09)
+[Full Changelog](https://github.com/playbasis/api/compare/2.5.9...2.6.0-alpha.4)
 
 ## [2.5.9](https://github.com/playbasis/api/tree/2.5.9) (2016-03-09)
 [Full Changelog](https://github.com/playbasis/api/compare/2.5.8...2.5.9)
@@ -1466,17 +1624,17 @@
 - Hotfix/hotfix php error in engine [\#125](https://github.com/playbasis/api/pull/125) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [Optimize_saleBoard_to_calculate_faster](https://github.com/playbasis/api/tree/Optimize_saleBoard_to_calculate_faster) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...Optimize_saleBoard_to_calculate_faster)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...Optimize_saleBoard_to_calculate_faster)
 
 **Implemented enhancements:**
 
 - Hotfix/optimize sale board to calculate faster [\#124](https://github.com/playbasis/api/pull/124) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
-## [2.1.43-alpha.12](https://github.com/playbasis/api/tree/2.1.43-alpha.12) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...2.1.43-alpha.12)
-
 ## [2.1.43-alpha.11](https://github.com/playbasis/api/tree/2.1.43-alpha.11) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...2.1.43-alpha.11)
+
+## [2.1.43-alpha.12](https://github.com/playbasis/api/tree/2.1.43-alpha.12) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.12)
 
 **Implemented enhancements:**
 
@@ -2108,17 +2266,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule...2.1.38-alpha.1)
 
 ## [fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule](https://github.com/playbasis/api/tree/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule) (2015-10-07)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
 
 **Implemented enhancements:**
 
 - Implementimg new feature for PIN code verification [\#32](https://github.com/playbasis/api/pull/32) ([burachit-playbasis](https://github.com/burachit-playbasis))
 
-## [2.1.37](https://github.com/playbasis/api/tree/2.1.37) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...2.1.37)
-
 ## [2.1.37-alpha.6](https://github.com/playbasis/api/tree/2.1.37-alpha.6) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37-alpha.6)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...2.1.37-alpha.6)
+
+## [2.1.37](https://github.com/playbasis/api/tree/2.1.37) (2015-10-02)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37)
 
 **Merged pull requests:**
 
@@ -2467,13 +2625,13 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.3...2.1.24-alpha.4)
 
 ## [2.1.24-alpha.3](https://github.com/playbasis/api/tree/2.1.24-alpha.3) (2015-04-27)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.3)
-
-## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.3)
 
 ## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.2)
+
+## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.1)
 
 ## [2.1.20-alpha.1](https://github.com/playbasis/api/tree/2.1.20-alpha.1) (2015-03-18)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.19-alpha.1...2.1.20-alpha.1)
