@@ -37,16 +37,18 @@ class Content_model extends MY_Model
             $this->mongo_db->where_not_in('_id', $optionalParams['content_id_organize_assoc']);
         }
 
-        if (isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'true'))){
-            $this->mongo_db->where_not_in('_id', $content_ids_to_player);
-        }elseif(isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'false'))){
-            $this->mongo_db->where_in('_id', $content_ids_to_player);
-        }
+        if (!isset($optionalParams['sort']) || ($optionalParams['sort'] !== 'random')){
+            if (isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'true'))) {
+                $this->mongo_db->where_not_in('_id', $content_ids_to_player);
+            } elseif (isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'false'))) {
+                $this->mongo_db->where_in('_id', $content_ids_to_player);
+            }
 
-        if (isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'true'))){
-            $this->mongo_db->where_not_in('_id', $content_ids_to_feedback);
-        }elseif(isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'false'))){
-            $this->mongo_db->where_in('_id', $content_ids_to_feedback);
+            if (isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'true'))) {
+                $this->mongo_db->where_not_in('_id', $content_ids_to_feedback);
+            } elseif (isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'false'))) {
+                $this->mongo_db->where_in('_id', $content_ids_to_feedback);
+            }
         }
 
         // Sorting

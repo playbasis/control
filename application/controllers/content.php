@@ -202,7 +202,7 @@ class Content extends REST2_Controller
                     // All = content base on player
                     // A = content_to_player
                     // B = content_feedback
-                    if (strtolower($query_data['only_new_content']) === 'true'){
+                    if (isset($query_data['only_new_content']) && strtolower($query_data['only_new_content']) === 'true'){
                         // All-A
                         if (!is_array($content_ids_to_player) || !in_array($contents[$i]['_id'], $content_ids_to_player)) {
                             if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
@@ -213,7 +213,7 @@ class Content extends REST2_Controller
                             }
                         }
                     }else{
-                        if (strtolower($query_data['only_new_feedback']) === 'false'){
+                        if (isset($query_data['only_new_feedback']) && strtolower($query_data['only_new_feedback']) === 'false'){
                             // B
                             if (!is_array($content_ids_to_player) || in_array($contents[$i]['_id'], $content_ids_to_feedback)) {
                                 if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
@@ -223,8 +223,8 @@ class Content extends REST2_Controller
                                     }
                                 }
                             }
-                        }elseif (strtolower($query_data['only_new_feedback']) === 'true'){
-                            if (strtolower($query_data['only_new_content']) === 'false'){
+                        }elseif (isset($query_data['only_new_feedback']) && strtolower($query_data['only_new_feedback']) === 'true'){
+                            if (isset($query_data['only_new_content']) && strtolower($query_data['only_new_content']) === 'false'){
                                 // A-B
                                 if (!is_array($content_ids_to_player) || in_array($contents[$i]['_id'], array_diff($content_ids_to_player, $content_ids_to_feedback))) {
                                     if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
@@ -246,7 +246,7 @@ class Content extends REST2_Controller
                                 }
                             }
                         }else{
-                            if (strtolower($query_data['only_new_content']) === 'false'){
+                            if (isset($query_data['only_new_content']) && strtolower($query_data['only_new_content']) === 'false'){
                                 // A
                                 if (!is_array($content_ids_to_player) || in_array($contents[$i]['_id'], $content_ids_to_player)) {
                                     if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
