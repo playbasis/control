@@ -1965,7 +1965,7 @@ class Mongo_db
 			if ($this->_replica_set !== FALSE) {
 				$this->_read_preference_primary = MongoClient::RP_PRIMARY_PREFERRED;
 				$this->_read_preference_secondary = MongoClient::RP_SECONDARY_PREFERRED;
-				$this->setReadPreference($this->_read_preference_primary); // instead of MongoClient::RP_PRIMARY (primary only) as a default
+				$this->setReadPreference($this->_read_preference_secondary); // instead of MongoClient::RP_PRIMARY (primary only) as a default
 				if (isset($this->_config_data['mongo_collection_to_secondary'])) { // direct requests to selected collections to secondary
 					if (is_array($this->_config_data['mongo_collection_to_secondary'])) foreach ($this->_config_data['mongo_collection_to_secondary'] as $collection) {
 						$this->_dbhandle->{$collection}->setReadPreference($this->_read_preference_secondary);
