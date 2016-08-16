@@ -1,36 +1,89 @@
 # Change Log
 
-## [2.15.0](https://github.com/playbasis/control/tree/2.15.0)
+## [2.16.0](https://github.com/playbasis/control/tree/2.16.0) (2016-08-16)
 
+## [2.15.8/delete_user](https://github.com/playbasis/control/tree/2.15.8/delete_user) (2016-08-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.15.7/corrected_file_size_in_mediamanager...2.15.8/delete_user)
+
+**Implemented enhancements:**
+
+- To expire player goods group [\#265](https://github.com/playbasis/control/pull/265) ([piya-playbasis](https://github.com/piya-playbasis))
+- Change session time out to 1 day [\#263](https://github.com/playbasis/control/pull/263) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.15.8/delete user [\#268](https://github.com/playbasis/control/pull/268) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Fix\_PHP\_error in report view. [\#266](https://github.com/playbasis/control/pull/266) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.15.7/corrected_file_size_in_mediamanager](https://github.com/playbasis/control/tree/2.15.7/corrected_file_size_in_mediamanager) (2016-08-08)
+[Full Changelog](https://github.com/playbasis/control/compare/2.15.6/display_goods_name_in_engine_rule...2.15.7/corrected_file_size_in_mediamanager)
+
+**Implemented enhancements:**
+
+- Hotfix/2.15.7/corrected file size in mediamanager [\#262](https://github.com/playbasis/control/pull/262) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.15.6/display_goods_name_in_engine_rule](https://github.com/playbasis/control/tree/2.15.6/display_goods_name_in_engine_rule) (2016-08-03)
+[Full Changelog](https://github.com/playbasis/control/compare/2.15.5/push_content_errors...2.15.6/display_goods_name_in_engine_rule)
+
+**Implemented enhancements:**
+
+- Hotfix/2.15.6/display goods name in engine rule [\#261](https://github.com/playbasis/control/pull/261) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.15.5/push_content_errors](https://github.com/playbasis/control/tree/2.15.5/push_content_errors) (2016-08-03)
+[Full Changelog](https://github.com/playbasis/control/compare/2.15.4/fix_insights_take_long_time_to_process_action_graph...2.15.5/push_content_errors)
+
+**Fixed bugs:**
+
+- Hotfix/2.15.5/push content errors [\#260](https://github.com/playbasis/control/pull/260) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.15.4/fix_insights_take_long_time_to_process_action_graph](https://github.com/playbasis/control/tree/2.15.4/fix_insights_take_long_time_to_process_action_graph) (2016-08-02)
+[Full Changelog](https://github.com/playbasis/control/compare/2.15.3/push_notify_when_item_deducted...2.15.4/fix_insights_take_long_time_to_process_action_graph)
+
+## [2.15.3/push_notify_when_item_deducted](https://github.com/playbasis/control/tree/2.15.3/push_notify_when_item_deducted) (2016-08-02)
+[Full Changelog](https://github.com/playbasis/control/compare/2.14.2/process_enginerule_when_deduct_item...2.15.3/push_notify_when_item_deducted)
+
+**Implemented enhancements:**
+
+- Hotfix/2.15.4/fix insights take long time to process action graph [\#258](https://github.com/playbasis/control/pull/258) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.15.3/push notify when item deducted [\#257](https://github.com/playbasis/control/pull/257) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.14.2/process_enginerule_when_deduct_item](https://github.com/playbasis/control/tree/2.14.2/process_enginerule_when_deduct_item) (2016-08-02)
+[Full Changelog](https://github.com/playbasis/control/compare/2.15.2/rule_fail_when_item_category_not_set...2.14.2/process_enginerule_when_deduct_item)
+
+**Implemented enhancements:**
+
+- Hotfix/2.14.2/process enginerule when deduct item [\#256](https://github.com/playbasis/control/pull/256) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.15.2/rule_fail_when_item_category_not_set](https://github.com/playbasis/control/tree/2.15.2/rule_fail_when_item_category_not_set) (2016-08-01)
+[Full Changelog](https://github.com/playbasis/control/compare/2.15.1/fix_bug_game_id_not_exist_b4_add_template...2.15.2/rule_fail_when_item_category_not_set)
+
+**Fixed bugs:**
+
+- Hotfix/2.15.2/rule fail when item category not set [\#255](https://github.com/playbasis/control/pull/255) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.15.1/fix_bug_game_id_not_exist_b4_add_template](https://github.com/playbasis/control/tree/2.15.1/fix_bug_game_id_not_exist_b4_add_template) (2016-07-28)
+[Full Changelog](https://github.com/playbasis/control/compare/2.15.0...2.15.1/fix_bug_game_id_not_exist_b4_add_template)
+
+**Fixed bugs:**
+
+- Hotfix/2.15.1/fix bug game id not exist b4 add template [\#254](https://github.com/playbasis/control/pull/254) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.15.0](https://github.com/playbasis/control/tree/2.15.0) (2016-07-28)
 [Full Changelog](https://github.com/playbasis/control/compare/2.14.3/Remove_resign_employee_email...2.15.0)
 
 **Implemented enhancements:**
 
 - set item image to template [\#252](https://github.com/playbasis/control/pull/252) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.14.3/remove resign employee email [\#251](https://github.com/playbasis/control/pull/251) ([niti-playbasis](https://github.com/niti-playbasis))
+- Feature/game/add delete template and fix edit template [\#250](https://github.com/playbasis/control/pull/250) ([piya-playbasis](https://github.com/piya-playbasis))
+- automatically notify when player receive the item [\#249](https://github.com/playbasis/control/pull/249) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- new condition \(game level\) in engine rule [\#247](https://github.com/playbasis/control/pull/247) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- new Cron function to deduct item [\#246](https://github.com/playbasis/control/pull/246) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.14.1/move report instance to dashboard [\#243](https://github.com/playbasis/control/pull/243) ([niti-playbasis](https://github.com/niti-playbasis))
 
 **Fixed bugs:**
 
 - fix bug item template [\#253](https://github.com/playbasis/control/pull/253) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.14.3/Remove_resign_employee_email](https://github.com/playbasis/control/tree/2.14.3/Remove_resign_employee_email) (2016-07-26)
-[Full Changelog](https://github.com/playbasis/control/compare/2.14.2/workflow_error...2.14.3/Remove_resign_employee_email)
-
-**Implemented enhancements:**
-
-- Hotfix/2.14.3/remove resign employee email [\#251](https://github.com/playbasis/control/pull/251) ([niti-playbasis](https://github.com/niti-playbasis))
-- Feature/game/add delete template and fix edit template [\#250](https://github.com/playbasis/control/pull/250) ([piya-playbasis](https://github.com/piya-playbasis))
-- automatically notify when player receive the item [\#249](https://github.com/playbasis/control/pull/249) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.14.2/workflow_error](https://github.com/playbasis/control/tree/2.14.2/workflow_error) (2016-07-22)
-[Full Changelog](https://github.com/playbasis/control/compare/2.14.1/Move_report_instance_to_dashboard...2.14.2/workflow_error)
-
-**Implemented enhancements:**
-
-- new condition \(game level\) in engine rule [\#247](https://github.com/playbasis/control/pull/247) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-- new Cron function to deduct item [\#246](https://github.com/playbasis/control/pull/246) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-**Fixed bugs:**
-
 - Hotfix/2.14.2/workflow error [\#248](https://github.com/playbasis/control/pull/248) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 **Merged pull requests:**
@@ -38,12 +91,14 @@
 - Feature/game combine code version [\#245](https://github.com/playbasis/control/pull/245) ([piya-playbasis](https://github.com/piya-playbasis))
 - Feature/game [\#244](https://github.com/playbasis/control/pull/244) ([piya-playbasis](https://github.com/piya-playbasis))
 
+## [2.14.3/Remove_resign_employee_email](https://github.com/playbasis/control/tree/2.14.3/Remove_resign_employee_email) (2016-07-26)
+[Full Changelog](https://github.com/playbasis/control/compare/2.14.2/workflow_error...2.14.3/Remove_resign_employee_email)
+
+## [2.14.2/workflow_error](https://github.com/playbasis/control/tree/2.14.2/workflow_error) (2016-07-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.14.1/Move_report_instance_to_dashboard...2.14.2/workflow_error)
+
 ## [2.14.1/Move_report_instance_to_dashboard](https://github.com/playbasis/control/tree/2.14.1/Move_report_instance_to_dashboard) (2016-07-15)
 [Full Changelog](https://github.com/playbasis/control/compare/2.14.0...2.14.1/Move_report_instance_to_dashboard)
-
-**Implemented enhancements:**
-
-- Hotfix/2.14.1/move report instance to dashboard [\#243](https://github.com/playbasis/control/pull/243) ([niti-playbasis](https://github.com/niti-playbasis))
 
 ## [2.14.0](https://github.com/playbasis/control/tree/2.14.0) (2016-07-14)
 [Full Changelog](https://github.com/playbasis/control/compare/2.13.1/id_shown_in_engine...2.14.0)
