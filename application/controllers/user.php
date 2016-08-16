@@ -235,6 +235,10 @@ class User extends MY_Controller
         $this->form_validation->set_rules('status', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (!$this->validateModify()) {
+                $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+                redirect('user/insert', 'refresh');
+            }
 
             $client_id = $this->User_model->getClientId();
             $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
@@ -378,11 +382,6 @@ class User extends MY_Controller
 
         $json = array();
         $this->error['warning'] = null;
-
-        if (!$this->validateModify()) {
-            $this->error['warning'] = $this->lang->line('error_permission');
-            $json['error'] = $this->lang->line('error_permission');
-        }
 
         if ($this->input->post('user_id') && $this->error['warning'] == null) {
 
