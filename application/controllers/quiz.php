@@ -300,11 +300,171 @@ class Quiz extends REST2_Controller
         $index = -1;
         $remain_count = count($completed_questions) - count($quiz['questions']);
         foreach ($quiz['questions'] as $i => $q) {
-            if (!in_array($q['question_id'], $completed_questions)) {
-                $question = $q; // get the first question in the quiz that the player has not submitted an answer
-                $index = $i;
-                if (($remain_count != 0) && (rand() % $remain_count == 0)) {
-                    break;
+            if($this->input->get('question_id')){
+                if($q['question_id'] == $this->input->get('question_id')){
+                    $question = $q;
+                    $index = $i;
+                }
+
+            } else {
+                if (!in_array($q['question_id'], $completed_questions)) {
+                    $qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $q['question_id']);
+                    $time_limit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit'] : null;
+                    if ($qustions_timestamp) {
+                        if ($time_limit) {
+                            $time_limits = explode(':', $time_limit);
+                            $limits = (($time_limits[0] * 3600) + ($time_limits[1] * 60) + ($time_limits[2]));
+                            if ($limits) {
+                                $expect_times = new MongoDate(time() - $limits);
+                                if ($expect_times < $qustions_timestamp[0]['questions_timestamp']) {
+                                    $question = $q; // get the first question in the quiz that the player has not submitted an answer
+                                    $index = $i;
+                                    if (($remain_count != 0) && (rand() % $remain_count == 0)) {
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            $question = $q; // get the first question in the quiz that the player has not submitted an answer
+                            $index = $i;
+                            if (($remain_count != 0) && (rand() % $remain_count == 0)) {
+                                break;
+                            }
+                        }
+                    } else {
+                        $question = $q; // get the first question in the quiz that the player has not submitted an answer
+                        $index = $i;
+                        if (($remain_count != 0) && (rand() % $remain_count == 0)) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if ($question) {
+            $timeout = false;
+            $question['index'] = $index + 1;
+            $question['total'] = count($quiz['questions']);
+            $question = convert_MongoId_question_id($question);
+
+            $active_qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question['question_id']);
+            $timelimit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit'] : null;
+            if ($active_qustions_timestamp) {
+                if ($timelimit) {
+                    $timelimits = explode(':', $timelimit);
+                    $limit = (($timelimits[0] * 3600) + ($timelimits[1] * 60) + ($timelimits[2]));
+                    if ($limit) {
+                        $expect_time = new MongoDate(time() - $limit);
+                        if ($expect_time > $active_qustions_timestamp[0]['questions_timestamp']) {
+                            $timeout = true;
+                        } else {
+                            $question['remaining_time_in_sec'] = $active_qustions_timestamp[0]['questions_timestamp']->sec - $expect_time->sec;
+                        }
+                    }
+                }
+            }
+
+            foreach ($question['options'] as &$option) {
+                $option = convert_MongoId_option_id($option);
+                if(!$timeout){
+                    unset($option['score']);
+                    unset($option['explanation']);
+                }
+            }
+            array_walk_recursive($question, array($this, "convert_mongo_object_and_image_path"));
+
+            $question_id = new MongoId($question['question_id']);
+            $question_active = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id, $pb_player_id , $quiz_id, $question_id );
+            $active = (isset($question_active) && !empty($question_active)) ? false:true;
+            $this->quiz_model->insert_question_timestamp($this->client_id, $this->site_id, $pb_player_id , $quiz_id, $question_id, $active);
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $question, 'processing_time' => $t)), 200);
+    }
+
+    public function question_post($quiz_id = '')
+    {
+        $this->benchmark->mark('start');
+
+        /* param "quiz_id" */
+        if (empty($quiz_id)) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('quiz_id')), 200);
+        }
+        $quiz_id = new MongoId($quiz_id);
+        $quiz = $this->quiz_model->find_by_id($this->client_id, $this->site_id, $quiz_id);
+        if ($quiz === null) {
+            $this->response($this->error->setError('QUIZ_NOT_FOUND'), 200);
+        }
+
+        /* param "player_id" */
+        $player_id = $this->input->post('player_id');
+        $random = $this->input->post('random') == "1" ? true : false;
+        if ($player_id === false) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
+        }
+        $pb_player_id = $this->player_model->getPlaybasisId(array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'cl_player_id' => $player_id,
+        ));
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $result = $this->quiz_model->find_quiz_by_quiz_and_player($this->client_id, $this->site_id, $quiz_id,
+            $pb_player_id);
+
+        if (isset($quiz['question_order']) && $quiz['question_order']) {
+            if ($random) {
+                $this->response($this->error->setError('QUIZ_QUESTION_NOT_ALLOW_RANDOM'), 200);
+            }
+            $quiz['questions'] = $this->sortArray($quiz['questions'], "question_number", "question");
+        }
+
+        $completed_questions = $result ? $result['questions'] : array();
+        $question = null;
+        $index = -1;
+        $remain_count = count($completed_questions) - count($quiz['questions']);
+        foreach ($quiz['questions'] as $i => $q) {
+            if($this->input->post('question_id')){
+                if($q['question_id'] == $this->input->post('question_id')){
+                    $question = $q;
+                    $index = $i;
+                }
+            } else {
+                if (!in_array($q['question_id'], $completed_questions)) {
+                    $qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $q['question_id']);
+                    $time_limit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit'] : null;
+                    if ($qustions_timestamp) {
+                        if ($time_limit) {
+                            $time_limits = explode(':', $time_limit);
+                            $limits = (($time_limits[0] * 3600) + ($time_limits[1] * 60) + ($time_limits[2]));
+                            if ($limits) {
+                                $expect_times = new MongoDate(time() - $limits);
+                                if ($expect_times < $qustions_timestamp[0]['questions_timestamp']) {
+                                    $question = $q; // get the first question in the quiz that the player has not submitted an answer
+                                    $index = $i;
+                                    if (($remain_count != 0) && (rand() % $remain_count == 0)) {
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            $question = $q; // get the first question in the quiz that the player has not submitted an answer
+                            $index = $i;
+                            if (($remain_count != 0) && (rand() % $remain_count == 0)) {
+                                break;
+                            }
+                        }
+                    } else {
+                        $question = $q; // get the first question in the quiz that the player has not submitted an answer
+                        $index = $i;
+                        if (($remain_count != 0) && (rand() % $remain_count == 0)) {
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -312,6 +472,7 @@ class Quiz extends REST2_Controller
             $question['index'] = $index + 1;
             $question['total'] = count($quiz['questions']);
             $question = convert_MongoId_question_id($question);
+            $result = $this->quiz_model->clear_active_question_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, new MongoId($question['question_id']));
             foreach ($question['options'] as &$option) {
                 $option = convert_MongoId_option_id($option);
                 unset($option['score']);

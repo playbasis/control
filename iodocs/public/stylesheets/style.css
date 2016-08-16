@@ -405,6 +405,14 @@ li {
   transition-timing-function: ease;
 }
 
+.endpoint.active h3 {
+    background-color: #71CDCD;
+}
+
+.method.active .title {
+  background-color: #71CDCD;
+}
+
 .endpoint.expanded {
   background-color: #fff;
 }
@@ -506,7 +514,6 @@ li {
 }
 
 .method .title:hover {
-  background-color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
 }
 

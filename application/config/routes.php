@@ -144,6 +144,7 @@ $route['Player/'.ANY_STRING.'/getAssociatedNode'] = 'player/getAssociatedNode/$1
 $route['Player/'.ANY_STRING.'/getRole/'.ANY_STRING] = 'player/getRole/$1/$2';       // ANY_STRING = player_id/node_id
 $route['Player/'.ANY_STRING.'/saleReport'] = 'player/saleReport/$1';                // ANY_STRING = player_id
 $route['Player/'.ANY_STRING.'/unlock'] = 'player/unlock/$1';                        // ANY_STRING = player_id
+$route['Player/'.ANY_STRING.'/actionReport'] = 'player/actionReport/$1';              // ANY_STRING = player_id
 
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
@@ -158,6 +159,8 @@ $route['Goods/sponsor'] = 'goods/sponsor';
 $route['Goods/ad'] = 'goods/personalizedSponsor';
 $route['Goods/couponVerify'] = 'goods/couponVerify';
 
+//Merchant API
+$route['Merchant/availableBranchGoodsGroup'] = 'merchant/availableBranchGoodsGroup';
 
 //engine API
 $route['Engine/actionConfig']	= 'engine/getActionConfig';

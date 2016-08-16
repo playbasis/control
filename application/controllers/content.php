@@ -277,12 +277,7 @@ class Content extends REST2_Controller
             }
             if (count($contents) > 0) {
                 foreach ($contents as $key => $val) {
-                    $number_followup = $this->content_model->countValidContentFollowup($this->client_id, $this->site_id,
-                        $pb_player_id, $val['_id']);
-                    if ($number_followup == false) {
-                        break;
-                    }
-                    $val['number_followup'] = $number_followup;
+                    $val['number_followup'] = $this->content_model->countValidContentFollowup($this->client_id, $this->site_id, $val['_id']);;
 
                     if (isset($pb_player_id) && !empty($pb_player_id)){
                         $player_action = $this->content_model->retrieveExistingPlayerContent(array(
@@ -560,15 +555,15 @@ class Content extends REST2_Controller
 
         if ($this->input->post('key')) {
             $data['custom'] = array();
-            $keys = explode(',', $this->input->post('key'));
-            $value = $this->input->post('value');
-            $values = explode(',', $value);
+            $keys = str_getcsv($this->input->post('key'));
+            $values = str_getcsv($this->input->post('value'));
             foreach ($keys as $i => $key) {
                 $contentInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
             }
         }
         if (is_array($contentInfo['custom'])) {
             foreach ($contentInfo['custom'] as $name => $value) {
+                $value = str_replace(',', '', $value);
                 if (is_numeric($value)) {
                     $contentInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
                 }
@@ -643,15 +638,15 @@ class Content extends REST2_Controller
 
         if ($this->input->post('key')) {
             $data['custom'] = array();
-            $keys = explode(',', $this->input->post('key'));
-            $value = $this->input->post('value');
-            $values = explode(',', $value);
+            $keys = str_getcsv($this->input->post('key'));
+            $values = str_getcsv($this->input->post('value'));
             foreach ($keys as $i => $key) {
                 $contentInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
             }
         }
         if (is_array($contentInfo['custom'])) {
             foreach ($contentInfo['custom'] as $name => $value) {
+                $value = str_replace(',', '', $value);
                 if (is_numeric($value)) {
                     $contentInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
                 }
@@ -697,11 +692,11 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
         $actionInfo['custom'] = null;
+
         $key = $this->input->post('key');
         if ($key) {
-            $keys = explode(',', $key);
-            $value = $this->input->post('value');
-            $values = explode(',', $value);
+            $keys = str_getcsv($key);
+            $values = str_getcsv($this->input->post('value'));
             if (count($values) != count($keys)){
                 $this->response($this->error->setError('PARAMETER_INVALID', array('key','value')), 200);
             }
@@ -712,6 +707,7 @@ class Content extends REST2_Controller
 
         if (is_array($actionInfo['custom'])) {
             foreach ($actionInfo['custom'] as $name => $value) {
+                $value = str_replace(',', '', $value);
                 if (is_numeric($value)) {
                     $actionInfo['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
                 }
@@ -820,9 +816,8 @@ class Content extends REST2_Controller
         $key = $this->input->post('key');
         if ($key) {
             $data['custom'] = array();
-            $keys = explode(',', $key);
-            $value = $this->input->post('value');
-            $values = explode(',', $value);
+            $keys = str_getcsv($key);
+            $values = str_getcsv($this->input->post('value'));
             if (count($values) != count($keys)){
                 $this->response($this->error->setError('PARAMETER_INVALID', array('key','value')), 200);
             }
@@ -833,6 +828,7 @@ class Content extends REST2_Controller
 
         if (is_array($data['custom'])) {
             foreach ($data['custom'] as $name => $value) {
+                $value = str_replace(',', '', $value);
                 if (is_numeric($value)) {
                     $data['custom'][$name . POSTFIX_NUMERIC_PARAM] = floatval($value);
                 }

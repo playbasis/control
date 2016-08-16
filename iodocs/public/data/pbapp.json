@@ -1542,6 +1542,57 @@
           ]
         },
         {
+          "MethodName": "Action report",
+          "Synopsis": "Action report of specific Player",
+          "HTTPMethod": "GET",
+          "URI": "/Player/:player_id/actionReport",
+          "RequiresOAuth": "Y",
+          "parameters": [
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "month",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Select month to get sale report(ex. 1,2,..,12)[default = current month]"
+            },
+            {
+              "Name": "year",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Select year to get sale report(ex. 2015)[default = current year]"
+            },
+            {
+              "Name": "count",
+              "Required": "N",
+              "Default": "",
+              "Type": "number",
+              "Description": "Number of months to get the report [default = 1 month]"
+            },
+            {
+              "Name": "action",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Select action name to query from action log [default = \"sell\"]"
+            },
+            {
+              "Name": "parameter",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Select parameter to report from action log [default = \"amount\"]"
+            }
+          ]
+        },
+        {
           "MethodName": "Unlock",
           "Synopsis": "Unlock player for authentication",
           "HTTPMethod": "POST",
@@ -1804,6 +1855,26 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Merchant API",
+      "methods": [
+        {
+          "MethodName": "Available Branch for Goods Group",
+          "Synopsis": "Returns list of available branch for goods group.",
+          "HTTPMethod": "GET",
+          "URI": "/Merchant/availableBranchGoodsGroup",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "goods_group",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "name of goods group"
+            }
+          ]
+        }]
     },
     {
       "name": "Engine API",
@@ -2347,6 +2418,61 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "question_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "question id in quiz"
+            },
+            {
+              "Name": "random",
+              "Required": "N",
+              "Default": "",
+              "Type": "enumerated",
+              "Description": "1=Random, 2=Not Random",
+              "EnumeratedList": [
+                "1",
+                "2"
+              ]
+            }
+          ]
+        },
+        {
+          "MethodName": "Get a Question from a Quiz with reset timestamp",
+          "Synopsis": "Get a question with a list of options for a given quiz and reset timestamp.",
+          "HTTPMethod": "POST",
+          "URI": "/Quiz/:id/question",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "quiz id"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "question_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "question id in quiz"
             },
             {
               "Name": "random",
