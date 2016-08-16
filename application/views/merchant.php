@@ -73,9 +73,7 @@
                     } else {
                         ?>
                         <tr>
-                            <td colspan="5">
-                                No Merchant
-                            </td>
+                            <td class="center" colspan="4"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
 

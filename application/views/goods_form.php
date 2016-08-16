@@ -109,6 +109,14 @@
                                     <input type="text" class="date" name="date_expire" value="<?php if ($date_expire && strtotime(datetimeMongotoReadable($date_expire))) { echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_expire))); } else { echo $date_expire; } ?>" size="50" />
                                 </td>
                             </tr>
+                            <?php if ($is_group) { ?>
+                            <tr>
+                                <td><?php echo $this->lang->line('entry_days_expire'); ?>:</td>
+                                <td>
+                                    <input type="number" name="days_expire" placeholder="day to expire after get coupon" value="<?php if (isset($days_expire) && $days_expire && strtotime(datetimeMongotoReadable($days_expire))) { echo date('Y-m-d', strtotime(datetimeMongotoReadable($days_expire))); } else { echo isset($days_expire) ? $days_expire :""; } ?>" size="50" />
+                                </td>
+                            </tr>
+                            <?php } ?>
                         </table>
 
                         <?php if (isset($members)) { ?>

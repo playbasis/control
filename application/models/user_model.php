@@ -398,7 +398,7 @@ class User_model extends MY_Model
         if (count($Q) > 0) {
             $row = $Q[0];
 
-            $this->mongo_db->select(array('_id', 'user_id', 'username', 'user_group_id', 'database', 'ip'));
+            $this->mongo_db->select(array('_id', 'user_id', 'username', 'user_group_id', 'database', 'ip' , 'last_app'));
             $this->mongo_db->where('username', $regex);
             $this->mongo_db->where('password', db_clean(dohash($p, $row['salt']), 40));
             $this->mongo_db->where('status', true);
@@ -441,7 +441,8 @@ class User_model extends MY_Model
 
                 // $this->site_id
                 if ($this->client_id) {
-                    $this->site_id = $this->fetchSiteId($this->client_id);
+                    $this->site_id = isset($row['last_app']) && !empty($row['last_app']) ? $row['last_app'] : $this->fetchSiteId($this->client_id);
+                    $this->set_last_app();
                 }
 
                 // $this->permission
@@ -654,6 +655,13 @@ class User_model extends MY_Model
         }
     }
 
+    public function set_last_app(){
+        if($this->site_id){
+            $this->mongo_db->set('last_app', new MongoId($this->site_id));
+            $this->mongo_db->where('_id', new MongoId($this->user_id));
+            $this->mongo_db->update('user');
+        }
+    }
     public function logout()
     {
         $this->session->unset_userdata('user_id');

@@ -16,6 +16,7 @@ class  MY_Controller  extends  CI_Controller  {
 
             if ($this->input->get('site_id')) {
                 $this->User_model->updateSiteId($this->input->get('site_id'));
+                $this->User_model->set_last_app();
             }
         } else {
             setcookie("client_id", null);

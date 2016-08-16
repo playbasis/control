@@ -1,18 +1,18 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function index_id($obj)
-{
-    return $obj['_id'];
-}
-
-function index_goods_id($obj)
-{
-    return $obj['goods_id'];
-}
-
 class Report_goods_model extends MY_Model
 {
+
+    function index_id($obj)
+    {
+        return $obj['_id'];
+    }
+
+    function index_goods_id($obj)
+    {
+        return $obj['goods_id'];
+    }
 
     public function getTotalReportGoods($data)
     {
