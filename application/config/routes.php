@@ -159,6 +159,8 @@ $route['Goods/sponsor'] = 'goods/sponsor';
 $route['Goods/ad'] = 'goods/personalizedSponsor';
 $route['Goods/couponVerify'] = 'goods/couponVerify';
 
+//Merchant API
+$route['Merchant/availableBranchGoodsGroup'] = 'merchant/availableBranchGoodsGroup';
 
 //engine API
 $route['Engine/actionConfig']	= 'engine/getActionConfig';

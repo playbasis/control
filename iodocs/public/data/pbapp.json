@@ -1857,6 +1857,26 @@
       ]
     },
     {
+      "name": "Merchant API",
+      "methods": [
+        {
+          "MethodName": "Available Branch for Goods Group",
+          "Synopsis": "Returns list of available branch for goods group.",
+          "HTTPMethod": "GET",
+          "URI": "/Merchant/availableBranchGoodsGroup",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "goods_group",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "name of goods group"
+            }
+          ]
+        }]
+    },
+    {
       "name": "Engine API",
       "methods": [
         {
