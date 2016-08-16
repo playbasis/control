@@ -381,6 +381,7 @@ class User extends MY_Controller
 
         if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
+            $json['error'] = $this->lang->line('error_permission');
         }
 
         if ($this->input->post('user_id') && $this->error['warning'] == null) {
@@ -390,9 +391,9 @@ class User extends MY_Controller
                 $this->User_model->deleteUser($this->input->post('user_id'));
             }
 
-            $this->session->data['success'] = $this->lang->line('text_success');
+            $this->session->data['success'] = $this->lang->line('text_success_delete');
 
-            $json['success'] = $this->lang->line('text_success');
+            $json['success'] = $this->lang->line('text_success_delete');
         }
 
         $this->output->set_output(json_encode($json));
