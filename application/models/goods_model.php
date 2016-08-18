@@ -248,7 +248,7 @@ class Goods_model extends MY_Model
                     '$group' => array(
                         '_id' => array('group' => '$group'),
                         'quantity' => array('$sum' => array('$cond'=> array(array('$or' => array(array('$gt' => array('$date_expired_coupon', new MongoDate())) ,
-                            array('$ifNull' => array('$date_expired_coupon', true)))) , '$quantity', 0))),
+                            array('$not' => array('$ifNull' => array('$date_expired_coupon', 0))))) , '$quantity', 0))),
                         'list' => array('$addToSet' => '$_id')
                     )
                 ),
