@@ -95,8 +95,7 @@ class Push_model extends MY_Model
                 // Examine the error message container
                 $aErrorQueue = $push->getErrors();
                 if (!empty($aErrorQueue)) {
-                    var_dump($aErrorQueue);
-
+                    log_message('error', print_r($aErrorQueue,true));
                 }
 
                 fclose($f_cert);
