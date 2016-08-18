@@ -849,7 +849,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('name')) {
             $this->data['name'] = $this->input->post('name');
-        } elseif (isset($goods_id) && ($goods_id != 0)) {
+        } elseif (isset($goods_info['name']) && !empty($goods_info['name'])) {
             $this->data['name'] = $goods_info['name'];
         } else {
             $this->data['name'] = '';
@@ -857,7 +857,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('description')) {
             $this->data['description'] = htmlentities($this->input->post('description'));
-        } elseif (isset($goods_id) && ($goods_id != 0)) {
+        } elseif (isset($goods_info['description']) && !empty($goods_info['description'])) {
             $this->data['description'] = htmlentities($goods_info['description']);
         } else {
             $this->data['description'] = '';
@@ -865,7 +865,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('code')) {
             $this->data['code'] = $this->input->post('code');
-        } elseif (!empty($goods_info) && isset($goods_info['code'])) {
+        } elseif (isset($goods_info['code']) && !empty($goods_info['code'])) {
             $this->data['code'] = $goods_info['code'];
         } else {
             $this->data['code'] = '';
@@ -873,7 +873,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('tags')) {
             $this->data['tags'] = $this->input->post('tags');
-        } elseif (!empty($goods_info) && isset($goods_info['tags'])) {
+        } elseif (isset($goods_info['tags']) && !empty($goods_info['tags'])) {
             $this->data['tags'] = $goods_info['tags'];
         } else {
             $this->data['tags'] = null;
@@ -881,7 +881,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['image']) && !empty($goods_info['image'])) {
             $this->data['image'] = $goods_info['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
@@ -905,7 +905,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('sort_order')) {
             $this->data['sort_order'] = $this->input->post('sort_order');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['sort_order']) && !empty($goods_info['sort_order'])) {
             $this->data['sort_order'] = $goods_info['sort_order'];
         } else {
             $this->data['sort_order'] = 0;
@@ -913,7 +913,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('status')) {
             $this->data['status'] = $this->input->post('status');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['status']) && !empty($goods_info['status'])) {
             $this->data['status'] = $goods_info['status'];
         } else {
             $this->data['status'] = 1;
@@ -925,7 +925,7 @@ class Goods extends MY_Controller
             $this->data['org_status'] = true;
             if ($this->input->post('organize_id')) {
                 $this->data['organize_id'] = $this->input->post('organize_id');
-            } elseif (!empty($goods_info) && isset($goods_info['organize_id'])) {
+            } elseif (isset($goods_info['organize_id']) && !empty($goods_info['organize_id'])) {
                 $this->data['organize_id'] = $goods_info['organize_id'];
             } else {
                 $this->data['organize_id'] = null;
@@ -933,7 +933,7 @@ class Goods extends MY_Controller
 
             if ($this->input->post('organize_role')) {
                 $this->data['organize_role'] = $this->input->post('organize_role');
-            } elseif (!empty($goods_info) && isset($goods_info['organize_role'])) {
+            } elseif (isset($goods_info['organize_role']) && !empty($goods_info['organize_role'])) {
                 $this->data['organize_role'] = $goods_info['organize_role'];
             } else {
                 $this->data['organize_role'] = null;
@@ -945,7 +945,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('quantity')) {
             $this->data['quantity'] = $this->input->post('quantity');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['quantity']) && !empty($goods_info['quantity'])) {
             $this->data['quantity'] = $goods_info['quantity'];
         } else {
             $this->data['quantity'] = null;
@@ -953,7 +953,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('per_user')) {
             $this->data['per_user'] = $this->input->post('per_user');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['per_user']) && !empty($goods_info['per_user'])) {
             $this->data['per_user'] = $goods_info['per_user'];
         } else {
             $this->data['per_user'] = null;
@@ -961,7 +961,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('reward_point')) {
             $this->data['reward_point'] = $this->input->post('reward_point');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['reward_point']) && !empty($goods_info['reward_point'])) {
             $this->data['reward_point'] = isset($goods_info['redeem']['point']) ? $goods_info['redeem']['point']['point_value'] : 0;
         } else {
             $this->data['reward_point'] = 0;
@@ -969,7 +969,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('reward_badge')) {
             $this->data['reward_badge'] = $this->input->post('reward_badge');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['reward_badge']) && !empty($goods_info['reward_badge'])) {
             $this->data['reward_badge'] = isset($goods_info['redeem']['badge']) ? $goods_info['redeem']['badge'] : array();
         } else {
             $this->data['reward_badge'] = array();
@@ -977,7 +977,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('reward_reward')) {
             $this->data['reward_reward'] = $this->input->post('reward_reward');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['reward_reward']) && !empty($goods_info['reward_reward'])) {
             $this->data['reward_reward'] = isset($goods_info['redeem']['custom']) ? $goods_info['redeem']['custom'] : array();
         } else {
             $this->data['reward_reward'] = array();
@@ -985,7 +985,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('sponsor')) {
             $this->data['sponsor'] = $this->input->post('sponsor');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['sponsor']) && !empty($goods_info['sponsor'])) {
             $this->data['sponsor'] = isset($goods_info['sponsor']) ? $goods_info['sponsor'] : null;
         } else {
             $this->data['sponsor'] = false;
@@ -993,7 +993,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('date_start')) {
             $this->data['date_start'] = $this->input->post('date_start');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['date_start']) && !empty($goods_info['date_start'])) {
             $this->data['date_start'] = $goods_info['date_start'];
         } else {
             $this->data['date_start'] = "";
@@ -1001,7 +1001,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('date_expire')) {
             $this->data['date_expire'] = $this->input->post('date_expire');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['date_expire']) && !empty($goods_info['date_expire'])) {
             $this->data['date_expire'] = $goods_info['date_expire'];
         } else {
             $this->data['date_expire'] = "";
@@ -1009,7 +1009,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('days_expire')) {
             $this->data['days_expire'] = $this->input->post('days_expire');
-        } elseif (!empty($goods_info)) {
+        } elseif (isset($goods_info['days_expire']) && !empty($goods_info['days_expire'])) {
             $this->data['days_expire'] = $goods_info['days_expire'];
         } else {
             $this->data['days_expire'] = "";
