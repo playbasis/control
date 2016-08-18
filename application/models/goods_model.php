@@ -130,6 +130,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('group', $group);
         $this->mongo_db->where('code', $code);
+        $this->mongo_db->where('$or',  array(array('date_expired_coupon' => array('$exists' => false)), array('date_expired_coupon' => array('$gt' => new MongoDate()))));
         if($quantity){
             $this->mongo_db->where_gt('quantity', 0);
         }
@@ -229,6 +230,9 @@ class Goods_model extends MY_Model
         if (isset($result[0]['date_expire'])) {
             $result[0]['date_expire'] = datetimeMongotoReadable($result[0]['date_expire']);
         }
+        if (isset($result[0]['date_expired_coupon'])) {
+            $result[0]['date_expired_coupon'] = datetimeMongotoReadable($result[0]['date_expired_coupon']);
+        }
         if (isset($result[0]['image'])) {
             $result[0]['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
         }
@@ -272,6 +276,7 @@ class Goods_model extends MY_Model
             'status' => true
         ));
         $this->mongo_db->where_gt('quantity', 0);
+        $this->mongo_db->where('$or',  array(array('date_expired_coupon' => array('$exists' => false)), array('date_expired_coupon' => array('$gt' => new MongoDate()))));
         return $this->mongo_db->count('playbasis_goods_to_client');
     }
     
@@ -335,6 +340,7 @@ class Goods_model extends MY_Model
             $this->mongo_db->where('quantity', (int)$quantity);
         }
 
+        $this->mongo_db->where('$or',  array(array('date_expired_coupon' => array('$exists' => false)), array('date_expired_coupon' => array('$gt' => new MongoDate()))));
         return $this->mongo_db->get('playbasis_goods_to_client');
     }
 
@@ -416,12 +422,13 @@ class Goods_model extends MY_Model
                 ),
             ),
             array(
-                '$project' => array('group' => 1, 'quantity' => 1)
+                '$project' => array('group' => 1, 'quantity' => 1, 'date_expired_coupon' => 1)
             ),
             array(
                 '$group' => array(
                     '_id' => array('group' => '$group'),
-                    'quantity' => array('$sum' => '$quantity'),
+                    'quantity' => array('$sum' => array('$cond'=> array(array('$or' => array(array('$gt' => array('$date_expired_coupon', new MongoDate())) ,
+                        array('$not' => array('$ifNull' => array('$date_expired_coupon', 0))))) , '$quantity', 0))),
                     'list' => array('$addToSet' => '$_id')
                 )
             ),

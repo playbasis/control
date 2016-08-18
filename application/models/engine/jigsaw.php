@@ -912,10 +912,14 @@ class jigsaw extends MY_Model
                 ),
             ),
             array(
-                '$project' => array('group' => 1, 'quantity' => 1)
+                '$project' => array('group' => 1, 'quantity' => 1, 'date_expired_coupon' => 1)
             ),
             array(
-                '$group' => array('_id' => array('group' => '$group'), 'quantity' => array('$sum' => '$quantity'))
+                '$group' => array(
+                                '_id' => array('group' => '$group'),
+                                'quantity' => array('$sum' => array('$cond'=> array(array('$or' => array(array('$gt' => array('$date_expired_coupon', new MongoDate())) ,
+                                    array('$not' => array('$ifNull' => array('$date_expired_coupon', 0))))) , '$quantity', 0)))
+                            )
             ),
         ));
         $res = $results ? $results['result'] : array();
