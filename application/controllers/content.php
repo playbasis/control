@@ -111,9 +111,8 @@ class Content extends REST2_Controller
         }
 
         $contents = $this->content_model->retrieveContent($this->client_id, $this->site_id, $query_data,
-            ((isset($query_data['only_new_content']) && !empty($query_data['only_new_content']))
-            && strtolower($query_data['only_new_content']) === "true") && (isset($query_data['sort'])
-                && strtolower($query_data['sort'] === 'random')) ? array() : $content_ids_to_player, $content_ids_to_feedback);
+            (isset($query_data['sort']) && strtolower($query_data['sort'] === 'random')) ? array() : $content_ids_to_player,
+            (isset($query_data['sort']) && strtolower($query_data['sort'] === 'random')) ? array() : $content_ids_to_feedback);
 
         foreach ($contents as &$content){
             $nodes_list = $this->store_org_model->getAssociatedNodeOfContent($this->validToken['client_id'],
@@ -189,7 +188,7 @@ class Content extends REST2_Controller
             if (count($contents) > 0) {
                 $m = count($contents);
                 $n = $this->content_model->retrieveContentCount($this->client_id, $this->site_id, $query_data,
-                    $content_ids_to_player);
+                    $content_ids_to_player, $content_ids_to_feedback);
                 if (isset($query_data['limit']) && $query_data['limit'] < $n) {
                     $n = $query_data['limit'];
                 }
@@ -200,14 +199,79 @@ class Content extends REST2_Controller
                 shuffle($numbers);
                 $c = 0;
                 foreach ($numbers as $i) {
-                    if (!is_array($content_ids_to_player) || !in_array($contents[$i]['_id'], $content_ids_to_player)) {
-                        if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
-                            $result[] = $contents[$i];
-                            if (count($result) >= $n) {
-                                break;
+                    // All = content base on player
+                    // A = content_to_player
+                    // B = content_feedback
+                    if (isset($query_data['only_new_content']) && strtolower($query_data['only_new_content']) === 'true'){
+                        // All-A
+                        if (!is_array($content_ids_to_player) || !in_array($contents[$i]['_id'], $content_ids_to_player)) {
+                            if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
+                                $result[] = $contents[$i];
+                                if (count($result) >= $n) {
+                                    break;
+                                }
+                            }
+                            $c++;
+                        }
+                    }else{
+                        if (isset($query_data['only_new_feedback']) && strtolower($query_data['only_new_feedback']) === 'false'){
+                            // B
+                            if (!is_array($content_ids_to_player) || in_array($contents[$i]['_id'], $content_ids_to_feedback)) {
+                                if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
+                                    $result[] = $contents[$i];
+                                    if (count($result) >= $n) {
+                                        break;
+                                    }
+                                }
+                                $c++;
+                            }
+                        }elseif (isset($query_data['only_new_feedback']) && strtolower($query_data['only_new_feedback']) === 'true'){
+                            if (isset($query_data['only_new_content']) && strtolower($query_data['only_new_content']) === 'false'){
+                                // A-B
+                                if (!is_array($content_ids_to_player) || in_array($contents[$i]['_id'], array_diff($content_ids_to_player, $content_ids_to_feedback))) {
+                                    if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
+                                        $result[] = $contents[$i];
+                                        if (count($result) >= $n) {
+                                            break;
+                                        }
+                                    }
+                                    $c++;
+                                }
+                            }else{
+                                // All-B
+                                if (!is_array($content_ids_to_player) || !in_array($contents[$i]['_id'], $content_ids_to_feedback)) {
+                                    if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
+                                        $result[] = $contents[$i];
+                                        if (count($result) >= $n) {
+                                            break;
+                                        }
+                                    }
+                                    $c++;
+                                }
+                            }
+                        }else{
+                            if (isset($query_data['only_new_content']) && strtolower($query_data['only_new_content']) === 'false'){
+                                // A
+                                if (!is_array($content_ids_to_player) || in_array($contents[$i]['_id'], $content_ids_to_player)) {
+                                    if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
+                                        $result[] = $contents[$i];
+                                        if (count($result) >= $n) {
+                                            break;
+                                        }
+                                    }
+                                    $c++;
+                                }
+                            }else{
+                                // All
+                                if (!isset($query_data['offset']) || $c >= (int)$query_data['offset']) {
+                                    $result[] = $contents[$i];
+                                    if (count($result) >= $n) {
+                                        break;
+                                    }
+                                }
+                                $c++;
                             }
                         }
-                        $c++;
                     }
                 }
             }
