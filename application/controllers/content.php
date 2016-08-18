@@ -211,6 +211,7 @@ class Content extends REST2_Controller
                                     break;
                                 }
                             }
+                            $c++;
                         }
                     }else{
                         if (isset($query_data['only_new_feedback']) && strtolower($query_data['only_new_feedback']) === 'false'){
@@ -222,6 +223,7 @@ class Content extends REST2_Controller
                                         break;
                                     }
                                 }
+                                $c++;
                             }
                         }elseif (isset($query_data['only_new_feedback']) && strtolower($query_data['only_new_feedback']) === 'true'){
                             if (isset($query_data['only_new_content']) && strtolower($query_data['only_new_content']) === 'false'){
@@ -233,6 +235,7 @@ class Content extends REST2_Controller
                                             break;
                                         }
                                     }
+                                    $c++;
                                 }
                             }else{
                                 // All-B
@@ -243,6 +246,7 @@ class Content extends REST2_Controller
                                             break;
                                         }
                                     }
+                                    $c++;
                                 }
                             }
                         }else{
@@ -255,6 +259,7 @@ class Content extends REST2_Controller
                                             break;
                                         }
                                     }
+                                    $c++;
                                 }
                             }else{
                                 // All
@@ -264,10 +269,10 @@ class Content extends REST2_Controller
                                         break;
                                     }
                                 }
+                                $c++;
                             }
                         }
                     }
-                    $c++;
                 }
             }
         }elseif (isset($query_data['sort']) && $query_data['sort'] == 'followup'){
