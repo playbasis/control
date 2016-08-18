@@ -420,32 +420,36 @@ $(document).ready(function(){
 
     });
 
-    //palmm
-    $("#global_goods").change(function(e){
-        e.preventDefault();
+    <?php if($org_status){?>
+        $("#global_goods").change(function(e){
+            e.preventDefault();
+            if (document.getElementById('global_goods').checked) {
+                //alert("checked");
+                $organizeParent.select2('enable', false);
+                $organizeParent.select2('val', null);
+                document.getElementById("organize_role").value = null;
+                document.getElementById("organize_role").disabled = true;
+            } else {
+                $organizeParent.select2('enable', true);
+                document.getElementById("organize_role").disabled = false;
+            }
+        });
+
         if (document.getElementById('global_goods').checked) {
             //alert("checked");
             $organizeParent.select2('enable', false);
-            $organizeParent.select2('val', null);
-            document.getElementById("organize_role").value = null;
             document.getElementById("organize_role").disabled = true;
         } else {
             $organizeParent.select2('enable', true);
             document.getElementById("organize_role").disabled = false;
         }
-    });
-
-    if (document.getElementById('global_goods').checked) {
-        //alert("checked");
-        $organizeParent.select2('enable', false);
-        document.getElementById("organize_role").disabled = true;
-    } else {
-        $organizeParent.select2('enable', true);
-        document.getElementById("organize_role").disabled = false;
-    }
+    <?php } ?>
 });
 
 //--></script>
+
+
+
 <?php if(!$client_id && !$name){?>
 <script type="text/javascript"><!--
 
