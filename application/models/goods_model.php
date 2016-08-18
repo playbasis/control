@@ -242,12 +242,13 @@ class Goods_model extends MY_Model
                     ),
                 ),
                 array(
-                    '$project' => array('group' => 1, 'quantity' => 1)
+                    '$project' => array('group' => 1, 'quantity' => 1, 'date_expired_coupon' => 1)
                 ),
                 array(
                     '$group' => array(
                         '_id' => array('group' => '$group'),
-                        'quantity' => array('$sum' => '$quantity'),
+                        'quantity' => array('$sum' => array('$cond'=> array(array('$or' => array(array('$gt' => array('$date_expired_coupon', new MongoDate())) ,
+                            array('$ifNull' => array('$date_expired_coupon', true)))) , '$quantity', 0))),
                         'list' => array('$addToSet' => '$_id')
                     )
                 ),
@@ -268,7 +269,7 @@ class Goods_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->select(array('name', 'code', 'goods_id'));
+        $this->mongo_db->select(array('name', 'code', 'goods_id' ,'date_expired_coupon'));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
@@ -312,6 +313,9 @@ class Goods_model extends MY_Model
         $this->mongo_db->where_gt('quantity', 0);
 
         $results = $this->mongo_db->get("playbasis_goods_to_client");
+        if(is_array($results)) foreach ($results as $index => $goods){
+            if(isset($goods['date_expired_coupon'])) $results[$index]['date_expired_coupon'] = datetimeMongotoReadable($goods['date_expired_coupon']);
+        }
 
         return $results;
     }
