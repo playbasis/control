@@ -27,6 +27,46 @@ class Merchant_model extends MY_Model
         return (!empty($result) && $result) ? $result : null;
     }
 
+    public function getMerchantById($client_id, $site_id, $merchant_id)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            '_id' => $merchant_id,
+        ));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_merchant_to_client');
+
+        return (!empty($result) && $result) ? $result[0] : null;
+    }
+
+    public function getAvailableBranchByGoodsGroup($client_id, $site_id, $goods_group)
+    {
+        $this->set_site_mongodb($site_id);
+        $results = $this->mongo_db->aggregate('playbasis_merchant_goodsgroup_to_client', array(
+                array(
+                    '$match' => array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'goods_group' => $goods_group,
+                        'status' => true,
+                        'deleted' => false
+                    )
+                ),
+                array(
+                    '$group' => array(
+                        '_id' => '$merchant_id',
+                        'branch' => array('$push' => '$branches_allow')
+                    )
+                ),
+            )
+        );
+
+        return $results['result'];
+    }
+
     public function getMerchantBranchByBranchesAndPinCode(
         $client_id,
         $site_id,
