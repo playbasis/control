@@ -183,7 +183,6 @@ class Quiz_model extends MY_Model
         $this->mongo_db->where('active', true);
         $this->mongo_db->set('answers', array('option_id' => $option_id));
         $this->mongo_db->set('answer_timestamp', new MongoDate(time()));
-        $this->mongo_db->set('active', false);
         $results = $this->mongo_db->update('playbasis_question_to_player');
         return $results;
     }
@@ -227,6 +226,51 @@ class Quiz_model extends MY_Model
             $this->mongo_db->set('answers', $answers);
             $this->mongo_db->set('value', $score + $result['value']);
             $this->mongo_db->set('grade', $grade);
+            $this->mongo_db->set('date_modified', $d);
+            return $this->mongo_db->update('playbasis_quiz_to_player');
+        }
+    }
+
+    public function update_player_question_timeout(
+        $client_id,
+        $site_id,
+        $quiz_id,
+        $pb_player_id,
+        $question_id,
+        $max_score,
+        $total_max
+    ) {
+        $d = new MongoDate(time());
+        $result = $this->find_quiz_by_quiz_and_player($client_id, $site_id, $quiz_id, $pb_player_id);
+        $questions = $result ? $result['questions'] : array();
+        $answers = $result ? $result['answers'] : array();
+        array_push($questions, $question_id);
+        array_push($answers, array('option_id' => Null, 'score' => 0, 'date_added' => $d));
+
+        if (!$result) {
+            return $this->mongo_db->insert('playbasis_quiz_to_player', array(
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'quiz_id' => $quiz_id,
+                'pb_player_id' => $pb_player_id,
+                'value' => 0,
+                'questions' => array($question_id),
+                'answers' => $answers,
+                'grade' => array('rewards' => array(),
+                                 'score' => 0,
+                                 'max_score' => $max_score,
+                                 'total_score' => 0,
+                                 'total_max_score' => $total_max),
+                'date_added' => $d,
+                'date_modified' => $d
+            ));
+        } else {
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->where('quiz_id', $quiz_id);
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+            $this->mongo_db->set('questions', $questions);
+            $this->mongo_db->set('answers', $answers);
             $this->mongo_db->set('date_modified', $d);
             return $this->mongo_db->update('playbasis_quiz_to_player');
         }

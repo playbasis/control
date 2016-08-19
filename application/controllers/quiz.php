@@ -269,6 +269,10 @@ class Quiz extends REST2_Controller
         if ($quiz === null) {
             $this->response($this->error->setError('QUIZ_NOT_FOUND'), 200);
         }
+        $total_max_score = 0;
+        if (is_array($quiz['questions'])) foreach ($quiz['questions'] as $questions) {
+            $total_max_score += $this->get_max_score_of_question($questions['options']);
+        }
 
         /* param "player_id" */
         $player_id = $this->input->get('player_id');
@@ -322,6 +326,12 @@ class Quiz extends REST2_Controller
                                     if (($remain_count != 0) && (rand() % $remain_count == 0)) {
                                         break;
                                     }
+                                } else {
+                                    if (!in_array($q['question_id'], $completed_questions)) {
+                                        $max_score = $this->get_max_score_of_question($q['options']);
+                                        $this->quiz_model->update_player_question_timeout($this->client_id, $this->site_id, $quiz_id, $pb_player_id, new MongoId($q['question_id']), $max_score, $total_max_score);
+                                        $this->quiz_model->update_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, new MongoId($q['question_id']), Null);
+                                    }
                                 }
                             }
                         } else {
@@ -356,6 +366,11 @@ class Quiz extends REST2_Controller
                     if ($limit) {
                         $expect_time = new MongoDate(time() - $limit);
                         if ($expect_time > $active_qustions_timestamp[0]['questions_timestamp']) {
+                            if (!in_array($question['question_id'], $completed_questions)) {
+                                $max_score = $this->get_max_score_of_question($question['options']);
+                                $this->quiz_model->update_player_question_timeout($this->client_id, $this->site_id, $quiz_id, $pb_player_id, new MongoId($question['question_id']), $max_score, $total_max_score);
+                                $this->quiz_model->update_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, new MongoId($question['question_id']), Null);
+                            }
                             $timeout = true;
                         } else {
                             $question['remaining_time_in_sec'] = $active_qustions_timestamp[0]['questions_timestamp']->sec - $expect_time->sec;
@@ -396,6 +411,11 @@ class Quiz extends REST2_Controller
         $quiz = $this->quiz_model->find_by_id($this->client_id, $this->site_id, $quiz_id);
         if ($quiz === null) {
             $this->response($this->error->setError('QUIZ_NOT_FOUND'), 200);
+        }
+
+        $total_max_score = 0;
+        if (is_array($quiz['questions'])) foreach ($quiz['questions'] as $questions) {
+            $total_max_score += $this->get_max_score_of_question($questions['options']);
         }
 
         /* param "player_id" */
@@ -449,6 +469,12 @@ class Quiz extends REST2_Controller
                                     if (($remain_count != 0) && (rand() % $remain_count == 0)) {
                                         break;
                                     }
+                                } else {
+                                    if (!in_array($q['question_id'], $completed_questions)) {
+                                        $max_score = $this->get_max_score_of_question($q['options']);
+                                        $this->quiz_model->update_player_question_timeout($this->client_id, $this->site_id, $quiz_id, $pb_player_id, new MongoId($q['question_id']), $max_score, $total_max_score);
+                                        $this->quiz_model->update_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, new MongoId($q['question_id']), Null);
+                                    }
                                 }
                             }
                         } else {
@@ -469,14 +495,38 @@ class Quiz extends REST2_Controller
             }
         }
         if ($question) {
+            $timeout = false;
             $question['index'] = $index + 1;
             $question['total'] = count($quiz['questions']);
             $question = convert_MongoId_question_id($question);
-            $result = $this->quiz_model->clear_active_question_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, new MongoId($question['question_id']));
+
+            $active_qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question['question_id']);
+            $timelimit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit'] : null;
+            if ($active_qustions_timestamp) {
+                if ($timelimit) {
+                    $timelimits = explode(':', $timelimit);
+                    $limit = (($timelimits[0] * 3600) + ($timelimits[1] * 60) + ($timelimits[2]));
+                    if ($limit) {
+                        $expect_time = new MongoDate(time() - $limit);
+                        if ($expect_time > $active_qustions_timestamp[0]['questions_timestamp']) {
+                            if (!in_array($question['question_id'], $completed_questions)) {
+                                $max_score = $this->get_max_score_of_question($question['options']);
+                                $this->quiz_model->update_player_question_timeout($this->client_id, $this->site_id, $quiz_id, $pb_player_id, new MongoId($question['question_id']), $max_score, $total_max_score);
+                                $this->quiz_model->update_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, new MongoId($question['question_id']), Null);
+                            }
+                            $timeout = true;
+                        } else {
+                            $this->quiz_model->clear_active_question_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, new MongoId($question['question_id']));
+                        }
+                    }
+                }
+            }
             foreach ($question['options'] as &$option) {
                 $option = convert_MongoId_option_id($option);
-                unset($option['score']);
-                unset($option['explanation']);
+                if(!$timeout){
+                    unset($option['score']);
+                    unset($option['explanation']);
+                }
             }
             array_walk_recursive($question, array($this, "convert_mongo_object_and_image_path"));
 
@@ -617,6 +667,25 @@ class Quiz extends REST2_Controller
             )));
         }
 
+        $active_qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id,$pb_player_id , $quiz_id,$question_id );
+        $timelimit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit']: null;
+        if($active_qustions_timestamp){
+            $this->quiz_model->update_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question_id, $option_id);
+            if($timelimit){
+                $timelimits = explode(':',$timelimit);
+                $limit = (($timelimits[0]*3600) + ($timelimits[1]*60) + ($timelimits[2]));
+                if($limit){
+                    $expect_time = new MongoDate(time() - $limit);
+                    if($expect_time > $active_qustions_timestamp[0]['questions_timestamp']){
+                        $this->quiz_model->update_player_question_timeout($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $max_score, $total_max_score);
+                        $this->response($this->error->setError('QUIZ_QUESTION_TIME_OUT'), 200);
+                    }
+                }
+            }
+        }else{
+            $this->quiz_model->insert_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question_id, $option_id, true);
+        }
+
         /* check to see if grade has any reward associated with it */
         $rewards = isset($grade['rewards']) ? $this->update_rewards($this->client_id, $this->site_id, $pb_player_id,
             $player_id, $grade['rewards']) : array();
@@ -625,24 +694,6 @@ class Quiz extends REST2_Controller
         $grade['max_score'] = $max_score;
         $grade['total_score'] = $total_score;
         $grade['total_max_score'] = $total_max_score;
-
-        $active_qustions_timestamp = $this->quiz_model->get_active_question_time_stamp($this->client_id, $this->site_id,$pb_player_id , $quiz_id,$question_id );
-        $timelimit = (isset($question['timelimit']) && !empty($question['timelimit'])) ? $question['timelimit']: null;
-        if($active_qustions_timestamp){
-            if($timelimit){
-                $timelimits = explode(':',$timelimit);
-                $limit = (($timelimits[0]*3600) + ($timelimits[1]*60) + ($timelimits[2]));
-                if($limit){
-                    $expect_time = new MongoDate(time() - $limit);
-                    if($expect_time > $active_qustions_timestamp[0]['questions_timestamp']){
-                        $this->response($this->error->setError('QUIZ_QUESTION_TIME_OUT'), 200);
-                    }
-                }
-            }
-            $this->quiz_model->update_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question_id, $option_id);
-        }else{
-            $this->quiz_model->insert_answer_timestamp($this->client_id, $this->site_id, $pb_player_id, $quiz_id, $question_id, $option_id , false);
-        }
 
         /* update player's score */
         $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id,
