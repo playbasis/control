@@ -177,6 +177,10 @@ class User extends MY_Controller
         $this->form_validation->set_rules('status', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!$this->validateModify()) {
+                $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+                redirect('user/update/' . $user_id, 'refresh');
+            }
 
             //Check to see if it passes the form validation
 
