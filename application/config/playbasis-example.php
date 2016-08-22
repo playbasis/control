@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-$config['IMG_PATH'] = 'http://images.pbapp.net/'; // DYNAMIC_IMG_PATH
+$config['IMG_PATH'] = 'https://images.pbapp.net/'; // DYNAMIC_IMG_PATH
 //$config['STATIC_IMG_PATH'] = 'http://control.app/'; // STATIC_IMG_PATH - local
 //$config['STATIC_IMG_PATH'] = 'http://devv2.pbapp.net/'; // STATIC_IMG_PATH - dev
 $config['STATIC_IMG_PATH'] = 'http://pbapp.net/'; // STATIC_IMG_PATH - production
