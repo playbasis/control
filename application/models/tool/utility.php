@@ -179,6 +179,9 @@ class Utility extends CI_Model
                      'coupon'
                  ) as $var) {
             if (isset($data[$var])) {
+                if($var == 'coupon'){
+                    if(is_array($data[$var])) $data[$var] = implode(",", $data[$var] );
+                }
                 $template = str_replace('{{' . $var . '}}', $data[$var], $template);
             }
         }
