@@ -190,6 +190,8 @@
                                 data-valign="middle"><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname[+node_name+node_type+store_id]?></th>
                             <th rowspan="2" data-align="center"
                                 data-valign="middle"><?php echo $this->lang->line('entry_player_name'); ?></th>
+                            <th rowspan="2" data-align="center"
+                                data-valign="middle"><?php echo $this->lang->line('entry_code'); ?></th>
                             <th colspan="3"
                                 data-align="center"><?php echo $this->lang->line('entry_node_detail'); ?></th>
                             <th rowspan="2" data-align="center"
@@ -203,6 +205,7 @@
                         <?php } else { ?>
                                 <th><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname?></th>
                                 <th><?php echo $this->lang->line('entry_player_name'); //cl_id+name+lastname?></th>
+                                <th><?php echo $this->lang->line('entry_code');?></th>
                                 <th><?php echo $this->lang->line('entry_operate'); ?></th>
                             </tr>
                         <?php } ?>
@@ -216,6 +219,7 @@
                                         <td><?php echo $redeemed_goods['_id'] ?></td>
                                         <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
                                         <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
+                                        <td><?php echo $redeemed_goods['code']; ?></td>
                                         <td><?php
                                             if (isset($redeemed_goods['player_organize_info'])) {
                                                 $prefix = '';
@@ -263,6 +267,7 @@
                                         <td><?php echo $redeemed_goods['_id'] ?></td>
                                         <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
                                         <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
+                                        <td><?php echo $redeemed_goods['code']; ?></td>
                                         <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a>
                                         </td>
                                     </tr>

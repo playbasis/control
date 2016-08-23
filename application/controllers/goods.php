@@ -583,6 +583,10 @@ class Goods extends MY_Controller
                     $redeemed_goods['player_organize_info'] = $organize_info_array;
                 }
             }
+            if(isset($redeemed_goods['goods_id'])){
+                $goods = $this->Goods_model->getGoodsOfClientPrivate($redeemed_goods['goods_id']);
+                $redeemed_goods['code'] = isset($goods['code']) ? $goods['code'] : null;
+            }
         }
 
         $this->data['redeemed_goods_list'] = $redeemed_goods_list;
