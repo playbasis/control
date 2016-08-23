@@ -219,7 +219,7 @@
                                         <td><?php echo $redeemed_goods['_id'] ?></td>
                                         <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
                                         <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
-                                        <td><?php echo $redeemed_goods['code']; ?></td>
+                                        <td><?php echo isset($redeemed_goods['code']) && !empty($redeemed_goods['code']) ? $redeemed_goods['code'] : ""; ?></td>
                                         <td><?php
                                             if (isset($redeemed_goods['player_organize_info'])) {
                                                 $prefix = '';
@@ -267,7 +267,7 @@
                                         <td><?php echo $redeemed_goods['_id'] ?></td>
                                         <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
                                         <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
-                                        <td><?php echo $redeemed_goods['code']; ?></td>
+                                        <td><?php echo isset($redeemed_goods['code']) && !empty($redeemed_goods['code']) ? $redeemed_goods['code'] : ""; ?></td>
                                         <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a>
                                         </td>
                                     </tr>
