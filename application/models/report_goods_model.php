@@ -9,11 +9,6 @@ class Report_goods_model extends MY_Model
         return $obj['_id'];
     }
 
-    function index_goods_id($obj)
-    {
-        return $obj['goods_id'];
-    }
-
     public function getTotalReportGoods($data)
     {
 
@@ -50,7 +45,7 @@ class Report_goods_model extends MY_Model
         if (isset($data['is_group']) && $data['is_group']) {
             if (isset($data['goods_id']) && $data['goods_id'] != '') {
                 $ids = $this->listGoodsIdByGroup($data['goods_id']);
-                $this->mongo_db->where_in('goods_id', array_map('index_goods_id', $ids));
+                $this->mongo_db->where_in('goods_id', array_map(function ($obj) {return $obj['goods_id'];}, $ids));
             }
         } else {
             if (isset($data['goods_id']) && $data['goods_id'] != '') {
@@ -101,7 +96,7 @@ class Report_goods_model extends MY_Model
         if (isset($data['is_group']) && $data['is_group']) {
             if (isset($data['goods_id']) && $data['goods_id'] != '') {
                 $ids = $this->listGoodsIdByGroup($data['goods_id']);
-                $this->mongo_db->where_in('goods_id', array_map('index_goods_id', $ids));
+                $this->mongo_db->where_in('goods_id', array_map(function ($obj) {return $obj['goods_id'];}, $ids));
             }
         } else {
             if (isset($data['goods_id']) && $data['goods_id'] != '') {
