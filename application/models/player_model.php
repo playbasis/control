@@ -1580,7 +1580,8 @@ class Player_model extends MY_Model
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
             'goods_id',
-            'value'
+            'value',
+            'date_expired'
         ));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array(
@@ -1595,7 +1596,7 @@ class Player_model extends MY_Model
         $playerGoods = array();
         foreach ($goods_list as $goods) {
             if (isset($goods['goods_id'])) {
-
+                if(isset($goods['date_expired'])) $goods['date_expired'] = datetimeMongotoReadable($goods['date_expired']);
                 //get goods data
                 $this->mongo_db->select(array(
                     'image',
