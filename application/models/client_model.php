@@ -646,9 +646,9 @@ class Client_model extends MY_Model
                 'date_modified' => $mongoDate
             );
             if(isset($goodsInfo['date_expired_coupon']) && !empty($goodsInfo['date_expired_coupon'])){
-                $data['date_expired'] = ($goodsInfo['date_expired_coupon']);
+                $data['date_expire'] = ($goodsInfo['date_expired_coupon']);
             } elseif (isset($goodsInfo['days_expire']) && !empty($goodsInfo['days_expire'])) {
-                $data['date_expired'] = new MongoDate(strtotime("+".$goodsInfo['days_expire']. ' day'));
+                $data['date_expire'] = new MongoDate(strtotime("+".$goodsInfo['days_expire']. ' day'));
             }
             $this->mongo_db->insert('playbasis_goods_to_player', $data, array("w" => 0, "j" => false));
         }
