@@ -1581,7 +1581,7 @@ class Player_model extends MY_Model
         $this->mongo_db->select(array(
             'goods_id',
             'value',
-            'date_expired'
+            'date_expire'
         ));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where(array(
@@ -1596,7 +1596,7 @@ class Player_model extends MY_Model
         $playerGoods = array();
         foreach ($goods_list as $goods) {
             if (isset($goods['goods_id'])) {
-                if(isset($goods['date_expired'])) $goods['date_expired'] = datetimeMongotoReadable($goods['date_expired']);
+                if(isset($goods['date_expire'])) $goods['date_expire'] = datetimeMongotoReadable($goods['date_expire']);
                 //get goods data
                 $this->mongo_db->select(array(
                     'image',
@@ -2323,9 +2323,9 @@ class Player_model extends MY_Model
                 $goodsInfo = $this->Goods_model->getGoods(array('client_id' => $client_id,'site_id' => $site_id, 'goods_id' => $gift_id));
                 $data['goods_id'] = $gift_id;
                 if(isset($goodsInfo['date_expired_coupon']) && !empty($goodsInfo['date_expired_coupon'])){
-                    $data['date_expired'] = ($goodsInfo['date_expired_coupon']);
+                    $data['date_expire'] = ($goodsInfo['date_expired_coupon']);
                 } elseif (isset($goodsInfo['days_expire']) && !empty($goodsInfo['days_expire'])) {
-                    $data['date_expired'] = new MongoDate(strtotime("+".$goodsInfo['days_expire']. ' day'));
+                    $data['date_expire'] = new MongoDate(strtotime("+".$goodsInfo['days_expire']. ' day'));
                 }
                 $receive_rewardInfo = $this->mongo_db->insert('playbasis_goods_to_player', $data);
             }
