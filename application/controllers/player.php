@@ -1627,10 +1627,22 @@ class Player extends REST2_Controller
                 'ranked_by'
             )), 200);
         }
+
         if ($ranked_by == 'level') {
             $leaderboard = $this->player_model->getLeaderboardByLevel($limit, $this->validToken['client_id'],
                 $this->validToken['site_id']);
         } else {
+
+            $reward = $this->reward_model->findByName(array(
+                'client_id' => $this->validToken['client_id'],
+                'site_id' => $this->validToken['site_id'],
+                'group' => 'POINT',
+            ), $ranked_by);
+
+            if (empty($reward)) {
+                $this->response($this->error->setError('REWARD_FOR_USER_NOT_EXIST', 200));
+            }
+
             $mode = $this->input->get('mode');
             switch ($mode) {
                 case 'weekly':
