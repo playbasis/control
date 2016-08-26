@@ -48,6 +48,11 @@ class Reward_model extends MY_Model
             'site_id' => $data['site_id'],
             'name' => $reward_name
         ));
+
+        if (isset($data['group']) && !empty($data['group'])){
+            $this->mongo_db->where('group', $data['group']);
+        }
+
         $result = $this->mongo_db->get('playbasis_reward_to_client');
         return $result ? $result[0]['reward_id'] : array();
     }
