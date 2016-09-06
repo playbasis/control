@@ -180,8 +180,7 @@ class Report_reward extends MY_Controller
             }
 
             if (isset($result['item_id']) && $result['item_id'] != null) {
-                $badge_info = $this->Badge_model->getBadge($result['item_id']);
-                $badge_name = $badge_info['name'];
+                $badge_name = $this->Badge_model->getNameOfBadgeID($client_id, $site_id, $result['item_id']);
             } else {
                 $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
             }
@@ -368,8 +367,7 @@ class Report_reward extends MY_Controller
             }
 
             if (isset($result['item_id']) && $result['item_id'] != null) {
-                $badge_info = $this->Badge_model->getBadge($result['item_id']);
-                $badge_name = $badge_info['name'];
+                $badge_name = $this->Badge_model->getNameOfBadgeID($client_id, $site_id, $result['item_id']);
             } else {
                 $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
             }
