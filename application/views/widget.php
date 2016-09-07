@@ -488,7 +488,7 @@
                                         
                                         For Customs Event when "Click", put attribute "data-pb-action" and "data-pb-url" in &#x3C;a&#x3E; or &#x3C;button&#x3E; tag for example<br><br>
                                         <pre class="prettyprint">
-&#x3C;a href=&#x22;http://www.exemple.com&#x22; data-pb-action=&#x22;view&#x22; data-pb-url=&#x22;exemple&#x22; &#x3E;exemple.com&#x3C;/a&#x3E;
+&#x3C;a href=&#x22;http://www.example.com&#x22; data-pb-action=&#x22;view&#x22; data-pb-url=&#x22;example&#x22; &#x3E;example.com&#x3C;/a&#x3E;
                                         </pre>
 
                                     </div>

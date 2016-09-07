@@ -64,6 +64,7 @@ $lang['entry_custom_point']             = 'Currency';
 $lang['entry_sponsor']                  = 'Sponsor';
 $lang['entry_start_date']               = 'Start Date';
 $lang['entry_expire_date']              = 'Expire Date';
+$lang['entry_expire_date_coupon']       = 'Coupon Expire Date';
 $lang['entry_days_expire']              = 'Days To Expire Coupon';
 $lang['entry_per_user']                 = 'Per User';
 $lang['entry_code']                     = 'Code';
