@@ -1,40 +1,96 @@
 # Change Log
 
-## [2.16.0](https://github.com/playbasis/control/tree/2.16.0) (2016-08-16)
+## [2.17.0](https://github.com/playbasis/control/tree/2.17.0)
 
-## [2.15.8/delete_user](https://github.com/playbasis/control/tree/2.15.8/delete_user) (2016-08-16)
-[Full Changelog](https://github.com/playbasis/control/compare/2.15.7/corrected_file_size_in_mediamanager...2.15.8/delete_user)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.0...2.17.0)
+
+**Fixed bugs:**
+
+- fixed bug in report, reward name is displayed wrongly [\#278](https://github.com/playbasis/control/pull/278) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.16.5/change_date_expired_to_date_expire_in_goods_to_player](https://github.com/playbasis/control/tree/2.16.5/change_date_expired_to_date_expire_in_goods_to_player) (2016-08-25)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods...2.16.5/change_date_expired_to_date_expire_in_goods_to_player)
+
+**Implemented enhancements:**
+
+- Hotfix/2.16.5/change date expired to date expire in goods to player [\#277](https://github.com/playbasis/control/pull/277) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods](https://github.com/playbasis/control/tree/2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods) (2016-08-23)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.3/fix_filter_goods_report_error...2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods)
+
+**Implemented enhancements:**
+
+- Hotfix/2.16.4/add coupon code in mark as used tab in goods [\#276](https://github.com/playbasis/control/pull/276) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.16.3/fix_filter_goods_report_error](https://github.com/playbasis/control/tree/2.16.3/fix_filter_goods_report_error) (2016-08-23)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.2/change_image_path_from_http_to_https...2.16.3/fix_filter_goods_report_error)
+
+**Implemented enhancements:**
+
+- Fix typo in widget tracker event tab [\#274](https://github.com/playbasis/control/pull/274) ([niti-playbasis](https://github.com/niti-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.16.3/fix filter goods report error [\#275](https://github.com/playbasis/control/pull/275) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.16.2/change_image_path_from_http_to_https](https://github.com/playbasis/control/tree/2.16.2/change_image_path_from_http_to_https) (2016-08-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.2/user_update_permission...2.16.2/change_image_path_from_http_to_https)
+
+**Implemented enhancements:**
+
+- Hotfix/2.16.2/change image path from http to https [\#273](https://github.com/playbasis/control/pull/273) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.16.2/user_update_permission](https://github.com/playbasis/control/tree/2.16.2/user_update_permission) (2016-08-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.1/fix_tags_in_goods_form...2.16.2/user_update_permission)
+
+**Implemented enhancements:**
+
+- To show only valid goods [\#270](https://github.com/playbasis/control/pull/270) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.16.2/user update permission [\#272](https://github.com/playbasis/control/pull/272) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- corrected check expired date in goods [\#271](https://github.com/playbasis/control/pull/271) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.16.1/fix_tags_in_goods_form](https://github.com/playbasis/control/tree/2.16.1/fix_tags_in_goods_form) (2016-08-18)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.0...2.16.1/fix_tags_in_goods_form)
+
+**Fixed bugs:**
+
+- Hotfix/2.16.1/fix tags in goods form [\#269](https://github.com/playbasis/control/pull/269) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.16.0](https://github.com/playbasis/control/tree/2.16.0) (2016-08-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.15.8/delete_user...2.16.0)
 
 **Implemented enhancements:**
 
 - To expire player goods group [\#265](https://github.com/playbasis/control/pull/265) ([piya-playbasis](https://github.com/piya-playbasis))
 - Change session time out to 1 day [\#263](https://github.com/playbasis/control/pull/263) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.15.7/corrected file size in mediamanager [\#262](https://github.com/playbasis/control/pull/262) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.15.6/display goods name in engine rule [\#261](https://github.com/playbasis/control/pull/261) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.15.4/fix insights take long time to process action graph [\#258](https://github.com/playbasis/control/pull/258) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.15.3/push notify when item deducted [\#257](https://github.com/playbasis/control/pull/257) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.14.2/process enginerule when deduct item [\#256](https://github.com/playbasis/control/pull/256) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 **Fixed bugs:**
 
 - Hotfix/2.15.8/delete user [\#268](https://github.com/playbasis/control/pull/268) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - Fix\_PHP\_error in report view. [\#266](https://github.com/playbasis/control/pull/266) ([niti-playbasis](https://github.com/niti-playbasis))
+- Hotfix/2.15.5/push content errors [\#260](https://github.com/playbasis/control/pull/260) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.15.2/rule fail when item category not set [\#255](https://github.com/playbasis/control/pull/255) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.15.1/fix bug game id not exist b4 add template [\#254](https://github.com/playbasis/control/pull/254) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.15.8/delete_user](https://github.com/playbasis/control/tree/2.15.8/delete_user) (2016-08-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.15.7/corrected_file_size_in_mediamanager...2.15.8/delete_user)
 
 ## [2.15.7/corrected_file_size_in_mediamanager](https://github.com/playbasis/control/tree/2.15.7/corrected_file_size_in_mediamanager) (2016-08-08)
 [Full Changelog](https://github.com/playbasis/control/compare/2.15.6/display_goods_name_in_engine_rule...2.15.7/corrected_file_size_in_mediamanager)
 
-**Implemented enhancements:**
-
-- Hotfix/2.15.7/corrected file size in mediamanager [\#262](https://github.com/playbasis/control/pull/262) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.15.6/display_goods_name_in_engine_rule](https://github.com/playbasis/control/tree/2.15.6/display_goods_name_in_engine_rule) (2016-08-03)
 [Full Changelog](https://github.com/playbasis/control/compare/2.15.5/push_content_errors...2.15.6/display_goods_name_in_engine_rule)
 
-**Implemented enhancements:**
-
-- Hotfix/2.15.6/display goods name in engine rule [\#261](https://github.com/playbasis/control/pull/261) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.15.5/push_content_errors](https://github.com/playbasis/control/tree/2.15.5/push_content_errors) (2016-08-03)
 [Full Changelog](https://github.com/playbasis/control/compare/2.15.4/fix_insights_take_long_time_to_process_action_graph...2.15.5/push_content_errors)
-
-**Fixed bugs:**
-
-- Hotfix/2.15.5/push content errors [\#260](https://github.com/playbasis/control/pull/260) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.15.4/fix_insights_take_long_time_to_process_action_graph](https://github.com/playbasis/control/tree/2.15.4/fix_insights_take_long_time_to_process_action_graph) (2016-08-02)
 [Full Changelog](https://github.com/playbasis/control/compare/2.15.3/push_notify_when_item_deducted...2.15.4/fix_insights_take_long_time_to_process_action_graph)
@@ -42,31 +98,14 @@
 ## [2.15.3/push_notify_when_item_deducted](https://github.com/playbasis/control/tree/2.15.3/push_notify_when_item_deducted) (2016-08-02)
 [Full Changelog](https://github.com/playbasis/control/compare/2.14.2/process_enginerule_when_deduct_item...2.15.3/push_notify_when_item_deducted)
 
-**Implemented enhancements:**
-
-- Hotfix/2.15.4/fix insights take long time to process action graph [\#258](https://github.com/playbasis/control/pull/258) ([piya-playbasis](https://github.com/piya-playbasis))
-- Hotfix/2.15.3/push notify when item deducted [\#257](https://github.com/playbasis/control/pull/257) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.14.2/process_enginerule_when_deduct_item](https://github.com/playbasis/control/tree/2.14.2/process_enginerule_when_deduct_item) (2016-08-02)
 [Full Changelog](https://github.com/playbasis/control/compare/2.15.2/rule_fail_when_item_category_not_set...2.14.2/process_enginerule_when_deduct_item)
-
-**Implemented enhancements:**
-
-- Hotfix/2.14.2/process enginerule when deduct item [\#256](https://github.com/playbasis/control/pull/256) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.15.2/rule_fail_when_item_category_not_set](https://github.com/playbasis/control/tree/2.15.2/rule_fail_when_item_category_not_set) (2016-08-01)
 [Full Changelog](https://github.com/playbasis/control/compare/2.15.1/fix_bug_game_id_not_exist_b4_add_template...2.15.2/rule_fail_when_item_category_not_set)
 
-**Fixed bugs:**
-
-- Hotfix/2.15.2/rule fail when item category not set [\#255](https://github.com/playbasis/control/pull/255) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.15.1/fix_bug_game_id_not_exist_b4_add_template](https://github.com/playbasis/control/tree/2.15.1/fix_bug_game_id_not_exist_b4_add_template) (2016-07-28)
 [Full Changelog](https://github.com/playbasis/control/compare/2.15.0...2.15.1/fix_bug_game_id_not_exist_b4_add_template)
-
-**Fixed bugs:**
-
-- Hotfix/2.15.1/fix bug game id not exist b4 add template [\#254](https://github.com/playbasis/control/pull/254) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.15.0](https://github.com/playbasis/control/tree/2.15.0) (2016-07-28)
 [Full Changelog](https://github.com/playbasis/control/compare/2.14.3/Remove_resign_employee_email...2.15.0)
