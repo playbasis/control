@@ -403,7 +403,7 @@
                     .text(formatJSON(response.headers));
             }
 
-            if(method == "/Auth"){
+            if(method == "/Auth" || method == "/Auth/renew"){
                 var result_response = JSON.parse(response.response)
                 if(result_response.success == true){
                     var inputs, index;

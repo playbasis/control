@@ -9,7 +9,7 @@ class Content_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
-    public function retrieveContent($client_id, $site_id, $optionalParams = array(), $content_ids_to_player=null, $content_ids_to_feedback = null)
+    public function retrieveContent($client_id, $site_id, $optionalParams = array(), $content_ids_to_player=array(), $content_ids_to_feedback = array())
     {
         $this->set_site_mongodb($site_id);
 
@@ -37,16 +37,18 @@ class Content_model extends MY_Model
             $this->mongo_db->where_not_in('_id', $optionalParams['content_id_organize_assoc']);
         }
 
-        if (isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'true'))){
-            $this->mongo_db->where_not_in('_id', $content_ids_to_player);
-        }elseif(isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'false'))){
-            $this->mongo_db->where_in('_id', $content_ids_to_player);
-        }
+        if (!isset($optionalParams['sort']) || ($optionalParams['sort'] !== 'random')){
+            if (isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'true'))) {
+                $this->mongo_db->where_not_in('_id', $content_ids_to_player);
+            } elseif (isset($optionalParams['only_new_content']) && (strtolower($optionalParams['only_new_content'] === 'false'))) {
+                $this->mongo_db->where_in('_id', $content_ids_to_player);
+            }
 
-        if (isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'true'))){
-            $this->mongo_db->where_not_in('_id', $content_ids_to_feedback);
-        }elseif(isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'false'))){
-            $this->mongo_db->where_in('_id', $content_ids_to_feedback);
+            if (isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'true'))) {
+                $this->mongo_db->where_not_in('_id', $content_ids_to_feedback);
+            } elseif (isset($optionalParams['only_new_feedback']) && (strtolower($optionalParams['only_new_feedback'] === 'false'))) {
+                $this->mongo_db->where_in('_id', $content_ids_to_feedback);
+            }
         }
 
         // Sorting
@@ -125,7 +127,7 @@ class Content_model extends MY_Model
         return !empty($result) ? $result : array();
     }
 
-    public function retrieveContentCount($client_id, $site_id, $optionalParams = array(), $content_ids_to_player=null, $content_ids_to_feedback = null)
+    public function retrieveContentCount($client_id, $site_id, $optionalParams = array(), $content_ids_to_player = array(), $content_ids_to_feedback = array())
     {
         $this->set_site_mongodb($site_id);
 

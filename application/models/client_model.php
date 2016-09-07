@@ -581,6 +581,7 @@ class Client_model extends MY_Model
             'goods_id' => new MongoId($goodsId),
             'deleted' => false
         ));
+        $this->mongo_db->where('$or',  array(array('date_expired_coupon' => array('$exists' => false)), array('date_expired_coupon' => array('$gt' => new MongoDate()))));
         $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_goods_to_client');
         if (!$result) {
@@ -616,6 +617,7 @@ class Client_model extends MY_Model
         $this->mongo_db->where('client_id', $is_sponsor ? null : new MongoId($client_id));
         $this->mongo_db->where('site_id', $is_sponsor ? null : new MongoId($site_id));
         $this->mongo_db->where('goods_id', new MongoId($goodsId));
+        $this->mongo_db->where('$or',  array(array('date_expired_coupon' => array('$exists' => false)), array('date_expired_coupon' => array('$gt' => new MongoDate()))));
         $this->mongo_db->update('playbasis_goods_to_client', array("w" => 0, "j" => false));
 
         //update player badge table
