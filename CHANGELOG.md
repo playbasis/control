@@ -1,7 +1,86 @@
 # Change Log
 
-## [2.15.0](https://github.com/playbasis/api/tree/2.15.0) (2016-08-16)
-[Full Changelog](https://github.com/playbasis/api/compare/2.14.16/get_question_with_reset_timestamp...2.15.0)
+## [v2.15.10/fix_php_error_when_create_content](https://github.com/playbasis/api/tree/v2.15.10/fix_php_error_when_create_content) (2016-09-05)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.15.9/fix_error_while_getting_invalid_rank...v2.15.10/fix_php_error_when_create_content)
+
+**Fixed bugs:**
+
+- Hotfix/2.15.10/fix php error when create content [\#385](https://github.com/playbasis/api/pull/385) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [v2.15.9/fix_error_while_getting_invalid_rank](https://github.com/playbasis/api/tree/v2.15.9/fix_error_while_getting_invalid_rank) (2016-08-26)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.8/change_date_expired_to_date_expire_in_goods_to_player...v2.15.9/fix_error_while_getting_invalid_rank)
+
+**Fixed bugs:**
+
+- Hotfix/2.15.9/fix error while getting invalid rank [\#384](https://github.com/playbasis/api/pull/384) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.15.8/change_date_expired_to_date_expire_in_goods_to_player](https://github.com/playbasis/api/tree/2.15.8/change_date_expired_to_date_expire_in_goods_to_player) (2016-08-25)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.7/add_date_expire_in_player_id_goods...2.15.8/change_date_expired_to_date_expire_in_goods_to_player)
+
+**Implemented enhancements:**
+
+- Hotfix/2.15.8/change date expired to date expire in goods to player [\#383](https://github.com/playbasis/api/pull/383) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.15.7/add_date_expire_in_player_id_goods](https://github.com/playbasis/api/tree/2.15.7/add_date_expire_in_player_id_goods) (2016-08-24)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.6/change_image_path_to_from_http_to_https...2.15.7/add_date_expire_in_player_id_goods)
+
+**Implemented enhancements:**
+
+- Hotfix/2.15.7/add date expire in player id goods [\#382](https://github.com/playbasis/api/pull/382) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.15.6/change_image_path_to_from_http_to_https](https://github.com/playbasis/api/tree/2.15.6/change_image_path_to_from_http_to_https) (2016-08-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.5/return_log_id_in_rule_and_corrected_goods_id...2.15.6/change_image_path_to_from_http_to_https)
+
+**Implemented enhancements:**
+
+- Hotfix/2.15.6/change image path to from http to https [\#381](https://github.com/playbasis/api/pull/381) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.15.5/return_log_id_in_rule_and_corrected_goods_id](https://github.com/playbasis/api/tree/2.15.5/return_log_id_in_rule_and_corrected_goods_id) (2016-08-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.4/update_quiz_to_player_for_question_timeout...2.15.5/return_log_id_in_rule_and_corrected_goods_id)
+
+**Implemented enhancements:**
+
+- Hotfix/2.15.5/return log id in rule and corrected goods [\#380](https://github.com/playbasis/api/pull/380) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.15.4/update_quiz_to_player_for_question_timeout](https://github.com/playbasis/api/tree/2.15.4/update_quiz_to_player_for_question_timeout) (2016-08-19)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.3/fix_push_response_error...2.15.4/update_quiz_to_player_for_question_timeout)
+
+**Implemented enhancements:**
+
+- Hotfix/2.15.4/update quiz to player for question timeout [\#379](https://github.com/playbasis/api/pull/379) ([piya-playbasis](https://github.com/piya-playbasis))
+- automatically fill token after calling Auth/renew [\#378](https://github.com/playbasis/api/pull/378) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- check dateexpired coupon in goods [\#376](https://github.com/playbasis/api/pull/376) ([piya-playbasis](https://github.com/piya-playbasis))
+- Feature/update sort by random for content [\#360](https://github.com/playbasis/api/pull/360) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.15.3/fix_push_response_error](https://github.com/playbasis/api/tree/2.15.3/fix_push_response_error) (2016-08-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.16.0-alpha.1...2.15.3/fix_push_response_error)
+
+**Fixed bugs:**
+
+- Hotfix/2.15.3/fix push response error [\#375](https://github.com/playbasis/api/pull/375) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.16.0-alpha.1](https://github.com/playbasis/api/tree/2.16.0-alpha.1) (2016-08-17)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.2/return_merchant_data_in_get_available_branch_goods_group...2.16.0-alpha.1)
+
+## [2.15.2/return_merchant_data_in_get_available_branch_goods_group](https://github.com/playbasis/api/tree/2.15.2/return_merchant_data_in_get_available_branch_goods_group) (2016-08-17)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.1/fix_return_question_timeout_in_quiz...2.15.2/return_merchant_data_in_get_available_branch_goods_group)
+
+**Implemented enhancements:**
+
+- Hotfix/2.15.2/return merchant data in get available branch goods group [\#374](https://github.com/playbasis/api/pull/374) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.15.1/fix_return_question_timeout_in_quiz](https://github.com/playbasis/api/tree/2.15.1/fix_return_question_timeout_in_quiz) (2016-08-16)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.15.0...2.15.1/fix_return_question_timeout_in_quiz)
+
+**Fixed bugs:**
+
+- Hotfix/2.15.1/fix return question timeout in quiz [\#373](https://github.com/playbasis/api/pull/373) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [v2.15.0](https://github.com/playbasis/api/tree/v2.15.0) (2016-08-16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.15.0-alpha.5...v2.15.0)
+
+## [2.15.0-alpha.5](https://github.com/playbasis/api/tree/2.15.0-alpha.5) (2016-08-16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.14.16/get_question_with_reset_timestamp...2.15.0-alpha.5)
 
 **Merged pull requests:**
 
@@ -1150,13 +1229,13 @@
 - - Merge generate content PIN into create/update content [\#193](https://github.com/playbasis/api/pull/193) ([niti-playbasis](https://github.com/niti-playbasis))
 
 ## [2.8.0-alpha.1](https://github.com/playbasis/api/tree/2.8.0-alpha.1) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...2.8.0-alpha.1)
-
-## [2.7.6](https://github.com/playbasis/api/tree/2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.8.0-alpha.1)
 
 ## [v2.7.6](https://github.com/playbasis/api/tree/v2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...v2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...v2.7.6)
+
+## [2.7.6](https://github.com/playbasis/api/tree/2.7.6) (2016-04-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...2.7.6)
 
 **Implemented enhancements:**
 
@@ -1483,13 +1562,13 @@
 [Full Changelog](https://github.com/playbasis/api/compare/Bug_rankPeerByAccAction_wrong_month_type...2.3.0-alpha.5)
 
 ## [Bug_rankPeerByAccAction_wrong_month_type](https://github.com/playbasis/api/tree/Bug_rankPeerByAccAction_wrong_month_type) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.3.4...Bug_rankPeerByAccAction_wrong_month_type)
-
-## [2.3.4](https://github.com/playbasis/api/tree/2.3.4) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.2.4...2.3.4)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.4...Bug_rankPeerByAccAction_wrong_month_type)
 
 ## [2.2.4](https://github.com/playbasis/api/tree/2.2.4) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.4...2.2.4)
+[Full Changelog](https://github.com/playbasis/api/compare/2.3.4...2.2.4)
+
+## [2.3.4](https://github.com/playbasis/api/tree/2.3.4) (2016-02-05)
+[Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.4...2.3.4)
 
 ## [2.3.0-alpha.4](https://github.com/playbasis/api/tree/2.3.0-alpha.4) (2016-02-03)
 [Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.3...2.3.0-alpha.4)
@@ -2625,13 +2704,13 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.3...2.1.24-alpha.4)
 
 ## [2.1.24-alpha.3](https://github.com/playbasis/api/tree/2.1.24-alpha.3) (2015-04-27)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.3)
-
-## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.3)
 
 ## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.1)
+
+## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.2)
 
 ## [2.1.20-alpha.1](https://github.com/playbasis/api/tree/2.1.20-alpha.1) (2015-03-18)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.19-alpha.1...2.1.20-alpha.1)
@@ -2820,16 +2899,16 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.3...2.1.1-alpha.2)
 
 ## [2.1.1-beta.3](https://github.com/playbasis/api/tree/2.1.1-beta.3) (2014-06-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.1...2.1.1-beta.3)
-
-## [2.1.1-alpha.1](https://github.com/playbasis/api/tree/2.1.1-alpha.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.1...2.1.1-alpha.1)
-
-## [2.1.1-rc.1](https://github.com/playbasis/api/tree/2.1.1-rc.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.1...2.1.1-rc.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.1...2.1.1-beta.3)
 
 ## [2.1.1-beta.1](https://github.com/playbasis/api/tree/2.1.1-beta.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-beta.1...2.1.1-beta.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.1...2.1.1-beta.1)
+
+## [2.1.1-rc.1](https://github.com/playbasis/api/tree/2.1.1-rc.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.1...2.1.1-rc.1)
+
+## [2.1.1-alpha.1](https://github.com/playbasis/api/tree/2.1.1-alpha.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-beta.1...2.1.1-alpha.1)
 
 ## [2.1.0-beta.1](https://github.com/playbasis/api/tree/2.1.0-beta.1) (2014-06-06)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.0-rc.1...2.1.0-beta.1)
