@@ -1583,7 +1583,7 @@ class Quest extends REST2_Controller
             $data['status'] = array("join", "finish");
             $quest_player = $this->quest_model->getPlayerQuest($data);
 
-            $resp['quest'] = array();
+            $resp['quest'] = null;
             if ($quest_player) {
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
                 if($quest) {
