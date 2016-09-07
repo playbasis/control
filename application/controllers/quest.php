@@ -1585,45 +1585,50 @@ class Quest extends REST2_Controller
 
             $resp['quest'] = array();
             if ($quest_player) {
-                $quest = $this->quest_model->getQuest(array_merge($data,
-                    array('quest_id' => $quest_player['quest_id'])));
-                $quest['num_missions'] = array(
-                    'total' => count($quest_player["missions"]),
-                    'join' => 0,
-                    'unjoin' => 0,
-                    'finish' => 0
-                );
+                $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
+                if($quest) {
+                    $quest['num_missions'] = array(
+                        'total' => count($quest["missions"]),
+                        'join' => 0,
+                        'unjoin' => 0,
+                        'finish' => 0
+                    );
 
-                foreach ($quest_player["missions"] as $k => $m) {
-                    $quest["missions"][$k]["date_modified"] = isset($m["date_modified"]) ? $m["date_modified"] : "";
-                    $quest["missions"][$k]["status"] = isset($m["status"]) ? $m["status"] : "";
-                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id,
-                        $this->validToken, $badge_player_check, $m);
-                    if ($quest["missions"][$k]["status"]) {
-                        $quest['num_missions'][$quest["missions"][$k]["status"]]++;
-                    }
-                }
-
-                $quest['status'] = $quest_player['status'];
-                $quest['quest_id'] = $quest_player['quest_id'];
-                unset($quest['_id']);
-
-                if(isset($quest['rewards']) && is_array($quest['rewards'])){
-                    foreach ($quest['rewards'] as $index => $reward){
-                        if(isset($reward['reward_data']['_id'])) unset($quest['rewards'][$index]['reward_data']['_id']);
-                        if(isset($reward['reward_data']['client_id'])) unset($quest['rewards'][$index]['reward_data']['client_id']);
-                        if(isset($reward['reward_data']['site_id'])) unset($quest['rewards'][$index]['reward_data']['site_id']);
-                        if($reward['reward_type'] == 'GOODS'){
-                            if(isset($reward['reward_data']['group'])) {
-                                $quest['rewards'][$index]['reward_data']['name'] = $quest['rewards'][$index]['reward_data']['group'];
+                    foreach ($quest["missions"] as $k => $m) {
+                        foreach ($quest_player["missions"] as $pk => $pm) {
+                            if ($m['mission_id'] == $pm['mission_id']) {
+                                $quest["missions"][$k]["date_modified"] = isset($m["date_modified"]) ? $m["date_modified"] : "";
+                                $quest["missions"][$k]["status"] = isset($pm["status"]) ? $pm["status"] : "";
+                                $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id,
+                                    $this->validToken, $badge_player_check, $m);
+                                if ($quest["missions"][$k]["status"]) {
+                                    $quest['num_missions'][$quest["missions"][$k]["status"]]++;
+                                }
                             }
-                            unset($quest['rewards'][$index]['reward_data']['code']);
                         }
                     }
-                }
 
-                array_walk_recursive($quest, array($this, "convert_mongo_object"));
-                $resp['quest'] = $quest;
+                    $quest['status'] = $quest_player['status'];
+                    $quest['quest_id'] = $quest_player['quest_id'];
+                    unset($quest['_id']);
+
+                    if (isset($quest['rewards']) && is_array($quest['rewards'])) {
+                        foreach ($quest['rewards'] as $index => $reward) {
+                            if (isset($reward['reward_data']['_id'])) unset($quest['rewards'][$index]['reward_data']['_id']);
+                            if (isset($reward['reward_data']['client_id'])) unset($quest['rewards'][$index]['reward_data']['client_id']);
+                            if (isset($reward['reward_data']['site_id'])) unset($quest['rewards'][$index]['reward_data']['site_id']);
+                            if ($reward['reward_type'] == 'GOODS') {
+                                if (isset($reward['reward_data']['group'])) {
+                                    $quest['rewards'][$index]['reward_data']['name'] = $quest['rewards'][$index]['reward_data']['group'];
+                                }
+                                unset($quest['rewards'][$index]['reward_data']['code']);
+                            }
+                        }
+                    }
+
+                    array_walk_recursive($quest, array($this, "convert_mongo_object"));
+                    $resp['quest'] = $quest;
+                }
             }
         } else {
             // get all quests related to clients
@@ -1641,41 +1646,47 @@ class Quest extends REST2_Controller
                 }
 
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
-                $quest['num_missions'] = array(
-                    'total' => count($q["missions"]),
-                    'join' => 0,
-                    'unjoin' => 0,
-                    'finish' => 0
-                );
+                if($quest){
+                    $quest['num_missions'] = array(
+                        'total' => count($quest["missions"]),
+                        'join' => 0,
+                        'unjoin' => 0,
+                        'finish' => 0
+                    );
 
-                foreach ($q["missions"] as $k => $m) {
-                    $quest["missions"][$k]["date_modified"] = isset($m["date_modified"]) ? $m["date_modified"] : "";
-                    $quest["missions"][$k]["status"] = isset($m["status"]) ? $m["status"] : "";
-                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id,
-                        $this->validToken, $badge_player_check, $m);
-                    if ($quest["missions"][$k]["status"]) {
-                        $quest['num_missions'][$quest["missions"][$k]["status"]]++;
-                    }
-                }
-
-                $quest['status'] = $q['status'];
-                $quest['quest_id'] = $q['quest_id'];
-                unset($quest['_id']);
-
-                if(isset($quest['rewards']) && is_array($quest['rewards'])){
-                    foreach ($quest['rewards'] as $index => $reward){
-                        if(isset($reward['reward_data']['_id'])) unset($quest['rewards'][$index]['reward_data']['_id']);
-                        if(isset($reward['reward_data']['client_id'])) unset($quest['rewards'][$index]['reward_data']['client_id']);
-                        if(isset($reward['reward_data']['site_id'])) unset($quest['rewards'][$index]['reward_data']['site_id']);
-                        if($reward['reward_type'] == 'GOODS'){
-                            if(isset($reward['reward_data']['group'])) {
-                                $quest['rewards'][$index]['reward_data']['name'] = $quest['rewards'][$index]['reward_data']['group'];
+                    foreach ($quest["missions"] as $k => $m) {
+                        foreach ($q["missions"] as $pk => $pm){
+                            if($m['mission_id']== $pm['mission_id']){
+                                $quest["missions"][$k]["date_modified"] = isset($m["date_modified"]) ? $m["date_modified"] : "";
+                                $quest["missions"][$k]["status"] = isset($pm["status"]) ? $pm["status"] : "";
+                                $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id,
+                                    $this->validToken, $badge_player_check, $m);
+                                if ($quest["missions"][$k]["status"]) {
+                                    $quest['num_missions'][$quest["missions"][$k]["status"]]++;
+                                }
                             }
-                            unset($quest['rewards'][$index]['reward_data']['code']);
                         }
                     }
+
+                    $quest['status'] = $q['status'];
+                    $quest['quest_id'] = $q['quest_id'];
+                    unset($quest['_id']);
+
+                    if(isset($quest['rewards']) && is_array($quest['rewards'])){
+                        foreach ($quest['rewards'] as $index => $reward){
+                            if(isset($reward['reward_data']['_id'])) unset($quest['rewards'][$index]['reward_data']['_id']);
+                            if(isset($reward['reward_data']['client_id'])) unset($quest['rewards'][$index]['reward_data']['client_id']);
+                            if(isset($reward['reward_data']['site_id'])) unset($quest['rewards'][$index]['reward_data']['site_id']);
+                            if($reward['reward_type'] == 'GOODS'){
+                                if(isset($reward['reward_data']['group'])) {
+                                    $quest['rewards'][$index]['reward_data']['name'] = $quest['rewards'][$index]['reward_data']['group'];
+                                }
+                                unset($quest['rewards'][$index]['reward_data']['code']);
+                            }
+                        }
+                    }
+                    $quests[] = $quest;
                 }
-                $quests[] = $quest;
             }
 
             array_walk_recursive($quests, array($this, "convert_mongo_object"));
