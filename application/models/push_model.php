@@ -114,10 +114,11 @@ class Push_model extends MY_Model
                 //define( 'API_ACCESS_KEY', 'AIzaSyCeCZPwysyiPnP4A-PWKFiSgz_QbWYPFtE' );
                 //$registrationIds = $data['device_token'];
                 $registrationIds =  array($data['device_token']);
+                
                 $msg = array
                 (
                     'message' => $data['messages'],
-                    'title'  => 'Playbasis API',
+                    'title'  => isset($data['title']) && !empty($data['title']) ? $data['title'] : "Playbasis API",
                     //'subtitle'    => $data['subtitle'],
                     //'tickerText'  => $data['description'],
                     'badge' => $data['badge_number'],
