@@ -1004,6 +1004,14 @@ class Client_model extends MY_Model
         return $result ? $result[0] : array();
     }
 
+    public function findSiteNameBySiteId($site_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('_id', $site_id);
+        $result = $this->mongo_db->get('playbasis_client_site');
+        return $result ? $result[0]['site_name'] : "";
+    }
+
     public function checkFeatureByFeatureName($clientData, $featureName)
     {
         $this->mongo_db->select(array('_id'));

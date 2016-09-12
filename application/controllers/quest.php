@@ -2293,8 +2293,10 @@ class Quest extends REST2_Controller
             $player['coupon'] = $input['coupon'];
         }
         $message = $this->utility->replace_template_vars($template['body'], $player);
+        $site_name = $this->client_model->findSiteNameBySiteId($input['site_id']);
         foreach ($devices as $device) {
             $this->push_model->initial(array(
+                'title' => $site_name,
                 'device_token' => $device['device_token'],
                 'messages' => $message,
                 'badge_number' => 1,
@@ -2332,8 +2334,10 @@ class Quest extends REST2_Controller
             return false;
         }
 
+        $site_name = $this->client_model->findSiteNameBySiteId($input['site_id']);
         foreach ($devices as $device) {
             $this->push_model->initial(array(
+                'title' => $site_name,
                 'device_token' => $device['device_token'],
                 'messages' => $message,
                 'badge_number' => 1,
