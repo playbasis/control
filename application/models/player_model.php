@@ -2958,7 +2958,7 @@ class Player_model extends MY_Model
         return $this->mongo_db->get('playbasis_player_device');
     }
 
-    public function unRegisterDevices($client_id, $site_id, $pb_player_id)
+    public function deRegisterDevices($client_id, $site_id, $pb_player_id)
     {
         $this->mongo_db->where(array(
             'client_id' => $client_id,

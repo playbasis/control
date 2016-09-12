@@ -258,7 +258,7 @@ class Push extends REST2_Controller
         $this->response($this->resp->setRespond(array('processing_time' => $t)), 200);
     }
 
-    public function deviceUnRegistration_post()
+    public function deviceDeRegistration_post()
     {
         $this->benchmark->mark('start');
 
@@ -279,7 +279,7 @@ class Push extends REST2_Controller
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
 
-        $this->player_model->unRegisterDevices($this->client_id, $this->site_id, $pb_player_id);
+        $this->player_model->deRegisterDevices($this->client_id, $this->site_id, $pb_player_id);
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
