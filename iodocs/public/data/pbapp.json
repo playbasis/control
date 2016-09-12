@@ -3138,7 +3138,7 @@
         },
         {
           "MethodName": "Device Unregistration",
-          "Synopsis": "Unregister for your device ",
+          "Synopsis": "Deregister for your device ",
           "HTTPMethod": "POST",
           "URI": "/Push/deviceDeRegistration",
           "RequiresOAuth": "N",
