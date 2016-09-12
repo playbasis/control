@@ -3137,6 +3137,29 @@
           ]
         },
         {
+          "MethodName": "Device Unregistration",
+          "Synopsis": "Unregister for your device ",
+          "HTTPMethod": "POST",
+          "URI": "/Push/deviceUnRegistration",
+          "RequiresOAuth": "N",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id"
+            }
+          ]
+        },
+        {
           "MethodName": "Send Push-Notification",
           "Synopsis": "Send push notification to a player.",
           "HTTPMethod": "POST",

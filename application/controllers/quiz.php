@@ -1330,8 +1330,10 @@ class Quiz extends REST2_Controller
             $player['code'] = $this->player_model->generateCode($input['pb_player_id']);
         }
         $message = $this->utility->replace_template_vars($template['body'], $player);
+        $site_name = $this->client_model->findSiteNameBySiteId($input['site_id']);
         foreach ($devices as $device) {
             $this->push_model->initial(array(
+                'title' => $site_name,
                 'device_token' => $device['device_token'],
                 'messages' => $message,
                 'badge_number' => 1,
