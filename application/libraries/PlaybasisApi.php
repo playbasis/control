@@ -233,6 +233,11 @@ class PlaybasisApi
         return $result;
     }
 
+    public function playQuest($params) {
+        $result = $this->_post('Engine/quest', $params);
+        return $result;
+    }
+
     private function _get($uri,$params = array()) {
         $defaultParam = array('api_key' => $this->api_key);
         $sendParam = array_merge($defaultParam, $params);
