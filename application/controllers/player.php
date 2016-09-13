@@ -1945,11 +1945,7 @@ class Player extends REST2_Controller
         }
 
         $required = $this->input->checkParam(array(
-            'phone_number',
-            'device_token',
-            'device_description',
-            'device_name',
-            'os_type'
+            'phone_number'
         ));
         if ($required) {
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
@@ -1959,7 +1955,7 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
         }
 
-        if(strtolower($this->input->post('os_type')) != "ios" && strtolower($this->input->post('os_type')) != "android"){
+        if($this->input->post('os_type') && strtolower($this->input->post('os_type')) != "ios" && strtolower($this->input->post('os_type')) != "android"){
             $this->response($this->error->setError('OS_TYPE_INVALID'), 200);
         }
 
