@@ -264,24 +264,35 @@ class Push extends REST2_Controller
     {
         $this->benchmark->mark('start');
 
-        $required = $this->input->checkParam(array(
-            'player_id',
-        ));
-
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $not_player_id = $this->input->checkParam(array('player_id'));
+        $not_device_token = $this->input->checkParam(array('device_token'));
+        
+        if ($not_player_id && $not_device_token) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('player_id/device_token')), 200);
         }
 
-        //get playbasis player id
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
-            'cl_player_id' => $this->input->post('player_id')
-        )));
+        if (!$not_player_id){
+            //get playbasis player id
+            $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+                'cl_player_id' => $this->input->post('player_id')
+            )));
 
-        if (!$pb_player_id) {
-            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            if (!$pb_player_id) {
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            }
+        }
+        
+        if (!$not_device_token) {
+            $device_token = $this->input->post('device_token');
+            $devices = $this->player_model->getDeviceByToken($this->client_id, $this->site_id,$device_token);
+            if (is_null($devices)) {
+                $this->response($this->error->setError('DEVICE_NOT_EXIST'), 200);
+            }
         }
 
-        $this->player_model->deRegisterDevices($this->client_id, $this->site_id, $pb_player_id);
+        $this->player_model->deRegisterDevices($this->client_id, $this->site_id, 
+                                               isset($pb_player_id) && !empty($pb_player_id)? $pb_player_id : null,
+                                               isset($device_token) && !empty($device_token) ? $device_token : null);
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
