@@ -965,7 +965,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('reward_point')) {
             $this->data['reward_point'] = $this->input->post('reward_point');
-        } elseif (isset($goods_info['reward_point']) && !empty($goods_info['reward_point'])) {
+        } elseif (isset($goods_info['redeem']['point']) && !empty($goods_info['redeem']['point'])) {
             $this->data['reward_point'] = isset($goods_info['redeem']['point']) ? $goods_info['redeem']['point']['point_value'] : 0;
         } else {
             $this->data['reward_point'] = 0;
@@ -973,7 +973,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('reward_badge')) {
             $this->data['reward_badge'] = $this->input->post('reward_badge');
-        } elseif (isset($goods_info['reward_badge']) && !empty($goods_info['reward_badge'])) {
+        } elseif (isset($goods_info['redeem']['badge']) && !empty($goods_info['redeem']['badge'])) {
             $this->data['reward_badge'] = isset($goods_info['redeem']['badge']) ? $goods_info['redeem']['badge'] : array();
         } else {
             $this->data['reward_badge'] = array();
@@ -981,7 +981,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('reward_reward')) {
             $this->data['reward_reward'] = $this->input->post('reward_reward');
-        } elseif (isset($goods_info['reward_reward']) && !empty($goods_info['reward_reward'])) {
+        } elseif (isset($goods_info['redeem']['custom']) && !empty($goods_info['redeem']['custom'])) {
             $this->data['reward_reward'] = isset($goods_info['redeem']['custom']) ? $goods_info['redeem']['custom'] : array();
         } else {
             $this->data['reward_reward'] = array();
