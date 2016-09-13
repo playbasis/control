@@ -2300,7 +2300,10 @@ class Quest extends REST2_Controller
                 'device_token' => $device['device_token'],
                 'messages' => $message,
                 'badge_number' => 1,
-                'data' => null,
+                'data' => array(
+                    'player_id_1' => $player['cl_player_id'],
+                    'player_id_2' => $player['cl_player_id-2']
+                ),
             ), $device['os_type']);
         }
         return true;
@@ -2341,7 +2344,7 @@ class Quest extends REST2_Controller
                 'device_token' => $device['device_token'],
                 'messages' => $message,
                 'badge_number' => 1,
-                'data' => array('client_id'=>$input['client_id'], 'site_id'=>$input['site_id'],'item_info'=>$item_info),
+                'data' => array('client_id'=>$input['client_id'], 'site_id'=>$input['site_id'], 'player_id' => $input['player_id'], 'item_info'=>$item_info),
             ), $device['os_type']);
         }
         return true;

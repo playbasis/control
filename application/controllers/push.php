@@ -87,7 +87,8 @@ class Push extends REST2_Controller
                     'messages' => $message,
                     'data' => array(
                         'client_id' => $this->client_id,
-                        'site_id' => $this->site_id
+                        'site_id' => $this->site_id,
+                        'player_id' => $player_id
                     ),
                     'badge_number' => 1
                 );
@@ -184,7 +185,8 @@ class Push extends REST2_Controller
                     'messages' => $message,
                     'data' => array(
                         'client_id' => $this->client_id,
-                        'site_id' => $this->site_id
+                        'site_id' => $this->site_id,
+                        'player_id' => $cl_player_id
                     ),
                     'badge_number' => 1
                 );
