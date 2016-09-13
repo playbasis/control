@@ -2958,17 +2958,36 @@ class Player_model extends MY_Model
         return $this->mongo_db->get('playbasis_player_device');
     }
 
-    public function deRegisterDevices($client_id, $site_id, $pb_player_id)
+    public function deRegisterDevices($client_id, $site_id, $pb_player_id = null,$device_token = null)
     {
         $this->mongo_db->where(array(
             'client_id' => $client_id,
             'site_id' => $site_id,
-            'pb_player_id' => $pb_player_id,
         ));
+
+        if ($pb_player_id) {
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+        }
+        if ($device_token) {
+            $this->mongo_db->where('device_token', $device_token);
+        }
         $this->mongo_db->set('deleted' , true);
         return $this->mongo_db->update_all('playbasis_player_device');
     }
 
+    public function getDeviceByToken($client_id, $site_id, $device_token)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'device_token' => $device_token
+        ));
+
+        $this->mongo_db->where_ne('deleted', true);
+        $result =  $this->mongo_db->get('playbasis_player_device');
+        return $result ? $result : null;
+    }
+    
     public function getMonthLeaderboardsByCustomParameter($input, $client_id, $site_id)
     {
 

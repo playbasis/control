@@ -3137,7 +3137,7 @@
           ]
         },
         {
-          "MethodName": "Device Unregistration",
+          "MethodName": "Device Deregistration",
           "Synopsis": "Deregister for your device ",
           "HTTPMethod": "POST",
           "URI": "/Push/deviceDeRegistration",
@@ -3152,10 +3152,17 @@
             },
             {
               "Name": "player_id",
-              "Required": "Y",
+              "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "player id"
+              "Description": "player id [player id or device token is required]"
+            },
+            {
+              "Name": "device_token",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Device [player id or device token is required]"
             }
           ]
         },
