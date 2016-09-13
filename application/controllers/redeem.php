@@ -264,6 +264,7 @@ class Redeem extends REST2_Controller
 
         $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'],
             $this->validToken['site_id'], $group, $pb_player_id, $amount);
+        $goods_amount = $this->goods_model->getTotalGoodsByGroup($this->validToken['client_id'], $this->validToken['site_id'], $group);
         if ($goods) {
             if (isset($goods['organize_id'])) {
                 if ((!array_key_exists((string)$goods['organize_id'], $org_id_list)
@@ -304,7 +305,11 @@ class Redeem extends REST2_Controller
                     $this->validToken['site_id'], $group, $pb_player_id, $amount);
             }
         }
-        $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+        if($goods_amount < $amount){
+            $this->response($this->error->setError('REDEEM_GOODS_NOT_ENOUGH'), 200);
+        } else {
+            $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+        }
     }
 
     public function merchantGoodsGroup_post()
