@@ -264,8 +264,7 @@ class Redeem extends REST2_Controller
 
         $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'],
             $this->validToken['site_id'], $group, $pb_player_id, $amount);
-        $goods_amount = $this->goods_model->getTotalGoodsByGroup($this->validToken['client_id'], $this->validToken['site_id'], $group);
-        if ($goods) {
+        if ($goods && !isset($goods['error'])) {
             if (isset($goods['organize_id'])) {
                 if ((!array_key_exists((string)$goods['organize_id'], $org_id_list)
                     || ((isset($goods['organize_role']) && $goods['organize_role'] != "")
@@ -304,12 +303,39 @@ class Redeem extends REST2_Controller
                 $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'],
                     $this->validToken['site_id'], $group, $pb_player_id, $amount);
             }
-        }
-        if($goods_amount < $amount){
-            $this->response($this->error->setError('REDEEM_GOODS_NOT_ENOUGH'), 200);
         } else {
-            $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+            if(isset($goods['error'])) {
+                switch ($goods['error']) {
+                    case 'GOODS_NOT_AVAILABLE':
+                        $this->response($this->error->setError('REDEEM_GOODS_NOT_AVAILABLE'), 200);
+                        break;
+                    case 'GOODS_NOT_ENOUGH':
+                        $this->response($this->error->setError('REDEEM_GOODS_NOT_ENOUGH'), 200);
+                        break;
+                    case 'POINT_NOT_ENOUGH':
+                        $this->response($this->error->setError('REDEEM_POINT_NOT_ENOUGH'), 200);
+                        break;
+                    case 'BADGE_NOT_ENOUGH':
+                        $this->response($this->error->setError('REDEEM_BADGE_NOT_ENOUGH'), 200);
+                        break;
+                    case 'CUSTOM_POINT_NOT_ENOUGH':
+                        $reward_name = array();
+                        foreach ($goods['custom_id'] as $reward_id){
+                            $reward_name[] = $this->client_model->getRewardName(array(
+                                'client_id' => $validToken['client_id'],
+                                'site_id' => $validToken['site_id'],
+                                'reward_id' => $reward_id
+                            ));
+                        }
+                        $reward_name = implode(',', $reward_name);
+                        $this->response($this->error->setError('REDEEM_CUSTOM_POINT_NOT_ENOUGH', $reward_name), 200);
+                        break;
+                }
+            } else {
+                $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+            }
         }
+         
     }
 
     public function merchantGoodsGroup_post()
@@ -427,7 +453,7 @@ class Redeem extends REST2_Controller
 
         $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'],
             $this->validToken['site_id'], $group, $pb_player_id, $amount);
-        if ($goods) {
+        if ($goods && !isset($goods['error'])) {
             for ($i = 0; $i < MAX_REDEEM_TRIES; $i++) { // try to redeem for a few times before giving up
                 log_message('debug', 'random = ' . $goods['goods_id']);
                 /* actual redemption */
@@ -457,8 +483,38 @@ class Redeem extends REST2_Controller
                 $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'],
                     $this->validToken['site_id'], $group, $pb_player_id, $amount);
             }
+        } else {
+            if(isset($goods['error'])) {
+                switch ($goods['error']) {
+                    case 'GOODS_NOT_AVAILABLE':
+                        $this->response($this->error->setError('REDEEM_GOODS_NOT_AVAILABLE'), 200);
+                        break;
+                    case 'GOODS_NOT_ENOUGH':
+                        $this->response($this->error->setError('REDEEM_GOODS_NOT_ENOUGH'), 200);
+                        break;
+                    case 'POINT_NOT_ENOUGH':
+                        $this->response($this->error->setError('REDEEM_POINT_NOT_ENOUGH'), 200);
+                        break;
+                    case 'BADGE_NOT_ENOUGH':
+                        $this->response($this->error->setError('REDEEM_BADGE_NOT_ENOUGH'), 200);
+                        break;
+                    case 'CUSTOM_POINT_NOT_ENOUGH':
+                        $reward_name = array();
+                        foreach ($goods['custom_id'] as $reward_id){
+                            $reward_name[] = $this->client_model->getRewardName(array(
+                                'client_id' => $validToken['client_id'],
+                                'site_id' => $validToken['site_id'],
+                                'reward_id' => $reward_id
+                            ));
+                        }
+                        $reward_name = implode(',', $reward_name);
+                        $this->response($this->error->setError('REDEEM_CUSTOM_POINT_NOT_ENOUGH', $reward_name), 200);
+                        break;
+                }
+            } else {
+                $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+            }
         }
-        $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
     }
 
     private function redeem(
