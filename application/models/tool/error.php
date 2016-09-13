@@ -98,6 +98,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Lithium subscription record is not found";
                 $errorData['error_code'] = '0813';
                 break;
+            case 'DEVICE_NOT_EXIST':
+                $errorData['message'] = "Device is not found";
+                $errorData['error_code'] = '0814';
+                break;
             case 'INVALID_API_KEY_OR_SECRET':
                 $errorData['message'] = "Invalid API-KEY OR API-SECRET";
                 $errorData['error_code'] = '0001';
