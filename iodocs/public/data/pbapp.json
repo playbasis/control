@@ -721,28 +721,28 @@
             },
             {
               "Name": "device_token",
-              "Required": "Y",
+              "Required": "N",
               "Default": "",
               "Type": "string",
               "Description": "access token returned from Device"
             },
             {
               "Name": "device_description",
-              "Required": "Y",
+              "Required": "N",
               "Default": "",
               "Type": "string",
               "Description": "Device model description"
             },
             {
               "Name": "device_name",
-              "Required": "Y",
+              "Required": "N",
               "Default": "",
               "Type": "string",
               "Description": "Device model name"
             },
             {
               "Name": "os_type",
-              "Required": "Y",
+              "Required": "N",
               "Default": "",
               "Type": "enumerated",
               "Description": "Choose os type",
