@@ -1337,7 +1337,9 @@ class Quiz extends REST2_Controller
                 'device_token' => $device['device_token'],
                 'messages' => $message,
                 'badge_number' => 1,
-                'data' => null,
+                'data' => array(
+                    'player_id' => $player['cl_player_id']
+                ),
             ), $device['os_type']);
         }
         return true;
