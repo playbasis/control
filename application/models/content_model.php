@@ -484,22 +484,32 @@ class Content_model extends MY_Model
         return $this->mongo_db->distinct('content_id', 'playbasis_content_feedback');
     }
 
-    public function countValidContentFollowup($client_id, $site_id, $content_id){
+    public function countValidContentFollowup($client_id, $site_id, $content_id, $pb_player_id_list=null){
         try {
             $this->mongo_db->where('client_id', new MongoID($client_id));
             $this->mongo_db->where('site_id', new MongoID($site_id));
             $this->mongo_db->where('content_id', new MongoID($content_id));
+
+            if (isset($pb_player_id_list) && is_array($pb_player_id_list)){
+                $this->mongo_db->where_in('pb_player_id', $pb_player_id_list);
+            }
+
         } catch (Exception $e) {
             return false;
         };
         return count($this->mongo_db->distinct('pb_player_id', 'playbasis_content_feedback'));
     }
 
-    public function countContentAction($client_id, $site_id, $content_id){
+    public function countContentAction($client_id, $site_id, $content_id, $pb_player_id_list=null){
         try {
             $this->mongo_db->where('client_id', new MongoID($client_id));
             $this->mongo_db->where('site_id', new MongoID($site_id));
             $this->mongo_db->where('content_id', new MongoID($content_id));
+
+            if (isset($pb_player_id_list) && is_array($pb_player_id_list)){
+                $this->mongo_db->where_in('pb_player_id', $pb_player_id_list);
+            }
+
         } catch (Exception $e) {
             return false;
         };

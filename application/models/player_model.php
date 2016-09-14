@@ -3174,6 +3174,37 @@ class Player_model extends MY_Model
         return $result;
     }
 
+    public function find_player_with_in($client_id, $site_id, $optionalsParam=null)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+
+        if (isset($optionalsParam['source'])){
+            $this->mongo_db->where('custom.source', $optionalsParam['source']);
+        }elseif (isset($optionalsParam['email'])){
+            $regex = new MongoRegex("/" . preg_quote(mb_strtolower($optionalsParam['email'])) . "/i");
+            $this->mongo_db->where('email', $regex);
+            if (isset($optionalsParam['not_source'])){
+                $this->mongo_db->where_ne('custom.source', $optionalsParam['not_source']);
+            }
+        }else{
+            if (isset($optionalsParam['not_email'])){
+                $regex = new MongoRegex("/.*" . preg_quote(mb_strtolower($optionalsParam['not_email'])) . ".*/i");
+                $this->mongo_db->where(array(
+                    'email' => array(
+                        '$not' => $regex
+                    )
+                ));
+            }
+            if (isset($optionalsParam['not_source'])){
+                $this->mongo_db->where_ne('custom.source', $optionalsParam['not_source']);
+            }
+        }
+
+        return $this->mongo_db->distinct('_id', 'playbasis_player');
+    }
+
 }
 
 function index_id($obj)
