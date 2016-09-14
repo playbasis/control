@@ -52,7 +52,8 @@ class Content extends REST2_Controller
         //$content_ids_to_player = array_merge($content_ids_to_player, $content_ids_to_feedback);
         //$content_ids_to_player = array_unique($content_ids_to_player);
 
-        if (isset($query_data['limit']) && isset($query_data['sort']) && ((strtolower($query_data['sort']) === 'followup') || strtolower($query_data['sort'] === 'random'))) {
+        if (isset($query_data['limit']) && isset($query_data['sort']) && ((strtolower($query_data['sort']) === 'followup')
+                || (strtolower($query_data['sort']) === 'action') ||  strtolower($query_data['sort'] === 'random'))) {
             $query_data['_limit'] = $query_data['limit'];
             $query_data['limit'] += count($content_ids_to_player);
         }
@@ -282,7 +283,8 @@ class Content extends REST2_Controller
             }
             if (count($contents) > 0) {
                 foreach ($contents as $key => $val) {
-                    $val['number_followup'] = $this->content_model->countValidContentFollowup($this->client_id, $this->site_id, $val['_id']);;
+                    $pb_player_id_list = $this->getPlayerIdListForSameType($pb_player_id, 'Country');
+                    $val['number_followup'] = $this->content_model->countValidContentFollowup($this->client_id, $this->site_id, $val['_id'], $pb_player_id_list);
 
                     if (isset($pb_player_id) && !empty($pb_player_id)){
                         $player_action = $this->content_model->retrieveExistingPlayerContent(array(
@@ -312,7 +314,8 @@ class Content extends REST2_Controller
             }
         }elseif(isset($query_data['sort']) && $query_data['sort'] == 'action'){
             foreach ($contents as $key => $val){
-                $val['number_action'] = $this->content_model->countContentAction($this->client_id, $this->site_id, $val['_id']);
+                $pb_player_id_list = $this->getPlayerIdListForSameType($pb_player_id, 'Country');
+                $val['number_action'] = $this->content_model->countContentAction($this->client_id, $this->site_id, $val['_id'], $pb_player_id_list);
                 $result[] = $val;
             }
             usort($result, function ($a, $b) use ($query_data) {
@@ -998,5 +1001,68 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('CONTENT_NOT_FOUND'), 200);
         }
         return $contents;
+    }
+
+    private function getPlayerIdListForSameType($pb_player_id, $organize=null)
+    {
+        if (isset($pb_player_id) && !empty($pb_player_id)) {
+
+            $player_id_list_from_node = array($pb_player_id);
+            $node_of_player = $this->store_org_model->retrieveNodeByPBPlayerID($this->client_id, $this->site_id,
+                $pb_player_id);
+
+            if (isset($node_of_player) && is_array($node_of_player)) {
+
+                foreach ($node_of_player as $node) {
+
+                    // Get only player list with same organize
+                    if (isset($organize) && !empty($organize)) {
+                        $node_details = $this->store_org_model->retrieveNodeById($this->site_id, $node['node_id']);
+                        $organize_id = $this->store_org_model->retrieveOrganizeByName($this->client_id, $this->site_id,
+                            $organize)['_id'];
+                        if ($node_details['organize'] != $organize_id) {
+                            continue;
+                        }
+                    }
+                    $player_id_from_node = $this->store_org_model->getPlayersByNodeId($this->client_id, $this->site_id,
+                        $node['node_id']);
+                    if (isset($player_id_from_node) && !empty($player_id_from_node)) {
+                        foreach ($player_id_from_node as $val) {
+                            array_push($player_id_list_from_node, $val['pb_player_id']);
+                        }
+                    }
+                }
+                $player_id_list_from_node = array_unique($player_id_list_from_node);
+            }
+
+            // Get same respondent type
+            $player_details = $this->player_model->getById($this->site_id, $pb_player_id);
+
+            if (isset($player_details['custom']['source']) && ($player_details['custom']['source'] == 'lucid')) {
+                $player_id_list = $this->player_model->find_player_with_in($this->client_id, $this->site_id, array(
+                    'source' => 'lucid',
+                ));
+            } elseif ((strpos($player_details['email'], '@unilever.com') !== false)) {
+                $player_id_list = $this->player_model->find_player_with_in($this->client_id, $this->site_id, array(
+                    'email' => '@unilever.com',
+                    'not_source' => 'lucid',
+                ));
+            } else {
+                $player_id_list = $this->player_model->find_player_with_in($this->client_id, $this->site_id, array(
+                    'not_email' => '@unilever.com',
+                    'not_source' => 'lucid',
+                ));
+            }
+
+            if (empty($player_id_list)){
+                return array_values($player_id_list_from_node);
+            }else{
+                return array_values(array_intersect($player_id_list_from_node, $player_id_list));
+            }
+
+        }
+
+        return null;
+
     }
 }
