@@ -65,7 +65,7 @@ class Push_model extends MY_Model
                 $message->setCustomIdentifier("Playbasis-Notification");
 
                 // Set badge icon to "3"
-                $message->setBadge($data['badge_number']);
+                $message->setBadge(intval($data['badge_number']));
 
                 // Set a simple welcome text
                 $message->setText($data['messages']);

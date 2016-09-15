@@ -269,7 +269,7 @@ $route['notification'] = 'notification/index';
 $route['Push/'.ANY_STRING.'/deviceRegistration'] = 'push/deviceRegistration/$1';
 $route['Push/deviceRegistration'] = 'push/deviceRegistration';
 $route['Push/deviceDeRegistration'] = 'push/deviceDeRegistration';
-
+$route['Push/sendPush'] = 'push/push_async';
 $route['Push/'.ANY_STRING.'/send'] = 'push/send/$1';
 $route['Push/send'] = 'push/send';
 $route['Push/goods'] = 'push/send_goods';

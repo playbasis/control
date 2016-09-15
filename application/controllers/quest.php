@@ -2295,7 +2295,8 @@ class Quest extends REST2_Controller
         $message = $this->utility->replace_template_vars($template['body'], $player);
         $site_name = $this->client_model->findSiteNameBySiteId($input['site_id']);
         foreach ($devices as $device) {
-            $this->push_model->initial(array(
+
+            $notificationInfo = array(
                 'title' => $site_name,
                 'device_token' => $device['device_token'],
                 'messages' => $message,
@@ -2303,8 +2304,12 @@ class Quest extends REST2_Controller
                 'data' => array(
                     'player_id_1' => $player['cl_player_id'],
                     'player_id_2' => $player['cl_player_id-2']
-                ),
-            ), $device['os_type']);
+                )
+            );
+
+            $api_key = $this->auth_model->getApikeyBySite($input['site_id']);
+            $params = array('notification_info' => http_build_query($notificationInfo) ,'type' => $device['os_type'], 'api_key' => $api_key);
+            $this->utility->request('Push','sendPush', http_build_query($params, '', '&'));
         }
         return true;
     }
@@ -2339,13 +2344,19 @@ class Quest extends REST2_Controller
 
         $site_name = $this->client_model->findSiteNameBySiteId($input['site_id']);
         foreach ($devices as $device) {
-            $this->push_model->initial(array(
+            $notificationInfo = array(
                 'title' => $site_name,
                 'device_token' => $device['device_token'],
                 'messages' => $message,
                 'badge_number' => 1,
-                'data' => array('client_id'=>$input['client_id'], 'site_id'=>$input['site_id'], 'player_id' => $input['player_id'], 'item_info'=>$item_info),
-            ), $device['os_type']);
+                'data' => array(
+                    'player_id' => $input['player_id'], 
+                    'item_info'=>$item_info
+                )
+            );
+            $api_key = $this->auth_model->getApikeyBySite($input['site_id']);
+            $params = array('notification_info' => http_build_query($notificationInfo) ,'type' => $device['os_type'], 'api_key' => $api_key);
+            $this->utility->request('Push','sendPush', http_build_query($params, '', '&'));
         }
         return true;
     }
