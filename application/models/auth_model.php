@@ -221,6 +221,35 @@ class Auth_model extends MY_Model
         return array();
     }
 
+    function getApikeyBySite ($site_id){
+        $this->mongo_db->select(array(
+            'api_key'
+        ));
+        $this->mongo_db->where(array(
+            'site_id' => new MongoId($site_id),
+            'status' => true,
+            'deleted' => false
+        ));
+        $this->mongo_db->limit(1);
+        $result =  $this->mongo_db->get('playbasis_platform_client_site');
+        return isset($result[0]['api_key']) ? $result[0]['api_key'] : null;
+    }
+
+    function getClientSiteByApiKey ($api_key){
+        $this->mongo_db->select(array(
+            'client_id',
+            'site_id'
+        ));
+        $this->mongo_db->where(array(
+            'api_key' => $api_key,
+            'status' => true,
+            'deleted' => false
+        ));
+        $this->mongo_db->limit(1);
+        $result =  $this->mongo_db->get('playbasis_platform_client_site');
+        return $result ? $result[0] : null;
+    }
+
     public function getOnePlatform($client_id, $site_id)
     {
         $this->set_site_mongodb($site_id);
