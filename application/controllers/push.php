@@ -86,13 +86,13 @@ class Push extends REST2_Controller
                     'device_token' => $device['device_token'],
                     'messages' => $message,
                     'data' => array(
-                        'client_id' => $this->client_id,
-                        'site_id' => $this->site_id,
                         'player_id' => $player_id
                     ),
                     'badge_number' => 1
                 );
-                $this->push_model->initial($notificationInfo, $device['os_type']);
+                $api_key = $this->auth_model->getApikeyBySite($this->site_id);
+                $params = array('notification_info' => http_build_query($notificationInfo) ,'type' => $device['os_type'], 'api_key' => $api_key);
+                $this->utility->request('Push','sendPush', http_build_query($params, '', '&'));
                 $this->push_model->log($notificationInfo, $device, $pb_player_id, $player_id);
             }
         }
@@ -184,19 +184,29 @@ class Push extends REST2_Controller
                     'device_token' => $device['device_token'],
                     'messages' => $message,
                     'data' => array(
-                        'client_id' => $this->client_id,
-                        'site_id' => $this->site_id,
                         'player_id' => $cl_player_id
                     ),
                     'badge_number' => 1
                 );
-                $this->push_model->initial($notificationInfo, $device['os_type']);
+                $api_key = $this->auth_model->getApikeyBySite($this->site_id);
+                $params = array('notification_info' => http_build_query($notificationInfo) ,'type' => $device['os_type'], 'api_key' => $api_key);
+                $this->utility->request('Push','sendPush', http_build_query($params, '', '&'));
                 $this->push_model->log($notificationInfo, $device, $pb_player_id, $cl_player_id);
             }
         }
         $this->response($this->resp->setRespond(''), 200);
     }
 
+    function push_async_get (){
+        
+        parse_str($this->input->get('notification_info'), $notificationInfo);
+        $site_data = $this->auth_model->getClientSiteByApiKey($this->input->get('api_key'));
+        $notificationInfo['data']['client_id'] = $site_data['client_id'];
+        $notificationInfo['data']['site_id'] = $site_data['site_id'];
+        $type = $this->input->get('type');
+        $this->push_model->initial($notificationInfo, $type);
+    }
+    
     /*
     public function send_post()
     {
