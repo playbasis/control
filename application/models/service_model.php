@@ -256,7 +256,8 @@ class Service_model extends MY_Model
         $limit,
         $pb_player_id = null,
         $last_read_activity_id = null,
-        $mode = 'all'
+        $mode = 'all',
+        $event_type = null
     ) {
         $this->set_site_mongodb($site_id);
 
@@ -275,7 +276,9 @@ class Service_model extends MY_Model
             $this->mongo_db->where(array('$or' => $reset_where));
         }
 
-        $event_type = array('REWARD', 'REDEEM', 'ACTION', 'LEVEL');
+        if(is_null($event_type)){
+            $event_type = array('REWARD', 'REDEEM', 'ACTION', 'LEVEL');
+        }
         if ($mode != 'all') {
             $event_type[] = 'SOCIAL';
         }
@@ -298,6 +301,7 @@ class Service_model extends MY_Model
             'date_added',
             'action_log_id',
             'pb_player_id',
+            'pb_player_id-2',
             'quest_id',
             'mission_id',
             'goods_id',
@@ -419,6 +423,25 @@ class Service_model extends MY_Model
 
             $event['player'] = isset($player[0]) ? $player[0] : null;
             unset($event['pb_player_id']);
+        }
+
+        if (isset($event['pb_player_id-2'])) {
+            $this->mongo_db->where('_id', $event['pb_player_id-2']);
+            $this->mongo_db->select(array(
+                'cl_player_id',
+                'username',
+                'first_name',
+                'last_name',
+                'gender',
+                'image',
+                'exp',
+                'level'
+            ));
+            $this->mongo_db->select(array(), array('_id'));
+            $player = $this->mongo_db->get('playbasis_player');
+
+            $event['player-2'] = isset($player[0]) ? $player[0] : null;
+            unset($event['pb_player_id-2']);
         }
 
         if (isset($event['from_pb_player_id'])) {
