@@ -26,7 +26,7 @@ class Redeem extends REST2_Controller
         $this->load->model('tool/respond', 'resp');
     }
 
-    public function goods_post($option = 0)
+    public function goods_post()
     {
         $this->benchmark->mark('goods_redeem_start');
 
@@ -122,7 +122,7 @@ class Redeem extends REST2_Controller
         $this->response($this->resp->setRespond($redeemResult), 200);
     }
 
-    public function sponsor_post($option = 0)
+    public function sponsor_post()
     {
         $this->benchmark->mark('goods_redeem_start');
 
