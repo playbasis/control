@@ -81,116 +81,118 @@ div.readable_area_wrapper
 
           ul
               - each endpoint in apiDefinition.endpoints
-                  li.endpoint
-                      h3.title
-                          span.name=endpoint.name
-                          ul.actions
-                              li.list-methods
-                                  a(href='#') List Methods
-                              li.expand-methods
-                                  a(href='#') Expand Methods
-                      - if (endpoint.methods.length)
-                      ul.methods.hidden
-                          - each method in endpoint.methods
-                              - var httpmethod =method.HTTPMethod.toLowerCase()
-                              - if (method.RequiresOAuth ==='Y' || method.RequiresOAuth ===true)
-                                  - var secure ='authrequired'
-                              - else
-                                  - var secure =''
-                              li(class='method ' + httpmethod + ' ' + secure)
-                                  div.title
-                                      span.http-method #{method.HTTPMethod}
-                                      span.name #{method.MethodName}
-                                      span.uri #{method.URI}
-                                  form.hidden
-                                      input(type='hidden', name='httpMethod', value=method.HTTPMethod)
-                                      input(type='hidden', name='oauth', value=secure)
-                                      input(type='hidden', name='methodUri', value=method.URI)
+                  - if (endpoint.Public === 'Y')
+                      li.endpoint
+                          h3.title
+                              span.name=endpoint.name
+                              ul.actions
+                                  li.list-methods
+                                      a(href='#') List Methods
+                                  li.expand-methods
+                                      a(href='#') Expand Methods
+                          - if (endpoint.methods.length)
+                          ul.methods.hidden
+                              - each method in endpoint.methods
+                                  - if (method.Public ==='Y' || method.Public ===true)
+                                      - var httpmethod =method.HTTPMethod.toLowerCase()
+                                      - if (method.RequiresOAuth ==='Y' || method.RequiresOAuth ===true)
+                                          - var secure ='authrequired'
+                                      - else
+                                          - var secure =''
+                                      li(class='method ' + httpmethod + ' ' + secure)
+                                          div.title
+                                              span.http-method #{method.HTTPMethod}
+                                              span.name #{method.MethodName}
+                                              span.uri #{'/'+method.URI}
+                                          form.hidden
+                                              input(type='hidden', name='httpMethod', value=method.HTTPMethod)
+                                              input(type='hidden', name='oauth', value=secure)
+                                              input(type='hidden', name='methodUri', value='/'+method.URI)
 
-                                      span.description #{method.Synopsis}
-                                      br
-                                      br
-                                      - if (method.parameters.length > 0)
-                                          table.parameters
-                                              thead
-                                                  tr
-                                                      th Parameter
-                                                      th Value
-                                                      th Type
-                                                      th Location
-                                                      th Description
-                                              tbody
-                                                  - var paramCount =0
-                                                  - each parameter in method.parameters
-                                                      - paramCount++
-                                                      div(id='param' + paramCount)
-                                                        - if (parameter.Required =='Y')
-                                                            - var required =true
-                                                            - var className ='required'
-                                                        - else
-                                                            - var required =false
-                                                            - var className =''
-                                                        tr(class=className)
-                                                            td.name=parameter.Name
-                                                            td.parameter
-                                                                - if (parameter.Type =='enumerated')
-                                                                    select(name='params[' + parameter.Name + ']', placeholder=className)
-                                                                      - if (parameter.Default =='')
-                                                                          option(value='') 
-                                                                      - each choice in parameter.EnumeratedList
-                                                                          - if (parameter.Default ==choice)
-                                                                                  option(value=choice, selected=true) #{choice}
-                                                                          - else
-                                                                                  option(value=choice) #{choice}
-                                                                - else if (parameter.Type =='boolean')
-                                                                     select(name='params[' + parameter.Name + ']', placeholder=className)
-                                                                          - if (parameter.Default =='')
-                                                                                  option(value='') 
-                                                                          - each choice in [apiInfo.booleanTrueVal,apiInfo.booleanFalseVal]
-                                                                             - if (parameter.Default ==choice)
-                                                                                     option(value=choice, selected=true) #{choice}
-                                                                             - else
-                                                                                     option(value=choice) #{choice}
-                                                                - else
-                                                                    input(name='params[' + parameter.Name + ']', value=parameter.Default, placeholder=className)
-                                                                    input(type='hidden', name='locations['+parameter.Name+']', value=parameter.Location || 'query')
-                                                            td.type=parameter.Type
-                                                            td.location
-                                                                p=parameter.Location || 'query'
-                                                            td.description
-                                                                p=parameter.Description || 'No description'
-                                                                - if (parameter.Type =='enumerated' && parameter.EnumeratedDescription)
-                                                                    dl.clearfix
-                                                                        - each description, choice in parameter.EnumeratedDescription
-                                                                            dt #{choice}
-                                                                            dd #{description}
-                                      - if (method.headers && method.headers.length > 0)
-                                          div.headers
-                                              h4.title
-                                                  div.indicator
-                                                  span Headers
-                                              div.fields
-                                                  table
-                                                      colgroup
-                                                          col(class='name')
-                                                          col(class='value')
-                                                          col(class='remove')
+                                              span.description #{method.Synopsis}
+                                              br
+                                              br
+                                              - if (method.parameters.length > 0)
+                                                  table.parameters
                                                       thead
                                                           tr
-                                                              th Name
-                                                              th(colspan='2') Value
+                                                              th Parameter
+                                                              th Value
+                                                              th Type
+                                                              th Location
+                                                              th Description
                                                       tbody
-                                                          tr
-                                                              td
-                                                                  input(name='headerNames[]', placeholder='Name')
-                                                              td
-                                                                  input(name='headerValues[]', placeholder='Value')
-                                                              td
-                                                                  a(href='#', class='remove') Remove
-                                                  a(href='#', class='add-headers') Add Header
-                                              // Create header fields and button to add/remove headers.
-                                      - if (!method['read-only'])
-                                          input(type='submit', id=method.MethodName, value='Try it!')
+                                                          - var paramCount =0
+                                                          - each parameter in method.parameters
+                                                              - paramCount++
+                                                              div(id='param' + paramCount)
+                                                                - if (parameter.Required !='N')
+                                                                    - var required =true
+                                                                    - var className ='required'
+                                                                - else
+                                                                    - var required =false
+                                                                    - var className =''
+                                                                tr(class=className)
+                                                                    td.name=parameter.Name
+                                                                    td.parameter
+                                                                        - if (parameter.Type =='enumerated')
+                                                                            select(name='params[' + parameter.Name + ']', placeholder=className)
+                                                                              - if (parameter.Default =='')
+                                                                                  option(value='')
+                                                                              - each choice in parameter.EnumeratedList
+                                                                                  - if (parameter.Default ==choice)
+                                                                                          option(value=choice, selected=true) #{choice}
+                                                                                  - else
+                                                                                          option(value=choice) #{choice}
+                                                                        - else if (parameter.Type =='boolean')
+                                                                             select(name='params[' + parameter.Name + ']', placeholder=className)
+                                                                                  - if (parameter.Default =='')
+                                                                                          option(value='')
+                                                                                  - each choice in [apiInfo.booleanTrueVal,apiInfo.booleanFalseVal]
+                                                                                     - if (parameter.Default ==choice)
+                                                                                             option(value=choice, selected=true) #{choice}
+                                                                                     - else
+                                                                                             option(value=choice) #{choice}
+                                                                        - else
+                                                                            input(name='params[' + parameter.Name + ']', value=parameter.Default, placeholder=className)
+                                                                            input(type='hidden', name='locations['+parameter.Name+']', value=parameter.Location || 'query')
+                                                                    td.type=parameter.Type
+                                                                    td.location
+                                                                        p=parameter.Location || 'query'
+                                                                    td.description
+                                                                        p=parameter.Description || 'No description'
+                                                                        - if (parameter.Type =='enumerated' && parameter.EnumeratedDescription)
+                                                                            dl.clearfix
+                                                                                - each description, choice in parameter.EnumeratedDescription
+                                                                                    dt #{choice}
+                                                                                    dd #{description}
+                                              - if (method.headers && method.headers.length > 0)
+                                                  div.headers
+                                                      h4.title
+                                                          div.indicator
+                                                          span Headers
+                                                      div.fields
+                                                          table
+                                                              colgroup
+                                                                  col(class='name')
+                                                                  col(class='value')
+                                                                  col(class='remove')
+                                                              thead
+                                                                  tr
+                                                                      th Name
+                                                                      th(colspan='2') Value
+                                                              tbody
+                                                                  tr
+                                                                      td
+                                                                          input(name='headerNames[]', placeholder='Name')
+                                                                      td
+                                                                          input(name='headerValues[]', placeholder='Value')
+                                                                      td
+                                                                          a(href='#', class='remove') Remove
+                                                          a(href='#', class='add-headers') Add Header
+                                                      // Create header fields and button to add/remove headers.
+                                              - if (!method['read-only'])
+                                                  input(type='submit', id=method.MethodName, value='Try it!')
 
 div.menu_area
   div.en

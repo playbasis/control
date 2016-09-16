@@ -278,7 +278,7 @@ class Push_model extends MY_Model
             return array();
         }
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('message', 'date_added'));
+        $this->mongo_db->select(array('messages', 'date_added'));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('cl_player_id', $cl_player_id);

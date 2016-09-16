@@ -368,6 +368,7 @@ class CI_Router {
 		// Is there a literal match?  If so we're done
 		if (isset($this->routes[$uri]))
 		{
+			$this->uri->router = $uri;
 			return $this->_set_request(explode('/', $this->routes[$uri]));
 		}
 
@@ -386,12 +387,14 @@ class CI_Router {
 					$val = preg_replace('#^'.$key.'$#', $val, $uri);
 				}
 
+				$this->uri->router = $key;
 				return $this->_set_request(explode('/', $val));
 			}
 		}
 
 		// If we got this far it means we didn't encounter a
 		// matching route so we'll set the site default route
+		$this->uri->router = $uri;
 		$this->_set_request($this->uri->segments);
 	}
 

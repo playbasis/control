@@ -33,7 +33,7 @@ class Fitbit extends REST2_Controller
         }
 
         $result = $this->Fitbit_model->getFitbitPlayer($client_id, $site_id, $pb_player_id);
-
+        array_walk_recursive($result, array($this, "convert_mongo_object_and_category"));
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
@@ -85,7 +85,7 @@ class Fitbit extends REST2_Controller
             $pb_player_id = $this->player_model->getPlaybasisId(array(
                 'client_id' => $this->validToken['client_id'],
                 'site_id' => $this->validToken['site_id'],
-                'cl_player_id' => $query_data['player_id']
+                'cl_player_id' => $cl_player_id
             ));
             if (empty($pb_player_id)) {
                 $this->response($this->error->setError('USER_NOT_EXIST'), 200);
@@ -101,7 +101,7 @@ class Fitbit extends REST2_Controller
         $result = $this->Fitbit_model->getFitbitPlayer($client_id, $site_id, $pb_player_id);
 
         if($result){
-            $result = $this->Fitbit_model->updateFitbitTokenPlayer($client_id, $site_id, $pb_player_id, $query_data['fitbit_token']);
+            $result = $this->Fitbit_model->updateFitbitPlayer($client_id, $site_id, $pb_player_id, $query_data['fitbit_token']);
         }
         else{
             $this->response($this->error->setError('FITBIT_PLAYER_NOT_EXIST'), 200);
@@ -123,7 +123,7 @@ class Fitbit extends REST2_Controller
             $pb_player_id = $this->player_model->getPlaybasisId(array(
                 'client_id' => $this->validToken['client_id'],
                 'site_id' => $this->validToken['site_id'],
-                'cl_player_id' => $query_data['player_id']
+                'cl_player_id' => $cl_player_id
             ));
             if (empty($pb_player_id)) {
                 $this->response($this->error->setError('USER_NOT_EXIST'), 200);
@@ -270,6 +270,20 @@ class Fitbit extends REST2_Controller
         $response = $response ? $response: curl_error($ch);
         curl_close ($ch);
         return $response;
+    }
+
+    private function convert_mongo_object_and_category(&$item, $key)
+    {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else {
+                if (get_class($item) === 'MongoDate') {
+                    $item = datetimeMongotoReadable($item);
+                }
+            }
+        }
+
     }
 }
 ?>
