@@ -2265,8 +2265,8 @@ class Cron extends CI_Controller
             }
 
             /* player-2 */
-            if (isset($input['player-2'])) {
-                $player2 = $this->player_model->getPlayerById($input['player-2']);
+            if (isset($input['pb_player_id-2'])) {
+                $player2 = $this->player_model->getPlayerById($input['pb_player_id-2']);
                 if ($player2) {
                     $player['first_name-2'] = $player2['first_name'];
                     $player['last_name-2'] = $player2['last_name'];
@@ -2274,7 +2274,7 @@ class Cron extends CI_Controller
                     $player['email-2'] = $player2['email'];
                     $player['phone_number-2'] = $player2['phone_number'];
                     if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) {
-                        $player['code-2'] = $this->player_model->generateCode($input['player-2']);
+                        $player['code-2'] = $this->player_model->generateCode($input['pb_player_id-2']);
                     }
                 }
             }
@@ -2344,8 +2344,8 @@ class Cron extends CI_Controller
             }
 
             /* player-2 */
-            if (isset($input['player-2'])) {
-                $player2 = $this->player_model->getPlayerById($input['player-2']);
+            if (isset($input['pb_player_id-2'])) {
+                $player2 = $this->player_model->getPlayerById($input['pb_player_id-2']);
                 if ($player2) {
                     $player['first_name-2'] = $player2['first_name'];
                     $player['last_name-2'] = $player2['last_name'];
@@ -2353,7 +2353,7 @@ class Cron extends CI_Controller
                     $player['email-2'] = $player2['email'];
                     $player['phone_number-2'] = $player2['phone_number'];
                     if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) {
-                        $player['code-2'] = $this->player_model->generateCode($input['player-2']);
+                        $player['code-2'] = $this->player_model->generateCode($input['pb_player_id-2']);
                     }
                 }
             }
@@ -2426,8 +2426,8 @@ class Cron extends CI_Controller
             }
 
             /* player-2 */
-            if (isset($input['player-2'])) {
-                $player2 = $this->player_model->getPlayerById($input['player-2']);
+            if (isset($input['pb_player_id-2'])) {
+                $player2 = $this->player_model->getPlayerById($input['pb_player_id-2']);
                 if ($player2) {
                     $player['first_name-2'] = $player2['first_name'];
                     $player['last_name-2'] = $player2['last_name'];
@@ -2435,7 +2435,7 @@ class Cron extends CI_Controller
                     $player['email-2'] = $player2['email'];
                     $player['phone_number-2'] = $player2['phone_number'];
                     if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) {
-                        $player['code-2'] = $this->player_model->generateCode($input['player-2']);
+                        $player['code-2'] = $this->player_model->generateCode($input['pb_player_id-2']);
                     }
                 }
             }
