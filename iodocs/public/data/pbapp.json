@@ -3348,6 +3348,13 @@
               "Default": "all",
               "Type": "string",
               "Description": "specify 'all' or 'player' (default is 'all')"
+            },
+            {
+              "Name": "event_type",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "event type [REWARD, REDEEM, ACTION, LEVEL] Ex. reward,redeem,action,level"
             }
           ]
         },

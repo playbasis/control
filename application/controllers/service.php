@@ -243,8 +243,10 @@ class Service extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
         }
 
+        $event_type = $this->input->get('event_type') ? explode(',',strtoupper($this->input->get('event_type'))) : null;
+        
         $respondThis['activities'] = $this->service_model->getRecentActivities($this->site_id, $offset,
-            $limit > 500 ? 500 : $limit, $pb_player_id, $last_read_activity_id, $mode);
+            $limit > 500 ? 500 : $limit, $pb_player_id, $last_read_activity_id, $mode , $event_type);
         $this->response($this->resp->setRespond($respondThis), 200);
     }
 
