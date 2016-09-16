@@ -22,6 +22,7 @@ class Tracker_model extends MY_Model
         //$this->computeMau($input, $d);
         $action_log_id = $this->mongo_db->insert('playbasis_action_log', array(
             'pb_player_id' => $input['pb_player_id'],
+            'pb_player_id-2' => isset($input['pb_player_id-2']) ? $input['pb_player_id-2'] : null,
             'client_id' => $input['client_id'],
             'site_id' => $input['site_id'],
             'action_id' => $input['action_id'],
@@ -32,6 +33,7 @@ class Tracker_model extends MY_Model
         ));
         $this->mongo_db->insert('playbasis_event_log', array(
             'pb_player_id' => $input['pb_player_id'],
+            'pb_player_id-2' => isset($input['pb_player_id-2']) ? $input['pb_player_id-2'] : null,
             'client_id' => $input['client_id'],
             'site_id' => $input['site_id'],
             'event_type' => 'ACTION',
@@ -297,6 +299,7 @@ class Tracker_model extends MY_Model
         }
         $this->mongo_db->insert('playbasis_validated_action_log', array(
             'pb_player_id' => $input['pb_player_id'],
+            'pb_player_id-2' => isset($input['pb_player_id-2']) ? $input['pb_player_id-2'] : null,
             'cl_player_id' => $input['player_id'],
             'client_id' => $input['client_id'],
             'site_id' => $input['site_id'],
