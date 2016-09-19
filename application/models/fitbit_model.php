@@ -14,6 +14,7 @@ class Fitbit_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where('pb_player_id', new MongoID($pb_player_id));
+        $this->mongo_db->where('deleted', false);
         $result = $this->mongo_db->get('playbasis_fitbit');
         return $result[0];
     }
@@ -23,6 +24,7 @@ class Fitbit_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where('pb_player_id', new MongoID($pb_player_id));
+        $this->mongo_db->where('deleted', false);
         $result = $this->mongo_db->count('playbasis_fitbit');
         return $result;
     }
@@ -48,6 +50,7 @@ class Fitbit_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where('pb_player_id', new MongoID($pb_player_id));
+        $this->mongo_db->where('deleted', false);
         if($subscription_id != null){
             $this->mongo_db->set('subscription_id', $subscription_id);
         }
@@ -61,6 +64,7 @@ class Fitbit_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where('pb_player_id', new MongoID($pb_player_id));
+        $this->mongo_db->where('deleted', false);
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->set('data_modified', new MongoDate());
         return $this->mongo_db->update('playbasis_fitbit');

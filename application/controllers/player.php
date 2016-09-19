@@ -129,12 +129,6 @@ class Player extends REST2_Controller
 
     public function list_post()
     {
-        $required = $this->input->checkParam(array(
-            'list_player_id'
-        ));
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
         $list_player_id = explode(",", $this->input->post('list_player_id'));
         //read player information
         for ($i = 0; $i < count($list_player_id); $i++) {
@@ -365,15 +359,10 @@ class Player extends REST2_Controller
 
     public function register_post($player_id = '')
     {
-        $required = $this->input->checkParam(array(
-            'email',
-            'username'
-        ));
         if (!$player_id) {
-            array_push($required, 'player_id');
-        }
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
         }
 
         if (!$this->validClPlayerId($player_id)) {
@@ -1002,18 +991,8 @@ class Player extends REST2_Controller
 
     public function auth_post()
     {
-        $required = $this->input->checkParam(array(
-            'password'
-        ));
         $username = $this->input->post('username');
         $email = $this->input->post('email');
-        if (!$email && !$username) {
-            array_push($required, 'username', 'email');
-        }
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-
         $password = do_hash($this->input->post('password'));
 
         $player = null;
@@ -1105,13 +1084,6 @@ class Player extends REST2_Controller
 
     public function verifyOTPCode_post($player_id = '')
     {
-        $required = $this->input->checkParam(array(
-            'code'
-        ));
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-
         if (!$player_id) {
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'player_id'
@@ -1159,13 +1131,6 @@ class Player extends REST2_Controller
 
     public function forgotPasswordEmail_post()
     {
-        $required = $this->input->checkParam(array(
-            'email'
-        ));
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-
         $email = $this->input->post('email');
         $player = $this->player_model->getPlayerByEmail($this->site_id, $email);
         if (!$player) {
@@ -1362,12 +1327,10 @@ class Player extends REST2_Controller
 
     public function point_history_get($player_id = '')
     {
-        $required = array();
         if (!$player_id) {
-            array_push($required, 'player_id');
-        }
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
         }
 
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
@@ -1404,12 +1367,10 @@ class Player extends REST2_Controller
 
     public function quest_reward_history_get($player_id = '')
     {
-        $required = array();
         if (!$player_id) {
-            array_push($required, 'player_id');
-        }
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
         }
 
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
@@ -1434,13 +1395,12 @@ class Player extends REST2_Controller
 
     public function action_get($player_id = '', $action = '', $option = 'time')
     {
-        $required = array();
         if (!$player_id) {
-            array_push($required, 'player_id');
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
         }
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
+
         //get playbasis player id
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
@@ -1469,17 +1429,6 @@ class Player extends REST2_Controller
     }
 
     public function giveGift_post($sent_player_id, $gift_type){
-
-        $required = $this->input->checkParam(array(
-            'received_player_id',
-            'gift_id',
-            'amount'
-        ));
-
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-
         $client_id = new MongoId($this->validToken['client_id']);
         $site_id = new MongoId($this->validToken['site_id']);
         $site_name = $this->validToken['site_name'];
@@ -1944,13 +1893,6 @@ class Player extends REST2_Controller
             )), 200);
         }
 
-        $required = $this->input->checkParam(array(
-            'phone_number'
-        ));
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-
         if (!$this->validTelephonewithCountry($this->input->post('phone_number'))) {
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
         }
@@ -2078,6 +2020,11 @@ class Player extends REST2_Controller
     public function deduct_reward_post($player_id)
     {
         /* param "player_id" */
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        }
         $pb_player_id = $this->player_model->getPlaybasisId(array(
             'client_id' => $this->client_id,
             'site_id' => $this->site_id,
@@ -2089,9 +2036,6 @@ class Player extends REST2_Controller
 
         /* param "reward" */
         $reward = $this->input->post('reward');
-        if ($reward === false) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('reward')), 200);
-        }
         $reward_id = $this->reward_model->findByName(array(
             'client_id' => $this->client_id,
             'site_id' => $this->site_id
@@ -2102,9 +2046,6 @@ class Player extends REST2_Controller
 
         /* param "amount" */
         $amount = $this->input->post('amount');
-        if ($amount === false) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('amount')), 200);
-        }
         $amount = intval($amount);
 
         /* param "force" */

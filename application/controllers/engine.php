@@ -310,11 +310,11 @@ class Engine extends Quest
     public function quest_post()
     {
         $token = array(
-            "client_id" => $this->input->post("client_id"),
-            "site_id" => $this->input->post("site_id"),
-            "site_name" => null
+            'client_id' => $this->validToken['client_id'],
+            'site_id' => $this->validToken['site_id'],
+            'site_name' => null
         );
-        $quest_id = $this->input->post("quest_id");
+        $quest_id = $this->input->post('quest_id');
 
         $response = $this->QuestProcess(null, $token, $quest_id);
         $this->response($this->resp->setRespond($response), 200);

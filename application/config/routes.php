@@ -104,9 +104,12 @@ $route['Player/point'] = 'player/point/';
 $route['Player/'.ANY_STRING.'/point_history'] = 'player/point_history/$1';
 $route['Player/'.ANY_STRING.'/quest_reward_history'] = 'player/quest_reward_history/$1';
 
-$route['Player/'.ANY_STRING.'/action/'.ANY_STRING.'/(time|count)'] = 'player/action/$1/$2/$3';
-$route['Player/action/'.ANY_STRING.'/(time|count)'] = 'player/action/0/$1/$2';
-$route['Player/'.ANY_STRING.'/action/(time|count)'] = 'player/action/$1/0/$2';
+$route['Player/'.ANY_STRING.'/action/'.ANY_STRING.'/time'] = 'player/action/$1/$2/time';
+$route['Player/'.ANY_STRING.'/action/'.ANY_STRING.'/count'] = 'player/action/$1/$2/count';
+$route['Player/action/'.ANY_STRING.'/time'] = 'player/action/0/$1/time';
+$route['Player/action/'.ANY_STRING.'/count'] = 'player/action/0/$1/count';
+$route['Player/'.ANY_STRING.'/action/time'] = 'player/action/$1/0/time';
+$route['Player/'.ANY_STRING.'/action/count'] = 'player/action/$1/0/count';
 $route['Player/action'] = 'player/action/';
 
 $route['Player/'.ANY_STRING.'/badge'] = 'player/badge/$1';
