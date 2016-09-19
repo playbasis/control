@@ -84,7 +84,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": {
               "cl_player_id": { "-type": "string"},
               "image":        { "-type": "string"},
@@ -124,7 +124,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": { 
               "cl_player_id": { "-type": "string"},
               "image":        { "-type": "string"},
@@ -166,7 +166,7 @@
               "Description": "player id as used in client's website separate with ',' example '1,2,3'"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": [
               {
                 "message":      { "-type": "continue"},
