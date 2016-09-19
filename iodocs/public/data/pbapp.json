@@ -204,7 +204,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": {
               "image":            { "-type": "string"},
               "username":         { "-type": "string"},
@@ -274,7 +274,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": {
               "image":            { "-type": "string"},
               "email":            { "-type": "string"},
