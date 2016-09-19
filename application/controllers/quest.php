@@ -32,6 +32,21 @@ class Quest extends MY_Controller
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("quest", $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
+
+        /* initialize $this->api */
+        $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(),
+            $this->User_model->getSiteId());
+        $this->_api = $this->playbasisapi;
+        $platforms = $this->App_model->getPlatFormByAppId(array(
+            'site_id' => $this->User_model->getSiteId(),
+        ));
+        $platform = isset($platforms[0]) ? $platforms[0] : null; // simply use the first platform
+        if ($platform) {
+            $this->_api->set_api_key($result['api_key']);
+            $this->_api->set_api_secret($result['api_secret']);
+            $pkg_name = isset($platform['data']['ios_bundle_id']) ? $platform['data']['ios_bundle_id'] : (isset($platform['data']['android_package_name']) ? $platform['data']['android_package_name'] : null);
+            $this->_api->auth($pkg_name);
+        }
     }
 
     public function index()
@@ -1615,22 +1630,13 @@ class Quest extends MY_Controller
 
     public function playQuest($quest_id = null)
     {
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-
-        $raw_result = $this->curl(
-            API_SERVER . "/Engine/quest",
-            array(
-                "client_id" => strval($client_id),
-                "site_id" => strval($site_id),
-                "quest_id" => strval($quest_id)
-            ));
+        $raw_result = $result = $this->_api->playQuest(array(
+            'quest_id' => strval($quest_id),
+        ));
 
         try {
-            $obj_result = json_decode($raw_result);
-
             // if success, assume that this quest ok
-            if ($obj_result->success) {
+            if ($raw_result->success) {
                 $this->output->set_output(json_encode(array("success" => true)));
             } else {
                 $this->output->set_output(json_encode(array("success" => false)));
