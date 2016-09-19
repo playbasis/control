@@ -1,63 +1,60 @@
 # Change Log
 
-## [2.17.0](https://github.com/playbasis/control/tree/2.17.0)
+## [2.18.0](https://github.com/playbasis/control/tree/2.18.0) (2016-09-19)
+[Full Changelog](https://github.com/playbasis/control/compare/2.17.0...2.18.0)
 
-[Full Changelog](https://github.com/playbasis/control/compare/2.16.0...2.17.0)
+
+## [2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api](https://github.com/playbasis/control/tree/2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api) (2016-09-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.17.1/fix_good_group_redeem_value_not_show_when_edit...2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api)
 
 **Fixed bugs:**
 
-- fixed bug in report, reward name is displayed wrongly [\#278](https://github.com/playbasis/control/pull/278) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.17.2/change player 2 to pb player 2 in process feedback to compatible with api [\#281](https://github.com/playbasis/control/pull/281) ([piya-playbasis](https://github.com/piya-playbasis))
 
-## [2.16.5/change_date_expired_to_date_expire_in_goods_to_player](https://github.com/playbasis/control/tree/2.16.5/change_date_expired_to_date_expire_in_goods_to_player) (2016-08-25)
-[Full Changelog](https://github.com/playbasis/control/compare/2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods...2.16.5/change_date_expired_to_date_expire_in_goods_to_player)
+## [2.17.1/fix_good_group_redeem_value_not_show_when_edit](https://github.com/playbasis/control/tree/2.17.1/fix_good_group_redeem_value_not_show_when_edit) (2016-09-13)
+[Full Changelog](https://github.com/playbasis/control/compare/2.17.0...2.17.1/fix_good_group_redeem_value_not_show_when_edit)
+
+**Fixed bugs:**
+
+- Hotfix/2.17.1/fix good group redeem value not show when edit [\#280](https://github.com/playbasis/control/pull/280) ([piya-playbasis](https://github.com/piya-playbasis))
+- Bring back play quest button [\#279](https://github.com/playbasis/control/pull/279) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.17.0](https://github.com/playbasis/control/tree/2.17.0) (2016-09-07)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.5/change_date_expired_to_date_expire_in_goods_to_player...2.17.0)
 
 **Implemented enhancements:**
 
 - Hotfix/2.16.5/change date expired to date expire in goods to player [\#277](https://github.com/playbasis/control/pull/277) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods](https://github.com/playbasis/control/tree/2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods) (2016-08-23)
-[Full Changelog](https://github.com/playbasis/control/compare/2.16.3/fix_filter_goods_report_error...2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods)
-
-**Implemented enhancements:**
-
 - Hotfix/2.16.4/add coupon code in mark as used tab in goods [\#276](https://github.com/playbasis/control/pull/276) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.16.3/fix_filter_goods_report_error](https://github.com/playbasis/control/tree/2.16.3/fix_filter_goods_report_error) (2016-08-23)
-[Full Changelog](https://github.com/playbasis/control/compare/2.16.2/change_image_path_from_http_to_https...2.16.3/fix_filter_goods_report_error)
-
-**Implemented enhancements:**
-
 - Fix typo in widget tracker event tab [\#274](https://github.com/playbasis/control/pull/274) ([niti-playbasis](https://github.com/niti-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/2.16.3/fix filter goods report error [\#275](https://github.com/playbasis/control/pull/275) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.16.2/change_image_path_from_http_to_https](https://github.com/playbasis/control/tree/2.16.2/change_image_path_from_http_to_https) (2016-08-22)
-[Full Changelog](https://github.com/playbasis/control/compare/2.16.2/user_update_permission...2.16.2/change_image_path_from_http_to_https)
-
-**Implemented enhancements:**
-
 - Hotfix/2.16.2/change image path from http to https [\#273](https://github.com/playbasis/control/pull/273) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.16.2/user_update_permission](https://github.com/playbasis/control/tree/2.16.2/user_update_permission) (2016-08-22)
-[Full Changelog](https://github.com/playbasis/control/compare/2.16.1/fix_tags_in_goods_form...2.16.2/user_update_permission)
-
-**Implemented enhancements:**
-
 - To show only valid goods [\#270](https://github.com/playbasis/control/pull/270) ([piya-playbasis](https://github.com/piya-playbasis))
 
 **Fixed bugs:**
 
+- fixed bug in report, reward name is displayed wrongly [\#278](https://github.com/playbasis/control/pull/278) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.16.3/fix filter goods report error [\#275](https://github.com/playbasis/control/pull/275) ([piya-playbasis](https://github.com/piya-playbasis))
 - Hotfix/2.16.2/user update permission [\#272](https://github.com/playbasis/control/pull/272) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - corrected check expired date in goods [\#271](https://github.com/playbasis/control/pull/271) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.16.1/fix tags in goods form [\#269](https://github.com/playbasis/control/pull/269) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.16.5/change_date_expired_to_date_expire_in_goods_to_player](https://github.com/playbasis/control/tree/2.16.5/change_date_expired_to_date_expire_in_goods_to_player) (2016-08-25)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods...2.16.5/change_date_expired_to_date_expire_in_goods_to_player)
+
+## [2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods](https://github.com/playbasis/control/tree/2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods) (2016-08-23)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.3/fix_filter_goods_report_error...2.16.4/add_coupon_code_in_mark_as_used_tab_in_goods)
+
+## [2.16.3/fix_filter_goods_report_error](https://github.com/playbasis/control/tree/2.16.3/fix_filter_goods_report_error) (2016-08-23)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.2/change_image_path_from_http_to_https...2.16.3/fix_filter_goods_report_error)
+
+## [2.16.2/change_image_path_from_http_to_https](https://github.com/playbasis/control/tree/2.16.2/change_image_path_from_http_to_https) (2016-08-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.2/user_update_permission...2.16.2/change_image_path_from_http_to_https)
+
+## [2.16.2/user_update_permission](https://github.com/playbasis/control/tree/2.16.2/user_update_permission) (2016-08-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.16.1/fix_tags_in_goods_form...2.16.2/user_update_permission)
 
 ## [2.16.1/fix_tags_in_goods_form](https://github.com/playbasis/control/tree/2.16.1/fix_tags_in_goods_form) (2016-08-18)
 [Full Changelog](https://github.com/playbasis/control/compare/2.16.0...2.16.1/fix_tags_in_goods_form)
-
-**Fixed bugs:**
-
-- Hotfix/2.16.1/fix tags in goods form [\#269](https://github.com/playbasis/control/pull/269) ([niti-playbasis](https://github.com/niti-playbasis))
 
 ## [2.16.0](https://github.com/playbasis/control/tree/2.16.0) (2016-08-16)
 [Full Changelog](https://github.com/playbasis/control/compare/2.15.8/delete_user...2.16.0)
