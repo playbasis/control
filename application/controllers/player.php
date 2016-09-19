@@ -1249,6 +1249,9 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
         }
         $point['point'] = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $this->site_id);
+        if(!isset($point['point'][0]['value'])){
+            $point['point'][0]['value'] = 0;
+        }
         $point['point'][0]['reward_id'] = $reward_id . "";
         $point['point'][0]['reward_name'] = $reward;
         ksort($point);
