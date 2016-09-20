@@ -398,15 +398,15 @@ class Player extends REST2_Controller
         }
 
         $firstName = $this->input->post('first_name');
-        if ($firstName || $firstName === "0") {
+        if ($this->utility->is_not_empty($firstName)) {
             $playerInfo['first_name'] = $firstName;
         }
         $lastName = $this->input->post('last_name');
-        if ($lastName || $lastName === "0") {
+        if ($this->utility->is_not_empty($lastName)) {
             $playerInfo['last_name'] = $lastName;
         }
         $nickName = $this->input->post('nickname');
-        if ($nickName || $nickName === "0") {
+        if ($this->utility->is_not_empty($nickName)) {
             $playerInfo['nickname'] = $nickName;
         }
         $phoneNumber = $this->input->post('phone_number');
@@ -441,7 +441,7 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('FORM_VALIDATION_FAILED', $this->validation_errors()[0]), 200);
         }
         $gender = $this->input->post('gender');
-        if ($gender) {
+        if ($this->utility->is_not_empty($gender)) {
             $playerInfo['gender'] = $gender;
         }
         $birthdate = $this->input->post('birth_date');
@@ -633,7 +633,7 @@ class Player extends REST2_Controller
             $playerInfo['image'] = $image;
         }
         $username = $this->input->post('username');
-        if ($username) {
+        if ($this->utility->is_not_empty($username)) {
             //check if new username is already exist in this site
             $player = $this->player_model->getPlayerByUsernameButNotID($this->site_id, $username, $pb_player_id);
             if ($player) {
@@ -650,15 +650,15 @@ class Player extends REST2_Controller
             $playerInfo['level'] = intval($level);
         }
         $firstName = $this->input->post('first_name');
-        if ($firstName) {
+        if ($this->utility->is_not_empty($firstName)) {
             $playerInfo['first_name'] = $firstName;
         }
         $lastName = $this->input->post('last_name');
-        if ($lastName) {
+        if ($this->utility->is_not_empty($lastName)) {
             $playerInfo['last_name'] = $lastName;
         }
         $nickName = $this->input->post('nickname');
-        if ($nickName) {
+        if ($this->utility->is_not_empty($nickName)) {
             $playerInfo['nickname'] = $nickName;
         }
         $phoneNumber = $this->input->post('phone_number');
@@ -700,7 +700,7 @@ class Player extends REST2_Controller
         }
 
         $gender = $this->input->post('gender');
-        if ($gender) {
+        if ($this->utility->is_not_empty($gender)) {
             $playerInfo['gender'] = intval($gender);
         }
         $birthdate = $this->input->post('birth_date');

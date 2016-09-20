@@ -275,7 +275,7 @@ class Service extends REST2_Controller
             $this->response($this->error->setError('EVENT_NOT_EXIST'), 200);
         }
         $player_id = ($this->input->post('player_id'));
-        if (!$player_id) {
+        if (!$this->utility->is_not_empty($player_id)) {
             $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
         }
         $from_pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken,
@@ -302,7 +302,7 @@ class Service extends REST2_Controller
             $this->response($this->error->setError('EVENT_NOT_EXIST'), 200);
         }
         $player_id = ($this->input->post('player_id'));
-        if (!$player_id) {
+        if (!$this->utility->is_not_empty($player_id)) {
             $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
         }
         $from_pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken,
@@ -314,7 +314,7 @@ class Service extends REST2_Controller
             'pb_player_id' => $activity['pb_player_id'],
             'from_pb_player_id' => $from_pb_player_id,
             'action_name' => 'comment',
-            'message' => $this->input->post('message') ? $this->input->post('message') : null,
+            'message' => $this->utility->is_not_empty($this->input->post('message')) ? $this->input->post('message') : null,
         ));
         $this->response($this->resp->setRespond(array('result' => true)), 200);
     }

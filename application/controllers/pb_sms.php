@@ -73,7 +73,7 @@ class Pb_sms extends REST2_Controller
 
         $validToken = $this->validToken;
 
-        if ($this->input->post('from')) {
+        if ($this->utility->is_not_empty($this->input->post('from'))) {
             $from = $this->input->post('from');
         } else {
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
@@ -110,7 +110,7 @@ class Pb_sms extends REST2_Controller
         }
 
         if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
-            if ($this->input->post('from')) {
+            if ($this->utility->is_not_empty($this->input->post('from'))) {
                 $from = $this->input->post('from');
             } else {
                 $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
@@ -239,7 +239,7 @@ class Pb_sms extends REST2_Controller
             }
             $result = $template['body'];
             $player_id = $this->input->get('player_id');
-            if ($player_id) {
+            if ($this->utility->is_not_empty($player_id)) {
                 $validToken = array_merge($this->validToken, array(
                     'cl_player_id' => $player_id
                 ));

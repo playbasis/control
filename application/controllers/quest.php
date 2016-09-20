@@ -1798,7 +1798,7 @@ class Quest extends REST2_Controller
     {
         $this->benchmark->mark('start');
 
-        $player_id = $this->input->post('player_id') ? $this->input->post('player_id') : $this->response($this->error->setError('PARAMETER_MISSING',
+        $player_id = $this->utility->is_not_empty($this->input->post('player_id')) ? $this->input->post('player_id') : $this->response($this->error->setError('PARAMETER_MISSING',
             array('player_id')), 200);
 
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
@@ -1836,7 +1836,7 @@ class Quest extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_INVALID', array('quest_id')), 200);
         }
 
-        if($this->input->get('player_id')){
+        if($this->utility->is_not_empty($this->input->get('player_id'))){
             $cl_player_id = $this->input->get('player_id');
             $pb_player_id = $this->player_model->getPlaybasisId(array(
                 'client_id' => $this->validToken['client_id'],

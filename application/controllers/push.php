@@ -12,6 +12,7 @@ class Push extends REST2_Controller
         $this->load->model('player_model');
         $this->load->model('push_model');
         $this->load->model('redeem_model');
+        $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -372,7 +373,7 @@ class Push extends REST2_Controller
             }
             $result = $template['body'];
             $player_id = $this->input->get('player_id');
-            if ($player_id) {
+            if ($this->utility->is_not_empty($player_id)) {
                 $validToken = array_merge($this->validToken, array(
                     'cl_player_id' => $player_id
                 ));
