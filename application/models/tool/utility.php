@@ -273,6 +273,10 @@ class Utility extends CI_Model
         }
     }
 
+    public function is_not_empty($input)
+    {
+        return ($input || $input === "0");
+    }
     public function request($class, $method, $arg)
     {
         $base_url = $this->config->base_url();
