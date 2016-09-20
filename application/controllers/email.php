@@ -352,7 +352,7 @@ class Email extends REST2_Controller
             }
             $result = $template['body'];
             $player_id = $this->input->get('player_id');
-            if ($player_id) {
+            if ($this->utility->is_not_empty($player_id)) {
                 $validToken = array_merge($this->validToken, array(
                     'cl_player_id' => $player_id
                 ));

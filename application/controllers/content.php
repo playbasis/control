@@ -11,6 +11,7 @@ class Content extends REST2_Controller
         $this->load->model('content_model');
         $this->load->model('player_model');
         $this->load->model('store_org_model');
+        $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -530,7 +531,7 @@ class Content extends REST2_Controller
         $contentInfo['summary']  = $this->input->post('summary');
         $contentInfo['detail']   = $this->input->post('detail');
 
-        if($this->input->post('category')) {
+        if($this->utility->is_not_empty($this->input->post('category'))) {
             $category = $this->content_model->retrieveContentCategory($this->client_id, $this->site_id, array(
                 'name' => $this->input->post('category')
             ));
@@ -540,7 +541,7 @@ class Content extends REST2_Controller
             $contentInfo['category'] = new MongoId($category[0]['_id']);
         }
 
-        if ($this->input->post('player_id')) {
+        if ($this->utility->is_not_empty($this->input->post('player_id'))) {
             $pb_player_id = $this->player_model->getPlaybasisId(array(
                 'client_id'    => $this->validToken['client_id'],
                 'site_id'      => $this->validToken['site_id'],
@@ -599,19 +600,19 @@ class Content extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_INVALID',array('node_id')), 200);
         }
 
-        if($this->input->post('title')){
+        if($this->utility->is_not_empty($this->input->post('title'))){
             $contentInfo['title'] = $this->input->post('title');
         }
 
-        if($this->input->post('summary')){
+        if($this->utility->is_not_empty($this->input->post('summary'))){
             $contentInfo['summary'] = $this->input->post('summary');
         }
 
-        if($this->input->post('detail')){
+        if($this->utility->is_not_empty($this->input->post('detail'))){
             $contentInfo['detail'] = $this->input->post('detail');
         }
 
-        if($this->input->post('category')) {
+        if($this->utility->is_not_empty($this->input->post('category'))) {
             $category = $this->content_model->retrieveContentCategory($this->client_id, $this->site_id, array(
                 'name' => $this->input->post('category')
             ));
@@ -880,7 +881,7 @@ class Content extends REST2_Controller
         $client_id = $this->validToken['client_id'];
         $site_id = $this->validToken['site_id'];
 
-        if(!$this->input->post('name')){
+        if(!$this->utility->is_not_empty($this->input->post('name'))){
             $this->response($this->error->setError('PARAMETER_MISSING', array('name')), 200);
         }
 

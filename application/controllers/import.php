@@ -10,6 +10,7 @@ class import extends REST2_Controller
         parent::__construct();
         $this->load->model('import_model');
         $this->load->model('player_model');
+        $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -39,32 +40,32 @@ class import extends REST2_Controller
         */
 
         $name = $this->input->post('name');
-        if ($name) {
+        if ($this->utility->is_not_empty($name)) {
             $playerInfo['name'] = $name;
         }
 
         $url = $this->input->post('url');
-        if ($url) {
+        if ($this->utility->is_not_empty($url)) {
             $playerInfo['url'] = $url;
         }
 
         $port = $this->input->post('port');
-        if ($port) {
+        if ($this->utility->is_not_empty($port)) {
             $playerInfo['port'] = $port;
         }
 
         $username = $this->input->post('user_name');
-        if ($username) {
+        if ($this->utility->is_not_empty($username)) {
             $playerInfo['user_name'] = $username;
         }
 
         $password = $this->input->post('password');
-        if ($password) {
+        if ($this->utility->is_not_empty($password)) {
             $playerInfo['password'] = $password;
         }
 
         $importType = $this->input->post('import_type');
-        if ($importType) {
+        if ($this->utility->is_not_empty($importType)) {
             $playerInfo['import_type'] = $importType;
         }
 

@@ -896,7 +896,7 @@ class Quiz extends REST2_Controller
     {
         $this->benchmark->mark('start');
 
-        $player_id = $this->input->post('player_id') ? $this->input->post('player_id') : $this->response($this->error->setError('PARAMETER_MISSING',
+        $player_id = $this->utility->is_not_empty($this->input->post('player_id')) ? $this->input->post('player_id') : $this->response($this->error->setError('PARAMETER_MISSING',
             array('player_id')), 200);
 
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
