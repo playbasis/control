@@ -398,15 +398,15 @@ class Player extends REST2_Controller
         }
 
         $firstName = $this->input->post('first_name');
-        if ($firstName) {
+        if ($firstName || $firstName === "0") {
             $playerInfo['first_name'] = $firstName;
         }
         $lastName = $this->input->post('last_name');
-        if ($lastName) {
+        if ($lastName || $lastName === "0") {
             $playerInfo['last_name'] = $lastName;
         }
         $nickName = $this->input->post('nickname');
-        if ($nickName) {
+        if ($nickName || $nickName === "0") {
             $playerInfo['nickname'] = $nickName;
         }
         $phoneNumber = $this->input->post('phone_number');
