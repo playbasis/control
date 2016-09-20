@@ -187,38 +187,40 @@ abstract class REST2_Controller extends REST_Controller
                     $pbapp_data = json_decode($json, true);
                     $found_endpoint = false;
                     $missing_parameter = array();
-                    foreach ($pbapp_data['endpoints'] as $endpoint) {
-                        if (in_array($method[0]->uri->segments[1], $endpoint['endpoint'])) {
-                            foreach ($endpoint['methods'] as $end_method) {
-                                if (($this->uri->router == $this->find_method_uri($end_method)) && ($this->request->method == strtolower($end_method['HTTPMethod']))) {
-                                    $found_endpoint = true;
-                                    $this->method_data = $end_method;
+                    if(isset($pbapp_data['endpoints']) && is_array($pbapp_data['endpoints'])) {
+                        foreach ($pbapp_data['endpoints'] as $endpoint) {
+                            if (in_array($method[0]->uri->segments[1], $endpoint['endpoint'])) {
+                                foreach ($endpoint['methods'] as $end_method) {
+                                    if (($this->uri->router == $this->find_method_uri($end_method)) && ($this->request->method == strtolower($end_method['HTTPMethod']))) {
+                                        $found_endpoint = true;
+                                        $this->method_data = $end_method;
 
-                                    //TODO: condition below should be removed when API schema is done
-                                    if(isset($this->method_data["response"]) ) {
-                                        foreach ($end_method['parameters'] as $parameter) {
-                                            // validate each parameter here
-                                            if (strtoupper($parameter['Required']) == 'Y' && !isset($this->_args[$parameter['Name']])) {
-                                                array_push($missing_parameter, $parameter['Name']);
-                                            }
-                                        }
-                                        if (isset($end_method['parameters_or'])) foreach ($end_method['parameters_or'] as $parameter_or) {
-                                            $check_parameter_or = false;
-                                            foreach ($parameter_or as $param_or) {
-                                                if (array_key_exists($param_or, $this->_args)) {
-                                                    $check_parameter_or = true;
+                                        //TODO: condition below should be removed when API schema is done
+                                        if (isset($this->method_data["response"])) {
+                                            foreach ($end_method['parameters'] as $parameter) {
+                                                // validate each parameter here
+                                                if (strtoupper($parameter['Required']) == 'Y' && !isset($this->_args[$parameter['Name']])) {
+                                                    array_push($missing_parameter, $parameter['Name']);
                                                 }
                                             }
-                                            if (!$check_parameter_or) {
-                                                $param = implode(" or ", $parameter_or);
-                                                array_push($missing_parameter, $param);
+                                            if (isset($end_method['parameters_or'])) foreach ($end_method['parameters_or'] as $parameter_or) {
+                                                $check_parameter_or = false;
+                                                foreach ($parameter_or as $param_or) {
+                                                    if (array_key_exists($param_or, $this->_args)) {
+                                                        $check_parameter_or = true;
+                                                    }
+                                                }
+                                                if (!$check_parameter_or) {
+                                                    $param = implode(" or ", $parameter_or);
+                                                    array_push($missing_parameter, $param);
+                                                }
                                             }
                                         }
+                                        break;
                                     }
-                                    break;
                                 }
+                                if ($found_endpoint) break;
                             }
-                            if ($found_endpoint) break;
                         }
                     }
                     if (!$found_endpoint) {
