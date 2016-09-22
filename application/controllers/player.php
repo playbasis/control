@@ -1779,7 +1779,7 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
         //get player goods
-        $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $this->site_id);
+        $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $this->site_id, $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null);
         $this->response($this->resp->setRespond($goodsList), 200);
     }
 
