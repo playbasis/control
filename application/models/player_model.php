@@ -1575,7 +1575,7 @@ class Player_model extends MY_Model
         return $event_log;
     }
 
-    public function getGoods($pb_player_id, $site_id)
+    public function getGoods($pb_player_id, $site_id, $tags = null)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
@@ -1604,12 +1604,16 @@ class Player_model extends MY_Model
                     'description',
                     'code',
                     'group',
+                    'tags'
                 ));
                 $this->mongo_db->select(array(), array('_id'));
                 $this->mongo_db->where(array(
                     'goods_id' => $goods['goods_id'],
                     'site_id' => $site_id,
                 ));
+                if($tags){
+                    $this->mongo_db->where_in('tags',$tags);
+                }
                 $this->mongo_db->limit(1);
                 $result = $this->mongo_db->get('playbasis_goods_to_client');
 
@@ -1622,6 +1626,7 @@ class Player_model extends MY_Model
                 $goods['name'] = $result['name'];
                 $goods['description'] = $result['description'];
                 $goods['code'] = $result['code'];
+                $goods['tags'] = isset($result['tags']) && !empty($result['tags']) ? $result['tags'] : null;
                 if (isset($result['group'])) {
                     $goods['group'] = $result['group'];
                 }
