@@ -84,7 +84,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": {
               "cl_player_id": { "-type": "string"},
               "image":        { "-type": "string"},
@@ -124,7 +124,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": { 
               "cl_player_id": { "-type": "string"},
               "image":        { "-type": "string"},
@@ -166,7 +166,7 @@
               "Description": "player id as used in client's website separate with ',' example '1,2,3'"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": [
               {
                 "message":      { "-type": "continue"},
@@ -204,7 +204,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": {
               "image":            { "-type": "string"},
               "username":         { "-type": "string"},
@@ -274,7 +274,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": {
               "image":            { "-type": "string"},
               "email":            { "-type": "string"},
@@ -352,7 +352,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "player": {
               "custom": {                "-optional": "true",
                 "[a-zA-Z0-9-%_:\\.]+":  { "-type": "string"}
@@ -704,7 +704,7 @@
               "Description": "email as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "success": { "-type": "boolean"}
           }
         },
@@ -731,7 +731,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "success": { "-type": "boolean", "-optional": "true"},
             "message": { "-type": "string",  "-optional": "true"}
           }
@@ -845,7 +845,7 @@
               "Description": "device token to verify with SMS verification process"
             }
           ],
-          "response": {
+          "response-debug": {
             "cl_player_id": { "-type": "string"},
             "session_id":   { "-type": "string"}
           }
@@ -905,7 +905,7 @@
               ]
             }
           ],
-          "response": {
+          "response-debug": {
             "to":              { "-type": "string"},
             "from":            { "-type": "string"},
             "message":         { "-type": "string"},
@@ -974,7 +974,7 @@
               ]
             }
           ],
-          "response": {
+          "response-debug": {
             "to":              { "-type": "string"},
             "from":            { "-type": "string"},
             "message":         { "-type": "string"},
@@ -1084,7 +1084,7 @@
               "Description": "session id"
             }
           ],
-          "response": {
+          "response-debug": {
             "cl_player_id": { "-type": "string"},
             "image":        { "-type": "string"},
             "username":     { "-type": "string"},
@@ -1113,7 +1113,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "points": [
               {
                 "reward_id":    { "-type": "string"},
@@ -1146,7 +1146,7 @@
               "Description": "name of the point-based reward to query"
             }
           ],
-          "response": {
+          "response-debug": {
             "point": [
               {
                 "reward_id":    { "-type": "string"},
@@ -1200,7 +1200,7 @@
               "Description": "Specify sorted direction [desc, *asc*]"
             }
           ],
-          "response": {
+          "response-debug": {
             "points": [
               {
                 "message":                  { "-type": "string"},
@@ -1241,7 +1241,7 @@
               "Description": "name of the action to query"
             }
           ],
-          "response": {
+          "response-debug": {
             "action": {
               "action_id":    { "-type": "string", "-optional": "true"},
               "action_name":  { "-type": "string", "-optional": "true"},
@@ -1265,7 +1265,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "action": {
               "action_id":    { "-type": "string", "-optional": "true"},
               "action_name":  { "-type": "string", "-optional": "true"},
@@ -1296,7 +1296,7 @@
               "Description": "name of the action to query"
             }
           ],
-          "response": {
+          "response-debug": {
             "action": {
               "action_id":    { "-type": "string",  "-optional": "true"},
               "action_name":  { "-type": "string",  "-optional": "true"},
@@ -1320,7 +1320,7 @@
               "Description": "number of  level"
             }
           ],
-          "response": {
+          "response-debug": {
             "level_title": { "-type": "string"},
             "level":       { "-type": "number"},
             "min_exp":     { "-type": "number"},
@@ -1525,7 +1525,7 @@
               "Description": "weekly, monthly (default is all-time)"
             }
           ],
-          "response": {
+          "response-debug": {
             "point": [
               {
                 "player_id":  { "-type": "string"  , "-optional": "true"},
@@ -1596,7 +1596,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "goods": [
               {
                 "goods_id":     { "-type": "string"},
@@ -1640,7 +1640,7 @@
               "Description": "fields to be included (comma ',' as delimiter)"
             }
           ],
-          "response": {
+          "response-debug": {
             "quest": {
               "quest_name":                   { "-type": "string"},
               "quest_id":                     { "-type": "string"},
@@ -1804,7 +1804,7 @@
               "Description": "fields to be included (comma ',' as delimiter)"
             }
           ],
-          "response": {
+          "response-debug": {
             "quests": [
               {
                 "quest_name":                   { "-type": "string"},
@@ -1956,7 +1956,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "quests": [
               {
                 "quest_name":                   { "-type": "string"},
@@ -2113,7 +2113,7 @@
               "Description": "number of results to return"
             }
           ],
-          "response": {
+          "response-debug": {
             "rewards": [
               {
                 "quest_id":       { "-type": "string"},
@@ -2174,7 +2174,7 @@
               "Description": "0 = not force if player has not enough reward to deduct, 1 = force to do the deduct (and player's reward becomes zero)"
             }
           ],
-          "response": {
+          "response-debug": {
             "old_value":      { "-type": "integer"},
             "new_value":      { "-type": "integer"},
             "value_deducted": { "-type": "integer"}
@@ -2236,7 +2236,7 @@
               "Description": "gift amount"
             }
           ],
-          "response": {
+          "response-debug": {
             "gift_name":  { "-type": "string"},
             "type":       { "-type": "string"},
             "remaining":  { "-type": "integer"}
@@ -2258,7 +2258,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": {
+          "response-debug": {
             "code":  { "-type": "string"}
           }
         },
@@ -2359,7 +2359,7 @@
               "Description": "Node Id"
             }
           ],
-          "response": {
+          "response-debug": {
             "organize_type": { "-type": "string"},
             "roles": [
               {
@@ -2473,7 +2473,7 @@
               "Description": "Select parameter to report from action log [default = \"amount\"]"
             }
           ],
-          "response": {
+          "response-debug": {
             "[a-zA-Z0-9-%_:\\.]+": {
               "[a-zA-Z0-9-%_:\\.]+": {
                 "percent_changed":      { "-type": "integer"},
