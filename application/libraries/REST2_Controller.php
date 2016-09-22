@@ -319,9 +319,16 @@ abstract class REST2_Controller extends REST_Controller
 
         if(isset($check_response[$check_head]['-type'])){
             if ( !is_null($pointer_data[$data_head]) && !empty($pointer_data[$data_head]) && (gettype($pointer_data[$data_head]) != $check_response[$check_head]["-type"])
-                 && $check_response[$check_head]["-type"] != "any" && $check_response[$check_head]["-type"] != "continue"){
+                 && $check_response[$check_head]["-type"] != "any" && $check_response[$check_head]["-type"] != "continue"
+                 && ((gettype($pointer_data[$data_head]) == "integer" || gettype($pointer_data[$data_head]) == "double" || gettype($pointer_data[$data_head]) == "long")
+                 && $check_response[$check_head]["-type"] != "number")) {
                 $is_error = true;
-                $static_pointer_data = $this->error->setError('INTERNAL_ERROR', "Response type invalid");
+                if (isset($this->_args["debug"]) && $this->_args["debug"] == DEBUG_KEY){
+                    $static_pointer_data = $this->error->setError('INTERNAL_ERROR', "Response type invalid, ".strtoupper($data_head)." return type " .gettype($pointer_data[$data_head]). " instead of ". $check_response[$check_head]["-type"]);
+                } else {
+                    $static_pointer_data = $this->error->setError('INTERNAL_ERROR', "Response type invalid");
+                }
+
             }else {
                 $response_result[$data_head] = $pointer_data[$data_head];
                 return $check_response[$check_head]["-type"];
@@ -352,7 +359,11 @@ abstract class REST2_Controller extends REST_Controller
                             && !(isset($check_response[$check_head][$key][1]) && array_key_exists('-optional', $check_response[$check_head][$key][1]) && $check_response[$check_head][$key][1]['-optional'] == "true")
                         ) {
                             $is_error = true;
-                            $static_pointer_data = $this->error->setError('INTERNAL_ERROR', "Response result(s) missing");
+                            if (isset($this->_args["debug"]) && $this->_args["debug"] == DEBUG_KEY){
+                                $static_pointer_data = $this->error->setError('INTERNAL_ERROR', "Response result(s) missing ".strtoupper($key));
+                            } else {
+                                $static_pointer_data = $this->error->setError('INTERNAL_ERROR', "Response result(s) missing");
+                            }
                             break;
                         }
                         foreach ($matches as $match) {
