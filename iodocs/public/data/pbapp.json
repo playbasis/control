@@ -397,7 +397,7 @@
               "Description": "custom field values separated by comma"
             }
           ],
-          "response": []
+          "response-debug": []
         },
         {
           "MethodName": "Register",
@@ -540,7 +540,7 @@
               ]
             }
           ],
-          "response": []
+          "response-debug": []
         },
         {
           "MethodName": "Update",
@@ -679,7 +679,7 @@
               ]
             }
           ],
-          "response": []
+          "response-debug": []
         },
         {
           "MethodName": "Reset player password",
@@ -759,7 +759,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": []
+          "response-debug": []
         },
         {
           "MethodName": "Login",
@@ -798,7 +798,7 @@
               "Description": "session expires in seconds"
             }
           ],
-          "response": []
+          "response-debug": []
         },
         {
           "MethodName": "Player Auth",
@@ -1011,7 +1011,7 @@
               "Description": "OTP code as sent to player"
             }
           ],
-          "response": []
+          "response-debug": []
         },
         {
           "MethodName": "Logout",
@@ -1043,7 +1043,7 @@
               "Description": "session id of the player"
             }
           ],
-          "response": []
+          "response-debug": []
         },
         {
           "MethodName": "List Active Player Sessions",
@@ -1061,7 +1061,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": [
+          "response-debug": [
             {
               "session_id":  { "-type": "string"},
               "date_expire": { "-type": "string"}
@@ -1337,7 +1337,7 @@
           "Public": "Y",
           "parameters": [
           ],
-          "response": [
+          "response-debug": [
             {
               "level_title": { "-type": "string"},
               "level":       { "-type": "number"},
@@ -1370,7 +1370,7 @@
               "Description": "Specific tag(s) to find (e.g. foo,bar)"
             }
           ],
-          "response": [
+          "response-debug": [
             {
               "badge_id":     { "-type": "string"},
               "image":        { "-type": "string"},
@@ -1405,7 +1405,7 @@
               "Description": "Specific tag(s) to find (e.g. foo,bar)"
             }
           ],
-          "response": [
+          "response-debug": [
             {
               "badge_id":     { "-type": "string"},
               "image":        { "-type": "string"},
@@ -1449,7 +1449,7 @@
               "Description": "weekly, monthly (default is all-time)"
             }
           ],
-          "response": [
+          "response-debug": [
             {
               "player_id":            { "-type": "string"},
               "first_name":           { "-type": "string"},
@@ -1482,7 +1482,7 @@
               "Description": "number of level"
             }
           ],
-          "response": []
+          "response-debug": []
         },
         {
           "MethodName": "DEPRECATED - Levels",
@@ -1500,7 +1500,7 @@
               "Description": "access token returned from Auth"
             }
           ],
-          "response": []
+          "response-debug": []
         },
         {
           "MethodName": "Ranks",
@@ -1578,7 +1578,7 @@
               "Description": "number of results to return for each point type"
             }
           ],
-          "response": []
+          "response-debug": []
         },
         {
           "MethodName": "Goods",
@@ -2313,7 +2313,7 @@
               "Description": "year to rank players by (2015, 2016 , ...)"
             }
           ],
-          "response": [
+          "response-debug": [
             {
               "cl_player_id":         { "-type": "string"},
               "[a-zA-Z0-9-%_:\\.]+":  { "-type": "integer"}
@@ -2336,7 +2336,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": [
+          "response-debug": [
             {
               "node_id": { "-type": "string"},
               "name":     { "-type": "string"}
@@ -2420,7 +2420,7 @@
               "Description": "Select parameter to report from action log [default = \"amount\"]"
             }
           ],
-          "response": [
+          "response-debug": [
             {
               "node_id":              { "-type": "string"},
               "name":                 { "-type": "string"},
@@ -2512,7 +2512,7 @@
               "Description": "player id as used in client's website"
             }
           ],
-          "response": []
+          "response-debug": []
         }
       ]
     },
