@@ -159,5 +159,6 @@ define('MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT', 80);
 define('MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH', 240);
 define('MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT', 240);
 
+define('DEBUG_KEY', 'playbasisthailand');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
