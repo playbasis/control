@@ -318,10 +318,10 @@ abstract class REST2_Controller extends REST_Controller
     private function check_response(&$static_pointer_data, &$pointer_data, $data_head, $check_response, $check_head, &$response_result, &$is_error) {
 
         if(isset($check_response[$check_head]['-type'])){
-            if ( !is_null($pointer_data[$data_head]) && !empty($pointer_data[$data_head]) && (gettype($pointer_data[$data_head]) != $check_response[$check_head]["-type"])
-                 && $check_response[$check_head]["-type"] != "any" && $check_response[$check_head]["-type"] != "continue"
-                 && ((gettype($pointer_data[$data_head]) == "integer" || gettype($pointer_data[$data_head]) == "double" || gettype($pointer_data[$data_head]) == "long")
-                 && $check_response[$check_head]["-type"] != "number")) {
+            if ( !is_null($pointer_data[$data_head]) && !empty($pointer_data[$data_head]) && (((gettype($pointer_data[$data_head]) != $check_response[$check_head]["-type"])
+                 && $check_response[$check_head]["-type"] != "any" && $check_response[$check_head]["-type"] != "continue" && $check_response[$check_head]["-type"] != "number")
+                 || ($check_response[$check_head]["-type"] == "number" && gettype($pointer_data[$data_head]) != "integer" && gettype($pointer_data[$data_head]) != "double" && gettype($pointer_data[$data_head]) != "long"))
+            ){
                 $is_error = true;
                 if (isset($this->_args["debug"]) && $this->_args["debug"] == DEBUG_KEY){
                     $static_pointer_data = $this->error->setError('INTERNAL_ERROR', "Response type invalid, ".strtoupper($data_head)." return type " .gettype($pointer_data[$data_head]). " instead of ". $check_response[$check_head]["-type"]);
