@@ -2003,6 +2003,9 @@
                         "name":         { "-type": "string"},
                         "message":      { "-type": "string"}
                     }
+                  },
+                  {
+                    "-optional": "true"
                   }
                 ],
                 "missions": [
@@ -3498,6 +3501,9 @@
                         "name":         { "-type": "string"},
                         "message":      { "-type": "string"}
                     }
+                  },
+                  {
+                    "-optional": "true"
                   }
                 ],
                 "missions": [
@@ -3629,6 +3635,9 @@
                         "name":         { "-type": "string"},
                         "message":      { "-type": "string"}
                     }
+                  },
+                  {
+                    "-optional": "true"
                   }
                 ],
                 "missions": [
