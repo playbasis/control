@@ -1772,8 +1772,8 @@
               ],
               "mission_order":      { "-type": "boolean"},
               "global_quest":       { "-type": "string", "-optional": "true"},
-              "organize_id":        { "-type": "string"},
-              "organize_role":      { "-type": "string"},
+              "organize_id":        { "-type": "string", "-optional": "true"},
+              "organize_role":      { "-type": "string", "-optional": "true"},
               "status":             { "-type": "string"},
               "date_added":         { "-type": "string"},
               "date_modified":      { "-type": "string", "-optional": "true"},
@@ -1937,8 +1937,8 @@
                 ],
                 "mission_order":      { "-type": "boolean"},
                 "global_quest":       { "-type": "string", "-optional": "true"},
-                "organize_id":        { "-type": "string"},
-                "organize_role":      { "-type": "string"},
+                "organize_id":        { "-type": "string", "-optional": "true"},
+                "organize_role":      { "-type": "string", "-optional": "true"},
                 "status":             { "-type": "string"},
                 "date_added":         { "-type": "string"},
                 "date_modified":      { "-type": "string", "-optional": "true"},
@@ -1979,6 +1979,9 @@
                     "condition_id":             { "-type": "string"},
                     "condition_value":          { "-type": "string"},
                     "condition_data":           { "-type": "any"}
+                  },
+                  {
+                    "-optional": "true"
                   }
                 ],
                 "rewards": [
@@ -2080,8 +2083,8 @@
                 ],
                 "mission_order":      { "-type": "boolean"},
                 "global_quest":       { "-type": "string", "-optional": "true"},
-                "organize_id":        { "-type": "string"},
-                "organize_role":      { "-type": "string"},
+                "organize_id":        { "-type": "string", "-optional": "true"},
+                "organize_role":      { "-type": "string", "-optional": "true"},
                 "status":             { "-type": "boolean"},
                 "player_status":      { "-type": "string", "-optional": "true"},
                 "date_added":         { "-type": "string"},
@@ -3471,6 +3474,9 @@
                     "condition_id":             { "-type": "string"},
                     "condition_value":          { "-type": "string"},
                     "condition_data":           { "-type": "any"}
+                  },
+                  {
+                    "-optional": "true"
                   }
                 ],
                 "rewards": [
@@ -3557,8 +3563,8 @@
                 ],
                 "mission_order":      { "-type": "boolean"},
                 "global_quest":       { "-type": "string", "-optional": "true"},
-                "organize_id":        { "-type": "string"},
-                "organize_role":      { "-type": "string"},
+                "organize_id":        { "-type": "string", "-optional": "true"},
+                "organize_role":      { "-type": "string", "-optional": "true"},
                 "status":             { "-type": "boolean"},
                 "player_status":      { "-type": "string", "-optional": "true"},
                 "date_added":         { "-type": "string"},
@@ -3599,6 +3605,9 @@
                     "condition_id":             { "-type": "string"},
                     "condition_value":          { "-type": "string"},
                     "condition_data":           { "-type": "any"}
+                  },
+                  {
+                    "-optional": "true"
                   }
                 ],
                 "rewards": [
@@ -3685,8 +3694,8 @@
                 ],
                 "mission_order":      { "-type": "boolean"},
                 "global_quest":       { "-type": "string", "-optional": "true"},
-                "organize_id":        { "-type": "string"},
-                "organize_role":      { "-type": "string"},
+                "organize_id":        { "-type": "string", "-optional": "true"},
+                "organize_role":      { "-type": "string", "-optional": "true"},
                 "status":             { "-type": "boolean"},
                 "player_status":      { "-type": "string", "-optional": "true"},
                 "date_added":         { "-type": "string"},
@@ -3836,8 +3845,8 @@
               ],
               "mission_order":      { "-type": "boolean"},
               "global_quest":       { "-type": "string", "-optional": "true"},
-              "organize_id":        { "-type": "string"},
-              "organize_role":      { "-type": "string"},
+              "organize_id":        { "-type": "string", "-optional": "true"},
+              "organize_role":      { "-type": "string", "-optional": "true"},
               "status":             { "-type": "boolean"},
               "date_added":         { "-type": "string"},
               "date_modified":      { "-type": "string", "-optional": "true"},
@@ -4070,8 +4079,8 @@
                 ],
                 "mission_order":      { "-type": "boolean"},
                 "global_quest":       { "-type": "string", "-optional": "true"},
-                "organize_id":        { "-type": "string"},
-                "organize_role":      { "-type": "string"},
+                "organize_id":        { "-type": "string", "-optional": "true"},
+                "organize_role":      { "-type": "string", "-optional": "true"},
                 "status":             { "-type": "boolean"},
                 "date_added":         { "-type": "string"},
                 "date_modified":      { "-type": "string", "-optional": "true"},
