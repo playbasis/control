@@ -1409,7 +1409,7 @@
             {
               "badge_id":     { "-type": "string"},
               "image":        { "-type": "string"},
-              "sort_order":   { "-type": "integer"},
+              "sort_order":   { "-type": "any"},
               "name":         { "-type": "string"},
               "description":  { "-type": "string"},
               "hint":         { "-type": "string"},
@@ -1655,7 +1655,7 @@
               "hint":                         { "-type": "string"},
               "image":                        { "-type": "string"},
               "tags":                         { "-type": "any", "-optional": "true"},
-              "sort_order":                   { "-type": "string"},
+              "sort_order":                   { "-type": "any"},
               "condition": [
                 {
                   "condition_type":           { "-type": "string"},
@@ -1820,7 +1820,7 @@
                 "hint":                         { "-type": "string"},
                 "image":                        { "-type": "string"},
                 "tags":                         { "-type": "any", "-optional": "true"},
-                "sort_order":                   { "-type": "string"},
+                "sort_order":                   { "-type": "any"},
                 "condition": [
                   {
                     "condition_type":           { "-type": "string"},
@@ -1972,7 +1972,7 @@
                 "hint":                         { "-type": "string"},
                 "image":                        { "-type": "string"},
                 "tags":                         { "-type": "any", "-optional": "true"},
-                "sort_order":                   { "-type": "string"},
+                "sort_order":                   { "-type": "any"},
                 "condition": [
                   {
                     "condition_type":           { "-type": "string"},
@@ -2543,7 +2543,7 @@
                 "name":         { "-type": "string"},
                 "badge_id":     { "-type": "string"},
                 "image":        { "-type": "string"},
-                "sort_order":   { "-type": "integer"},
+                "sort_order":   { "-type": "any"},
                 "description":  { "-type": "string"},
                 "hint":         { "-type": "string"},
                 "sponsor":      { "-type": "boolean"},
@@ -2574,7 +2574,7 @@
                 "name":         { "-type": "string"},
                 "badge_id":     { "-type": "string"},
                 "image":        { "-type": "string"},
-                "sort_order":   { "-type": "integer"},
+                "sort_order":   { "-type": "any"},
                 "description":  { "-type": "string"},
                 "hint":         { "-type": "string"},
                 "sponsor":      { "-type": "boolean"},
@@ -2604,7 +2604,7 @@
               "name":         { "-type": "string"},
               "badge_id":     { "-type": "string"},
               "image":        { "-type": "string"},
-              "sort_order":   { "-type": "integer"},
+              "sort_order":   { "-type": "any"},
               "description":  { "-type": "string"},
               "hint":         { "-type": "string"},
               "sponsor":      { "-type": "boolean"},
@@ -2652,7 +2652,7 @@
                 "quantity":             { "-type": "integer"},
                 "amount":               { "-type": "integer", "-optional": "true"},
                 "image":                { "-type": "string"},
-                "sort_order":           { "-type": "integer"},
+                "sort_order":           { "-type": "any"},
                 "description":          { "-type": "string"},
                 "code":                 { "-type": "any" , "-optional": "true"},
                 "redeem": {
@@ -2704,7 +2704,7 @@
               "quantity":             { "-type": "integer"},
               "per_user":             { "-type": "integer" , "-optional": "true"},
               "image":                { "-type": "string"},
-              "sort_order":           { "-type": "integer"},
+              "sort_order":           { "-type": "any"},
               "description":          { "-type": "string"},
               "code":                 { "-type": "any" , "-optional": "true"},
               "redeem": {
@@ -2862,7 +2862,7 @@
                 "code":                     { "-type": "any"},
                 "tags":                     { "-type": "any", "-optional": "true" },
                 "sponsor":                  { "-type": "boolean"},
-                "sort_order":               { "-type": "integer"},
+                "sort_order":               { "-type": "any"},
                 "date_start":               { "-type": "string", "-optional": "true"},
                 "date_expire":              { "-type": "string", "-optional": "true"},
                 "days_expire":              { "-type": "string", "-optional": "true"},
@@ -2929,7 +2929,7 @@
                 "code":                     { "-type": "any"},
                 "tags":                     { "-type": "any", "-optional": "true" },
                 "sponsor":                  { "-type": "boolean"},
-                "sort_order":               { "-type": "integer"},
+                "sort_order":               { "-type": "any"},
                 "date_start":               { "-type": "string", "-optional": "true"},
                 "date_expire":              { "-type": "string", "-optional": "true"},
                 "days_expire":              { "-type": "string", "-optional": "true"},
@@ -3042,7 +3042,7 @@
                   "description":                    { "-type": "string"},
                   "specific_id":                    { "-type": "string"},
                   "category":                       { "-type": "string"},
-                  "sort_order":                     { "-type": "integer", "-optional": "true"},
+                  "sort_order":                     { "-type": "any", "-optional": "true"},
                   "jigsaw_index":                   { "-type": "string"},
                   "dataSet": [
                     {
@@ -3100,7 +3100,7 @@
                 "description":                    { "-type": "string"},
                 "specific_id":                    { "-type": "string"},
                 "category":                       { "-type": "string"},
-                "sort_order":                     { "-type": "integer", "-optional": "true"},
+                "sort_order":                     { "-type": "any", "-optional": "true"},
                 "jigsaw_index":                   { "-type": "string"},
                 "dataSet": [
                   {
@@ -3464,7 +3464,7 @@
                 "hint":                         { "-type": "string"},
                 "image":                        { "-type": "string"},
                 "tags":                         { "-type": "any", "-optional": "true"},
-                "sort_order":                   { "-type": "string"},
+                "sort_order":                   { "-type": "any"},
                 "condition": [
                   {
                     "condition_type":           { "-type": "string"},
@@ -3592,7 +3592,7 @@
                 "hint":                         { "-type": "string"},
                 "image":                        { "-type": "string"},
                 "tags":                         { "-type": "any", "-optional": "true"},
-                "sort_order":                   { "-type": "string"},
+                "sort_order":                   { "-type": "any"},
                 "condition": [
                   {
                     "condition_type":           { "-type": "string"},
@@ -3719,7 +3719,7 @@
               "hint":                         { "-type": "string"},
               "image":                        { "-type": "string"},
               "tags":                         { "-type": "any", "-optional": "true"},
-              "sort_order":                   { "-type": "string"},
+              "sort_order":                   { "-type": "any"},
               "condition": [
                 {
                   "condition_type":           { "-type": "string"},
@@ -3953,7 +3953,7 @@
                 "hint":                         { "-type": "string"},
                 "image":                        { "-type": "string"},
                 "tags":                         { "-type": "any", "-optional": "true"},
-                "sort_order":                   { "-type": "string"},
+                "sort_order":                   { "-type": "any"},
                 "condition": [
                   {
                     "condition_type":           { "-type": "string"},
@@ -5058,7 +5058,7 @@
                   "per_user":                   { "-type": "integer"},
                   "image":                      { "-type": "string"},
                   "sponsor":                    { "-type": "boolean"},
-                  "sort_order":                 { "-type": "integer"},
+                  "sort_order":                 { "-type": "any"},
                   "code":                       { "-type": "string"},
                   "redeem": {
                     "point": {
@@ -5147,7 +5147,7 @@
                   "per_user":                   { "-type": "integer"},
                   "image":                      { "-type": "string"},
                   "sponsor":                    { "-type": "boolean"},
-                  "sort_order":                 { "-type": "integer"},
+                  "sort_order":                 { "-type": "any"},
                   "code":                       { "-type": "string"},
                   "redeem": {
                     "point": {
@@ -8365,7 +8365,7 @@
               {
                 "badge_id":       {"-type": "string"},
                 "image":          {"-type": "string"},
-                "sort_order":     {"-type": "integer"},
+                "sort_order":     {"-type": "any"},
                 "name":           {"-type": "string"},
                 "description":    {"-type": "string"},
                 "hint":           {"-type": "string"},
