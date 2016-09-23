@@ -226,7 +226,7 @@
                   "description":  { "-type": "string"},
                   "amount":       { "-type": "number"},
                   "hint":         { "-type": "string"},
-                  "tags":         { "-type": "any"}
+                  "tags":         { "-type": "any", "-optional": "true"}
                 }
               ],
               "goods": [
@@ -298,7 +298,7 @@
                   "description":  { "-type": "string"},
                   "amount":       { "-type": "number"},
                   "hint":         { "-type": "string"},
-                  "tags":         { "-type": "any"}
+                  "tags":         { "-type": "any", "-optional": "true"}
                 }
               ],
               "goods": [
@@ -1378,7 +1378,7 @@
               "description":  { "-type": "string"},
               "amount":       { "-type": "number"},
               "hint":         { "-type": "string"},
-              "tags":         { "-type": "any"}
+              "tags":         { "-type": "any", "-optional": "true"}
             }
           ]
         },
@@ -1414,7 +1414,7 @@
               "description":  { "-type": "string"},
               "hint":         { "-type": "string"},
               "sponsor":      { "-type": "boolean"},
-              "tags":         { "-type": "any"},
+              "tags":         { "-type": "any", "-optional": "true"},
               "amount":       { "-type": "number"}
             }
           ]
@@ -1654,7 +1654,7 @@
               "description":                  { "-type": "string"},
               "hint":                         { "-type": "string"},
               "image":                        { "-type": "string"},
-              "tags":                         { "-type": "any"},
+              "tags":                         { "-type": "any", "-optional": "true"},
               "sort_order":                   { "-type": "string"},
               "condition": [
                 {
@@ -1819,7 +1819,7 @@
                 "description":                  { "-type": "string"},
                 "hint":                         { "-type": "string"},
                 "image":                        { "-type": "string"},
-                "tags":                         { "-type": "any"},
+                "tags":                         { "-type": "any", "-optional": "true"},
                 "sort_order":                   { "-type": "string"},
                 "condition": [
                   {
@@ -1971,7 +1971,7 @@
                 "description":                  { "-type": "string"},
                 "hint":                         { "-type": "string"},
                 "image":                        { "-type": "string"},
-                "tags":                         { "-type": "any"},
+                "tags":                         { "-type": "any", "-optional": "true"},
                 "sort_order":                   { "-type": "string"},
                 "condition": [
                   {
@@ -2547,7 +2547,7 @@
                 "description":  { "-type": "string"},
                 "hint":         { "-type": "string"},
                 "sponsor":      { "-type": "boolean"},
-                "tags":         { "-type": "any"}
+                "tags":         { "-type": "any", "-optional": "true"}
               }
             ]
           }
@@ -2578,7 +2578,7 @@
                 "description":  { "-type": "string"},
                 "hint":         { "-type": "string"},
                 "sponsor":      { "-type": "boolean"},
-                "tags":         { "-type": "any"}
+                "tags":         { "-type": "any", "-optional": "true"}
               }
             ]
           }
@@ -2608,7 +2608,7 @@
               "description":  { "-type": "string"},
               "hint":         { "-type": "string"},
               "sponsor":      { "-type": "boolean"},
-              "tags":         { "-type": "any"}
+              "tags":         { "-type": "any", "-optional": "true"}
             }
           }
         }
@@ -2662,10 +2662,10 @@
                   "custom":             { "-type": "any", "-optional": "true"}
                 },
                 "sponsor":              { "-type": "boolean"},
-                "organize":             { "-type": "string", "-optional": "true" },
-                "organize_id":          { "-type": "string", "-optional": "true" },
-                "organize_role":        { "-type": "string", "-optional": "true" },
-                "tags":                 { "-type": "any" },
+                "organize":             { "-type": "string", "-optional": "true"},
+                "organize_id":          { "-type": "string", "-optional": "true"},
+                "organize_role":        { "-type": "string", "-optional": "true"},
+                "tags":                 { "-type": "any"   , "-optional": "true"},
                 "date_start":           { "-type": "string", "-optional": "true"},
                 "date_expire":          { "-type": "string", "-optional": "true"}
               }
@@ -2714,10 +2714,10 @@
                 "custom":             { "-type": "any", "-optional": "true"}
               },
               "sponsor":              { "-type": "boolean"},
-              "organize":             { "-type": "string", "-optional": "true" },
-              "organize_id":          { "-type": "string", "-optional": "true" },
-              "organize_role":        { "-type": "string", "-optional": "true" },
-              "tags":                 { "-type": "any" },
+              "organize":             { "-type": "string", "-optional": "true"},
+              "organize_id":          { "-type": "string", "-optional": "true"},
+              "organize_role":        { "-type": "string", "-optional": "true"},
+              "tags":                 { "-type": "any"   , "-optional": "true"},
               "date_start":           { "-type": "string", "-optional": "true"},
               "date_expire":          { "-type": "string", "-optional": "true"}
             },
@@ -2860,7 +2860,7 @@
                   "custom":                 { "-type": "any", "-optional": "true"}
                 },
                 "code":                     { "-type": "any"},
-                "tags":                     { "-type": "any" },
+                "tags":                     { "-type": "any", "-optional": "true" },
                 "sponsor":                  { "-type": "boolean"},
                 "sort_order":               { "-type": "integer"},
                 "date_start":               { "-type": "string", "-optional": "true"},
@@ -2927,7 +2927,7 @@
                   "custom":                 { "-type": "any", "-optional": "true"}
                 },
                 "code":                     { "-type": "any"},
-                "tags":                     { "-type": "any" },
+                "tags":                     { "-type": "any", "-optional": "true" },
                 "sponsor":                  { "-type": "boolean"},
                 "sort_order":               { "-type": "integer"},
                 "date_start":               { "-type": "string", "-optional": "true"},
@@ -3034,7 +3034,7 @@
             {
               "name":                               { "-type": "string"},
               "description":                        { "-type": "string"},
-              "tags":                               { "-type": "any"},
+              "tags":                               { "-type": "any", "-optional": "true"},
               "jigsaw_set": [
                 {
                   "id":                             { "-type": "string"},
@@ -3092,7 +3092,7 @@
             "name":                               { "-type": "string"},
             "id":                                 { "-type": "string"},
             "description":                        { "-type": "string"},
-            "tags":                               { "-type": "any"},
+            "tags":                               { "-type": "any", "-optional": "true"},
             "jigsaw_set": [
               {
                 "id":                             { "-type": "string"},
@@ -3463,7 +3463,7 @@
                 "description":                  { "-type": "string"},
                 "hint":                         { "-type": "string"},
                 "image":                        { "-type": "string"},
-                "tags":                         { "-type": "any"},
+                "tags":                         { "-type": "any", "-optional": "true"},
                 "sort_order":                   { "-type": "string"},
                 "condition": [
                   {
@@ -3591,7 +3591,7 @@
                 "description":                  { "-type": "string"},
                 "hint":                         { "-type": "string"},
                 "image":                        { "-type": "string"},
-                "tags":                         { "-type": "any"},
+                "tags":                         { "-type": "any", "-optional": "true"},
                 "sort_order":                   { "-type": "string"},
                 "condition": [
                   {
@@ -3718,7 +3718,7 @@
               "description":                  { "-type": "string"},
               "hint":                         { "-type": "string"},
               "image":                        { "-type": "string"},
-              "tags":                         { "-type": "any"},
+              "tags":                         { "-type": "any", "-optional": "true"},
               "sort_order":                   { "-type": "string"},
               "condition": [
                 {
@@ -3952,7 +3952,7 @@
                 "description":                  { "-type": "string"},
                 "hint":                         { "-type": "string"},
                 "image":                        { "-type": "string"},
-                "tags":                         { "-type": "any"},
+                "tags":                         { "-type": "any", "-optional": "true"},
                 "sort_order":                   { "-type": "string"},
                 "condition": [
                   {
@@ -4380,7 +4380,7 @@
                 "weight":                    { "-type": "integer"},
                 "description":               { "-type": "string"},
                 "description_image":         { "-type": "string"},
-                "tags":                      { "-type": "any"}
+                "tags":                      { "-type": "any", "-optional": "true"}
               }
             ],
             "processing_time":               { "-type": "string"}
@@ -4417,7 +4417,7 @@
               "weight":                                               { "-type": "integer"},
               "date_start":                                           { "-type": "string"},
               "date_expire":                                          { "-type": "string"},
-              "tags":                                                 { "-type": "any"},
+              "tags":                                                 { "-type": "any", "-optional": "true"},
               "type":                                                 { "-type": "string"},
               "status":                                               { "-type": "boolean"},
               "description":                                          { "-type": "string"},
@@ -4529,7 +4529,7 @@
               "weight":                    { "-type": "integer"},
               "description":               { "-type": "string"},
               "description_image":         { "-type": "string"},
-              "tags":                      { "-type": "any"}
+              "tags":                      { "-type": "any", "-optional": "true"}
             },
             "processing_time":          { "-type": "string"}
           }
@@ -5084,7 +5084,7 @@
                       }
                     ]
                   },
-                  "tags":                       { "-type": "any"},
+                  "tags":                       { "-type": "any", "-optional": "true"},
                   "date_start":                 { "-type": "string"},
                   "date_expire":                { "-type": "string"},
                   "group":                      { "-type": "string", "-optional": "true"},
@@ -5173,7 +5173,7 @@
                       }
                     ]
                   },
-                  "tags":                       { "-type": "any"},
+                  "tags":                       { "-type": "any", "-optional": "true"},
                   "date_start":                 { "-type": "string"},
                   "date_expire":                { "-type": "string"},
                   "days_expire":                { "-type": "string"},
@@ -7516,7 +7516,7 @@
                 "image":                              {"-type": "string"},
                 "status":                             {"-type": "boolean"},
                 "pin":                                {"-type": "string","-optional": "true"},
-                "tags":                               {"-type": "any"},
+                "tags":                               {"-type": "any", "-optional": "true"},
                 "node_id":                            {"-type": "string"},
                 "category":                           {"-type": "string","-optional": "true"},
                 "organize": [
@@ -8370,7 +8370,7 @@
                 "description":    {"-type": "string"},
                 "hint":           {"-type": "string"},
                 "sponsor":        {"-type": "boolean"},
-                "tags":           {"-type": "any"}
+                "tags":           {"-type": "any", "-optional": "true"}
               }
             ]
            }
