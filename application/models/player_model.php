@@ -1575,28 +1575,32 @@ class Player_model extends MY_Model
         return $event_log;
     }
 
-    public function getGoods($pb_player_id, $site_id, $tags = null)
+    public function getGoods($pb_player_id, $site_id, $tags = null, $status = null)
     {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array(
-            'goods_id',
-            'value',
-            'date_expire'
-        ));
-        $this->mongo_db->select(array(), array('_id'));
-        $this->mongo_db->where(array(
-            'pb_player_id' => $pb_player_id,
-        ));
-        $goods_list = $this->mongo_db->get('playbasis_goods_to_player');
 
-        if (!$goods_list) {
+        $match_condition = array(
+            'site_id' => new MongoId($site_id),
+            'pb_player_id' => new MongoId($pb_player_id)
+        );
+
+        $query_array = array(
+            array(
+                '$match' => $match_condition
+            ),
+            array(
+                '$group' => array('_id' => '$goods_id',
+                                  'current' => array('$sum' => 1))
+            )
+        );
+        $results = $this->mongo_db->aggregate('playbasis_goods_log', $query_array);
+        if (!$results) {
             return array();
         }
 
         $playerGoods = array();
-        foreach ($goods_list as $goods) {
-            if (isset($goods['goods_id'])) {
-                if(isset($goods['date_expire'])) $goods['date_expire'] = datetimeMongotoReadable($goods['date_expire']);
+        foreach ($results["result"] as $goods) {
+            if (isset($goods['_id'])) {
                 //get goods data
                 $this->mongo_db->select(array(
                     'image',
@@ -1608,7 +1612,7 @@ class Player_model extends MY_Model
                 ));
                 $this->mongo_db->select(array(), array('_id'));
                 $this->mongo_db->where(array(
-                    'goods_id' => $goods['goods_id'],
+                    'goods_id' => $goods['_id'],
                     'site_id' => $site_id,
                 ));
                 if($tags){
@@ -1621,18 +1625,43 @@ class Player_model extends MY_Model
                     continue;
                 }
                 $result = $result[0];
-                $goods['goods_id'] = $goods['goods_id'] . "";
-                $goods['image'] = $this->config->item('IMG_PATH') . $result['image'];
-                $goods['name'] = $result['name'];
-                $goods['description'] = $result['description'];
-                $goods['code'] = $result['code'];
-                $goods['tags'] = isset($result['tags']) && !empty($result['tags']) ? $result['tags'] : null;
-                if (isset($result['group'])) {
-                    $goods['group'] = $result['group'];
+
+                $this->mongo_db->select(array(
+                    'goods_id',
+                    'value',
+                    'date_expire'
+                ));
+                $this->mongo_db->select(array(), array('_id'));
+                $this->mongo_db->where(array(
+                    'pb_player_id' => $pb_player_id,
+                    'goods_id' => $goods['_id'],
+                ));
+                $goods_data = $this->mongo_db->get('playbasis_goods_to_player');
+                if ($goods_data) {
+                    $goods_data = $goods_data[0];
+                    if(isset($goods_data['date_expire'])) $goods_data['date_expire'] = datetimeMongotoReadable($goods_data['date_expire']);
+                    $goods_data['status'] = $goods_data['value'] > 0 ? "active" : "used";
+                } else {
+                    $goods_data = array();
+                    $goods_data['value'] = 0;
+                    $goods_data['status'] = "expired";
                 }
-                $goods['amount'] = $goods['value'];
-                unset($goods['value']);
-                array_push($playerGoods, $goods);
+                if ($status && $status != $goods_data['status']){
+                    continue;
+                }
+                $goods_data['goods_id'] = $goods['_id'] . "";
+                $goods_data['image'] = $this->config->item('IMG_PATH') . $result['image'];
+                $goods_data['name'] = $result['name'];
+                $goods_data['description'] = $result['description'];
+                $goods_data['code'] = $result['code'];
+                $goods_data['tags'] = isset($result['tags']) && !empty($result['tags']) ? $result['tags'] : null;
+                if (isset($result['group'])) {
+                    $goods_data['group'] = $result['group'];
+                }
+
+                $goods_data['amount'] = $goods_data['value'];
+                unset($goods_data['value']);
+                array_push($playerGoods, $goods_data);
             }
         }
         return $playerGoods;
