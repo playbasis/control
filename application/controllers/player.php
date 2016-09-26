@@ -1778,10 +1778,18 @@ class Player extends REST2_Controller
         if (!$pb_player_id) {
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         }
+        $status = $this->input->get('status');
+        if($status){
+            if ($status != "all" && $status != "active" && $status != "used" && $status != "expired") {
+                $this->response($this->error->setError('INVALID_STATUS'), 200);
+            }
+            $status = ($status == "all") ? null : $status;
+        } else {
+            $status = "active";
+        }
         //get player goods
         $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $this->site_id,
-                              $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null,
-                              $this->input->get('status') ? $this->input->get('status') : null);
+                              $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null, $status);
         $this->response($this->resp->setRespond($goodsList), 200);
     }
 

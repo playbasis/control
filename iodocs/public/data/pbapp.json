@@ -1605,11 +1605,12 @@
             {
               "Name": "status",
               "Required": "N",
-              "Default": "",
+              "Default": "active",
               "Type": "enumerated",
               "Description": "Specific status to find (e.g. active,expired,used)",
               "EnumeratedList": [
                 "active",
+                "all",
                 "expired",
                 "used"
               ]
