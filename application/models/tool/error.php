@@ -302,6 +302,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Gift to send is not exist";
                 $errorData['error_code'] = '0610';
                 break;
+            case 'INVALID_STATUS':
+                $errorData['message'] = "Invalid status";
+                $errorData['error_code'] = '0611';
+                break;
             case "QUEST_JOINED":
                 $errorData["message"] = "User has already join this quest";
                 $errorData["error_code"] = "0701";
