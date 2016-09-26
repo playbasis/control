@@ -1601,6 +1601,18 @@
               "Default": "",
               "Type": "string",
               "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "",
+              "Type": "enumerated",
+              "Description": "Specific status to find (e.g. active,expired,used)",
+              "EnumeratedList": [
+                "active",
+                "expired",
+                "used"
+              ]
             }
           ],
           "response-debug": {
@@ -1612,7 +1624,8 @@
                 "description":  { "-type": "string"},
                 "code":         { "-type": "string"},
                 "group":        { "-type": "string" , "-optional": "true"},
-                "amount":       { "-type": "integer"}
+                "amount":       { "-type": "integer"},
+                "status":       { "-type": "string"}
               }
             ]
           }
