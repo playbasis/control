@@ -160,11 +160,11 @@ $route['Goods'] = 'goods/index';
 $route['Goods/sponsor/'.ANY_STRING] = 'goods/sponsor/$1';
 $route['Goods/sponsor'] = 'goods/sponsor';
 $route['Goods/ad'] = 'goods/personalizedSponsor';
-$route['Goods/couponVerify'] = 'goods/couponVerify';
 
 //Merchant API
 $route['Merchant/availableBranchGoodsGroup'] = 'merchant/availableBranchGoodsGroup';
-
+$route['Merchant/goodsGroup/verify'] = 'merchant/GoodsGroupVerify';
+$route['Merchant/goodsGroup/redeem'] = 'merchant/GoodsGroupRedeem';
 //engine API
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
 $route['Engine/rules']	= 'engine/rules';
@@ -179,7 +179,6 @@ $route['Engine/json']	= 'engine/json/0';
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
 $route['Redeem/goods'] = 'redeem/goods/0';
 $route['Redeem/goodsGroup'] = 'redeem/goodsGroup';
-$route['Redeem/goodsGroup/verify'] = 'redeem/merchantGoodsGroup';
 $route['Redeem/sponsor/'.ANY_STRING] = 'redeem/sponsor/$1';
 $route['Redeem/sponsor'] = 'redeem/sponsor/0';
 $route['Redeem/sponsorGroup'] = 'redeem/sponsorGroup';
