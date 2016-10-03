@@ -1207,7 +1207,7 @@
                 "reward_id":                { "-type": "string"},
                 "reward_name":              { "-type": "string"},
                 "value":                    { "-type": "number"},
-                "date_added":               { "-type": "string"},
+                "date_added":               { "-type": "string", "-optional": "true"},
                 "action_name":              { "-type": "string", "-optional": "true"},
                 "action_parameters": {        "-optional": "true",
                     "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any", "-optional": "true"}
@@ -1789,7 +1789,7 @@
               "organize_id":        { "-type": "string", "-optional": "true"},
               "organize_role":      { "-type": "string", "-optional": "true"},
               "status":             { "-type": "string"},
-              "date_added":         { "-type": "string"},
+              "date_added":         { "-type": "string", "-optional": "true"},
               "date_modified":      { "-type": "string", "-optional": "true"},
               "num_missions":       { "-type": "any"}
             }  
@@ -1954,7 +1954,7 @@
                 "organize_id":        { "-type": "string", "-optional": "true"},
                 "organize_role":      { "-type": "string", "-optional": "true"},
                 "status":             { "-type": "string"},
-                "date_added":         { "-type": "string"},
+                "date_added":         { "-type": "string", "-optional": "true"},
                 "date_modified":      { "-type": "string", "-optional": "true"},
                 "num_missions":       { "-type": "any"}
               }
@@ -2104,8 +2104,8 @@
                 "organize_role":      { "-type": "string", "-optional": "true"},
                 "status":             { "-type": "boolean"},
                 "player_status":      { "-type": "string", "-optional": "true"},
-                "date_added":         { "-type": "string"},
-                "date_modified":      { "-type": "string"}
+                "date_added":         { "-type": "string", "-optional": "true"},
+                "date_modified":      { "-type": "string", "-optional": "true"}
               }
             ]
           }
@@ -2149,8 +2149,8 @@
                 "reward_id":      { "-type": "string"},
                 "reward_name":    { "-type": "string"},
                 "reward_value":   { "-type": "string"},
-                "date_added":     { "-type": "string"},
-                "date_modified":  { "-type": "string"},
+                "date_added":     { "-type": "string", "-optional": "true"},
+                "date_modified":  { "-type": "string", "-optional": "true"},
                 "quest_name":     { "-type": "string"},
                 "type":           { "-type": "string"}
               }
@@ -3551,8 +3551,8 @@
                 "organize_role":      { "-type": "string", "-optional": "true"},
                 "status":             { "-type": "boolean"},
                 "player_status":      { "-type": "string", "-optional": "true"},
-                "date_added":         { "-type": "string"},
-                "date_modified":      { "-type": "string"}
+                "date_added":         { "-type": "string", "-optional": "true"},
+                "date_modified":      { "-type": "string", "-optional": "true"}
               }
             ]
           }
@@ -3685,8 +3685,8 @@
                 "organize_role":      { "-type": "string", "-optional": "true"},
                 "status":             { "-type": "boolean"},
                 "player_status":      { "-type": "string", "-optional": "true"},
-                "date_added":         { "-type": "string"},
-                "date_modified":      { "-type": "string"}
+                "date_added":         { "-type": "string", "-optional": "true"},
+                "date_modified":      { "-type": "string", "-optional": "true"}
               }
             ]
           }
@@ -3835,7 +3835,7 @@
               "organize_id":        { "-type": "string", "-optional": "true"},
               "organize_role":      { "-type": "string", "-optional": "true"},
               "status":             { "-type": "boolean"},
-              "date_added":         { "-type": "string"},
+              "date_added":         { "-type": "string", "-optional": "true"},
               "date_modified":      { "-type": "string", "-optional": "true"},
               "num_missions":       { "-type": "any", "-optional": "true"}
             }  
@@ -4069,7 +4069,7 @@
                 "organize_id":        { "-type": "string", "-optional": "true"},
                 "organize_role":      { "-type": "string", "-optional": "true"},
                 "status":             { "-type": "boolean"},
-                "date_added":         { "-type": "string"},
+                "date_added":         { "-type": "string", "-optional": "true"},
                 "date_modified":      { "-type": "string", "-optional": "true"},
                 "num_missions":       { "-type": "any", "-optional": "true"}
               }
@@ -5521,7 +5521,7 @@
           "responses": [
             {
               "subject":          { "-type": "string"},
-              "date_added":       { "-type": "string"}
+              "date_added":       { "-type": "string", "-optional": "true"}
             }
           ]
         },
@@ -5723,7 +5723,7 @@
           "responses": [
             {
               "message":        { "-type": "string"},
-              "date_added":     { "-type": "string"}
+              "date_added":     { "-type": "string", "-optional": "true"}
             }
           ]
         },
@@ -5992,7 +5992,7 @@
           "responses": [
             {
               "messages":   { "-type": "string"},  
-              "date_added": { "-type": "string"}
+              "date_added": { "-type": "string", "-optional": "true"}
             }
           ]
         },
@@ -6106,7 +6106,7 @@
                 "quest_id":          { "-type": "string", "-optional": "true"},
                 "mission_id":        { "-type": "string", "-optional": "true"},
                 "quiz_id":           { "-type": "string", "-optional": "true"},
-                "date_added":        { "-type": "string"},
+                "date_added":        { "-type": "string", "-optional": "true"},
                 "id":                { "-type": "string"},
                 "player": {
                   "cl_player_id":    { "-type": "string"},
@@ -6162,7 +6162,7 @@
               "quest_id":          { "-type": "string", "-optional": "true"},
               "mission_id":        { "-type": "string", "-optional": "true"},
               "quiz_id":           { "-type": "string", "-optional": "true"},
-              "date_added":        { "-type": "string"},
+              "date_added":        { "-type": "string", "-optional": "true"},
               "id":                { "-type": "string"},
               "player": {
                 "cl_player_id":    { "-type": "string"},
@@ -6309,7 +6309,7 @@
                 "reward_id":        { "-type": "string"},
                 "reward_name":      { "-type": "string"},
                 "value":            { "-type": "integer"},
-                "date_added":       { "-type": "string"},
+                "date_added":       { "-type": "string", "-optional": "true"},
                 "player": {
                   "cl_player_id":   { "-type": "string"},
                   "image":          { "-type": "string"},
@@ -6357,7 +6357,7 @@
                 "reward_id":        { "-type": "string"},
                 "reward_name":      { "-type": "string"},
                 "value":            { "-type": "integer"},
-                "date_added":       { "-type": "string"},
+                "date_added":       { "-type": "string", "-optional": "true"},
                 "player": {
                   "cl_player_id":   { "-type": "string"},
                   "image":          { "-type": "string"},
@@ -6475,8 +6475,8 @@
                 "description":       { "-type": "string"},
                 "status":            { "-type": "boolean"},
                 "slug":              { "-type": "string"},
-                "date_added":        { "-type": "string"},
-                "date_modified":     { "-type": "string"},
+                "date_added":        { "-type": "string", "-optional": "true"},
+                "date_modified":     { "-type": "string", "-optional": "true"},
                 "parent": {            "-optional": "true",
                   "id":              { "-type": "string"},
                   "name":            { "-type": "string"}
@@ -6559,8 +6559,8 @@
                 "description":          { "-type": "string"},
                 "status":               { "-type": "boolean"},
                 "slug":                 { "-type": "string"},
-                "date_added":           { "-type": "string"},
-                "date_modified":        { "-type": "string"},
+                "date_added":           { "-type": "string", "-optional": "true"},
+                "date_modified":        { "-type": "string", "-optional": "true"},
                 "organize": {
                   "id":                 { "-type": "string"},
                   "name":               { "-type": "string"}
@@ -8220,8 +8220,8 @@
               "file_size":                    {"-type": "integer"},
               "file_name":                    {"-type": "string"},
               "directory":                    {"-type": "string"},
-              "date_added":                   {"-type": "string"},
-              "date_modified":                {"-type": "string"},
+              "date_added":                   {"-type": "string", "-optional": "true"},
+              "date_modified":                {"-type": "string", "-optional": "true"},
               "thumb_small":                  {"-type": "string"},
               "thumb_large":                  {"-type": "string"}
             },
@@ -9084,8 +9084,8 @@
           "responses": [
             {
               "game_name":                  {"-type": "string"},
-              "date_added":                 {"-type": "string"},
-              "date_modified":              {"-type": "string"},
+              "date_added":                 {"-type": "string", "-optional": "true"},
+              "date_modified":              {"-type": "string", "-optional": "true"},
               "image":                      {"-type": "string"},
               "template": {
                 "template_name":            {"-type": "string"},
