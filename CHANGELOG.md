@@ -1,23 +1,28 @@
 # Change Log
+## [2.19.0](https://github.com/playbasis/control/tree/2.19.0) (2016-10-03)
+[Full Changelog](https://github.com/playbasis/control/compare/2.18.0...2.19.0)
+
+## [2.17.3/Add_goods_status_in_report](https://github.com/playbasis/control/tree/2.17.3/Add_goods_status_in_report) (2016-10-03)
+[Full Changelog](https://github.com/playbasis/control/compare/2.18.0...2.17.3/Add_goods_status_in_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.17.3/add goods status in report [\#282](https://github.com/playbasis/control/pull/282) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.18.0](https://github.com/playbasis/control/tree/2.18.0) (2016-09-19)
-[Full Changelog](https://github.com/playbasis/control/compare/2.17.0...2.18.0)
-
-
-## [2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api](https://github.com/playbasis/control/tree/2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api) (2016-09-16)
-[Full Changelog](https://github.com/playbasis/control/compare/2.17.1/fix_good_group_redeem_value_not_show_when_edit...2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api)
+[Full Changelog](https://github.com/playbasis/control/compare/2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api...2.18.0)
 
 **Fixed bugs:**
 
 - Hotfix/2.17.2/change player 2 to pb player 2 in process feedback to compatible with api [\#281](https://github.com/playbasis/control/pull/281) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.17.1/fix good group redeem value not show when edit [\#280](https://github.com/playbasis/control/pull/280) ([piya-playbasis](https://github.com/piya-playbasis))
+- Bring back play quest button [\#279](https://github.com/playbasis/control/pull/279) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api](https://github.com/playbasis/control/tree/2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api) (2016-09-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.17.1/fix_good_group_redeem_value_not_show_when_edit...2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api)
 
 ## [2.17.1/fix_good_group_redeem_value_not_show_when_edit](https://github.com/playbasis/control/tree/2.17.1/fix_good_group_redeem_value_not_show_when_edit) (2016-09-13)
 [Full Changelog](https://github.com/playbasis/control/compare/2.17.0...2.17.1/fix_good_group_redeem_value_not_show_when_edit)
-
-**Fixed bugs:**
-
-- Hotfix/2.17.1/fix good group redeem value not show when edit [\#280](https://github.com/playbasis/control/pull/280) ([piya-playbasis](https://github.com/piya-playbasis))
-- Bring back play quest button [\#279](https://github.com/playbasis/control/pull/279) ([niti-playbasis](https://github.com/niti-playbasis))
 
 ## [2.17.0](https://github.com/playbasis/control/tree/2.17.0) (2016-09-07)
 [Full Changelog](https://github.com/playbasis/control/compare/2.16.5/change_date_expired_to_date_expire_in_goods_to_player...2.17.0)
