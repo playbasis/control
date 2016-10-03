@@ -57,6 +57,7 @@
                     <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
                     <td class="right"><?php echo $this->lang->line('column_goods_name'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_goods_amount'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_goods_status'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
                 </tr>
                 </thead>
@@ -79,6 +80,7 @@
                             ?>
                         </td>
                         <td class="right"><?php echo $report['value']; ?></td>
+                        <td class="right"><?php echo isset($report['status']) ? $report['status']: ""; ?></td>
                         <td class="right"><?php echo $report['date_added']; ?></td>
                     </tr>
                         <?php } ?>

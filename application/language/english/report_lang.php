@@ -24,6 +24,7 @@ $lang['column_date_added']          			= 'DateTime';
 $lang['column_reward_name']						= 'Reward';
 $lang['column_reward_value']					= 'Value';
 $lang['column_goods_amount']					= 'Amount';
+$lang['column_goods_status']					= 'Status';
 $lang['column_goods_redeemwith']					= 'Redeem with';
 $lang['column_goods_name']					= 'Goods';
 $lang['column_date_registered']					= 'Date Registered';

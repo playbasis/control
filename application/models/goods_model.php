@@ -33,6 +33,19 @@ class Goods_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getPlayerGoodsById($site_id, $goodsId, $pb_player_id)
+    {
+        $this->mongo_db->select(array('value'));
+        $this->mongo_db->where(array(
+            'site_id' => $site_id,
+            'goods_id' => $goodsId,
+            'pb_player_id' => $pb_player_id
+        ));
+        $this->mongo_db->limit(1);
+        $goods = $this->mongo_db->get('playbasis_goods_to_player');
+        return isset($goods[0]) ? $goods[0]['value'] : null;
+    }
+
     public function getGoodsOfClientPrivate($goods_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -944,7 +957,8 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('site_id', $data['site_id']);
         $this->mongo_db->where('cl_player_id', $data['cl_player_id']);
         $this->mongo_db->where('goods_id', $data['goods_id']);
-        $this->mongo_db->delete('playbasis_goods_to_player');
+        $this->mongo_db->set('value', 0);
+        $this->mongo_db->update('playbasis_goods_to_player');
     }
 
     public function listGoods($goods_id_list, $fields = array())

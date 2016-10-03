@@ -157,7 +157,12 @@ class Report_goods extends MY_Controller
             $goods_name = null;
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-
+            $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
+            if(!is_null($goods_player)){
+                $status = $goods_player > 0 ? "active" : "used";
+            } else {
+                $status = "expired";
+            }
             if (!empty($player['image'])) {
                 $thumb = $player['image'];
             } else {
@@ -178,6 +183,7 @@ class Report_goods extends MY_Controller
                 'goods_name' => $result['goods_name'],
                 // 'value'             => $result['value']
                 'value' => $result['amount'],
+                'status' => $status
                 // 'redeem'            => $result['redeem']
             );
         }
