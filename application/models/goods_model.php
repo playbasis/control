@@ -320,7 +320,8 @@ class Goods_model extends MY_Model
             'group',
             'code',
             'organize_id',
-            'organize_role'
+            'organize_role',
+            'tags'
         ));
         $this->mongo_db->where(array(
             'client_id' => $client_id,

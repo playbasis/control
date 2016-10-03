@@ -937,7 +937,8 @@ class jigsaw extends MY_Model
             'per_user',
             'quantity',
             'group',
-            'code'
+            'code',
+            'tags'
         ));
         $this->mongo_db->where(array(
             'site_id' => $site_id,
