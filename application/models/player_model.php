@@ -1719,7 +1719,7 @@ class Player_model extends MY_Model
         return $goods;
     }
 
-    public function deleteGoodsFromPlayer($client_id, $site_id, $pb_player_id, $goods_id)
+    public function markUsedGoodsFromPlayer($client_id, $site_id, $pb_player_id, $goods_id)
     {
         $this->set_site_mongodb($site_id);
 
@@ -1729,8 +1729,8 @@ class Player_model extends MY_Model
             'pb_player_id' => $pb_player_id,
             'goods_id' => $goods_id
         ));
-
-        $result = $this->mongo_db->delete('playbasis_goods_to_player');
+        $this->mongo_db->set('value', 0);
+        $result = $this->mongo_db->update('playbasis_goods_to_player');
 
         return $result;
     }
