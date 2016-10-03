@@ -306,6 +306,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Invalid status";
                 $errorData['error_code'] = '0611';
                 break;
+            case 'REDEEM_COUPON_CODE_USED':
+                $errorData['message'] = "Coupon code has been used";
+                $errorData['error_code'] = '0611';
+                break;
             case "QUEST_JOINED":
                 $errorData["message"] = "User has already join this quest";
                 $errorData["error_code"] = "0701";
