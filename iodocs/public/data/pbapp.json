@@ -2828,133 +2828,6 @@
           ]
         },
         {
-          "MethodName": "Coupon code verification",
-          "Synopsis": "verify coupon code available.",
-          "HTTPMethod": "GET",
-          "URI": "Goods/couponVerify",
-          "RequiresOAuth": "N",
-          "Public": "Y",
-          "parameters": [
-            {
-              "Name": "goods_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "goods id"
-            },
-            {
-              "Name": "coupon_code",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "coupon code of goods to verify"
-            },
-            {
-              "Name": "player_id",
-              "Required": "N",
-              "Default": "",
-              "Type": "string",
-              "Description": "player id as used in client's website"
-            }
-          ],
-          "responses": {
-            "events": {
-              "event_type":                 { "-type": "string"},
-              "goos_data": {
-                "goods_id":                 { "-type": "string"},
-                "group":                    { "-type": "string", "-optional": "true"},
-                "name":                     { "-type": "string"},
-                "description":              { "-type": "string"},
-                "quantity":                 { "-type": "integer"},
-                "image":                    { "-type": "string"},
-                "redeem": {
-                  "point": {
-                    "point_value":          { "-type": "integer"}
-                  },
-                  "custom":                 { "-type": "any", "-optional": "true"}
-                },
-                "code":                     { "-type": "any"},
-                "tags":                     { "-type": "any" },
-                "sponsor":                  { "-type": "boolean"},
-                "sort_order":               { "-type": "integer"},
-                "date_start":               { "-type": "string", "-optional": "true"},
-                "date_expire":              { "-type": "string", "-optional": "true"},
-                "days_expire":              { "-type": "string", "-optional": "true"},
-                "organize_id":              { "-type": "string", "-optional": "true"},
-                "organize_role":            { "-type": "string", "-optional": "true"}
-              },
-              "value":                      { "-type": "integer"}
-            }
-          }
-        },
-        {
-          "MethodName": "Coupon code verification with redeem",
-          "Synopsis": "verify coupon code available and redeem.",
-          "HTTPMethod": "POST",
-          "URI": "Goods/couponVerify",
-          "RequiresOAuth": "N",
-          "Public": "Y",
-          "parameters": [
-            {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
-            },
-            {
-              "Name": "goods_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "goods id"
-            },
-            {
-              "Name": "coupon_code",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "coupon code of goods to verify"
-            },
-            {
-              "Name": "player_id",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "player id as used in client's website"
-            }
-          ],
-          "responses": {
-            "events": {
-              "event_type":                 { "-type": "string"},
-              "goos_data": {
-                "goods_id":                 { "-type": "string"},
-                "group":                    { "-type": "string", "-optional": "true"},
-                "name":                     { "-type": "string"},
-                "description":              { "-type": "string"},
-                "quantity":                 { "-type": "integer"},
-                "image":                    { "-type": "string"},
-                "redeem": {
-                  "point": {
-                    "point_value":          { "-type": "integer"}
-                  },
-                  "custom":                 { "-type": "any", "-optional": "true"}
-                },
-                "code":                     { "-type": "any"},
-                "tags":                     { "-type": "any" },
-                "sponsor":                  { "-type": "boolean"},
-                "sort_order":               { "-type": "integer"},
-                "date_start":               { "-type": "string", "-optional": "true"},
-                "date_expire":              { "-type": "string", "-optional": "true"},
-                "days_expire":              { "-type": "string", "-optional": "true"},
-                "organize_id":              { "-type": "string", "-optional": "true"},
-                "organize_role":            { "-type": "string", "-optional": "true"}
-              },
-              "value":                      { "-type": "integer"}
-            }
-          }
-        },
-        {
           "MethodName": "Return sponsor goods for player",
           "Synopsis": "Return sponsor goods for player.",
           "HTTPMethod": "GET",
@@ -3013,6 +2886,104 @@
               }
             }
           ]
+        },
+        {
+          "MethodName": "Merchant Coupon Verification",
+          "Synopsis": "Verify coupon code available to be redeem",
+          "HTTPMethod": "GET",
+          "URI": "Merchant/goodsGroup/verify",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "goods_group",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "goods group"
+            },
+            {
+              "Name": "coupon_code",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "coupon code of goods to verify"
+            },
+            {
+              "Name": "pin_code",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "merchant PIN Code generated from admin dashboard"
+            },
+            {
+              "Name": "player_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            }
+          ],
+          "responses": {
+            "success": { "-type": "boolean"},
+            "details": { "-type": "any", "-optional": "true"}
+          }
+        },
+        {
+          "MethodName": "Merchant Redeem Coupon",
+          "Synopsis": "Marchant Redeem Coupon From Player",
+          "HTTPMethod": "POST",
+          "URI": "Merchant/goodsGroup/redeem",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "goods_group",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "goods group"
+            },
+            {
+              "Name": "coupon_code",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "coupon code of goods to verify"
+            },
+            {
+              "Name": "pin_code",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "merchant PIN Code generated from admin dashboard"
+            },
+            {
+              "Name": "player_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            }
+          ],
+          "responses": {
+            "success": { "-type": "boolean"},
+            "details": { "-type": "any", "-optional": "true"}
+          }
         }
       ]
     },
@@ -5201,49 +5172,6 @@
             "log_id":                           { "-type": "string"},
             "processing_time":                  { "-type": "string", "-optional": "true"}
           }
-        },
-        {
-          "MethodName": "Redeem Verification",
-          "Synopsis": "Redeem verification for merchant using PIN code",
-          "HTTPMethod": "POST",
-          "URI": "Redeem/goodsGroup/verify",
-          "RequiresOAuth": "N",
-          "Public": "Y",
-          "parameters": [
-            {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
-            },
-            {
-              "Name": "goods_group",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "goods group"
-            },
-            {
-              "Name": "coupon_code",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "coupon code of goods to verify"
-            },
-            {
-              "Name": "pin_code",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "merchant PIN Code generated from admin dashboard"
-            }
-          ],
-          "responses": {
-            "success": { "-type": "boolean"},
-            "details": { "-type": "any", "-optional": "true"}
-          }
-
         },
         {
           "MethodName": "Redeem Sponsor",
