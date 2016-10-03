@@ -2896,13 +2896,6 @@
           "Public": "Y",
           "parameters": [
             {
-              "Name": "token",
-              "Required": "Y",
-              "Default": "",
-              "Type": "string",
-              "Description": "access token returned from Auth"
-            },
-            {
               "Name": "goods_group",
               "Required": "Y",
               "Default": "",
