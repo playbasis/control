@@ -164,7 +164,7 @@ class Merchant extends REST2_Controller
         
         if (!empty($player_goods)) {
             if($player_goods['amount'] < 1){
-                $this->response($this->error->setError('REDEEM_GOODS_NOT_ENOUGH'), 200);
+                $this->response($this->error->setError('REDEEM_COUPON_CODE_USED'), 200);
             } else {
                 if($pin_code){
                     // Get all branches that are allowed to verify the goods group
