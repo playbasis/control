@@ -15,11 +15,11 @@
             <div class="report-filter">
                 <span>
                         <?php echo $this->lang->line('filter_date_start'); ?>
-                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" />
+                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:100px;"/>
                 </span>
                 <span>
                         <?php echo $this->lang->line('filter_date_end'); ?>
-                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" />
+                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:100px;"/>
                 </span>
                 <span>
                         <?php echo $this->lang->line('filter_email_username'); ?>
@@ -36,6 +36,15 @@
                             <option value="<?php echo $good['_id']?>"><?php echo $good['name'];?></option>
                             <?php }?>
                         <?php }?>
+                    </select>
+                </span>
+                <span>
+                    <?php echo $this->lang->line('filter_status'); ?>
+                    <select name="filter_goods_status">
+                        <option value="all"><?php echo "All";    ?></option>
+                        <option value="active"><?php echo "Active"; ?></option>
+                        <option value="used"><?php echo "Used";   ?></option>
+                        <option value="expired"><?php echo "Expired";?></option>
                     </select>
                 </span>
                 <span>
@@ -131,6 +140,11 @@ function filter() {
         url += '&goods_id=' + encodeURIComponent(filter_goods_id);
     }
 
+    var filter_goods_status = $('select[name=\'filter_goods_status\']').attr('value');
+
+    if (filter_goods_status != 0) {
+        url += '&status=' + encodeURIComponent(filter_goods_status);
+    }
     location = url;
 }
 

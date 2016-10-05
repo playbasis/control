@@ -124,6 +124,14 @@ class Report_goods extends MY_Controller
             $filter_goods_id = '';
         }
 
+        if ($this->input->get('status')) {
+            $filter_goods_status = $this->input->get('status');
+            $parameter_url .= "&status=" . $filter_goods_status;
+            if ($filter_goods_status === "all" ) $filter_goods_status = null;
+        } else {
+            $filter_goods_status = null;
+        }
+
         $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
 
         $client_id = $this->User_model->getClientId();
@@ -174,18 +182,20 @@ class Report_goods extends MY_Controller
                 $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
             }*/
 
-            $this->data['reports'][] = array(
-                'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
-                'date_added' => datetimeMongotoReadable($result['date_added']),
-                'goods_name' => $result['goods_name'],
-                // 'value'             => $result['value']
-                'value' => $result['amount'],
-                'status' => $status
-                // 'redeem'            => $result['redeem']
-            );
+            if (is_null($filter_goods_status) || $filter_goods_status === $status){
+                $this->data['reports'][] = array(
+                    'cl_player_id' => $player['cl_player_id'],
+                    'username' => $player['username'],
+                    'image' => $thumb,
+                    'email' => $player['email'],
+                    'date_added' => datetimeMongotoReadable($result['date_added']),
+                    'goods_name' => $result['goods_name'],
+                    // 'value'             => $result['value']
+                    'value' => $result['amount'],
+                    'status' => $status
+                    // 'redeem'            => $result['redeem']
+                );
+            }
         }
 
         $this->data['goods_available'] = array();
