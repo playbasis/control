@@ -244,9 +244,10 @@ class Service extends REST2_Controller
         }
 
         $event_type = $this->input->get('event_type') ? explode(',',strtoupper($this->input->get('event_type'))) : null;
+        $action_name = $this->input->get('action_name') ? explode(',',$this->input->get('action_name')) : null;
         
         $respondThis['activities'] = $this->service_model->getRecentActivities($this->site_id, $offset,
-            $limit > 500 ? 500 : $limit, $pb_player_id, $last_read_activity_id, $mode , $event_type);
+            $limit > 500 ? 500 : $limit, $pb_player_id, $last_read_activity_id, $mode , $event_type, $action_name);
         $this->response($this->resp->setRespond($respondThis), 200);
     }
 
