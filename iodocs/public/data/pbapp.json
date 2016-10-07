@@ -6092,6 +6092,13 @@
               "Default": "",
               "Type": "string",
               "Description": "event type [REWARD, REDEEM, ACTION, LEVEL] Ex. reward,redeem,action,level"
+            },
+            {
+              "Name": "action_name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "filter action name Ex. like,comment,login"
             }
           ],
           "responses": {
