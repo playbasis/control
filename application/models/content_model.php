@@ -515,4 +515,30 @@ class Content_model extends MY_Model
         };
         return count($this->mongo_db->distinct('pb_player_id', 'playbasis_content_to_player'));
     }
+
+    public function countContentAllAction($client_id, $site_id, $content_id, $pb_player_id_list=null){
+        $match_condition = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'content_id' => array('$in' => $content_id )
+        );
+        if (isset($pb_player_id_list) && is_array($pb_player_id_list)){
+            $match_condition = array_merge($match_condition, array('pb_player_id' => array('$in' => $pb_player_id_list)));
+        }
+        $query_array = array(
+            array(
+                '$match' => $match_condition
+            ),
+            array(
+                '$group' => array('_id' => '$content_id',
+                                  'player' => array('$push' => '$pb_player_id')
+                                 )
+            )
+        );
+        $results = $this->mongo_db->aggregate('playbasis_content_to_player', $query_array);
+        foreach ($results['result'] as &$result){
+            $result['player'] = count(array_unique($result['player']));
+        }
+        return $results['result'];
+    }
 }
