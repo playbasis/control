@@ -737,6 +737,27 @@ class Store_org_model extends MY_Model
         return $this->mongo_db->get('playbasis_store_organize_to_content');
     }
 
+    public function aggregateAssociatedNodeOfContent($client_id, $site_id, $content_list)
+    {
+        $match_condition = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'content_id' => array('$in' => $content_list )
+        );
+        $query_array = array(
+            array(
+                '$match' => $match_condition
+            ),
+            array(
+                '$group' => array('_id' => '$content_id',
+                                  'node' => array('$push' => array("node_id" => '$node_id', "roles" => '$roles'))
+                )
+            )
+        );
+        $results = $this->mongo_db->aggregate('playbasis_store_organize_to_content', $query_array);
+        return $results['result'];
+    }
+
     public function getRoleOfPlayer($client_id, $site_id, $player_id, $node_id)
     {
 

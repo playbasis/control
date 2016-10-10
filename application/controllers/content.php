@@ -116,17 +116,21 @@ class Content extends REST2_Controller
             (isset($query_data['sort']) && strtolower($query_data['sort'] === 'random')) ? array() : $content_ids_to_player,
             (isset($query_data['sort']) && strtolower($query_data['sort'] === 'random')) ? array() : $content_ids_to_feedback);
 
-        foreach ($contents as &$content){
-            $nodes_list = $this->store_org_model->getAssociatedNodeOfContent($this->validToken['client_id'],
-                $this->validToken['site_id'], $content['_id']);
-            $organization = array();
-            if (!empty($nodes_list)) {
-                foreach ($nodes_list as $node) {
+        $list_content = array();
+        foreach ($contents as $val) {
+            array_push($list_content, new MongoId($val['_id']));
+        }
+
+        $content_node = $this->store_org_model->aggregateAssociatedNodeOfContent($this->validToken['client_id'],
+            $this->validToken['site_id'], $list_content);
+        if (!empty($content_node)) {
+            foreach ($content_node as $content) {
+                $organization = array();
+                foreach ($content['node'] as $node){
                     $org_node = $this->store_org_model->retrieveNodeById($this->validToken['site_id'], $node['node_id']);
                     $name = $org_node['name'];
                     $org_info = $this->store_org_model->retrieveOrganizeById($this->validToken['client_id'],
                         $this->validToken['site_id'], $org_node['organize']);
-                    $node_id = (String)$node['node_id'];
                     $roles = array();
                     if (isset($node['roles']) && is_array($node['roles'])) {
                         foreach ($node['roles'] as $role_name => $date_join) {
@@ -139,12 +143,13 @@ class Content extends REST2_Controller
                     }
                     array_push($organization, array(
                         'name' => $name,
-                        'node_id' => $node_id,
+                        'node_id' => (String)$node['node_id'],
                         'organize_type' => $org_info['name'],
                         'roles' => $roles
                     ));
                 }
-                $content['organize'] = $organization;
+                $key = array_search($content['_id'], array_column($contents, '_id'));
+                $contents[$key]['organize'] = $organization;
             }
         }
 
@@ -175,7 +180,6 @@ class Content extends REST2_Controller
                 $val['image'] = $this->config->item('IMG_PATH') . $val['image'];
             }
         });
-        array_walk_recursive($contents, array($this, "convert_mongo_object_and_optional"));
 
         $result = array();
         if (isset($query_data['sort']) && $query_data['sort'] == 'random') {
@@ -314,9 +318,11 @@ class Content extends REST2_Controller
                 $result = isset($query_data['limit']) && !empty($query_data['limit']) ? array_slice($result, 0, $query_data['limit']) : $result;
             }
         }elseif(isset($query_data['sort']) && $query_data['sort'] == 'action'){
-            foreach ($contents as $key => $val){
-                $pb_player_id_list = $this->getPlayerIdListForSameType($pb_player_id, 'Country');
-                $val['number_action'] = $this->content_model->countContentAction($this->client_id, $this->site_id, $val['_id'], $pb_player_id_list);
+            $pb_player_id_list = $this->getPlayerIdListForSameType($pb_player_id, 'Country');
+            $number_action = $this->content_model->countContentAllAction($this->client_id, $this->site_id, $list_content, $pb_player_id_list);
+            foreach ($contents as $val) {
+                $key = array_search($val['_id'], array_column($number_action, '_id'));
+                $val['number_action'] = $number_action[$key]['player'];
                 $result[] = $val;
             }
             usort($result, function ($a, $b) use ($query_data) {
@@ -349,6 +355,7 @@ class Content extends REST2_Controller
             }
         }
 
+        array_walk_recursive($result, array($this, "convert_mongo_object_and_optional"));
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
