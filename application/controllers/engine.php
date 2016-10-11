@@ -884,23 +884,33 @@ class Engine extends Quest
                 }
 
                 // support formula-based quantity
-                if (isset($jigsawConfig['quantity']) && strpos($jigsawConfig['quantity'], '{') !== false) {
-                    require_once APPPATH . '/libraries/ipsum/Parser.class.php';
-                    $f = $jigsawConfig['quantity'];
-                    foreach ($input as $key => $value) {
-                        if (!is_string($value)) {
-                            continue;
+                foreach ( array('quantity', 'param_value') as $config_key){
+                    if (isset($jigsawConfig[$config_key]) && strpos($jigsawConfig[$config_key], '{') !== false) {
+
+                        $f = $jigsawConfig[$config_key];
+                        foreach ($input as $key => $value) {
+                            if (!is_string($value)) {
+                                continue;
+                            }
+                            $f = str_replace('{' . $key . '}', $value, $f);
                         }
-                        $f = str_replace('{' . $key . '}', $value, $f);
-                    }
-                    $parser = new Parser($f . '\0');
-                    try {
-                        $jigsawConfig['quantity'] = intval($parser->run());
-                    } catch (Exception $e) {
-                        log_message('error', 'Error during evaluation (formula = ' . $f . '), e = ' . $e->getMessage());
-                        $jigsawConfig['quantity'] = 0;
+
+
+                        if($config_key == 'quantity'){
+                            require_once APPPATH . '/libraries/ipsum/Parser.class.php';
+                            $parser = new Parser($f . '\0');
+                            try {
+                                $jigsawConfig[$config_key] = intval($parser->run());
+                            } catch (Exception $e) {
+                                log_message('error', 'Error during evaluation (formula = ' . $f . '), e = ' . $e->getMessage());
+                                $jigsawConfig[$config_key] = 0;
+                            }
+                        }else{
+                            $jigsawConfig[$config_key] = $f;
+                        }
                     }
                 }
+
 
                 //get class path to process jigsaw
                 $processor = ($jigsaw_id ? $this->client_model->getJigsawProcessorWithCache($cache_jigsaw, $jigsaw_id,
