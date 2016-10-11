@@ -59,27 +59,7 @@ class jigsaw extends MY_Model
         $result = false;
         $param_name = $config['param_name'];
 
-        // support formula-based quantity
-        if (isset($config['param_value']) && strpos($config['param_value'], '{') !== false) {
-            require_once APPPATH . '/libraries/ipsum/Parser.class.php';
-            $f = $config['param_value'];
-            foreach ($input as $key => $value) {
-                if (!is_string($value)) {
-                    continue;
-                }
-                $f = str_replace('{' . $key . '}', $value, $f);
-            }
-            $parser = new Parser($f . '\0');
-            try {
-                $config['param_value'] = intval($parser->run());
-            } catch (Exception $e) {
-                log_message('error', 'Error during evaluation (formula = ' . $f . '), e = ' . $e->getMessage());
-                unset($config['param_value']);
-            }
-        }
-
-
-        if (isset($input[$param_name]) && isset($config['param_value'])) {
+        if (isset($input[$param_name])) {
             if ($config['param_operation'] == '=') {
                 $result = ($input[$param_name] == $config['param_value']);
             } elseif ($config['param_operation'] == '>') {
