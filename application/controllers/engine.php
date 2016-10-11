@@ -886,7 +886,7 @@ class Engine extends Quest
                 // support formula-based quantity
                 foreach ( array('quantity', 'param_value') as $config_key){
                     if (isset($jigsawConfig[$config_key]) && strpos($jigsawConfig[$config_key], '{') !== false) {
-                        require_once APPPATH . '/libraries/ipsum/Parser.class.php';
+
                         $f = $jigsawConfig[$config_key];
                         foreach ($input as $key => $value) {
                             if (!is_string($value)) {
@@ -894,12 +894,19 @@ class Engine extends Quest
                             }
                             $f = str_replace('{' . $key . '}', $value, $f);
                         }
-                        $parser = new Parser($f . '\0');
-                        try {
-                            $jigsawConfig[$config_key] = intval($parser->run());
-                        } catch (Exception $e) {
-                            log_message('error', 'Error during evaluation (formula = ' . $f . '), e = ' . $e->getMessage());
-                            $jigsawConfig[$config_key] = ($config_key == 'quantity') ? 0 : $f;
+
+
+                        if($config_key == 'quantity'){
+                            require_once APPPATH . '/libraries/ipsum/Parser.class.php';
+                            $parser = new Parser($f . '\0');
+                            try {
+                                $jigsawConfig[$config_key] = intval($parser->run());
+                            } catch (Exception $e) {
+                                log_message('error', 'Error during evaluation (formula = ' . $f . '), e = ' . $e->getMessage());
+                                $jigsawConfig[$config_key] = 0;
+                            }
+                        }else{
+                            $jigsawConfig[$config_key] = $f;
                         }
                     }
                 }
