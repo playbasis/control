@@ -149,7 +149,7 @@ class Content extends REST2_Controller
                     ));
                 }
                 $key = array_search($content['_id'], array_column($contents, '_id'));
-                $contents[$key]['organize'] = $organization;
+                if ($key !== false) $contents[$key]['organize'] = $organization;
             }
         }
 
@@ -322,7 +322,7 @@ class Content extends REST2_Controller
             $number_action = $this->content_model->countContentAllAction($this->client_id, $this->site_id, $list_content, $pb_player_id_list);
             foreach ($contents as $val) {
                 $key = array_search($val['_id'], array_column($number_action, '_id'));
-                $val['number_action'] = $number_action[$key]['player'];
+                $val['number_action'] = $key !== false && isset($number_action[$key]['player']) ? $number_action[$key]['player'] : 0;
                 $result[] = $val;
             }
             usort($result, function ($a, $b) use ($query_data) {
