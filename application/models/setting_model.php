@@ -24,8 +24,8 @@ class Setting_model extends MY_Model
 
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
-        $this->mongo_db->where('app_enable', true);
-        $this->mongo_db->where(array('$or' => array(array('app_period' => null) , array('$and' => array(array('app_period.date_start' => array('$lt' => new MongoDate())), array('app_period.date_end' => array('$gt' => new MongoDate())))))));
+        $this->mongo_db->where(array('$or' => array(array('app_enable' => true) , array('app_enable' => array('exists' => false)))));
+        $this->mongo_db->where(array('$or' => array(array('app_period' => null) , array('app_period' => array('exists' => false)) , array('$and' => array(array('app_period.date_start' => array('$lt' => new MongoDate())), array('app_period.date_end' => array('$gt' => new MongoDate())))))));
         $results = $this->mongo_db->get("playbasis_setting");
 
         return $results ? true : false;
