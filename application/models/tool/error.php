@@ -42,6 +42,10 @@ class Error extends CI_Model
                 }
                 $errorData['error_code'] = '0903';
                 break;
+            case 'SETTING_DISABLE':
+                $errorData['message'] = "The setting has been disabled";
+                $errorData['error_code'] = '0904';
+                break;
             case 'INTERNAL_ERROR':
                 $errorData['message'] = "There is an internal server error: " . print_r($dataArray, true);
                 $errorData['error_code'] = '0800';

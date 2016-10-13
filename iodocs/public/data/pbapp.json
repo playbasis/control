@@ -64,6 +64,32 @@
       ]
     },
     {
+      "name": "Setting API",
+      "endpoint": [
+        "Setting"
+      ],
+      "Public": "Y",
+      "methods": [
+        {
+          "MethodName": "App Status",
+          "Synopsis": "Check app enable in setting",
+          "HTTPMethod": "GET",
+          "URI": "Setting/appStatus",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [],
+          "responses": {
+            "app_status": {
+              "-type": "boolean"
+            },
+            "app_period": {
+              "-type": "any"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Player API",
       "endpoint": ["Player"],
       "Public": "Y",
