@@ -47,6 +47,8 @@ $route['default_controller'] = "welcome/playbasis";
 $route['Auth'] = 'auth';
 $route['Auth/renew'] = 'auth/renew';
 
+$route['Setting/appStatus'] = 'setting/appStatus';
+
 //player API
 $route['Player/'.ANY_STRING] = 'player/index/$1';
 $route['Player/'.ANY_STRING.'/data/all'] = 'player/details/$1';

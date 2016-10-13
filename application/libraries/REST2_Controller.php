@@ -22,6 +22,7 @@ abstract class REST2_Controller extends REST_Controller
     protected $client_usage;
     protected $client_plan;
     protected $method_data;
+    protected $app_enable;
     private $log_id;
 
     /**
@@ -42,6 +43,7 @@ abstract class REST2_Controller extends REST_Controller
         /* 0.1 Load libraries */
         $this->load->model('rest_model');
         $this->load->model('auth_model');
+        $this->load->model('setting_model');
         $this->load->model('client_model');
         $this->load->model('tool/error', 'error');
 
@@ -65,6 +67,7 @@ abstract class REST2_Controller extends REST_Controller
         $this->validToken = !empty($token) ? $this->auth_model->findToken($token) : (!empty($api_key) ? $this->auth_model->createTokenFromAPIKey($api_key) : null);
         $this->client_id = !empty($this->validToken) ? $this->validToken['client_id'] : null;
         $this->site_id = !empty($this->validToken) ? $this->validToken['site_id'] : null;
+        $this->app_enable = $this->setting_model->appStatus($this->client_id, $this->site_id);
         $this->log_id = $this->rest_model->logRequest(array(
             'client_id' => $this->client_id,
             'site_id' => $this->site_id,
@@ -179,6 +182,9 @@ abstract class REST2_Controller extends REST_Controller
             'class_method' => $method[1],
         ));
         try {
+            if (in_array($class_name, array('Auth', 'Quest', 'Quiz', 'Engine', 'Redeem', 'Game', 'Merchant')) && $this->app_enable === false && $this->request->method === "post"){
+                $this->response($this->error->setError('SETTING_DISABLE'), 200);
+            }
             /* 2.1 Validate request (basic common validation for all controllers) */
             if (!in_array($class_name, array('Auth', 'Facebook', 'Geditor', 'Instagram', 'Janrain', 'Mobile', 'Notification', 'Pipedrive', 'Playbasis'))) { // list of modules that don't require auth info
                 // Check required parameter from pbapp.json
