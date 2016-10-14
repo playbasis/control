@@ -14,6 +14,8 @@ $lang['text_clear']                     = 'Clear Image';
 $lang['tab_security']                   = 'Security';
 
 // Entry
+$lang['entry_app_status']               = 'App Status';
+$lang['entry_app_period']               = 'App Period (optional)';
 $lang['entry_policy']                   = 'Password Policy';
 $lang['entry_enable']                   = 'Enabled';
 $lang['entry_disable']                  = 'Disabled';
@@ -42,6 +44,7 @@ $lang['error_name']             = 'Category Name must be between 2 and 32 charac
 $lang['error_limit']            = 'You have reached goods limit.';
 $lang['error_redeem']           = 'Please provide point or badge.';
 $lang['error_file']           = 'Please provide a file to import.';
+$lang['error_date']           = 'Waning: Plese check DateTime, DateTime is invalid';
 $lang['error_upload']           = 'Our system cannot access your uploaded file.';
 $lang['error_group_exists']           = 'Group already exists.';
 $lang['error_file_too_large']           = 'File too large. File must be less than 2 megabytes.';
