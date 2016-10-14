@@ -78,7 +78,8 @@ class setting extends MY_Controller
                     $data['app_period']['date_start'] = new MongoDate(strtotime($data['app_period']['date_start']));
                     $data['app_period']['date_end'] = new MongoDate(strtotime($data['app_period']['date_end']));
                 }else{
-                    if(isset($data['app_period']['date_start']) || isset($data['app_period']['date_end'])){
+                    if((isset($data['app_period']['date_start']) && $data['app_period']['date_start']) ||
+                       (isset($data['app_period']['date_end']) && $data['app_period']['date_end'])){
                         $this->data['message'] = $this->lang->line('error_date');
                     }
                     $data['app_period'] = null;
