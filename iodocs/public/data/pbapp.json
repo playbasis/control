@@ -1652,6 +1652,7 @@
                 "code":         { "-type": "string"},
                 "group":        { "-type": "string" , "-optional": "true"},
                 "amount":       { "-type": "number"},
+                "tags":         { "-type": "any" , "-optional": "true"},
                 "status":       { "-type": "string"}
               }
             ]
