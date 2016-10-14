@@ -1,4 +1,8 @@
 <link rel="stylesheet" media="screen" type="text/css" href="<?php echo base_url();?>stylesheet/goods/style.css" />
+<link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
+<script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
+        src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
+<div class="cover"></div>
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
@@ -40,12 +44,31 @@
             <div id="actions">
                 <table class="form">
                     <tr>
+                        <td><?php echo $this->lang->line('entry_app_status') ?>:</td>
+                        <td>
+                            <div class="btn-group" data-toggle="buttons-radio">
+                                <button type="button" class="btn btn-primary <?php echo (isset($app_status) && $app_status)?"active":"" ?>" onclick="app_status_change(this)" value="true" ><?php echo $this->lang->line('entry_enable') ?></button>
+                                <button type="button" class="btn btn-primary <?php echo (isset($app_status) && $app_status)?"":"active" ?>" onclick="app_status_change(this)" value="false"><?php echo $this->lang->line('entry_disable') ?></button>
+                                <input type="hidden" id="app_status_id" name="app_status" value="<?php echo (isset($app_status) && $app_status)?"true":"false" ?>">
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><?php echo $this->lang->line('entry_app_period'); ?>:</td>
+                        <td>
+                            <input type="text" class="date" id="app_date_start_id" name="app_period[date_start]" value="<?php echo isset($app_period['date_start']) ? date('Y-m-d', strtotime(datetimeMongotoReadable($app_period['date_start']))):''; ?>" size="50" /> to
+                            <input type="text" class="date" id="app_date_end_id" name="app_period[date_end]"  value="<?php echo isset($app_period['date_end']) ? date('Y-m-d', strtotime(datetimeMongotoReadable($app_period['date_end']))):''; ?>" size="50" />
+                        </td>
+                    </tr>
+
+                    <tr>
                         <td><?php echo $this->lang->line('entry_policy') ?>:</td>
                         <td>
                             <div class="btn-group" data-toggle="buttons-radio">
                                 <button type="button" class="btn btn-primary <?php echo (isset($password_policy_enable) && $password_policy_enable)?"active":"" ?>" onclick="pass_policy_change(this)" value="true" ><?php echo $this->lang->line('entry_enable') ?></button>
                                 <button type="button" class="btn btn-primary <?php echo (isset($password_policy_enable) && $password_policy_enable)?"":"active" ?>" onclick="pass_policy_change(this)" value="false"><?php echo $this->lang->line('entry_disable') ?></button>
-                                <input type="hidden" id="pass_policy_id" name="password_policy_enable" value="<?php echo (isset($password_policy_enable) && $password_policy_enable)?"true":"falses" ?>">
+                                <input type="hidden" id="pass_policy_id" name="password_policy_enable" value="<?php echo (isset($password_policy_enable) && $password_policy_enable)?"true":"false" ?>">
                             </div>
                         </td>
                     </tr>
@@ -106,7 +129,79 @@
     </div>
 </div>
 
+<script src="<?php echo base_url(); ?>javascript/bootstrap/combodate.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function(){
+
+        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
+
+        $('.timelimit').combodate({
+            firstItem: 'name', //show 'hour' and 'minute' string at first item of dropdown
+            minuteStep: 1
+        });
+    })
+
+    $(document).ready(function(){
+
+        $(".tags").select2({
+            width: 'resolve',
+            tags: true,
+            tokenSeparators: [',', ' ']
+        });
+    });
+
+</script>
+
 <script>
+
+    $(document).ready(function() {
+        //hidden input
+        var pass_policy = document.getElementById('pass_policy_id');
+
+        // text input
+        var min_char = document.getElementById('min_char');
+
+        //checkbox
+        var alphabet = document.getElementById('alphabet');
+        var numeric = document.getElementById('numeric');
+        var user_in_password = document.getElementById('user_in_password');
+
+        if (pass_policy.value == "true")
+        {
+            min_char.disabled = false;
+            alphabet.disabled = false;
+            numeric.disabled = false;
+            user_in_password.disabled = false;
+        }
+        else{
+            min_char.disabled = true;
+            alphabet.disabled = true;
+            numeric.disabled = true;
+            user_in_password.disabled = true;
+
+        }
+
+        //hidden input
+        var app_status_id = document.getElementById('app_status_id');
+
+        // text input
+        var app_date_start_id = document.getElementById('app_date_start_id');
+        var app_date_end_id = document.getElementById('app_date_end_id');
+
+        if (app_status_id.value == "true")
+        {
+            //app_status_id.value = true;
+            app_date_start_id.disabled = false;
+            app_date_end_id.disabled = false;
+        }
+        else{
+            //app_status_id.value = false;
+            app_date_start_id.disabled = true;
+            app_date_end_id.disabled = true;
+        }
+    })
+
     $(function(){
         $(".dropdown-menu li a").click(function(){
             var timeout = document.getElementById('timeout');
@@ -149,4 +244,29 @@
         }
 
     }
+
+    function app_status_change(elem){
+        //hidden input
+        var app_status_id = document.getElementById('app_status_id');
+
+        // text input
+        var app_date_start_id = document.getElementById('app_date_start_id');
+        var app_date_end_id = document.getElementById('app_date_end_id');
+
+        if (elem.value == "true")
+        {
+            app_status_id.value = true;
+            app_date_start_id.disabled = false;
+            app_date_end_id.disabled = false;
+        }
+        else{
+            app_status_id.value = false;
+            app_date_start_id.disabled = true;
+            app_date_end_id.disabled = true;
+        }
+    }
+
+    Pace.on("done", function () {
+        $(".cover").fadeOut(1000);
+    });
 </script>

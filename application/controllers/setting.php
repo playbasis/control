@@ -57,8 +57,7 @@ class setting extends MY_Controller
         $this->error['warning'] = null;
 
         $this->form_validation->set_rules('min_char', $this->lang->line('entry_min_char'), 'trim|numeric|xss_clean');
-        $this->form_validation->set_rules('max_retries', $this->lang->line('entry_max_retries'),
-            'trim|numeric|xss_clean');
+        $this->form_validation->set_rules('max_retries', $this->lang->line('entry_max_retries'),  'trim|numeric|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->data['message'] = null;
@@ -71,6 +70,20 @@ class setting extends MY_Controller
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
+                $data['app_status'] = (isset($data['app_status']) && $data['app_status'] == "true") ? true : false;
+                if(isset($data['app_period']['date_start']) && $data['app_period']['date_start'] && isset($data['app_period']['date_end']) && $data['app_period']['date_end']){
+                    if($data['app_period']['date_start'] > $data['app_period']['date_end']){
+                        $this->data['message'] = $this->lang->line('error_date');
+                    }
+                    $data['app_period']['date_start'] = new MongoDate(strtotime($data['app_period']['date_start']));
+                    $data['app_period']['date_end'] = new MongoDate(strtotime($data['app_period']['date_end']));
+                }else{
+                    if(isset($data['app_period']['date_start']) || isset($data['app_period']['date_end'])){
+                        $this->data['message'] = $this->lang->line('error_date');
+                    }
+                    $data['app_period'] = null;
+                }
+
                 $data['password_policy_enable'] = (isset($data['password_policy_enable']) && $data['password_policy_enable'] == "true") ? true : false;
 
                 $data['password_policy']['alphabet'] = (isset($data['password_policy']['alphabet']) && $data['password_policy']['alphabet'] == "on") ? true : false;
@@ -82,10 +95,12 @@ class setting extends MY_Controller
 
                 $data['timeout'] = $this->wordToTime($data['timeout']);
 
-                $insert = $this->Setting_model->updateSetting($data);
-                if ($insert) {
-                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                    redirect('/setting', 'refresh');
+                if(is_null($this->data['message'])) {
+                    $insert = $this->Setting_model->updateSetting($data);
+                    if ($insert) {
+                        $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                        redirect('/setting', 'refresh');
+                    }
                 }
             }
         }
@@ -95,8 +110,6 @@ class setting extends MY_Controller
 
     private function getList()
     {
-
-
         $config['base_url'] = site_url('setting');
         if (!isset($this->data['success'])) {
             $this->data['success'] = '';
@@ -108,6 +121,10 @@ class setting extends MY_Controller
             $this->data = array_merge($this->data, $setting);
         } else {
             $this->data['password_policy_enable'] = true;
+        }
+
+        if(!isset($this->data['app_status'])){
+            $this->data['app_status'] = true;
         }
         $this->data['timeout'] = isset($setting['timeout']) ? $this->timeToWord($setting['timeout']) : null;
         $timeout_list = array(60, 300, 900, 3600, 7200, 86400, 604800, 1209600, -1);
@@ -123,7 +140,7 @@ class setting extends MY_Controller
 
     private function validateModify()
     {
-        if ($this->User_model->hasPermission('modify', 'data')) {
+        if ($this->User_model->hasPermission('modify', 'setting')) {
             return true;
         } else {
             return false;
