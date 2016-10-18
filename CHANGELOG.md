@@ -1,13 +1,51 @@
 # Change Log
-## [2.19.0](https://github.com/playbasis/control/tree/2.19.0) (2016-10-03)
-[Full Changelog](https://github.com/playbasis/control/compare/2.18.0...2.19.0)
 
-## [2.17.3/Add_goods_status_in_report](https://github.com/playbasis/control/tree/2.17.3/Add_goods_status_in_report) (2016-10-03)
-[Full Changelog](https://github.com/playbasis/control/compare/2.18.0...2.17.3/Add_goods_status_in_report)
+## [2.20.0](https://github.com/playbasis/control/tree/2.20.0) (2016-10-18)
+[Full Changelog](https://github.com/playbasis/control/compare/2.19.0...2.20.0)
+
+[Full Changelog](https://github.com/playbasis/control/compare/2.19.4/fix_goods_page_too_slow...HEAD)
+
+**Implemented enhancements:**
+
+- Rule condition - counter operation [\#287](https://github.com/playbasis/control/pull/287) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.19.4/fix_goods_page_too_slow](https://github.com/playbasis/control/tree/2.19.4/fix_goods_page_too_slow) (2016-10-18)
+[Full Changelog](https://github.com/playbasis/control/compare/2.19.3/fix_date_time_error_in_setting...2.19.4/fix_goods_page_too_slow)
+
+**Implemented enhancements:**
+
+- Hotfix/2.19.4/fix goods page too slow [\#286](https://github.com/playbasis/control/pull/286) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.19.3/fix_date_time_error_in_setting](https://github.com/playbasis/control/tree/2.19.3/fix_date_time_error_in_setting) (2016-10-14)
+[Full Changelog](https://github.com/playbasis/control/compare/2.19.2/app_enable_setting...2.19.3/fix_date_time_error_in_setting)
+
+**Fixed bugs:**
+
+- Hotfix/2.19.3/fix date time error in setting [\#285](https://github.com/playbasis/control/pull/285) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.19.2/app_enable_setting](https://github.com/playbasis/control/tree/2.19.2/app_enable_setting) (2016-10-14)
+[Full Changelog](https://github.com/playbasis/control/compare/2.19.1/fillter_status_in_goods_report...2.19.2/app_enable_setting)
+
+**Implemented enhancements:**
+
+- Hotfix/2.19.2/app enable setting [\#284](https://github.com/playbasis/control/pull/284) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.19.1/fillter_status_in_goods_report](https://github.com/playbasis/control/tree/2.19.1/fillter_status_in_goods_report) (2016-10-05)
+[Full Changelog](https://github.com/playbasis/control/compare/2.19.0...2.19.1/fillter_status_in_goods_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.19.1/fillter status in goods report [\#283](https://github.com/playbasis/control/pull/283) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.19.0](https://github.com/playbasis/control/tree/2.19.0) (2016-10-03)
+[Full Changelog](https://github.com/playbasis/control/compare/2.17.3/Add_goods_status_in_report...2.19.0)
 
 **Implemented enhancements:**
 
 - Hotfix/2.17.3/add goods status in report [\#282](https://github.com/playbasis/control/pull/282) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.17.3/Add_goods_status_in_report](https://github.com/playbasis/control/tree/2.17.3/Add_goods_status_in_report) (2016-10-03)
+[Full Changelog](https://github.com/playbasis/control/compare/2.18.0...2.17.3/Add_goods_status_in_report)
 
 ## [2.18.0](https://github.com/playbasis/control/tree/2.18.0) (2016-09-19)
 [Full Changelog](https://github.com/playbasis/control/compare/2.17.2/change_player-2_to_pb_player-2_in_processFeedback_to_compatible_with_api...2.18.0)
@@ -653,6 +691,10 @@
 ## [v2.2.27](https://github.com/playbasis/control/tree/v2.2.27) (2015-12-02)
 [Full Changelog](https://github.com/playbasis/control/compare/enable_mongo_native_long...v2.2.27)
 
+**Fixed bugs:**
+
+- Set `mongo.native\_long` to `true` to avoid int buffer overflow also a… [\#54](https://github.com/playbasis/control/pull/54) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
 ## [enable_mongo_native_long](https://github.com/playbasis/control/tree/enable_mongo_native_long) (2015-12-01)
 [Full Changelog](https://github.com/playbasis/control/compare/fix_https_in_plan_price...enable_mongo_native_long)
 
@@ -666,7 +708,6 @@
 
 **Fixed bugs:**
 
-- Set `mongo.native\_long` to `true` to avoid int buffer overflow also a… [\#54](https://github.com/playbasis/control/pull/54) ([burachit-playbasis](https://github.com/burachit-playbasis))
 - Bug fix: Engine rule condition did not update to database for weekly … [\#53](https://github.com/playbasis/control/pull/53) ([narut-playbasis](https://github.com/narut-playbasis))
 - Bugfix: check required filed on quest page [\#51](https://github.com/playbasis/control/pull/51) ([narut-playbasis](https://github.com/narut-playbasis))
 - Bug fix picture can't be uploaded due to php error [\#50](https://github.com/playbasis/control/pull/50) ([narut-playbasis](https://github.com/narut-playbasis))
