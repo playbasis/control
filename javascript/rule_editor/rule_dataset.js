@@ -575,6 +575,30 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 rowField.find('input').val(rowText.html());
                             }
                         }
+                        else if(anotherType.match('COUNTEROP')) {
+                            if($thisrow.find('.dropdown').length > 0) {
+                                console.log('COUNTEROP in if');
+                                var operation = {
+                                    'equal': '=',
+                                    'equalOrGreater': '>=',
+                                    'equalOrLess': '<=',
+                                    'greater': '>',
+                                    'less': '<'
+
+                                }
+                                var operation_option = $('<select id="operation">');
+                                $.each(operation, function (key, value) {
+                                    operation_option.append($('<option>', {value: key})
+                                        .text(value));
+                                });
+                                rowField.children().hide();
+                                rowField.append(operation_option);
+                                $('#operation').val(rowText.html());
+                            }else{
+                                if(DEBUG)console.log('edit > text');
+                                rowField.find('input').val(rowText.html());
+                            }
+                        }
                         else{
                             // default case
                             if(DEBUG)console.log('edit > normal case');
