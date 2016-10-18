@@ -549,6 +549,13 @@ class Goods extends MY_Controller
             $node_detail_list)));
         $organization_detail_list = $this->Store_org_model->listOrganizations($_organization_list,
             array('name', 'description'));
+        $goods_list_data = array();
+        foreach ($redeemed_goods_list as $redeemed_goods) {
+            if (isset($redeemed_goods['goods_id'])) {
+                array_push($goods_list_data, new MongoId($redeemed_goods['goods_id']));
+            }
+        }
+        $goods = $this->Goods_model->getGoodslistOfClientPrivate($goods_list_data);
 
         foreach ($redeemed_goods_list as &$redeemed_goods) {
             if (isset($redeemed_goods['pb_player_id'])) {
@@ -583,9 +590,12 @@ class Goods extends MY_Controller
                     $redeemed_goods['player_organize_info'] = $organize_info_array;
                 }
             }
-            if(isset($redeemed_goods['goods_id'])){
-                $goods = $this->Goods_model->getGoodsOfClientPrivate($redeemed_goods['goods_id']);
-                $redeemed_goods['code'] = isset($goods['code']) ? $goods['code'] : null;
+
+            if (isset($redeemed_goods['goods_id'])) {
+                $goods_id = array_search($redeemed_goods['goods_id'], array_column($goods, 'goods_id'));
+                if ($goods_id !== false){
+                    $redeemed_goods['code'] = isset($goods[$goods_id]['code']) ? $goods[$goods_id]['code'] : null;
+                }
             }
         }
 

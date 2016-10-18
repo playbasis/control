@@ -56,6 +56,14 @@ class Goods_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getGoodslistOfClientPrivate($goods_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where_in('goods_id', $goods_id);
+        return $this->mongo_db->get("playbasis_goods_to_client");
+    }
+    
     public function getGoodsIDByName($client_id, $site_id, $good_name, $good_group=null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
