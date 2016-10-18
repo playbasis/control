@@ -260,6 +260,39 @@ class jigsaw extends MY_Model
         }
     }
 
+    public function counterOp($config, $input, &$exInfo = array())
+    {
+        assert($config != false);
+        assert(is_array($config));
+        assert(isset($config['param_value']));
+        if (!isset($config['param_operation'])) $config['param_operation'] = '='; // default is the equal operator
+        $jigsaw = $this->getMostRecentJigsaw($input, array(
+            'input',
+            'date_added'
+        ));
+        if (!$jigsaw) {
+            $exInfo['current_counter'] = (int)1;
+            return false;
+        }else{
+            $log = $jigsaw['input'];
+            $counter = $log['current_counter']+1;
+            $exInfo['current_counter'] = $counter;
+            $result = false;
+            if ($config['param_operation'] == '=') {
+                $result = ($counter == $config['param_value']);
+            } elseif ($config['param_operation'] == '>') {
+                $result = ($counter > $config['param_value']);
+            } elseif ($config['param_operation'] == '<') {
+                $result = ($counter < $config['param_value']);
+            } elseif ($config['param_operation'] == '>=') {
+                $result = ($counter >= $config['param_value']);
+            } elseif ($config['param_operation'] == '<=') {
+                $result = ($counter <= $config['param_value']);
+            }
+            return $result;
+        }
+    }
+
     public function counterWithin($config, $input, &$exInfo = array())
     {
         assert($config != false);
