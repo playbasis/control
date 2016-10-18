@@ -251,37 +251,26 @@ class jigsaw extends MY_Model
         }
     }
 
-    public function counterOp($config, $input, &$exInfo = array())
+    public function counterRange($config, $input, &$exInfo = array())
     {
-        assert($config != false);
-        assert(is_array($config));
-        assert(isset($config['param_value']));
-        if (!isset($config['param_operation'])) $config['param_operation'] = '='; // default is the equal operator
-        $jigsaw = $this->getMostRecentJigsaw($input, array(
-            'input',
-            'date_added'
-        ));
-        if (!$jigsaw) {
-            $exInfo['current_counter'] = (int)1;
-            return false;
-        }else{
-            $log = $jigsaw['input'];
-            $counter = $log['current_counter']+1;
-            $exInfo['current_counter'] = $counter;
-            $result = false;
-            if ($config['param_operation'] == '=') {
-                $result = ($counter == $config['param_value']);
-            } elseif ($config['param_operation'] == '>') {
-                $result = ($counter > $config['param_value']);
-            } elseif ($config['param_operation'] == '<') {
-                $result = ($counter < $config['param_value']);
-            } elseif ($config['param_operation'] == '>=') {
-                $result = ($counter >= $config['param_value']);
-            } elseif ($config['param_operation'] == '<=') {
-                $result = ($counter <= $config['param_value']);
-            }
-            return $result;
+        assert($input != false);
+        assert(is_array($input));
+        assert($input['pb_player_id']);
+        assert($input['rule_id']);
+        assert($input['jigsaw_id']);
+        $from = (isset($config['param_from']) && $config['param_from'] ) ? (int)$config['param_from'] : 0; // default is 0
+        $to = (isset($config['param_to']) && $config['param_to'] ) ? (int)$config['param_to'] : null; // default is infinity
+        $jigsaw = $this->getMostRecentJigsaw($input, array('input'));
+
+        $counter = (isset($jigsaw['input']['current_counter'])) ? ((int)$jigsaw['input']['current_counter'])+1 : 1;
+        $exInfo['current_counter'] = $counter;
+
+        if (!is_null($to)) {
+            $result = ($counter >= $from && $counter <= $to);
+        } else {
+            $result = $counter >= $from;
         }
+        return $result;
     }
 
     public function counterWithin($config, $input, &$exInfo = array())
