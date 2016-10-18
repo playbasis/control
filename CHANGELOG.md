@@ -1,124 +1,162 @@
 # Change Log
 
-## [2.18.0](https://github.com/playbasis/api/tree/v2.18.0) (2016-10-03)
-[Full Changelog](https://github.com/playbasis/api/compare/v2.17.0...v2.18.0)
+## [2.19.0](https://github.com/playbasis/api/tree/v2.19.0) (2016-10-18)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.18.0...v2.19.0)
 
-## [2.17.13/remove_token_in_merchant_coupon_verify](https://github.com/playbasis/api/tree/2.17.13/remove_token_in_merchant_coupon_verify) (2016-10-03)
-[Full Changelog](https://github.com/playbasis/api/compare/2.17.12/merchant_redeem_goods_group...2.17.13/remove_token_in_merchant_coupon_verify)
+**Implemented enhancements:**
+
+- - Rule condition - counter operator [\#431](https://github.com/playbasis/api/pull/431) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.18.8/fix_app_setting_status](https://github.com/playbasis/api/tree/2.18.8/fix_app_setting_status) (2016-10-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.18.7/fix_reponse_for_default_case_in_setting_app_status...2.18.8/fix_app_setting_status)
 
 **Fixed bugs:**
 
-- Hotfix/2.17.13/remove token in merchant coupon verify [\#420](https://github.com/playbasis/api/pull/420) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.18.8/fix app setting status [\#430](https://github.com/playbasis/api/pull/430) ([piya-playbasis](https://github.com/piya-playbasis))
 
-## [2.17.12/merchant_redeem_goods_group](https://github.com/playbasis/api/tree/2.17.12/merchant_redeem_goods_group) (2016-10-03)
-[Full Changelog](https://github.com/playbasis/api/compare/2.17.12/dec_goods_to_player_instead_of_delete_for_redeem_goods_group...2.17.12/merchant_redeem_goods_group)
+## [2.18.7/fix_reponse_for_default_case_in_setting_app_status](https://github.com/playbasis/api/tree/2.18.7/fix_reponse_for_default_case_in_setting_app_status) (2016-10-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.18.6/bug_app_setting...2.18.7/fix_reponse_for_default_case_in_setting_app_status)
+
+**Fixed bugs:**
+
+- Hotfix/2.18.7/fix reponse for default case in setting app status [\#429](https://github.com/playbasis/api/pull/429) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.18.6/bug_app_setting](https://github.com/playbasis/api/tree/2.18.6/bug_app_setting) (2016-10-13)
+[Full Changelog](https://github.com/playbasis/api/compare/2.18.5/fix_setting_enable_default_to_true...2.18.6/bug_app_setting)
+
+## [2.18.5/fix_setting_enable_default_to_true](https://github.com/playbasis/api/tree/2.18.5/fix_setting_enable_default_to_true) (2016-10-13)
+[Full Changelog](https://github.com/playbasis/api/compare/2.18.4/Setting_enable...2.18.5/fix_setting_enable_default_to_true)
+
+**Fixed bugs:**
+
+- Hotfix/2.18.5/fix setting enable default to true [\#428](https://github.com/playbasis/api/pull/428) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.18.4/Setting_enable](https://github.com/playbasis/api/tree/2.18.4/Setting_enable) (2016-10-13)
+[Full Changelog](https://github.com/playbasis/api/compare/2.18.3/fix_content_error_when_number_action_is_0...2.18.4/Setting_enable)
+
+**Merged pull requests:**
+
+- Hotfix/2.18.4/setting enable [\#427](https://github.com/playbasis/api/pull/427) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.18.3/fix_content_error_when_number_action_is_0](https://github.com/playbasis/api/tree/2.18.3/fix_content_error_when_number_action_is_0) (2016-10-12)
+[Full Changelog](https://github.com/playbasis/api/compare/2.18.2/customparam_variable_value...2.18.3/fix_content_error_when_number_action_is_0)
+
+**Fixed bugs:**
+
+- Hotfix/2.18.3/fix content error when number action is 0 [\#426](https://github.com/playbasis/api/pull/426) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.18.2/customparam_variable_value](https://github.com/playbasis/api/tree/2.18.2/customparam_variable_value) (2016-10-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.18.1/fix_content_list_too_slow_when_sort_with_action...2.18.2/customparam_variable_value)
+
+**Implemented enhancements:**
+
+- support variable value in custom parameter condition [\#425](https://github.com/playbasis/api/pull/425) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.18.1/fix_content_list_too_slow_when_sort_with_action](https://github.com/playbasis/api/tree/2.18.1/fix_content_list_too_slow_when_sort_with_action) (2016-10-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.19.3/add_filter_action_name_in_recent_activity...2.18.1/fix_content_list_too_slow_when_sort_with_action)
+
+**Implemented enhancements:**
+
+- Hotfix/2.18.1/fix content list too slow when sort with action [\#424](https://github.com/playbasis/api/pull/424) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.19.3/add_filter_action_name_in_recent_activity](https://github.com/playbasis/api/tree/2.19.3/add_filter_action_name_in_recent_activity) (2016-10-07)
+[Full Changelog](https://github.com/playbasis/api/compare/2.19.2/set_datemodified_as_optional...2.19.3/add_filter_action_name_in_recent_activity)
+
+**Implemented enhancements:**
+
+- Hotfix/2.19.3/add filter action name in recent activity [\#423](https://github.com/playbasis/api/pull/423) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.19.2/set_datemodified_as_optional](https://github.com/playbasis/api/tree/2.19.2/set_datemodified_as_optional) (2016-10-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.19.0/add_tags_in_get_rule_detail...2.19.2/set_datemodified_as_optional)
+
+**Fixed bugs:**
+
+- API schema - set date added/modified as optional field [\#422](https://github.com/playbasis/api/pull/422) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.19.0/add_tags_in_get_rule_detail](https://github.com/playbasis/api/tree/2.19.0/add_tags_in_get_rule_detail) (2016-10-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.18.0...2.19.0/add_tags_in_get_rule_detail)
+
+**Implemented enhancements:**
+
+- Hotfix/2.19.1/add tags in get rule detail [\#421](https://github.com/playbasis/api/pull/421) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.18.0](https://github.com/playbasis/api/tree/2.18.0) (2016-10-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.17.13/remove_token_in_merchant_coupon_verify...2.18.0)
 
 **Implemented enhancements:**
 
 - Hotfix/2.17.12/merchant redeem goods group [\#419](https://github.com/playbasis/api/pull/419) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.17.12/dec_goods_to_player_instead_of_delete_for_redeem_goods_group](https://github.com/playbasis/api/tree/2.17.12/dec_goods_to_player_instead_of_delete_for_redeem_goods_group) (2016-10-03)
-[Full Changelog](https://github.com/playbasis/api/compare/2.17.11/set_active_as_default_status_in_player_goods...2.17.12/dec_goods_to_player_instead_of_delete_for_redeem_goods_group)
-
-**Implemented enhancements:**
-
 - Hotfix/2.17.12/dec goods to player instead of delete for redeem goods group [\#418](https://github.com/playbasis/api/pull/418) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.17.11/set_active_as_default_status_in_player_goods](https://github.com/playbasis/api/tree/2.17.11/set_active_as_default_status_in_player_goods) (2016-09-26)
-[Full Changelog](https://github.com/playbasis/api/compare/2.17.10/support_goods_status_in_player_goods...2.17.11/set_active_as_default_status_in_player_goods)
-
-**Implemented enhancements:**
-
 - Hotfix/2.17.11/set active as default status in player goods [\#417](https://github.com/playbasis/api/pull/417) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.17.10/support_goods_status_in_player_goods](https://github.com/playbasis/api/tree/2.17.10/support_goods_status_in_player_goods) (2016-09-26)
-[Full Changelog](https://github.com/playbasis/api/compare/2.17.9/support_tags_in_player_goods...2.17.10/support_goods_status_in_player_goods)
-
-**Implemented enhancements:**
-
 - Hotfix/2.17.10/support goods status in player goods [\#416](https://github.com/playbasis/api/pull/416) ([piya-playbasis](https://github.com/piya-playbasis))
 - set feedbacks field as optional [\#415](https://github.com/playbasis/api/pull/415) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - set optional field [\#414](https://github.com/playbasis/api/pull/414) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - Schema - set sort\_order to be any type [\#413](https://github.com/playbasis/api/pull/413) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - Schema - set tags as optional [\#412](https://github.com/playbasis/api/pull/412) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - enable api schema [\#411](https://github.com/playbasis/api/pull/411) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.17.9/support tags in player goods [\#410](https://github.com/playbasis/api/pull/410) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.17.8/bypass checking resonse in production [\#409](https://github.com/playbasis/api/pull/409) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.17.7/enable api schema player endpoint [\#408](https://github.com/playbasis/api/pull/408) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.17.6/support type number and add debug response in rest2 [\#407](https://github.com/playbasis/api/pull/407) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.17.5/fix php check 0 as empty [\#406](https://github.com/playbasis/api/pull/406) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.17.4/allow register player with first name and last name as 0 [\#405](https://github.com/playbasis/api/pull/405) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.17.13/remove token in merchant coupon verify [\#420](https://github.com/playbasis/api/pull/420) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.17.3/skip api schema process if file pbapp.json is not ready or invalid [\#404](https://github.com/playbasis/api/pull/404) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/disable api schema [\#403](https://github.com/playbasis/api/pull/403) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- return point value as 0 if player never get the point [\#402](https://github.com/playbasis/api/pull/402) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.17.2/bypass checking response for player details [\#401](https://github.com/playbasis/api/pull/401) ([niti-playbasis](https://github.com/niti-playbasis))
+- Hotfix/2.17.1/bypass checking response [\#400](https://github.com/playbasis/api/pull/400) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.17.13/remove_token_in_merchant_coupon_verify](https://github.com/playbasis/api/tree/2.17.13/remove_token_in_merchant_coupon_verify) (2016-10-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.17.12/merchant_redeem_goods_group...2.17.13/remove_token_in_merchant_coupon_verify)
+
+## [2.17.12/merchant_redeem_goods_group](https://github.com/playbasis/api/tree/2.17.12/merchant_redeem_goods_group) (2016-10-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.17.12/dec_goods_to_player_instead_of_delete_for_redeem_goods_group...2.17.12/merchant_redeem_goods_group)
+
+## [2.17.12/dec_goods_to_player_instead_of_delete_for_redeem_goods_group](https://github.com/playbasis/api/tree/2.17.12/dec_goods_to_player_instead_of_delete_for_redeem_goods_group) (2016-10-03)
+[Full Changelog](https://github.com/playbasis/api/compare/2.17.11/set_active_as_default_status_in_player_goods...2.17.12/dec_goods_to_player_instead_of_delete_for_redeem_goods_group)
+
+## [2.17.11/set_active_as_default_status_in_player_goods](https://github.com/playbasis/api/tree/2.17.11/set_active_as_default_status_in_player_goods) (2016-09-26)
+[Full Changelog](https://github.com/playbasis/api/compare/2.17.10/support_goods_status_in_player_goods...2.17.11/set_active_as_default_status_in_player_goods)
+
+## [2.17.10/support_goods_status_in_player_goods](https://github.com/playbasis/api/tree/2.17.10/support_goods_status_in_player_goods) (2016-09-26)
+[Full Changelog](https://github.com/playbasis/api/compare/2.17.9/support_tags_in_player_goods...2.17.10/support_goods_status_in_player_goods)
 
 ## [2.17.9/support_tags_in_player_goods](https://github.com/playbasis/api/tree/2.17.9/support_tags_in_player_goods) (2016-09-22)
 [Full Changelog](https://github.com/playbasis/api/compare/2.17.8/bypass_checking_resonse_in_production...2.17.9/support_tags_in_player_goods)
 
-**Implemented enhancements:**
-
-- Hotfix/2.17.9/support tags in player goods [\#410](https://github.com/playbasis/api/pull/410) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.17.8/bypass_checking_resonse_in_production](https://github.com/playbasis/api/tree/2.17.8/bypass_checking_resonse_in_production) (2016-09-22)
 [Full Changelog](https://github.com/playbasis/api/compare/2.17.7/enable_schema_player_endpoint...2.17.8/bypass_checking_resonse_in_production)
-
-**Implemented enhancements:**
-
-- Hotfix/2.17.8/bypass checking resonse in production [\#409](https://github.com/playbasis/api/pull/409) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.17.7/enable_schema_player_endpoint](https://github.com/playbasis/api/tree/2.17.7/enable_schema_player_endpoint) (2016-09-22)
 [Full Changelog](https://github.com/playbasis/api/compare/2.17.6/support_type_number_and_add_debug_response_in_rest2...2.17.7/enable_schema_player_endpoint)
 
-**Implemented enhancements:**
-
-- Hotfix/2.17.7/enable api schema player endpoint [\#408](https://github.com/playbasis/api/pull/408) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.17.6/support_type_number_and_add_debug_response_in_rest2](https://github.com/playbasis/api/tree/2.17.6/support_type_number_and_add_debug_response_in_rest2) (2016-09-22)
 [Full Changelog](https://github.com/playbasis/api/compare/2.17.5/fix_php_check_0_as_empty...2.17.6/support_type_number_and_add_debug_response_in_rest2)
-
-**Implemented enhancements:**
-
-- Hotfix/2.17.6/support type number and add debug response in rest2 [\#407](https://github.com/playbasis/api/pull/407) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.17.5/fix_php_check_0_as_empty](https://github.com/playbasis/api/tree/2.17.5/fix_php_check_0_as_empty) (2016-09-20)
 [Full Changelog](https://github.com/playbasis/api/compare/2.17.4/allow_register_player_with_first_name_and_last_name_as_0...2.17.5/fix_php_check_0_as_empty)
 
-**Implemented enhancements:**
-
-- Hotfix/2.17.5/fix php check 0 as empty [\#406](https://github.com/playbasis/api/pull/406) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.17.4/allow_register_player_with_first_name_and_last_name_as_0](https://github.com/playbasis/api/tree/2.17.4/allow_register_player_with_first_name_and_last_name_as_0) (2016-09-20)
 [Full Changelog](https://github.com/playbasis/api/compare/2.17.3/skip_schema_if_pbappjson_not_ready...2.17.4/allow_register_player_with_first_name_and_last_name_as_0)
-
-**Implemented enhancements:**
-
-- Hotfix/2.17.4/allow register player with first name and last name as 0 [\#405](https://github.com/playbasis/api/pull/405) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.17.3/skip_schema_if_pbappjson_not_ready](https://github.com/playbasis/api/tree/2.17.3/skip_schema_if_pbappjson_not_ready) (2016-09-20)
 [Full Changelog](https://github.com/playbasis/api/compare/disable_api_schema...2.17.3/skip_schema_if_pbappjson_not_ready)
 
-**Fixed bugs:**
-
-- Hotfix/2.17.3/skip api schema process if file pbapp.json is not ready or invalid [\#404](https://github.com/playbasis/api/pull/404) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [disable_api_schema](https://github.com/playbasis/api/tree/disable_api_schema) (2016-09-19)
 [Full Changelog](https://github.com/playbasis/api/compare/player_point_return_0_value...disable_api_schema)
-
-**Fixed bugs:**
-
-- Hotfix/disable api schema [\#403](https://github.com/playbasis/api/pull/403) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [player_point_return_0_value](https://github.com/playbasis/api/tree/player_point_return_0_value) (2016-09-19)
 [Full Changelog](https://github.com/playbasis/api/compare/v2.17.2/bypass_checking_response_for_player_details...player_point_return_0_value)
 
-**Fixed bugs:**
-
-- return point value as 0 if player never get the point [\#402](https://github.com/playbasis/api/pull/402) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [v2.17.2/bypass_checking_response_for_player_details](https://github.com/playbasis/api/tree/v2.17.2/bypass_checking_response_for_player_details) (2016-09-19)
 [Full Changelog](https://github.com/playbasis/api/compare/v2.17.1/bypass_checking_response...v2.17.2/bypass_checking_response_for_player_details)
 
-**Fixed bugs:**
-
-- Hotfix/2.17.2/bypass checking response for player details [\#401](https://github.com/playbasis/api/pull/401) ([niti-playbasis](https://github.com/niti-playbasis))
-
 ## [v2.17.1/bypass_checking_response](https://github.com/playbasis/api/tree/v2.17.1/bypass_checking_response) (2016-09-19)
 [Full Changelog](https://github.com/playbasis/api/compare/v2.17.0...v2.17.1/bypass_checking_response)
-
-**Fixed bugs:**
-
-- Hotfix/2.17.1/bypass checking response [\#400](https://github.com/playbasis/api/pull/400) ([niti-playbasis](https://github.com/niti-playbasis))
 
 ## [v2.17.0](https://github.com/playbasis/api/tree/v2.17.0) (2016-09-19)
 [Full Changelog](https://github.com/playbasis/api/compare/2.16.11/fix_player_2_to_pb_player-2...v2.17.0)
@@ -1062,17 +1100,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.16...v2.10.0)
 
 ## [2.10.0-alpha.16](https://github.com/playbasis/api/tree/2.10.0-alpha.16) (2016-05-30)
-[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.15...2.10.0-alpha.16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.14...2.10.0-alpha.16)
 
 **Implemented enhancements:**
 
 - revise "get content count" to compatable with "get content count" [\#260](https://github.com/playbasis/api/pull/260) ([piya-playbasis](https://github.com/piya-playbasis))
 
-## [2.10.0-alpha.15](https://github.com/playbasis/api/tree/2.10.0-alpha.15) (2016-05-30)
-[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.14...2.10.0-alpha.15)
-
 ## [2.10.0-alpha.14](https://github.com/playbasis/api/tree/2.10.0-alpha.14) (2016-05-30)
-[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.13...2.10.0-alpha.14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.15...2.10.0-alpha.14)
+
+## [2.10.0-alpha.15](https://github.com/playbasis/api/tree/2.10.0-alpha.15) (2016-05-30)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.13...2.10.0-alpha.15)
 
 **Implemented enhancements:**
 
@@ -1441,13 +1479,13 @@
 - - Merge generate content PIN into create/update content [\#193](https://github.com/playbasis/api/pull/193) ([niti-playbasis](https://github.com/niti-playbasis))
 
 ## [2.8.0-alpha.1](https://github.com/playbasis/api/tree/2.8.0-alpha.1) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.8.0-alpha.1)
-
-## [v2.7.6](https://github.com/playbasis/api/tree/v2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...v2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...2.8.0-alpha.1)
 
 ## [2.7.6](https://github.com/playbasis/api/tree/2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.7.6)
+
+## [v2.7.6](https://github.com/playbasis/api/tree/v2.7.6) (2016-04-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...v2.7.6)
 
 **Implemented enhancements:**
 
@@ -1771,13 +1809,13 @@
 - Feature/run rule in bg [\#144](https://github.com/playbasis/api/pull/144) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [2.3.0-alpha.5](https://github.com/playbasis/api/tree/2.3.0-alpha.5) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.2.4...2.3.0-alpha.5)
-
-## [2.2.4](https://github.com/playbasis/api/tree/2.2.4) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.3.4...2.2.4)
+[Full Changelog](https://github.com/playbasis/api/compare/2.3.4...2.3.0-alpha.5)
 
 ## [2.3.4](https://github.com/playbasis/api/tree/2.3.4) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/Bug_rankPeerByAccAction_wrong_month_type...2.3.4)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.4...2.3.4)
+
+## [2.2.4](https://github.com/playbasis/api/tree/2.2.4) (2016-02-05)
+[Full Changelog](https://github.com/playbasis/api/compare/Bug_rankPeerByAccAction_wrong_month_type...2.2.4)
 
 ## [Bug_rankPeerByAccAction_wrong_month_type](https://github.com/playbasis/api/tree/Bug_rankPeerByAccAction_wrong_month_type) (2016-02-05)
 [Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.4...Bug_rankPeerByAccAction_wrong_month_type)
@@ -2557,17 +2595,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule...2.1.38-alpha.1)
 
 ## [fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule](https://github.com/playbasis/api/tree/fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule) (2015-10-07)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...fix_bug_cannot_give_normal_goods_as_reward_of_engine_rule)
 
 **Implemented enhancements:**
 
 - Implementimg new feature for PIN code verification [\#32](https://github.com/playbasis/api/pull/32) ([burachit-playbasis](https://github.com/burachit-playbasis))
 
-## [2.1.37](https://github.com/playbasis/api/tree/2.1.37) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.6...2.1.37)
-
 ## [2.1.37-alpha.6](https://github.com/playbasis/api/tree/2.1.37-alpha.6) (2015-10-02)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37-alpha.6)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37...2.1.37-alpha.6)
+
+## [2.1.37](https://github.com/playbasis/api/tree/2.1.37) (2015-10-02)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.37-alpha.5...2.1.37)
 
 **Merged pull requests:**
 
@@ -3102,31 +3140,31 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.2-alpha.1...2.1.2-alpha.20)
 
 ## [2.1.2-alpha.1](https://github.com/playbasis/api/tree/2.1.2-alpha.1) (2014-06-20)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.3...2.1.2-alpha.1)
-
-## [2.1.1-rc.3](https://github.com/playbasis/api/tree/2.1.1-rc.3) (2014-06-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.2...2.1.1-rc.3)
-
-## [2.1.1-alpha.2](https://github.com/playbasis/api/tree/2.1.1-alpha.2) (2014-06-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.3...2.1.1-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.3...2.1.2-alpha.1)
 
 ## [2.1.1-beta.3](https://github.com/playbasis/api/tree/2.1.1-beta.3) (2014-06-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.1...2.1.1-beta.3)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.2...2.1.1-beta.3)
 
-## [2.1.1-alpha.1](https://github.com/playbasis/api/tree/2.1.1-alpha.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.1...2.1.1-alpha.1)
+## [2.1.1-alpha.2](https://github.com/playbasis/api/tree/2.1.1-alpha.2) (2014-06-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.3...2.1.1-alpha.2)
 
-## [2.1.1-rc.1](https://github.com/playbasis/api/tree/2.1.1-rc.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.1...2.1.1-rc.1)
+## [2.1.1-rc.3](https://github.com/playbasis/api/tree/2.1.1-rc.3) (2014-06-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-beta.1...2.1.1-rc.3)
 
 ## [2.1.1-beta.1](https://github.com/playbasis/api/tree/2.1.1-beta.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-beta.1...2.1.1-beta.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-rc.1...2.1.1-beta.1)
 
-## [2.1.0-beta.1](https://github.com/playbasis/api/tree/2.1.0-beta.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-rc.1...2.1.0-beta.1)
+## [2.1.1-rc.1](https://github.com/playbasis/api/tree/2.1.1-rc.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.1-alpha.1...2.1.1-rc.1)
+
+## [2.1.1-alpha.1](https://github.com/playbasis/api/tree/2.1.1-alpha.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-rc.1...2.1.1-alpha.1)
 
 ## [2.1.0-rc.1](https://github.com/playbasis/api/tree/2.1.0-rc.1) (2014-06-06)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-alpha.1...2.1.0-rc.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-beta.1...2.1.0-rc.1)
+
+## [2.1.0-beta.1](https://github.com/playbasis/api/tree/2.1.0-beta.1) (2014-06-06)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.0-alpha.1...2.1.0-beta.1)
 
 ## [2.1.0-alpha.1](https://github.com/playbasis/api/tree/2.1.0-alpha.1) (2014-06-06)
 [Full Changelog](https://github.com/playbasis/api/compare/1.0-ALPHA.2...2.1.0-alpha.1)
