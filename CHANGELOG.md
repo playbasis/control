@@ -1,7 +1,7 @@
 # Change Log
 
-## [2.19.0](https://github.com/playbasis/api/tree/v2.19.0) (2016-10-18)
-[Full Changelog](https://github.com/playbasis/api/compare/v2.18.0...v2.19.0)
+## [2.19.1](https://github.com/playbasis/api/tree/v2.19.1) (2016-10-18)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.18.0...v2.19.1)
 
 **Implemented enhancements:**
 
