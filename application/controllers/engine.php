@@ -719,6 +719,7 @@ class Engine extends Quest
 
         $this->benchmark->mark('engine_rule_end');
         $apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
+        array_walk_recursive($apiResult, array($this, "convert_mongo_object"));
         $this->response($this->resp->setRespond($apiResult), 200);
     }
 
