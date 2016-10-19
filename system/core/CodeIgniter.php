@@ -319,44 +319,42 @@
  *  Call the requested method
  * ------------------------------------------------------
  */
-	// Is there a "remap" function? If so, we call it instead
-	if (method_exists($CI, '_remap'))
-	{
-		$CI->_remap($method, array_slice($URI->rsegments, 2));
-	}
-	else
-	{
-		// is_callable() returns TRUE on some versions of PHP 5 for private and protected
-		// methods, so we'll use this workaround for consistent behavior
-		if ( ! in_array(strtolower($method), array_map('strtolower', get_class_methods($CI))))
-		{
-			// Check and see if we are using a 404 override and use it.
-			if ( ! empty($RTR->routes['404_override']))
-			{
-				$x = explode('/', $RTR->routes['404_override']);
-				$class = $x[0];
-				$method = (isset($x[1]) ? $x[1] : 'index');
-				if ( ! class_exists($class))
-				{
-					if ( ! file_exists(APPPATH.'controllers/'.$class.'.php'))
-					{
-						show_404("{$class}/{$method}");
-					}
 
-					include_once(APPPATH.'controllers/'.$class.'.php');
-					unset($CI);
-					$CI = new $class();
+	// PHPUNIT_TEST:
+	// Ignore Routing schemes in a PHPUnit test
+
+	if (!defined('PHPUNIT_TEST')) {
+
+		// Is there a "remap" function? If so, we call it instead
+		if (method_exists($CI, '_remap')) {
+			$CI->_remap($method, array_slice($URI->rsegments, 2));
+		} else {
+			// is_callable() returns TRUE on some versions of PHP 5 for private and protected
+			// methods, so we'll use this workaround for consistent behavior
+			if (!in_array(strtolower($method), array_map('strtolower', get_class_methods($CI)))) {
+				// Check and see if we are using a 404 override and use it.
+				if (!empty($RTR->routes['404_override'])) {
+					$x = explode('/', $RTR->routes['404_override']);
+					$class = $x[0];
+					$method = (isset($x[1]) ? $x[1] : 'index');
+					if (!class_exists($class)) {
+						if (!file_exists(APPPATH . 'controllers/' . $class . '.php')) {
+							show_404("{$class}/{$method}");
+						}
+
+						include_once(APPPATH . 'controllers/' . $class . '.php');
+						unset($CI);
+						$CI = new $class();
+					}
+				} else {
+					show_404("{$class}/{$method}");
 				}
 			}
-			else
-			{
-				show_404("{$class}/{$method}");
-			}
-		}
 
-		// Call the requested method.
-		// Any URI segments present (besides the class/function) will be passed to the method for convenience
-		call_user_func_array(array(&$CI, $method), array_slice($URI->rsegments, 2));
+			// Call the requested method.
+			// Any URI segments present (besides the class/function) will be passed to the method for convenience
+			call_user_func_array(array(&$CI, $method), array_slice($URI->rsegments, 2));
+		}
 	}
 
 
@@ -375,7 +373,9 @@
  *  Send the final rendered output to the browser
  * ------------------------------------------------------
  */
-	if ($EXT->_call_hook('display_override') === FALSE)
+	// PHPUNIT_TEST:
+	// Ignore output in a PHPUnit test
+	if ($EXT->_call_hook('display_override') === FALSE && !defined('PHPUNIT_TEST'))
 	{
 		$OUT->_display();
 	}
