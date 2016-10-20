@@ -575,6 +575,30 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 rowField.find('input').val(rowText.html());
                             }
                         }
+                        else if(anotherType.match('DURATION')) {
+                            if($thisrow.find('.dropdown').length > 0) {
+                                console.log('DURATION in if');
+                                var unit = {
+                                    'seconds': 'seconds',
+                                    'minutes': 'minutes',
+                                    'hours': 'hours',
+                                    'days': 'days',
+                                    'months': 'months'
+
+                                }
+                                var unit_option = $('<select id="duration_unit">');
+                                $.each(unit, function (key, value) {
+                                    unit_option.append($('<option>', {value: key})
+                                        .text(value));
+                                });
+                                rowField.children().hide();
+                                rowField.append(unit_option);
+                                $('#duration_unit').val(rowText.html());
+                            }else{
+                                if(DEBUG)console.log('edit > text');
+                                rowField.find('input').val(rowText.html());
+                            }
+                        }
                         else{
                             // default case
                             if(DEBUG)console.log('edit > normal case');
@@ -754,41 +778,6 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                             rowField.find('input')
                                 .val(val)
                             //console.log('save > MONTHLY' + val);
-                        }
-                        else if(anotherType.match('CUSTOMPARAMETER')) {
-                            if($thisrow.find('.dropdown').length > 0) {
-                                var fulldate = $('.timepickerx').datetimepicker('getDate');
-                                var val_min = fulldate.getMinutes();
-                                var val_hours = fulldate.getHours();
-
-                                val_min = val_min < 10 ? '0' + val_min.toString() : val_min.toString();
-                                val_hours = val_hours < 10 ? '0' + val_hours.toString() : val_hours.toString();
-                                var val = val_hours + ':' + val_min;
-
-                                rowText.html(val);
-                                rowField.find('input')
-                                    .val(val)
-                                //console.log('save > CUSTOMPARAMETER' + val);
-                            }else {
-                                rowText.html(rowField.find('input').val());
-                            }
-                        }
-                        else if(anotherType.match('LEVEL')) {
-                            if($thisrow.find('.dropdown').length > 0) {
-                                var fulldate = $('.timepickerx').datetimepicker('getDate');
-                                var val_min = fulldate.getMinutes();
-                                var val_hours = fulldate.getHours();
-
-                                val_min = val_min < 10 ? '0' + val_min.toString() : val_min.toString();
-                                val_hours = val_hours < 10 ? '0' + val_hours.toString() : val_hours.toString();
-                                var val = val_hours + ':' + val_min;
-
-                                rowText.html(val);
-                                rowField.find('input')
-                                    .val(val)
-                            }else {
-                                rowText.html(rowField.find('input').val());
-                            }
                         }
                         else{
                             // default case
