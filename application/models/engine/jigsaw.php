@@ -350,6 +350,69 @@ class jigsaw extends MY_Model
         }
     }
 
+    private function isInDuration($now,$start_time,$value,$unit){
+        $now = new Datetime(datetimeMongotoReadable($now));
+        $start_time = new Datetime(datetimeMongotoReadable($start_time));
+        $start_time->modify("+".$value." ".$unit);
+
+        $interval = $now->diff($start_time);
+        if($interval->invert == 0){
+            // $now <= $deadline
+            return true;
+        }else{
+            // $now > $deadline
+            return false;
+        }
+    }
+
+    public function duration($config, $input, &$exInfo = array())
+    {
+        assert($config != false);
+        assert(is_array($config));
+        assert(isset($config['duration_value']));
+        assert(isset($config['duration_unit']));
+        assert(isset($config['limit_action']));
+        assert($input != false);
+        assert(is_array($input));
+        assert($input['pb_player_id']);
+        assert($input['rule_id']);
+        assert($input['jigsaw_id']);
+        $now = isset($input['rule_time']) ? $input['rule_time'] : new MongoDate();
+
+        $result = $this->getMostRecentJigsaw($input, array(
+            'input',
+        ));
+
+        if (!$result) {
+            $exInfo['start_time'] = $now;
+            $exInfo['current_count'] = 1;
+            if(1 <= $config['limit_action']){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            $log = $result['input'];
+            $start_time = $log['start_time'];
+
+            if(!$this->isInDuration($now, $start_time, $config['duration_value'], $config['duration_unit'])){
+                $current_count = 1;
+                $exInfo['start_time'] = $now;
+
+            }else{
+                $current_count = $log['current_count']+1;
+                $exInfo['start_time'] = $start_time;
+
+            }
+            $exInfo['current_count'] = $current_count;
+            if($current_count <= $config['limit_action'] ){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
     public function before($config, $input, &$exInfo = array())
     {
         assert($config != false);
