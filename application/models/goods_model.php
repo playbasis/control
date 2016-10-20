@@ -490,6 +490,15 @@ class Goods_model extends MY_Model
                 $data_insert['date_start'] = new MongoDate($date_start_another);
                 $data_insert['date_expire'] = new MongoDate($date_expire_another);
             }
+        } else {
+            if (isset($data['date_start']) && $data['date_start']) {
+                $date_start_another = strtotime($data['date_start']);
+                $data_insert['date_start'] = new MongoDate($date_start_another);
+            }
+            if (isset($data['date_expire']) && $data['date_expire']) {
+                $date_expire_another = strtotime($data['date_expire']);
+                $data_insert['date_expire'] = new MongoDate($date_expire_another);
+            }
         }
 
         if (isset($data['organize_id'])) {
@@ -542,6 +551,15 @@ class Goods_model extends MY_Model
 
             if ($date_start_another < $date_expire_another) {
                 $data_insert['date_start'] = new MongoDate($date_start_another);
+                $data_insert['date_expire'] = new MongoDate($date_expire_another);
+            }
+        } else {
+            if (isset($data['date_start']) && $data['date_start']) {
+                $date_start_another = strtotime($data['date_start']);
+                $data_insert['date_start'] = new MongoDate($date_start_another);
+            }
+            if (isset($data['date_expire']) && $data['date_expire']) {
+                $date_expire_another = strtotime($data['date_expire']);
                 $data_insert['date_expire'] = new MongoDate($date_expire_another);
             }
         }
@@ -609,8 +627,20 @@ class Goods_model extends MY_Model
                 $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
             }
         } else {
-            $this->mongo_db->set('date_start', null);
-            $this->mongo_db->set('date_expire', null);
+            if (isset($data['date_start']) && $data['date_start']) {
+                $date_start_another = strtotime($data['date_start']);
+                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
+                $this->mongo_db->set('date_expire', null);
+            }
+            elseif (isset($data['date_expire']) && $data['date_expire']) {
+                $date_expire_another = strtotime($data['date_expire']);
+                $this->mongo_db->set('date_start', null);
+                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
+            }
+            else {
+                $this->mongo_db->set('date_start', null);
+                $this->mongo_db->set('date_expire', null);
+            }
         }
 
         $this->mongo_db->update('playbasis_goods');
@@ -663,8 +693,18 @@ class Goods_model extends MY_Model
                 $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
             }
         } else {
-            $this->mongo_db->set('date_start', null);
-            $this->mongo_db->set('date_expire', null);
+            if (isset($data['date_start']) && $data['date_start']) {
+                $date_start_another = strtotime($data['date_start']);
+                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
+                $this->mongo_db->set('date_expire', null);
+            } elseif (isset($data['date_expire']) && $data['date_expire']) {
+                $date_expire_another = strtotime($data['date_expire']);
+                $this->mongo_db->set('date_start', null);
+                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
+            } else {
+                $this->mongo_db->set('date_start', null);
+                $this->mongo_db->set('date_expire', null);
+            }
         }
 
         if (isset($data['image'])) {
@@ -717,8 +757,18 @@ class Goods_model extends MY_Model
                 $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
             }
         } else {
-            $this->mongo_db->set('date_start', null);
-            $this->mongo_db->set('date_expire', null);
+            if (isset($data['date_start']) && $data['date_start']) {
+                $date_start_another = strtotime($data['date_start']);
+                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
+                $this->mongo_db->set('date_expire', null);
+            } elseif (isset($data['date_expire']) && $data['date_expire']) {
+                $date_expire_another = strtotime($data['date_expire']);
+                $this->mongo_db->set('date_start', null);
+                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
+            } else {
+                $this->mongo_db->set('date_start', null);
+                $this->mongo_db->set('date_expire', null);
+            }
         }
 
         if (isset($data['image'])) {
@@ -782,8 +832,18 @@ class Goods_model extends MY_Model
                 $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
             }
         } else {
-            $this->mongo_db->set('date_start', null);
-            $this->mongo_db->set('date_expire', null);
+            if (isset($data['date_start']) && $data['date_start']) {
+                $date_start_another = strtotime($data['date_start']);
+                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
+                $this->mongo_db->set('date_expire', null);
+            } elseif (isset($data['date_expire']) && $data['date_expire']) {
+                $date_expire_another = strtotime($data['date_expire']);
+                $this->mongo_db->set('date_start', null);
+                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
+            } else {
+                $this->mongo_db->set('date_start', null);
+                $this->mongo_db->set('date_expire', null);
+            }
         }
 
         $this->mongo_db->update_all('playbasis_goods_to_client');
