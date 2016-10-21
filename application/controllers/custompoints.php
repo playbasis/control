@@ -103,6 +103,8 @@ class Custompoints extends MY_Controller
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['name'] = $custompoints_data['name'];
+                $data['quantity'] = isset($custompoints_data['quantity']) && !empty($custompoints_data['quantity']) ? intval($custompoints_data['quantity']) : null;
+                $data['pending'] = isset($custompoints_data['pending']) && !empty($custompoints_data['pending']) ? $custompoints_data['pending'] : false;
                 $data['status'] = true;
                 $data['type'] = $custompoints_data['type_custompoint'];
                 if ($custompoints_data['type_custompoint'] != "normal") {
@@ -279,6 +281,16 @@ class Custompoints extends MY_Controller
             $this->data['type'] = "normal";
         }
 
+        if (isset($custompoints_info['pending'])) {
+            $this->data['pending'] = $custompoints_info['pending'];
+        } else {
+            $this->data['pending'] = false;
+        }
+
+        if (isset($custompoints_info['quantity'])) {
+            $this->data['quantity'] = $custompoints_info['quantity'];
+        }
+
         if (isset($custompoints_info['energy_props'])) {
             $this->data['maximum'] = $custompoints_info['energy_props']['maximum'];
         }
@@ -330,6 +342,9 @@ class Custompoints extends MY_Controller
                 $this->form_validation->set_rules('energy_changing_per_period',
                     $this->lang->line('entry_energy_changing_per_period'),
                     'required|numeric|is_natural_no_zero|xss_clean');
+            } else {
+                $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'),
+                    'numeric|xss_clean');
             }
 
             if ($this->form_validation->run()) {
@@ -339,6 +354,8 @@ class Custompoints extends MY_Controller
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['reward_id'] = $custompoints_id;
                 $data['name'] = $custompoints_data['name'];
+                $data['quantity'] = isset($custompoints_data['quantity']) && !empty($custompoints_data['quantity']) ? intval($custompoints_data['quantity']) : null;
+                $data['pending'] = isset($custompoints_data['pending']) && !empty($custompoints_data['pending']) ? $custompoints_data['pending'] : false;
                 $data['type'] = $custompoints_data['type_custompoint'];
                 if ($custompoints_data['type_custompoint'] != "normal") {
                     $data['maximum'] = $custompoints_data['energy_maximum'];
