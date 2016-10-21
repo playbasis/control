@@ -9224,6 +9224,76 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Style API",
+      "endpoint": ["Style"],
+      "Public": "Y",
+      "methods": [
+        {
+          "MethodName": "Retrieve custom style",
+          "Synopsis": "Retrieve custom style by specified filter fields",
+          "HTTPMethod": "GET",
+          "URI": "Style",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific name of group to retrieve custom style"
+            },
+            {
+              "Name": "key",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific key name to retrieve custom style"
+            },
+            {
+              "Name": "sort",
+              "Required": "N",
+              "Default": "name",
+              "Type": "string",
+              "Description": "Specific field to sort ('name', 'key', 'date_added', 'date_modified')"
+            },
+            {
+              "Name": "order",
+              "Required": "N",
+              "Default": "asc",
+              "Type": "string",
+              "Description": "Direction to order ('desc', 'asc'), but if sort is 'random' then this field will be seed number"
+            },
+            {
+              "Name": "offset",
+              "Required": "N",
+              "Default": "0",
+              "Type": "integer",
+              "Description": "number of records starting"
+            },
+            {
+              "Name": "limit",
+              "Required": "N",
+              "Default": "20",
+              "Type": "integer",
+              "Description": "number of results to return"
+            }
+          ],
+          "response": {
+            "result":[
+              {
+                "name":          {"-type": "string"},
+                "key":           {"-type": "string"},
+                "value":         {"-type": "string"},
+                "date_added":    {"-type": "string", "-optional": "true"},
+                "date_modified": {"-type": "string", "-optional": "true"}
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }

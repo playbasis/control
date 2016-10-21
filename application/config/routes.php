@@ -361,6 +361,9 @@ $route['Game'] = 'game/list';
 $route['Game/playerItemStatus'] = 'game/playerItemStatus';
 $route['Game/setCurrentStage'] = 'game/setCurrentStage';
 
+//Custom style API
+$route['Style'] = 'custom_style/list';
+
 //misc
 //$route['test']	= 'playbasis/test';
 $route['test']	= 'notification/index';
