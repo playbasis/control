@@ -1318,6 +1318,15 @@ class Goods extends MY_Controller
                 $template['date_start'] = new MongoDate($date_start_another);
                 $template['date_expire'] = new MongoDate($date_expire_another);
             }
+        } else {
+            if (isset($data['date_start']) && $data['date_start']) {
+                $date_start_another = strtotime($data['date_start']);
+                $template['date_start'] = new MongoDate($date_start_another);
+            }
+            if (isset($data['date_expire']) && $data['date_expire']) {
+                $date_expire_another = strtotime($data['date_expire']);
+                $template['date_expire'] = new MongoDate($date_expire_another);
+            }
         }
 
         if (isset($data['organize_id'])) {
