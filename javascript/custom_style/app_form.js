@@ -146,7 +146,7 @@ function submitModalForm() {
         })
         .fail(function (xhr, textStatus, errorThrown) {
             if(JSON.parse(xhr.responseText).status == "error") {
-                $('form.store-organize-form').trigger("reset");
+                $('form.style-form').trigger("reset");
                 alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
             }else if(JSON.parse(xhr.responseText).status == "name require"){
                 $waitDialog.modal('hide');

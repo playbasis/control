@@ -196,7 +196,7 @@ class Custom_style extends MY_Controller
 
     private function validateModify()
     {
-        if ($this->User_model->hasPermission('modify', 'store_org')) {
+        if ($this->User_model->hasPermission('modify', 'custom_style')) {
             return true;
         } else {
             return false;
@@ -212,7 +212,7 @@ class Custom_style extends MY_Controller
         $client_id = $this->User_model->getClientId();
 
         if ($this->User_model->hasPermission('access',
-                'store_org') && $this->Feature_model->getFeatureExistByClientId($client_id, 'store_org')
+                'custom_style') && $this->Feature_model->getFeatureExistByClientId($client_id, 'custom_style')
         ) {
             return true;
         } else {
