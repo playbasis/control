@@ -80,6 +80,23 @@
                     </tr>
                     <tr>
                         <td>
+                            <span id="quantity_required"></span> <?php echo $this->lang->line('entry_quantity'); ?>:
+                        </td>
+                        <td>
+                            <input type="text"
+                                   placeholder="<?php echo $this->lang->line('entry_quantity'); ?>"
+                                   name="quantity" id="input_quantity"
+                                   value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span id="pending"></span> <?php echo $this->lang->line('entry_pending'); ?>:
+                        </td>
+                        <td><input type="checkbox" id="pending" name="pending" <?php echo (isset($pending) && $pending) ? "checked" : ''; ?>></td>
+                    </tr>
+                    <tr>
+                        <td>
                             <span class="required hide" id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_maximum'); ?>:
                         </td>
                         <td>
@@ -157,6 +174,8 @@
         });
 
         var energy_inputs = $('[id^=input_energy_]'),
+            quantity_input = $('[id=input_quantity]'),
+            quantity_span = $('[id=quantity_required]'),
             energy_required_span = $('[id=energy_required]'),
             custompoint_type_radio = $('input[type=radio][name=type_custompoint]'),
             custompoint_type_radio_value = $('input[type=radio][name=type_custompoint]:checked').val();
@@ -164,7 +183,12 @@
         if(custompoint_type_radio_value != "normal"){
             energy_inputs.attr('disabled',false);
             energy_required_span.show();
+            quantity_input.attr('disabled',true);
+            quantity_span.hide();
+
         } else {
+            quantity_input.attr('disabled',false);
+            quantity_span.show();
             energy_inputs.attr('disabled',true);
             energy_required_span.hide();
         }
@@ -173,7 +197,11 @@
             if ($(this).val() != 'normal') {
                 energy_inputs.attr('disabled',false);
                 energy_required_span.show();
+                quantity_input.attr('disabled',true);
+                quantity_span.hide();
             } else {
+                quantity_input.attr('disabled',false);
+                quantity_span.show();
                 energy_inputs.attr('disabled',true);
                 energy_required_span.hide();
             }

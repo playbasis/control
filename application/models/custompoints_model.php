@@ -44,12 +44,14 @@ class Custompoints_model extends MY_Model
             'site_id' => $data['site_id'],
             'group' => 'POINT',
             'name' => strtolower($data['name']),
+            'quantity' => $data['quantity'],
             'limit' => null,
             'description' => null,
             'sort' => 1,
             'tags' => isset($tags) ? $tags : null,
             'status' => true,
             'is_custom' => true,
+            'pending' => $data['pending'],
             'init_dataset' => array($field1, $field2, $field3),
             'type' => $data['type'],
             'date_added' => new MongoDate(),
@@ -153,6 +155,8 @@ class Custompoints_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
         $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('quantity', $data['quantity']);
+        $this->mongo_db->set('pending', $data['pending']);
         $this->mongo_db->set('type', $data['type']);
 
         if ($data['type'] != 'normal') {
