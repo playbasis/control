@@ -2933,7 +2933,7 @@
               "Description": "Specify paging limit [default = 20]"
             }
           ],
-          "responses": [
+          "response": [
             {
               "cl_player_id": { "-type": "string"},
               "reward_id":    { "-type": "string"},
@@ -2977,10 +2977,12 @@
               ]
             }
           ],
-          "responses": {
-            "success": { "-type": "boolean"},
-            "details": { "-type": "any", "-optional": "true"}
-          }
+          "response": [
+            {
+              "pending_id": { "-type": "string"},
+              "status":    { "-type": "string"}
+            }
+          ]
         }
       ]
     },
