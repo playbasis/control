@@ -163,6 +163,10 @@ $route['Goods/sponsor/'.ANY_STRING] = 'goods/sponsor/$1';
 $route['Goods/sponsor'] = 'goods/sponsor';
 $route['Goods/ad'] = 'goods/personalizedSponsor';
 
+//Point API
+$route['Point/custom/pending'] = 'custompoint/pending';
+$route['Point/custom/approval'] = 'custompoint/approval';
+
 //Merchant API
 $route['Merchant/availableBranchGoodsGroup'] = 'merchant/availableBranchGoodsGroup';
 $route['Merchant/goodsGroup/verify'] = 'merchant/GoodsGroupVerify';

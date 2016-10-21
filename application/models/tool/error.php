@@ -312,7 +312,11 @@ class Error extends CI_Model
                 break;
             case 'REDEEM_COUPON_CODE_USED':
                 $errorData['message'] = "Coupon code has been used";
-                $errorData['error_code'] = '0611';
+                $errorData['error_code'] = '0612';
+                break;
+            case 'PENDING_ID_NOT_FOUND':
+                $errorData['message'] = "Pending ID not found";
+                $errorData['error_code'] = '0613';
                 break;
             case "QUEST_JOINED":
                 $errorData["message"] = "User has already join this quest";

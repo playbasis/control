@@ -2885,6 +2885,106 @@
       ]
     },
     {
+      "name": "Point API",
+      "endpoint": ["Point"],
+      "Public": "Y",
+      "methods": [
+        {
+          "MethodName": "Pending List",
+          "Synopsis": "Return list of pending custompoint to be approve",
+          "HTTPMethod": "GET",
+          "URI": "Point/custom/pending",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "player_list",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "List of player, ex. john,max,robert"
+            },
+            {
+              "Name": "from",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "From date in the format YYYY-MM-DD (ex.1982-09-29)"
+            },
+            {
+              "Name": "to",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "To date in the format YYYY-MM-DD (ex.1982-09-29)"
+            },
+            {
+              "Name": "offset",
+              "Required": "N",
+              "Default": "0",
+              "Type": "string",
+              "Description": "Specify paging offset [default = 0]"
+            },
+            {
+              "Name": "limit",
+              "Required": "N",
+              "Default": "20",
+              "Type": "string",
+              "Description": "Specify paging limit [default = 20]"
+            }
+          ],
+          "responses": [
+            {
+              "cl_player_id": { "-type": "string"},
+              "reward_id":    { "-type": "string"},
+              "value":        { "-type": "integer"},
+              "date_added":   { "-type": "string"},
+              "pending_id":   { "-type": "string"}
+            }
+          ]
+        },
+        {
+          "MethodName": "Approve Pending CustomPoint",
+          "Synopsis": "To approve custompoint in pending",
+          "HTTPMethod": "POST",
+          "URI": "Point/custom/approval",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "pending_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "pending id of custompoint"
+            },
+            {
+              "Name": "approve",
+              "Required": "Y",
+              "Default": "true",
+              "Type": "enumerated",
+              "Description": "approve status",
+              "EnumeratedList": [
+                "true",
+                "false"
+              ]
+            }
+          ],
+          "responses": {
+            "success": { "-type": "boolean"},
+            "details": { "-type": "any", "-optional": "true"}
+          }
+        }
+      ]
+    },
+    {
       "name": "Merchant API",
       "endpoint": ["Merchant"],
       "Public": "Y",
