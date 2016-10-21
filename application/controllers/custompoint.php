@@ -40,7 +40,7 @@ class Custompoint extends REST2_Controller
     public function approval_post()
     {
         $required = $this->input->checkParam(array(
-            'pending_id',
+            'pending_list',
             'approve'
         ));
         if ($required) {
@@ -51,15 +51,19 @@ class Custompoint extends REST2_Controller
             'client_id' => $this->validToken['client_id'],
             'site_id' => $this->validToken['site_id']
         );
-        $data['pending_id'] = new MongoId($this->input->post('pending_id'));
-        
         $approve = $this->input->post('approve') === "true" ? true : false;
-        $status = $this->reward_model->approvePendingReward($data,$approve);
-        if($status){
-            $this->response($this->resp->setRespond('success'), 200);
-        } else {
-            $this->response($this->error->setError('PENDING_ID_NOT_FOUND'), 200);
+        $pending_list = explode(",",$this->input->post('pending_list'));
+        $response = array();
+        if (is_array($pending_list)) foreach ($pending_list as $pending_id){
+            try{
+                $data['pending_id'] = new MongoId($pending_id);
+                $status = $this->reward_model->approvePendingReward($data,$approve);
+                array_push($response, array('pending_id' => $pending_id, 'status' => $status ? "success" : "Pending ID not found"));
+            } catch (Exception $e){
+                array_push($response, array('pending_id' => $pending_id, 'status' => "Pending ID is invalid"));
+            }
         }
+        $this->response($this->resp->setRespond($response), 200);
     }
     private function convert_mongo_object(&$item, $key)
     {

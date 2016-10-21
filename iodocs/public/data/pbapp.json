@@ -2959,18 +2959,18 @@
               "Description": "access token returned from Auth"
             },
             {
-              "Name": "pending_id",
+              "Name": "pending_list",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "pending id of custompoint"
+              "Description": "list of pending id of custompoint ex. xxxx,xxxx,xxxx"
             },
             {
               "Name": "approve",
               "Required": "Y",
               "Default": "true",
               "Type": "enumerated",
-              "Description": "approve status",
+              "Description": "approve status, true = approve , false = reject",
               "EnumeratedList": [
                 "true",
                 "false"
