@@ -574,7 +574,53 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('LIMIT_EXCEED'), 200);
         }
     }
+    public function referral_post()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'referral_code',
+        ));
 
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        $cl_player_id_B = $this->input->post('player_id');
+        $referral_code = $this->input->post('referral_code');
+        $client_id = $this->validToken["client_id"];
+        $site_id = $this->validToken["site_id"];
+        
+        $pb_player_id_B = $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $cl_player_id_B)));
+        if (!$pb_player_id_B) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        if ($referral_code) {
+            $playerA = $this->player_model->findPlayerByCode($site_id, $referral_code, array('cl_player_id'));
+            if ($playerA && ($playerA['_id'] != $pb_player_id_B)) {
+                $platform = $this->auth_model->getOnePlatform($client_id, $site_id);
+                // [rule] A invite B
+                $this->utility->request('engine', 'json', http_build_query(array(
+                    'api_key' => $platform['api_key'],
+                    'pb_player_id' => $playerA['_id'] . '',
+                    'action' => ACTION_INVITE,
+                    'pb_player_id-2' => $pb_player_id_B . ''
+                )));
+
+                // [rule] B invited by A
+                $this->utility->request('engine', 'json', http_build_query(array(
+                    'api_key' => $platform['api_key'],
+                    'pb_player_id' => $pb_player_id_B . '',
+                    'action' => ACTION_INVITED,
+                    'pb_player_id-2' => $playerA['_id'] . ''
+                )));
+            } else {
+                $this->response($this->error->setError('REFERRAL_CODE_INVALID'), 200);
+            }
+        }
+        $this->response($this->resp->setRespond(), 200);
+    }
+    
     public function registerBatch_post()
     {
         $batch_data = json_decode($this->input->post()['batch'],true);
