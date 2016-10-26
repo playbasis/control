@@ -598,19 +598,19 @@ class Player extends REST2_Controller
         if ($referral_code) {
             $playerA = $this->player_model->findPlayerByCode($site_id, $referral_code, array('cl_player_id'));
             if ($playerA && ($playerA['_id'] != $pb_player_id_B)) {
-                $platform = $this->auth_model->getOnePlatform($client_id, $site_id);
-                // [rule] A invite B
-                $this->utility->request('engine', 'json', http_build_query(array(
-                    'api_key' => $platform['api_key'],
-                    'pb_player_id' => $playerA['_id'] . '',
-                    'action' => ACTION_INVITE,
-                    'pb_player_id-2' => $pb_player_id_B . ''
-                )));
-                
                 $action_id = $this->action_model->findAction(array_merge($this->validToken, array('action_name' => ACTION_INVITED)));
                 if ($action_id) {
                     $action_count = $this->player_model->getActionCount($pb_player_id_B, $action_id, $site_id);
                     if ($action_count && isset($action_count['count']) && $action_count['count'] < 1){
+                        $platform = $this->auth_model->getOnePlatform($client_id, $site_id);
+                        // [rule] A invite B
+                        $this->utility->request('engine', 'json', http_build_query(array(
+                            'api_key' => $platform['api_key'],
+                            'pb_player_id' => $playerA['_id'] . '',
+                            'action' => ACTION_INVITE,
+                            'pb_player_id-2' => $pb_player_id_B . ''
+                        )));
+
                         // [rule] B invited by A
                         $this->utility->request('engine', 'json', http_build_query(array(
                             'api_key' => $platform['api_key'],
