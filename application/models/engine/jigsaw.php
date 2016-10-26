@@ -640,11 +640,11 @@ class jigsaw extends MY_Model
             }
         }
         $c = $this->countActionWithParams($input['client_id'], $input['site_id'], $input['pb_player_id'],
-            $input['action_id'], $params);
+            $input['action_id'], $params, isset($input['pb_player_id-2']) && $input['pb_player_id-2'] ? $input['pb_player_id-2']:null );
         return $c == 0;
     }
 
-    private function countActionWithParams($client_id, $site_id, $pb_player_id, $action_id, $parameters)
+    private function countActionWithParams($client_id, $site_id, $pb_player_id, $action_id, $parameters, $pb_player_id_2=null)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where(array(
@@ -654,6 +654,9 @@ class jigsaw extends MY_Model
             'action_id' => $action_id,
         ));
 
+        if($pb_player_id_2){
+            $this->mongo_db->where('pb_player_id-2', $pb_player_id_2);
+        }
         foreach ($parameters as $name => $value) {
             $this->mongo_db->where(array('parameters.' . $name => $value));
         }

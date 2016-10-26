@@ -606,14 +606,20 @@ class Player extends REST2_Controller
                     'action' => ACTION_INVITE,
                     'pb_player_id-2' => $pb_player_id_B . ''
                 )));
-
-                // [rule] B invited by A
-                $this->utility->request('engine', 'json', http_build_query(array(
-                    'api_key' => $platform['api_key'],
-                    'pb_player_id' => $pb_player_id_B . '',
-                    'action' => ACTION_INVITED,
-                    'pb_player_id-2' => $playerA['_id'] . ''
-                )));
+                
+                $action_id = $this->action_model->findAction(array_merge($this->validToken, array('action_name' => ACTION_INVITED)));
+                if ($action_id) {
+                    $action_count = $this->player_model->getActionCount($pb_player_id_B, $action_id, $site_id);
+                    if ($action_count && isset($action_count['count']) && $action_count['count'] < 1){
+                        // [rule] B invited by A
+                        $this->utility->request('engine', 'json', http_build_query(array(
+                            'api_key' => $platform['api_key'],
+                            'pb_player_id' => $pb_player_id_B . '',
+                            'action' => ACTION_INVITED,
+                            'pb_player_id-2' => $playerA['_id'] . ''
+                        )));
+                    }
+                }
             } else {
                 $this->response($this->error->setError('REFERRAL_CODE_INVALID'), 200);
             }
