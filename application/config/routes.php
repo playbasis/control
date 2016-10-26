@@ -59,6 +59,8 @@ $route['Player/'.ANY_STRING.'/custom'] = 'player/custom/$1';
 
 $route['Player/'.ANY_STRING.'/register'] = 'player/register/$1';
 $route['Player/register'] = 'player/register';
+$route['Player/referral'] = 'player/referral';
+
 $route['Player/registerBatch'] = 'player/registerBatch';
 
 $route['Player/'.ANY_STRING.'/update'] = 'player/update/$1';

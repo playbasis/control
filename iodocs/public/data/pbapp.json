@@ -569,6 +569,38 @@
           "response": []
         },
         {
+          "MethodName": "Referral",
+          "Synopsis": "To add Referral code another player for invitation system",
+          "HTTPMethod": "POST",
+          "URI": "Player/referral",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website *** It's available only [A-Za-z0-9_-]"
+            },
+            {
+              "Name": "referral_code",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "referral code of another player for invitation system"
+            }
+          ],
+          "response": []
+        },
+        {
           "MethodName": "Update",
           "Synopsis": "Update player information.",
           "HTTPMethod": "POST",
