@@ -90,7 +90,7 @@ class Goods_model extends MY_Model
         return $goods;
     }
 
-    public function getGoodsByGroupAndCode($client_id, $site_id, $group, $code, $fields = array())
+    public function getGoodsByGroupAndCode($client_id, $site_id, $group, $code, $fields = array(),$all=false)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         if ($fields) {
@@ -103,7 +103,12 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('code', $code);
 
         $result = $this->mongo_db->get('playbasis_goods_to_client');
-        return $result ? $result[0] : null;
+
+        if($all){
+            return $result ? $result : null;
+        }else{
+            return $result ? $result[0] : null;
+        }
     }
 
     public function getAllAvailableGoodsByGroupAndCode($client_id, $site_id, $group, $code, $quantity=false)
