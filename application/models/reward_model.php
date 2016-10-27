@@ -333,6 +333,7 @@ class Reward_model extends MY_Model
             'site_id' => $data['site_id'],
             '_id' => $data['log_id'],
         ));
+        $this->mongo_db->set('date_modified', new MongoDate());
         $this->mongo_db->set('status', $data['status']);
         return $this->mongo_db->update('playbasis_reward_custom_log');
     }
