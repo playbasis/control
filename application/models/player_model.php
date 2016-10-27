@@ -304,7 +304,7 @@ class Player_model extends MY_Model
             $this->mongo_db->where_in('goods_id', $goods_list);
         }
         if($quantity){
-            $this->mongo_db->where_ne('value', 0);
+            $this->mongo_db->where_gt('value', 0);
         }
         $this->mongo_db->limit(1);
         $id = $this->mongo_db->get('playbasis_goods_to_player');
@@ -1691,7 +1691,7 @@ class Player_model extends MY_Model
             $this->mongo_db->where_in('goods_id', $goods_list);
         }
         if($quantity) {
-            $this->mongo_db->where_ne('value', 0);
+            $this->mongo_db->where_gt('value', 0);
         }
         $this->mongo_db->limit(1);
         $goods = $this->mongo_db->get('playbasis_goods_to_player');
