@@ -139,15 +139,23 @@ class Merchant extends REST2_Controller
         $pin_code = $this->input->post('pin_code');
         $cl_player_id = $this->input->post('player_id');
 
-        $goods_info = $this->goods_model->getGoodsByGroupAndCode($client_id, $site_id, $group, $code);
+        $goods_info = $this->goods_model->getGoodsByGroupAndCode($client_id, $site_id, $group, $code, array('goods_id'), true);
 
         if (!$goods_info) {
             $this->response($this->error->setError('REDEEM_INVALID_COUPON_CODE'), 200);
         }
-        $goods_id = new MongoId($goods_info['goods_id']);
+
+        $goods_list = array();
+        if(is_array($goods_info)) foreach ($goods_info as $good){
+            array_push($goods_list, new MongoId($good['goods_id']));
+        }
 
         if (!$cl_player_id){
-            $player_id = $this->player_model->getPbAndCilentIdByGoodsId($this->validToken, $goods_id);
+            //workaround for case same coupon code in group
+            $player_id = $this->player_model->getPbAndCilentIdByGoodsId($this->validToken, false, $goods_list,true);
+            if(!$player_id){
+                $player_id = $this->player_model->getPbAndCilentIdByGoodsId($this->validToken, false, $goods_list);
+            }
             $pb_player_id = $player_id['pb_player_id'];
             $cl_player_id = $player_id['cl_player_id'];
         } else {
@@ -160,8 +168,13 @@ class Merchant extends REST2_Controller
                 $this->response($this->error->setError('USER_NOT_EXIST'), 200);
             }
         }
-        $player_goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $site_id, $goods_id);
-        
+
+        //workaround for case same coupon code in group
+        $player_goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $site_id, false, $goods_list, true);
+        if (!$player_goods) {
+            $player_goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $site_id, false, $goods_list);
+        }
+
         if (!empty($player_goods)) {
             if($player_goods['amount'] < 1){
                 $this->response($this->error->setError('REDEEM_COUPON_CODE_USED'), 200);
@@ -187,17 +200,17 @@ class Merchant extends REST2_Controller
                         $branch_log_data['b_id'] = $branch['_id'];
                         $branch_log_data['b_name'] = $branch['branch_name'];
 
-                        $log_result = $this->merchant_model->logMerchantRedeem($client_id, $site_id, $goods_id, $player_goods['group'], $cl_player_id, $pb_player_id, $branch_log_data);
+                        $log_result = $this->merchant_model->logMerchantRedeem($client_id, $site_id, new MongoId($player_goods['goods_id']), $player_goods['group'], $cl_player_id, $pb_player_id, $branch_log_data);
                         $result = $this->merchant_model->getMerchantRedeemLogByLogId($client_id, $site_id, new MongoId($log_result));
                         if ($result) {
-                            $this->player_model->markUsedGoodsFromPlayer($client_id, $site_id, $pb_player_id, $goods_id);
+                            $this->player_model->markUsedGoodsFromPlayer($client_id, $site_id, $pb_player_id, new MongoId($player_goods['goods_id']));
                         }
                         $this->response($this->resp->setRespond(array("success" => true)), 200);
                     } else {
                         $this->response($this->error->setError('BRANCH_IS_NOT_ALLOW_TO_VERIFY_GOODS'), 200);
                     }
                 } else {
-                    $this->player_model->markUsedGoodsFromPlayer($client_id, $site_id, $pb_player_id, $goods_id);
+                    $this->player_model->markUsedGoodsFromPlayer($client_id, $site_id, $pb_player_id, new MongoId($player_goods['goods_id']));
                     $this->response($this->resp->setRespond(array("success" => true)), 200);
                 }
             }
