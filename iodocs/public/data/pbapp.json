@@ -3012,9 +3012,81 @@
           "response": [
             {
               "pending_id": { "-type": "string"},
-              "status":    { "-type": "string"}
+              "status":     { "-type": "string"}
             }
           ]
+        },
+        {
+          "MethodName": "Retrieve Custom Log",
+          "Synopsis": "Return First/Last Reward Custom Log",
+          "HTTPMethod": "GET",
+          "URI": "Point/custom/log",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "reward_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "name of reward to be get the custom log"
+            },
+            {
+              "Name": "key",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "key of custom param"
+            },
+            {
+              "Name": "sort",
+              "Required": "N",
+              "Default": "ASC",
+              "Type": "enumerated",
+              "Description": "ASC=To get first Log , DESC=To get latest Log ,Default as ASC",
+              "EnumeratedList": [
+                "ASC",
+                "DESC"
+              ]
+            }
+          ],
+          "response": {
+            "log_id":       { "-type": "string"},
+            "value":        { "-type": "string"}
+          }
+
+        },
+        {
+          "MethodName": "Clear Reward Custom Log",
+          "Synopsis": "To clear reward custom log",
+          "HTTPMethod": "POST",
+          "URI": "Point/custom/clearLog",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "log_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "id of reward custom log"
+            }
+          ],
+          "response": {}
         }
       ]
     },

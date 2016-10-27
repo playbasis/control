@@ -168,6 +168,8 @@ $route['Goods/ad'] = 'goods/personalizedSponsor';
 //Point API
 $route['Point/custom/pending'] = 'custompoint/pending';
 $route['Point/custom/approval'] = 'custompoint/approval';
+$route['Point/custom/log'] = 'custompoint/customLog';
+$route['Point/custom/clearLog'] = 'custompoint/clearCustomLog';
 
 //Merchant API
 $route['Merchant/availableBranchGoodsGroup'] = 'merchant/availableBranchGoodsGroup';
