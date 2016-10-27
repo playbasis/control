@@ -337,6 +337,25 @@ class Reward_model extends MY_Model
         $this->mongo_db->set('status', $data['status']);
         return $this->mongo_db->update('playbasis_reward_custom_log');
     }
+
+    public function addCustomLog($client_id, $site_id, $cl_player_id, $pb_player_id, $reward_id, $key, $value)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $insert_data = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'cl_player_id' => $cl_player_id,
+            'pb_player_id' => new MongoId($pb_player_id),
+            'reward_id' => new MongoId($reward_id),
+            'key' => $key,
+            'value' => $value,
+            'status' => true,
+            'date_added' => new MongoDate(),
+            'date_modified' => new MongoDate()
+        );
+        return $this->mongo_db->insert('playbasis_reward_custom_log', $insert_data);
+    }
 }
 
 ?>

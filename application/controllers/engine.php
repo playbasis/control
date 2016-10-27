@@ -32,6 +32,7 @@ class Engine extends Quest
         $this->load->model('level_model');
         $this->load->model('game_model');
         $this->load->model('badge_model');
+        $this->load->model('reward_model');
     }
 
     public function getActionConfig_get()
@@ -1131,6 +1132,14 @@ class Engine extends Quest
                                             $eventMessage,
                                             '');
                                     }
+
+                                    if(isset($jigsawConfig['custom_log']) && $jigsawConfig['custom_log']){
+                                        if(isset($input[$jigsawConfig['custom_log']]) && $input[$jigsawConfig['custom_log']]){
+                                            $this->reward_model->addCustomLog($client_id, $site_id, $input['player_id'],
+                                                $input['pb_player_id'], $jigsawConfig['reward_id'], $jigsawConfig['custom_log'], $input[$jigsawConfig['custom_log']]);
+                                        }
+                                    }
+
                                 }  // close if (!$input["test"])
                             } else {
                                 switch ($jigsawConfig['reward_name']) {
