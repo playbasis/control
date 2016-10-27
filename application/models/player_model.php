@@ -283,9 +283,9 @@ class Player_model extends MY_Model
         return ($id) ? $id[0]['_id'] : null;
     }
 
-    public function getPbAndCilentIdByGoodsId($clientData, $goods_id)
+    public function getPbAndCilentIdByGoodsId($clientData, $goods_id=false, $goods_list=false, $quantity=false)
     {
-        if (!$clientData || !$goods_id) {
+        if (!$clientData) {
             return null;
         }
         $this->set_site_mongodb($clientData['site_id']);
@@ -296,8 +296,16 @@ class Player_model extends MY_Model
         $this->mongo_db->where(array(
             'client_id' => $clientData['client_id'],
             'site_id' => $clientData['site_id'],
-            'goods_id' => $goods_id
         ));
+        if($goods_id){
+            $this->mongo_db->where('goods_id', $goods_id);
+        }
+        if($goods_list){
+            $this->mongo_db->where_in('goods_id', $goods_list);
+        }
+        if($quantity){
+            $this->mongo_db->where_gt('value', 0);
+        }
         $this->mongo_db->limit(1);
         $id = $this->mongo_db->get('playbasis_goods_to_player');
         return ($id) ? $id[0] : null;
@@ -1667,7 +1675,7 @@ class Player_model extends MY_Model
         return $playerGoods;
     }
 
-    public function getGoodsByGoodsId($pb_player_id, $site_id, $goods_id)
+    public function getGoodsByGoodsId($pb_player_id, $site_id, $goods_id=false, $goods_list=false, $quantity=false)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(
@@ -1675,10 +1683,16 @@ class Player_model extends MY_Model
             'value'
         ));
         $this->mongo_db->select(array(), array('_id'));
-        $this->mongo_db->where(array(
-            'pb_player_id' => $pb_player_id,
-            'goods_id' => $goods_id
-        ));
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        if($goods_id){
+            $this->mongo_db->where('goods_id', $goods_id);
+        }
+        if($goods_list){
+            $this->mongo_db->where_in('goods_id', $goods_list);
+        }
+        if($quantity) {
+            $this->mongo_db->where_gt('value', 0);
+        }
         $this->mongo_db->limit(1);
         $goods = $this->mongo_db->get('playbasis_goods_to_player');
 
