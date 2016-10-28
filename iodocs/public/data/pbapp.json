@@ -2922,10 +2922,10 @@
       "Public": "Y",
       "methods": [
         {
-          "MethodName": "Pending List",
-          "Synopsis": "Return list of pending custompoint to be approve",
+          "MethodName": "List Custom Status",
+          "Synopsis": "Return list of custompoint to be approve",
           "HTTPMethod": "GET",
-          "URI": "Point/custom/pending",
+          "URI": "Point/custom/list",
           "RequiresOAuth": "N",
           "Public": "Y",
           "parameters": [
@@ -2935,6 +2935,19 @@
               "Default": "",
               "Type": "string",
               "Description": "List of player, ex. john,max,robert"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "All",
+              "Type": "enumerated",
+              "Description": "status of custompoint",
+              "EnumeratedList": [
+                "All",
+                "Approve",
+                "Pending",
+                "Reject"
+              ]
             },
             {
               "Name": "from",
@@ -2967,17 +2980,43 @@
           ],
           "response": [
             {
-              "cl_player_id": { "-type": "string"},
-              "reward_id":    { "-type": "string"},
-              "value":        { "-type": "integer"},
-              "date_added":   { "-type": "string"},
-              "pending_id":   { "-type": "string"}
+              "cl_player_id":     { "-type": "string"},
+              "reward_name":      { "-type": "string"},
+              "value":            { "-type": "integer"},
+              "status":           { "-type": "string"},
+              "date_added":       { "-type": "string"},
+              "transaction_id":   { "-type": "string"}
             }
           ]
         },
         {
-          "MethodName": "Approve Pending CustomPoint",
-          "Synopsis": "To approve custompoint in pending",
+          "MethodName": "Retrieve Transaction CustomPoint",
+          "Synopsis": "Return transaction of custompoint",
+          "HTTPMethod": "GET",
+          "URI": "Point/custom/transaction",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "transaction_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "transaction id of custompoint"
+            }
+          ],
+          "response": {
+            "cl_player_id":     { "-type": "string"},
+            "reward_name":      { "-type": "string"},
+            "value":            { "-type": "integer"},
+            "status":           { "-type": "string"},
+            "date_added":       { "-type": "string"},
+            "transaction_id":   { "-type": "string"}
+          }
+        },
+        {
+          "MethodName": "Approve Transaction CustomPoint",
+          "Synopsis": "To approve custom point in transaction list",
           "HTTPMethod": "POST",
           "URI": "Point/custom/approval",
           "RequiresOAuth": "N",
@@ -2991,11 +3030,11 @@
               "Description": "access token returned from Auth"
             },
             {
-              "Name": "pending_list",
+              "Name": "transaction_list",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "list of pending id of custompoint ex. xxxx,xxxx,xxxx"
+              "Description": "list of transaction id of custompoint ex. xxxx,xxxx,xxxx"
             },
             {
               "Name": "approve",
@@ -3011,8 +3050,8 @@
           ],
           "response": [
             {
-              "pending_id": { "-type": "string"},
-              "status":     { "-type": "string"}
+              "transaction_id":  { "-type": "string"},
+              "status":          { "-type": "string"}
             }
           ]
         },

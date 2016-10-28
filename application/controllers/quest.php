@@ -993,8 +993,8 @@ class Quest extends REST2_Controller
                     'reward_type' => $reward_type_name,
                     'value' => $r["reward_value"]
                 );
-                if (isset($return_data['pending_id']) && !empty($return_data['pending_id'])){
-                    $event['pending_id'] = $return_data['pending_id'];
+                if (isset($return_data['transaction_id']) && !empty($return_data['transaction_id'])){
+                    $event['transaction_id'] = $return_data['transaction_id'];
                 }
                 
                 array_push($sub_events['events'], $event);

@@ -988,8 +988,8 @@ class Engine extends Quest
                                 'reward_type' => $jigsawConfig['reward_name'],
                                 'value' => $jigsawConfig['quantity']
                             );
-                            if (isset($jigsawConfig['pending_id']) && !empty($jigsawConfig['pending_id'])){
-                                $event['pending_id'] = $jigsawConfig['pending_id'];
+                            if (isset($jigsawConfig['transaction_id']) && !empty($jigsawConfig['transaction_id'])){
+                                $event['transaction_id'] = $jigsawConfig['transaction_id'];
                             }
 
                             array_push($apiResult['events'],
@@ -1097,8 +1097,8 @@ class Engine extends Quest
                                     'reward_type' => $jigsawConfig['reward_name'],
                                     'value' => $jigsawConfig['quantity']
                                 );
-                                if (isset($reward['pending_id']) && !empty($reward['pending_id'])) {
-                                    $event['pending_id'] = $reward['pending_id'];
+                                if (isset($reward['transaction_id']) && !empty($reward['transaction_id'])) {
+                                    $event['transaction_id'] = $reward['transaction_id'];
                                 }
                                 array_push($apiResult['events'],
                                     $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);

@@ -166,7 +166,8 @@ $route['Goods/sponsor'] = 'goods/sponsor';
 $route['Goods/ad'] = 'goods/personalizedSponsor';
 
 //Point API
-$route['Point/custom/pending'] = 'custompoint/pending';
+$route['Point/custom/list'] = 'custompoint/list';
+$route['Point/custom/transaction'] = 'custompoint/transaction';
 $route['Point/custom/approval'] = 'custompoint/approval';
 $route['Point/custom/log'] = 'custompoint/customLog';
 $route['Point/custom/clearLog'] = 'custompoint/clearCustomLog';
