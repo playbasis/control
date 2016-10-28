@@ -14,11 +14,15 @@ class Custompoint extends REST2_Controller
         $this->load->model('tool/respond', 'resp');
     }
 
-    public function pending_get()
+    public function list_get()
     {
         $data = $this->input->get();
         $data['client_id'] = $this->validToken['client_id'];
         $data['site_id'] = $this->validToken['site_id'];
+        if (isset($data['status']) && $data['status']){
+            $data['status'] = strtolower($data['status']);
+            if ($data['status'] == 'all') unset($data['status']);
+        }
         if (isset($data['to']) && strtotime($data['to'])){
             $data['to'] = new MongoDate(strtotime($data['to']));
         }
@@ -26,22 +30,56 @@ class Custompoint extends REST2_Controller
             $data['from'] = new MongoDate(strtotime($data['from']));
         }
         if (isset($data['player_list']) && !empty($data['player_list'])){
-            $data['player_list'] = explode(",",$data['player_list']);
+            $data['player_list'] = array_map('trim', explode(",",$data['player_list']));
         }
         $pending_list = $this->reward_model->listPendingRewards($data);
         foreach ($pending_list as &$item)
         {
-            $item['pending_id'] = $item['_id']->{'$id'};
+            $item['reward_name'] = $this->reward_model->getRewardName($data,$item['reward_id']);
+            $item['transaction_id'] = $item['_id']->{'$id'};
+            unset($item['reward_id']);
             unset($item['_id']);
         }
         array_walk_recursive($pending_list, array($this, "convert_mongo_object"));
         $this->response($this->resp->setRespond($pending_list), 200);
     }
 
+    public function transaction_get()
+    {
+        $required = $this->input->checkParam(array(
+            'transaction_id',
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        $data = array(
+            'client_id' => $this->validToken['client_id'],
+            'site_id' => $this->validToken['site_id']
+        );
+        $transaction_id = $this->input->get('transaction_id');
+        $response = null;
+        try{
+            $data['transaction_id'] = new MongoId($transaction_id);
+            $response = $this->reward_model->getPendingRewardsById($data);
+            if($response){
+                $response['reward_name'] = $this->reward_model->getRewardName($data,$response['reward_id']);
+                $response['transaction_id'] = $response['_id']->{'$id'};
+                unset($response['reward_id']);
+                unset($response['_id']);
+                array_walk_recursive($response, array($this, "convert_mongo_object"));
+            }
+        } catch (Exception $e){
+            $this->response($this->resp->setRespond($transaction_id), 200);
+        }
+
+        $this->response($this->resp->setRespond($response), 200);
+    }
+
     public function approval_post()
     {
         $required = $this->input->checkParam(array(
-            'pending_list',
+            'transaction_list',
             'approve'
         ));
         if ($required) {
@@ -53,15 +91,15 @@ class Custompoint extends REST2_Controller
             'site_id' => $this->validToken['site_id']
         );
         $approve = $this->input->post('approve') === "true" ? true : false;
-        $pending_list = explode(",",$this->input->post('pending_list'));
+        $transaction_list = array_map('trim', explode(",",$this->input->post('transaction_list')));
         $response = array();
-        if (is_array($pending_list)) foreach ($pending_list as $pending_id){
+        if (is_array($transaction_list)) foreach ($transaction_list as $transaction_id){
             try{
-                $data['pending_id'] = new MongoId($pending_id);
+                $data['transaction_id'] = new MongoId($transaction_id);
                 $status = $this->reward_model->approvePendingReward($data,$approve);
-                array_push($response, array('pending_id' => $pending_id, 'status' => $status ? "success" : "Pending ID not found"));
+                array_push($response, array('transaction_id' => $transaction_id, 'status' => $status ? "success" : "Transaction ID not found"));
             } catch (Exception $e){
-                array_push($response, array('pending_id' => $pending_id, 'status' => "Pending ID is invalid"));
+                array_push($response, array('transaction_id' => $transaction_id, 'status' => "Transaction ID is invalid"));
             }
         }
         $this->response($this->resp->setRespond($response), 200);

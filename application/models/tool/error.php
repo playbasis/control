@@ -314,8 +314,12 @@ class Error extends CI_Model
                 $errorData['message'] = "Coupon code has been used";
                 $errorData['error_code'] = '0612';
                 break;
-            case 'PENDING_ID_NOT_FOUND':
-                $errorData['message'] = "Pending ID not found";
+            case 'TRANSACTION_ID_NOT_FOUND':
+                $errorData['message'] = "Transaction ID not found";
+                $errorData['error_code'] = '0613';
+                break;
+            case 'TRANSACTION_ID_INVALID':
+                $errorData['message'] = "Transaction ID is invalid";
                 $errorData['error_code'] = '0613';
                 break;
             case "QUEST_JOINED":

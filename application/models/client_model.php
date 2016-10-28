@@ -246,19 +246,19 @@ class Client_model extends MY_Model
                     }
                     if ($pending && ($amount > 0)) {
                         $mongoDate = new MongoDate(time());
-                        $pending_id = $this->mongo_db->insert('playbasis_reward_pending_to_player', array(
+                        $transaction_id = $this->mongo_db->insert('playbasis_reward_status_to_player', array(
                             'pb_player_id' => $pbPlayerId,
                             'cl_player_id' => $clPlayerId,
                             'client_id' => $clientId,
                             'site_id' => $siteId,
                             'reward_id' => $rewardId,
                             'value' => intval($amount),
-                            'status' => true,
+                            'status' => 'pending',
                             'date_added' => $mongoDate,
                             'date_modified' => $mongoDate
                         ));
                         $status['reward_status'] = "REWARD_PENDING";
-                        $status['pending_id'] = $pending_id;
+                        $status['transaction_id'] = $transaction_id;
                     } else {
                         //update player reward table
                         $this->mongo_db->where(array(
@@ -415,8 +415,8 @@ class Client_model extends MY_Model
             $status = $this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'],
                 $input['client_id'], $input['site_id'], $anonymous, $jigsawConfig);
             $jigsawConfig['reward_status'] = $status['reward_status'];
-            if(isset($status['pending_id']) && !empty($status['pending_id'])){
-                $jigsawConfig['pending_id'] = $status['pending_id'];
+            if(isset($status['transaction_id']) && !empty($status['transaction_id'])){
+                $jigsawConfig['transaction_id'] = $status['transaction_id'];
             }
         }
         $jigsawConfig['reward_id'] = $customRewardId;
