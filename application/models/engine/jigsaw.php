@@ -103,6 +103,67 @@ class jigsaw extends MY_Model
         return $result;
     }
 
+    public function userprofile($config, $input, &$exInfo = array())
+    {
+        assert($config != false);
+        assert(is_array($config));
+        assert(isset($config['profile']));
+        assert(isset($config['operation']));
+        $now = isset($input['rule_time']) ? $input['rule_time'] : new MongoDate();
+        if(!(isset($config['value']) && $config['value'])){
+            return false;
+        }
+
+        // calculate age of user
+        if($config['profile'] == 'age'){
+            if(isset($input['user_profile']['birth_date']) && $input['user_profile']['birth_date']){
+
+                $now = new Datetime(datetimeMongotoReadable($now));
+                $birth_date = new Datetime($input['user_profile']['birth_date']);
+                $interval = $now->diff($birth_date);
+                if($interval->invert == 0){
+                    // $now <= birth date
+                    return false;
+                }
+                $input['user_profile']['age'] = $interval->y;
+            }else{
+                return false;
+            }
+        }
+
+        $result = false;
+
+        if($config['profile'] == 'gender' && isset($input['user_profile']['gender']) && $config['operation'] == "="){
+            if($input['user_profile']['gender'] == 1){
+                $male = array("male","man","gentleman");
+                if(in_array($config['value'],$male)){
+                    $result = true;
+                }
+            }else if($input['user_profile']['gender'] == 0){
+                $female = array("female","woman","lady");
+                if(in_array($config['value'],$female)){
+                    $result = true;
+                }
+            }
+        }else {
+            if (isset($input['user_profile'][$config['profile']])) {
+                if ($config['operation'] == '=') {
+                    $result = ($input['user_profile'][$config['profile']] == $config['value']);
+                } elseif ($config['operation'] == '>') {
+                    $result = ($input['user_profile'][$config['profile']] >  $config['value']);
+                } elseif ($config['operation'] == '<') {
+                    $result = ($input['user_profile'][$config['profile']] <  $config['value']);
+                } elseif ($config['operation'] == '>=') {
+                    $result = ($input['user_profile'][$config['profile']] >= $config['value']);
+                } elseif ($config['operation'] == '<=') {
+                    $result = ($input['user_profile'][$config['profile']] <= $config['value']);
+                }
+            }
+        }
+
+        return $result;
+    }
+
     public function gameLevel($config, $input, &$exInfo = array())
     {
         assert($config != false);
