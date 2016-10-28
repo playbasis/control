@@ -253,14 +253,16 @@ toolstip = {
 			description:'Reward a user with the specified amount of points',
 			field_desc:{
 				reward_name:'reward name',
-				quantity:'amount of point to award'
+				quantity:'amount of point to award',
+				custom_log:'custom parameter to log'
 			}
 		},
 		exp:{ 
 			description:'Reward a user with the specified amount of exp',
 			field_desc:{
 				reward_name:'reward name',
-				quantity:'amount of exp to award'
+				quantity:'amount of exp to award',
+				custom_log:'custom parameter to log'
 			}
 		},
 		badge:{ 
@@ -283,6 +285,14 @@ toolstip = {
 			field_desc:{
 				reward_name:'name of point to award',
 				quantity:'amount of point to award'
+			}
+		},
+		etc:{
+			description:'Reward a user with the specified type and amount of point',
+			field_desc:{
+				reward_name:'name of custom point to award',
+				quantity:'amount of custom point to award',
+				custom_log:'custom parameter to log'
 			}
 		}
 	},

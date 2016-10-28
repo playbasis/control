@@ -92,13 +92,26 @@ class Rule extends MY_Controller
                 $game['name'] = $game['game_name'];
             }
         }
+
         if (is_array($rewardList)) {
+            $reward_list = array("badge","customPointReward","goods");
             foreach ($rewardList as &$reward) {
                 if (is_array($reward['dataSet'])) {
                     foreach ($reward['dataSet'] as &$dataset) {
                         if (strtolower($dataset['param_name']) == "quantity") {
                             $dataset['field_type'] = 'text';
                         }
+                    }
+                    if(!in_array($reward["name"],$reward_list)) {
+                        $reward['dataSet'][] = array(
+                            'field_type' => "text",
+                            'label' => "custom Log (optional)",
+                            'param_name' => "custom_log",
+                            'placeholder' => "",
+                            'sortOrder' => "0",
+                            'value' => "",
+
+                        );
                     }
                 }
             }
