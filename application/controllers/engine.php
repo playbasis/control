@@ -865,6 +865,20 @@ class Engine extends Quest
                     $input['level'] = $level['level'];
                 }
 
+                // User profile condition
+                if (($input['jigsaw_name']) == 'userProfile') {
+                    //read player information
+                    $player_profile = $this->player_model->readPlayer($input['pb_player_id'], $this->site_id, array(
+                        'exp','gender','birth_date'
+                    ));
+
+                    $level = $this->level_model->getLevelByExp($player_profile['exp'], $this->validToken['client_id'],
+                        $this->validToken['site_id']);
+
+                    $player_profile['level'] = isset($level['level']) ? $level['level'] : null;
+                    $input['user_profile'] = $player_profile;
+                }
+
                 // Game level condition
                 if (($input['jigsaw_name']) == 'gameLevel') {
                     //get current game stage of player
