@@ -74,7 +74,7 @@ class Reward_model extends MY_Model
 
         $this->mongo_db->limit((int)$data['limit']);
         $this->mongo_db->offset((int)$data['offset']);
-        $result = $this->mongo_db->get('playbasis_reward_pending_to_player');
+        $result = $this->mongo_db->get('playbasis_reward_status_to_player');
         return $result;
     }
 
@@ -94,7 +94,7 @@ class Reward_model extends MY_Model
             'site_id' => $data['site_id'],
             '_id' => $data['transaction_id']
         ));
-        $result = $this->mongo_db->get('playbasis_reward_pending_to_player');
+        $result = $this->mongo_db->get('playbasis_reward_status_to_player');
         return $result? $result[0]: null;
     }
     public function approvePendingReward($data,$approve)
@@ -106,7 +106,7 @@ class Reward_model extends MY_Model
             '_id' => $data['transaction_id'],
             'status' => 'pending'
         ));
-        $pending_reward = $this->mongo_db->get('playbasis_reward_pending_to_player');
+        $pending_reward = $this->mongo_db->get('playbasis_reward_status_to_player');
 
         if ($pending_reward){
             $pending_reward = $pending_reward[0];
@@ -117,7 +117,7 @@ class Reward_model extends MY_Model
                     '_id' => $data['transaction_id']
                 ));
                 $this->mongo_db->set('status', 'approve');
-                $this->mongo_db->update('playbasis_reward_pending_to_player');
+                $this->mongo_db->update('playbasis_reward_status_to_player');
 
                 $this->mongo_db->where(array(
                     'client_id' => $data['client_id'],
@@ -147,7 +147,7 @@ class Reward_model extends MY_Model
                     '_id' => $data['transaction_id']
                 ));
                 $this->mongo_db->set('status', 'reject');
-                $this->mongo_db->update('playbasis_reward_pending_to_player');
+                $this->mongo_db->update('playbasis_reward_status_to_player');
 
                 $this->mongo_db->where(array(
                     'client_id' => $data['client_id'],

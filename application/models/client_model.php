@@ -246,7 +246,7 @@ class Client_model extends MY_Model
                     }
                     if ($pending && ($amount > 0)) {
                         $mongoDate = new MongoDate(time());
-                        $transaction_id = $this->mongo_db->insert('playbasis_reward_pending_to_player', array(
+                        $transaction_id = $this->mongo_db->insert('playbasis_reward_status_to_player', array(
                             'pb_player_id' => $pbPlayerId,
                             'cl_player_id' => $clPlayerId,
                             'client_id' => $clientId,
