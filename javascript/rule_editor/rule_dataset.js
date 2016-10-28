@@ -599,6 +599,41 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 rowField.find('input').val(rowText.html());
                             }
                         }
+                        else if(anotherType.match('USERPROFILE')) {
+                            if($thisrow.find('.dropdown').length > 0) {
+                                console.log('USERPROFILE in if');
+                                var unit = {};
+                                if($thisrow.find('.name_profile').length > 0){
+                                    unit = {
+                                        'gender': 'gender',
+                                        'exp': 'exp',
+                                        'age': 'age',
+                                        'level': 'level'
+                                    }
+                                }else{
+                                    unit = {
+                                        'equal': '=',
+                                        'equalOrGreater': '>=',
+                                        'equalOrLess': '<=',
+                                        'greater': '>',
+                                        'less': '<'
+                                    }
+                                }
+
+
+                                var unit_option = $('<select id="duration_unit">');
+                                $.each(unit, function (key, value) {
+                                    unit_option.append($('<option>', {value: key})
+                                        .text(value));
+                                });
+                                rowField.children().hide();
+                                rowField.append(unit_option);
+                                $('#duration_unit').val(rowText.html());
+                            }else{
+                                if(DEBUG)console.log('edit > text');
+                                rowField.find('input').val(rowText.html());
+                            }
+                        }
                         else{
                             // default case
                             if(DEBUG)console.log('edit > normal case');

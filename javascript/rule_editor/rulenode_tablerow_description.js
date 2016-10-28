@@ -239,11 +239,19 @@ toolstip = {
 				day_of_month:'date of month to start a new month, and allow an action to go through again'
 			}
 		},
-		every_n_day:{
+		everyNDays:{
 			description:'When EveryNDays is triggered more than once every N days, the rule will stop and the action will be discarded.',
 			field_desc:{
 				num_of_days:'time of day to start a new period, and allow an action to go through again',
 				time_of_day:'number of days before a new period begins, and allow an action to go through again'
+			}
+		},
+		userProfile:{
+			description:'check whether the profile of user meet condition.',
+			field_desc:{
+				profile:'profile to check',
+				operation:'operation',
+				value:'value (ex: gender = male)'
 			}
 		}
 	},
