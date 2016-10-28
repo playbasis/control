@@ -108,7 +108,7 @@ abstract class CITestCase extends PHPUnit_Framework_TestCase
             return $res;
         }
     }
-
+/*
     public function getToken()
     {
         $rest = $this->CI->rest;
@@ -118,4 +118,5 @@ abstract class CITestCase extends PHPUnit_Framework_TestCase
         ));
         return $response->success ? $response->response->token : null;
     }
+*/
 }
