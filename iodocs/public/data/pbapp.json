@@ -2939,14 +2939,14 @@
             {
               "Name": "status",
               "Required": "N",
-              "Default": "All",
+              "Default": "all",
               "Type": "enumerated",
               "Description": "status of custompoint",
               "EnumeratedList": [
-                "All",
-                "Approve",
-                "Pending",
-                "Reject"
+                "all",
+                "approve",
+                "pending",
+                "reject"
               ]
             },
             {
@@ -3087,12 +3087,12 @@
             {
               "Name": "sort",
               "Required": "N",
-              "Default": "ASC",
+              "Default": "asc",
               "Type": "enumerated",
-              "Description": "ASC=To get first Log , DESC=To get latest Log ,Default as ASC",
+              "Description": "asc=To get first Log , desc=To get latest Log ,Default as ASC",
               "EnumeratedList": [
-                "ASC",
-                "DESC"
+                "asc",
+                "desc"
               ]
             }
           ],
