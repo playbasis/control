@@ -780,7 +780,7 @@ class jigsaw extends MY_Model
             return false;
         } // there is no valid entry
         $max = $sum;
-        $ran = rand(0, $max - 1);
+        $ran = $max > 1 ? rand(0, $max - 1) : 0;
         foreach ($acc as $i => $value) {
             if ($ran < $value) {
                 $exInfo['index'] = $i;
