@@ -2408,7 +2408,7 @@ class Player extends REST2_Controller
 
     private function validClPlayerId($cl_player_id)
     {
-        return (!preg_match("/^([-a-z0-9_-])+$/i", $cl_player_id)) ? false : true;
+        return (!preg_match("/^([a-zA-Z0-9-_=]+)+$/i", $cl_player_id)) ? false : true;
     }
 
     private function validTelephonewithCountry($number)
