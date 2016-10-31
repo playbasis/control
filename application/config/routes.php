@@ -38,7 +38,7 @@
 |
 */
 
-define('ANY_STRING','([a-zA-Z0-9-%_:\.]+)');
+define('ANY_STRING','([a-zA-Z0-9-%_:\.=]+)');
 define('ANY_NUMBER','([0-9]+)');
 
 $route['default_controller'] = "welcome/playbasis";
