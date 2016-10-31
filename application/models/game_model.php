@@ -411,4 +411,26 @@ class Game_model extends MY_Model
         $this->mongo_db->inc('value', intval($quantity));
         $this->mongo_db->update('playbasis_reward_to_player');
     }
+
+    public function resetItemToPlayerById($client_id, $site_id, $item_list)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $date = new MongoDate();
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where_in('badge_id', $item_list);
+        $this->mongo_db->set('date_modified', $date);
+        $this->mongo_db->set('value', 0);
+        $this->mongo_db->update_all('playbasis_reward_to_player');
+    }
+
+    public function updateGameStageLastReset($client_id, $site_id, $game_id, $stage_id, $reset_date)
+    {
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('game_id', new MongoId($game_id));
+        $this->mongo_db->where('_id', new MongoId($stage_id));
+        $this->mongo_db->set('last_reset', $reset_date);
+        $this->mongo_db->update('playbasis_game_stage_to_client');
+    }
 }
