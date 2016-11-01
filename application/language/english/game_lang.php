@@ -31,6 +31,9 @@ $lang['entry_world_level']              = 'Level';
 $lang['entry_world_width']              = 'Width';
 $lang['entry_world_height']             = 'Height';
 $lang['entry_world_description']        = 'Description';
+$lang['entry_world_reset_enable']       = 'Reset Enable';
+$lang['entry_world_date_reset']         = 'Reset Date Start';
+$lang['entry_world_duration']           = 'Reset Duration (Days)';
 $lang['entry_world_image']              = 'Image';
 
 $lang['entry_template_name']            = 'Name';

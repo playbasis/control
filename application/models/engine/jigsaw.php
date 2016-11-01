@@ -736,9 +736,10 @@ class jigsaw extends MY_Model
     public function sequence($config, $input, &$exInfo = array())
     {
         $this->set_site_mongodb($input['site_id']);
-        $result = $this->getMostRecentJigsaw($input, array(
-            'input'
-        ));
+        $global = (isset($config["global"]) && $config["global"] === "true") ? true : false;
+
+        $result = $this->getMostRecentJigsaw($input, array('input'),$global);
+
         $i = !$result || !isset($result['input']['index']) ? 0 : $result['input']['index'] + 1;
         $exInfo['index'] = $i;
         $exInfo['break'] = true; // generally, "sequence" will block
@@ -825,17 +826,21 @@ class jigsaw extends MY_Model
         return $ok;
     }
 
-    public function getMostRecentJigsaw($input, $fields)
+    public function getMostRecentJigsaw($input, $fields, $global = false)
     {
         assert(isset($input['site_id']));
         $this->set_site_mongodb($input['site_id']);
         $this->mongo_db->select($fields);
         $this->mongo_db->where(array(
-            'pb_player_id' => $input['pb_player_id'],
+            'site_id' => $input['site_id'],
             'rule_id' => $input['rule_id'],
             'jigsaw_id' => $input['jigsaw_id'],
             'jigsaw_index' => $input['jigsaw_index']
         ));
+        if(!$global){
+            $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
+        }
+
         $this->mongo_db->order_by(array(
             'date_added' => 'desc'
         ));
@@ -845,10 +850,14 @@ class jigsaw extends MY_Model
         if (!$result) {
             $this->mongo_db->select($fields);
             $this->mongo_db->where(array(
-                'pb_player_id' => $input['pb_player_id'],
+                'site_id' => $input['site_id'],
                 'rule_id' => $input['rule_id'],
                 'jigsaw_id' => $input['jigsaw_id'],
             ));
+            if(!$global){
+                $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
+            }
+
             $this->mongo_db->order_by(array(
                 'date_added' => 'desc'
             ));

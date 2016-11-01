@@ -34,6 +34,8 @@ Node = function(json){
 
         if(this.category.toLowerCase() == "action"){
             var target_element = (toolstip[this.category.toLowerCase()]);
+        }else if(this.category.toLowerCase() == "reward" && !(toolstip[this.category.toLowerCase()].hasOwnProperty(this.jigsawName))){
+            var target_element = ((toolstip[this.category.toLowerCase()])['etc']);
         }else{
             var target_element = ((toolstip[this.category.toLowerCase()])[this.jigsawName]);
         }

@@ -94,11 +94,7 @@
                                                     <td><input type="text" name="worlds[<?php echo $index ?>][world_name]" id="worlds_<?php echo $index ?>_name" size="100" value="<?php echo $world['world_name'] ?>"></td>
                                                     <td></td>
                                                 </tr>
-                                                <tr>
-                                                    <td><?php echo $this->lang->line("entry_world_level"); ?>:</td>
-                                                    <td><input type="number" name="worlds[<?php echo $index ?>][world_level]" id="worlds_<?php echo $index ?>_level" size="100" min="1" value="<?php echo $world['world_level'] ?>"></td>
-                                                    <td></td>
-                                                </tr>
+
                                                 <tr>
                                                     <td><?php echo $this->lang->line("entry_image"); ?>:</td>
                                                     <td> <img src="<?php echo $world['world_thumb'] ?>" alt="" id="world_<?php echo $index ?>_thumb" onerror="$(this).attr("src","<?php echo base_url(); ?>image/default-image.png");"/>
@@ -114,24 +110,49 @@
                                                     <td><input type="text" name="worlds[<?php echo $index ?>][world_category]" id="worlds_<?php echo $index ?>_category" size="100" value="<?php echo $world['world_category'] ?>"></td>
                                                     <td></td>
                                                 </tr>
+                                                <tr>
+                                                    <td><?php echo $this->lang->line("entry_world_width"); ?>:</td>
+                                                    <td><input type="number" name=worlds[<?php echo $index ?>][world_width] id="worlds_<?php echo $index ?>_world_width" value="<?php echo $world['world_width'] ?>" size="100" min="1" value="1" onchange="add_thumbnail(<?php echo $index ?>)"></td>
+                                                    <td><input type="hidden" id="worlds_<?php echo $index ?>_world_width_temp" size="100" value="0"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><?php echo $this->lang->line("entry_world_height"); ?>:</td>
+                                                    <td><input type="number" name=worlds[<?php echo $index ?>][world_height] id="worlds_<?php echo $index ?>_world_height" value="<?php echo $world['world_height'] ?>" size="100" min="1" value="1" onchange="add_thumbnail(<?php echo $index ?>)"></td>
+                                                    <td><input type="hidden" id="worlds_<?php echo $index ?>_world_height_temp" size="100" value="0"></td>
+                                                </tr>
                                                 </table>
                                             </div>
                                             <div class="span6">
                                                 <table class="form">
                                                     <tr>
-                                                        <td><?php echo $this->lang->line("entry_world_width"); ?>:</td>
-                                                        <td><input type="number" name=worlds[<?php echo $index ?>][world_width] id="worlds_<?php echo $index ?>_world_width" value="<?php echo $world['world_width'] ?>" size="100" min="1" value="1" onchange="add_thumbnail(<?php echo $index ?>)"></td>
-                                                        <td><input type="hidden" id="worlds_<?php echo $index ?>_world_width_temp" size="100" value="0"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><?php echo $this->lang->line("entry_world_height"); ?>:</td>
-                                                        <td><input type="number" name=worlds[<?php echo $index ?>][world_height] id="worlds_<?php echo $index ?>_world_height" value="<?php echo $world['world_height'] ?>" size="100" min="1" value="1" onchange="add_thumbnail(<?php echo $index ?>)"></td>
-                                                        <td><input type="hidden" id="worlds_<?php echo $index ?>_world_height_temp" size="100" value="0"></td>
+                                                        <td><?php echo $this->lang->line("entry_world_level"); ?>:</td>
+                                                        <td><input type="number" name="worlds[<?php echo $index ?>][world_level]" id="worlds_<?php echo $index ?>_level" size="100" min="1" value="<?php echo $world['world_level'] ?>"></td>
+                                                        <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td><?php echo $this->lang->line("entry_world_description"); ?>:</td>
-                                                        <td><textarea name="worlds[<?php echo $index ?>][world_description]" rows="4"></textarea></td>
+                                                        <td><textarea name="worlds[<?php echo $index ?>][world_description]" rows="6"></textarea></td>
                                                         <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><?php echo $this->lang->line('entry_world_reset_enable'); ?>:</td>
+                                                        <td><input class="world_reset" type="checkbox" id="worlds_<?php echo $index ?>_reset_enable" name="worlds[<?php echo $index ?>][reset_enable]" <?php echo (isset($world['world_reset_enable']) && $world['world_reset_enable']) ? "checked" : ''; ?>></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><?php echo $this->lang->line('entry_world_date_reset'); ?>:</td>
+                                                        <td>
+                                                            <input type="text" class="date" id="worlds_<?php echo $index ?>_reset_date"  placeholder="Default is today"
+                                                                   name="worlds[<?php echo $index ?>][reset_date]" <?php echo (isset($world['world_reset_enable']) && $world['world_reset_enable']) ?  '': 'disabled'; ?>
+                                                                   value="<?php echo (isset($world['world_reset_date']) && $world['world_reset_date'] && strtotime(datetimeMongotoReadable($world['world_reset_date']))) ? date('Y-m-d', strtotime(datetimeMongotoReadable($world['world_reset_date']))) : "";?>" size="50" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><?php echo $this->lang->line('entry_world_duration'); ?>:</td>
+                                                        <td>
+                                                            <input type="number" id="worlds_<?php echo $index ?>_reset_duration" placeholder="Default is 30 days"
+                                                                   name="worlds[<?php echo $index ?>][reset_duration]" id="worlds_<?php echo $index ?>_reset_duration" size="100" <?php echo (isset($world['world_reset_enable']) && $world['world_reset_enable']) ?  '': 'disabled'; ?>
+                                                                   value="<?php echo isset($world['world_reset_date']) && $world['world_reset_date'] ?$world['world_reset_duration'] : ""?>">
+                                                        </td>
                                                     </tr>
                                                 </table>
                                             </div>
@@ -402,9 +423,10 @@
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
-<script>
 
+<script>
     $(function(){
+        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
         $('#status').bootstrapSwitch();
         $("#status").bootstrapSwitch('size', 'small');
         $("#status").bootstrapSwitch('onColor', 'success');
@@ -421,6 +443,21 @@
         $("#template_status").bootstrapSwitch('labelWidth', '10');
         $("#template_status").bootstrapSwitch('onText', 'Enable');
         $("#template_status").bootstrapSwitch('offText', 'Disable');
+        $('.world_reset').on( "change", function() {
+            var world = $(this).attr('id');
+            var data = world.split('_');
+            var id = data[1];
+            var reset_enable = $('#'+world+'');
+            var reset_date = $('#worlds_'+id+'_reset_date');
+            var reset_duration = $('#worlds_'+id+'_reset_duration');
+            if (reset_enable.attr('checked')) {
+                reset_date.attr('disabled',false);
+                reset_duration.attr('disabled',false);
+            } else {
+                reset_date.attr('disabled',true);
+                reset_duration.attr('disabled',true);
+            }
+        });
     });
 
     var countWorldId = 0,
@@ -570,11 +607,6 @@
                                                     <td></td>\
                                                 </tr>\
                                                 <tr>\
-                                                    <td><?php echo $this->lang->line("entry_world_level"); ?>:</td>\
-                                                    <td><input type="number" name="worlds['+itemWorldId+'][world_level]" id="worlds_'+itemWorldId+'_level" size="100" min="1" value="1"></td>\
-                                                    <td></td>\
-                                                </tr>\
-                                                <tr>\
                                                     <td><?php echo $this->lang->line("entry_image"); ?>:</td>\
                                                     <td> <img src="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>" alt="" id="world_'+itemWorldId+'_thumb" onerror="$(this).attr("src","<?php echo base_url(); ?>image/default-image.png");"/>\
                                                         <input type="hidden" name="worlds['+itemWorldId+'][world_image]" value="no_image.jpg" id="world_'+itemWorldId+'_image"/>\
@@ -589,10 +621,6 @@
                                                     <td><input type="text" name="worlds['+itemWorldId+'][world_category]" id="worlds_'+itemWorldId+'_category" size="100" value=""></td>\
                                                     <td></td>\
                                                 </tr>\
-                                            </table>\
-                                            </div>\
-                                            <div class="span6">\
-                                            <table class="form">\
                                                 <tr>\
                                                     <td><?php echo $this->lang->line("entry_world_width"); ?>:</td>\
                                                     <td><input type="number" name=worlds['+itemWorldId+'][world_width] id="worlds_'+itemWorldId+'_world_width" size="100" min="1" value="1" onchange="add_thumbnail('+itemWorldId+')"></td>\
@@ -603,10 +631,35 @@
                                                     <td><input type="number" name=worlds['+itemWorldId+'][world_height] id="worlds_'+itemWorldId+'_world_height" size="100" min="1" value="1" onchange="add_thumbnail('+itemWorldId+')"></td>\
                                                     <td><input type="hidden" id="worlds_'+itemWorldId+'_world_height_temp" size="100" value="0"></td>\
                                                 </tr>\
+                                            </table>\
+                                            </div>\
+                                            <div class="span6">\
+                                            <table class="form">\
+                                                <tr>\
+                                                    <td><?php echo $this->lang->line("entry_world_level"); ?>:</td>\
+                                                    <td><input type="number" name="worlds['+itemWorldId+'][world_level]" id="worlds_'+itemWorldId+'_level" size="100" min="1" value="1"></td>\
+                                                    <td></td>\
+                                                </tr>\
                                                 <tr>\
                                                     <td><?php echo $this->lang->line("entry_world_description"); ?>:</td>\
-                                                    <td><textarea name="worlds['+itemWorldId+'][world_description]" rows="4"></textarea></td>\
+                                                    <td><textarea name="worlds['+itemWorldId+'][world_description]" rows="6"></textarea></td>\
                                                     <td></td>\
+                                                </tr>\
+                                                <tr>\
+                                                    <td><?php echo $this->lang->line('entry_world_reset_enable'); ?>:</td>\
+                                                    <td><input class="world_reset" type="checkbox" id="worlds_'+itemWorldId+'_reset_enable" name="worlds['+itemWorldId+'][reset_enable]"></td>\
+                                                </tr>\
+                                                <tr>\
+                                                    <td><?php echo $this->lang->line('entry_world_date_reset'); ?>:</td>\
+                                                    <td>\
+                                                        <input type="text" class="date" id="worlds_'+itemWorldId+'_reset_date" name="worlds['+itemWorldId+'][reset_date]" disabled value="" size="50" />\
+                                                    </td>\
+                                                </tr>\
+                                                <tr>\
+                                                    <td><?php echo $this->lang->line('entry_world_duration'); ?>:</td>\
+                                                    <td>\
+                                                        <input type="number" id="worlds_'+itemWorldId+'_reset_duration" name="worlds['+itemWorldId+'][reset_duration]" id="worlds_'+itemWorldId+'_reset_duration" size="100" disabled value="">\
+                                                    </td>\
                                                 </tr>\
                                             </table>\
                                             </div>\
@@ -628,13 +681,26 @@
     });
 
     function init_world_event(id) {
-
+        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
         $('.world-item-wrapper .box-world-header').unbind().bind('click', function (data) {
             var $target = $(this).next('.box-content');
 
             if ($target.is(':visible')) $('i', $(this)).removeClass('icon-chevron-up').addClass('icon-chevron-down');
             else                       $('i', $(this)).removeClass('icon-chevron-down').addClass('icon-chevron-up');
             $target.slideToggle();
+        });
+
+        $('.world_reset').on( "change", function() {
+            var reset_enable = $('#worlds_'+id+'_reset_enable');
+            var reset_date = $('#worlds_'+id+'_reset_date');
+            var reset_duration = $('#worlds_'+id+'_reset_duration');
+            if (reset_enable.attr('checked')) {
+                reset_date.attr('disabled',false);
+                reset_duration.attr('disabled',false);
+            } else {
+                reset_date.attr('disabled',true);
+                reset_duration.attr('disabled',true);
+            }
         });
 
         $('.remove-world-btn').unbind().bind('click', function (data) {

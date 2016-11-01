@@ -2537,10 +2537,10 @@ class Cron extends CI_Controller
 
             foreach ($clients as $client) {
                 // deduct item of farm game
-                $game_id = $this->game_model->getGameSetting($client['client_id'], $client['site_id'], array('game_name' => 'farm'));
-                if($game_id){
+                $game_id = $this->game_model->getGameSetting($client['client_id'], $client['site_id'], array('game_name' => 'farm', 'filter_status' => true));
+                if ($game_id) {
                     // check if game item are not set then no need to do anything for this client
-                    $game_items = $this->game_model->getGameStageItem($client['client_id'], $client['site_id'], $game_id['_id'], array('filter_status' => true));
+                    $game_items = $this->game_model->getGameStageItem($client['client_id'], $client['site_id'], $game_id['_id']);
                     if($game_items){
                         $players = $this->player_model->findPlayersBySiteId($client['site_id']);
                         if($players){
@@ -2597,6 +2597,37 @@ class Cron extends CI_Controller
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function processGameReset()
+    {
+        $clients = $this->client_model->listClientActiveFeatureByFeatureName('Game');
+
+        if ($clients) {
+            foreach ($clients as $client) {
+                // deduct item of farm game
+                $game_id = $this->game_model->getGameSetting($client['client_id'], $client['site_id'], array('game_name' => 'farm', 'filter_status' => true));
+                if ($game_id) {
+                    // check if game item are not set then no need to do anything for this client
+                    $game_stages = $this->game_model->getGameStage($client['client_id'], $client['site_id'], $game_id['_id']);
+                    $now = new DateTime(datetimeMongotoReadable(new MongoDate()));
+                    if ($game_stages && is_array($game_stages)) foreach($game_stages as $stage){
+                        if (isset($stage['reset_enable']) && ($stage['reset_enable'] === "on")){
+                            $reset_time = isset($stage['last_reset']) ? new DateTime(datetimeMongotoReadable($stage['last_reset'])) :
+                                                                        new DateTime(datetimeMongotoReadable($stage['reset_date']));
+                            $reset_time->modify("+".$stage['reset_duration']." day");
+                            $interval = $now->diff($reset_time);
+                            if ($interval->invert){
+                                //delete
+                                $this->game_model->resetItemToPlayerById($client['client_id'], $client['site_id'], $stage['item_list']);
+                                //update reset date
+                                $this->game_model->updateGameStageLastReset($client['client_id'], $client['site_id'], $game_id['_id'], $stage['_id'], new MongoDate(strtotime($reset_time->date)));
                             }
                         }
                     }

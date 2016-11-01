@@ -101,7 +101,15 @@ class game extends MY_Controller
                         $stage_data['image']                  = $world['world_image'];
                         $stage_data['category']               = isset($world['world_category']) && !empty($world['world_category']) ? new MongoId($world['world_category']): "";
                         $stage_data['description']            = $world['world_description'];
-                        $stage_data['stage_config']['height'] = (int)$world['world_height'];
+                        $stage_data['reset_enable']           = $world['reset_enable'];
+                        if ($world['reset_enable'] == 'on'){
+                            $stage_data['reset_date']         = !empty($world['reset_date']) ? new MongoDate(strtotime($world['reset_date'])) : new MongoDate();
+                            $stage_data['reset_duration']     = !empty($world['reset_duration']) ? (int)$world['reset_duration'] : 30;
+                        } else {
+                            $stage_data['reset_date']         = null;
+                            $stage_data['reset_duration']     = null;
+                        }
+
                         $stage_data['item_list']              = $item_array;
 
                         $stage_data['stage_config']['width']  = (int)$world['world_width'];
@@ -304,6 +312,23 @@ class game extends MY_Controller
                 $this->data['worlds'][$index]['world_category'] = $stage['category'] . "";
             } else {
                 $this->data['worlds'][$index]['world_category'] = "";
+            }
+
+            if (isset($stage['reset_enable'])) {
+                $this->data['worlds'][$index]['world_reset_enable'] = $stage['reset_enable'] . "";
+            } else {
+                $this->data['worlds'][$index]['world_reset_enable'] = "";
+            }
+
+            if (isset($stage['reset_date'])) {
+                $this->data['worlds'][$index]['world_reset_date'] = dateMongotoReadable($stage['reset_date']);
+            } else {
+                $this->data['worlds'][$index]['world_reset_date'] = "";
+            }
+            if (isset($stage['reset_duration'])) {
+                $this->data['worlds'][$index]['world_reset_duration'] = $stage['reset_duration'] . "";
+            } else {
+                $this->data['worlds'][$index]['world_reset_duration'] = "";
             }
 
             if (isset($stage['stage_config']['width'])) {
