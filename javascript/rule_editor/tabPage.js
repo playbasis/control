@@ -204,14 +204,15 @@ $(document).ready(function() {
         }
     });
 
-    //Fetch goods collection item
+    //Fetch all goods
     $.ajax({
-        url: urlConfig.URL_getGoods(),
+        url: urlConfig.URL_getAllGoods(),
         dataType:"json",
         success: function(json) {
-            GoodsSet.list = json.goods;
+            GoodsSet.all_goods = json.goods;
         }
     });
+
 });
 
 BadgeSet = {
@@ -253,12 +254,12 @@ BadgeSet = {
 };
 
 GoodsSet = {
-    list:[],
+    all_goods:[],
     getGoodsImage:function(id){
         var output  = '';
-        if(this.list && this.list.length > 0){
-            for(var index in this.list){
-                var b = this.list[index];
+        if(this.all_goods && this.all_goods.length > 0){
+            for(var index in this.all_goods){
+                var b = this.all_goods[index];
                 if(b.goods_id == id){
                     var image = '';
                     var ims = b.image.split(".");
@@ -275,9 +276,9 @@ GoodsSet = {
 
     getGoodsName:function(id){
         var output  = '';
-        if(this.list && this.list.length > 0){
-            for(var index in this.list){
-                var b = this.list[index];
+        if(this.all_goods && this.all_goods.length > 0){
+            for(var index in this.all_goods){
+                var b = this.all_goods[index];
                 if(b.goods_id == id){
                     if (typeof b.group != "undefined"){
                         output =  b.group;
