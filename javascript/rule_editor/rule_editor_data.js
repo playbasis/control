@@ -37,7 +37,8 @@ urlConfig = {
   URL_deleteRule: function(){ return this.forgeCustomActionURL('deleteRule')},
   URL_changeRuleState: function(){ return this.forgeCustomActionURL('setRuleState')},
   URL_getBadges: function(){ return this.forgeCustomActionURL('loadBadges')},
-  URL_getGoods: function(){ return this.forgeCustomActionURL('loadGoods')}
+  URL_getGoods: function(){ return this.forgeCustomActionURL('loadGoods')},
+  URL_getAllGoods: function(){ return this.forgeCustomActionURL('loadAllGoods')}
 },
 
 
