@@ -103,7 +103,7 @@ class Custompoints extends MY_Controller
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['name'] = $custompoints_data['name'];
-                $data['quantity'] = isset($custompoints_data['quantity']) && !empty($custompoints_data['quantity']) ? intval($custompoints_data['quantity']) : null;
+                $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
                 $data['pending'] = isset($custompoints_data['pending']) && !empty($custompoints_data['pending']) ? $custompoints_data['pending'] : false;
                 $data['status'] = true;
                 $data['type'] = $custompoints_data['type_custompoint'];
@@ -354,7 +354,7 @@ class Custompoints extends MY_Controller
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['reward_id'] = $custompoints_id;
                 $data['name'] = $custompoints_data['name'];
-                $data['quantity'] = isset($custompoints_data['quantity']) && !empty($custompoints_data['quantity']) ? intval($custompoints_data['quantity']) : null;
+                $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
                 $data['pending'] = isset($custompoints_data['pending']) && !empty($custompoints_data['pending']) ? $custompoints_data['pending'] : false;
                 $data['type'] = $custompoints_data['type_custompoint'];
                 if ($custompoints_data['type_custompoint'] != "normal") {
