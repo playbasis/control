@@ -171,7 +171,7 @@ class Client_model extends MY_Model
 
     public function updatePlayerPointReward(
         $rewardId,
-        $quantity,
+        $amount,
         $pbPlayerId,
         $clPlayerId,
         $clientId,
@@ -181,44 +181,145 @@ class Client_model extends MY_Model
     ) {
         assert(isset($rewardId));
         assert(isset($siteId));
-        assert(isset($quantity));
+        assert(isset($amount));
         assert(isset($pbPlayerId));
         $this->set_site_mongodb($siteId);
 
-        //update player reward table
         $this->mongo_db->where(array(
-            'pb_player_id' => $pbPlayerId,
+            'client_id' => $clientId,
+            'site_id' => $siteId,
             'reward_id' => $rewardId
         ));
-        $hasReward = $this->mongo_db->count('playbasis_reward_to_player');
-        if ($hasReward) {
-            $this->mongo_db->where(array(
-                'pb_player_id' => $pbPlayerId,
-                'reward_id' => $rewardId
-            ));
-            $this->mongo_db->set('date_modified', new MongoDate(time()));
-            if ($overrideOldValue) {
-                $this->mongo_db->set('value', intval($quantity));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_reward_to_client');
+        $reward = false;
+        $status = array();
+        $status['reward_status'] = "REWARD_RECEIVED";
+        if ($result && $result[0]) {
+            $result = $result[0];
+            $is_custom = isset($result['is_custom']) && !empty($result['is_custom']) ? $result['is_custom'] : false;
+            $quantity = isset($result['quantity']) && !is_null($result['quantity']) ? $result['quantity'] : null;
+            $pending = isset($result['pending']) && !empty($result['pending']) ? $result['pending'] : false;
+            if (!$is_custom){
+                //update player reward table
+                $this->mongo_db->where(array(
+                    'pb_player_id' => $pbPlayerId,
+                    'reward_id' => $rewardId
+                ));
+                $hasReward = $this->mongo_db->count('playbasis_reward_to_player');
+                if ($hasReward) {
+                    $this->mongo_db->where(array(
+                        'pb_player_id' => $pbPlayerId,
+                        'reward_id' => $rewardId
+                    ));
+                    $this->mongo_db->set('date_modified', new MongoDate(time()));
+                    if ($overrideOldValue) {
+                        $this->mongo_db->set('value', intval($amount));
+                    } else {
+                        $this->mongo_db->inc('value', intval($amount));
+                    }
+                    $this->mongo_db->update('playbasis_reward_to_player');
+                } else {
+                    $mongoDate = new MongoDate(time());
+                    $this->mongo_db->insert('playbasis_reward_to_player', array(
+                        'pb_player_id' => $pbPlayerId,
+                        'cl_player_id' => $clPlayerId,
+                        'client_id' => $clientId,
+                        'site_id' => $siteId,
+                        'reward_id' => $rewardId,
+                        'value' => intval($amount),
+                        'date_added' => $mongoDate,
+                        'date_modified' => $mongoDate
+                    ));
+                }
+                $reward = true;
             } else {
-                $this->mongo_db->inc('value', intval($quantity));
+                if ((is_null($quantity) || (intval($quantity) > 0)) || ($amount < 0)){
+                    if ($quantity && ($amount > 0)) {
+                        $this->mongo_db->where(array(
+                            'client_id' => $clientId,
+                            'site_id' => $siteId,
+                            'reward_id' => $rewardId
+                        ));
+                        if ((intval($quantity) >= intval($amount)) || is_null($quantity)){
+                            $this->mongo_db->dec('quantity', intval($amount));
+                        } else {
+                            $this->mongo_db->dec('quantity', intval($quantity));
+                        }
+                        $this->mongo_db->update('playbasis_reward_to_client');
+                    }
+                    if ($pending && ($amount > 0)) {
+                        $mongoDate = new MongoDate(time());
+                        $inset_data = array(
+                            'pb_player_id' => $pbPlayerId,
+                            'cl_player_id' => $clPlayerId,
+                            'client_id' => $clientId,
+                            'site_id' => $siteId,
+                            'reward_id' => $rewardId,
+                            'status' => 'pending',
+                            'date_added' => $mongoDate,
+                            'date_modified' => $mongoDate
+                        );
+                        if ((intval($quantity) >= intval($amount))){
+                            $inset_data['value'] = intval($amount);
+                        } else {
+                            $inset_data['value'] = intval($quantity);
+                        }
+                        $transaction_id = $this->mongo_db->insert('playbasis_reward_status_to_player', $inset_data);
+                        $status['reward_status'] = "REWARD_PENDING";
+                        $status['transaction_id'] = $transaction_id;
+                    } else {
+                        //update player reward table
+                        $this->mongo_db->where(array(
+                            'pb_player_id' => $pbPlayerId,
+                            'reward_id' => $rewardId
+                        ));
+                        $hasReward = $this->mongo_db->count('playbasis_reward_to_player');
+                        if ($hasReward) {
+                            $this->mongo_db->where(array(
+                                'pb_player_id' => $pbPlayerId,
+                                'reward_id' => $rewardId
+                            ));
+                            $this->mongo_db->set('date_modified', new MongoDate(time()));
+                            if ($overrideOldValue) {
+                                $this->mongo_db->set('value', intval($amount));
+                            } else {
+                                if ((intval($quantity) >= intval($amount)) || is_null($quantity)){
+                                    $this->mongo_db->inc('value', intval($amount));
+                                } else {
+                                    $this->mongo_db->inc('value', intval($quantity));
+                                }
+                            }
+                            $this->mongo_db->update('playbasis_reward_to_player');
+                        } else {
+                            $mongoDate = new MongoDate(time());
+                            $insert_reward = array(
+                                'pb_player_id' => $pbPlayerId,
+                                'cl_player_id' => $clPlayerId,
+                                'client_id' => $clientId,
+                                'site_id' => $siteId,
+                                'reward_id' => $rewardId,
+                                'date_added' => $mongoDate,
+                                'date_modified' => $mongoDate
+                            );
+                            if ((intval($quantity) >= intval($amount))){
+                                $insert_reward['value'] = intval($amount);
+                            } else {
+                                $insert_reward['value'] = intval($quantity);
+                            }
+                            $this->mongo_db->insert('playbasis_reward_to_player', $insert_reward);
+                        }
+                        $reward = true;
+                    }
+                } else {
+                    // not enough
+                    $status['reward_status'] = "REWARD_NOT_AVAILABLE";
+                }
             }
-            $this->mongo_db->update('playbasis_reward_to_player');
-        } else {
-            $mongoDate = new MongoDate(time());
-            $this->mongo_db->insert('playbasis_reward_to_player', array(
-                'pb_player_id' => $pbPlayerId,
-                'cl_player_id' => $clPlayerId,
-                'client_id' => $clientId,
-                'site_id' => $siteId,
-                'reward_id' => $rewardId,
-                'value' => intval($quantity),
-                'date_added' => $mongoDate,
-                'date_modified' => $mongoDate
-            ));
         }
 
         //update client reward limit
-        if (!$anonymous) {
+        if (!$anonymous && $reward) {
             $this->mongo_db->select(array('limit'));
             $this->mongo_db->where(array(
                 'reward_id' => $rewardId,
@@ -235,9 +336,10 @@ class Client_model extends MY_Model
                 'reward_id' => $rewardId,
                 'site_id' => $siteId
             ));
-            $this->mongo_db->dec('limit', intval($quantity));
+            $this->mongo_db->dec('limit', intval($amount));
             $this->mongo_db->update('playbasis_reward_to_client');
         }
+        return $status;
     }
 
     public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig, $anonymous = false)
@@ -328,8 +430,12 @@ class Client_model extends MY_Model
             ));
         } else {
             //update player reward
-            $this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'],
-                $input['client_id'], $input['site_id'], $anonymous);
+            $status = $this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'],
+                $input['client_id'], $input['site_id'], $anonymous, $jigsawConfig);
+            $jigsawConfig['reward_status'] = $status['reward_status'];
+            if(isset($status['transaction_id']) && !empty($status['transaction_id'])){
+                $jigsawConfig['transaction_id'] = $status['transaction_id'];
+            }
         }
         $jigsawConfig['reward_id'] = $customRewardId;
         $jigsawConfig['reward_name'] = $rewardName;

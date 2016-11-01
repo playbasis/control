@@ -32,6 +32,7 @@ class Engine extends Quest
         $this->load->model('level_model');
         $this->load->model('game_model');
         $this->load->model('badge_model');
+        $this->load->model('reward_model');
     }
 
     public function getActionConfig_get()
@@ -864,6 +865,20 @@ class Engine extends Quest
                     $input['level'] = $level['level'];
                 }
 
+                // User profile condition
+                if (($input['jigsaw_name']) == 'userProfile') {
+                    //read player information
+                    $player_profile = $this->player_model->readPlayer($input['pb_player_id'], $this->site_id, array(
+                        'exp','gender','birth_date'
+                    ));
+
+                    $level = $this->level_model->getLevelByExp($player_profile['exp'], $this->validToken['client_id'],
+                        $this->validToken['site_id']);
+
+                    $player_profile['level'] = isset($level['level']) ? $level['level'] : null;
+                    $input['user_profile'] = $player_profile;
+                }
+
                 // Game level condition
                 if (($input['jigsaw_name']) == 'gameLevel') {
                     //get current game stage of player
@@ -983,10 +998,14 @@ class Engine extends Quest
                             }
 
                             $event = array(
-                                'event_type' => 'REWARD_RECEIVED',
+                                'event_type' => isset($jigsawConfig['reward_status']) && !empty($jigsawConfig['reward_status']) ? $jigsawConfig['reward_status'] : 'REWARD_RECEIVED',
                                 'reward_type' => $jigsawConfig['reward_name'],
                                 'value' => $jigsawConfig['quantity']
                             );
+                            if (isset($jigsawConfig['transaction_id']) && !empty($jigsawConfig['transaction_id'])){
+                                $event['transaction_id'] = $jigsawConfig['transaction_id'];
+                            }
+
                             array_push($apiResult['events'],
                                 $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
@@ -1076,7 +1095,7 @@ class Engine extends Quest
                                 } else {
                                     //update point-based reward
                                     if (!$input["test"]) {
-                                        $this->client_model->updatePlayerPointReward(
+                                        $reward = $this->client_model->updatePlayerPointReward(
                                             $jigsawConfig['reward_id'],
                                             $jigsawConfig['quantity'],
                                             $input['pb_player_id'],
@@ -1088,10 +1107,13 @@ class Engine extends Quest
                                 }  // close if ($jigsawConfig["reward_name"] == 'exp')
 
                                 $event = array(
-                                    'event_type' => 'REWARD_RECEIVED',
+                                    'event_type' => isset($reward['reward_status']) && !empty($reward['reward_status']) ? $reward['reward_status'] : 'REWARD_RECEIVED',
                                     'reward_type' => $jigsawConfig['reward_name'],
                                     'value' => $jigsawConfig['quantity']
                                 );
+                                if (isset($reward['transaction_id']) && !empty($reward['transaction_id'])) {
+                                    $event['transaction_id'] = $reward['transaction_id'];
+                                }
                                 array_push($apiResult['events'],
                                     $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
@@ -1124,6 +1146,14 @@ class Engine extends Quest
                                             $eventMessage,
                                             '');
                                     }
+
+                                    if(isset($jigsawConfig['custom_log']) && $jigsawConfig['custom_log']){
+                                        if(isset($input[$jigsawConfig['custom_log']]) && $input[$jigsawConfig['custom_log']]){
+                                            $this->reward_model->addCustomLog($client_id, $site_id, $input['player_id'],
+                                                $input['pb_player_id'], $jigsawConfig['reward_id'], $jigsawConfig['custom_log'], $input[$jigsawConfig['custom_log']]);
+                                        }
+                                    }
+
                                 }  // close if (!$input["test"])
                             } else {
                                 switch ($jigsawConfig['reward_name']) {

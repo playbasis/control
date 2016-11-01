@@ -26,6 +26,144 @@ class Reward_model extends MY_Model
         return $result;
     }
 
+    public function listPendingRewards($data)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(
+            array('_id',
+                  'cl_player_id',
+                  'reward_id',
+                  'value',
+                  'status',
+                  'date_added'
+            ));
+
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+        ));
+        if (isset($data['status'])){
+            $this->mongo_db->where('status', $data['status']);
+        }
+
+        if (isset($data['player_list']) && !empty($data['player_list']) && is_array($data['player_list'])){
+            $this->mongo_db->where_in('cl_player_id', $data['player_list']);
+        }
+        if (isset($data['from']) && !empty($data['from'])){
+            $this->mongo_db->where_gte('date_added', $data['from']);
+        }
+        if (isset($data['to']) && !empty($data['to'])){
+            $this->mongo_db->where_lte('date_added', $data['to']);
+        }
+
+        if (isset($data['offset']) && !empty($data['offset'])) {
+            if ($data['offset'] < 0) {
+                $data['offset'] = 0;
+            }
+        } else {
+            $data['offset'] = 0;
+        }
+
+        if (isset($data['limit']) && !empty($data['limit'])) {
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+        } else {
+            $data['limit'] = 20;
+        }
+
+        $this->mongo_db->limit((int)$data['limit']);
+        $this->mongo_db->offset((int)$data['offset']);
+        $result = $this->mongo_db->get('playbasis_reward_status_to_player');
+        return $result;
+    }
+
+    public function getPendingRewardsById($data)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(
+            array('_id',
+                'cl_player_id',
+                'reward_id',
+                'value',
+                'status',
+                'date_added'
+            ));
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            '_id' => $data['transaction_id']
+        ));
+        $result = $this->mongo_db->get('playbasis_reward_status_to_player');
+        return $result? $result[0]: null;
+    }
+    public function approvePendingReward($data,$approve)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            '_id' => $data['transaction_id'],
+            'status' => 'pending'
+        ));
+        $pending_reward = $this->mongo_db->get('playbasis_reward_status_to_player');
+
+        if ($pending_reward){
+            $pending_reward = $pending_reward[0];
+            if ($approve) {
+                $this->mongo_db->where(array(
+                    'client_id' => $data['client_id'],
+                    'site_id' => $data['site_id'],
+                    '_id' => $data['transaction_id']
+                ));
+                $this->mongo_db->set('status', 'approve');
+                $this->mongo_db->update('playbasis_reward_status_to_player');
+
+                $this->mongo_db->where(array(
+                    'client_id' => $data['client_id'],
+                    'site_id' => $data['site_id'],
+                    'reward_id' => $pending_reward['reward_id']
+                ));
+                $player_reward = $this->mongo_db->get('playbasis_reward_to_player');
+                if ($player_reward){
+                    $this->mongo_db->where(array(
+                        'client_id' => $data['client_id'],
+                        'site_id' => $data['site_id'],
+                        'reward_id' => $pending_reward['reward_id']
+                    ));
+                    $this->mongo_db->inc('value', intval($pending_reward['value']));
+                    $this->mongo_db->set('date_modified', new MongoDate());
+                    $this->mongo_db->update('playbasis_reward_to_player');
+                } else {
+                    unset($pending_reward['status']);
+                    $pending_reward['date_added'] = new MongoDate();
+                    $pending_reward['date_modified'] = new MongoDate();
+                    $this->mongo_db->insert('playbasis_reward_to_player',$pending_reward);
+                }
+            } else {
+                $this->mongo_db->where(array(
+                    'client_id' => $data['client_id'],
+                    'site_id' => $data['site_id'],
+                    '_id' => $data['transaction_id']
+                ));
+                $this->mongo_db->set('status', 'reject');
+                $this->mongo_db->update('playbasis_reward_status_to_player');
+
+                $this->mongo_db->where(array(
+                    'client_id' => $data['client_id'],
+                    'site_id' => $data['site_id'],
+                    'reward_id' => $pending_reward['reward_id']
+                ));
+                $this->mongo_db->inc('quantity', intval($pending_reward['value']));
+                $this->mongo_db->set('date_modified', new MongoDate());
+                $this->mongo_db->update('playbasis_reward_to_client');
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function getRewardName($data, $reward_id)
     {
         $this->set_site_mongodb($data['site_id']);
@@ -197,6 +335,56 @@ class Reward_model extends MY_Model
             array_push($result, array('_id' => $to, 'value' => 0));
         }
         return $result;
+    }
+
+    public function customLog($data)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(array('_id','value'));
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'pb_player_id' => $data['pb_player_id'],
+            'reward_id' => $data['reward_id'],
+            'key' => $data['key'],
+            'status' => true,
+        ));
+        $this->mongo_db->order_by(array('date_added' => $data['sort']));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_reward_custom_log');
+        return $result ? $result[0] : null;
+    }
+
+    public function setCustomLog($data)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            '_id' => $data['log_id'],
+        ));
+        $this->mongo_db->set('date_modified', new MongoDate());
+        $this->mongo_db->set('status', $data['status']);
+        return $this->mongo_db->update('playbasis_reward_custom_log');
+    }
+
+    public function addCustomLog($client_id, $site_id, $cl_player_id, $pb_player_id, $reward_id, $key, $value)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $insert_data = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'cl_player_id' => $cl_player_id,
+            'pb_player_id' => new MongoId($pb_player_id),
+            'reward_id' => new MongoId($reward_id),
+            'key' => $key,
+            'value' => $value,
+            'status' => true,
+            'date_added' => new MongoDate(),
+            'date_modified' => new MongoDate()
+        );
+        return $this->mongo_db->insert('playbasis_reward_custom_log', $insert_data);
     }
 }
 

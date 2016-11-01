@@ -1012,12 +1012,16 @@ class Quiz extends REST2_Controller
                                 'pb_player_id' => $pb_player_id,
                                 'player_id' => $cl_player_id
                             ), $return_data);
-                            array_push($events, array(
-                                'event_type' => 'REWARD_RECEIVED',
+                            $event = array(
+                                'event_type' => isset($return_data['reward_status']) && !empty($return_data['reward_status']) ? $return_data['reward_status'] : 'REWARD_RECEIVED',
                                 'reward_type' => $name,
                                 'reward_id' => $id,
                                 'value' => $value
-                            ));
+                            );
+                            if (isset($return_data['transaction_id']) && !empty($return_data['transaction_id'])){
+                                $event['transaction_id'] = $return_data['transaction_id'];
+                            }
+                            array_push($events, $event);
                         }
                     }
                     break;

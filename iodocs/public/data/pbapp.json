@@ -2917,6 +2917,219 @@
       ]
     },
     {
+      "name": "Point API",
+      "endpoint": ["Point"],
+      "Public": "Y",
+      "methods": [
+        {
+          "MethodName": "List Custom Status",
+          "Synopsis": "Return list of custompoint to be approve",
+          "HTTPMethod": "GET",
+          "URI": "Point/custom/list",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "player_list",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "List of player, ex. john,max,robert"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "all",
+              "Type": "enumerated",
+              "Description": "status of custompoint",
+              "EnumeratedList": [
+                "all",
+                "approve",
+                "pending",
+                "reject"
+              ]
+            },
+            {
+              "Name": "from",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "From date in the format YYYY-MM-DD (ex.1982-09-29)"
+            },
+            {
+              "Name": "to",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "To date in the format YYYY-MM-DD (ex.1982-09-29)"
+            },
+            {
+              "Name": "offset",
+              "Required": "N",
+              "Default": "0",
+              "Type": "string",
+              "Description": "Specify paging offset [default = 0]"
+            },
+            {
+              "Name": "limit",
+              "Required": "N",
+              "Default": "20",
+              "Type": "string",
+              "Description": "Specify paging limit [default = 20]"
+            }
+          ],
+          "response": [
+            {
+              "cl_player_id":     { "-type": "string"},
+              "reward_name":      { "-type": "string"},
+              "value":            { "-type": "integer"},
+              "status":           { "-type": "string"},
+              "date_added":       { "-type": "string"},
+              "transaction_id":   { "-type": "string"}
+            }
+          ]
+        },
+        {
+          "MethodName": "Retrieve Transaction CustomPoint",
+          "Synopsis": "Return transaction of custompoint",
+          "HTTPMethod": "GET",
+          "URI": "Point/custom/transaction",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "transaction_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "transaction id of custompoint"
+            }
+          ],
+          "response": {
+            "cl_player_id":     { "-type": "string"},
+            "reward_name":      { "-type": "string"},
+            "value":            { "-type": "integer"},
+            "status":           { "-type": "string"},
+            "date_added":       { "-type": "string"},
+            "transaction_id":   { "-type": "string"}
+          }
+        },
+        {
+          "MethodName": "Approve Transaction CustomPoint",
+          "Synopsis": "To approve custom point in transaction list",
+          "HTTPMethod": "POST",
+          "URI": "Point/custom/approval",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "transaction_list",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "list of transaction id of custompoint ex. xxxx,xxxx,xxxx"
+            },
+            {
+              "Name": "approve",
+              "Required": "Y",
+              "Default": "true",
+              "Type": "enumerated",
+              "Description": "approve status, true = approve , false = reject",
+              "EnumeratedList": [
+                "true",
+                "false"
+              ]
+            }
+          ],
+          "response": [
+            {
+              "transaction_id":  { "-type": "string"},
+              "status":          { "-type": "string"}
+            }
+          ]
+        },
+        {
+          "MethodName": "Retrieve Custom Log",
+          "Synopsis": "Return First/Last Reward Custom Log",
+          "HTTPMethod": "GET",
+          "URI": "Point/custom/log",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "player_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "reward_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "name of reward to be get the custom log"
+            },
+            {
+              "Name": "key",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "key of custom param"
+            },
+            {
+              "Name": "sort",
+              "Required": "N",
+              "Default": "asc",
+              "Type": "enumerated",
+              "Description": "asc=To get first Log , desc=To get latest Log ,Default as ASC",
+              "EnumeratedList": [
+                "asc",
+                "desc"
+              ]
+            }
+          ],
+          "response": {
+            "log_id":       { "-type": "string"},
+            "value":        { "-type": "string"}
+          }
+
+        },
+        {
+          "MethodName": "Clear Reward Custom Log",
+          "Synopsis": "To clear reward custom log",
+          "HTTPMethod": "POST",
+          "URI": "Point/custom/clearLog",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "log_id",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "id of reward custom log"
+            }
+          ],
+          "response": {}
+        }
+      ]
+    },
+    {
       "name": "Merchant API",
       "endpoint": ["Merchant"],
       "Public": "Y",

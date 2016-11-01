@@ -508,7 +508,7 @@ class Service_model extends MY_Model
                     $event['quest'] = $this->getQuest(array('site_id' => $site_id, 'quest_id' => $quest_id));
                     unset($event['url']);
                     break;
-                case ACTION_COMPLETE_QUEST:
+                case ACTION_COMPLETE_MISSION:
                     $mission_id = new MongoId($event['url']);
                     $event['mission'] = $this->getMission(array('site_id' => $site_id, 'mission_id' => $mission_id));
                     $quest_id = $this->getQuestIdByMissionId(array('site_id' => $site_id, 'mission_id' => $mission_id));

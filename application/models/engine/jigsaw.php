@@ -103,6 +103,67 @@ class jigsaw extends MY_Model
         return $result;
     }
 
+    public function userprofile($config, $input, &$exInfo = array())
+    {
+        assert($config != false);
+        assert(is_array($config));
+        assert(isset($config['profile']));
+        assert(isset($config['operation']));
+        $now = isset($input['rule_time']) ? $input['rule_time'] : new MongoDate();
+        if(!(isset($config['value']) && $config['value'])){
+            return false;
+        }
+
+        // calculate age of user
+        if($config['profile'] == 'age'){
+            if(isset($input['user_profile']['birth_date']) && $input['user_profile']['birth_date']){
+
+                $now = new Datetime(datetimeMongotoReadable($now));
+                $birth_date = new Datetime($input['user_profile']['birth_date']);
+                $interval = $now->diff($birth_date);
+                if($interval->invert == 0){
+                    // $now <= birth date
+                    return false;
+                }
+                $input['user_profile']['age'] = $interval->y;
+            }else{
+                return false;
+            }
+        }
+
+        $result = false;
+
+        if($config['profile'] == 'gender' && isset($input['user_profile']['gender']) && $config['operation'] == "="){
+            if($input['user_profile']['gender'] == 1){
+                $male = array("male","man","gentleman");
+                if(in_array($config['value'],$male)){
+                    $result = true;
+                }
+            }else if($input['user_profile']['gender'] == 0){
+                $female = array("female","woman","lady");
+                if(in_array($config['value'],$female)){
+                    $result = true;
+                }
+            }
+        }else {
+            if (isset($input['user_profile'][$config['profile']])) {
+                if ($config['operation'] == '=') {
+                    $result = ($input['user_profile'][$config['profile']] == $config['value']);
+                } elseif ($config['operation'] == '>') {
+                    $result = ($input['user_profile'][$config['profile']] >  $config['value']);
+                } elseif ($config['operation'] == '<') {
+                    $result = ($input['user_profile'][$config['profile']] <  $config['value']);
+                } elseif ($config['operation'] == '>=') {
+                    $result = ($input['user_profile'][$config['profile']] >= $config['value']);
+                } elseif ($config['operation'] == '<=') {
+                    $result = ($input['user_profile'][$config['profile']] <= $config['value']);
+                }
+            }
+        }
+
+        return $result;
+    }
+
     public function gameLevel($config, $input, &$exInfo = array())
     {
         assert($config != false);
@@ -748,9 +809,10 @@ class jigsaw extends MY_Model
     public function sequence($config, $input, &$exInfo = array())
     {
         $this->set_site_mongodb($input['site_id']);
-        $result = $this->getMostRecentJigsaw($input, array(
-            'input'
-        ));
+        $global = (isset($config["global"]) && $config["global"] === "true") ? true : false;
+
+        $result = $this->getMostRecentJigsaw($input, array('input'),$global);
+
         $i = !$result || !isset($result['input']['index']) ? 0 : $result['input']['index'] + 1;
         $exInfo['index'] = $i;
         $exInfo['break'] = true; // generally, "sequence" will block
@@ -837,17 +899,21 @@ class jigsaw extends MY_Model
         return $ok;
     }
 
-    public function getMostRecentJigsaw($input, $fields)
+    public function getMostRecentJigsaw($input, $fields, $global = false)
     {
         assert(isset($input['site_id']));
         $this->set_site_mongodb($input['site_id']);
         $this->mongo_db->select($fields);
         $this->mongo_db->where(array(
-            'pb_player_id' => $input['pb_player_id'],
+            'site_id' => $input['site_id'],
             'rule_id' => $input['rule_id'],
             'jigsaw_id' => $input['jigsaw_id'],
             'jigsaw_index' => $input['jigsaw_index']
         ));
+        if(!$global){
+            $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
+        }
+
         $this->mongo_db->order_by(array(
             'date_added' => 'desc'
         ));
@@ -857,10 +923,14 @@ class jigsaw extends MY_Model
         if (!$result) {
             $this->mongo_db->select($fields);
             $this->mongo_db->where(array(
-                'pb_player_id' => $input['pb_player_id'],
+                'site_id' => $input['site_id'],
                 'rule_id' => $input['rule_id'],
                 'jigsaw_id' => $input['jigsaw_id'],
             ));
+            if(!$global){
+                $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
+            }
+
             $this->mongo_db->order_by(array(
                 'date_added' => 'desc'
             ));

@@ -742,7 +742,7 @@ class Quest extends REST2_Controller
         );
 
         $player = $this->player_model->readPlayer($player_id, $validToken['site_id'], 'anonymous');
-        $anonymous = $player['anonymous'] != null ? $player['anonymous'] : false;
+        $anonymous = isset($player['anonymous']) && $player['anonymous'] != null ? $player['anonymous'] : false;
 
         $mission = $this->quest_model->getMission($data);
 
@@ -803,7 +803,7 @@ class Quest extends REST2_Controller
         );
 
         $player = $this->player_model->readPlayer($player_id, $validToken['site_id'], 'anonymous');
-        $anonymous = $player['anonymous'] != null ? $player['anonymous'] : false;
+        $anonymous = isset($player['anonymous']) && $player['anonymous'] != null ? $player['anonymous'] : false;
 
         $quest = $this->quest_model->getQuest($data);
 
@@ -863,7 +863,7 @@ class Quest extends REST2_Controller
         );
 
         $player = $this->player_model->readPlayer($player_id, $validToken['site_id'], 'anonymous');
-        $anonymous = $player['anonymous'] != null ? $player['anonymous'] : false;
+        $anonymous = isset($player['anonymous']) && $player['anonymous'] != null ? $player['anonymous'] : false;
 
         foreach ($array_reward as $r) {
 
@@ -989,10 +989,14 @@ class Quest extends REST2_Controller
                 }
 
                 $event = array(
-                    'event_type' => 'REWARD_RECEIVED',
+                    'event_type' => isset($return_data['reward_status']) && !empty($return_data['reward_status']) ? $return_data['reward_status'] : 'REWARD_RECEIVED',
                     'reward_type' => $reward_type_name,
                     'value' => $r["reward_value"]
                 );
+                if (isset($return_data['transaction_id']) && !empty($return_data['transaction_id'])){
+                    $event['transaction_id'] = $return_data['transaction_id'];
+                }
+                
                 array_push($sub_events['events'], $event);
                 $eventMessage = $this->utility->getEventMessage($reward_type_message, $r["reward_value"],
                     $reward_type_name);
