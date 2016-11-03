@@ -684,13 +684,6 @@ class Rule extends MY_Controller
 
     public function loadGoodsById()
     {
-        $this->load->model('Badge_model');
-        $this->load->model('Goods_model');
-
-        $siteId = $this->User_model->getSiteId();
-        $clientId = $this->User_model->getClientId();
-
-
         if (!$this->input->get('goodsID')) {
             $this->jsonErrorResponse();
             return;
