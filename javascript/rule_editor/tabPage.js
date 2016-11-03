@@ -217,7 +217,7 @@ $(document).ready(function() {
 BadgeSet = {
     list:[],
     getBadgeImage:function(id){
-        var output  = '';
+        var output =  '<img src="'+imageUrlPath+'cache/data/no_image-100x100.jpg"/>';
         if(this.list && this.list.length > 0){
             for(var index in this.list){
                 var b = this.list[index];
@@ -227,8 +227,6 @@ BadgeSet = {
                                 image = imageUrlPath+"cache/"+ims[0]+"-100x100."+ims[1];
                             output =  '<img src="'+image+'" />';
                     break;
-                }else{
-                    output =  '<img src="'+imageUrlPath+'cache/data/no_image-100x100.jpg"/>';
                 }
             }//end for
         }//end if
@@ -236,15 +234,13 @@ BadgeSet = {
     },//end function
 
     getBadgeName:function(id){
-        var output  = '';
+        var output  = 'item';
         if(this.list && this.list.length > 0){
             for(var index in this.list){
                 var b = this.list[index];
                 if(b.badge_id == id){
                     output =  b.name;
                     break;
-                }else{
-                    output =  'item';
                 }
             }//end for
         }//end if
@@ -254,27 +250,140 @@ BadgeSet = {
 
 GoodsSet = {
     list:[],
-    getGoodsImage:function(id){
-        var output  = '';
+    new_list:[],
+    getGoodsImageDirect:function(id){
+        var output  = '<img src="'+imageUrlPath+'cache/data/no_image-100x100.jpg"/>';
+        var found = false;
         if(this.list && this.list.length > 0){
             for(var index in this.list){
                 var b = this.list[index];
+
                 if(b.goods_id == id){
                     var image = '';
                     var ims = b.image.split(".");
                     image = imageUrlPath+"cache/"+ims[0]+"-100x100."+ims[1];
                     output =  '<img src="'+image+'" />';
+                    found = true;
                     break;
-                }else{
-                    output =  '<img src="'+imageUrlPath+'cache/data/no_image-100x100.jpg"/>';
                 }
             }//end for
+            if(!found){
+                if(this.new_list && this.new_list[0] != undefined && this.new_list.length > 0){
+                    // check already in new list ?
+                    for(var index1 in this.new_list){
+                        var a = this.new_list[index1];
+                        if(a.goods_id == id){
+                            var image = '';
+                            var ims = a.image.split(".");
+                            image = imageUrlPath+"cache/"+ims[0]+"-100x100."+ims[1];
+                            output =  '<img src="'+image+'" />';
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(!found && id){
+                    var goods_info = [];
+                    //todo: set time out of jquery
+                    $.ajax({
+                        url: urlConfig.URL_getGoodsById(),
+                        data: 'goodsID='+id ,
+                        dataType:"json",
+                        async: false,
+                        success: function(json) {
+                            goods_info = json.goods_info;
+                            if(goods_info != "undefined"){
+                                GoodsSet.new_list.push(goods_info);
+                                var image = '';
+                                var ims = goods_info['image'].split(".");
+                                image = imageUrlPath+"cache/"+ims[0]+"-100x100."+ims[1];
+                                output =  '<img src="'+image+'" />';
+                            }
+                        }
+                    });
+                }
+            }
+        }//end if
+        return output;
+    },//end function
+
+    getGoodsImage:function(id){
+        var output  = '<img src="'+imageUrlPath+'cache/data/no_image-100x100.jpg"/>';
+        if(this.list && this.list.length > 0){
+            for(var index in this.list){
+                var b = this.list[index];
+                if(b['goods_id'] == id){
+                    var image = '';
+                    var ims = b.image.split(".");
+                    image = imageUrlPath+"cache/"+ims[0]+"-100x100."+ims[1];
+                    output =  '<img src="'+image+'" />';
+                    break;
+                }
+            }//end for
+        }//end if
+
+        return output;
+    },//end function
+
+    getGoodsNameDirect:function(id){
+        var output =  'goods';
+        var found = false;
+        if(this.list && this.list.length > 0){
+            for(var index in this.list){
+                var b = this.list[index];
+                if(b.goods_id == id){
+                    if (typeof b.group != "undefined"){
+                        output =  b.group;
+                    }else{
+                        output =  b.name;
+                    }
+                    found = true;
+                    break;
+                }
+            }//end for
+            if(!found){
+                if(this.new_list && this.new_list[0] != undefined && this.new_list.length > 0){
+                    // check already in new list ?
+                    for(var index1 in this.new_list){
+                        var c = this.new_list[index1];
+                        if(c.goods_id == id){
+                            if (typeof c.group != "undefined"){
+                                output =  c.group;
+                            }else{
+                                output =  c.name;
+                            }
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(!found && id){
+                    var goods_info = [];
+                    $.ajax({
+                        url: urlConfig.URL_getGoodsById(),
+                        data: 'goodsID='+id ,
+                        dataType:"json",
+                        success: function(json) {
+                            goods_info = json.goods_info;
+                            if(goods_info != "undefined"){
+                                GoodsSet.new_list.push(goods_info);
+                                if (typeof goods_info['group'] != "undefined"){
+                                    output =  goods_info['group'];
+                                }else{
+                                    output =  goods_info['name'];
+                                }
+                            }
+                        },
+                        async: false
+                    });
+                }
+            }
         }//end if
         return output;
     },//end function
 
     getGoodsName:function(id){
-        var output  = '';
+        var output  = 'goods';
         if(this.list && this.list.length > 0){
             for(var index in this.list){
                 var b = this.list[index];
@@ -285,8 +394,6 @@ GoodsSet = {
                         output =  b.name;
                     }
                     break;
-                }else{
-                    output =  'goods';
                 }
             }//end for
         }//end if
