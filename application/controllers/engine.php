@@ -284,23 +284,19 @@ class Engine extends Quest
 
     private function findGoodsDetail($client_id, $site_id, $item_id)
     {
-        $goodsData = $this->jigsaw_model->getGoods($site_id, $item_id);
+        $goodsData = $this->goods_model->getGoods(array('client_id'=>$client_id , 'site_id'=>$site_id ,'goods_id'=>$item_id));
         if (!$goodsData) {
             return null;
-        }
-
-        if (isset($goodsData['group'])) {
-            $goodsData = $this->goods_model->getGoodsFromGroup($client_id, $site_id, $goodsData['group'], null, 1);
-            if (!$goodsData) {
-                return null;
-            }
         }
 
         unset($goodsData['_id']);
         unset($goodsData['redeem']);
         unset($goodsData['quantity']);
-        $goodsData['goods_id'] = $goodsData['goods_id'] . '';
-        $goodsData['image'] = $this->config->item('IMG_PATH') . $goodsData['image'];
+        unset($goodsData['days_expire']);
+        unset($goodsData['date_expired_coupon']);
+        unset($goodsData['sponsor']);
+        unset($goodsData['sort_order']);
+
         return $goodsData;
     }
 
