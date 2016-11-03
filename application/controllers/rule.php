@@ -682,6 +682,23 @@ class Rule extends MY_Controller
         $this->output->set_output(json_encode($json));
     }
 
+    public function loadGoodsById()
+    {
+        if (!$this->input->get('goodsID')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        $goods_info = $this->Goods_model->getGoodsOfClientPrivate($this->input->get('goodsID'));
+        $goods_info['_id'] = $goods_info['_id'] . "";
+        $goods_info['goods_id'] = $goods_info['goods_id'] . "";
+        $goods_info['client_id'] = $goods_info['client_id'] . "";
+        $goods_info['site_id'] = $goods_info['site_id'] . "";
+
+        $json['goods_info'] = $goods_info;
+        $this->output->set_output(json_encode($json));
+    }
+
     public function jsonGetRuleById()
     {
         if ($this->User_model->isAdmin()) {
