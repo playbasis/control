@@ -93,6 +93,8 @@
                                 <ul class="dropdown-menu add-condition-menu" role="menu" aria-labelledby="dropdownMenu">
                                     <li class="add-datetime"><a tabindex="-1" href="javascript:void(0)" >DATE TIME</a></li>
                                     <li class="add-datejoin"><a tabindex="-1" href="javascript:void(0)" >JOIN</a></li>
+                                    <li class="add-gender"><a tabindex="-1" href="javascript:void(0)" >GENDER</a></li>
+                                    <li class="add-age"><a tabindex="-1" href="javascript:void(0)" >AGE</a></li>
                                     <li class="add-level"><a tabindex="-1" href="javascript:void(0)" >LEVEL</a></li>
                                     <li class="add-quest"><a tabindex="-1" href="javascript:void(0)" >QUEST</a></li>
                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
@@ -131,6 +133,43 @@
                                         <input type="text" name="condition[datejoinend][condition_value]" class="date" placeholder="date end to join" id="condition[datejoinend][condition_id]" value="<?php echo dateMongotoReadable($editDateJoinEndCon['condition_value']) ?>">
                                         <input type="hidden" name="condition[datejoinend][condition_type]" value="DATEJOIN_END">
                                         <input type="hidden" name="condition[datejoinend][condition_id]" value="">
+                                    </div>
+                                <?php } ?>
+
+                                <?php if(isset($editGenderCon)){ ?>
+                                    <div class="gender-wrapper condition-type well">
+                                        <h3>Gender<a class="remove"><i class="icon-remove-sign"></i></a></h3>
+                                        <label class="span4">Gender:</label>
+                                        <div class="select-wrapper">
+                                            <select name="condition[gender][condition_value]">
+                                                <option <?php echo $editGenderCon['condition_value'] == "1" ? "selected" : ""; ?> value = "1"> Male</option>
+                                                <option <?php echo $editGenderCon['condition_value'] == "2" ? "selected" : ""; ?> value = "2"> Female</option>
+                                            </select>
+                                        </div>
+                                        <input type="hidden" name="condition[gender][condition_type]" value="GENDER">
+                                        <input type="hidden" name="condition[gender][condition_id]" value="">
+                                    </div>
+                                <?php } ?>
+
+                                <?php if(isset($editAgeOperateCon) && isset($editAgeValueCon)){ ?>
+                                    <div class="age-wrapper condition-type well">
+                                        <h3>Age<a class="remove"><i class="icon-remove-sign"></i></a></h3>
+                                        <label class="span4">Operation:</label>
+                                        <div class="select-wrapper">
+                                            <select name="condition[ageOperate][condition_value]">
+                                                <option <?php echo $editAgeOperateCon['condition_value'] === "="  ? "selected" : ""; ?>  value = "="> = </option>
+                                                <option <?php echo $editAgeOperateCon['condition_value'] === ">=" ? "selected" : ""; ?>  value = ">="> >= </option>
+                                                <option <?php echo $editAgeOperateCon['condition_value'] === "<=" ? "selected" : ""; ?>  value = "<="> <= </option>
+                                                <option <?php echo $editAgeOperateCon['condition_value'] === ">"  ? "selected" : ""; ?>  value = ">"> > </option>
+                                                <option <?php echo $editAgeOperateCon['condition_value'] === "<"  ? "selected" : ""; ?>  value = "<"> < </option>
+                                            </select>
+                                        </div>
+                                        <input type="hidden" name="condition[ageOperate][condition_type]" value="AGE_OPERATE">
+                                        <input type="hidden" name="condition[ageOperate][condition_id]" value=""><br>
+                                        <label class="span4">Age:</label>
+                                        <input type="number" name="condition[ageValue][condition_value]" placeholder="Age" value = "<?php echo $editAgeValueCon['condition_value'] ?>">
+                                        <input type="hidden" name="condition[ageValue][condition_type]" value="AGE_VALUE">
+                                        <input type="hidden" name="condition[ageValue][condition_id]" value="">
                                     </div>
                                 <?php } ?>
 
@@ -1485,6 +1524,8 @@
 
             addDatetimeObj = menuObj.find('.add-datetime'),
             addDatejoinObj = menuObj.find('.add-datejoin'),
+            addGenderObj = menuObj.find('.add-gender'),
+            addAgeObj = menuObj.find('.add-age'),
             addLevelObj = menuObj.find('.add-level'),
             addQuestObj = menuObj.find('.add-quest'),
             addGoodsObj = menuObj.find('.add-goods'),
@@ -1526,6 +1567,26 @@
                 addDatejoinObj.removeClass('disabled');
                 addDatejoinObj.unbind().bind('click',function(data){
                     addDatejoin(target);
+                });
+            }
+
+            if(containerObj.has('.gender-wrapper').length){
+                addGenderObj.addClass('disabled');
+                addGenderObj.unbind();
+            }else{
+                addGenderObj.removeClass('disabled');
+                addGenderObj.unbind().bind('click',function(data){
+                    addGender(target);
+                });
+            }
+
+            if(containerObj.has('.age-wrapper').length){
+                addAgeObj.addClass('disabled');
+                addAgeObj.unbind();
+            }else{
+                addAgeObj.removeClass('disabled');
+                addAgeObj.unbind().bind('click',function(data){
+                    addAge(target);
                 });
             }
 
@@ -1845,6 +1906,59 @@ function addDatejoin(target){
     var datejoinHtml = '<div class="datejoin-wrapper '+type+'-type well">'+datejoinHead+datejoinstart+'<br>'+datejoinend+'</div>';
 
     target.html = datejoinHtml;
+
+    render(target);
+}
+
+function addGender(target){
+    var type = target.type;
+    var id = target.id || null;
+    var parent = target.parent || 'quest';
+    var inputHtml = '';
+
+    var genderHead = '<h3>Gender <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
+    var genderValue = '<label class="span4">Gender:</label>\
+                       <div class="select-wrapper">\
+                       <select name="'+type+'[gender][condition_value]">\
+                            <option selected value = "1"> Male</option>\
+                            <option value = "2"> Female</option>\
+                       </select>\
+                       </div>\
+                       <input type="hidden" name = "'+type+'[gender][condition_type]" value="GENDER">\
+                       <input type = "hidden" name = "'+type+'[gender][condition_id]" value="">';
+    var genderHtml = '<div class="gender-wrapper '+type+'-type well">'+genderHead+genderValue +'</div>';
+
+    target.html = genderHtml;
+
+    render(target);
+}
+
+function addAge(target){
+    var type = target.type;
+    var id = target.id || null;
+    var parent = target.parent || 'quest';
+    var inputHtml = '';
+
+    var ageHead = '<h3>AGE <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
+
+    var ageOperate = '<label class="span4">Operation:</label>\
+                      <div class="select-wrapper">\
+                         <select name="'+type+'[ageOperate][condition_value]">\
+                            <option selected value = "="> = </option>\
+                            <option value = ">="> >= </option>\
+                            <option value = "<="> <= </option>\
+                            <option value = ">"> > </option>\
+                            <option value = "<"> < </option>\
+                         </select>\
+                      </div>\
+                      <input type="hidden" name="'+type+'[ageOperate][condition_type]" value="AGE_OPERATE">\
+                      <input type="hidden" name="'+type+'[ageOperate][condition_id]"   value="">';
+    var ageValue = '<label class="span4">Age:</label> <input type="number" name="'+type+'[ageValue][condition_value]" placeholder="Age" value = "">\
+                    <input type="hidden" name = "'+type+'[ageValue][condition_type]" value="AGE_VALUE">\
+                    <input type = "hidden" name = "'+type+'[ageValue][condition_id]" value="">';
+    var ageHtml = '<div class="age-wrapper '+type+'-type well">'+ageHead+ageOperate+'<br>'+ageValue+'</div>';
+
+    target.html = ageHtml;
 
     render(target);
 }

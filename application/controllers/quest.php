@@ -246,6 +246,17 @@ class Quest extends MY_Controller
             }
         }
 
+        if(isset($conditions_input['ageOperate']) && isset($conditions_input['ageValue'])){
+            if (empty($conditions_input['ageValue']['condition_value'])){
+                $this->session->set_flashdata('fail', $this->lang->line('error_age_value_empty'));
+                redirect('/quest/insert');
+            }
+            if (intval($conditions_input['ageValue']['condition_value']) < 0){
+                $this->session->set_flashdata('fail', $this->lang->line('error_age_value_negative'));
+                redirect('/quest/insert');
+            }
+        }
+
         $missions_input = $this->input->post('missions');
         if ($missions_input != false && !empty($missions_input)) {
             foreach ($missions_input as $i => $mission) {
@@ -706,6 +717,24 @@ class Quest extends MY_Controller
                             $this->data['editDateJoinEndCon']['condition_type'] = $condition['condition_type'];
                             $this->data['editDateJoinEndCon']['condition_id'] = isset($condition['condition_id']) ? $condition['condition_id'] : null;
                             $this->data['editDateJoinEndCon']['condition_value'] = isset($condition['condition_value']) ? $condition['condition_value'] : null;
+                        }
+
+                        if ($condition['condition_type'] == 'GENDER') {
+                            $this->data['editGenderCon']['condition_type'] = $condition['condition_type'];
+                            $this->data['editGenderCon']['condition_id'] = isset($condition['condition_id']) ? $condition['condition_id'] : null;
+                            $this->data['editGenderCon']['condition_value'] = isset($condition['condition_value']) ? $condition['condition_value'] : null;
+                        }
+
+                        if ($condition['condition_type'] == 'AGE_OPERATE') {
+                            $this->data['editAgeOperateCon']['condition_type'] = $condition['condition_type'];
+                            $this->data['editAgeOperateCon']['condition_id'] = isset($condition['condition_id']) ? $condition['condition_id'] : null;
+                            $this->data['editAgeOperateCon']['condition_value'] = isset($condition['condition_value']) ? $condition['condition_value'] : null;
+                        }
+
+                        if ($condition['condition_type'] == 'AGE_VALUE') {
+                            $this->data['editAgeValueCon']['condition_type'] = $condition['condition_type'];
+                            $this->data['editAgeValueCon']['condition_id'] = isset($condition['condition_id']) ? $condition['condition_id'] : null;
+                            $this->data['editAgeValueCon']['condition_value'] = isset($condition['condition_value']) ? $condition['condition_value'] : null;
                         }
 
                         if ($condition['condition_type'] == 'LEVEL_START') {
@@ -1404,6 +1433,17 @@ class Quest extends MY_Controller
             }
         }
 
+        if(isset($conditions_input['ageOperate']) && isset($conditions_input['ageValue'])){
+            if (empty($conditions_input['ageValue']['condition_value'])){
+                $this->session->set_flashdata('fail', $this->lang->line('error_age_value_empty'));
+                redirect('/quest/edit/' . $quest_id);
+            }
+            if (intval($conditions_input['ageValue']['condition_value']) < 0){
+                $this->session->set_flashdata('fail', $this->lang->line('error_age_value_negative'));
+                redirect('/quest/edit/' . $quest_id);
+            }
+        }
+
         $missions_input = $this->input->post('missions');
         if ($missions_input != false && !empty($missions_input)) {
             foreach ($missions_input as $i => $mission) {
@@ -1663,6 +1703,9 @@ class Quest extends MY_Controller
                     case 'DATETIME_END':
                     case 'DATEJOIN_START':
                     case 'DATEJOIN_END':
+                    case 'GENDER':
+                    case 'AGE_OPERATE':
+                    case 'AGE_VALUE':
                     case 'LEVEL_START':
                     case 'LEVEL_END':
                         /* nothing to check */
