@@ -75,15 +75,6 @@ class game extends MY_Controller
                                     $item_data['item_config']['amount_to_harvest'] = (int)$column['item_harvest'];
                                     $this->Game_model->updateGameStageItem($client_id, $site_id, $game_id, $item_data);
                                     array_push($item_array, $item_data['item_id']);
-                                    if(isset($column['item_image'])){
-                                        foreach ($column['item_image'] as $template_index => $template){
-                                            $item_template_data['template_id'] = new MongoId($template_index);
-                                            $item_template_data['item_id']     = new MongoId($column['item_id']);
-                                            $item_template_data['images']      = $template;
-                                            $item_template_data['thumb']       = $column['item_thumb'][$template_index];
-                                            $this->Game_model->updateGameItemTemplate($client_id, $site_id, $game_id, $item_template_data);
-                                        }
-                                    }
                                 }
 
                             }
@@ -159,13 +150,6 @@ class game extends MY_Controller
         $game_data = $this->Game_model->getGameSetting($client_id, $site_id, $this->data);
         $game_id = $game_data ? $game_data['_id'] : $this->Game_model->updateGameSetting($client_id, $site_id, array('game_name' => 'farm'));
         $game_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_id);
-        $count_template = $this->Game_model->countGameTemplate($client_id, $site_id, $game_id);
-
-        if (isset($count_template)) {
-            $this->data['total_template'] = $count_template;
-        } else {
-            $this->data['total_template'] = 0;
-        }
         
         foreach ($game_stage as $index => $stage){
             if(isset($stage['_id'])) {
