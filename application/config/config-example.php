@@ -106,7 +106,7 @@ $config['enable_hooks'] = FALSE;
 |
 | See: https://github.com/getsentry/raven-php#configuration
 */
-$config['raven_client'] = 'https://5af46ccfed0e4264a1e19126b304a312:cdbdf925febb43619e85e6bf0919bf95@sentry.io/111629';
+$config['raven_client'] = 'DNS Sentry project';
 $config['raven_config'] = array();
 $config['raven_log_threshold'] = array('ERROR');
 $config['raven_environments'] = array('production');
