@@ -364,6 +364,21 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
+/*
+| -------------------------------------------------------------------
+|  Raven Client Configuration
+| -------------------------------------------------------------------
+| 'raven_client' = DSN string for connecting to a Raven client.
+| 'raven_config' = Optional second parameter to Raven_Client which
+| contains extra configuration options.
+|
+| See: https://github.com/getsentry/raven-php#configuration
+*/
+
+$config['raven_client'] = '';
+$config['raven_config'] = array();
+$config['raven_log_threshold'] = array('ERROR');
+$config['raven_environments'] = array('production');
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */
