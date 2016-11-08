@@ -71,7 +71,7 @@ db.on("error", function(err) {
 
 // Sentry client
 var raven = require('raven');
-var raven_client = new raven.Client('https://90bb97448c3a4486ad607e8fad5f61f9:b352792e119943f7a99991238a4cf5c2@sentry.io/112469');
+var raven_client = new raven.Client('DNS sentry project');
 raven_client.patchGlobal();
 
 //
