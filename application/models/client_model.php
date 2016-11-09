@@ -759,6 +759,7 @@ class Client_model extends MY_Model
                 $data['date_expire'] = new MongoDate(strtotime("+".$goodsInfo['days_expire']. ' day'));
             }
             $this->mongo_db->insert('playbasis_goods_to_player', $data, array("w" => 0, "j" => false));
+            return $data;
         }
     }
 
