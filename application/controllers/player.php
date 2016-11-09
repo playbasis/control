@@ -1845,8 +1845,11 @@ class Player extends REST2_Controller
 
         $null_list = array();
         $not_null_list = array();
+        $date_expire= array();
+        $name = array();
+        $name_null = array();
         foreach ($goodsList['goods'] as $key => $row) {
-            if(!is_null($row['date_expire'])){
+            if(isset($row['date_expire']) && !is_null($row['date_expire'])){
                 array_push($not_null_list, $row);
                 $date_expire[$key]  = $row['date_expire'];
                 $name[$key] = $row['name'];
