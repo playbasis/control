@@ -483,6 +483,40 @@ class jigsaw extends MY_Model
         }
     }
 
+    private function calculateDistanceInKilometres($lat1, $lon1, $lat2, $lon2) {
+        $radlat1 = pi() * $lat1/180;
+        $radlat2 = pi() * $lat2/180;
+        $theta = $lon1-$lon2;
+        $radtheta = pi() * $theta/180;
+        $dist = sin($radlat1) * sin($radlat2) + cos($radlat1) * cos($radlat2) * cos($radtheta);
+        $dist = acos($dist);
+        $dist = $dist * (180/pi()) * 111.18957696 ;
+		return $dist;
+    }
+
+
+    public function locationArea($config, $input, &$exInfo = array())
+    {
+        assert($config != false);
+        assert(is_array($config));
+        assert(isset($config['latitude']));
+        assert(isset($config['longitude']));
+        assert(isset($config['area']));
+        $latitude = isset($input['latitude']) ? $input['latitude'] : null;
+        $longitude = isset($input['longitude']) ? $input['longitude'] : null;
+
+        if(is_null($latitude) || is_null($longitude) ){
+            return false;
+        }else{
+            $distance_in_kilo = $this->calculateDistanceInKilometres($config['latitude'],$config['longitude'],$latitude,$longitude);
+            if(($distance_in_kilo * 1000) <= (float)$config['area']){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
     public function before($config, $input, &$exInfo = array())
     {
         assert($config != false);
