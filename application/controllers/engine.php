@@ -1394,43 +1394,48 @@ class Engine extends Quest
         $eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], '', '', '', '', '', $goodsData['name']);
         if(isset($goodsData['group']) && !empty($goodsData['group'])){
             $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $goodsData['group'] , null , null , 1 );
-            $rand_goods = array_rand($goods_group_rewards, sizeof($goods_group_rewards) < $jigsawConfig['quantity'] ? sizeof($goods_group_rewards) : (int)$jigsawConfig['quantity']);
-            if(!is_array($rand_goods)){
-                $rand_goods = array($rand_goods);
-            }
-            $log_array = array();
-            $id_array = array();
-            $code_array = array();
-            foreach($rand_goods as $index){
-                $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $goodsData['group'] , $input['pb_player_id']);
-                if(($goods_group_rewards[$index]['per_user'] > $player_goods) || ($goods_group_rewards[$index]['per_user'] == null)) {
-                    try {
-                    $this->client_model->updateplayerGoods($goods_group_rewards[$index]['goods_id'], 1,
-                        $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
-                    } catch (Exception $e){}
-                    $this->tracker_model->trackGoods(array_merge($validToken, array(
-                        'pb_player_id' => $input['pb_player_id'],
-                        'goods_id' => new MongoId($goods_group_rewards[$index]['goods_id']),
-                        'goods_name' => $goods_group_rewards[$index]['name'],
-                        'group' => $goods_group_rewards[$index]['group'],
-                        'is_sponsor' => false,
-                        'amount' => $goods_group_rewards[$index]['quantity'],
-                        'redeem' => null, // cannot pull from goodsData, should pull from "redeem" condition for rule context
-                        'action_name' => 'redeem_goods',
-                        'action_icon' => 'fa-icon-shopping-cart',
-                        'message' => $eventMessage
-                    )));
-                    $log_id = $this->redeem_model->exerciseCode('goods', $validToken['client_id'], $validToken['site_id'],
-                        $input['pb_player_id'], array_key_exists('code', $goods_group_rewards[$index]) ? $goods_group_rewards[$index]['code'] : null);
-                    array_push($log_array, $log_id."" );
-                    array_push($id_array, $goods_group_rewards[$index]['goods_id']."");
-                    array_push($code_array, array_key_exists('code', $goods_group_rewards[$index]) ? $goods_group_rewards[$index]['code'] : null);
+            if($jigsawConfig['quantity'] > 0 && $goods_group_rewards){
+                $rand_goods = array_rand($goods_group_rewards, sizeof($goods_group_rewards) < $jigsawConfig['quantity'] ? sizeof($goods_group_rewards) : (int)$jigsawConfig['quantity']);
+                if(!is_array($rand_goods)){
+                    $rand_goods = array($rand_goods);
                 }
+                $log_array = array();
+                $id_array = array();
+                $code_array = array();
+                foreach($rand_goods as $index){
+                    $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $goodsData['group'] , $input['pb_player_id']);
+                    if(($goods_group_rewards[$index]['per_user'] > $player_goods) || ($goods_group_rewards[$index]['per_user'] == null)) {
+                        try {
+                            $this->client_model->updateplayerGoods($goods_group_rewards[$index]['goods_id'], 1,
+                                $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
+                        } catch (Exception $e){}
+                        $this->tracker_model->trackGoods(array_merge($validToken, array(
+                            'pb_player_id' => $input['pb_player_id'],
+                            'goods_id' => new MongoId($goods_group_rewards[$index]['goods_id']),
+                            'goods_name' => $goods_group_rewards[$index]['name'],
+                            'group' => $goods_group_rewards[$index]['group'],
+                            'is_sponsor' => false,
+                            'amount' => $goods_group_rewards[$index]['quantity'],
+                            'redeem' => null, // cannot pull from goodsData, should pull from "redeem" condition for rule context
+                            'action_name' => 'redeem_goods',
+                            'action_icon' => 'fa-icon-shopping-cart',
+                            'message' => $eventMessage
+                        )));
+                        $log_id = $this->redeem_model->exerciseCode('goods', $validToken['client_id'], $validToken['site_id'],
+                            $input['pb_player_id'], array_key_exists('code', $goods_group_rewards[$index]) ? $goods_group_rewards[$index]['code'] : null);
+                        array_push($log_array, $log_id."" );
+                        array_push($id_array, $goods_group_rewards[$index]['goods_id']."");
+                        array_push($code_array, array_key_exists('code', $goods_group_rewards[$index]) ? $goods_group_rewards[$index]['code'] : null);
+                    }
+                }
+                $event['value'] = sizeof($rand_goods);
+                $event['reward_data']['code'] = sizeof($rand_goods) == 1 ? $code_array[0]:$code_array;
+                $event['reward_data']['goods_id'] = sizeof($rand_goods) == 1 ? $id_array[0]:$id_array;
+                $event['log_id'] = sizeof($rand_goods) == 1 ? $log_array[0]:$log_array;
+            } else {
+                $event['value'] = 0;
+                $event['log_id'] = null;
             }
-            $event['value'] = sizeof($rand_goods);
-            $event['reward_data']['code'] = sizeof($rand_goods) == 1 ? $code_array[0]:$code_array;
-            $event['reward_data']['goods_id'] = sizeof($rand_goods) == 1 ? $id_array[0]:$id_array;
-            $event['log_id'] = sizeof($rand_goods) == 1 ? $log_array[0]:$log_array;
         }
         else{
             $player_goods = $this->goods_model->getPlayerGoods($validToken['site_id'], $goodsData['goods_id'], $input['pb_player_id']);
