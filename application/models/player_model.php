@@ -1662,6 +1662,7 @@ class Player_model extends MY_Model
                 $goods_data['name'] = $result['name'];
                 $goods_data['description'] = $result['description'];
                 $goods_data['code'] = $result['code'];
+                $goods_data['date_expire'] = isset($goods_data['date_expire']) ? $goods_data['date_expire'] : null;
                 $goods_data['tags'] = isset($result['tags']) && !empty($result['tags']) ? $result['tags'] : null;
                 if (isset($result['group'])) {
                     $goods_data['group'] = $result['group'];
