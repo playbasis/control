@@ -12,6 +12,7 @@ class Campaign_model extends MY_Model
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             'name' => $data['name'],
+            'image' => $data['image'],
             'date_start' => $data['date_start'],
             'date_end' => $data['date_end'],
             'weight' => $data['weight'],
@@ -33,6 +34,7 @@ class Campaign_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoId($data['site_id']));
         $this->mongo_db->where('_id', new MongoId($data['_id']));
         $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('image', $data['image']);
         $this->mongo_db->set('date_start', $data['date_start']);
         $this->mongo_db->set('date_end', $data['date_end']);
         $this->mongo_db->set('weight', $data['weight']);

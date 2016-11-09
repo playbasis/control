@@ -30,11 +30,8 @@
                     <thead>
                     <tr>
                         <td width="5%" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="left">
-                            <?php
-                                echo $this->lang->line('column_name');
-                            ?>
-                        </td>
+                        <td class="left"><?php echo $this->lang->line('column_image'); ?></td>
+                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
                         <td class="center"><?php echo $this->lang->line('column_date_start'); ?></td>
                         <td class="center"><?php echo $this->lang->line('column_date_end'); ?></td>
                         <td class="center"><?php echo $this->lang->line('column_weight'); ?></td>
@@ -51,12 +48,18 @@
                                         <input type="checkbox" name="selected[]" value="<?php echo $campaign['_id']; ?>" />
                                     <?php }?>
                                 </td>
+                                <td class="left" width="5%">
+                                    <div class="image"><img src="<?php echo isset($campaign['image']) ? $campaign['image'] : ""; ?>" alt=""
+                                         id="thumb"
+                                         onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image-48.png');"/>
+                                    </div>
+                                </td>
                                 <td class="left" width="40%"><?php echo isset($campaign['name']) && !empty($campaign['name']) ? $campaign['name'] : ""; ?></td>
                                 <td class="left" width="10%"><?php echo isset($campaign['date_start']) && !empty($campaign['date_start'])  ? dateMongotoReadable($campaign['date_start']) : "N/A"; ?></td>
                                 <td class="left" width="10%"><?php echo isset($campaign['date_end']) && !empty($campaign['date_end'])  ? dateMongotoReadable($campaign['date_end']) : "N/A"; ?></td>
                                 <td class="left" width="10%"><?php echo isset($campaign['weight']) && !empty($campaign['weight']) ? $campaign['weight'] : "0"; ?></td>
                                 <td class="left" width="10%"><?php echo isset($campaign['status']) && !empty($campaign['status']) && $campaign['status']? "Enable" : "Disable"; ?></td>
-                                <td class="right" width="10%">
+                                <td class="center" width="10%">
                                     <?php
                                     echo anchor('campaign/update/'.$campaign['_id'], "<i class='fa fa-edit fa-lg''></i>",
                                         array('class'=>'tooltips',

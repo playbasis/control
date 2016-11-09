@@ -72,11 +72,16 @@ class Campaign extends MY_Controller
             }
 
             if ($this->form_validation->run()) {
+
                 $campaign_data = $this->input->post();
-                log_message('error','campaign_data'. print_r($campaign_data,true));
+                $campaign_exist = $this->Campaign_model->getCampaign($client_id, $site_id, array('name' => $campaign_data['name']));
+                if($campaign_exist){
+                    $this->data['message'] = $this->lang->line('error_campaign_exist');
+                }
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
                 $data['name'] = $campaign_data['name'];
+                $data['image'] = isset($campaign_data['image']) ? html_entity_decode($campaign_data['image'], ENT_QUOTES, 'UTF-8') : '';
                 $data['date_start'] = null;
                 $data['date_end'] = null;
                 $data['weight'] = isset($campaign_data['weight']) && $campaign_data['weight'] ? intval($campaign_data['weight']) : 0;
@@ -136,6 +141,7 @@ class Campaign extends MY_Controller
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['_id'] = $campaign_id;
                 $data['name'] = $campaign_data['name'];
+                $data['image'] = isset($campaign_data['image']) ? html_entity_decode($campaign_data['image'], ENT_QUOTES, 'UTF-8') : '';
                 $data['date_start'] = null;
                 $data['date_end'] = null;
                 $data['weight'] = isset($campaign_data['weight']) && $campaign_data['weight'] ? intval($campaign_data['weight']) : 0;
@@ -228,7 +234,21 @@ class Campaign extends MY_Controller
                 'offset' => $offset,
             );
             $campaigns  = $this->Campaign_model->getCampaign($client_id, $site_id, $filter);
-
+            if($campaigns) foreach($campaigns as &$campaign){
+                if (isset($campaign['image'])) {
+                    $info = pathinfo($campaign['image']);
+                    if (isset($info['extension'])) {
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($campaign['image'], 0,
+                                utf8_strrpos($campaign['image'], '.')) . '-50x50.' . $extension;
+                        $campaign['image'] = S3_IMAGE . $new_image;
+                    } else {
+                        $campaign['image'] = S3_IMAGE . "cache/no_image-50x50.jpg";
+                    }
+                } else {
+                    $campaign['image'] = S3_IMAGE . "cache/no_image-50x50.jpg";
+                }
+            }
             $this->data['campaigns'] = $campaigns;
             $config['total_rows'] = $this->Campaign_model->countCampaign($client_id, $site_id);
         }
@@ -303,6 +323,30 @@ class Campaign extends MY_Controller
         } else {
             $this->data['name'] = '';
         }
+
+        if ($this->input->post('image')) {
+            $this->data['image'] = $this->input->post('image');
+        } elseif (isset($campaign_info['image']) && !empty($campaign_info['image'])) {
+            $this->data['image'] = $campaign_info['image'];
+        } else {
+            $this->data['image'] = 'no_image.jpg';
+        }
+
+        if ($this->data['image']) {
+            $info = pathinfo($this->data['image']);
+            if (isset($info['extension'])) {
+                $extension = $info['extension'];
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0,
+                        utf8_strrpos($this->data['image'], '.')) . '-100x100.' . $extension;
+                $this->data['thumb'] = S3_IMAGE . $new_image;
+            } else {
+                $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+            }
+        } else {
+            $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+        }
+
+        $this->data['no_image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
 
         if ($this->input->post('date_start')) {
             $this->data['date_start'] = $this->input->post('date_start');
