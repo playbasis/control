@@ -1598,6 +1598,7 @@ class Player_model extends MY_Model
             ),
             array(
                 '$group' => array('_id' => '$goods_id',
+                                  'date_expire' => array('$push' => '$date_expire'),
                                   'current' => array('$sum' => 1))
             )
         );
@@ -1649,10 +1650,12 @@ class Player_model extends MY_Model
                     $goods_data = $goods_data[0];
                     if(isset($goods_data['date_expire'])) $goods_data['date_expire'] = datetimeMongotoReadable($goods_data['date_expire']);
                     $goods_data['status'] = $goods_data['value'] > 0 ? "active" : "used";
+                    $goods_data['date_expire'] = isset($goods_data['date_expire']) ? $goods_data['date_expire'] : null;
                 } else {
                     $goods_data = array();
                     $goods_data['value'] = 0;
                     $goods_data['status'] = "expired";
+                    $goods_data['date_expire'] = isset($goods['date_expire'][0]) ? datetimeMongotoReadable($goods['date_expire'][0]) : null;
                 }
                 if ($status && $status != $goods_data['status']){
                     continue;
@@ -1662,7 +1665,6 @@ class Player_model extends MY_Model
                 $goods_data['name'] = $result['name'];
                 $goods_data['description'] = $result['description'];
                 $goods_data['code'] = $result['code'];
-                $goods_data['date_expire'] = isset($goods_data['date_expire']) ? $goods_data['date_expire'] : null;
                 $goods_data['tags'] = isset($result['tags']) && !empty($result['tags']) ? $result['tags'] : null;
                 if (isset($result['group'])) {
                     $goods_data['group'] = $result['group'];

@@ -1406,7 +1406,7 @@ class Engine extends Quest
                     $player_goods = $this->goods_model->getPlayerGoodsGroup($validToken['site_id'], $goodsData['group'] , $input['pb_player_id']);
                     if(($goods_group_rewards[$index]['per_user'] > $player_goods) || ($goods_group_rewards[$index]['per_user'] == null)) {
                         try {
-                            $this->client_model->updateplayerGoods($goods_group_rewards[$index]['goods_id'], 1,
+                            $return_data = $this->client_model->updateplayerGoods($goods_group_rewards[$index]['goods_id'], 1,
                                 $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
                         } catch (Exception $e){}
                         $this->tracker_model->trackGoods(array_merge($validToken, array(
@@ -1414,6 +1414,7 @@ class Engine extends Quest
                             'goods_id' => new MongoId($goods_group_rewards[$index]['goods_id']),
                             'goods_name' => $goods_group_rewards[$index]['name'],
                             'group' => $goods_group_rewards[$index]['group'],
+                            'date_expire' => isset($return_data['date_expire']) ? $return_data['date_expire'] : null,
                             'is_sponsor' => false,
                             'amount' => $goods_group_rewards[$index]['quantity'],
                             'redeem' => null, // cannot pull from goodsData, should pull from "redeem" condition for rule context
@@ -1436,8 +1437,7 @@ class Engine extends Quest
                 $event['value'] = 0;
                 $event['log_id'] = null;
             }
-        }
-        else{
+        } else {
             $player_goods = $this->goods_model->getPlayerGoods($validToken['site_id'], $goodsData['goods_id'], $input['pb_player_id']);
             if(isset($goodsData['per_user']) && (int)$goodsData['per_user'] > 0){
                 $quantity = ((int)$jigsawConfig['quantity'] + (int)$player_goods) > (int)$goodsData['per_user'] ? (int)$goodsData['per_user'] - (int)$player_goods : $jigsawConfig['quantity'];

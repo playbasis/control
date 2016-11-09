@@ -114,6 +114,7 @@ class Tracker_model extends MY_Model
             'is_sponsor' => (isset($input['is_sponsor'])) ? $input['is_sponsor'] : false,
             'redeem' => $input['redeem'],
             'amount' => $input['amount'],
+            'date_expire' => isset($input['date_expire']) ? $input['date_expire'] : null,
             'date_added' => $mongoDate,
             'date_modified' => $mongoDate
         ));
