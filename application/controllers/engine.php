@@ -997,7 +997,7 @@ class Engine extends Quest
                                 'event_type' => isset($jigsawConfig['reward_status']) && !empty($jigsawConfig['reward_status']) ? $jigsawConfig['reward_status'] : 'REWARD_RECEIVED',
                                 'reward_type' => $jigsawConfig['reward_name']
                             );
-                            $event['value'] = $event['event_type'] == "REWARD_NOT_AVAILABLE" ? 0 : $jigsawConfig['quantity'];
+                            $event['value'] = $event['event_type'] == "REWARD_NOT_AVAILABLE" ? "0" : $jigsawConfig['quantity'];
 
                             if (isset($jigsawConfig['transaction_id']) && !empty($jigsawConfig['transaction_id'])){
                                 $event['transaction_id'] = $jigsawConfig['transaction_id'];
@@ -1107,7 +1107,7 @@ class Engine extends Quest
                                     'event_type' => isset($reward['reward_status']) && !empty($reward['reward_status']) ? $reward['reward_status'] : 'REWARD_RECEIVED',
                                     'reward_type' => $jigsawConfig['reward_name'],
                                 );
-                                $event['value'] = $event['event_type'] == "REWARD_NOT_AVAILABLE" ? 0 : $jigsawConfig['quantity'];
+                                $event['value'] = $event['event_type'] == "REWARD_NOT_AVAILABLE" ? "0" : $jigsawConfig['quantity'];
 
                                 if (isset($reward['transaction_id']) && !empty($reward['transaction_id'])) {
                                     $event['transaction_id'] = $reward['transaction_id'];
