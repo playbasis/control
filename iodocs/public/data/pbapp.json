@@ -3066,7 +3066,7 @@
           "parameters": [
             {
               "Name": "name",
-              "Required": "n",
+              "Required": "N",
               "Default": "",
               "Type": "string",
               "Description": "name of point"
