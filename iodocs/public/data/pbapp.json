@@ -3057,6 +3057,29 @@
           ]
         },
         {
+          "MethodName": "Retrieve Remaing Points",
+          "Synopsis": "Return remaing for each points",
+          "HTTPMethod": "GET",
+          "URI": "Point/custom/remaining",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "name",
+              "Required": "n",
+              "Default": "",
+              "Type": "string",
+              "Description": "name of point"
+            }
+          ],
+          "response": [
+            {
+              "name":             { "-type": "string"},
+              "quantity":         { "-type": "integer", "-optional": "true"}
+            }
+          ]
+        },
+        {
           "MethodName": "Retrieve Custom Log",
           "Synopsis": "Return First/Last Reward Custom Log",
           "HTTPMethod": "GET",
