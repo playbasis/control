@@ -9599,7 +9599,7 @@
               "longitude":     {"-type": "string"},
               "object_type":   {"-type": "string"},
               "object_id":     {"-type": "string"},
-              "status":        {"-type": "string"},
+              "status":        {"-type": "boolean"},
               "tags":          { "-type": "any", "-optional": "true"},
               "date_added":    {"-type": "string", "-optional": "true"},
               "date_modified": {"-type": "string", "-optional": "true"}
