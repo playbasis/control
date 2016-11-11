@@ -282,4 +282,26 @@ class Game_model extends MY_Model
         $this->mongo_db->set('last_reset', $reset_date);
         $this->mongo_db->update('playbasis_game_stage_to_client');
     }
+
+    public function getRules($client_id, $site_id, $id =false)
+    {
+        $this->mongo_db->select(array('name'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        if ($id){
+            $this->mongo_db->where('_id', new MongoId($id));
+        }
+        return $this->mongo_db->get('playbasis_rule');
+    }
+
+    public function countRules($client_id, $site_id, $id =false)
+    {
+        $this->mongo_db->select(array('name'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        if ($id){
+            $this->mongo_db->where('_id', new MongoId($id));
+        }
+        return $this->mongo_db->count('playbasis_rule');
+    }
 }

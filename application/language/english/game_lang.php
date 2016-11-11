@@ -12,16 +12,26 @@ $lang['text_clear']                     = 'Clear Image';
 
 // Tab
 $lang['tab_farm']                       = 'Farm';
+$lang['tab_bingo']                      = 'Bingo';
+$lang['tab_egg']                        = 'Break Egg';
+$lang['tab_pairs']                      = 'Pairs Card';
+$lang['tab_catch']                      = 'Catch Item';
 
 // Entry
 $lang['entry_category']                 = 'Items Category';
 $lang['entry_image']                    = 'Image';
+$lang['entry_status']                   = 'Status';
+$lang['entry_duration']                 = 'Duration';
+$lang['entry_action_time']              = 'Action Times';
+$lang['entry_range_low']                = 'Range Low';
+$lang['entry_range_high']               = 'Range high';
 $lang['entry_status']                   = 'Status';
 $lang['entry_items']                    = 'Items';
 $lang['entry_config']                   = 'Config';
 $lang['entry_template']                 = 'Template';
 
 $lang['entry_item_name']                = 'Item Name';
+$lang['entry_rule_name']                = 'Rule Name';
 $lang['entry_item_description']         = 'Item Description';
 $lang['entry_item_harvest']             = 'Amount to harvest';
 $lang['entry_item_deduct']              = 'Days to deduct';
