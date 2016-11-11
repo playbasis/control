@@ -9563,6 +9563,50 @@
           }
         }
       ]
+    },
+    {
+      "name": "Location API",
+      "endpoint": ["Location"],
+      "Public": "Y",
+      "methods": [
+        {
+          "MethodName": "Retrieve Location",
+          "Synopsis": "Retrieve Location",
+          "HTTPMethod": "GET",
+          "URI": "Location",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "location_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific location id"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific status to retrieve location"
+            }
+          ],
+          "response": [
+            {
+              "name":          {"-type": "string"},
+              "latitude":      {"-type": "string"},
+              "longitude":     {"-type": "string"},
+              "object_type":   {"-type": "string"},
+              "object_id":     {"-type": "string"},
+              "status":        {"-type": "string"},
+              "tags":          { "-type": "any", "-optional": "true"},
+              "date_added":    {"-type": "string", "-optional": "true"},
+              "date_modified": {"-type": "string", "-optional": "true"}
+            }
+          ]
+        }
+      ]
     }
   ]
 }
