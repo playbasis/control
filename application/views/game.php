@@ -15,7 +15,11 @@
 
         <div class="content">
             <div id="tabs" class="htabs">
-                <a href="<?php echo site_url('game');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_farm'); ?></a>
+                <a href="<?php echo site_url('game');?>" style="display: inline;"><?php echo $this->lang->line('tab_farm'); ?></a>
+                <a href="<?php echo site_url('game/bingo');?>" style="display: inline;"> <?php echo $this->lang->line('tab_bingo'); ?></a>
+                <a href="<?php echo site_url('game/egg');?>" style="display: inline;"><?php echo $this->lang->line('tab_egg'); ?></a>
+                <a href="<?php echo site_url('game/pairs');?>" style="display: inline;"><?php echo $this->lang->line('tab_pairs'); ?></a>
+                <a href="<?php echo site_url('game/catch_item');?>" style="display: inline;"><?php echo $this->lang->line('tab_catch'); ?></a>
             </div>
             <?php if($this->session->flashdata('success')){ ?>
                 <div class="content messages half-width">
@@ -41,9 +45,18 @@
             $attributes = array('id' => 'form' , 'class' => 'form-horizontal game-form');
             echo form_open_multipart($form ,$attributes);
             ?>
-            <div id="actions">
+            <?php if($game == 'farm' || $game == 'bingo') { ?>
+            <?php if($game == 'farm') { ?>
+            <div id="tab-farm">
+            <?php } if($game == 'bingo') { ?>
+            <div id="tab-bingo">
+            <?php } ?>
                 <table class="form">
+                    <?php if($game == 'farm') { ?>
                     <input type="hidden" name="name" size="100" value="farm">
+                    <?php } if($game == 'bingo') { ?>
+                    <input type="hidden" name="name" size="100" value="bingo">
+                    <?php } ?>
                     <tr>
                         <td><?php echo $this->lang->line('entry_image'); ?>:</td>
                         <td> <img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
@@ -159,14 +172,17 @@
                                                         <li id="thumbnails_grid_<?php echo $index?>_<?php echo $row ?>_<?php echo $column ?>">
                                                             <div class="thumbnail tooltips" data-placement="top" title="[<?php echo $row ?>][<?php echo $column ?>]" >
                                                                 <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_id]" id="worlds_<?php echo $index ?>_item_id_<?php echo $row?>_<?php echo $column?>" size="100" value="<?php echo isset($world['world_item'][$row][$column]['item_id']) ? $world['world_item'][$row][$column]['item_id'] : ""?>">
+                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][rule_id]" id="worlds_<?php echo $index ?>_rule_id_<?php echo $row?>_<?php echo $column?>" size="100" value="<?php echo isset($world['world_item'][$row][$column]['rule_id']) ? $world['world_item'][$row][$column]['rule_id'] : ""?>">
+                                                                <?php if($game == 'farm') { ?>
                                                                 <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_harvest]" id="worlds_<?php echo $index ?>_item_harvest_<?php echo $row?>_<?php echo $column?>" size="100" value=<?php echo isset($world['world_item'][$row][$column]['item_harvest']) ? $world['world_item'][$row][$column]['item_harvest'] : ""?>>
                                                                 <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_deduct]" id="worlds_<?php echo $index ?>_item_deduct_<?php echo $row?>_<?php echo $column?>" size="100" value=<?php echo isset($world['world_item'][$row][$column]['item_deduct']) ? $world['world_item'][$row][$column]['item_deduct'] : ""?>>
+                                                                <?php } ?>
                                                                 <input type="hidden" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_description]" id="worlds_<?php echo $index ?>_item_description_<?php echo $row?>_<?php echo $column?>" size="100" value="<?php echo isset($world['world_item'][$row][$column]['item_description']) ? $world['world_item'][$row][$column]['item_description'] : ""?>">
                                                                 <?php if(isset($world['world_item'][$row][$column]['item_id'])) { ?>
                                                                     <img style="padding: 10px" onclick = "showItemModalForm(<?php echo $index ?>,<?php echo $row ?>,<?php echo $column ?>)" src="<?php echo $world['world_item'][$row][$column]['item_thumb'] ?>" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_thumb]" alt="" id="worlds_<?php echo $index ?>_item_thumb_<?php echo $row?>_<?php echo $column?>" onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
-                                                                    <i class="fa fa-plus-circle fa-5x fa-align-center hide" id = "worlds_<?php echo $index ?>_item_add_<?php echo $row?>_<?php echo $column?>" onclick = "showItemModalForm(<?php echo $index ?>,<?php echo $row ?>,<?php echo $column ?>)" class="tooltips" data - placement = "top" title = "[<?php echo $row ?>][<?php echo $column ?>]" id = "add" style = "padding: 30px" aria - hidden = "true" ></i >
+                                                                    <i class="fa fa-plus-circle fa-5x fa-align-center hide" id = "worlds_<?php echo $index ?>_item_add_<?php echo $row?>_<?php echo $column?>" onclick = "showItemModalForm(<?php echo $index ?>,<?php echo $row ?>,<?php echo $column ?>)" class="tooltips" data - placement = "top" title = "[<?php echo $row ?>][<?php echo $column ?>]" style = "padding: 30px" aria - hidden = "true" ></i >
                                                                 <?php } else { ?>
-                                                                    <i class="fa fa-plus-circle fa-5x fa-align-center" id = "worlds_<?php echo $index ?>_item_add_<?php echo $row?>_<?php echo $column?>" onclick = "showItemModalForm(<?php echo $index ?>,<?php echo $row ?>,<?php echo $column ?>)" class="tooltips" data - placement = "top" title = "[<?php echo $row ?>][<?php echo $column ?>]" id = "add" style = "padding: 30px" aria - hidden = "true" ></i >
+                                                                    <i class="fa fa-plus-circle fa-5x fa-align-center" id = "worlds_<?php echo $index ?>_item_add_<?php echo $row?>_<?php echo $column?>" onclick = "showItemModalForm(<?php echo $index ?>,<?php echo $row ?>,<?php echo $column ?>)" class="tooltips" data - placement = "top" title = "[<?php echo $row ?>][<?php echo $column ?>]" style = "padding: 30px" aria - hidden = "true" ></i >
                                                                     <img class="hide" style="padding: 10px" onclick = "showItemModalForm(<?php echo $index ?>,<?php echo $row ?>,<?php echo $column ?>)" src="" name="worlds[<?php echo $index ?>][world_item][<?php echo $row?>][<?php echo $column ?>][item_thumb]" alt="" id="worlds_<?php echo $index ?>_item_thumb_<?php echo $row?>_<?php echo $column?>" onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
                                                                 <?php } ?>
                                                             </div>
@@ -185,10 +201,131 @@
                 </div>
             <?php echo form_close();?>
             </div><!-- #actions -->
+            <?php }
+            if($game == 'egg' || $game == 'pairs' || $game == 'catch_item'){
+            ?>
+            <?php if($game == 'egg') { ?>
+            <div id="tab-egg">
+            <?php } if($game == 'pairs') { ?>
+            <div id="tab-pairs">
+            <?php } if($game == 'catch_item') { ?>
+            <div id="tab-catch_item">
+            <?php }  ?>
+                <table class="form">
+                    <?php if($game == 'egg') { ?>
+                        <input type="hidden" name="name" size="100" value="egg">
+                    <?php } if($game == 'pairs') { ?>
+                        <input type="hidden" name="name" size="100" value="pairs">
+                    <?php } if($game == 'catch_item') { ?>
+                        <input type="hidden" name="name" size="100" value="catch_item">
+                    <?php }  ?>
+
+                    
+                    <tr>
+                        <td><?php echo $this->lang->line('entry_image'); ?>:</td>
+                        <td> <img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
+                            <input type="hidden" name="image" value="<?php echo $image; ?>" id="image"/>
+                            <br/>
+                            <a onclick="image_upload('#image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a> &nbsp;&nbsp;|&nbsp;&nbsp;
+                            <a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo $this->lang->line('entry_status'); ?>:</td>
+                        <td><input type="checkbox" name="status" id="status" <?php echo  $status == true ? 'checked' : ''; ?>></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo $this->lang->line("entry_duration"); ?>:</td>
+                        <td><input type="number" name="duration" id="duration" size="100" min="1" value="<?php echo $duration ? $duration : 1; ?>"></td>
+                    </tr>
+                    <?php if($game == 'egg'){ ?>
+                    <tr>
+                        <td><?php echo $this->lang->line("entry_action_time"); ?>:</td>
+                        <td><input type="number" name="action_time" id="action_time" size="100" min="1" value="<?php echo $action_time ? $action_time : 1; ?>"></td>
+                    </tr>
+                    <?php } ?>
+                </table>
+                <div id="table-world">
+                    <div class="world-head-wrapper text-center">
+                        <a href="javascript:void(0)" class="btn open-world-btn btn-lg">Open All</a>
+                        <a href="javascript:void(0)" class="btn close-world-btn btn-lg">Close All</a>
+                        <a href="javascript:void(0)" class="btn btn-primary add-world-btn btn-lg">+ New World</a>
+                    </div><br>
+                    <div class="world-wrapper">
+                        <?php if(isset($worlds)){
+                            foreach($worlds as $key => $world){ $index = $key +1;?>
+                                <div class="world-item-wrapper" data-world-id="<?php echo $index?>" id="world_<?php echo $index?>_item_wrapper">
+                                    <div class="box-header box-world-header overflow-visible" style="height: 30px;">
+                                        <h2><img src="<?php echo base_url();?>image/default-image.png" width="30"> <?php echo $world['world_name'] ?></h2>
+                                        <div class="box-icon">
+                                            <a href="javascript:void(0)" class="btn btn-danger right remove-world-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
+                                            <span class="break"></span>
+                                            <a href="javaScript:void()" ><i class="icon-chevron-up"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="box-content clearfix">
+                                        <div class="row-fluid">
+                                            <div class="span12 well" style="min-height:500px">
+                                                <div class="span6">
+                                                    <table class="form">
+                                                        <input type="hidden" name="worlds[<?php echo $index ?>][world_id]" id="worlds_<?php echo $index ?>_id" size="100" value="<?php echo $world['world_id'] ?>">
+                                                        <tr>
+                                                            <td><?php echo $this->lang->line("entry_world_name"); ?>:</td>
+                                                            <td><input type="text" name="worlds[<?php echo $index ?>][world_name]" id="worlds_<?php echo $index ?>_name" size="100" value="<?php echo $world['world_name'] ?>"></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><?php echo $this->lang->line("entry_world_level"); ?>:</td>
+                                                            <td><input type="number" name="worlds[<?php echo $index ?>][world_level]" id="worlds_<?php echo $index ?>_level" size="100" min="1" value="<?php echo $world['world_level'] ?>"></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><?php echo $this->lang->line("entry_image"); ?>:</td>
+                                                            <td> <img src="<?php echo $world['world_thumb'] ?>" alt="" id="world_<?php echo $index ?>_thumb" onerror="$(this).attr("src","<?php echo base_url(); ?>image/default-image.png");"/>
+                                                                <input type="hidden" name="worlds[<?php echo $index ?>][world_image]" value="<?php echo $world['world_image'] ?>" id="world_<?php echo $index ?>_image"/>
+                                                                <br/>
+                                                                <a onclick="image_upload('#world_<?php echo $index ?>_image', 'world_<?php echo $index ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                                                <a onclick="$('world_<?php echo $index ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('world_<?php echo $index ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <div class="span6">
+                                                    <table class="form">
+                                                        <tr>
+                                                            <td><?php echo $this->lang->line("entry_range_low"); ?>:</td>
+                                                            <td><input type="number" name="worlds[<?php echo $index ?>][world_low]" id="worlds_<?php echo $index ?>_low" size="100" min="1" value="<?php echo $world['world_low'] ?>"></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><?php echo $this->lang->line("entry_range_high"); ?>:</td>
+                                                            <td><input type="number" name="worlds[<?php echo $index ?>][world_high]" id="worlds_<?php echo $index ?>_high" size="100" min="1" value="<?php echo $world['world_high'] ?>"></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><?php echo $this->lang->line("entry_world_description"); ?>:</td>
+                                                            <td><textarea name="worlds[<?php echo $index ?>][world_description]" rows="6"></textarea></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php }
+                        } ?>
+                    </div><!-- .world-wrapper -->
+                <?php echo form_close();?>
+            </div>
+            <?php } ?>
         </div>
     </div>
+    </div>
 </div>
-
 <div class="modal hide" id="savedDialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -247,7 +384,7 @@
     </div>
 </div>
 
-<div class="modal hide fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal hide fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
     <div class="modal-header">
         <h3 id="myModalLabel">Warning !</h3>
         <input type="hidden" name="confirm_event" id="confirm_event" value="">
@@ -282,6 +419,13 @@
                     </div>
                 </div>
                 <div class="control-group">
+                    <label for="rule_id" class="control-label"><span class="required">*</span><?php echo $this->lang->line('entry_rule_name'); ?></label>
+                    <div class="controls">
+                        <input type="text" name="rule_id" id="rule_id" placeholder="<?php echo $this->lang->line('entry_rule_name'); ?>">
+                    </div>
+                </div>
+                <?php if($game == 'farm'){ ?>
+                <div class="control-group">
                     <label for="item_harvest" class="control-label"><span class="required">*</span><?php echo $this->lang->line('entry_item_harvest'); ?></label>
                     <div class="controls">
                         <input type="number" name="item_harvest" id="item_harvest" min="1" placeholder="<?php echo $this->lang->line('entry_item_harvest'); ?>">
@@ -293,6 +437,7 @@
                         <input type="number" name="item_deduct" id="item_deduct" min="1" placeholder="<?php echo $this->lang->line('entry_item_deduct'); ?>">
                     </div>
                 </div>
+                <?php } ?>
                 <div class="control-group">
                     <label for="item-desc" class="control-label"><?php echo $this->lang->line('entry_item_description'); ?></label>
                     <div class="controls">
@@ -318,7 +463,6 @@
 
 <script>
     $(function(){
-        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
         $('#status').bootstrapSwitch();
         $("#status").bootstrapSwitch('size', 'small');
         $("#status").bootstrapSwitch('onColor', 'success');
@@ -327,6 +471,49 @@
         $("#status").bootstrapSwitch('labelWidth', '10');
         $("#status").bootstrapSwitch('onText', 'Enable');
         $("#status").bootstrapSwitch('offText', 'Disable');
+    });
+
+    Pace.on("done", function () {
+        $(".cover").fadeOut(1000);
+    });
+
+    function image_upload(field, thumb) {
+        var $mm_Modal = $('#mmModal');
+
+        if ($mm_Modal.length !== 0) $mm_Modal.remove();
+
+        var frameSrc = baseUrlPath + "mediamanager/dialog?field=" + encodeURIComponent(field);
+        var mm_modal_str = "";
+        mm_modal_str += "<div id=\"mmModal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\">";
+        mm_modal_str += " <div class=\"modal-body\">";
+        mm_modal_str += "   <iframe src=\"" + frameSrc + "\" style=\"position:absolute; zoom:0.60\" width=\"99.6%\" height=\"99.6%\" frameborder=\"0\"><\/iframe>";
+        mm_modal_str += " <\/div>";
+        mm_modal_str += "<\/div>";
+
+        $mm_Modal = $(mm_modal_str);
+        $('#page-render').append($mm_Modal);
+
+        $mm_Modal.modal('show');
+
+        $mm_Modal.on('hidden', function () {
+            var $field = $(field);
+            if ($field.attr('value')) {
+                $.ajax({
+                    url: baseUrlPath + 'mediamanager/image?image=' + encodeURIComponent($field.val()),
+                    dataType: 'text',
+                    success: function (data) {
+                        $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
+                    }
+                });
+            }
+        });
+    }
+</script>
+<?php if($game == 'farm' || $game == 'bingo'){
+?>
+<script>
+    $(function(){
+        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
         $('.world_reset').on( "change", function() {
             var world = $(this).attr('id');
             var data = world.split('_');
@@ -347,6 +534,7 @@
     var countWorldId = 0,
         $waitDialog = $('#pleaseWaitDialog'),
         $savedDialog = $('#savedDialog'),
+        temp_category,
         $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
 
     preventUnusual ={
@@ -416,42 +604,6 @@
         }
     }
 
-    function image_upload(field, thumb) {
-        var $mm_Modal = $('#mmModal');
-
-        if ($mm_Modal.length !== 0) $mm_Modal.remove();
-
-        var frameSrc = baseUrlPath + "mediamanager/dialog?field=" + encodeURIComponent(field);
-        var mm_modal_str = "";
-        mm_modal_str += "<div id=\"mmModal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\">";
-        mm_modal_str += " <div class=\"modal-body\">";
-        mm_modal_str += "   <iframe src=\"" + frameSrc + "\" style=\"position:absolute; zoom:0.60\" width=\"99.6%\" height=\"99.6%\" frameborder=\"0\"><\/iframe>";
-        mm_modal_str += " <\/div>";
-        mm_modal_str += "<\/div>";
-
-        $mm_Modal = $(mm_modal_str);
-        $('#page-render').append($mm_Modal);
-
-        $mm_Modal.modal('show');
-
-        $mm_Modal.on('hidden', function () {
-            var $field = $(field);
-            if ($field.attr('value')) {
-                $.ajax({
-                    url: baseUrlPath + 'mediamanager/image?image=' + encodeURIComponent($field.val()),
-                    dataType: 'text',
-                    success: function (data) {
-                        $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
-                    }
-                });
-            }
-        });
-    }
-
-    Pace.on("done", function () {
-        $(".cover").fadeOut(1000);
-    });
-
     //======================== World ========================
     $('.world-item-wrapper').each(function () {
         countWorldId++;
@@ -491,7 +643,7 @@
                                                 </tr>\
                                                 <tr>\
                                                     <td><?php echo $this->lang->line("entry_image"); ?>:</td>\
-                                                    <td> <img src="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>" alt="" id="world_'+itemWorldId+'_thumb" onerror="$(this).attr("src","<?php echo base_url(); ?>image/default-image.png");"/>\
+                                                    <td> <img src="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>" alt="" id="world_'+itemWorldId+'_thumb" onerror="$(this).attr(\'src\', \'<?php echo base_url(); ?>image/default-image.png\' )"/>\
                                                         <input type="hidden" name="worlds['+itemWorldId+'][world_image]" value="no_image.jpg" id="world_'+itemWorldId+'_image"/>\
                                                         <br/>\
                                                         <a onclick="image_upload(\'#world_'+itemWorldId+'_image\', \'world_'+itemWorldId+'_thumb\');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;\
@@ -591,8 +743,6 @@
         get_item_category(id);
     }
 
-    var temp_category;
-
     function get_item_category(world){
         $inputCategory = $('#worlds_'+world+'_category');
         $inputCategory.select2({
@@ -664,6 +814,49 @@
         });
     }
 
+    $('button#confirm_cancel_button').on('click',cancelConfirm);
+
+    function cancelConfirm(){
+        var event = $('#confirm_event').val();
+        var world = $('#confirm_world').val();
+        var param = $('#confirm_parameter').val();
+
+        if(event == 'category'){
+            document.getElementById('worlds_'+world+'_category').value = temp_category;
+            get_item_category(world);
+            $('#confirm-delete').modal('hide');
+        }
+    }
+
+    function categoryFormatResult(category) {
+        return '<div class="row-fluid">' +
+                    '<div>' + category.name + '</div>'
+               '</div>';
+    }
+
+    function categoryFormatSelection(category) {
+        return category.name;
+    }
+
+</script>
+<?php }
+if ($game == 'farm'){
+    //////////////////////////////////////////////////////////////////////////////////
+    //                                                                              //
+    //            ///////////     //////     ///////////    /////////////           //
+    //            //             //    //    //       //   //    //    //           //
+    //            //            //      //   //       //   //    //    //           //
+    //            /////////     //////////   //////////    //    //    //           //
+    //            //            //      //   //   //       //    //    //           //
+    //            //            //      //   //    //      //    //    //           //
+    //            //            //      //   //     ///    //    //    //           //
+    //                                                                              //
+    //////////////////////////////////////////////////////////////////////////////////
+?>
+<script>
+    var list_badge;
+    $('button#item-modal-submit').on('click',submitItemModalForm);
+    $('a#confirm_del_button').on('click',deleteConfirm);
     function add_thumbnail(world_id){
         var $world_widths = $('#worlds_'+ world_id +'_world_width'),
             $world_widths_temp = $('#worlds_'+ world_id +'_world_width_temp'),
@@ -680,11 +873,12 @@
                     if (myElemj === null) $('#thumbnails_grid_'+ world_id +'_'+ i).append('<li id="thumbnails_grid_'+ world_id +'_' + i + '_' + j + '">\
                                                     <div class="thumbnail tooltips" data-placement="top" title="['+i+']['+j+']" style="width:120px;height:120px;">\
                                                         <input type="hidden" name=worlds['+world_id+'][world_item]['+i+']['+j+'][item_id] id="worlds_'+world_id+'_item_id_' + i + '_' + j + '" size="100" value="">\
+                                                        <input type="hidden" name=worlds['+world_id+'][world_item]['+i+']['+j+'][rule_id] id="worlds_'+world_id+'_rule_id_' + i + '_' + j + '" size="100" value="">\
                                                         <input type="hidden" name=worlds['+world_id+'][world_item]['+i+']['+j+'][item_harvest] id="worlds_'+world_id+'_item_harvest_' + i + '_' + j + '" size="100" value="1">\
                                                         <input type="hidden" name=worlds['+world_id+'][world_item]['+i+']['+j+'][item_deduct] id="worlds_'+world_id+'_item_deduct_' + i + '_' + j + '" size="100" value="1">\
                                                         <input type="hidden" name=worlds['+world_id+'][world_item]['+i+']['+j+'][item_description] id="worlds_'+world_id+'_item_description_' + i + '_' + j + '" size="100" value="">\
-                                                        <i class="fa fa-plus-circle fa-5x fa-align-center" onclick="showItemModalForm('+world_id+','+i+','+j+')" class="tooltips" data-placement="top" title="['+i+']['+j+']" id="add" style="padding: 30px" aria-hidden="true"></i>\
-                                                        <img class="hide" style="padding: 10px" onclick = "showItemModalForm('+world_id+','+i+','+j+')" src="" name="worlds['+world_id+'][world_item]['+i+']['+j+'][item_thumb]" alt="" id="worlds_'+world_id+'_item_thumb_'+i+'_'+j+'" onerror="$(this).attr("src","<?php echo base_url(); ?>image/default-image.png");"/>\
+                                                        <i class="fa fa-plus-circle fa-5x fa-align-center" onclick="showItemModalForm('+world_id+','+i+','+j+')" class="tooltips" data-placement="top" title="['+i+']['+j+']" id = "worlds_'+world_id+'_item_add_'+i+'_'+j+'" style="padding: 30px" aria-hidden="true"></i>\
+                                                        <img class="hide" style="padding: 10px" onclick = "showItemModalForm('+world_id+','+i+','+j+')" src="" name="worlds['+world_id+'][world_item]['+i+']['+j+'][item_thumb]" alt="" id="worlds_'+world_id+'_item_thumb_'+i+'_'+j+'" onerror="$(this).attr(\'src\', \'<?php echo base_url(); ?>image/default-image.png\' )"/>\
                                                     </div>\
                                                     <div id="world_'+ world_id +'_item_image_' + i + '_' + j + '"></div>\
                                                  </li>');
@@ -707,10 +901,6 @@
         $waitDialog.modal('hide');
     }
 
-    $('#page-render').on('click', 'button#item-modal-submit', submitItemModalForm);
-    $('#page-render').on('click', 'button#confirm_cancel_button', cancelConfirm);
-    $('#page-render').on('click', 'a#confirm_del_button', deleteConfirm);
-
     function deleteConfirm(){
         var event = $('#confirm_event').val();
         var world = $('#confirm_world').val();
@@ -721,6 +911,7 @@
             for(var i =0;i<$world_heights.val();i++){
                 for(var j=0;j<$world_widths.val();j++){
                     document.getElementById('worlds_'+ world +'_item_id_' + i + '_' + j).value =  "";
+                    document.getElementById('worlds_'+ world +'_rule_id_' + i + '_' + j).value =  "";
                     document.getElementById('worlds_'+ world +'_item_harvest_' + i + '_' + j).value =  1;
                     document.getElementById('worlds_'+ world +'_item_deduct_' + i + '_' + j).value =  1;
                     document.getElementById('worlds_'+ world +'_item_description_' + i + '_' + j).value =  "";
@@ -737,29 +928,19 @@
         }
     }
 
-    function cancelConfirm(){
-        var event = $('#confirm_event').val();
-        var world = $('#confirm_world').val();
-        var param = $('#confirm_parameter').val();
-
-        if(event == 'category'){
-            document.getElementById('worlds_'+world+'_category').value = temp_category;
-            get_item_category(world);
-            $('#confirm-delete').modal('hide');
-        }
-    }
-
     function submitItemModalForm() {
         var world_id   = $('#item_world_id').val(),
             row    = $('#item_row').val(),
             column    = $('#item_column').val(),
             item_id = $('#item_id').val(),
+            rule_id = $('#rule_id').val(),
             item_harvest = $('#item_harvest').val(),
             item_deduct  = $('#item_deduct').val(),
             item_desc = $('#item-desc').val();
-            dialogMsg = "";
+        dialogMsg = "";
 
         if(item_id == "") dialogMsg += '- Please select Item <br>';
+        if(rule_id == "") dialogMsg += '- Please select Rule <br>';
         if(item_harvest < 1) dialogMsg += '- Days to harvest is require at least 1 day <br>';
         if(item_deduct < 1) dialogMsg += '- Days to die is require at least 1 day <br>';
         if(dialogMsg != ""){
@@ -768,25 +949,27 @@
             $('#formItemModal').modal('hide');
 
             document.getElementById('worlds_'+ world_id +'_item_id_' + row + '_' + column).value =  item_id;
+            document.getElementById('worlds_'+ world_id +'_rule_id_' + row + '_' + column).value =  rule_id;
             document.getElementById('worlds_'+ world_id +'_item_harvest_' + row + '_' + column).value =  item_harvest;
             document.getElementById('worlds_'+ world_id +'_item_deduct_' + row + '_' + column).value =  item_deduct;
             document.getElementById('worlds_'+ world_id +'_item_description_' + row + '_' + column).value = item_desc;
-            for(var i = 0; i<  list_badge.length; i++){
+            if(list_badge != undefined) for(var i = 0; i<  list_badge.length; i++){
+                var path = list_badge[i]['image'].split(".");
                 if (item_id == list_badge[i]['_id']){
-                    document.getElementById('worlds_'+ world_id +'_item_thumb_' + row + '_' + column).value = list_badge[i]['image'];
+                    document.getElementById('worlds_'+ world_id +'_item_thumb_' + row + '_' + column).src = "https://images.pbapp.net/cache/"+path[0]+"-100x100."+path[1];
                 }
             }
 
             $('#worlds_'+ world_id +'_item_thumb_' + row + '_' + column).removeClass('hide');
             $('#worlds_'+ world_id +'_item_add_' + row + '_' + column).addClass('hide');
             document.getElementById('item_id').value = "";
+            document.getElementById('rule_id').value = "";
             document.getElementById('item_harvest').value = "";
             document.getElementById('item_deduct').value = "";
             document.getElementById('item-desc').value = "";
         }
     }
 
-    var list_badge;
     function showItemModalForm(world_id,row,column) {
         var $world_category = $('#worlds_'+world_id+'_category');
         var $world_width = $('#worlds_'+ world_id +'_world_width');
@@ -797,6 +980,7 @@
         document.getElementById('item_row').value = row;
         document.getElementById('item_column').value = column;
         document.getElementById('item_id').value = ($('#worlds_'+ world_id +'_item_id_'+ row +'_' + column).val() != "") ? $('#worlds_'+ world_id +'_item_id_'+ row +'_' + column).val() : "";
+        document.getElementById('rule_id').value = ($('#worlds_'+ world_id +'_rule_id_'+ row +'_' + column).val() != "") ? $('#worlds_'+ world_id +'_rule_id_'+ row +'_' + column).val() : "";
         document.getElementById('item_harvest').value = ($('#worlds_'+ world_id +'_item_harvest_'+ row +'_' + column).val() != "") ? $('#worlds_'+ world_id +'_item_harvest_'+ row +'_' + column).val() : 1;
         document.getElementById('item_deduct').value  = ($('#worlds_'+ world_id +'_item_deduct_' + row +'_' + column).val() != "") ? $('#worlds_'+ world_id +'_item_deduct_'+ row +'_' + column).val() : 1;
         document.getElementById('item-desc').value = ($('#worlds_'+ world_id +'_item_desc_'+ row +'_' + column).val() != null) ? $('#worlds_'+ world_id +'_item_desc_'+ row +'_' + column).val() : "";
@@ -859,20 +1043,456 @@
                 formatResult: categoryFormatResult,
                 formatSelection: categoryFormatSelection,
             });
+            $rule = $('#rule_id');
+            $rule.select2({
+                width: '220px',
+                allowClear: true,
+                placeholder: "Select Rule",
+                minimumInputLength: 0,
+                id: function (data) {
+                    return data._id;
+                },
+                ajax: {
+                    url: baseUrlPath + "game/rule",
+                    dataType: 'json',
+                    quietMillis: 250,
+                    data: function (term, page) {
+                        return {
+                            search: term, // search term
+                        };
+                    },
+                    results: function (data, page) {
+                        return {results: data.rows};
+                    },
+                    cache: true
+                },
+                initSelection: function (element, callback) {
+                    var id = $(element).val();
+                    if (id !== ""){
+                        $.ajax(baseUrlPath + "game/rule/" + id, {
+                            dataType: "json",
+                            beforeSend: function (xhr) {
+                                $rule.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                            }
+                        }).done(function (data) {
+                            if (typeof data != "undefined")
+                                callback(data);
+                        }).always(function () {
+                            $rule.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                        });
+                    }
+                },
+                formatResult: categoryFormatResult,
+                formatSelection: categoryFormatSelection,
+            });
         }
         else{
             preventUnusual.message("please select category" , "Fail!");
         }
     }
-
-    function categoryFormatResult(category) {
-        return '<div class="row-fluid">' +
-                    '<div>' + category.name + '</div>'
-               '</div>';
-    }
-
-    function categoryFormatSelection(category) {
-        return category.name;
-    }
-
 </script>
+<?php }
+if($game == 'bingo'){
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                             //
+    //            ///////////    /////////    //       //    ///////////   ///////////             //
+    //            //       //       //        ////     //    //            //       //             //
+    //            //       //       //        //  //   //    //            //       //             //
+    //            /////////         //        //    // //    //    /////   //       //             //
+    //            //       //       //        //     ////    //       //   //       //             //
+    //            //       //       //        //       //    //       //   //       //             //
+    //            //////////     ////////     //       //    ///////////   ///////////             //
+    //                                                                                             //
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+?>
+<script>
+    var list_badge;
+    $('button#item-modal-submit').on('click',submitItemModalForm);
+    $('a#confirm_del_button').on('click',deleteConfirm);
+    function add_thumbnail(world_id){
+        var $world_widths = $('#worlds_'+ world_id +'_world_width'),
+            $world_widths_temp = $('#worlds_'+ world_id +'_world_width_temp'),
+            $world_heights = $('#worlds_'+ world_id +'_world_height'),
+            $world_heights_temp = $('#worlds_'+ world_id +'_world_height_temp'),
+            $thumbnails_grids = $('#worlds_'+ world_id +'_thumbnails_grids');
+        $waitDialog.modal('show');
+
+        if($world_heights.val() > $world_heights_temp.val() || $world_widths.val() > $world_widths_temp.val()){
+
+            for(var i =0;i<$world_heights.val();i++){
+                var myElemi = document.getElementById('thumbnails_grid_'+ world_id +'_'+ i);
+                if (myElemi === null) $thumbnails_grids.append('<ul id="thumbnails_grid_'+ world_id +'_'+ i +'" class="thumbnails">');
+
+                for(var j=0;j<$world_widths.val();j++){
+                    var myElemj = document.getElementById('thumbnails_grid_'+ world_id +'_' + i + '_' + j);
+                    if (myElemj === null) $('#thumbnails_grid_'+ world_id +'_'+ i).append('<li id="thumbnails_grid_'+ world_id +'_' + i + '_' + j + '">\
+                                                <div class="thumbnail tooltips" data-placement="top" title="['+i+']['+j+']" style="width:120px;height:120px;">\
+                                                    <input type="hidden" name=worlds['+world_id+'][world_item]['+i+']['+j+'][item_id] id="worlds_'+world_id+'_item_id_' + i + '_' + j + '" size="100" value="">\
+                                                    <input type="hidden" name=worlds['+world_id+'][world_item]['+i+']['+j+'][rule_id] id="worlds_'+world_id+'_rule_id_' + i + '_' + j + '" size="100" value="">\
+                                                    <input type="hidden" name=worlds['+world_id+'][world_item]['+i+']['+j+'][item_description] id="worlds_'+world_id+'_item_description_' + i + '_' + j + '" size="100" value="">\
+                                                    <i class="fa fa-plus-circle fa-5x fa-align-center" onclick="showItemModalForm('+world_id+','+i+','+j+')" class="tooltips" data-placement="top" title="['+i+']['+j+']" id = "worlds_'+world_id+'_item_add_'+i+'_'+j+'" style="padding: 30px" aria-hidden="true"></i>\
+                                                    <img class="hide" style="padding: 10px" onclick = "showItemModalForm('+world_id+','+i+','+j+')" src="" name="worlds['+world_id+'][world_item]['+i+']['+j+'][item_thumb]" alt="" id="worlds_'+world_id+'_item_thumb_'+i+'_'+j+'" onerror="$(this).attr(\'src\', \'<?php echo base_url(); ?>image/default-image.png\' )"/>\
+                                                </div>\
+                                                <div id="world_'+ world_id +'_item_image_' + i + '_' + j + '"></div>\
+                                             </li>');
+                }
+                if (myElemi === null) $thumbnails_grids.append('</ul>');
+            }
+
+            if($world_heights.val() > $world_heights_temp.val()) document.getElementById('worlds_'+world_id+'_world_height_temp').value = $world_heights.val();
+            if($world_widths.val() > $world_widths_temp.val()) document.getElementById('worlds_'+world_id+'_world_width_temp').value = $world_widths.val();
+        } else {
+            for(var i =0; i<$world_heights_temp.val(); i++){
+                for(var j=0; j<$world_widths_temp.val(); j++){
+                    if(i > ($world_heights.val()-1) || j > ($world_widths.val()-1)){
+                        $('#thumbnails_grid_'+ world_id +'_' + i +'_'+ j).remove();
+                    }
+                }
+            }
+            if($world_heights.val() < $world_heights_temp.val()) document.getElementById('worlds_'+world_id+'_world_height_temp').value = $world_heights.val();
+            if($world_widths.val() < $world_widths_temp.val()) document.getElementById('worlds_'+world_id+'_world_width_temp').value = $world_widths.val();
+        }
+        $waitDialog.modal('hide');
+    }
+
+    function deleteConfirm(){
+        var event = $('#confirm_event').val();
+        var world = $('#confirm_world').val();
+        var $world_widths = $('#worlds_'+ world +'_world_width'),
+            $world_heights = $('#worlds_'+ world +'_world_height');
+
+        if(event == "category"){
+            for(var i =0;i<$world_heights.val();i++){
+                for(var j=0;j<$world_widths.val();j++){
+                    document.getElementById('worlds_'+ world +'_item_id_' + i + '_' + j).value =  "";
+                    document.getElementById('worlds_'+ world +'_rule_id_' + i + '_' + j).value =  "";
+                    document.getElementById('worlds_'+ world +'_item_description_' + i + '_' + j).value =  "";
+                    $('#worlds_'+ world +'_item_thumb_' + i + '_' + j).addClass('hide');
+                    $('#worlds_'+ world +'_item_add_' + i + '_' + j).removeClass('hide');
+                }
+            }
+            $('#confirm-delete').modal('hide');
+        }
+        if(event == "world"){
+            $('#world_'+world+'_item_wrapper').remove();
+            init_world_event(world);
+            $('#confirm-delete').modal('hide');
+        }
+    }
+
+    function submitItemModalForm() {
+        var world_id   = $('#item_world_id').val(),
+            row    = $('#item_row').val(),
+            column    = $('#item_column').val(),
+            item_id = $('#item_id').val(),
+            rule_id = $('#rule_id').val(),
+            item_desc = $('#item-desc').val();
+        dialogMsg = "";
+
+        if(item_id == "") dialogMsg += '- Please select Item <br>';
+        if(rule_id == "") dialogMsg += '- Please select Rule <br>';
+        if(dialogMsg != ""){
+            preventUnusual.message(dialogMsg , "Fail!");
+        } else {
+            $('#formItemModal').modal('hide');
+
+            document.getElementById('worlds_'+ world_id +'_item_id_' + row + '_' + column).value =  item_id;
+            document.getElementById('worlds_'+ world_id +'_rule_id_' + row + '_' + column).value =  rule_id;
+            document.getElementById('worlds_'+ world_id +'_item_description_' + row + '_' + column).value = item_desc;
+            if(list_badge != undefined) for(var i = 0; i<  list_badge.length; i++){
+                var path = list_badge[i]['image'].split(".");
+                if (item_id == list_badge[i]['_id']){
+                    document.getElementById('worlds_'+ world_id +'_item_thumb_' + row + '_' + column).src = "https://images.pbapp.net/cache/"+path[0]+"-100x100."+path[1];
+                }
+            }
+
+            $('#worlds_'+ world_id +'_item_thumb_' + row + '_' + column).removeClass('hide');
+            $('#worlds_'+ world_id +'_item_add_' + row + '_' + column).addClass('hide');
+            document.getElementById('item_id').value = "";
+            document.getElementById('rule_id').value = "";
+            document.getElementById('item-desc').value = "";
+        }
+    }
+
+    function showItemModalForm(world_id,row,column) {
+        var $world_category = $('#worlds_' + world_id + '_category');
+        var $world_width = $('#worlds_' + world_id + '_world_width');
+        var $world_height = $('#worlds_' + world_id + '_world_height');
+        document.getElementById('worlds_' + world_id + '_world_width').disabled = false;
+        document.getElementById('worlds_' + world_id + '_world_height').disabled = false;
+        document.getElementById('item_world_id').value = world_id;
+        document.getElementById('item_row').value = row;
+        document.getElementById('item_column').value = column;
+        document.getElementById('item_id').value = ($('#worlds_' + world_id + '_item_id_' + row + '_' + column).val() != "") ? $('#worlds_' + world_id + '_item_id_' + row + '_' + column).val() : "";
+        document.getElementById('rule_id').value = ($('#worlds_' + world_id + '_rule_id_' + row + '_' + column).val() != "") ? $('#worlds_' + world_id + '_rule_id_' + row + '_' + column).val() : "";
+        document.getElementById('item-desc').value = ($('#worlds_' + world_id + '_item_desc_' + row + '_' + column).val() != null) ? $('#worlds_' + world_id + '_item_desc_' + row + '_' + column).val() : "";
+
+
+        if ($world_category.val() != "") {
+            $('#formItemModal').modal('show');
+            $inputCategory = $('#item_id');
+            $inputCategory.select2({
+                width: '220px',
+                allowClear: true,
+                placeholder: "Select Item",
+                minimumInputLength: 0,
+                id: function (data) {
+                    return data._id;
+                },
+                ajax: {
+                    url: baseUrlPath + "badge/items?filter_category=" + $world_category.val(),
+                    dataType: 'json',
+                    quietMillis: 250,
+                    data: function (term, page) {
+                        return {
+                            search: term, // search term
+                        };
+                    },
+                    results: function (data, page) {
+                        list_badge = data.rows;
+                        for (var i = 0; i < Number($world_height.val()); i++) {
+                            for (var j = 0; j < Number($world_width.val()); j++) {
+                                for (var k = 0; k < data.total; k++) {
+                                    if (data.rows[k] != undefined) {
+                                        if ($('#worlds_' + world_id + '_item_id_' + i + '_' + j).val() == data.rows[k]._id) {
+                                            data.rows.splice(k, 1);
+                                            data.total--;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return {results: data.rows};
+                    },
+                    cache: true
+                },
+                initSelection: function (element, callback) {
+                    var id = $(element).val();
+                    if (id !== "") {
+                        $.ajax(baseUrlPath + "badge/items/" + id, {
+                            dataType: "json",
+                            beforeSend: function (xhr) {
+                                $inputCategory.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                            }
+                        }).done(function (data) {
+                            if (typeof data != "undefined")
+                                callback(data);
+                        }).always(function () {
+                            $inputCategory.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                        });
+                    }
+                },
+                formatResult: categoryFormatResult,
+                formatSelection: categoryFormatSelection,
+            });
+            $rule = $('#rule_id');
+            $rule.select2({
+                width: '220px',
+                allowClear: true,
+                placeholder: "Select Rule",
+                minimumInputLength: 0,
+                id: function (data) {
+                    return data._id;
+                },
+                ajax: {
+                    url: baseUrlPath + "game/rule",
+                    dataType: 'json',
+                    quietMillis: 250,
+                    data: function (term, page) {
+                        return {
+                            search: term, // search term
+                        };
+                    },
+                    results: function (data, page) {
+                        return {results: data.rows};
+                    },
+                    cache: true
+                },
+                initSelection: function (element, callback) {
+                    var id = $(element).val();
+                    if (id !== "") {
+                        $.ajax(baseUrlPath + "game/rule/" + id, {
+                            dataType: "json",
+                            beforeSend: function (xhr) {
+                                $rule.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                            }
+                        }).done(function (data) {
+                            if (typeof data != "undefined")
+                                callback(data);
+                        }).always(function () {
+                            $rule.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                        });
+                    }
+                },
+                formatResult: categoryFormatResult,
+                formatSelection: categoryFormatSelection,
+            });
+        }
+        else {
+            preventUnusual.message("please select category", "Fail!");
+        }
+    }
+</script>
+<?php }
+
+if($game == 'egg' || $game == 'pairs' || $game == 'catch_item' ){
+    ?>
+<script>
+    var countWorldId = 0,
+        $waitDialog = $('#pleaseWaitDialog');
+
+    preventUnusual ={
+        message:function(msg,title){
+            if(msg=='' || msg== undefined)return;
+
+            if(title!='' && title!= undefined) {
+                $('#errorModal').find('#myModalLabel').html(title);
+            }else{
+                $('#errorModal').find('#myModalLabel').html("Warning !");
+            }
+            $('#errorModal').removeClass('hide');
+            $('#errorModal').removeClass('in');
+            $('#errorModal').modal();
+            $('#errorModal .modal-body').html(msg);
+        }
+    }
+
+    function game_validation(){
+        var formData = $('form.game-form').serialize();
+        $.ajax({
+            type: "POST",
+            url: baseUrlPath + "game/edit/",
+            data: formData,
+            beforeSend: function (xhr) {
+                $waitDialog.modal();
+            }
+        }).done(function (data) {
+            location.reload();
+        }).fail(function (xhr, textStatus, errorThrown) {
+            if(JSON.parse(xhr.responseText).status == "error") {
+                $('form.game-form').trigger("reset");
+                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                $waitDialog.modal('hide');
+
+            }
+        }).always(function () {
+            $waitDialog.modal('hide');
+        });
+    }
+    //======================== World ========================
+    $('.world-item-wrapper').each(function () {
+        countWorldId++;
+    })
+
+    for(var iWorld=1;iWorld <= countWorldId;iWorld++){
+        init_world_event(iWorld);
+    }
+    $('.open-world-btn').click(function () {
+        $('.world-item-wrapper>.box-content').show();
+    })
+    $('.close-world-btn').click(function () {
+        $('.world-item-wrapper>.box-content').hide();
+    })
+
+    $('.add-world-btn').click(function () {
+        countWorldId++;
+        var itemWorldId = countWorldId;
+        var itemWorldHtml = '<div class="world-item-wrapper" data-world-id="'+ itemWorldId +'" id="world_'+ itemWorldId +'_item_wrapper">\
+                                <div class="box-header box-world-header overflow-visible" style="height: 30px;">\
+                                    <h2><img src="<?php echo base_url();?>image/default-image.png" width="30"> World</h2>\
+                                    <div class="box-icon">\
+                                        <a href="javascript:void(0)" class="btn btn-danger right remove-world-btn dropdown-toggle" data-toggle="dropdown">Delete </a>\
+                                        <span class="break"></span>\
+                                        <a href="javaScript:void()" ><i class="icon-chevron-up"></i></a>\
+                                    </div>\
+                                </div>\
+                                <div class="box-content clearfix">\
+                                    <div class="row-fluid">\
+                                        <div class="span12 well" style="min-height:500px">\
+                                            <div class="span6">\
+                                            <table class="form">\
+                                                <tr>\
+                                                    <td><?php echo $this->lang->line("entry_world_name"); ?>:</td>\
+                                                    <td><input type="text" name="worlds['+itemWorldId+'][world_name]" id="worlds_'+itemWorldId+'_name" size="100" value=""></td>\
+                                                    <td></td>\
+                                                </tr>\
+                                                <tr>\
+                                                    <td><?php echo $this->lang->line("entry_world_level"); ?>:</td>\
+                                                    <td><input type="number" name="worlds['+itemWorldId+'][world_level]" id="worlds_'+itemWorldId+'_level" size="100" min="1" value="1"></td>\
+                                                    <td></td>\
+                                                </tr>\
+                                                <tr>\
+                                                    <td><?php echo $this->lang->line("entry_image"); ?>:</td>\
+                                                    <td> <img src="<?php echo S3_IMAGE . "cache/no_image-100x100.jpg" ?>" alt="" id="world_'+itemWorldId+'_thumb" onerror="$(this).attr(\'src\', \'<?php echo base_url(); ?>image/default-image.png\' )"/>\
+                                                        <input type="hidden" name="worlds['+itemWorldId+'][world_image]" value="no_image.jpg" id="world_'+itemWorldId+'_image"/>\
+                                                        <br/>\
+                                                        <a onclick="image_upload(\'#world_'+itemWorldId+'_image\', \'world_'+itemWorldId+'_thumb\');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;\
+                                                        <a onclick="$(\'world_'+itemWorldId+'_thumb\').attr(\'src\', \'<?php echo $this->lang->line('no_image'); ?>\'); $(\'world_'+itemWorldId+'_image\').attr(\'value\', \'\');"><?php echo $this->lang->line('text_clear'); ?></a>\
+                                                    </td>\
+                                                    <td></td>\
+                                                </tr>\
+                                            </table>\
+                                            </div>\
+                                            <div class="span6">\
+                                            <table class="form">\
+                                                <tr>\
+                                                    <td><?php echo $this->lang->line("entry_range_low"); ?>:</td>\
+                                                    <td><input type="number" name="worlds['+itemWorldId+'][world_low]" id="worlds_'+itemWorldId+'_low" size="100" min="1" value="1"></td>\
+                                                </tr>\
+                                                <tr>\
+                                                    <td><?php echo $this->lang->line("entry_range_high"); ?>:</td>\
+                                                    <td><input type="number" name="worlds['+itemWorldId+'][world_high]" id="worlds_'+itemWorldId+'_high" size="100" min="1" value="1"></td>\
+                                                </tr>\
+                                                <tr>\
+                                                    <td><?php echo $this->lang->line("entry_world_description"); ?>:</td>\
+                                                    <td><textarea name="worlds['+itemWorldId+'][world_description]" rows="6"></textarea></td>\
+                                                    <td></td>\
+                                                </tr>\
+                                            </table>\
+                                            </div>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+                            </div>';
+
+        $('.world-item-wrapper>.box-content').slideUp();
+        $('.world-wrapper').append(itemWorldHtml);
+        init_world_event(itemWorldId);
+    });
+
+    function init_world_event(id) {
+        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
+        $('.world-item-wrapper .box-world-header').unbind().bind('click', function (data) {
+            var $target = $(this).next('.box-content');
+
+            if ($target.is(':visible')) $('i', $(this)).removeClass('icon-chevron-up').addClass('icon-chevron-down');
+            else                       $('i', $(this)).removeClass('icon-chevron-down').addClass('icon-chevron-up');
+            $target.slideToggle();
+        });
+
+        $('.remove-world-btn').unbind().bind('click', function (data) {
+            $('#confirm-delete .modal-body').html('Are you sure to remove!!');
+            document.getElementById('confirm_event').value = "world";
+            document.getElementById('confirm_world').value = $(this).parent().parent().parent().data('world-id');
+            $('#confirm-delete').modal('show');
+        });
+    }
+
+    $('#page-render').on('click', 'a#confirm_del_button', deleteConfirm);
+
+    function deleteConfirm(){
+        var event = $('#confirm_event').val();
+        var world = $('#confirm_world').val();
+
+        if(event == "world"){
+            $('#world_'+world+'_item_wrapper').remove();
+            init_world_event(world);
+            $('#confirm-delete').modal('hide');
+        }
+    }
+</script>
+<?php } ?>
+
+
+
