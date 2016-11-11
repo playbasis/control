@@ -243,7 +243,7 @@ class Game extends REST2_Controller
 
         $response = array();
 
-        if(strtolower($query_data['game_name']) == "farm") {
+        if(strtolower($query_data['game_name']) == "farm" || strtolower($query_data['game_name']) == "bingo") {
 
             if( (isset($query_data['stage_level']) && $query_data['stage_level']) ){
 
@@ -303,6 +303,7 @@ class Game extends REST2_Controller
             }
         }
 
+        array_walk_recursive($response, array($this, "convert_mongo_object"));
         //$this->benchmark->mark('end');
         //$t = $this->benchmark->elapsed_time('start', 'end');
         //$this->response($this->resp->setRespond(array( 'processing_time' => $t)), 200);
@@ -472,4 +473,18 @@ class Game extends REST2_Controller
         //$this->response($this->resp->setRespond(array( 'processing_time' => $t)), 200);
         $this->response($this->resp->setRespond(), 200);
     }
+
+    private function convert_mongo_object(&$item, $key)
+    {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else {
+                if (get_class($item) === 'MongoDate') {
+                    $item = datetimeMongotoReadable($item);
+                }
+            }
+        }
+    }
+
 }
