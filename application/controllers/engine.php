@@ -33,6 +33,7 @@ class Engine extends Quest
         $this->load->model('game_model');
         $this->load->model('badge_model');
         $this->load->model('reward_model');
+        $this->load->model('location_model');
     }
 
     public function getActionConfig_get()
@@ -859,6 +860,14 @@ class Engine extends Quest
                     $level = $this->level_model->getLevelByExp($player['player']['exp'], $this->validToken['client_id'],
                         $this->validToken['site_id']);
                     $input['level'] = $level['level'];
+                }
+
+                // Level condition
+                if (($input['jigsaw_name']) == 'locationArea') {
+                    //read player information
+                    $location_info = $this->location_model->getLocation($client_id, $site_id, array('location_id' => $jigsawConfig['location_id']));
+                    $jigsawConfig['latitude'] = isset($location_info[0]['latitude']) ? $location_info[0]['latitude'] : null;
+                    $jigsawConfig['longitude'] = isset($location_info[0]['longitude']) ? $location_info[0]['longitude'] : null;
                 }
 
                 // User profile condition
