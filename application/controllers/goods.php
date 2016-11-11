@@ -927,8 +927,8 @@ class Goods extends MY_Controller
 
         if ($this->input->post('status')) {
             $this->data['status'] = $this->input->post('status');
-        } elseif (isset($goods_info['status']) && !empty($goods_info['status'])) {
-            $this->data['status'] = $goods_info['status'];
+        } elseif (isset($goods_info['status'])) {
+            $this->data['status'] = $goods_info['status'] ? true : false;
         } else {
             $this->data['status'] = 1;
         }
