@@ -22,6 +22,7 @@ class Rule extends MY_Controller
         $this->load->model('Sms_model');
         $this->load->model('Push_model');
         $this->load->model('Game_model');
+        $this->load->model('Location_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -87,6 +88,7 @@ class Rule extends MY_Controller
         $groupList = $this->Rule_model->getGroupJigsawList($site_id, $client_id);
         $levelConditionList = $this->Level_model->getLevelConditions();
         $gameList = $this->Game_model->getGameList($client_id, $site_id);
+        $locationList = $this->Location_model->getLocationList($client_id, $site_id);
         if($gameList){
             foreach ($gameList as &$game) {
                 $game['name'] = $game['game_name'];
@@ -129,6 +131,7 @@ class Rule extends MY_Controller
         $this->data['pushList'] = $pushList;
         $this->data['webhookList'] = $webhookList;
         $this->data['gameList'] = $gameList;
+        $this->data['locationList'] = $locationList;
 
         //}
 

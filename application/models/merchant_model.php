@@ -142,6 +142,19 @@ class Merchant_model extends MY_Model
         return false;
     }
 
+    public function retrieveAllBranches($client_id, $site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+
+        $result = $this->mongo_db->get('playbasis_merchant_branch_to_client');
+
+        return $result;
+    }
+
     public function retrieveBranches($client_id, $site_id, $arrBranchID = array())
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -377,6 +390,17 @@ class Merchant_model extends MY_Model
         $this->mongo_db->limit(1);
         $record = $this->mongo_db->get('playbasis_merchant_branch_to_client');
         return $record ? $record[0] : array();
+    }
+
+    public function getBranchNameByID($client_id, $site_id, $branch_id)
+    {
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('_id', new MongoId($branch_id));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_merchant_branch_to_client');
+        return $result ? $result[0]['branch_name'] : null;
     }
 
     public function findMerchantByBranchId($branch_id)
