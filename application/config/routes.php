@@ -169,6 +169,7 @@ $route['Goods/ad'] = 'goods/personalizedSponsor';
 $route['Point/custom/list'] = 'custompoint/list';
 $route['Point/custom/transaction'] = 'custompoint/transaction';
 $route['Point/custom/approval'] = 'custompoint/approval';
+$route['Point/custom/remaining'] = 'custompoint/remainingPoint';
 $route['Point/custom/log'] = 'custompoint/customLog';
 $route['Point/custom/clearLog'] = 'custompoint/clearCustomLog';
 
