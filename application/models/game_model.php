@@ -68,6 +68,8 @@ class Game_model extends MY_Model
 
         $this->mongo_db->select(array(
             'game_name',
+            'duration',
+            'action_time',
             'item_category_id',
             'item_list',
             'image',
@@ -110,6 +112,8 @@ class Game_model extends MY_Model
             //'game_id',
             'stage_name',
             'stage_level',
+            'range_low',
+            'range_high',
             'descriptrion',
             'stage_config',
             'image',
