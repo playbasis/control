@@ -386,6 +386,23 @@ class Reward_model extends MY_Model
         );
         return $this->mongo_db->insert('playbasis_reward_custom_log', $insert_data);
     }
+
+    public function remainingPoint($data)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(array('name','quantity'));
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'status' => true
+        ));
+        
+        if(isset($data['name'])){
+            $this->mongo_db->where('name', $data['name']);
+        }
+        $result = $this->mongo_db->get('playbasis_reward_to_client');
+        return $result;
+    }
 }
 
 ?>

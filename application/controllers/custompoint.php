@@ -105,6 +105,25 @@ class Custompoint extends REST2_Controller
         $this->response($this->resp->setRespond($response), 200);
     }
 
+    public function remainingPoint_get()
+    {
+        $data = $this->input->get();
+        $data['client_id'] = $this->validToken['client_id'];
+        $data['site_id'] = $this->validToken['site_id'];
+
+        if($this->input->post('point_name')){
+            $data['name'] = $this->input->post('point_name');
+        }
+        
+        $remaining_point = $this->reward_model->remainingPoint($data);
+        foreach ($remaining_point as &$point){
+            if(!isset($point['quantity'])){
+                $point['quantity'] = null;
+            }
+        }
+        $this->response($this->resp->setRespond($remaining_point), 200);
+    }
+
     public function customLog_get()
     {
         $required = $this->input->checkParam(array(
