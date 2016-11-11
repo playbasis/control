@@ -374,6 +374,9 @@ $route['Game/setCurrentStage'] = 'game/setCurrentStage';
 //Custom style API
 $route['Style'] = 'custom_style/list';
 
+//Location API
+$route['Location'] = 'location/list';
+
 //misc
 //$route['test']	= 'playbasis/test';
 $route['test']	= 'notification/index';
