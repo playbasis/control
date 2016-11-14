@@ -764,6 +764,17 @@ class Engine extends Quest
             $time = $action_time;
         }
         if (!$input["test"]) {
+
+            // populate input parameter of the action
+            $action_dataset = $this->jigsaw_model->getActionDatasetInfo($input['action_name']);
+            $input['parameters'] = array();
+            if (is_array($action_dataset)) {
+                foreach ($action_dataset as $dataset) {
+                    if (isset($input[$dataset['param_name']])) {
+                        $input['parameters'][$dataset['param_name']] = $input[$dataset['param_name']];
+                    }
+                }
+            }
             $input['action_log_id'] = $this->tracker_model->trackAction($input, $time); //track action
             $input['action_log_time'] = $this->action_model->findActionLogTime($validToken['site_id'],
                 $input['action_log_id']);

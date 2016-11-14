@@ -28,6 +28,7 @@ class Tracker_model extends MY_Model
             'action_id' => $input['action_id'],
             'action_name' => $input['action_name'],
             'url' => (isset($input['url'])) ? $input['url'] : null,
+            'parameters' => (isset($input['parameters'])) ? $input['parameters'] : null,
             'date_added' => $mongoDate,
             'date_modified' => $mongoDate
         ));
@@ -41,6 +42,7 @@ class Tracker_model extends MY_Model
             'action_id' => $input['action_id'],
             'action_name' => $input['action_name'],
             'url' => (isset($input['url'])) ? $input['url'] : null,
+            'parameters' => (isset($input['parameters'])) ? $input['parameters'] : null,
             'date_added' => $mongoDate,
             'date_modified' => $mongoDate
         ), array("w" => 0, "j" => false));
