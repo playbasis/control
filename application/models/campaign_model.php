@@ -16,7 +16,6 @@ class Campaign_model extends MY_Model
             'date_start' => $data['date_start'],
             'date_end' => $data['date_end'],
             'weight' => $data['weight'],
-            'status' => $data['status'],
             'date_modified' => $d,
             'date_added' => $d,
             'deleted' => false,
@@ -38,7 +37,6 @@ class Campaign_model extends MY_Model
         $this->mongo_db->set('date_start', $data['date_start']);
         $this->mongo_db->set('date_end', $data['date_end']);
         $this->mongo_db->set('weight', $data['weight']);
-        $this->mongo_db->set('status', $data['status']);
 
         return $this->mongo_db->update('playbasis_campaign_to_client');
     }
@@ -56,9 +54,6 @@ class Campaign_model extends MY_Model
         }
         if(isset($data['name']) && !empty($data['name'])){
             $this->mongo_db->where('name', $data['name']);
-        }
-        if(isset($data['status']) && $data['status']){
-            $this->mongo_db->where('status', true);
         }
 
         if (isset($data['limit'])) {
@@ -92,9 +87,6 @@ class Campaign_model extends MY_Model
         if(isset($data['name']) && !empty($data['name'])){
             $this->mongo_db->where('name', $data['name']);
         }
-        if(isset($data['status']) && $data['status']){
-            $this->mongo_db->where('status', true);
-        }
 
         $results = $this->mongo_db->count("playbasis_campaign_to_client");
 
@@ -104,10 +96,16 @@ class Campaign_model extends MY_Model
     public function deleteCampaign($campaign_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        
+
         $this->mongo_db->where('_id', $campaign_id);
         $this->mongo_db->set('deleted', true);
         $results = $this->mongo_db->update("playbasis_campaign_to_client");
+
+        if($results){
+            $this->mongo_db->where('campaign_id', $campaign_id);
+            $this->mongo_db->set('deleted', true);
+            $results = $this->mongo_db->update_all("playbasis_game_campaign_to_client");
+        }
 
         return $results;
     }

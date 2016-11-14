@@ -35,7 +35,6 @@
                         <td class="center"><?php echo $this->lang->line('column_date_start'); ?></td>
                         <td class="center"><?php echo $this->lang->line('column_date_end'); ?></td>
                         <td class="center"><?php echo $this->lang->line('column_weight'); ?></td>
-                        <td class="center"><?php echo $this->lang->line('column_status'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
@@ -58,7 +57,6 @@
                                 <td class="left" width="10%"><?php echo isset($campaign['date_start']) && !empty($campaign['date_start'])  ? dateMongotoReadable($campaign['date_start']) : "N/A"; ?></td>
                                 <td class="left" width="10%"><?php echo isset($campaign['date_end']) && !empty($campaign['date_end'])  ? dateMongotoReadable($campaign['date_end']) : "N/A"; ?></td>
                                 <td class="left" width="10%"><?php echo isset($campaign['weight']) && !empty($campaign['weight']) ? $campaign['weight'] : "0"; ?></td>
-                                <td class="left" width="10%"><?php echo isset($campaign['status']) && !empty($campaign['status']) && $campaign['status']? "Enable" : "Disable"; ?></td>
                                 <td class="center" width="10%">
                                     <?php
                                     echo anchor('campaign/update/'.$campaign['_id'], "<i class='fa fa-edit fa-lg''></i>",

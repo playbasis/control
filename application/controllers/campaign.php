@@ -85,7 +85,6 @@ class Campaign extends MY_Controller
                 $data['date_start'] = null;
                 $data['date_end'] = null;
                 $data['weight'] = isset($campaign_data['weight']) && $campaign_data['weight'] ? intval($campaign_data['weight']) : 0;
-                $data['status'] = isseT($campaign_data['status']) && $campaign_data['status'] == "on" ? true : false;
 
                 if (isset($campaign_data['date_start']) && !empty($campaign_data['date_start']) && isset($campaign_data['date_end']) && !empty($campaign_data['date_end'])) {
                     $date_start_another = strtotime($campaign_data['date_start']);
@@ -145,7 +144,6 @@ class Campaign extends MY_Controller
                 $data['date_start'] = null;
                 $data['date_end'] = null;
                 $data['weight'] = isset($campaign_data['weight']) && $campaign_data['weight'] ? intval($campaign_data['weight']) : 0;
-                $data['status'] = isseT($campaign_data['status']) && $campaign_data['status'] == "on" ? true : false;
 
                 if (isset($campaign_data['date_start']) && $campaign_data['date_start'] && isset($campaign_data['date_end']) && $campaign_data['date_end']) {
                     $date_start_another = strtotime($campaign_data['date_start']);
@@ -370,14 +368,6 @@ class Campaign extends MY_Controller
             $this->data['weight'] = $campaign_info['weight'];
         } else {
             $this->data['weight'] = 0;
-        }
-
-        if ($this->input->post('status')) {
-            $this->data['status'] = $this->input->post('status');
-        } elseif (isset($campaign_info['status'])) {
-            $this->data['status'] = $campaign_info['status'];
-        } else {
-            $this->data['status'] = true;
         }
 
         $this->load->vars($this->data);
