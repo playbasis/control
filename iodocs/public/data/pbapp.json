@@ -2656,6 +2656,8 @@
                 "image":        { "-type": "string"},
                 "sort_order":   { "-type": "any"},
                 "description":  { "-type": "string"},
+                "quantity":     { "-type": "integer"},
+                "per_user":     { "-type": "integer"},
                 "hint":         { "-type": "string"},
                 "sponsor":      { "-type": "boolean"},
                 "tags":         { "-type": "any", "-optional": "true"}
@@ -2686,6 +2688,8 @@
               "image":        { "-type": "string"},
               "sort_order":   { "-type": "any"},
               "description":  { "-type": "string"},
+              "quantity":     { "-type": "integer"},
+              "per_user":     { "-type": "integer"},
               "hint":         { "-type": "string"},
               "sponsor":      { "-type": "boolean"},
               "tags":         { "-type": "any", "-optional": "true"}
