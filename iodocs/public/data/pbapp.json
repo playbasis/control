@@ -9398,6 +9398,24 @@
           ]
         },
         {
+          "MethodName": "Retrieve Active Campaign",
+          "Synopsis": "Retrieve Active Campaign",
+          "HTTPMethod": "GET",
+          "URI": "Game/campaign/active",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [],
+          "response": {
+            "result": {
+              "name":          {"-type": "string"},
+              "image":         {"-type": "string"},
+              "weight":        {"-type": "integer"},
+              "date_start":    {"-type": "any", "-optional": "true"},
+              "date_end":      {"-type": "any", "-optional": "true"}
+            }
+          }
+        },
+        {
           "MethodName": "Retrieve Game Item status",
           "Synopsis": "Retrieve player's item(s) status in game",
           "HTTPMethod": "GET",
