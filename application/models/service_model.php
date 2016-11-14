@@ -314,6 +314,7 @@ class Service_model extends MY_Model
             'quiz_id',
             'action_name',
             'url',
+            'parameters',
             'event_type',
             'event_id',
             'from_pb_player_id'
@@ -580,6 +581,7 @@ class Service_model extends MY_Model
             'quiz_id',
             'action_name',
             'url',
+            'parameters',
             'from_pb_player_id'
         ));
         $this->mongo_db->where('_id', $event_id);
