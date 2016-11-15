@@ -106,6 +106,10 @@ class Error extends CI_Model
                 $errorData['message'] = "Device is not found";
                 $errorData['error_code'] = '0814';
                 break;
+            case 'SIZE_KEY_VAL_NOT_MATCH':
+                $errorData['message'] = "size of key and value are not matched";
+                $errorData['error_code'] = '0815';
+                break;
             case 'INVALID_API_KEY_OR_SECRET':
                 $errorData['message'] = "Invalid API-KEY OR API-SECRET";
                 $errorData['error_code'] = '0001';
