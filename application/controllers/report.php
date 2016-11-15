@@ -271,13 +271,19 @@ class Report extends MY_Controller
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
         } else {
-            $filter_date_start = '';
+            $filter_date_start = date("Y-m-d", strtotime("-30 days"));
         }
 
         if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
+            $date = $this->input->get('date_expire');
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate + ("86399");
+            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
         } else {
-            $filter_date_end = '';
+            $date = date("Y-m-d");
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate + ("86399");
+            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
         }
 
         if ($this->input->get('username')) {
@@ -306,7 +312,7 @@ class Report extends MY_Controller
 
         $this->load->helper('export_data');
 
-        $results = $this->Action_model->getActionReport($data, true);
+        $results = $this->Action_model->getActionReport($data);
 
         $exporter = new ExportDataExcel('browser', "ActionReport_" . date("YmdHis") . ".xls");
 
