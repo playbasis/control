@@ -142,19 +142,34 @@ class Game extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $stage, 'processing_time' => $t)), 200);
     }
 
-    private function getList($data, $objectType)
+    public function activeCampaign_get()
     {
-        // Add object into list of array
-        $list = array();
-        foreach ($data as $val){
-            try{
-                array_push($list, new MongoId($val[$objectType]));
-            }
-            catch(MongoException $e){
-                array_push($list, $val[$objectType]);
-            }
+        $required = $this->input->checkParam(array(
+            'game_name',
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         }
-        return $list;
+
+        $game_name = $this->input->get('game_name');
+        $game = $this->game_model->retrieveGame($this->client_id, $this->site_id, array(
+            'game_name' => $game_name,
+            'order' => 'desc'
+        ));
+        if (empty($game)){
+            $this->response($this->error->setError('GAME_NOT_FOUND'), 200);
+        }
+        $campaigns = $this->game_model->getGameCampaign($this->client_id, $this->site_id, $game[0]['_id']);
+        $campaigns_list = array();
+        if($campaigns && is_array($campaigns)) foreach ($campaigns as $campaign){
+            array_push($campaigns_list, $campaign['campaign_id']);
+        }
+        $result = $this->game_model->getActiveCampaign($this->client_id, $this->site_id, $campaigns_list);
+        if($result){
+            unset($result['_id']);
+            array_walk_recursive($result, array($this, "convert_mongo_object_and_optional"));
+        }
+        $this->response($this->resp->setRespond(array('result' => $result)), 200);
     }
 
     /**
