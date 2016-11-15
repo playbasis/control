@@ -189,6 +189,7 @@ class Report_goods extends MY_Controller
                     'image' => $thumb,
                     'email' => $player['email'],
                     'date_added' => datetimeMongotoReadable($result['date_added']),
+                    'date_expire' => isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null,
                     'goods_name' => $result['goods_name'],
                     // 'value'             => $result['value']
                     'value' => $result['amount'],
@@ -381,7 +382,12 @@ class Report_goods extends MY_Controller
             $goods_name = null;
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-
+            $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
+            if(!is_null($goods_player)){
+                $status = $goods_player > 0 ? "active" : "used";
+            } else {
+                $status = "expired";
+            }
             if (!empty($player['image'])) {
                 $thumb = $player['image'];
             } else {
@@ -394,6 +400,8 @@ class Report_goods extends MY_Controller
                 'image' => $thumb,
                 'email' => $player['email'],
                 'date_added' => datetimeMongotoReadable($result['date_added']),
+                'date_expire' => isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null,
+                'status' => $status,
                 'goods_name' => $result['goods_name'],
                 // 'value'             => $result['value']
                 'amount' => $result['amount'],
@@ -415,7 +423,9 @@ class Report_goods extends MY_Controller
                 $this->lang->line('column_email'),
                 $this->lang->line('column_goods_name'),
                 $this->lang->line('column_goods_amount'),
-                $this->lang->line('column_date_added')
+                $this->lang->line('column_status'),
+                $this->lang->line('column_date_added'),
+                $this->lang->line('column_date_expire')
             )
         );
 
@@ -426,7 +436,9 @@ class Report_goods extends MY_Controller
                     $row['email'],
                     $row['goods_name'],
                     $row['amount'],
-                    $row['date_added']
+                    $row['status'],
+                    $row['date_added'],
+                    $row['date_expire']
                 )
             );
         }
