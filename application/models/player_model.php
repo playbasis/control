@@ -1752,6 +1752,7 @@ class Player_model extends MY_Model
             'goods_id' => $goods_id
         ));
         $this->mongo_db->set('value', 0);
+        $this->mongo_db->set('date_modified', new MongoDate());
         $result = $this->mongo_db->update('playbasis_goods_to_player');
 
         return $result;
