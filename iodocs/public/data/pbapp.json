@@ -1352,6 +1352,13 @@
               "Default": "",
               "Type": "string",
               "Description": "name of the action to query"
+            },
+            {
+              "Name": "url",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "url of the action to query"
             }
           ],
           "response": {

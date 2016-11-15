@@ -526,12 +526,15 @@ class Player_model extends MY_Model
         return $result;
     }
 
-    public function getActionCount($pb_player_id, $action_id, $site_id)
+    public function getActionCount($pb_player_id, $action_id, $site_id, $url = false)
     {
         $fields = array(
             'pb_player_id' => $pb_player_id,
             'action_id' => $action_id
         );
+        if ($url){
+            $this->mongo_db->where('url', $url);
+        }
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where($fields);
         $count = $this->mongo_db->count('playbasis_action_log');
