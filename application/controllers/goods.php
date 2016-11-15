@@ -526,10 +526,7 @@ class Goods extends MY_Controller
         $this->_getList($offset);
 
         //todo: Node type should only shown when match with goods's organize.
-
-        $_goods_list = array_values(array_unique(array_map(array($this, 'extract_goods_id'),
-            $this->Goods_model->getAllRedeemedGoods(array('site_id' => $this->User_model->getSiteId())))));
-        $redeemed_goods_list = $this->Goods_model->listRedeemedGoods($_goods_list,
+        $redeemed_goods_list = $this->Goods_model->listRedeemedGoodsBySite($this->User_model->getSiteId(),
             array('goods_id', 'cl_player_id', 'pb_player_id'));
 
         $this->load->model('Player_model');
