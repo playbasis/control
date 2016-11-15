@@ -382,13 +382,13 @@ class Game_model extends MY_Model
             'deleted' => false
         ));
         $this->mongo_db->where_in('_id', $campaign_list);
-        $this->mongo_db->where('$or',  array(array('date_start' => array('$exists' => false)), array('date_start' => array('$lte' => $d))));
-        $this->mongo_db->where('$or',  array(array('date_end' => array('$exists' => false)), array('date_end' => array('$gte' => $d))));
-        $this->mongo_db->order_by(array('weight' => 'ASC', 'name' => 'ASC'));
+        $this->mongo_db->where(array('$and' => array( array('$or' => array(array("date_start" => null), array("date_start" => array('$lte'=> $d)))),
+                                                      array('$or' => array(array("date_end" => array('$gte'=> $d)), array("date_end" => null))))));
+        $this->mongo_db->order_by(array('weight' => 'desc','date_start' => 'desc', "date_end" => 'asc' , 'name' => 'asc'));
         $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_campaign_to_client');
 
-        return $result ? $result[0]:array();
+        return $result ? $result[0] : array();
     }
 
 }
