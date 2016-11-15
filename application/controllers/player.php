@@ -1471,9 +1471,16 @@ class Player extends REST2_Controller
             if (!$action_id) {
                 $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
             }
+            if($this->input->get('key') && $this->input->get('value')){
+                $key = explode(',', $this->input->get('key'));
+                $value =  explode(',', $this->input->get('value'));
+                if (sizeof($key) != sizeof($value)){
+                    $this->response($this->error->setError('SIZE_KEY_VAL_NOT_MATCH'), 200);
+                }
+            }
             $actions['action'] = ($option == 'time') ? $this->player_model->getActionPerform($pb_player_id, $action_id, $this->site_id) : 
-                                                       $this->player_model->getActionCount($pb_player_id, $action_id, $this->site_id, 
-                                                            $this->input->get('url') ? $this->input->get('url') : null);
+                                                       $this->player_model->getActionCount($pb_player_id, $action_id, $this->site_id,
+                                                           isset($key) && $key ? $key : null , isset($value) && $value ? $value : null);
         } else //get last action performed
         {
             if ($option != 'time') {

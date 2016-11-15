@@ -1354,11 +1354,18 @@
               "Description": "name of the action to query"
             },
             {
-              "Name": "url",
+              "Name": "key",
               "Required": "N",
               "Default": "",
               "Type": "string",
-              "Description": "url of the action to query"
+              "Description": "list of parameters key of the action to query Ex, currency,type,url"
+            },
+            {
+              "Name": "value",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "list of parameters value of the action to query Ex, dollar,money,step"
             }
           ],
           "response": {
