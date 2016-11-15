@@ -154,6 +154,16 @@ class Report_goods extends MY_Controller
         $results = array();
 
         if ($client_id) {
+            if($filter_goods_status == "expired"){
+                $ex_id = $this->Goods_model->getPlayerGoods($data['site_id'], $filter_date_start, $filter_date_end);
+                $data['ex_id'] = is_array($ex_id) ? array_column($ex_id, 'goods_id') : array();
+            } elseif ($filter_goods_status == "active"){
+                $in_id = $this->Goods_model->getPlayerGoodsActive($data['site_id'], $filter_date_start, $filter_date_end);
+                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
+            } elseif ($filter_goods_status == "used"){
+                $in_id = $this->Goods_model->getPlayerGoodsUsed($data['site_id'], $filter_date_start, $filter_date_end);
+                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
+            }
             $report_total = $this->Report_goods_model->getTotalReportGoods($data);
             $results = $this->Report_goods_model->getReportGoods($data);
         }

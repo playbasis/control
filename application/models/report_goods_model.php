@@ -56,6 +56,14 @@ class Report_goods_model extends MY_Model
             }
         }
 
+        if (isset($data['ex_id']) && $data['ex_id']){
+            $this->mongo_db->where_not_in('goods_id', $data['ex_id']);
+        }
+
+        if (isset($data['in_id']) && $data['in_id']){
+            $this->mongo_db->where_in('goods_id', $data['in_id']);
+        }
+
         // $results = $this->mongo_db->count("playbasis_goods_to_player");
         $results = $this->mongo_db->count("playbasis_goods_log");
 
@@ -105,6 +113,14 @@ class Report_goods_model extends MY_Model
                 );
                 $this->mongo_db->where($goodsRewards);
             }
+        }
+
+        if (isset($data['ex_id']) && $data['ex_id']){
+            $this->mongo_db->where_not_in('goods_id', $data['ex_id']);
+        }
+
+        if (isset($data['in_id']) && $data['in_id']){
+            $this->mongo_db->where_in('goods_id', $data['in_id']);
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
