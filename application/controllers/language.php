@@ -276,6 +276,14 @@ class Language extends MY_Controller
             $this->data['language'] = '';
         }
 
+        if ($this->input->post('abbreviation')) {
+            $this->data['abbreviation'] = $this->input->post('abbreviation');
+        } elseif (isset($language_info['abbreviation'])) {
+            $this->data['abbreviation'] = $language_info['abbreviation'];
+        } else {
+            $this->data['abbreviation'] = '';
+        }
+
         if ($this->input->post('status')) {
             $this->data['status'] = $this->input->post('status');
         } elseif (isset($language_info['status'])) {
