@@ -1415,7 +1415,7 @@ class Engine extends Quest
         $site_name = $validToken['site_name'];
         $eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], '', '', '', '', '', $goodsData['name']);
         if(isset($goodsData['group']) && !empty($goodsData['group'])){
-            $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $goodsData['group'] , null , null , 1 );
+            $goods_group_rewards = $this->goods_model->getGoodsByGroup($validToken['client_id'], $validToken['site_id'], $goodsData['group'] , 0 , $jigsawConfig['quantity']*10 , 1 );
             if($jigsawConfig['quantity'] > 0 && $goods_group_rewards){
                 $rand_goods = array_rand($goods_group_rewards, sizeof($goods_group_rewards) < $jigsawConfig['quantity'] ? sizeof($goods_group_rewards) : (int)$jigsawConfig['quantity']);
                 if(!is_array($rand_goods)){
