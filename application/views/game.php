@@ -20,8 +20,10 @@
 
         <div class="content">
             <div id="tabs" class="htabs">
-                <a href="<?php echo site_url('game');?>" style="display: inline;"><?php echo $this->lang->line('tab_campaign'); ?></a>
-                <a href="<?php echo site_url('game/farm');?>" style="display: inline;"><?php echo $this->lang->line('tab_farm'); ?></a>
+                <?php if($is_enable_campaign) { ?>
+                <a href="<?php echo site_url('game/campaign_index');?>" style="display: inline;"><?php echo $this->lang->line('tab_campaign'); ?></a>
+                <?php } ?>
+                <a href="<?php echo site_url('game/farm');?>" class = "selected" style="display: inline;"><?php echo $this->lang->line('tab_farm'); ?></a>
                 <a href="<?php echo site_url('game/bingo');?>" style="display: inline;"> <?php echo $this->lang->line('tab_bingo'); ?></a>
                 <a href="<?php echo site_url('game/egg');?>" style="display: inline;"><?php echo $this->lang->line('tab_egg'); ?></a>
                 <a href="<?php echo site_url('game/pairs');?>" style="display: inline;"><?php echo $this->lang->line('tab_pairs'); ?></a>
@@ -573,6 +575,7 @@
         $('.checkbox').bootstrapSwitch('labelWidth', '10');
         $('.checkbox').bootstrapSwitch('onText', 'Enable');
         $('.checkbox').bootstrapSwitch('offText', 'Disable');
+        $('#tabs a').tabs();
     });
 
     Pace.on("done", function () {

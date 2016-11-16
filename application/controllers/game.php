@@ -22,7 +22,7 @@ class game extends MY_Controller
 
     public function index()
     {
-        if (!$this->validateAccess('game') || !$this->validateAccess('campaign') ) {
+        if (!$this->validateAccess('game')) {
             echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
@@ -33,8 +33,14 @@ class game extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['main'] = 'game';
         $this->data['form'] = 'game/edit/';
-        $this->data['game'] = 'campaign';
-        $this->getList();
+        $this->data['is_enable_campaign'] = $this->validateAccess('campaign');
+        if ($this->data['is_enable_campaign']){
+            $this->data['game'] = 'campaign';
+            $this->getlist('campaign');
+        } else {
+            $this->data['game'] = 'farm';
+            $this->getForm('farm');
+        }
     }
 
     public function farm()
@@ -52,6 +58,23 @@ class game extends MY_Controller
         $this->data['form'] = 'game/edit/';
         $this->data['game'] = 'farm';
         $this->getForm('farm');
+    }
+
+    public function campaign_index()
+    {
+        if (!$this->validateAccess('game') || !$this->validateAccess('campaign') ) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['main'] = 'game';
+        $this->data['form'] = 'game/edit/';
+        $this->data['game'] = 'campaign';
+        $this->getlist('campaign');
     }
 
     public function bingo()
