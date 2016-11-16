@@ -46,6 +46,39 @@ class Goods_model extends MY_Model
         return isset($goods[0]) ? $goods[0]['value'] : null;
     }
 
+
+    public function getPlayerGoods($site_id, $date_start, $date_end)
+    {
+        $this->mongo_db->select(array('goods_id'));
+        $this->mongo_db->where('site_id',$site_id);
+        $this->mongo_db->where_gte('date_modified',new MongoDate(strtotime($date_start)));
+        $this->mongo_db->where_lte('date_modified',new MongoDate(strtotime($date_end)));
+        $goods = $this->mongo_db->get('playbasis_goods_to_player');
+        return $goods;
+    }
+
+    public function getPlayerGoodsUsed($site_id, $date_start, $date_end)
+    {
+        $this->mongo_db->select(array('goods_id'));
+        $this->mongo_db->where('site_id',$site_id);
+        $this->mongo_db->where('value',0);
+        $this->mongo_db->where_gte('date_modified',new MongoDate(strtotime($date_start)));
+        $this->mongo_db->where_lte('date_modified',new MongoDate(strtotime($date_end)));
+        $goods = $this->mongo_db->get('playbasis_goods_to_player');
+        return $goods;
+    }
+
+    public function getPlayerGoodsActive($site_id, $date_start, $date_end)
+    {
+        $this->mongo_db->select(array('goods_id'));
+        $this->mongo_db->where('site_id',$site_id);
+        $this->mongo_db->where_gt('value',0);
+        $this->mongo_db->where_gte('date_modified',new MongoDate(strtotime($date_start)));
+        $this->mongo_db->where_lte('date_modified',new MongoDate(strtotime($date_end)));
+        $goods = $this->mongo_db->get('playbasis_goods_to_player');
+        return $goods;
+    }
+
     public function getGoodsOfClientPrivate($goods_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
