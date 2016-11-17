@@ -42,6 +42,7 @@ var express     = require('express'),
 try {
     var config = require('./config.json');
 } catch(e) {
+    raven_client.captureException(e);
     console.error("File config.json not found or is invalid.  Try: `cp config.json.sample config.json`");
     process.exit(1);
 }
@@ -62,10 +63,16 @@ if (process.env.REDISTOGO_URL) {
 }
 
 db.on("error", function(err) {
+    raven_client.captureException(err);
     if (config.debug) {
          console.log("Error " + err);
     }
 });
+
+// Sentry client
+var raven = require('raven');
+var raven_client = new raven.Client('DNS sentry project');
+raven_client.patchGlobal();
 
 //
 // Load API Configs
@@ -77,6 +84,7 @@ try {
         console.log(util.inspect(apisConfig));
     }
 } catch(e) {
+    raven_client.captureException(e);
     console.error("File apiconfig.json not found or is invalid.");
     process.exit(1);
 }
@@ -163,6 +171,7 @@ function oauth(req, res, next) {
 
             oa.getOAuthRequestToken(function(err, oauthToken, oauthTokenSecret, results) {
                 if (err) {
+                    raven_client.captureException(err);
                     res.send("Error getting OAuth request token : " + util.inspect(err), 500);
                 } else {
                     // Unique key using the sessionID and API name to store tokens and secrets
@@ -221,6 +230,7 @@ function oauthSuccess(req, res, next) {
         key + ':apiSecret'
     ], function(err, result) {
         if (err) {
+            raven_client.captureException(err);
             console.log(util.inspect(err));
         }
         oauthRequestToken = result[0],
@@ -248,6 +258,7 @@ function oauthSuccess(req, res, next) {
 
         oa.getOAuthAccessToken(oauthRequestToken, oauthRequestTokenSecret, req.query.oauth_verifier, function(error, oauthAccessToken, oauthAccessTokenSecret, results) {
             if (error) {
+                raven_client.captureException(err);
                 res.send("Error getting OAuth access token : " + util.inspect(error) + "["+oauthAccessToken+"]"+ "["+oauthAccessTokenSecret+"]"+ "["+util.inspect(results)+"]", 500);
             } else {
                 if (config.debug) {
@@ -398,7 +409,8 @@ function processRequest(req, res, next) {
                             }
 
                             res.statusCode = error.statusCode
-
+                            raven_client.captureException(error);
+                            
                             next();
                         } else {
                             req.resultHeaders = response.headers;
@@ -432,7 +444,7 @@ function processRequest(req, res, next) {
                             console.log(util.inspect(error));
                             body = error.data;
                         }
-
+                        raven_client.captureException(error);
                         res.statusCode = error.statusCode;
 
                     } else {
@@ -629,6 +641,7 @@ function processRequest(req, res, next) {
                 next();
             })
         }).on('error', function(e) {
+            raven_client.captureException(e);
             if (config.debug) {
                 console.log('HEADERS: ' + JSON.stringify(res.headers));
                 console.log("Got error: " + e.message);
@@ -706,6 +719,7 @@ app.dynamicHelpers({
             }
             catch(err)
             {
+                raven_client.captureException(err);
                 console.log("error require : "+req.params.api);
                 return require(__dirname + '/public/data/pbapp.json');
             }

@@ -96,6 +96,20 @@ $config['charset'] = 'UTF-8';
 */
 $config['enable_hooks'] = FALSE;
 
+/*
+| -------------------------------------------------------------------
+|  Raven Client Configuration
+| -------------------------------------------------------------------
+| 'raven_client' = DSN string for connecting to a Raven client.
+| 'raven_config' = Optional second parameter to Raven_Client which
+| contains extra configuration options.
+|
+| See: https://github.com/getsentry/raven-php#configuration
+*/
+$config['raven_client'] = 'DNS Sentry project';
+$config['raven_config'] = array();
+$config['raven_log_threshold'] = array('ERROR');
+$config['raven_environments'] = array('production');
 
 /*
 |--------------------------------------------------------------------------

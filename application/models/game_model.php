@@ -355,4 +355,61 @@ class Game_model extends MY_Model
 
         return $result ? $result[0] : null;
     }
+
+    public function getGameCampaign($client_id, $site_id, $game_id)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'game_id' => new MongoId($game_id),
+            'status' => true
+        ));
+        
+        $result = $this->mongo_db->get('playbasis_game_campaign_to_client');
+        return $result;
+    }
+
+    public function getCampaign($client_id, $site_id,$campaign_list,$campaign_name=false)
+    {
+        //get badge name by $badge_id
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('name','image','date_start','date_end','weight'));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false
+        ));
+        if($campaign_name){
+            $this->mongo_db->where('name', $campaign_name);
+        }
+        $this->mongo_db->where_in('_id', $campaign_list);
+        $this->mongo_db->order_by(array('weight' => 'desc','date_start' => 'desc', "date_end" => 'asc' , 'name' => 'asc'));
+        $result = $this->mongo_db->get('playbasis_campaign_to_client');
+
+        return $result;
+    }
+
+    public function getActiveCampaign($client_id, $site_id,$campaign_list)
+    {
+        //get badge name by $badge_id
+        $this->set_site_mongodb($site_id);
+        $d = new MongoDate();
+        $this->mongo_db->select(array('name','image','date_start','date_end','weight'));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false
+        ));
+        $this->mongo_db->where_in('_id', $campaign_list);
+        $this->mongo_db->where(array('$and' => array( array('$or' => array(array("date_start" => null), array("date_start" => array('$lte'=> $d)))),
+                                                      array('$or' => array(array("date_end" => array('$gte'=> $d)), array("date_end" => null))))));
+        $this->mongo_db->order_by(array('weight' => 'desc','date_start' => 'desc', "date_end" => 'asc' , 'name' => 'asc'));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_campaign_to_client');
+
+        return $result ? $result[0] : array();
+    }
+
 }

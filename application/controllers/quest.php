@@ -429,7 +429,7 @@ class Quest extends REST2_Controller
         }
 
         $questEvent = array();
-
+        $ageOperate = "";
         if ($quest && isset($quest["condition"])) {
 
             foreach ($quest["condition"] as $c) {
@@ -474,6 +474,63 @@ class Quest extends REST2_Controller
                                 'message' => 'quest already finished'
                             );
                             array_push($questEvent, $event);
+                        }
+                        break;
+                    case "GENDER":
+                        if(isset($player['gender']) && $player['gender']){
+                            if ((intval($c["condition_value"]) != $player['gender'])){
+                                $event = array(
+                                    'event_type' => 'GENDER_IS_NOT_SATISFY',
+                                    'message' => 'Your gender is not satisfy'
+                                );
+                                array_push($questEvent, $event);
+                            }
+                        } else {
+                            $event = array(
+                                'event_type' => 'GENDER_INVALID',
+                                'message' => 'Gender is invalid'
+                            );
+                            array_push($questEvent, $event);
+                        }
+                        break;
+                    case "AGE_OPERATE":
+                        $ageOperate = $c["condition_value"];
+                        break;
+                    case "AGE_VALUE":
+                        if (!empty($ageOperate)) {
+                            if(isset($player['birth_date']) && !empty($player['birth_date'])){
+                                $result = false;
+                                $now = new Datetime(datetimeMongotoReadable(new MongoDate()));
+                                $birth_date = new Datetime(datetimeMongotoReadable($player['birth_date']));
+                                $interval = $now->diff($birth_date);
+                                $player['age'] = $interval->y;
+
+                                if ($ageOperate == '=') {
+                                    $result = ($player['age'] == intval($c["condition_value"]));
+                                } elseif ($ageOperate == '>') {
+                                    $result = ($player['age'] >  intval($c["condition_value"]));
+                                } elseif ($ageOperate == '<') {
+                                    $result = ($player['age'] <  intval($c["condition_value"]));
+                                } elseif ($ageOperate == '>=') {
+                                    $result = ($player['age'] >= intval($c["condition_value"]));
+                                } elseif ($ageOperate == '<=') {
+                                    $result = ($player['age'] <= intval($c["condition_value"]));
+                                }
+
+                                if (!$result){
+                                    $event = array(
+                                        'event_type' => 'AGE_IS_NOT_SATISFY',
+                                        'message' => 'Your age is not satisfied'
+                                    );
+                                    array_push($questEvent, $event);
+                                }
+                            } else {
+                                $event = array(
+                                    'event_type' => 'BIRTH_DATE_INVALID',
+                                    'message' => 'birth date is invalid'
+                                );
+                                array_push($questEvent, $event);
+                            }
                         }
                         break;
                     case "LEVEL_START":
