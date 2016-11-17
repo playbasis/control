@@ -9574,6 +9574,47 @@
       ]
     },
     {
+      "name": "Campaign API",
+      "endpoint": ["Campaign"],
+      "Public": "Y",
+      "methods": [
+        {
+          "MethodName": "Retrieve Campaign",
+          "Synopsis": "Retrieve campaign",
+          "HTTPMethod": "GET",
+          "URI": "Campaign",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [],
+          "response": [
+            {
+              "name":          {"-type": "string"},
+              "image":         {"-type": "string"},
+              "weight":        {"-type": "integer"},
+              "date_start":    {"-type": "string", "-optional": "true"},
+              "date_end":      {"-type": "string", "-optional": "true"}
+            }
+          ]
+        },
+        {
+          "MethodName": "Retrieve Active Campaign",
+          "Synopsis": "Retrieve active campaign",
+          "HTTPMethod": "GET",
+          "URI": "Campaign/active",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [],
+          "response": {
+            "name":          {"-type": "string"},
+            "image":         {"-type": "string"},
+            "weight":        {"-type": "integer"},
+            "date_start":    {"-type": "string", "-optional": "true"},
+            "date_end":      {"-type": "string", "-optional": "true"}
+          }
+        }
+      ]
+    },
+    {
       "name": "Style API",
       "endpoint": ["Style"],
       "Public": "Y",

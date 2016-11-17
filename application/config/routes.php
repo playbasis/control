@@ -173,6 +173,10 @@ $route['Point/custom/remaining'] = 'custompoint/remainingPoint';
 $route['Point/custom/log'] = 'custompoint/customLog';
 $route['Point/custom/clearLog'] = 'custompoint/clearCustomLog';
 
+//Campaign API
+$route['Campaign'] = 'campaign';
+$route['Campaign/active'] = 'campaign/activeCampaign';
+
 //Merchant API
 $route['Merchant/availableBranchGoodsGroup'] = 'merchant/availableBranchGoodsGroup';
 $route['Merchant/goodsGroup/verify'] = 'merchant/GoodsGroupVerify';
