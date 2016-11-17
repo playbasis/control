@@ -54,6 +54,7 @@ class game extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['is_enable_campaign'] = $this->validateAccess('campaign');
         $this->data['main'] = 'game';
         $this->data['form'] = 'game/edit/';
         $this->data['game'] = 'farm';
@@ -71,6 +72,7 @@ class game extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['is_enable_campaign'] = $this->validateAccess('campaign');
         $this->data['main'] = 'game';
         $this->data['form'] = 'game/edit/';
         $this->data['game'] = 'campaign';
@@ -88,6 +90,7 @@ class game extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['is_enable_campaign'] = $this->validateAccess('campaign');
         $this->data['main'] = 'game';
         $this->data['form'] = 'game/edit/';
         $this->data['game'] = 'bingo';
@@ -105,6 +108,7 @@ class game extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['is_enable_campaign'] = $this->validateAccess('campaign');
         $this->data['main'] = 'game';
         $this->data['form'] = 'game/edit/';
         $this->data['game'] = 'egg';
@@ -122,6 +126,7 @@ class game extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['is_enable_campaign'] = $this->validateAccess('campaign');
         $this->data['main'] = 'game';
         $this->data['form'] = 'game/edit/';
         $this->data['game'] = 'pairs';
@@ -139,6 +144,7 @@ class game extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['is_enable_campaign'] = $this->validateAccess('campaign');
         $this->data['main'] = 'game';
         $this->data['form'] = 'game/edit/';
         $this->data['game'] = 'catch_item';
@@ -605,6 +611,8 @@ class game extends MY_Controller
                 $campaign_data['game_name'] = $campaign['game_name'];
                 $campaign = $campaign_data;
             }
+            $name = array();
+            $weight = array();
             foreach ($campaigns as $key => $row) {
                 $name[$key] = $row['game_name'];
                 $weight[$key] = $row['weight'];

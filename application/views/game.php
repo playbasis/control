@@ -21,13 +21,13 @@
         <div class="content">
             <div id="tabs" class="htabs">
                 <?php if($is_enable_campaign) { ?>
-                <a href="<?php echo site_url('game/campaign_index');?>" style="display: inline;"><?php echo $this->lang->line('tab_campaign'); ?></a>
+                <a id="tab_campaign" href="<?php echo site_url('game/campaign_index');?>" style="display: inline;"><?php echo $this->lang->line('tab_campaign'); ?></a>
                 <?php } ?>
-                <a href="<?php echo site_url('game/farm');?>" class = "selected" style="display: inline;"><?php echo $this->lang->line('tab_farm'); ?></a>
-                <a href="<?php echo site_url('game/bingo');?>" style="display: inline;"> <?php echo $this->lang->line('tab_bingo'); ?></a>
-                <a href="<?php echo site_url('game/egg');?>" style="display: inline;"><?php echo $this->lang->line('tab_egg'); ?></a>
-                <a href="<?php echo site_url('game/pairs');?>" style="display: inline;"><?php echo $this->lang->line('tab_pairs'); ?></a>
-                <a href="<?php echo site_url('game/catch_item');?>" style="display: inline;"><?php echo $this->lang->line('tab_catch'); ?></a>
+                <a id="tab_farm" href="<?php echo site_url('game/farm');?>" style="display: inline;"><?php echo $this->lang->line('tab_farm'); ?></a>
+                <a id="tab_bingo" href="<?php echo site_url('game/bingo');?>" style="display: inline;"> <?php echo $this->lang->line('tab_bingo'); ?></a>
+                <a id="tab_egg" href="<?php echo site_url('game/egg');?>" style="display: inline;"><?php echo $this->lang->line('tab_egg'); ?></a>
+                <a id="tab_pairs" href="<?php echo site_url('game/pairs');?>" style="display: inline;"><?php echo $this->lang->line('tab_pairs'); ?></a>
+                <a id="tab_catch_item" href="<?php echo site_url('game/catch_item');?>" style="display: inline;"><?php echo $this->lang->line('tab_catch'); ?></a>
             </div>
             <?php if($this->session->flashdata('success')){ ?>
                 <div class="content messages half-width">
@@ -575,7 +575,7 @@
         $('.checkbox').bootstrapSwitch('labelWidth', '10');
         $('.checkbox').bootstrapSwitch('onText', 'Enable');
         $('.checkbox').bootstrapSwitch('offText', 'Disable');
-        $('#tabs a').tabs();
+        $('#tab_<?php echo $game?>').addClass('selected')
     });
 
     Pace.on("done", function () {
