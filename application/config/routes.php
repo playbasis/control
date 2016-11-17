@@ -370,6 +370,7 @@ $route['Import/importSetting'] = 'import/importSetting';
 $route['Game'] = 'game/list';
 $route['Game/playerItemStatus'] = 'game/playerItemStatus';
 $route['Game/setCurrentStage'] = 'game/setCurrentStage';
+$route['Game/campaign'] = 'game/campaign';
 $route['Game/campaign/active'] = 'game/activeCampaign';
 
 //Custom style API

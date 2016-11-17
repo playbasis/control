@@ -9416,13 +9416,56 @@
           ]
         },
         {
+          "MethodName": "Retrieve Game Campaign",
+          "Synopsis": "Retrieve Game Campaign",
+          "HTTPMethod": "GET",
+          "URI": "Game/campaign",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "game_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "name of game to retrieve campaign details"
+            },
+            {
+              "Name": "campaign_name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific campaign of game to retrieve campaign details"
+            }
+          ],
+          "response": {
+            "result": [
+              {
+                "name":          {"-type": "string"},
+                "image":         {"-type": "string"},
+                "weight":        {"-type": "integer"},
+                "date_start":    {"-type": "any", "-optional": "true"},
+                "date_end":      {"-type": "any", "-optional": "true"}
+              }
+            ]
+          }
+        },
+        {
           "MethodName": "Retrieve Active Campaign",
           "Synopsis": "Retrieve Active Campaign",
           "HTTPMethod": "GET",
           "URI": "Game/campaign/active",
           "RequiresOAuth": "N",
           "Public": "Y",
-          "parameters": [],
+          "parameters": [
+            {
+              "Name": "game_name",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "name of game to retrieve campaign details"
+            }
+          ],
           "response": {
             "result": {
               "name":          {"-type": "string"},
