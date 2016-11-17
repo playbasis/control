@@ -292,7 +292,7 @@ GoodsSet = {
                         async: false,
                         success: function(json) {
                             goods_info = json.goods_info;
-                            if(goods_info != "undefined"){
+                            if(typeof goods_info != "undefined"){
                                 GoodsSet.new_list.push(goods_info);
                                 var image = '';
                                 var ims = goods_info['image'].split(".");
@@ -365,7 +365,7 @@ GoodsSet = {
                         dataType:"json",
                         success: function(json) {
                             goods_info = json.goods_info;
-                            if(goods_info != "undefined"){
+                            if(typeof goods_info != "undefined"){
                                 GoodsSet.new_list.push(goods_info);
                                 if (typeof goods_info['group'] != "undefined"){
                                     output =  goods_info['group'];
