@@ -1,7 +1,92 @@
 # Change Log
 
+## [2.22.0](https://github.com/playbasis/control/tree/2.22.0) (2016-11-17)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.0...2.22.0)
+
+## [2.21.8/manual-spin_for_digi](https://github.com/playbasis/control/tree/2.21.8/manual-spin_for_digi) (2016-11-17)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.7/rule_setting_load_forever...2.21.8/manual-spin_for_digi)
+
+**Merged pull requests:**
+
+- Hotfix/2.21.8/manual spin for digi [\#317](https://github.com/playbasis/control/pull/317) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.7/rule_setting_load_forever](https://github.com/playbasis/control/tree/2.21.7/rule_setting_load_forever) (2016-11-17)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.5/fix_pagination_when_filter_status_in_goods_report...2.21.7/rule_setting_load_forever)
+
+**Fixed bugs:**
+
+- Hotfix/2.21.7/rule setting load forever [\#316](https://github.com/playbasis/control/pull/316) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- fix campagin in game [\#315](https://github.com/playbasis/control/pull/315) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.5/fix_pagination_when_filter_status_in_goods_report](https://github.com/playbasis/control/tree/2.21.5/fix_pagination_when_filter_status_in_goods_report) (2016-11-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.6/disable_custom_log...2.21.5/fix_pagination_when_filter_status_in_goods_report)
+
+## [2.21.6/disable_custom_log](https://github.com/playbasis/control/tree/2.21.6/disable_custom_log) (2016-11-15)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.4/fix_goods_page_exceed_memory_limit...2.21.6/disable_custom_log)
+
+**Implemented enhancements:**
+
+- fix pagination in goods report [\#314](https://github.com/playbasis/control/pull/314) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.21.6/disable custom log [\#313](https://github.com/playbasis/control/pull/313) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.21.4/fix_goods_page_exceed_memory_limit](https://github.com/playbasis/control/tree/2.21.4/fix_goods_page_exceed_memory_limit) (2016-11-15)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.3/fix_bug_in_report...2.21.4/fix_goods_page_exceed_memory_limit)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.4/fix goods page exceed memory limit [\#312](https://github.com/playbasis/control/pull/312) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.3/fix_bug_in_report](https://github.com/playbasis/control/tree/2.21.3/fix_bug_in_report) (2016-11-15)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.2/location_feature...2.21.3/fix_bug_in_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.3/fix bug in report [\#311](https://github.com/playbasis/control/pull/311) ([piya-playbasis](https://github.com/piya-playbasis))
+- Feature/language feature [\#310](https://github.com/playbasis/control/pull/310) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- support campaign in game [\#309](https://github.com/playbasis/control/pull/309) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.21.3/fix bug in report [\#311](https://github.com/playbasis/control/pull/311) ([piya-playbasis](https://github.com/piya-playbasis))
+- Update colspan value [\#308](https://github.com/playbasis/control/pull/308) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.21.2/location_feature](https://github.com/playbasis/control/tree/2.21.2/location_feature) (2016-11-11)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.2/gane_bingo_egg_pairs_catch_item...2.21.2/location_feature)
+
+**Implemented enhancements:**
+
+- location feature [\#307](https://github.com/playbasis/control/pull/307) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.21.2/gane_bingo_egg_pairs_catch_item](https://github.com/playbasis/control/tree/2.21.2/gane_bingo_egg_pairs_catch_item) (2016-11-11)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.1/query_goods_image_in_rule...2.21.2/gane_bingo_egg_pairs_catch_item)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.2/gane bingo egg pairs catch item [\#306](https://github.com/playbasis/control/pull/306) ([piya-playbasis](https://github.com/piya-playbasis))
+- setup sentry to monitor error [\#304](https://github.com/playbasis/control/pull/304) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- remove template in game [\#303](https://github.com/playbasis/control/pull/303) ([piya-playbasis](https://github.com/piya-playbasis))
+- remove template in game will replace with campaign feature later [\#302](https://github.com/playbasis/control/pull/302) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Merged pull requests:**
+
+- campaign feature [\#305](https://github.com/playbasis/control/pull/305) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.1/query_goods_image_in_rule](https://github.com/playbasis/control/tree/2.21.1/query_goods_image_in_rule) (2016-11-03)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.0...2.21.1/query_goods_image_in_rule)
+
+**Implemented enhancements:**
+
+- support age and gender condition in quest [\#300](https://github.com/playbasis/control/pull/300) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.21.1/query goods image in rule [\#301](https://github.com/playbasis/control/pull/301) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
 ## [2.21.0](https://github.com/playbasis/control/tree/2.21.0) (2016-11-01)
-[Full Changelog](https://github.com/playbasis/control/compare/2.20.0...2.21.0)
+[Full Changelog](https://github.com/playbasis/control/compare/2.20.4/fix_validate_custom_style...2.21.0)
 
 **Implemented enhancements:**
 
@@ -10,13 +95,18 @@
 - condition user profile [\#296](https://github.com/playbasis/control/pull/296) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - To log custom parameter when reward\(exp,point,custom point\) is awarded [\#295](https://github.com/playbasis/control/pull/295) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - support quantity in currency [\#294](https://github.com/playbasis/control/pull/294) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.20.4/fix_validate_custom_style](https://github.com/playbasis/control/tree/2.20.4/fix_validate_custom_style) (2016-10-21)
-[Full Changelog](https://github.com/playbasis/control/compare/2.20.3/fix_cant_set_only_date_start_or_date_end_in_goods...2.20.4/fix_validate_custom_style)
+- global sequence rewards [\#292](https://github.com/playbasis/control/pull/292) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- new feature support key-value style [\#291](https://github.com/playbasis/control/pull/291) ([niti-playbasis](https://github.com/niti-playbasis))
+- Hotfix/2.20.3/fix cant set only date start or date end in goods [\#290](https://github.com/playbasis/control/pull/290) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.20.2/condition duration limit [\#289](https://github.com/playbasis/control/pull/289) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.20.1/condition counter operator to range [\#288](https://github.com/playbasis/control/pull/288) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 **Fixed bugs:**
 
 - hotfix/2.20.4/fix\_validate\_custom\_style [\#293](https://github.com/playbasis/control/pull/293) ([niti-playbasis](https://github.com/niti-playbasis))
+
+## [2.20.4/fix_validate_custom_style](https://github.com/playbasis/control/tree/2.20.4/fix_validate_custom_style) (2016-10-21)
+[Full Changelog](https://github.com/playbasis/control/compare/2.20.3/fix_cant_set_only_date_start_or_date_end_in_goods...2.20.4/fix_validate_custom_style)
 
 ## [2.20.3/fix_cant_set_only_date_start_or_date_end_in_goods](https://github.com/playbasis/control/tree/2.20.3/fix_cant_set_only_date_start_or_date_end_in_goods) (2016-10-21)
 [Full Changelog](https://github.com/playbasis/control/compare/2.20.2/support_key-value_style_db...2.20.3/fix_cant_set_only_date_start_or_date_end_in_goods)
@@ -24,25 +114,11 @@
 ## [2.20.2/support_key-value_style_db](https://github.com/playbasis/control/tree/2.20.2/support_key-value_style_db) (2016-10-21)
 [Full Changelog](https://github.com/playbasis/control/compare/2.20.2/condition_duration_limit...2.20.2/support_key-value_style_db)
 
-**Implemented enhancements:**
-
-- global sequence rewards [\#292](https://github.com/playbasis/control/pull/292) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-- new feature support key-value style [\#291](https://github.com/playbasis/control/pull/291) ([niti-playbasis](https://github.com/niti-playbasis))
-- Hotfix/2.20.3/fix cant set only date start or date end in goods [\#290](https://github.com/playbasis/control/pull/290) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.20.2/condition_duration_limit](https://github.com/playbasis/control/tree/2.20.2/condition_duration_limit) (2016-10-20)
 [Full Changelog](https://github.com/playbasis/control/compare/2.20.1/condition_counter_operator_to_range...2.20.2/condition_duration_limit)
 
-**Implemented enhancements:**
-
-- Hotfix/2.20.2/condition duration limit [\#289](https://github.com/playbasis/control/pull/289) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.20.1/condition_counter_operator_to_range](https://github.com/playbasis/control/tree/2.20.1/condition_counter_operator_to_range) (2016-10-18)
 [Full Changelog](https://github.com/playbasis/control/compare/2.20.0...2.20.1/condition_counter_operator_to_range)
-
-**Implemented enhancements:**
-
-- Hotfix/2.20.1/condition counter operator to range [\#288](https://github.com/playbasis/control/pull/288) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.20.0](https://github.com/playbasis/control/tree/2.20.0) (2016-10-18)
 [Full Changelog](https://github.com/playbasis/control/compare/2.19.4/fix_goods_page_too_slow...2.20.0)
