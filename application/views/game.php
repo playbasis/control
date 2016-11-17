@@ -8,14 +8,22 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
+            <?php if($game == 'campaign') { ?>
+                <button class="btn btn-info" onclick="showCampaignModalForm();" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
+                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
+            <?php } else { ?>
                 <button class="btn btn-primary btn-lg" onclick="game_validation();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
                 <button class="btn btn-primary btn-lg" onclick="location = baseUrlPath+'game'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+            <?php } ?>
             </div>
         </div>
 
         <div class="content">
             <div id="tabs" class="htabs">
-                <a href="<?php echo site_url('game');?>" style="display: inline;"><?php echo $this->lang->line('tab_farm'); ?></a>
+                <?php if($is_enable_campaign) { ?>
+                <a href="<?php echo site_url('game/campaign_index');?>" style="display: inline;"><?php echo $this->lang->line('tab_campaign'); ?></a>
+                <?php } ?>
+                <a href="<?php echo site_url('game/farm');?>" class = "selected" style="display: inline;"><?php echo $this->lang->line('tab_farm'); ?></a>
                 <a href="<?php echo site_url('game/bingo');?>" style="display: inline;"> <?php echo $this->lang->line('tab_bingo'); ?></a>
                 <a href="<?php echo site_url('game/egg');?>" style="display: inline;"><?php echo $this->lang->line('tab_egg'); ?></a>
                 <a href="<?php echo site_url('game/pairs');?>" style="display: inline;"><?php echo $this->lang->line('tab_pairs'); ?></a>
@@ -42,9 +50,73 @@
                 </div>
                 <?php
             }
-            $attributes = array('id' => 'form' , 'class' => 'form-horizontal game-form');
-            echo form_open_multipart($form ,$attributes);
             ?>
+            <?php if($game == 'campaign') { ?>
+            <div id="tab-campaign">
+                <?php
+                $attributes = array('id' => 'form');
+                echo form_open('game/delete',$attributes);
+                ?>
+                <div>
+                <table class="list">
+                    <thead>
+                    <tr>
+                        <td rowspan="2" width="1" style="text-align: center;">
+                            <input type="checkbox"
+                                   onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
+                        </td>
+                        <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('entry_game_name'); ?></td>
+                        <td colspan="4" class="center" style="width:150px;"><?php echo $this->lang->line('entry_campaign'); ?></td>
+                        <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('entry_campaign_status'); ?></td>
+                    </tr>
+                    <tr>
+                        <td class="center" style="width:80px;"><?php echo $this->lang->line('entry_campaign_name'); ?></td>
+                        <td class="center" style="width:80px;"><?php echo $this->lang->line('entry_campaign_start'); ?></td>
+                        <td class="center" style="width:80px;"><?php echo $this->lang->line('entry_campaign_end'); ?></td>
+                        <td class="center" style="width:80px;"><?php echo $this->lang->line('entry_campaign_weight'); ?></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if (isset($campaigns) && $campaigns) { ?>
+                        <?php foreach ($campaigns as $campaign) { ?>
+                            <tr>
+                                <td width="1%" style="text-align: center;">
+                                    <?php if ($client_id){?>
+                                        <input type="checkbox" name="selected[]" value="<?php echo $campaign['_id']; ?>" />
+                                    <?php }?>
+                                </td>
+                                <td class="left" width="20%"><?php echo isset($campaign['game_name']) && !empty($campaign['game_name']) ? $campaign['game_name'] : ""; ?></td>
+                                <td class="left" width="20%"><?php echo isset($campaign['name']) && !empty($campaign['name']) ? $campaign['name'] : ""; ?></td>
+                                <td class="right" width="10%"><?php echo isset($campaign['date_start']) && !empty($campaign['date_start'])  ? dateMongotoReadable($campaign['date_start']) : "N/A"; ?></td>
+                                <td class="right" width="10%"><?php echo isset($campaign['date_end']) && !empty($campaign['date_end'])  ? dateMongotoReadable($campaign['date_end']) : "N/A"; ?></td>
+                                <td class="right" width="5%"><?php echo isset($campaign['weight']) && !empty($campaign['weight']) ? $campaign['weight'] : "0"; ?></td>
+                                <td class="center" width="10%"><input class="checkbox" type="checkbox" name="status" id="status" value="<?php echo $campaign['_id']; ?>" <?php echo isset($campaign['status']) && !empty($campaign['status']) && $campaign['status']? "checked" : "" ?>></td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
+                        </tr>
+                    <?php } ?>
+                    </tbody>
+                </table>
+                </div>
+                <div class="pagination">
+                    <ul class='ul_rule_pagination_container'>
+                        <li class="page_index_number active"><a>Total Records:</a></li>
+                        <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
+                        <li class="page_index_number active"><a>(<?php echo number_format($pagination_total_pages); ?>
+                                Pages)</a></li>
+                        <?php echo $pagination_links; ?>
+                    </ul>
+                </div>
+                <?php
+                echo form_close();?>
+            </div><!-- #actions -->
+            <?php } else {
+                $attributes = array('id' => 'form', 'class' => 'form-horizontal game-form');
+                echo form_open_multipart($form, $attributes);
+            }?>
             <?php if($game == 'farm' || $game == 'bingo') { ?>
             <?php if($game == 'farm') { ?>
             <div id="tab-farm">
@@ -69,7 +141,7 @@
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('entry_status'); ?>:</td>
-                        <td><input type="checkbox" name="status" id="status" <?php echo  $status == true ? 'checked' : ''; ?>></td>
+                        <td><input class="checkbox" type="checkbox" name="status" id="status" <?php echo  $status == true ? 'checked' : ''; ?>></td>
                         <td></td>
                     </tr>
                 </table>
@@ -233,7 +305,7 @@
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('entry_status'); ?>:</td>
-                        <td><input type="checkbox" name="status" id="status" <?php echo  $status == true ? 'checked' : ''; ?>></td>
+                        <td><input class="checkbox" type="checkbox" name="status" id="status" <?php echo  $status == true ? 'checked' : ''; ?>></td>
                         <td></td>
                     </tr>
                     <tr>
@@ -454,6 +526,38 @@
     </div>
 </div>
 
+<div id="formCampaignModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formCampaignModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="formCampaignModalLabel">Item</h3>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <?php echo form_open(null, array('class' => 'form-horizontal Campaign-form')); ?>
+            <div class="row-fluid">
+                <div class="control-group">
+                    <label for="game_id" class="control-label"><span class="required">*</span><?php echo $this->lang->line('entry_game_name'); ?></label>
+                    <div class="controls">
+                        <input type="text" name="game_id" id="game_id" placeholder="<?php echo $this->lang->line('entry_game_name'); ?>">
+                    </div><br>
+                    <label for="campaign_id" class="control-label"><span class="required">*</span><?php echo $this->lang->line('entry_campaign'); ?></label>
+                    <div class="controls">
+                        <input type="text" name="campaign_id" id="campaign_id" placeholder="<?php echo $this->lang->line('entry_campaign'); ?>">
+                    </div><br>
+                    <label for="status" class="control-label"><?php echo $this->lang->line('entry_status'); ?></label>
+                    <div class="controls">
+                        <input class="checkbox" type="checkbox" name="status" id="status" checked>
+                    </div>
+                </div>
+            </div>
+            <?php echo form_close(); ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" id="campaign-modal-submit"><i class="fa fa-plus">&nbsp;</i>Save</button>
+    </div>
+</div>
 
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/custom/bootstrap-switch.min.js" type="text/javascript" ></script>
@@ -463,14 +567,15 @@
 
 <script>
     $(function(){
-        $('#status').bootstrapSwitch();
-        $("#status").bootstrapSwitch('size', 'small');
-        $("#status").bootstrapSwitch('onColor', 'success');
-        $("#status").bootstrapSwitch('offColor', 'danger');
-        $("#status").bootstrapSwitch('handleWidth', '70');
-        $("#status").bootstrapSwitch('labelWidth', '10');
-        $("#status").bootstrapSwitch('onText', 'Enable');
-        $("#status").bootstrapSwitch('offText', 'Disable');
+        $('.checkbox').bootstrapSwitch();
+        $('.checkbox').bootstrapSwitch('size', 'small');
+        $('.checkbox').bootstrapSwitch('onColor', 'success');
+        $('.checkbox').bootstrapSwitch('offColor', 'danger');
+        $('.checkbox').bootstrapSwitch('handleWidth', '70');
+        $('.checkbox').bootstrapSwitch('labelWidth', '10');
+        $('.checkbox').bootstrapSwitch('onText', 'Enable');
+        $('.checkbox').bootstrapSwitch('offText', 'Disable');
+        $('#tabs a').tabs();
     });
 
     Pace.on("done", function () {
@@ -509,7 +614,198 @@
         });
     }
 </script>
-<?php if($game == 'farm' || $game == 'bingo'){
+<?php if($game == 'campaign') { ?>
+<script>
+    $('.checkbox').on('switchChange.bootstrapSwitch', function(event, state) {
+        var formData = "_id="+$(this).val()+"&status="+$(this)[0].checked;
+        $.ajax({
+            type: "POST",
+            url: baseUrlPath + "game/status",
+            data: formData,
+            timeout: 3000,
+            beforeSend: function (xhr) {
+                $waitDialog.modal('show');
+            }
+        }).done(function (data) {
+            $waitDialog.modal('hide');
+        }).fail(function (xhr, textStatus, errorThrown) {
+            if(JSON.parse(xhr.responseText).status == "error") {
+                $('form.Campaign-form').trigger("reset");
+                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                $waitDialog.modal('hide');
+            }
+        }).always(function () {
+            $waitDialog.modal('hide');
+        });
+    });
+    var $waitDialog = $('#pleaseWaitDialog');
+    function showCampaignModalForm() {
+        $('#formCampaignModal').modal('show');
+        $game = $('#game_id');
+        $game.select2({
+            width: '220px',
+            allowClear: true,
+            placeholder: "Select Item",
+            minimumInputLength: 0,
+            id: function (data) {
+                return data._id;
+            },
+            ajax: {
+                url: baseUrlPath + "game/game_ajax",
+                dataType: 'json',
+                quietMillis: 250,
+                data: function (term, page) {
+                    return {
+                        search: term, // search term
+                    };
+                },
+                results: function (data, page) {
+                    return {results: data.rows};
+                },
+                cache: true
+            },
+            initSelection: function (element, callback) {
+                var id = $(element).val();
+                if (id !== ""){
+                    $.ajax(baseUrlPath + "game/game_ajax/" + id, {
+                        dataType: "json",
+                        beforeSend: function (xhr) {
+                            $game.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                        }
+                    }).done(function (data) {
+                        if (typeof data != "undefined")
+                            callback(data);
+                    }).always(function () {
+                        $game.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                    });
+                }
+            },
+            formatResult: gameFormatResult,
+            formatSelection: gameFormatSelection,
+        });
+        $campaign = $('#campaign_id');
+        $campaign.select2({
+            width: '220px',
+            allowClear: true,
+            placeholder: "Select Rule",
+            minimumInputLength: 0,
+            id: function (data) {
+                return data._id;
+            },
+            ajax: {
+                url: baseUrlPath + "game/campaign",
+                dataType: 'json',
+                quietMillis: 250,
+                data: function (term, page) {
+                    return {
+                        search: term, // search term
+                    };
+                },
+                results: function (data, page) {
+                    return {results: data.rows};
+                },
+                cache: true
+            },
+            initSelection: function (element, callback) {
+                var id = $(element).val();
+                if (id !== ""){
+                    $.ajax(baseUrlPath + "game/campaign/" + id, {
+                        dataType: "json",
+                        beforeSend: function (xhr) {
+                            $campaign.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                        }
+                    }).done(function (data) {
+                        if (typeof data != "undefined")
+                            callback(data);
+                    }).always(function () {
+                        $campaign.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                    });
+                }
+            },
+            formatResult: categoryFormatResult,
+            formatSelection: categoryFormatSelection,
+        });
+    }
+
+    function categoryFormatResult(category) {
+        return '<div class="row-fluid">' +
+            '<div>' + category.name + '</div>'
+        '</div>';
+    }
+
+    function categoryFormatSelection(category) {
+        return category.name;
+    }
+
+    function gameFormatResult(category) {
+        return '<div class="row-fluid">' +
+                '<div>' + category.game_name + '</div>'
+               '</div>';
+    }
+
+    function gameFormatSelection(category) {
+        return '<div class="row-fluid">' +
+            '<div>' + category.game_name + '</div>'
+            '</div>';
+    }
+
+    $('button#campaign-modal-submit').on('click',submitCampaignModalForm);
+
+    preventUnusual ={
+        message:function(msg,title){
+            if(msg=='' || msg== undefined)return;
+
+            if(title!='' && title!= undefined) {
+                $('#errorModal').find('#myModalLabel').html(title);
+            }else{
+                $('#errorModal').find('#myModalLabel').html("Warning !");
+            }
+            $('#errorModal').removeClass('hide');
+            $('#errorModal').removeClass('in');
+            $('#errorModal').modal();
+            $('#errorModal .modal-body').html(msg);
+        }
+    }
+
+    function submitCampaignModalForm() {
+        var game_id = $('#game_id').val(),
+            campaign_id = $('#campaign_id').val(),
+        dialogMsg = "";
+
+        if(game_id == "") dialogMsg += '- Please select Game <br>';
+        if(campaign_id == "") dialogMsg += '- Please select Campaign <br>';
+        if(dialogMsg != ""){
+            preventUnusual.message(dialogMsg , "Fail!");
+        } else {
+            var formData = $('form.Campaign-form').serialize();
+            $.ajax({
+                type: "POST",
+                url: baseUrlPath + "game/insert",
+                data: formData,
+                timeout: 3000,
+                beforeSend: function (xhr) {
+                    $('#formCampaignModal').modal('hide');
+                    $waitDialog.modal('show');
+                }
+            }).done(function (data) {
+                $waitDialog.modal('hide');
+                window.location.reload();
+            }).fail(function (xhr, textStatus, errorThrown) {
+                if(JSON.parse(xhr.responseText).status == "error") {
+                    $('form.Campaign-form').trigger("reset");
+                    alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+                }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                    $waitDialog.modal('hide');
+                }
+            }).always(function () {
+                $waitDialog.modal('hide');
+            });
+        }
+    }
+</script>
+<?php }
+if($game == 'farm' || $game == 'bingo'){
 ?>
 <script>
     $(function(){

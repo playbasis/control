@@ -11,13 +11,22 @@ $lang['text_browse']                    = 'Browse Files';
 $lang['text_clear']                     = 'Clear Image';
 
 // Tab
+$lang['tab_campaign']                   = 'Campaign';
 $lang['tab_farm']                       = 'Farm';
 $lang['tab_bingo']                      = 'Bingo';
-$lang['tab_egg']                        = 'Break Egg';
-$lang['tab_pairs']                      = 'Pairs Card';
+$lang['tab_egg']                        = 'Egg';
+$lang['tab_pairs']                      = 'Pairs';
 $lang['tab_catch']                      = 'Catch Item';
 
 // Entry
+$lang['entry_game_name']                = 'Game Name';
+$lang['entry_campaign']                 = 'Campaign';
+$lang['entry_campaign_name']            = 'Name';
+$lang['entry_campaign_start']           = 'Date Start';
+$lang['entry_campaign_end']             = 'Date End';
+$lang['entry_campaign_weight']          = 'Weight';
+$lang['entry_campaign_status']          = 'Status';
+$lang['entry_action']                   = 'Action';
 $lang['entry_category']                 = 'Items Category';
 $lang['entry_image']                    = 'Image';
 $lang['entry_status']                   = 'Status';
