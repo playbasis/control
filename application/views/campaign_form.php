@@ -87,11 +87,6 @@
                                    value="<?php echo isset($weight) ? $weight : ""; ?>">
                         </td>
                     </tr>
-                    <tr>
-                        <td><?php echo $this->lang->line('entry_status'); ?>:</td>
-                        <td><input type="checkbox" name="status" id="status" <?php echo  $status == true ? 'checked' : ''; ?>></td>
-                        <td></td>
-                    </tr>
                 </table>
             </div>
             <?php
