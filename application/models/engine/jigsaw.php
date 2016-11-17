@@ -505,7 +505,9 @@ class jigsaw extends MY_Model
         $latitude = isset($input['latitude']) ? $input['latitude'] : null;
         $longitude = isset($input['longitude']) ? $input['longitude'] : null;
 
-        if(is_null($latitude) || is_null($longitude) ){
+        if($config['area']==""){
+            return true;
+        }elseif(is_null($latitude) || is_null($longitude) ){
             return false;
         }else{
             $distance_in_kilo = $this->calculateDistanceInKilometres($config['latitude'],$config['longitude'],$latitude,$longitude);
