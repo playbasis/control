@@ -95,13 +95,12 @@ class Custompoints extends MY_Controller
                 $this->form_validation->set_rules('energy_changing_per_period',
                     $this->lang->line('entry_energy_changing_per_period'),
                     'required|numeric|is_natural_no_zero|xss_clean');
-            }
-
-            if( $this->input->post('limit_per_day') != ""){
-                $this->form_validation->set_rules('limit_per_day',
-                    $this->lang->line('entry_limit_per_day'),
+            }else {
+                $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'),
                     'numeric|xss_clean');
             }
+
+            $this->form_validation->set_rules('limit_per_day',  $this->lang->line('entry_limit_per_day'), 'numeric|xss_clean');
 
             if ($this->form_validation->run()) {
                 $custompoints_data = $this->input->post();
@@ -377,6 +376,8 @@ class Custompoints extends MY_Controller
                 $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'),
                     'numeric|xss_clean');
             }
+
+            $this->form_validation->set_rules('limit_per_day',  $this->lang->line('entry_limit_per_day'), 'numeric|xss_clean');
 
             if ($this->form_validation->run()) {
                 $custompoints_data = $this->input->post();
