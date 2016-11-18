@@ -2733,6 +2733,34 @@
               "Description": "player id as used in client's website"
             },
             {
+              "Name": "date_start",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "date start in the format YYYY-MM-DD (ex.1982-09-29) to filter goods that valid date start/expire in period"
+            },
+            {
+              "Name": "date_end",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "date end in the format YYYY-MM-DD (ex.1982-09-29) to filter goods that valid date start/expire in period"
+            },
+            {
+              "Name": "offset",
+              "Required": "N",
+              "Default": "0",
+              "Type": "string",
+              "Description": "Specify paging offset [default = 0]"
+            },
+            {
+              "Name": "limit",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specify paging limit [default = unlimited]"
+            },
+            {
               "Name": "tags",
               "Required": "N",
               "Default": "",
@@ -2760,6 +2788,89 @@
                   "custom":             { "-type": "any", "-optional": "true"}
                 },
                 "sponsor":              { "-type": "boolean"},
+                "organize":             { "-type": "string", "-optional": "true"},
+                "organize_id":          { "-type": "string", "-optional": "true"},
+                "organize_role":        { "-type": "string", "-optional": "true"},
+                "tags":                 { "-type": "any"   , "-optional": "true"},
+                "date_start":           { "-type": "string", "-optional": "true"},
+                "date_expire":          { "-type": "string", "-optional": "true"}
+              }
+            ]
+          }
+        },
+        {
+          "MethodName": "Goods List Info with selected field",
+          "Synopsis": "Returns information about all available goods for the current site.",
+          "HTTPMethod": "GET",
+          "URI": "Goods/field",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "player_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "selected_field",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "selected parameters ex xxx,xxx,xxx,xxx"
+            },
+            {
+              "Name": "date_start",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "date start in the format YYYY-MM-DD (ex.1982-09-29) to filter goods that valid date start/expire in period"
+            },
+            {
+              "Name": "date_end",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "date end in the format YYYY-MM-DD (ex.1982-09-29) to filter goods that valid date start/expire in period"
+            },
+            {
+              "Name": "offset",
+              "Required": "N",
+              "Default": "0",
+              "Type": "string",
+              "Description": "Specify paging offset [default = 0]"
+            },
+            {
+              "Name": "limit",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specify paging limit [default = unlimited]"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            }
+          ],
+          "responses": {
+            "goods_list": [
+              {
+                "name":                 { "-type": "string", "-optional": "true"},
+                "goods_id":             { "-type": "string", "-optional": "true"},
+                "is_group":             { "-type": "boolean", "-optional": "true"},
+                "group":                { "-type": "string" , "-optional": "true"},
+                "quantity":             { "-type": "integer", "-optional": "true"},
+                "amount":               { "-type": "integer", "-optional": "true"},
+                "image":                { "-type": "string", "-optional": "true"},
+                "sort_order":           { "-type": "any", "-optional": "true"},
+                "description":          { "-type": "string", "-optional": "true"},
+                "code":                 { "-type": "any" , "-optional": "true"},
+                "redeem":               { "-type": "any" , "-optional": "true"},
+                "sponsor":              { "-type": "boolean", "-optional": "true"},
                 "organize":             { "-type": "string", "-optional": "true"},
                 "organize_id":          { "-type": "string", "-optional": "true"},
                 "organize_role":        { "-type": "string", "-optional": "true"},

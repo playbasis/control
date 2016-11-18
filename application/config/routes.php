@@ -161,6 +161,7 @@ $route['Badges'] = 'badge/index';
 //Goods API
 $route['Goods/'.ANY_STRING] = 'goods/index/$1';
 $route['Goods'] = 'goods/index';
+$route['Goods/field'] = 'goods/index';
 $route['Goods/sponsor/'.ANY_STRING] = 'goods/sponsor/$1';
 $route['Goods/sponsor'] = 'goods/sponsor';
 $route['Goods/ad'] = 'goods/personalizedSponsor';

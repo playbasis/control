@@ -12,7 +12,7 @@ class Goods_model extends MY_Model
     public function getAllGoods($data, $nin = array())
     {
         $this->set_site_mongodb($data['site_id']);
-        $this->mongo_db->select(array(
+        $select = isset($data['selected_field']) && is_array($data['selected_field']) && $data['selected_field'] ? $data['selected_field'] : array(
             'goods_id',
             'image',
             'name',
@@ -28,7 +28,8 @@ class Goods_model extends MY_Model
             'sort_order',
             'organize_id',
             'organize_role'
-        ));
+        );
+        $this->mongo_db->select($select);
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
@@ -42,6 +43,40 @@ class Goods_model extends MY_Model
         if (!empty($data['tags'])){
             $this->mongo_db->where_in('tags', $data['tags']);
         }
+
+        if(isset($data['date_start']) && !empty($data['date_start']) && isset($data['date_end']) && !empty($data['date_end'])){
+            $this->mongo_db->where(array('$and' => array( array('$or' => array(array("date_start" => null), array("date_start" => array('$lte'=> $data['date_start'])))),
+                                                          array('$or' => array(array("date_expire" => null), array("date_expire" => array('$gte'=> $data['date_end'])))))));
+        } else {
+            if(isset($data['date_start']) && !empty($data['date_start'])){
+                $this->mongo_db->where(array('$or' => array(array("date_start" => null), array("date_start" => array('$lte'=> $data['date_start'])))));
+            }
+
+            if(isset($data['date_end']) && !empty($data['date_end'])){
+                $this->mongo_db->where(array('$or' => array(array("date_expire" => null), array("date_expire" => array('$gte'=> $data['date_end'])))));
+            }
+        }
+
+
+
+
+        if (isset($data['offset']) && !empty($data['offset'])) {
+            if ($data['offset'] < 0) {
+                $data['offset'] = 0;
+            }
+        } else {
+            $data['offset'] = 0;
+        }
+
+        $this->mongo_db->offset((int)$data['offset']);
+        
+        if (isset($data['limit']) && !empty($data['limit'])) {
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+            $this->mongo_db->limit((int)$data['limit']);
+        }
+
         $goods = $this->mongo_db->get('playbasis_goods_to_client');
         if ($goods) {
             foreach ($goods as &$g) {
@@ -80,11 +115,11 @@ class Goods_model extends MY_Model
                     }
                 }
 
-                $g['image'] = $this->config->item('IMG_PATH') . $g['image'];
-                $g['_id'] = $g['_id'] . "";
-                $g['goods_id'] = $g['goods_id'] . "";
-                $g['date_start'] = $g['date_start'] ? datetimeMongotoReadable($g['date_start']) : null;
-                $g['date_expire'] = $g['date_expire'] ? datetimeMongotoReadable($g['date_expire']) : null;
+                if(isset($g['image'])) $g['image'] = $this->config->item('IMG_PATH') . $g['image'];
+                if(isset($g['_id'])) $g['_id'] = $g['_id'] . "";
+                if(isset($g['goods_id'])) $g['goods_id'] = $g['goods_id'] . "";
+                if(isset($g['date_start'])) $g['date_start'] = $g['date_start'] ? datetimeMongotoReadable($g['date_start']) : null;
+                if(isset($g['date_expire'])) $g['date_expire'] = $g['date_expire'] ? datetimeMongotoReadable($g['date_expire']) : null;
             }
         }
         return $goods;

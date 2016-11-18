@@ -110,9 +110,31 @@ class Goods extends REST2_Controller
             $data = $this->validToken;
 
             if ($this->input->get('tags')){
-                $data += array(
-                    'tags' => explode(',', $this->input->get('tags'))
-                );
+                $data['tags'] = explode(',', $this->input->get('tags'));
+            }
+
+            if ($this->input->get('selected_field')){
+                $data['selected_field'] = explode(',', $this->input->get('selected_field'));
+                foreach ($data['selected_field'] as $index => $field){
+                    if(!$field){
+                        unset($data['selected_field'][$index]);
+                    }
+                }
+                $data['selected_field'] = array_values($data['selected_field']);
+            }
+
+            if ($this->input->get('date_start')){
+                $data['date_start'] = new MongoDate(strtotime($this->input->get('date_start')));
+            }
+
+            if ($this->input->get('date_end')){
+                $data['date_end'] = new MongoDate(strtotime($this->input->get('date_end')));
+            }
+
+            $data['offset'] = ($this->input->get('offset')) ? $this->input->get('offset') : 0;
+            $data['limit'] = ($this->input->get('limit')) ? $this->input->get('limit') : null;
+            if ($data['limit'] > 500) {
+                $data['limit'] = 500;
             }
 
             $goodsList['goods_list'] = $this->goods_model->getAllGoods($data, $ids);
