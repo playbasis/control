@@ -97,6 +97,12 @@ class Custompoints extends MY_Controller
                     'required|numeric|is_natural_no_zero|xss_clean');
             }
 
+            if( $this->input->post('limit_per_day') != ""){
+                $this->form_validation->set_rules('limit_per_day',
+                    $this->lang->line('entry_limit_per_day'),
+                    'numeric|xss_clean');
+            }
+
             if ($this->form_validation->run()) {
                 $custompoints_data = $this->input->post();
 
@@ -104,6 +110,9 @@ class Custompoints extends MY_Controller
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['name'] = $custompoints_data['name'];
                 $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
+                $data['limit_per_day'] = isset($custompoints_data['limit_per_day']) && !is_null($custompoints_data['limit_per_day']) && $custompoints_data['limit_per_day'] !== "" ? intval($custompoints_data['limit_per_day']) : null;
+                $limit_start_time = isset($custompoints_data['limit_start_time']) && !is_null($custompoints_data['limit_start_time']) && $custompoints_data['limit_start_time'] !== "" ? $custompoints_data['limit_start_time'] : "00:00";
+                $data['limit_start_time'] = is_null($data['limit_per_day']) || $data['limit_per_day'] == 0 ? "00:00" : $limit_start_time;
                 $data['pending'] = isset($custompoints_data['pending']) && !empty($custompoints_data['pending']) ? $custompoints_data['pending'] : false;
                 $data['status'] = true;
                 $data['type'] = $custompoints_data['type_custompoint'];
@@ -281,14 +290,36 @@ class Custompoints extends MY_Controller
             $this->data['type'] = "normal";
         }
 
-        if (isset($custompoints_info['pending'])) {
+        if ($this->input->post('pending')) {
+            $this->data['pending'] = $this->input->post('pending');
+        } elseif (isset($custompoints_info['pending'])) {
             $this->data['pending'] = $custompoints_info['pending'];
         } else {
             $this->data['pending'] = false;
         }
 
-        if (isset($custompoints_info['quantity'])) {
+        if ($this->input->post('quantity')) {
+            $this->data['quantity'] = $this->input->post('quantity');
+        } elseif (!empty($custompoints_info)) {
             $this->data['quantity'] = $custompoints_info['quantity'];
+        } else {
+            $this->data['quantity'] = "";
+        }
+
+        if ($this->input->post('limit_per_day')) {
+            $this->data['limit_per_day'] = $this->input->post('limit_per_day');
+        } elseif (isset($custompoints_info['limit_per_day'])) {
+            $this->data['limit_per_day'] = $custompoints_info['limit_per_day'] ;
+        } else {
+            $this->data['limit_per_day'] = "";
+        }
+
+        if ($this->input->post('limit_start_time')) {
+            $this->data['limit_start_time'] = $this->input->post('limit_start_time');
+        } elseif (isset($custompoints_info['limit_start_time'])) {
+            $this->data['limit_start_time'] = $custompoints_info['limit_start_time'] ;
+        } else {
+            $this->data['limit_start_time'] = "";
         }
 
         if (isset($custompoints_info['energy_props'])) {
@@ -304,11 +335,11 @@ class Custompoints extends MY_Controller
         }
 
         if ($this->input->post('tags')) {
-            $this->data['tags'] = $this->input->post('tags');
-        } elseif (!empty($custompoints_info) && isset($custompoints_info['tags'])) {
-            $this->data['tags'] = $custompoints_info['tags'];
+            $this->data['tags'] = explode(',', $this->input->post('tags'));
+        } elseif (isset($language_info['tags'])) {
+            $this->data['tags'] = $language_info['tags'];
         } else {
-            $this->data['tags'] = null;
+            $this->data['tags'] = '';
         }
 
         $this->load->vars($this->data);
@@ -355,6 +386,9 @@ class Custompoints extends MY_Controller
                 $data['reward_id'] = $custompoints_id;
                 $data['name'] = $custompoints_data['name'];
                 $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
+                $data['limit_per_day'] = isset($custompoints_data['limit_per_day']) && !is_null($custompoints_data['limit_per_day']) && $custompoints_data['limit_per_day'] !== "" ? intval($custompoints_data['limit_per_day']) : null;
+                $limit_start_time = isset($custompoints_data['limit_start_time']) && !is_null($custompoints_data['limit_start_time']) && $custompoints_data['limit_start_time'] !== "" ? $custompoints_data['limit_start_time'] : "00:00";
+                $data['limit_start_time'] = is_null($data['limit_per_day']) || $data['limit_per_day'] == 0 ? null : $limit_start_time;
                 $data['pending'] = isset($custompoints_data['pending']) && !empty($custompoints_data['pending']) ? $custompoints_data['pending'] : false;
                 $data['type'] = $custompoints_data['type_custompoint'];
                 if ($custompoints_data['type_custompoint'] != "normal") {

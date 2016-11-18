@@ -1,3 +1,8 @@
+<link rel="stylesheet" media="screen" type="text/css" href="<?php echo base_url();?>stylesheet/goods/style.css" />
+<link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
+<script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
+        src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
+<div class="cover"></div>
 <div id="content" class="span10">
 
     <div class="box">
@@ -91,9 +96,27 @@
                     </tr>
                     <tr>
                         <td>
+                            <span id="limit_per_day_span"></span> <?php echo $this->lang->line('entry_limit_per_day'); ?>:
+                        </td>
+                        <td>
+                            <input type="text"
+                                   placeholder="<?php echo $this->lang->line('entry_limit_per_day_placeholder'); ?>"
+                                   name="limit_per_day" id="input_limit_per_day"
+                                   value="<?php echo isset($limit_per_day) ? $limit_per_day : set_value('limit_per_day'); ?>">
+                            Start time :
+                            <input type="text"
+                                   placeholder="<?php echo $this->lang->line('entry_limit_start_time'); ?>"
+                                   name="limit_start_time" id="input_limit_start_time"
+                                   value="<?php echo isset($limit_start_time) ? $limit_start_time : set_value('limit_start_time'); ?>">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <span id="pending"></span> <?php echo $this->lang->line('entry_pending'); ?>:
                         </td>
-                        <td><input type="checkbox" id="pending" name="pending" <?php echo (isset($pending) && $pending) ? "checked" : ''; ?>></td>
+                        <td>
+                            <input type="checkbox" id="pending" name="pending" <?php echo (isset($pending) && $pending) ? "checked" : ''; ?>>
+                        </td>
                     </tr>
                     <tr>
                         <td>
@@ -165,6 +188,7 @@
         });
     });
 
+
     $(function(){
         $('#tabs a').tabs();
 
@@ -173,21 +197,31 @@
             stepMinute: 10
         });
 
+        $('#input_limit_start_time').timepicker({
+            stepHour: 1,
+            stepMinute: 10
+        });
+
         var energy_inputs = $('[id^=input_energy_]'),
             quantity_input = $('[id=input_quantity]'),
             quantity_span = $('[id=quantity_required]'),
+            limit_per_day = $('[id=input_limit_per_day]'),
+            limit_start_time = $('[id=input_limit_start_time]'),
             energy_required_span = $('[id=energy_required]'),
             custompoint_type_radio = $('input[type=radio][name=type_custompoint]'),
             custompoint_type_radio_value = $('input[type=radio][name=type_custompoint]:checked').val();
 
         if(custompoint_type_radio_value != "normal"){
+            quantity_input.attr('disabled',true);
+            limit_per_day.attr('disabled',true);
+            limit_start_time.attr('disabled',true);
+            quantity_span.hide();
             energy_inputs.attr('disabled',false);
             energy_required_span.show();
-            quantity_input.attr('disabled',true);
-            quantity_span.hide();
-
         } else {
             quantity_input.attr('disabled',false);
+            limit_per_day.attr('disabled',false);
+            limit_start_time.attr('disabled',false);
             quantity_span.show();
             energy_inputs.attr('disabled',true);
             energy_required_span.hide();
@@ -195,16 +229,24 @@
 
         $( custompoint_type_radio ).on( "change", function() {
             if ($(this).val() != 'normal') {
+                quantity_input.attr('disabled',true);
+                limit_per_day.attr('disabled',true);
+                limit_start_time.attr('disabled',true);
+                quantity_span.hide();
                 energy_inputs.attr('disabled',false);
                 energy_required_span.show();
-                quantity_input.attr('disabled',true);
-                quantity_span.hide();
             } else {
                 quantity_input.attr('disabled',false);
+                limit_per_day.attr('disabled',false);
+                limit_start_time.attr('disabled',false);
                 quantity_span.show();
                 energy_inputs.attr('disabled',true);
                 energy_required_span.hide();
             }
         });
+    });
+
+    Pace.on("done", function () {
+        $(".cover").fadeOut(1000);
     });
 </script>

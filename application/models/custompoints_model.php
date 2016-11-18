@@ -45,6 +45,8 @@ class Custompoints_model extends MY_Model
             'group' => 'POINT',
             'name' => strtolower($data['name']),
             'quantity' => $data['quantity'],
+            'limit_per_day' => $data['limit_per_day'],
+            'limit_start_time' => $data['limit_start_time'],
             'limit' => null,
             'description' => null,
             'sort' => 1,
@@ -156,6 +158,8 @@ class Custompoints_model extends MY_Model
 
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('quantity', $data['quantity']);
+        $this->mongo_db->set('limit_per_day', $data['limit_per_day']);
+        $this->mongo_db->set('limit_start_time', $data['limit_start_time']);
         $this->mongo_db->set('pending', $data['pending']);
         $this->mongo_db->set('type', $data['type']);
 
