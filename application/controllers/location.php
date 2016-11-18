@@ -334,6 +334,14 @@ class Location extends MY_Controller
             $this->data['name'] = '';
         }
 
+        if ($this->input->post('image')) {
+            $this->data['image'] = $this->input->post('image');
+        } elseif (isset($location_info['image'])) {
+            $this->data['image'] = $location_info['image'];
+        } else {
+            $this->data['image'] = '';
+        }
+
         if ($this->input->post('latitude')) {
             $this->data['latitude'] = $this->input->post('latitude');
         } elseif (isset($location_info['latitude'])) {
