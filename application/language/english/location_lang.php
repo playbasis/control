@@ -23,13 +23,15 @@ $lang = array(
     'entry_name'                        => 'Location Name',
     'entry_object'                      => 'Object at location',
     'entry_status'                      => 'Status',
+    'entry_image'                       => 'Image',
     'entry_tags'                        => 'Tags',
     'object_type'                       => 'Object type',
     'object_id'                         => 'Object ID',
     'entry_tags'                        => 'Tags',
     'option_store'                      => 'Store',
-    'option_item'                       => 'Item'
-
+    'option_item'                       => 'Item',
+    'text_browse'           			=> 'Browse Files',
+    'text_clear'                        => 'Clear Image'
 );
 $lang['error_access']               = 'Warning: You do not have permission to access this page!';
 $lang['error_permission']           = 'Warning: You do not have permission to modify Location!';

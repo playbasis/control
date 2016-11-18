@@ -80,6 +80,20 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>
+                        <?php echo $this->lang->line('entry_image'); ?> :
+                    </td>
+                    <td>
+                        <div class="image">
+                            <img width="100" height="100" src="<?php echo isset($image)? S3_IMAGE.$image : S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="location_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                            <input type="hidden" name="image" value="<?php echo isset($image)? $image : "no_image.jpg"; ?>" id="location_image" />
+                            <br />
+                            <a onclick="image_upload('#location_image', 'location_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                            <a onclick="$('#location_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#location_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
                     <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                     <td><select name="status" >
                             <?php if ($status) { ?>
@@ -160,9 +174,40 @@
             tags: true,
             tokenSeparators: [',', ' ']
         });
-
-
     });
+
+    function image_upload(field, thumb) {
+        var $mm_Modal = $('#mmModal');
+
+        if ($mm_Modal.length !== 0) $mm_Modal.remove();
+
+        var frameSrc = baseUrlPath + "mediamanager/dialog?field=" + encodeURIComponent(field);
+        var mm_modal_str = "";
+        mm_modal_str += "<div id=\"mmModal\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\">";
+        mm_modal_str += " <div class=\"modal-body\">";
+        mm_modal_str += "   <iframe src=\"" + frameSrc + "\" style=\"position:absolute; zoom:0.60\" width=\"99.6%\" height=\"99.6%\" frameborder=\"0\"><\/iframe>";
+        mm_modal_str += " <\/div>";
+        mm_modal_str += "<\/div>";
+
+        $mm_Modal = $(mm_modal_str);
+        $('#page-render').append($mm_Modal);
+
+        $mm_Modal.modal('show');
+
+        $mm_Modal.on('hidden', function () {
+            var $field = $(field);
+            if ($field.attr('value')) {
+                $.ajax({
+                    url: baseUrlPath + 'mediamanager/image?image=' + encodeURIComponent($field.val()),
+                    dataType: 'text',
+                    success: function (data) {
+                        $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
+                    }
+                });
+            }
+        });
+    }
+
 
     Pace.on("done", function () {
         $(".cover").fadeOut(1000);

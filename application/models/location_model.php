@@ -118,6 +118,7 @@ class Location_model extends MY_Model
             'client_id' => new MongoId($data['client_id']),
             'site_id' => new MongoId($data['site_id']),
             'name' =>$data['name'],
+            'image' => $data['image'],
             'latitude' => $data['latitude'],
             'longitude' => $data['longitude'],
             'object_type' => $data['object_type'],
@@ -145,6 +146,7 @@ class Location_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoID($site_id));
 
         $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('image', $data['image']);
         $this->mongo_db->set('latitude', $data['latitude']);
         $this->mongo_db->set('longitude', $data['longitude']);
         $this->mongo_db->set('object_type', $data['object_type']);
