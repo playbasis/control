@@ -25,10 +25,17 @@ class Location_model extends MY_Model
         }
 
         if(isset($data['status']) && $data['status']){
-            $this->mongo_db->where('_id',new MongoID($data['location_id']));
+            $this->mongo_db->where('status',(strtolower($data['status'])==='false') ? false : true);
         }
 
         $result = $this->mongo_db->get('playbasis_location_to_client');
+        if ($result) {
+            foreach ($result as &$location) {
+                if(isset($location['image'])){
+                    $location['image'] = $this->config->item('IMG_PATH') . $location['image'];
+                }
+            }
+        }
 
         return $result ? $result : array();
     }

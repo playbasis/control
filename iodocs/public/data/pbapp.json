@@ -9831,7 +9831,7 @@
               "object_type":   {"-type": "string"},
               "object_id":     {"-type": "string"},
               "status":        {"-type": "boolean"},
-              "image":         {"-type": "string"},
+              "image":         {"-type": "string", "-optional": "true"},
               "tags":          {"-type": "any", "-optional": "true"},
               "date_added":    {"-type": "string", "-optional": "true"},
               "date_modified": {"-type": "string", "-optional": "true"}
