@@ -944,7 +944,29 @@ class Engine extends Quest
                         }
                     }
                 }
+                if ((($input['jigsaw_name']) == 'redeem') && isset($jigsawConfig['group_container']) && is_array($jigsawConfig['group_container'])) {
+                    foreach ($jigsawConfig['group_container'] as &$jigsawConfigGroup) {
+                        if (isset($jigsawConfigGroup['quantity']) && strpos($jigsawConfigGroup['quantity'], '{') !== false) {
 
+                            $f = $jigsawConfigGroup['quantity'];
+                            foreach ($input as $key => $value) {
+                                if (!is_string($value)) {
+                                    continue;
+                                }
+                                $f = str_replace('{' . $key . '}', $value, $f);
+                            }
+
+                            require_once APPPATH . '/libraries/ipsum/Parser.class.php';
+                            $parser = new Parser($f . '\0');
+                            try {
+                                $jigsawConfigGroup['quantity'] = intval($parser->run());
+                            } catch (Exception $e) {
+                                log_message('error', 'Error during evaluation (formula = ' . $f . '), e = ' . $e->getMessage());
+                                $jigsawConfigGroup['quantity'] = 0;
+                            }
+                        }
+                    }
+                }
 
                 //get class path to process jigsaw
                 $processor = ($jigsaw_id ? $this->client_model->getJigsawProcessorWithCache($cache_jigsaw, $jigsaw_id,
