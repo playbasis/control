@@ -302,7 +302,7 @@ class Client_model extends MY_Model
                                 'date_added' => $mongoDate,
                                 'date_modified' => $mongoDate
                             );
-                            if ((intval($quantity) >= intval($amount))){
+                            if ((intval($quantity) >= intval($amount)) || is_null($quantity)){
                                 $insert_reward['value'] = intval($amount);
                             } else {
                                 $insert_reward['value'] = intval($quantity);
