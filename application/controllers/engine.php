@@ -620,7 +620,7 @@ class Engine extends Quest
                     $pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
                         'player_id' => $cl_player_id,
                         'image' => $this->config->item('DEFAULT_PROFILE_IMAGE'),
-                        'email' => 'qa1'.$cl_player_id.'@playbasis.com',
+                        'email' => 'qa1+'.$cl_player_id.'@playbasis.com',
                         'username' => $cl_player_id,
                         'first_name' => $cl_player_id,
                         'nickname' => $cl_player_id,
