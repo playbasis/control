@@ -201,9 +201,14 @@ class jigsaw extends MY_Model
         assert($input != false);
         assert(is_array($input));
         assert($input['pb_player_id']);
-        //always true if reward type is point
+
         if (is_null($config['item_id']) || $config['item_id'] == '') {
-            return $this->checkReward($config['reward_id'], $input['site_id'], $config['quantity']);
+            $result =  $this->checkReward($config['reward_id'], $input['site_id']);
+            if($result == true){
+                $timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
+                $result = $this->checkRewardLimitPerDay($config['reward_id'], $input['client_id'], $input['site_id'], $config['quantity'], $timeNow);
+            }
+            return $result;
         }
 
         //if reward type is badge
@@ -1074,7 +1079,7 @@ class jigsaw extends MY_Model
         return true;
     }
 
-    private function checkReward($rewardId, $siteId, $quantity = 0)
+    private function checkReward($rewardId, $siteId)
     {
         $this->set_site_mongodb($siteId);
         $this->mongo_db->select(array('limit'));
@@ -1093,6 +1098,73 @@ class jigsaw extends MY_Model
         }
 
         return $result['limit'] > 0;
+    }
+
+    private function checkRewardLimitPerDay($reward_id, $client_id,  $site_id, $quantity, $timeNow)
+    {
+        $reward = $this->getRewardInfo($client_id, $site_id, $reward_id);
+        if(!$reward){
+            return false;
+        }else {
+            if (isset($reward['limit_per_day']) && $reward['limit_per_day']) {
+                $currentYMD = date("Y-m-d");
+                $settingTime = (isset($reward['limit_start_time']) && $reward['limit_start_time']) ? $reward['limit_start_time'] : "00:00";
+                $settingTime = strtotime("$currentYMD $settingTime:00");
+                $currentTime = strtotime($currentYMD." " . date('H:i', $timeNow) . ":00");
+
+                if ($settingTime <= $currentTime){ // action has been processed for today !
+                    $startTimeFilter = $settingTime;
+                }else{
+                    $startTimeFilter =  strtotime( "-1 day" , $settingTime ) ;
+                }
+
+                $total = $this->countPointAwardInDay($reward_id, $client_id, $site_id, $startTimeFilter);
+                if(($total + $quantity) > $reward['limit_per_day']){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+    }
+
+    private function countPointAwardInDay($reward_id, $client_id, $site_id, $startTime){
+
+        $results = $this->mongo_db->aggregate('playbasis_custom_point_log', array(
+            array(
+                '$match' => array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id,
+                    'reward_id' => $reward_id,
+                    'date_added' => array('$gte' => new MongoDate($startTime)),
+                ),
+            ),
+
+            array(
+                '$group' => array(
+                    '_id' => null,
+                    'sum' => array('$sum' => '$quantity')
+                )
+            ),
+        ));
+
+        $total = $results['result'] ? $results['result'][0]['sum'] : 0;
+
+        return $total;
+    }
+
+    private function getRewardInfo($client_id, $site_id, $reward_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'reward_id' => $reward_id,
+        ));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_reward_to_client');
+
+        return $result ? $result[0] : null;
     }
 
     private function getGroupQuantity($site_id, $group)
