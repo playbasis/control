@@ -311,6 +311,11 @@ class Client_model extends MY_Model
                         }
                         $reward = true;
                     }
+
+                    if($amount > 0){
+                        //update custom point log
+                        $this->logCustomPoint($clientId, $siteId, $pbPlayerId, $rewardId, $amount);
+                    }
                 } else {
                     // not enough
                     $status['reward_status'] = "REWARD_NOT_AVAILABLE";
@@ -340,6 +345,21 @@ class Client_model extends MY_Model
             $this->mongo_db->update('playbasis_reward_to_client');
         }
         return $status;
+    }
+
+    private function logCustomPoint($client_id, $site_id, $pb_player_id, $reward_id, $quantity){
+        $d = new MongoDate(time());
+        $data = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'pb_player_id' => new MongoId($pb_player_id),
+            'reward_id' => new MongoId($reward_id),
+            'quantity' => intval($quantity),
+            'date_added' => $d,
+            'date_modified' => $d
+        );
+        $data['value'] = intval($quantity);
+        $this->mongo_db->insert('playbasis_custom_point_log', $data);
     }
 
     public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig, $anonymous = false)
