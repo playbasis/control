@@ -9696,7 +9696,15 @@
           "URI": "Campaign",
           "RequiresOAuth": "N",
           "Public": "Y",
-          "parameters": [],
+          "parameters": [
+            {
+              "Name": "campaign_name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific campaign of game to retrieve campaign details"
+            }
+          ],
           "response": [
             {
               "name":          {"-type": "string"},
