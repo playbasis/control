@@ -9,7 +9,7 @@ class Campaign_model extends MY_Model
         $this->config->load('playbasis');
     }
 
-    public function getCampaign($client_id, $site_id)
+    public function getCampaign($client_id, $site_id, $campaign_name=false)
     {
         //get badge name by $badge_id
         $this->set_site_mongodb($site_id);
@@ -20,6 +20,9 @@ class Campaign_model extends MY_Model
             'site_id' => $site_id,
             'deleted' => false
         ));
+        if ($campaign_name){
+            $this->mongo_db->where('name', $campaign_name);
+        }
         $this->mongo_db->order_by(array('weight' => 'ASC', 'name' => 'ASC'));
         $result = $this->mongo_db->get('playbasis_campaign_to_client');
 
