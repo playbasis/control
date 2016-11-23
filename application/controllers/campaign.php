@@ -15,7 +15,8 @@ class Campaign extends REST2_Controller
 
     public function index_get()
     {
-        $result = $this->campaign_model->getCampaign($this->client_id, $this->site_id);
+        $campaign_name = $this->input->get('campaign_name');
+        $result = $this->campaign_model->getCampaign($this->client_id, $this->site_id, $campaign_name ? $campaign_name: false);
         foreach ($result as $index => $res){
             unset($result[$index]['_id']);
         }
