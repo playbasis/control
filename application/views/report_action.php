@@ -15,11 +15,24 @@
             <div class="report-filter">
                 <span>
                         <?php echo $this->lang->line('filter_date_start'); ?>
-                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" />
+                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:100px;"/>
                 </span>
                 <span>
                         <?php echo $this->lang->line('filter_date_end'); ?>
-                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" />
+                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:100px;"/>
+                </span>
+                <span>
+                    <?php echo $this->lang->line('filter_time_zone'); ?>
+                    <select name="filter_timezone" style="height: 30px">
+                        <option value="0">Select timezone</option>
+                        <?php foreach($time_zone as $t) {
+                            if ($filter_time_zone == $t) { ?>
+                                <option selected value="<?php echo $t ?>"><?php echo $t ?></option>
+                            <?php } else { ?>
+                                <option value="<?php echo $t ?>"><?php echo $t ?></option>
+                            <?php }
+                        }?>
+                    </select>
                 </span>
                 <span>
                         <?php echo $this->lang->line('filter_email_username'); ?>
@@ -27,7 +40,7 @@
                 </span>
                 <span>
                         <?php echo $this->lang->line('filter_action_id'); ?>
-                    <select name="filter_action_id">
+                    <select name="filter_action_id" style="height:30px;">
                         <option value="0"><?php echo "All"; ?></option>
                         <?php foreach ($actions as $action) { ?>
                         <?php if ($action['action_id'] == $filter_action_id) { ?>
@@ -114,6 +127,12 @@ function filter() {
         url += '&date_expire=' + encodeURIComponent(filter_date_end);
     }
 
+    var filter_time_zone = $('select[name=\'filter_timezone\']').attr('value');
+
+    if (filter_time_zone) {
+        url += '&time_zone=' + encodeURIComponent(filter_time_zone);
+    }
+
     var filter_username = $('input[name=\'filter_username\']').attr('value');
 
     if (filter_username) {
@@ -143,6 +162,12 @@ function downloadFile() {
 
     if (filter_date_end) {
         url += '&date_expire=' + encodeURIComponent(filter_date_end);
+    }
+
+    var filter_time_zone = $('select[name=\'filter_timezone\']').attr('value');
+
+    if (filter_time_zone) {
+        url += '&time_zone=' + encodeURIComponent(filter_time_zone);
     }
 
     var filter_username = $('input[name=\'filter_username\']').attr('value');
