@@ -16,6 +16,7 @@ class Content extends MY_Controller
         $this->load->model('Store_org_model');
         $this->load->model('Feature_model');
         $this->load->model('App_model');
+        $this->load->model('Language_model');
 
         if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
@@ -135,6 +136,15 @@ class Content extends MY_Controller
                 if(!$check_content){
                     $insert = $this->Content_model->createContent($data);
                     if ($insert) {
+
+                        if ($this->User_model->hasPermission('access', 'language') &&
+                            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'language'))
+                        {
+                            foreach($content_data['language_list'] as $language){
+                                $this->Content_model->createContentToLanguage($client_id, $site_id, $insert , $language['language_id'], $language['content_info']);
+                            }
+                        }
+
                         if ($this->User_model->hasPermission('access', 'store_org') &&
                             $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org'))
                         {
@@ -246,6 +256,19 @@ class Content extends MY_Controller
                 if(!$check_content){
                     $insert = $this->Content_model->updateContent($data);
                     if ($insert) {
+                        if ($this->User_model->hasPermission('access', 'language') &&
+                            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'language'))
+                        {
+                            foreach($content_data['language_list'] as $language){
+                                $content = $this->Content_model->getContentToLanguage($client_id, $site_id, $content_id, $language['language_id']);
+                                if($content){
+                                    $this->Content_model->updateContentToLanguage($client_id, $site_id, $content_id, $language['language_id'], $language['content_info']);
+                                }else {
+                                    $this->Content_model->createContentToLanguage($client_id, $site_id, $content_id, $language['language_id'], $language['content_info']);
+                                }
+                            }
+                        }
+
                         if ($this->User_model->hasPermission('access', 'store_org') &&
                             $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')) 
                         {
@@ -502,15 +525,15 @@ class Content extends MY_Controller
 
         $this->data['main'] = 'content_form';
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
         if (isset($content_id) && ($content_id != 0)) {
             if ($this->User_model->getClientId()) {
                 $content_info = $this->Content_model->retrieveContent($content_id);
             }
 
             if ($this->data['org_status']) {
-
-                $client_id = $this->User_model->getClientId();
-                $site_id = $this->User_model->getSiteId();
 
                 $org_info = $this->Content_model->getOrganizationToContent($client_id, $site_id, $content_id);
                 if (isset($org_info) && !empty($org_info)) {
@@ -540,6 +563,34 @@ class Content extends MY_Controller
             }
 
         }
+
+        $this->data['language_status'] = false;
+        if ($this->User_model->hasPermission('access', 'language') &&
+            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'language')
+        ) {
+            $this->data['language_status'] = true;
+
+            if ($this->input->post('language_list')) {
+                $this->data['language_list'] = $this->input->post('language_list');
+            } else{
+                $language_list = $this->Language_model->getLanguageList($client_id, $site_id, true);
+                foreach($language_list as &$language){
+                    $language['language_id'] = $language['_id']."";
+                    if ($content_id) {
+                        $content = $this->Content_model->getContentToLanguage($client_id, $site_id, $content_id, $language['_id']);
+                        $language['content_info']['title'] = (isset($content['title']) && $content['title']) ? $content['title'] : "";
+                        $language['content_info']['summary'] = (isset($content['summary']) && $content['summary']) ? $content['summary'] : "";
+                        $language['content_info']['detail'] = (isset($content['detail']) && $content['detail']) ? $content['detail'] : "";
+                    }else{
+                        $language['content_info']['title'] = "";
+                        $language['content_info']['summary'] = "";
+                        $language['content_info']['detail'] = "";
+                    }
+                }
+                $this->data['language_list'] = $language_list;
+            }
+        }
+
         if ($this->input->post('node_id')) {
             $this->data['node_id'] = $this->input->post('node_id');
         } elseif (isset($content_info['node_id'])) {

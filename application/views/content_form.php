@@ -51,38 +51,93 @@
                 </div>
             </div>
 
-            <div class="control-group">
-                <label class="control-label"
-                       for="inputTitle"><?php echo $this->lang->line('entry_title'); ?><span
-                        class="required">&nbsp;*</span></label>
-                <div class="controls">
-                    <input type="text" name="title" size="100" id="inputTitle"
-                           placeholder="<?php echo $this->lang->line('entry_title'); ?>"
-                           value="<?php echo isset($title) ? $title : set_value('$title'); ?>"/>
-                </div>
-            </div>
+            <?php if($language_status){?>
+            <div class="tabbable" id="Tabs">
+                <ul class="nav nav-tabs" >
+                    <li class="active"><a href="#Tab_english"  data-toggle="tab">EN</a></li>
+                    <?php for($i = 0;$i<count($language_list);$i++){?>
+                        <li><a href="#Tab_<?php echo $i ?>"     data-toggle="tab"><?php echo strtoupper($language_list[$i]['abbreviation']) ?></a></li>
 
-            <div class="control-group">
-                <label class="control-label" for="inputSummary">
-                    <?php echo $this->lang->line('entry_summary'); ?><span
-                        class="required">&nbsp;*</span>
-                </label>
-                <div class="controls">
-                    <textarea name="summary" id="inputSummary" cols="80" rows="5" style="width: 70%;"
+                    <?php }?>
+
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade active in" id="Tab_english">
+            <?php }?>
+
+                <div class="control-group">
+                    <label class="control-label"
+                           for="inputTitle"><?php echo $this->lang->line('entry_title'); ?><span
+                            class="required">&nbsp;*</span></label>
+                    <div class="controls">
+                        <input type="text" name="title" size="100" id="inputTitle"
+                               placeholder="<?php echo $this->lang->line('entry_title'); ?>"
+                               value="<?php echo isset($title) ? $title : set_value('$title'); ?>"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputSummary">
+                        <?php echo $this->lang->line('entry_summary'); ?><span
+                            class="required">&nbsp;*</span>
+                    </label>
+                    <div class="controls">
+                        <textarea name="summary" id="inputSummary" cols="80" rows="5" style="width: 70%;"
                               placeholder="<?php echo $this->lang->line('entry_summary'); ?>"><?php echo isset($summary) ? $summary : set_value('summary'); ?></textarea>
+                    </div>
                 </div>
-            </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputDetail">
+                        <?php echo $this->lang->line('entry_detail'); ?><span
+                            class="required">&nbsp;*</span>
+                    </label>
+                    <div class="controls">
+                        <textarea name="detail" id="inputDetail" cols="80" rows="20"
+                             placeholder="<?php echo $this->lang->line('entry_detail'); ?>"><?php echo isset($detail) ? $detail : set_value('detail'); ?></textarea>
+                    </div>
+                </div>
 
-            <div class="control-group">
-                <label class="control-label" for="inputDetail">
-                    <?php echo $this->lang->line('entry_detail'); ?><span
-                        class="required">&nbsp;*</span>
-                </label>
-                <div class="controls">
-                    <textarea name="detail" id="inputDetail" cols="80" rows="20"
-                              placeholder="<?php echo $this->lang->line('entry_detail'); ?>"><?php echo isset($detail) ? $detail : set_value('detail'); ?></textarea>
+            <?php if($language_status){?>
+                    </div>
+                <?php for($i = 0;$i<count($language_list);$i++){?>
+                    <div class="tab-pane fade in" id="Tab_<?php echo $i ?>" data-value="<?php echo $i?>">
+                        <input type="hidden" id="language_id" name="language_list[<?php echo $i ?>][language_id]" value="<?php echo $language_list[$i]['language_id']; ?>"/>
+                        <input type="hidden" id="abbreviation" name="language_list[<?php echo $i ?>][abbreviation]" value="<?php echo $language_list[$i]['abbreviation']; ?>"/>
+                        <div class="control-group">
+                            <label class="control-label" for="inputTitle">
+                                <?php echo $this->lang->line('entry_title'); ?>
+                            </label>
+                            <div class="controls">
+                                <input type="text" id="inputTitle" size="100" name="language_list[<?php echo $i ?>][content_info][title]"
+                                    placeholder="<?php echo $this->lang->line('entry_title'); ?>"
+                                    value="<?php echo isset($language_list[$i]['content_info']['title']) ? $language_list[$i]['content_info']['title'] : ""; ?>"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputSummary">
+                                <?php echo $this->lang->line('entry_summary'); ?>
+                            </label>
+                            <div class="controls">
+                                <textarea id="inputSummary" name="language_list[<?php echo $i ?>][content_info][summary]" cols="80" rows="5" style="width: 70%;"
+                                    placeholder="<?php echo $this->lang->line('entry_summary'); ?>"><?php echo isset($language_list[$i]['content_info']['summary']) ? $language_list[$i]['content_info']['summary'] : ""; ?></textarea>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputDetail<?php echo $i ?>">
+                                <?php echo $this->lang->line('entry_detail'); ?>
+                            </label>
+                            <div class="controls">
+                                <textarea id="inputDetail<?php echo $i ?>" name="language_list[<?php echo $i ?>][content_info][detail]" cols="80" rows="20"
+                                    placeholder="<?php echo $this->lang->line('entry_detail'); ?>"><?php echo isset($language_list[$i]['content_info']['detail']) ? $language_list[$i]['content_info']['detail'] : ""; ?></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                <?php }?>
+
                 </div>
             </div>
+            <?php }?>
+
 
             <div class="control-group">
                 <label class="control-label"><?php echo $this->lang->line('entry_date_range'); ?>
@@ -355,6 +410,7 @@
             $categoryContentToolbarRemove.prop('disabled', true);
         });
     }
+
     function initComponents() {
         CKEDITOR.replace('inputDetail', {
             filebrowserImageBrowseUrl : 'mediamanager/dialog/'
@@ -533,6 +589,8 @@
         preventEnterKeyDown();
     });
 
+
+
     Pace.on("done", function(){
         $(".cover").fadeOut(1000);
     });
@@ -562,6 +620,13 @@
     }
 
     $(document).ready(function(){
+        <?php if($language_status){?>
+        <?php for($i = 0;$i<count($language_list);$i++){?>
+            CKEDITOR.replace("<?php echo "inputDetail".$i ?>", {
+                filebrowserImageBrowseUrl : 'mediamanager/dialog/'
+        });
+        <?php }?>
+        <?php }?>
 
         $(".tags").select2({
             width: 'resolve',
