@@ -42,6 +42,7 @@ $lang['column_max_score']                       = 'Max Score';
 // Button
 $lang['button_filter']                          = 'Filter';
 $lang['button_download']                        = 'Download';
+$lang['filter_time_zone']                       = 'Time Zone';
 $lang['filter_date_start']                      = 'Date Start';
 $lang['filter_date_end']                        = 'Date End';
 $lang['filter_username']                        = 'Username';
