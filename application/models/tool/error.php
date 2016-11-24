@@ -398,9 +398,13 @@ class Error extends CI_Model
                 $errorData['message'] = "Content node_id already exists";
                 $errorData['error_code'] = '2003';
                 break;
-            case 'CONTENT_NODE_ID__SPACE_EXIST':
+            case 'CONTENT_NODE_ID_SPACE_EXIST':
                 $errorData['message'] = "Content node_id is invalid,space exists";
-                $errorData['error_code'] = '2003';
+                $errorData['error_code'] = '2004';
+                break;
+            case 'CONTENT_LANGUAGE_NOT_FOUND':
+                $errorData['message'] = "The selected language does not exists";
+                $errorData['error_code'] = '2005';
                 break;
             case 'PIN_CODE_INVALID':
                 $errorData['message'] = "Sorry, this PIN doesn’t match any active project";
