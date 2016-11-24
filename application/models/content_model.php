@@ -424,4 +424,67 @@ class Content_model extends MY_Model
     {
         $value = new MongoId($value);
     }
+
+    public function createContentToLanguage($client_id, $site_id, $content_id , $language_id, $content_data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $date = new MongoDate();
+        $data =  array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'content_id' => new MongoId($content_id),
+            'language_id' => new MongoId($language_id),
+            'title' => (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : "",
+            'summary' => (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : "",
+            'detail' => (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : "",
+            'deleted' => false,
+            'date_added' => $date,
+            'date_modified' => $date
+        );
+        $insert = $this->mongo_db->insert('playbasis_content_to_language', $data);
+
+        return $insert;
+    }
+
+    public function getContentToLanguage($client_id, $site_id, $content_id , $language_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('title', 'summary', 'detail'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('content_id', new MongoId($content_id));
+        $this->mongo_db->where('language_id', new MongoId($language_id));
+
+        $result = $this->mongo_db->get('playbasis_content_to_language');
+        return $result ? $result[0] : null;
+    }
+
+    public function updateContentToLanguage($client_id , $site_id, $content_id , $language_id, $content_data)
+    {
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('content_id', new MongoId($content_id));
+        $this->mongo_db->where('language_id', new MongoId($language_id));
+
+        $this->mongo_db->set('title', (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : "");
+        $this->mongo_db->set('summary', (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : "");
+        $this->mongo_db->set('detail', (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : "");
+        $this->mongo_db->set('date_modified', new MongoDate());
+        $update = $this->mongo_db->update('playbasis_content_to_language');
+
+        return $update;
+    }
+
+    public function deleteContentToLanguage($content_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($content_id));
+        $this->mongo_db->set('deleted', true);
+        return $this->mongo_db->update('playbasis_content_to_language');
+    }
+
 }

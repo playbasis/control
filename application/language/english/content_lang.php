@@ -53,6 +53,10 @@ $lang['text_image_manager'] = 'Image Manager';
 $lang['text_browse'] = 'Browse Files';
 $lang['text_clear'] = 'Clear Image';
 $lang['text_empty_content'] = 'No content found';
+$lang['text_success_create']            = 'The content has been created';
+$lang['text_success_create_without_org_setting']  = 'The content has been created without organization setting ';
+$lang['text_success_create_without_role_setting'] = 'The content has been created and added to node without setting role';
+
 
 // Error message
 $lang['error_permission'] = 'Warning: You do not have permission to modify Content!';

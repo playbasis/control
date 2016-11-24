@@ -115,11 +115,11 @@ class Language extends MY_Controller
                 $data['site_id'] = $site_id;
 
                 $chk_name = $this->Language_model->retrieveLanguageByName($client_id, $site_id, $data['language']);
-                if($chk_name){
+                if($chk_name || $data['language'] == "English"){
                     $this->data['message'] = $this->lang->line('text_error_duplicate_language');
                 }else {
                     $chk_abbr = $this->Language_model->retrieveLanguageByAbbr($client_id, $site_id, $data['abbreviation']);
-                    if($chk_abbr){
+                    if($chk_abbr || $data['abbreviation'] == "en"){
                         $this->data['message'] = $this->lang->line('text_error_duplicate_abbr');
                     }else {
                         $insert = $this->Language_model->insertLanguage($data);
@@ -161,11 +161,11 @@ class Language extends MY_Controller
                 $data = $this->input->post();
 
                 $chk_name = $this->Language_model->retrieveLanguageByNameButNotID($client_id, $site_id, $data['language'],$language_id);
-                if($chk_name){
+                if($chk_name || $data['language'] == "English"){
                     $this->data['message'] = $this->lang->line('text_error_duplicate_language');
                 }else{
                     $chk_abbr = $this->Language_model->retrieveLanguageByAbbrButNotID($client_id, $site_id, $data['abbreviation'],$language_id);
-                    if($chk_abbr){
+                    if($chk_abbr || $data['abbreviation'] == "en"){
                         $this->data['message'] = $this->lang->line('text_error_duplicate_abbr');
                     }else {
                         $insert = $this->Language_model->updateLanguage($client_id, $site_id, $language_id, $data);
