@@ -7791,6 +7791,13 @@
               "Description": "Specific node_id of content"
             },
             {
+              "Name": "language",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Select language of content's details (default = English)"
+            },
+            {
               "Name": "title",
               "Required": "N",
               "Default": "",

@@ -11,6 +11,7 @@ class Content extends REST2_Controller
         $this->load->model('content_model');
         $this->load->model('player_model');
         $this->load->model('store_org_model');
+        $this->load->model('language_model');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
@@ -32,6 +33,13 @@ class Content extends REST2_Controller
             ));
             if (empty($pb_player_id)) {
                 $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            }
+        }
+
+        if (isset($query_data['language']) && !empty($query_data['language']) && strtolower($query_data['language']) != "english") {
+            $language = $this->language_model->retrieveLanguageByName($this->validToken['client_id'], $this->validToken['site_id'], $query_data['language']);
+            if(!$language){
+                $this->response($this->error->setError('CONTENT_LANGUAGE_NOT_FOUND'), 200);
             }
         }
 
@@ -355,6 +363,28 @@ class Content extends REST2_Controller
             }
         }
 
+
+        if (isset($query_data['language']) && !empty($query_data['language']) && strtolower($query_data['language']) != "english") {
+            if(isset($language['_id'])){
+                foreach($result as &$res){
+                    $content_to_language = $this->content_model->getContentToLanguage($this->validToken['client_id'], $this->validToken['site_id'], $res['_id'] , $language['_id']);
+                    $res['title'] = isset($content_to_language['title']) && $content_to_language['title'] ? $content_to_language['title'] : "";
+                    $res['summary'] = isset($content_to_language['summary']) && $content_to_language['summary'] ? $content_to_language['summary'] : "";
+                    $detail_to_language = isset($content_to_language['detail']) && $content_to_language['detail'] ? $content_to_language['detail'] : "";
+                    if (isset($query_data['full_html']) && $query_data['full_html'] == "true") {
+
+                        $res['detail'] = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">' .
+                                '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">' .
+                                '<style>img{ max-width: 100%}</style>' .
+                                '</head><title></title><body>' . $detail_to_language . '</body></html>';
+
+                    }else {
+                        $res['detail'] = $detail_to_language;
+                    }
+                }
+            }
+        }
+
         array_walk_recursive($result, array($this, "convert_mongo_object_and_optional"));
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -513,7 +543,7 @@ class Content extends REST2_Controller
 
         if($this->input->post('node_id')) {
             if (strpos($this->input->post('node_id'), ' ') > 0) {
-                $this->response($this->error->setError('CONTENT_NODE_ID__SPACE_EXIST'), 200);
+                $this->response($this->error->setError('CONTENT_NODE_ID_SPACE_EXIST'), 200);
             }
             else
             {

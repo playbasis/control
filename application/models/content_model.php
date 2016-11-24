@@ -541,4 +541,19 @@ class Content_model extends MY_Model
         }
         return $results['result'];
     }
+
+    public function getContentToLanguage($client_id, $site_id, $content_id , $language_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('title', 'summary', 'detail'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('content_id', new MongoId($content_id));
+        $this->mongo_db->where('language_id', new MongoId($language_id));
+
+        $result = $this->mongo_db->get('playbasis_content_to_language');
+        return $result ? $result[0] : null;
+    }
 }
