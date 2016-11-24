@@ -42,6 +42,15 @@
                         </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td></td>
+                                <td class="left" width="30%">English (default)</td>
+                                <td class="left" width="20%">en</td>
+                                <td class="left" width="20%">enable</td>
+                                <td class="left" width="20%">english</td>
+                                <td class="center" width="10%"></td>
+                            </tr>
+
                             <?php if (isset($languages) && $languages) { ?>
                             <?php foreach ($languages as $language) { ?>
                             <tr>

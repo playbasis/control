@@ -60,13 +60,15 @@ class Language_model extends MY_Model
         return $result ? $result[0] : null;
     }
 
-    public function getLanguageList($client_id, $site_id)
+    public function getLanguageList($client_id, $site_id, $status = true)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        $this->mongo_db->select(array('language', 'abbreviation'));
+
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
-        //$this->mongo_db->where('status', true);
+        $this->mongo_db->where('status', $status);
         $this->mongo_db->where('deleted', false);
 
         $results = $this->mongo_db->get("playbasis_language_to_client");
