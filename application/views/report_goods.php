@@ -22,12 +22,25 @@
                     <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:100px;"/>
                 </span>
                 <span>
+                    <?php echo $this->lang->line('filter_time_zone'); ?>
+                    <select name="filter_timezone" style="height: 30px; width: 150px">
+                        <option value="0">Select timezone</option>
+                        <?php foreach($time_zone as $t) {
+                            if ($filter_time_zone == $t) { ?>
+                                <option selected value="<?php echo $t ?>"><?php echo $t ?></option>
+                            <?php } else { ?>
+                                <option value="<?php echo $t ?>"><?php echo $t ?></option>
+                            <?php }
+                        }?>
+                    </select>
+                </span>
+                <span>
                         <?php echo $this->lang->line('filter_email_username'); ?>
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>
                         <?php echo $this->lang->line('filter_reward_id'); ?>
-                    <select name="filter_goods_id">
+                    <select name="filter_goods_id" style="height: 30px; width: 180px">
                         <option value="0"><?php echo "All"; ?></option>
                         <?php foreach ($goods_available as $good){?>
                             <?php if ($good['_id'] == $filter_goods_id) { ?>
@@ -40,7 +53,7 @@
                 </span>
                 <span>
                     <?php echo $this->lang->line('filter_status'); ?>
-                    <select name="filter_goods_status">
+                    <select name="filter_goods_status" style="height: 30px; width:80px">
                         <option value="all"><?php echo "All";    ?></option>
                         <option value="active"><?php echo "Active"; ?></option>
                         <option value="used"><?php echo "Used";   ?></option>
@@ -130,6 +143,12 @@ function filter() {
         url += '&date_expire=' + encodeURIComponent(filter_date_end);
     }
 
+    var filter_time_zone = $('select[name=\'filter_timezone\']').attr('value');
+
+    if (filter_time_zone) {
+        url += '&time_zone=' + encodeURIComponent(filter_time_zone);
+    }
+
     var filter_username = $('input[name=\'filter_username\']').attr('value');
 
     if (filter_username) {
@@ -164,6 +183,12 @@ function downloadFile() {
 
     if (filter_date_end) {
         url += '&date_expire=' + encodeURIComponent(filter_date_end);
+    }
+
+    var filter_time_zone = $('select[name=\'filter_timezone\']').attr('value');
+
+    if (filter_time_zone) {
+        url += '&time_zone=' + encodeURIComponent(filter_time_zone);
     }
 
     var filter_username = $('input[name=\'filter_username\']').attr('value');

@@ -105,6 +105,23 @@ class Report_registration extends MY_Controller
             //--> end
         }
 
+        if ($this->input->get('time_zone')){
+            $UTC_7 = new DateTimeZone("Asia/Bangkok");
+
+            $filter_time_zone = $this->input->get('time_zone');
+            $parameter_url .= "&time_zone=" . urlencode($filter_time_zone);
+            $newTZ = new DateTimeZone($filter_time_zone);
+            $date_start = new DateTime( $filter_date_start, $newTZ);
+            $date_start->setTimezone($UTC_7);
+            $filter_date_start2 = $date_start->format("Y-m-d H:i:s");;
+
+            $date_end = new DateTime( $filter_date_end, $newTZ);
+            $date_end->setTimezone($UTC_7);
+            $filter_date_end2 = $date_end->format("Y-m-d H:i:s");
+        } else {
+            $filter_time_zone = "Asia/Bangkok";
+        }
+
         if ($this->input->get('username')) {
             $filter_username = $this->input->get('username');
             $parameter_url .= "&username=" . $filter_username;
@@ -131,8 +148,8 @@ class Report_registration extends MY_Controller
         $data = array(
             'client_id' => $client_id,
             'site_id' => $site_id,
-            'date_start' => $filter_date_start,
-            'date_expire' => $filter_date_end,
+            'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
+            'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
             'filter_site_id' => $filter_site_id,
             'start' => $offset,
@@ -153,6 +170,7 @@ class Report_registration extends MY_Controller
 
         }
 
+        $this->data['time_zone'] = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
         $this->data['reports'] = array();
 
         foreach ($results as $result) {
@@ -166,12 +184,18 @@ class Report_registration extends MY_Controller
                 $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
 
+            if ($this->input->get('time_zone')){
+                $date_added = new DateTime( datetimeMongotoReadable($result['date_added']), $UTC_7);
+                $date_added->setTimezone($newTZ);
+                $date_added = $date_added->format("Y-m-d H:i:s");;
+            }
+
             $this->data['reports'][] = array(
                 'cl_player_id' => $result['cl_player_id'],
                 'username' => $result['username'],
                 'image' => $thumb,
                 'email' => $result['email'],
-                'date_added' => datetimeMongotoReadable($result['date_added']),
+                'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
             );
         }
 
@@ -215,6 +239,7 @@ class Report_registration extends MY_Controller
         $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
         $this->data['pagination_total_rows'] = $config["total_rows"];
 
+        $this->data['filter_time_zone'] = $filter_time_zone;
         $this->data['filter_date_start'] = $filter_date_start;
         // --> This will show only the date, not including the time
         $filter_date_end_exploded = explode(" ", $filter_date_end);
@@ -279,6 +304,22 @@ class Report_registration extends MY_Controller
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
         }
 
+        if ($this->input->get('time_zone')){
+            $UTC_7 = new DateTimeZone("Asia/Bangkok");
+
+            $filter_time_zone = $this->input->get('time_zone');
+            $newTZ = new DateTimeZone($filter_time_zone);
+            $date_start = new DateTime( $filter_date_start, $newTZ);
+            $date_start->setTimezone($UTC_7);
+            $filter_date_start2 = $date_start->format("Y-m-d H:i:s");;
+
+            $date_end = new DateTime( $filter_date_end, $newTZ);
+            $date_end->setTimezone($UTC_7);
+            $filter_date_end2 = $date_end->format("Y-m-d H:i:s");
+        } else {
+            $filter_time_zone = "Asia/Bangkok";
+        }
+
         if ($this->input->get('username')) {
             $filter_username = $this->input->get('username');
             $parameter_url .= "&username=" . $filter_username;
@@ -292,8 +333,8 @@ class Report_registration extends MY_Controller
         $data = array(
             'client_id' => $client_id,
             'site_id' => $site_id,
-            'date_start' => $filter_date_start,
-            'date_expire' => $filter_date_end,
+            'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
+            'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
         );
 
@@ -310,11 +351,17 @@ class Report_registration extends MY_Controller
 
         foreach ($results as $result) {
 
+            if ($this->input->get('time_zone')){
+                $date_added = new DateTime( datetimeMongotoReadable($result['date_added']), $UTC_7);
+                $date_added->setTimezone($newTZ);
+                $date_added = $date_added->format("Y-m-d H:i:s");;
+            }
+
             $this->data['reports'][] = array(
                 'cl_player_id' => $result['cl_player_id'],
                 'username' => $result['username'],
                 'email' => $result['email'],
-                'date_added' => datetimeMongotoReadable($result['date_added']),
+                'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
             );
         }
         $results = $this->data['reports'];
