@@ -1034,7 +1034,7 @@ class Goods_model extends MY_Model
         return $this->mongo_db->get('playbasis_goods_to_player');
     }
 
-    public function listRedeemedGoodsBySite($site_id, $fields = array())
+    public function listRedeemedGoodsBySite($site_id, $fields = array(), $data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         if ($fields) {
@@ -1042,7 +1042,30 @@ class Goods_model extends MY_Model
         }
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where_gt('value', 0);
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
         return $this->mongo_db->get('playbasis_goods_to_player');
+    }
+
+    public function countRedeemedGoodsBySite($site_id, $fields = array())
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        if ($fields) {
+            $this->mongo_db->select($fields);
+        }
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_gt('value', 0);
+        return $this->mongo_db->count('playbasis_goods_to_player');
     }
 
     public function listVerifiedGoods($goods_id_list, $fields = array())

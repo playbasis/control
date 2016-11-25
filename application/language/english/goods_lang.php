@@ -70,6 +70,7 @@ $lang['entry_per_user']                 = 'Per User';
 $lang['entry_code']                     = 'Code';
 $lang['entry_player_id']                = 'Player Id';
 $lang['entry_player_name']              = 'Player Name';
+$lang['entry_goods_name']               = 'Goods Name';
 $lang['entry_node_detail']              = 'Node Detail';
 $lang['entry_node_name']                = 'Node Name';
 $lang['entry_node_type']                = 'Node Type';

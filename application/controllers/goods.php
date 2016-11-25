@@ -43,6 +43,20 @@ class Goods extends MY_Controller
 
     }
 
+    public function markAsUsed()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->getListAsUsed(0);
+    }
+
     public function page($offset = 0)
     {
 
@@ -57,7 +71,6 @@ class Goods extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->getList($offset);
-
     }
 
     public function import()
@@ -521,31 +534,48 @@ class Goods extends MY_Controller
         $this->getList(0);
     }
 
-    private function getList($offset)
+    public function pageAsUsed($offset = 0)
     {
-        $this->_getList($offset);
 
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->getListAsUsed($offset);
+    }
+
+    public function getListAsUsed($offset, $per_page = NUMBER_OF_RECORDS_PER_PAGE){
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('goods/pageAsUsed');
+
+        if ($this->User_model->hasPermission('access', 'store_org') &&
+            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+        ) {
+            $this->data['org_status'] = true;
+        } else {
+            $this->data['org_status'] = false;
+        }
         //todo: Node type should only shown when match with goods's organize.
-        $redeemed_goods_list = $this->Goods_model->listRedeemedGoodsBySite($this->User_model->getSiteId(),
-            array('goods_id', 'cl_player_id', 'pb_player_id'));
+        $redeemed_goods_count = $this->Goods_model->countRedeemedGoodsBySite($this->User_model->getSiteId(), array('goods_id', 'cl_player_id', 'pb_player_id'));
+        $redeemed_goods_list = $this->Goods_model->listRedeemedGoodsBySite($this->User_model->getSiteId(), array('goods_id', 'cl_player_id', 'pb_player_id'),array('start' => $offset , 'limit' => $per_page));
 
         $this->load->model('Player_model');
-        $_pb_player_id_list = array_values(array_unique(array_map(array($this, 'extract_pb_player_id'),
-            $redeemed_goods_list)));
-        $players_detail_list = $this->Player_model->listPlayers($_pb_player_id_list,
-            array('first_name', 'last_name', 'cl_player_id'));
+        $_pb_player_id_list = array_values(array_unique(array_map(array($this, 'extract_pb_player_id'), $redeemed_goods_list)));
+        $players_detail_list = $this->Player_model->listPlayers($_pb_player_id_list, array('first_name', 'last_name', 'cl_player_id'));
 
-        $players_with_node_detail_list = $this->Player_model->listPlayersOrganize($_pb_player_id_list,
-            array('node_id', 'pb_player_id'));
-        $_node_list = array_values(array_unique(array_map(array($this, 'extract_node_id'),
-            $players_with_node_detail_list)));
-        $node_detail_list = $this->Store_org_model->listNodes($_node_list,
-            array('name', 'description', 'organize'));
+        $players_with_node_detail_list = $this->Player_model->listPlayersOrganize($_pb_player_id_list, array('node_id', 'pb_player_id'));
+        $_node_list = array_values(array_unique(array_map(array($this, 'extract_node_id'), $players_with_node_detail_list)));
+        $node_detail_list = $this->Store_org_model->listNodes($_node_list, array('name', 'description', 'organize'));
 
-        $_organization_list = array_values(array_unique(array_map(array($this, 'extract_organize_id'),
-            $node_detail_list)));
-        $organization_detail_list = $this->Store_org_model->listOrganizations($_organization_list,
-            array('name', 'description'));
+        $_organization_list = array_values(array_unique(array_map(array($this, 'extract_organize_id'), $node_detail_list)));
+        $organization_detail_list = $this->Store_org_model->listOrganizations($_organization_list, array('name', 'description'));
         $goods_list_data = array();
         foreach ($redeemed_goods_list as $redeemed_goods) {
             if (isset($redeemed_goods['goods_id'])) {
@@ -557,8 +587,7 @@ class Goods extends MY_Controller
         foreach ($redeemed_goods_list as &$redeemed_goods) {
             if (isset($redeemed_goods['pb_player_id'])) {
                 // set player info
-                $player_index = $this->searchForId(new MongoId($redeemed_goods['pb_player_id']),
-                    $players_detail_list);
+                $player_index = $this->searchForId(new MongoId($redeemed_goods['pb_player_id']), $players_detail_list);
                 if (isset($player_index)) {
                     $redeemed_goods['player_info'] = $players_detail_list[$player_index];
                 }
@@ -591,11 +620,62 @@ class Goods extends MY_Controller
             if (isset($redeemed_goods['goods_id'])) {
                 $goods_id = array_search($redeemed_goods['goods_id'], array_column($goods, 'goods_id'));
                 if ($goods_id !== false){
+                    $redeemed_goods['name'] = isset($goods[$goods_id]['group']) ? $goods[$goods_id]['group'] : $goods[$goods_id]['name'];
                     $redeemed_goods['code'] = isset($goods[$goods_id]['code']) ? $goods[$goods_id]['code'] : null;
                 }
             }
         }
 
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
+
+        if (isset($this->session->data['success'])) {
+            $this->data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $this->data['success'] = '';
+        }
+
+        $config['total_rows'] = $redeemed_goods_count;
+        $config['per_page'] = $per_page;
+        $config["uri_segment"] = 3;
+
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
+
+        $this->data['main'] = 'goods';
+        $this->data['tabs'] = $this->lang->line('heading_title_mark_as_used');
         $this->data['redeemed_goods_list'] = $redeemed_goods_list;
 
         $this->load->vars($this->data);
@@ -609,7 +689,7 @@ class Goods extends MY_Controller
         $this->render_page('goods_ajax');
     }
 
-    private function _getList($offset, $per_page = NUMBER_OF_RECORDS_PER_PAGE)
+    private function getList($offset, $per_page = NUMBER_OF_RECORDS_PER_PAGE)
     {
 
         $this->load->library('pagination');
@@ -813,7 +893,11 @@ class Goods extends MY_Controller
         $this->data['pagination_total_rows'] = $config["total_rows"];
 
         $this->data['main'] = 'goods';
+        $this->data['tabs'] = $this->lang->line('heading_title_goods_list');
         $this->data['setting_group_id'] = $setting_group_id;
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
     }
 
     private function getForm($goods_id = null, $import = false)
