@@ -163,9 +163,7 @@ class Goods_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
         $this->mongo_db->where('deleted', false);
-        $goods_list_data = $this->mongo_db->get("playbasis_goods");
-
-        return $goods_list_data;
+        return $this->mongo_db->get("playbasis_goods");
     }
 
     public function getTotalGoods($data)
@@ -181,9 +179,7 @@ class Goods_model extends MY_Model
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
         $this->mongo_db->where('deleted', false);
-        $total = $this->mongo_db->count("playbasis_goods");
-
-        return $total;
+        return $this->mongo_db->count("playbasis_goods");
     }
 
     public function getGoodsBySiteId($data = array())
@@ -232,13 +228,14 @@ class Goods_model extends MY_Model
         }
 
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('site_id', new MongoId($data['site_id']));
         if (array_key_exists('$nin', $data)) {
             $this->mongo_db->where_not_in('_id', $data['$nin']);
         }
-        $results = $this->mongo_db->get("playbasis_goods_to_client");
-
-        return $results;
+        if (array_key_exists('$in', $data)) {
+            $this->mongo_db->where_in('_id', $data['$in']);
+        }
+        return $this->mongo_db->get("playbasis_goods_to_client");
     }
 
     public function getTotalGoodsBySiteId($data)
@@ -254,13 +251,14 @@ class Goods_model extends MY_Model
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('site_id', $data['site_id'] ? new MongoID($data['site_id']) : null);
+        $this->mongo_db->where('site_id', $data['site_id'] ? new MongoId($data['site_id']) : null);
         if (array_key_exists('$nin', $data)) {
             $this->mongo_db->where_not_in('_id', $data['$nin']);
         }
-        $total = $this->mongo_db->count("playbasis_goods_to_client");
-
-        return $total;
+        if (array_key_exists('$in', $data)) {
+            $this->mongo_db->where_in('_id', $data['$in']);
+        }
+        return $this->mongo_db->count("playbasis_goods_to_client");
     }
 
     /* Deprecated: use getGroupsAggregate instead */

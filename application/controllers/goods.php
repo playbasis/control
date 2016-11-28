@@ -1275,32 +1275,18 @@ class Goods extends MY_Controller
 
     private function checkOwnerGoods($goodsId)
     {
-
         $error = null;
-
         if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
-
-            $goods_data = array('site_id' => $this->User_model->getSiteId());
-
-            $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
-            $has = false;
-
-            foreach ($goods_list as $goods) {
-                if ($goods['_id'] . "" == $goodsId . "") {
-                    $has = true;
-                }
-            }
-
+            $c = $this->Goods_model->getTotalGoodsBySiteId(array(
+                'site_id' => $this->User_model->getSiteId(),
+                '$in' => array(new MongoId($goodsId)),
+            ));
+            $has = ($c > 0);
             if (!$has) {
                 $error = $this->lang->line('error_permission');
             }
         }
-
-        if (!$error) {
-            return true;
-        } else {
-            return false;
-        }
+        return !$error;
     }
 
     private function validateAccess()
