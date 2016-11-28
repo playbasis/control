@@ -176,6 +176,7 @@
                                 <?php } else { ?>
                                     <th><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname?></th>
                                     <th><?php echo $this->lang->line('entry_player_name'); //cl_id+name+lastname?></th>
+                                    <th><?php echo $this->lang->line('entry_goods_name');?></th>
                                     <th><?php echo $this->lang->line('entry_code');?></th>
                                     <th><?php echo $this->lang->line('entry_operate'); ?></th>
                                 </tr>
