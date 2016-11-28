@@ -335,8 +335,8 @@ class Custompoints extends MY_Controller
 
         if ($this->input->post('tags')) {
             $this->data['tags'] = explode(',', $this->input->post('tags'));
-        } elseif (isset($language_info['tags'])) {
-            $this->data['tags'] = $language_info['tags'];
+        } elseif (isset($custompoints_info['tags'])) {
+            $this->data['tags'] = $custompoints_info['tags'];
         } else {
             $this->data['tags'] = '';
         }
