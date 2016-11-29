@@ -402,11 +402,11 @@ class Report extends MY_Controller
                 }
             }
             if ($this->input->get('time_zone')){
-                $date_added = new DateTime( $this->datetimeMongotoReadable($result['date_added']), $UTC_7 );
+                $date_added = new DateTime( $this->datetimeMongotoReadable($row['date_added']), $UTC_7 );
                 $date_added->setTimezone( $newTZ );
                 $date_added = $date_added->format("Y-m-d H:i:s");;
             }
-            array_push($row_to_add, $this->input->get('time_zone') ? $date_added : $this->datetimeMongotoReadable($result['date_added']));
+            array_push($row_to_add, $this->input->get('time_zone') ? $date_added : $this->datetimeMongotoReadable($row['date_added']));
             $exporter->addRow($row_to_add);
         }
         $exporter->finalize();
