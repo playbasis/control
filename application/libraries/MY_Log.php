@@ -22,7 +22,7 @@ class MY_Log {
         }
 
         // Environment check
-        if ( ! in_array(ENVIRONMENT, $this->config['raven_environments'])) return;
+        if (!isset($this->config['raven_environments']) || !in_array(ENVIRONMENT, $this->config['raven_environments'])) return;
         try
         {
             // If Raven_Client isn't already defined, include the autoloader
@@ -59,7 +59,7 @@ class MY_Log {
     public function write_log($level = 'error', $msg, $php_error = FALSE)
     {
         // Environment check
-        if ( ! in_array(ENVIRONMENT, $this->config['raven_environments'])) return;
+        if (!isset($this->config['raven_environments']) || !in_array(ENVIRONMENT, $this->config['raven_environments'])) return;
         $level = strtoupper($level);
         if ( ! isset($this->_levels[$level]) OR ($this->_levels[$level] > $this->_threshold))
         {
