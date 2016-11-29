@@ -172,6 +172,13 @@ class Engine extends Quest
                                 'Error in applyBadgeObjGoodsObj(), jigsawConfig = ' . print_r($jigsaw['config'], true));
                             $jigsaw['config']['data'] = null;
                         }
+                        if($jigsaw['category'] == 'REWARD') {
+                            foreach ($jigsaw['dataSet'] as $index => $data_set){
+                                if($data_set['param_name'] == "custom_log"){
+                                    unset($jigsaw['dataSet'][$index]);
+                                }
+                            }
+                        }
                         array_walk_recursive($jigsaw, array($this, "convert_mongo_object"));
                     }
                 }
