@@ -636,6 +636,13 @@ class Engine extends Quest
                         'first_name' => $cl_player_id,
                         'nickname' => $cl_player_id,
                     )));
+                    $platform = $this->auth_model->getOnePlatform($validToken['client_id'], $validToken["site_id"]);
+                    $this->utility->request('engine', 'json', http_build_query(array(
+                        'api_key' => $platform['api_key'],
+                        'pb_player_id' => $pb_player_id . '',
+                        'action' => ACTION_REGISTER
+                    )));
+                    
                     /* Automatically energy initialization after creating a new player*/
                     $energys = $this->energy_model->findActiveEnergyRewardsById($this->validToken['client_id'],
                         $this->validToken['site_id']);
