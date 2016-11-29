@@ -109,7 +109,7 @@ class Lexer{
     $this->eatWhitespaces();
     
     //source terminated -> finished
-    if($this->_source[$this->_token] == '\0'){
+    if(isset($this->_source[$this->_token]) && $this->_source[$this->_token] == '\0'){
         $this->_morphem->setCode(FINISHED);
     
     //go ahead
@@ -144,11 +144,10 @@ class Lexer{
         }else if(is_numeric($this->_source[$this->_token])){
             //detect numeric values (especially floats with '.')
             $result = $this->_source[$this->_token++];
-            while(is_numeric($this->_source[$this->_token]) || $this->_source[$this->_token] == '.' ||
-                    $this->_source[$this->_token] == ','){
+            while( isset($this->_source[$this->_token]) && (is_numeric($this->_source[$this->_token]) || $this->_source[$this->_token] == '.' || $this->_source[$this->_token] == ',')){
                     if($this->_source[$this->_token] == ',')
                         $this->_source[$this->_token] = '.';
-                $result .= $this->_source[$this->_token++]; 
+                $result .= $this->_source[$this->_token++];
             }
             $this->_morphem->setValue(floatval($result));
             $this->_morphem->setCode(DVAL);
@@ -159,16 +158,17 @@ class Lexer{
       }
       //must be a character value or NOVAL (no value)
       if($ctrl == CVAL || $ctrl == null){
+        if(isset($this->_source[$this->_token]) ){
         //isn't a digit -> must be an operator
-        switch($this->_source[$this->_token]){
-            case '+': case '-': case '*': case '/': case '(': case ')':
-                $this->_morphem->setValue($this->_source[$this->_token++]);
-                $this->_morphem->setCode(CVAL);
-                break;
-            default:
-                $this->_morphem->setCode(NOVAL);
-        }
-        $this->_morphem->setEaten(false);
+          switch($this->_source[$this->_token]){
+              case '+': case '-': case '*': case '/': case '(': case ')':
+                  $this->_morphem->setValue($this->_source[$this->_token++]);
+                  $this->_morphem->setCode(CVAL);
+                  break;
+              default:
+                  $this->_morphem->setCode(NOVAL);
+          }
+        }$this->_morphem->setEaten(false);
         return;
       }else{
           Parser::error('getNext()', 1, 'Unknown token found! (' . $this->_source[$this->_token]);
@@ -192,7 +192,7 @@ class Lexer{
      * @method eatWhitespaces
      */
     function eatWhitespaces(){
-        while($this->_source[$this->_token] == ' ' || $this->_source[$this->_token] == '\t')
+        while(isset($this->_source[$this->_token]) && ($this->_source[$this->_token] == ' ' || $this->_source[$this->_token] == '\t'))
             $this->_token++;
     }
     
