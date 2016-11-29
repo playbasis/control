@@ -929,10 +929,9 @@ class Engine extends Quest
                             $f = str_replace('{' . $key . '}', $value, $f);
                         }
 
-
+                        require_once APPPATH . '/libraries/ipsum/Parser.class.php';
+                        $parser = new Parser($f . '\0');
                         if($config_key == 'quantity'){
-                            require_once APPPATH . '/libraries/ipsum/Parser.class.php';
-                            $parser = new Parser($f . '\0');
                             try {
                                 $jigsawConfig[$config_key] = intval($parser->run());
                             } catch (Exception $e) {
@@ -940,7 +939,11 @@ class Engine extends Quest
                                 $jigsawConfig[$config_key] = 0;
                             }
                         }else{
-                            $jigsawConfig[$config_key] = $f;
+                            try {
+                                $jigsawConfig[$config_key] = $parser->run();
+                            } catch (Exception $e) {
+                                $jigsawConfig[$config_key] = $f;
+                            }
                         }
                     }
                 }
