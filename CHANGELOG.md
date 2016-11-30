@@ -1,22 +1,118 @@
 # Change Log
 
-## [2.22.0](https://github.com/playbasis/control/tree/2.22.0) (2016-11-17)
-[Full Changelog](https://github.com/playbasis/control/compare/2.21.0...2.22.0)
+## [2.23.0](https://github.com/playbasis/control/tree/2.23.0) (2016-11-30)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.0...2.23.0)
 
-## [2.21.8/manual-spin_for_digi](https://github.com/playbasis/control/tree/2.21.8/manual-spin_for_digi) (2016-11-17)
-[Full Changelog](https://github.com/playbasis/control/compare/2.21.7/rule_setting_load_forever...2.21.8/manual-spin_for_digi)
+**Implemented enhancements:**
+
+- support time in campaign [\#331](https://github.com/playbasis/control/pull/331) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.22.8/fix_date_in_report__action_download](https://github.com/playbasis/control/tree/2.22.8/fix_date_in_report__action_download) (2016-11-29)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.7/enable_custom_log...2.22.8/fix_date_in_report__action_download)
+
+**Fixed bugs:**
+
+- Hotfix/2.22.8/fix date in report  action download [\#330](https://github.com/playbasis/control/pull/330) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.22.7/enable_custom_log](https://github.com/playbasis/control/tree/2.22.7/enable_custom_log) (2016-11-29)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_bug_tags_not_working_for_custompoints...2.22.7/enable_custom_log)
+
+**Implemented enhancements:**
+
+- Hotfix/2.22.7/enable custom log [\#328](https://github.com/playbasis/control/pull/328) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [fix_bug_tags_not_working_for_custompoints](https://github.com/playbasis/control/tree/fix_bug_tags_not_working_for_custompoints) (2016-11-28)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_perf_checkOwnerGoods...fix_bug_tags_not_working_for_custompoints)
+
+**Fixed bugs:**
+
+- Hotfix/fix bug tags not working for custompoints [\#327](https://github.com/playbasis/control/pull/327) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [fix_perf_checkOwnerGoods](https://github.com/playbasis/control/tree/fix_perf_checkOwnerGoods) (2016-11-28)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.6/timezone_in_report...fix_perf_checkOwnerGoods)
+
+**Implemented enhancements:**
+
+- Hotfix/fix perf check owner goods [\#326](https://github.com/playbasis/control/pull/326) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- pagination mark as used in goods [\#324](https://github.com/playbasis/control/pull/324) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.22.6/timezone_in_report](https://github.com/playbasis/control/tree/2.22.6/timezone_in_report) (2016-11-24)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.5/multi_language_in_content...2.22.6/timezone_in_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.22.6/timezone in report [\#323](https://github.com/playbasis/control/pull/323) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.22.5/multi_language_in_content](https://github.com/playbasis/control/tree/2.22.5/multi_language_in_content) (2016-11-24)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.4/upload_manual_spin...2.22.5/multi_language_in_content)
 
 **Merged pull requests:**
 
-- Hotfix/2.21.8/manual spin for digi [\#317](https://github.com/playbasis/control/pull/317) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.22.5/multi language in content [\#322](https://github.com/playbasis/control/pull/322) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
-## [2.21.7/rule_setting_load_forever](https://github.com/playbasis/control/tree/2.21.7/rule_setting_load_forever) (2016-11-17)
-[Full Changelog](https://github.com/playbasis/control/compare/2.21.5/fix_pagination_when_filter_status_in_goods_report...2.21.7/rule_setting_load_forever)
+## [2.22.4/upload_manual_spin](https://github.com/playbasis/control/tree/2.22.4/upload_manual_spin) (2016-11-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.3/location_image...2.22.4/upload_manual_spin)
+
+**Implemented enhancements:**
+
+- Hotfix/2.22.4/upload manual spin [\#321](https://github.com/playbasis/control/pull/321) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.22.3/location_image](https://github.com/playbasis/control/tree/2.22.3/location_image) (2016-11-18)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.2/limit_point_amount_per_day...2.22.3/location_image)
+
+**Implemented enhancements:**
+
+- Hotfix/2.22.3/location image [\#320](https://github.com/playbasis/control/pull/320) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.22.2/limit_point_amount_per_day](https://github.com/playbasis/control/tree/2.22.2/limit_point_amount_per_day) (2016-11-18)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.1/fix_tabs_in_game...2.22.2/limit_point_amount_per_day)
+
+**Implemented enhancements:**
+
+- Hotfix/2.22.2/limit point amount per day [\#319](https://github.com/playbasis/control/pull/319) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.22.1/fix_tabs_in_game](https://github.com/playbasis/control/tree/2.22.1/fix_tabs_in_game) (2016-11-17)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.0...2.22.1/fix_tabs_in_game)
+
+**Fixed bugs:**
+
+- Hotfix/2.22.1/fix tabs in game [\#318](https://github.com/playbasis/control/pull/318) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.22.0](https://github.com/playbasis/control/tree/2.22.0) (2016-11-17)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.8/manual-spin_for_digi...2.22.0)
+
+**Implemented enhancements:**
+
+- fix pagination in goods report [\#314](https://github.com/playbasis/control/pull/314) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.21.4/fix goods page exceed memory limit [\#312](https://github.com/playbasis/control/pull/312) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.21.3/fix bug in report [\#311](https://github.com/playbasis/control/pull/311) ([piya-playbasis](https://github.com/piya-playbasis))
+- Feature/language feature [\#310](https://github.com/playbasis/control/pull/310) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- support campaign in game [\#309](https://github.com/playbasis/control/pull/309) ([piya-playbasis](https://github.com/piya-playbasis))
+- location feature [\#307](https://github.com/playbasis/control/pull/307) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.21.2/gane bingo egg pairs catch item [\#306](https://github.com/playbasis/control/pull/306) ([piya-playbasis](https://github.com/piya-playbasis))
+- setup sentry to monitor error [\#304](https://github.com/playbasis/control/pull/304) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- remove template in game [\#303](https://github.com/playbasis/control/pull/303) ([piya-playbasis](https://github.com/piya-playbasis))
+- remove template in game will replace with campaign feature later [\#302](https://github.com/playbasis/control/pull/302) ([piya-playbasis](https://github.com/piya-playbasis))
+- support age and gender condition in quest [\#300](https://github.com/playbasis/control/pull/300) ([piya-playbasis](https://github.com/piya-playbasis))
 
 **Fixed bugs:**
 
 - Hotfix/2.21.7/rule setting load forever [\#316](https://github.com/playbasis/control/pull/316) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - fix campagin in game [\#315](https://github.com/playbasis/control/pull/315) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.21.6/disable custom log [\#313](https://github.com/playbasis/control/pull/313) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.21.3/fix bug in report [\#311](https://github.com/playbasis/control/pull/311) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.21.1/query goods image in rule [\#301](https://github.com/playbasis/control/pull/301) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Merged pull requests:**
+
+- Hotfix/2.21.8/manual spin for digi [\#317](https://github.com/playbasis/control/pull/317) ([piya-playbasis](https://github.com/piya-playbasis))
+- campaign feature [\#305](https://github.com/playbasis/control/pull/305) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.8/manual-spin_for_digi](https://github.com/playbasis/control/tree/2.21.8/manual-spin_for_digi) (2016-11-17)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.7/rule_setting_load_forever...2.21.8/manual-spin_for_digi)
+
+## [2.21.7/rule_setting_load_forever](https://github.com/playbasis/control/tree/2.21.7/rule_setting_load_forever) (2016-11-17)
+[Full Changelog](https://github.com/playbasis/control/compare/2.21.5/fix_pagination_when_filter_status_in_goods_report...2.21.7/rule_setting_load_forever)
 
 ## [2.21.5/fix_pagination_when_filter_status_in_goods_report](https://github.com/playbasis/control/tree/2.21.5/fix_pagination_when_filter_status_in_goods_report) (2016-11-16)
 [Full Changelog](https://github.com/playbasis/control/compare/2.21.6/disable_custom_log...2.21.5/fix_pagination_when_filter_status_in_goods_report)
@@ -24,66 +120,24 @@
 ## [2.21.6/disable_custom_log](https://github.com/playbasis/control/tree/2.21.6/disable_custom_log) (2016-11-15)
 [Full Changelog](https://github.com/playbasis/control/compare/2.21.4/fix_goods_page_exceed_memory_limit...2.21.6/disable_custom_log)
 
-**Implemented enhancements:**
-
-- fix pagination in goods report [\#314](https://github.com/playbasis/control/pull/314) ([piya-playbasis](https://github.com/piya-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/2.21.6/disable custom log [\#313](https://github.com/playbasis/control/pull/313) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.21.4/fix_goods_page_exceed_memory_limit](https://github.com/playbasis/control/tree/2.21.4/fix_goods_page_exceed_memory_limit) (2016-11-15)
 [Full Changelog](https://github.com/playbasis/control/compare/2.21.3/fix_bug_in_report...2.21.4/fix_goods_page_exceed_memory_limit)
-
-**Implemented enhancements:**
-
-- Hotfix/2.21.4/fix goods page exceed memory limit [\#312](https://github.com/playbasis/control/pull/312) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.21.3/fix_bug_in_report](https://github.com/playbasis/control/tree/2.21.3/fix_bug_in_report) (2016-11-15)
 [Full Changelog](https://github.com/playbasis/control/compare/2.21.2/location_feature...2.21.3/fix_bug_in_report)
 
-**Implemented enhancements:**
-
-- Hotfix/2.21.3/fix bug in report [\#311](https://github.com/playbasis/control/pull/311) ([piya-playbasis](https://github.com/piya-playbasis))
-- Feature/language feature [\#310](https://github.com/playbasis/control/pull/310) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-- support campaign in game [\#309](https://github.com/playbasis/control/pull/309) ([piya-playbasis](https://github.com/piya-playbasis))
-
 **Fixed bugs:**
 
-- Hotfix/2.21.3/fix bug in report [\#311](https://github.com/playbasis/control/pull/311) ([piya-playbasis](https://github.com/piya-playbasis))
 - Update colspan value [\#308](https://github.com/playbasis/control/pull/308) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
 
 ## [2.21.2/location_feature](https://github.com/playbasis/control/tree/2.21.2/location_feature) (2016-11-11)
 [Full Changelog](https://github.com/playbasis/control/compare/2.21.2/gane_bingo_egg_pairs_catch_item...2.21.2/location_feature)
 
-**Implemented enhancements:**
-
-- location feature [\#307](https://github.com/playbasis/control/pull/307) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.21.2/gane_bingo_egg_pairs_catch_item](https://github.com/playbasis/control/tree/2.21.2/gane_bingo_egg_pairs_catch_item) (2016-11-11)
 [Full Changelog](https://github.com/playbasis/control/compare/2.21.1/query_goods_image_in_rule...2.21.2/gane_bingo_egg_pairs_catch_item)
 
-**Implemented enhancements:**
-
-- Hotfix/2.21.2/gane bingo egg pairs catch item [\#306](https://github.com/playbasis/control/pull/306) ([piya-playbasis](https://github.com/piya-playbasis))
-- setup sentry to monitor error [\#304](https://github.com/playbasis/control/pull/304) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-- remove template in game [\#303](https://github.com/playbasis/control/pull/303) ([piya-playbasis](https://github.com/piya-playbasis))
-- remove template in game will replace with campaign feature later [\#302](https://github.com/playbasis/control/pull/302) ([piya-playbasis](https://github.com/piya-playbasis))
-
-**Merged pull requests:**
-
-- campaign feature [\#305](https://github.com/playbasis/control/pull/305) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.21.1/query_goods_image_in_rule](https://github.com/playbasis/control/tree/2.21.1/query_goods_image_in_rule) (2016-11-03)
 [Full Changelog](https://github.com/playbasis/control/compare/2.21.0...2.21.1/query_goods_image_in_rule)
-
-**Implemented enhancements:**
-
-- support age and gender condition in quest [\#300](https://github.com/playbasis/control/pull/300) ([piya-playbasis](https://github.com/piya-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/2.21.1/query goods image in rule [\#301](https://github.com/playbasis/control/pull/301) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.21.0](https://github.com/playbasis/control/tree/2.21.0) (2016-11-01)
 [Full Changelog](https://github.com/playbasis/control/compare/2.20.4/fix_validate_custom_style...2.21.0)
