@@ -65,7 +65,7 @@
                             <?php echo $this->lang->line('entry_date_start'); ?>:
                         </td>
                         <td>
-                            <input type="text" class="date" placeholder="<?php echo $this->lang->line('entry_date_start'); ?>" name="date_start" value="<?php if (isset($date_start) && $date_start && strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_start)));} else { echo isset($date_start) && $date_start ? $date_start : ""; } ?>" size="50" />
+                            <input type="text" class="date" placeholder="<?php echo $this->lang->line('entry_date_start'); ?>" name="date_start" value="<?php if (isset($date_start) && $date_start && strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_start)));} else { echo isset($date_start) && $date_start ? $date_start : ""; } ?>" size="50" />
                         </td>
                     </tr>
                     <tr>
@@ -73,7 +73,7 @@
                             <?php echo $this->lang->line('entry_date_end'); ?>:
                         </td>
                         <td>
-                            <input type="text" class="date" placeholder="<?php echo $this->lang->line('entry_date_end'); ?>" name="date_end" value="<?php if (isset($date_end) && $date_end && strtotime(datetimeMongotoReadable($date_end))) {echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_end)));} else { echo isset($date_end) && $date_end ? $date_end : ""; } ?>" size="50" />
+                            <input type="text" class="date" placeholder="<?php echo $this->lang->line('entry_date_end'); ?>" name="date_end" value="<?php if (isset($date_end) && $date_end && strtotime(datetimeMongotoReadable($date_end))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_end)));} else { echo isset($date_end) && $date_end ? $date_end : ""; } ?>" size="50" />
                         </td>
                     </tr>
                     <tr>
@@ -110,7 +110,7 @@
         $('#status').bootstrapSwitch('labelWidth', '10');
         $('#status').bootstrapSwitch('onText', 'Enable');
         $('#status').bootstrapSwitch('offText', 'Disable');
-        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
+        $('.date').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
     });
 
     function image_upload(field, thumb) {

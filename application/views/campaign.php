@@ -54,8 +54,8 @@
                                     </div>
                                 </td>
                                 <td class="left" width="40%"><?php echo isset($campaign['name']) && !empty($campaign['name']) ? $campaign['name'] : ""; ?></td>
-                                <td class="left" width="10%"><?php echo isset($campaign['date_start']) && !empty($campaign['date_start'])  ? dateMongotoReadable($campaign['date_start']) : "N/A"; ?></td>
-                                <td class="left" width="10%"><?php echo isset($campaign['date_end']) && !empty($campaign['date_end'])  ? dateMongotoReadable($campaign['date_end']) : "N/A"; ?></td>
+                                <td class="left" width="10%"><?php echo isset($campaign['date_start']) && !empty($campaign['date_start'])  ? datetimeMongotoReadable($campaign['date_start']) : "N/A"; ?></td>
+                                <td class="left" width="10%"><?php echo isset($campaign['date_end']) && !empty($campaign['date_end'])  ? datetimeMongotoReadable($campaign['date_end']) : "N/A"; ?></td>
                                 <td class="left" width="10%"><?php echo isset($campaign['weight']) && !empty($campaign['weight']) ? $campaign['weight'] : "0"; ?></td>
                                 <td class="center" width="10%">
                                     <?php
