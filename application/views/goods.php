@@ -26,17 +26,12 @@
             <?php //}?>
         </div>
         <div class="content">
-            <div class="tabbable">
-                <ul class="nav nav-tabs" id="mainTab">
-                    <li class="active"><a href="#goodsListTab"
-                                          data-toggle="tab"><?php echo $this->lang->line('heading_title_goods_list'); ?></a>
-                    </li>
-                    <li><a href="#MarkAsUsedTab"
-                           data-toggle="tab"><?php echo $this->lang->line('heading_title_mark_as_used'); ?></a>
-                    </li>
-                </ul>
+            <div id="tabs" class="htabs">
+                <a href="<?php echo site_url('goods');?>" style="display: inline;"><?php echo $this->lang->line('heading_title_goods_list'); ?></a>
+                <a href="<?php echo site_url('goods/markAsUsed');?>" style="display: inline;" ><?php echo $this->lang->line('heading_title_mark_as_used'); ?></a>
             </div>
             <div class="tab-content">
+                <?php if($tabs == $this->lang->line('heading_title_goods_list')) { ?>
                 <div class="tab-pane fade active in" id="goodsListTab">
                     <?php if ($this->session->flashdata('success')) { ?>
                         <div class="content messages half-width">
@@ -51,35 +46,24 @@
                         <table class="list">
                             <thead>
                             <tr>
-                                <td width="1" style="text-align: center;"><input type="checkbox"
-                                                                                 onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
-                                </td>
-                                <td class="left"
-                                    style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
+                                <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/></td>
+                                <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
                                 <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
                                 <?php if ($org_status) { ?>
-                                    <td class="left"
-                                        style="width:50px;"><?php echo $this->lang->line('column_organization'); ?></td>
+                                    <td class="left" style="width:50px;"><?php echo $this->lang->line('column_organization'); ?></td>
                                 <?php } ?>
                                 <?php if (!$client_id) { ?>
                                     <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
                                 <?php } ?>
                                 <?php if ($client_id) { ?>
-                                    <td class="left"
-                                        style="width:50px;"><?php echo $this->lang->line('column_is_group'); ?></td>
+                                    <td class="left" style="width:50px;"><?php echo $this->lang->line('column_is_group'); ?></td>
                                 <?php } ?>
-                                <td class="left"
-                                    style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
-                                <td class="left"
-                                    style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
-                                <td class="left"
-                                    style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
-                                <td class="right"
-                                    style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
-                                <td class="right"
-                                    style="width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
-                                <td class="right"
-                                    style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
+                                <td class="left" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
+                                <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
+                                <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
+                                <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
+                                <td class="right" style="width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
+                                <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                             </tr>
                             </thead>
                             <tbody>
@@ -90,28 +74,21 @@
                                             <?php if ($client_id) { ?>
                                                 <?php if (!(isset($goods['sponsor']) && $goods['sponsor'])) { ?>
                                                     <?php if ($goods['selected']) { ?>
-                                                        <input type="checkbox" name="selected[]"
-                                                               value="<?php echo $goods['goods_id']; ?>"
-                                                               checked="checked"/>
+                                                        <input type="checkbox" name="selected[]" value="<?php echo $goods['goods_id']; ?>" checked="checked"/>
                                                     <?php } else { ?>
-                                                        <input type="checkbox" name="selected[]"
-                                                               value="<?php echo $goods['goods_id']; ?>"/>
+                                                        <input type="checkbox" name="selected[]" value="<?php echo $goods['goods_id']; ?>"/>
                                                     <?php } ?>
                                                 <?php } ?>
                                             <?php } else { ?>
                                                 <?php if ($goods['selected']) { ?>
-                                                    <input type="checkbox" name="selected[]"
-                                                           value="<?php echo $goods['goods_id']; ?>" checked="checked"/>
+                                                    <input type="checkbox" name="selected[]" value="<?php echo $goods['goods_id']; ?>" checked="checked"/>
                                                 <?php } else { ?>
-                                                    <input type="checkbox" name="selected[]"
-                                                           value="<?php echo $goods['goods_id']; ?>"/>
+                                                    <input type="checkbox" name="selected[]" value="<?php echo $goods['goods_id']; ?>"/>
                                                 <?php } ?>
                                             <?php } ?>
                                         </td>
                                         <td class="left">
-                                            <div class="image"><img src="<?php echo $goods['image']; ?>" alt=""
-                                                                    id="thumb"
-                                                                    onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
+                                            <div class="image"><img src="<?php echo $goods['image']; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
                                             </div>
                                         </td>
                                         <td class="left"><?php echo $goods['name']; ?></td>
@@ -176,106 +153,115 @@
                         </ul>
                     </div>
                 </div>
-                <div class="tab-pane fade in" id="MarkAsUsedTab">
-                    <table id="MarkAsUsedTable"
-                           data-toggle="table"
-                           data-search="true"
-                           data-pagination="true">
-                        <thead>
-                        <tr>
-                            <th rowspan="2" data-visible="false"
-                                data-field="id"><?php echo $this->lang->line('entry_system_id'); ?></th>
-                            <?php if ($org_status) { ?>
-                            <th rowspan="2" data-align="center"
-                                data-valign="middle"><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname[+node_name+node_type+store_id]?></th>
-                            <th rowspan="2" data-align="center"
-                                data-valign="middle"><?php echo $this->lang->line('entry_player_name'); ?></th>
-                            <th rowspan="2" data-align="center"
-                                data-valign="middle"><?php echo $this->lang->line('entry_code'); ?></th>
-                            <th colspan="3"
-                                data-align="center"><?php echo $this->lang->line('entry_node_detail'); ?></th>
-                            <th rowspan="2" data-align="center"
-                                data-valign="middle"><?php echo $this->lang->line('entry_operate'); ?></th>
-                        </tr>
-                        <tr>
-                            <th data-align="center"><?php echo $this->lang->line('entry_node_type'); ?></th>
-                            <th data-align="center"><?php echo $this->lang->line('entry_node_name'); ?></th>
-                            <th data-align="center"><?php echo $this->lang->line('entry_description'); ?></th>
-                        </tr>
-                        <?php } else { ?>
-                                <th><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname?></th>
-                                <th><?php echo $this->lang->line('entry_player_name'); //cl_id+name+lastname?></th>
-                                <th><?php echo $this->lang->line('entry_code');?></th>
-                                <th><?php echo $this->lang->line('entry_operate'); ?></th>
-                            </tr>
-                        <?php } ?>
-                        </thead>
-                        <tbody>
-                        <?php
-                        if (isset($redeemed_goods_list) && !empty($redeemed_goods_list)) {
-                            foreach ($redeemed_goods_list as $redeemed_goods) { ?>
+                <?php } if($tabs == $this->lang->line('heading_title_mark_as_used')) { ?>
+                <div class="tab-pane fade active in" id="MarkAsUsedTab">
+                    <div id="markAsUsed">
+                        <table id="MarkAsUsedTable" data-toggle="table" data-pagination="true">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" data-visible="false" data-field="id"><?php echo $this->lang->line('entry_system_id'); ?></th>
                                 <?php if ($org_status) { ?>
-                                    <tr data-id="<?php echo $redeemed_goods['_id'] ?>">
-                                        <td><?php echo $redeemed_goods['_id'] ?></td>
-                                        <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
-                                        <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
-                                        <td><?php echo isset($redeemed_goods['code']) && !empty($redeemed_goods['code']) ? $redeemed_goods['code'] : ""; ?></td>
-                                        <td><?php
-                                            if (isset($redeemed_goods['player_organize_info'])) {
-                                                $prefix = '';
-                                                $orgList = '';
-                                                foreach ($redeemed_goods['player_organize_info'] as $org) {
-                                                    $orgList .= $prefix . '"' . $org['name'] . '"';
-                                                    $prefix = ', ';
-                                                }
-                                                echo isset($orgList) ? $orgList : "n/a";
-                                            } else {
-                                                echo "n/a";
-                                            }
-                                            ?></td>
-                                        <td><?php
-                                            if (isset($redeemed_goods['player_node_info'])) {
-                                                $prefix = '';
-                                                $nodeList = '';
-                                                foreach ($redeemed_goods['player_node_info'] as $node) {
-                                                    $nodeList .= $prefix . '"' . $node['name'] . '"';
-                                                    $prefix = ', ';
-                                                }
-                                                echo isset($nodeList) ? $nodeList : "n/a";
-                                            } else {
-                                                echo "n/a";
-                                            }
-                                            ?></td>
-                                        <td><?php
-                                            if (isset($redeemed_goods['player_node_info'])) {
-                                                $prefix = '';
-                                                $nodeList = '';
-                                                foreach ($redeemed_goods['player_node_info'] as $node) {
-                                                    $nodeList .= $prefix . '"' . $node['description'] . '"';
-                                                    $prefix = ', ';
-                                                }
-                                                echo isset($nodeList) ? $nodeList : "n/a";
-                                            } else {
-                                                echo "n/a";
-                                            }
-                                            ?></td>
-                                        <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a>
-                                        </td>
-                                    </tr>
+                                    <th rowspan="2" data-align="center" data-valign="middle"><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname[+node_name+node_type+store_id]?></th>
+                                    <th rowspan="2" data-align="center" data-valign="middle"><?php echo $this->lang->line('entry_player_name'); ?></th>
+                                    <th rowspan="2" data-align="center" data-valign="middle"><?php echo $this->lang->line('entry_goods_name'); ?></th>
+                                    <th rowspan="2" data-align="center" data-valign="middle"><?php echo $this->lang->line('entry_code'); ?></th>
+                                    <th colspan="3" data-align="center"><?php echo $this->lang->line('entry_node_detail'); ?></th>
+                                    <th rowspan="2" data-align="center" data-valign="middle"><?php echo $this->lang->line('entry_operate'); ?></th>
+                                </tr>
+                                <tr>
+                                    <th data-align="center"><?php echo $this->lang->line('entry_node_type'); ?></th>
+                                    <th data-align="center"><?php echo $this->lang->line('entry_node_name'); ?></th>
+                                    <th data-align="center"><?php echo $this->lang->line('entry_description'); ?></th>
+                                </tr>
                                 <?php } else { ?>
-                                    <tr data-id="<?php echo $redeemed_goods['_id'] ?>">
-                                        <td><?php echo $redeemed_goods['_id'] ?></td>
-                                        <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
-                                        <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
-                                        <td><?php echo isset($redeemed_goods['code']) && !empty($redeemed_goods['code']) ? $redeemed_goods['code'] : ""; ?></td>
-                                        <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a>
-                                        </td>
-                                    </tr>
+                                    <th><?php echo $this->lang->line('entry_player_id'); //cl_id+name+lastname?></th>
+                                    <th><?php echo $this->lang->line('entry_player_name'); //cl_id+name+lastname?></th>
+                                    <th><?php echo $this->lang->line('entry_goods_name');?></th>
+                                    <th><?php echo $this->lang->line('entry_code');?></th>
+                                    <th><?php echo $this->lang->line('entry_operate'); ?></th>
+                                </tr>
                                 <?php } ?>
-                            <?php }
-                        } ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            <?php
+                            if (isset($redeemed_goods_list) && !empty($redeemed_goods_list)) {
+                                foreach ($redeemed_goods_list as $redeemed_goods) { ?>
+                                    <?php if ($org_status) { ?>
+                                        <tr data-id="<?php echo $redeemed_goods['_id'] ?>">
+                                            <td><?php echo $redeemed_goods['_id'] ?></td>
+                                            <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
+                                            <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
+                                            <td><?php echo isset($redeemed_goods['name']) && !empty($redeemed_goods['name']) ? $redeemed_goods['name'] : ""; ?></td>
+                                            <td><?php echo isset($redeemed_goods['code']) && !empty($redeemed_goods['code']) ? $redeemed_goods['code'] : ""; ?></td>
+                                            <td><?php
+                                                if (isset($redeemed_goods['player_organize_info'])) {
+                                                    $prefix = '';
+                                                    $orgList = '';
+                                                    foreach ($redeemed_goods['player_organize_info'] as $org) {
+                                                        $orgList .= $prefix . '"' . $org['name'] . '"';
+                                                        $prefix = ', ';
+                                                    }
+                                                    echo isset($orgList) ? $orgList : "n/a";
+                                                } else {
+                                                    echo "n/a";
+                                                }
+                                                ?></td>
+                                            <td><?php
+                                                if (isset($redeemed_goods['player_node_info'])) {
+                                                    $prefix = '';
+                                                    $nodeList = '';
+                                                    foreach ($redeemed_goods['player_node_info'] as $node) {
+                                                        $nodeList .= $prefix . '"' . $node['name'] . '"';
+                                                        $prefix = ', ';
+                                                    }
+                                                    echo isset($nodeList) ? $nodeList : "n/a";
+                                                } else {
+                                                    echo "n/a";
+                                                }
+                                                ?></td>
+                                            <td><?php
+                                                if (isset($redeemed_goods['player_node_info'])) {
+                                                    $prefix = '';
+                                                    $nodeList = '';
+                                                    foreach ($redeemed_goods['player_node_info'] as $node) {
+                                                        $nodeList .= $prefix . '"' . $node['description'] . '"';
+                                                        $prefix = ', ';
+                                                    }
+                                                    echo isset($nodeList) ? $nodeList : "n/a";
+                                                } else {
+                                                    echo "n/a";
+                                                }
+                                                ?></td>
+                                            <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a>
+                                            </td>
+                                        </tr>
+                                    <?php } else { ?>
+                                        <tr data-id="<?php echo $redeemed_goods['_id'] ?>">
+                                            <td><?php echo $redeemed_goods['_id'] ?></td>
+                                            <td><?php echo $redeemed_goods['cl_player_id'] ?></td>
+                                            <td><?php echo $redeemed_goods['player_info']['first_name'] . " " . $redeemed_goods['player_info']['last_name']; ?></td>
+                                            <td><?php echo isset($redeemed_goods['name']) && !empty($redeemed_goods['name']) ? $redeemed_goods['name'] : ""; ?></td>
+                                            <td><?php echo isset($redeemed_goods['code']) && !empty($redeemed_goods['code']) ? $redeemed_goods['code'] : ""; ?></td>
+                                            <td><a href="#" role="button" class="btn btn-primary mark-as-used-btn">Used</a>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                <?php }
+                            } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <ul class='ul_rule_pagination_container'>
+                            <li class="page_index_number active"><a>Total Records:</a></li>
+                            <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a>
+                            </li>
+                            <li class="page_index_number active">
+                                <a>(<?php echo number_format($pagination_total_pages); ?> Pages)</a></li>
+                            <?php echo $pagination_links; ?>
+                        </ul>
+                    </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>
