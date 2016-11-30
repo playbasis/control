@@ -4,10 +4,10 @@ require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once(APPPATH . 'controllers/quest.php');
 require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
 
-function myround2($number){
+/*function myround2($number){
     $result  = round($number,2);
     return $result;
-}
+}*/
 //class Engine extends REST2_Controller
 class Engine extends Quest
 {
@@ -950,7 +950,7 @@ class Engine extends Quest
                         require_once APPPATH . '/libraries/ipsum/Parser.class.php';
                         $parser = new Parser($f);
 
-                        $parser->addFunction('round2', 'myround2');
+                        //$parser->addFunction('round2', 'myround2');
                         if($config_key == 'quantity'){
                             try {
                                 $jigsawConfig[$config_key] = intval($parser->run());
@@ -959,11 +959,11 @@ class Engine extends Quest
                                 $jigsawConfig[$config_key] = 0;
                             }
                         }else{
-                            try {
+                            /*try {
                                 $jigsawConfig[$config_key] = $parser->run();
-                            } catch (Exception $e) {
+                            } catch (Exception $e) {*/
                                 $jigsawConfig[$config_key] = $f;
-                            }
+                            //}
                         }
                     }
                 }
