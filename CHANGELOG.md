@@ -1,103 +1,200 @@
 # Change Log
 
+## [2.22.0](https://github.com/playbasis/api/tree/2.22.0) (2016-11-30)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.0...2.22.0)
+
+## [2.21.16/add_register_log_after_auto_add_player_in_rule](https://github.com/playbasis/api/tree/2.21.16/add_register_log_after_auto_add_player_in_rule) (2016-11-29)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.15/round_up_function...2.21.16/add_register_log_after_auto_add_player_in_rule)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.16/add register log after auto add player in rule [\#492](https://github.com/playbasis/api/pull/492) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.15/round_up_function](https://github.com/playbasis/api/tree/2.21.15/round_up_function) (2016-11-29)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.14/hidden_custom_log_in_rules_list...2.21.15/round_up_function)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.15/round up function [\#491](https://github.com/playbasis/api/pull/491) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.21.14/hidden_custom_log_in_rules_list](https://github.com/playbasis/api/tree/2.21.14/hidden_custom_log_in_rules_list) (2016-11-29)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.13/support_formula_based_with_operation...2.21.14/hidden_custom_log_in_rules_list)
+
+**Fixed bugs:**
+
+- Hotfix/2.21.14/hidden custom log in rules list [\#489](https://github.com/playbasis/api/pull/489) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.13/support_formula_based_with_operation](https://github.com/playbasis/api/tree/2.21.13/support_formula_based_with_operation) (2016-11-29)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.12/support_multi_language_in_content...2.21.13/support_formula_based_with_operation)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.13/support formula based with operation [\#488](https://github.com/playbasis/api/pull/488) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.21.12/support_multi_language_in_content](https://github.com/playbasis/api/tree/2.21.12/support_multi_language_in_content) (2016-11-24)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.11/filter_canpaign_name_in_campaign...2.21.12/support_multi_language_in_content)
+
+**Merged pull requests:**
+
+- Hotfix/2.21.12/support multi language in content [\#487](https://github.com/playbasis/api/pull/487) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.21.11/filter_canpaign_name_in_campaign](https://github.com/playbasis/api/tree/2.21.11/filter_canpaign_name_in_campaign) (2016-11-23)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.9/limit_amount__to_award_custompoint...2.21.11/filter_canpaign_name_in_campaign)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.11/filter canpaign name in campaign [\#486](https://github.com/playbasis/api/pull/486) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.9/limit_amount__to_award_custompoint](https://github.com/playbasis/api/tree/2.21.9/limit_amount__to_award_custompoint) (2016-11-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.10/fix_custom_report...2.21.9/limit_amount__to_award_custompoint)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.9/limit amount  to award custompoint [\#485](https://github.com/playbasis/api/pull/485) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.21.10/fix_custom_report](https://github.com/playbasis/api/tree/2.21.10/fix_custom_report) (2016-11-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.9/fix_redeem_with_custom_amount...2.21.10/fix_custom_report)
+
+**Fixed bugs:**
+
+- Hotfix/2.21.10/fix custom report for 1st time reward [\#484](https://github.com/playbasis/api/pull/484) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.9/fix_redeem_with_custom_amount](https://github.com/playbasis/api/tree/2.21.9/fix_redeem_with_custom_amount) (2016-11-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.8/change_default_email_auto_register_in_engine...2.21.9/fix_redeem_with_custom_amount)
+
+**Fixed bugs:**
+
+- Hotfix/2.21.9/fix redeem with custom amount [\#483](https://github.com/playbasis/api/pull/483) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.8/change_default_email_auto_register_in_engine](https://github.com/playbasis/api/tree/2.21.8/change_default_email_auto_register_in_engine) (2016-11-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.7/url_image...2.21.8/change_default_email_auto_register_in_engine)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.8/change default email auto register in engine [\#482](https://github.com/playbasis/api/pull/482) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.7/url_image](https://github.com/playbasis/api/tree/2.21.7/url_image) (2016-11-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.6/change_return_value_in_points_to_be_string...2.21.7/url_image)
+
+**Fixed bugs:**
+
+- Hotfix/2.21.7/url image [\#481](https://github.com/playbasis/api/pull/481) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.21.6/change_return_value_in_points_to_be_string](https://github.com/playbasis/api/tree/2.21.6/change_return_value_in_points_to_be_string) (2016-11-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.5/location_image...2.21.6/change_return_value_in_points_to_be_string)
+
+**Fixed bugs:**
+
+- Hotfix/2.21.6/change return value in points to be string [\#480](https://github.com/playbasis/api/pull/480) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.5/location_image](https://github.com/playbasis/api/tree/2.21.5/location_image) (2016-11-21)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.4/change_logic_date_start_date_end_in_goods...2.21.5/location_image)
+
+**Fixed bugs:**
+
+- Hotfix/2.21.5/location image [\#479](https://github.com/playbasis/api/pull/479) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.21.4/change_logic_date_start_date_end_in_goods](https://github.com/playbasis/api/tree/2.21.4/change_logic_date_start_date_end_in_goods) (2016-11-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.3/improve_goods_list_and_custom_selected_field...2.21.4/change_logic_date_start_date_end_in_goods)
+
+**Fixed bugs:**
+
+- Hotfix/2.21.4/change logic date start date end in goods [\#478](https://github.com/playbasis/api/pull/478) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.3/improve_goods_list_and_custom_selected_field](https://github.com/playbasis/api/tree/2.21.3/improve_goods_list_and_custom_selected_field) (2016-11-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.2/campaign_endpoint...2.21.3/improve_goods_list_and_custom_selected_field)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.3/improve goods list and custom selected field [\#477](https://github.com/playbasis/api/pull/477) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.2/campaign_endpoint](https://github.com/playbasis/api/tree/2.21.2/campaign_endpoint) (2016-11-17)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.1/workaround_register_2_player_via_exgine_and_register_at_the_same_time...2.21.2/campaign_endpoint)
+
+**Merged pull requests:**
+
+- Hotfix/2.21.2/campaign endpoint [\#476](https://github.com/playbasis/api/pull/476) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.21.1/workaround_register_2_player_via_exgine_and_register_at_the_same_time](https://github.com/playbasis/api/tree/2.21.1/workaround_register_2_player_via_exgine_and_register_at_the_same_time) (2016-11-17)
+[Full Changelog](https://github.com/playbasis/api/compare/2.21.0...2.21.1/workaround_register_2_player_via_exgine_and_register_at_the_same_time)
+
+**Implemented enhancements:**
+
+- Hotfix/2.21.1/workaround register 2 player via exgine and register at the same time [\#475](https://github.com/playbasis/api/pull/475) ([piya-playbasis](https://github.com/piya-playbasis))
+
 ## [2.21.0](https://github.com/playbasis/api/tree/2.21.0) (2016-11-17)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.0...2.21.0)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.15/location_condition_without_area...2.21.0)
 
 **Implemented enhancements:**
 
 - add get all campaign in game [\#474](https://github.com/playbasis/api/pull/474) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.20.15/location_condition_without_area](https://github.com/playbasis/api/tree/2.20.15/location_condition_without_area) (2016-11-17)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.14/limit_goods_to_random_for_performance...2.20.15/location_condition_without_area)
-
-**Implemented enhancements:**
-
 - Hotfix/2.20.15/location condition without area [\#473](https://github.com/playbasis/api/pull/473) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.20.14/limit_goods_to_random_for_performance](https://github.com/playbasis/api/tree/2.20.14/limit_goods_to_random_for_performance) (2016-11-15)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.13/filter_url_in_player_action_count...2.20.14/limit_goods_to_random_for_performance)
-
-**Implemented enhancements:**
-
 - Hotfix/2.20.14/limit goods to random for performance [\#472](https://github.com/playbasis/api/pull/472) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.20.13/filter_url_in_player_action_count](https://github.com/playbasis/api/tree/2.20.13/filter_url_in_player_action_count) (2016-11-15)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.12/response_peruser_quantity_badge...2.20.13/filter_url_in_player_action_count)
-
-**Implemented enhancements:**
-
 - Hotfix/2.20.13/filter url in player action count [\#471](https://github.com/playbasis/api/pull/471) ([piya-playbasis](https://github.com/piya-playbasis))
-- support campaign in game [\#469](https://github.com/playbasis/api/pull/469) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.20.12/response_peruser_quantity_badge](https://github.com/playbasis/api/tree/2.20.12/response_peruser_quantity_badge) (2016-11-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.11/include_parameter_field_in_activity_api...2.20.12/response_peruser_quantity_badge)
-
-**Implemented enhancements:**
-
 - Hotfix/2.20.12/response peruser quantity badge [\#470](https://github.com/playbasis/api/pull/470) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.20.11/include_parameter_field_in_activity_api](https://github.com/playbasis/api/tree/2.20.11/include_parameter_field_in_activity_api) (2016-11-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.11/game_bingo_api...2.20.11/include_parameter_field_in_activity_api)
-
-**Implemented enhancements:**
-
+- support campaign in game [\#469](https://github.com/playbasis/api/pull/469) ([piya-playbasis](https://github.com/piya-playbasis))
 - Hotfix/2.20.11/include parameter field in activity api [\#468](https://github.com/playbasis/api/pull/468) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.20.11/game_bingo_api](https://github.com/playbasis/api/tree/2.20.11/game_bingo_api) (2016-11-11)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.10/condition_location...2.20.11/game_bingo_api)
-
-**Implemented enhancements:**
-
 - Hotfix/2.20.11/game bingo api [\#467](https://github.com/playbasis/api/pull/467) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.20.10/condition_location](https://github.com/playbasis/api/tree/2.20.10/condition_location) (2016-11-11)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.10/clean_up_game_template_and_support_new_3_games...2.20.10/condition_location)
-
-**Implemented enhancements:**
-
 - location API [\#466](https://github.com/playbasis/api/pull/466) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.20.10/clean_up_game_template_and_support_new_3_games](https://github.com/playbasis/api/tree/2.20.10/clean_up_game_template_and_support_new_3_games) (2016-11-11)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.9/get_remaining_pool_in_custompoints...2.20.10/clean_up_game_template_and_support_new_3_games)
-
-**Implemented enhancements:**
-
 - Hotfix/2.20.10/clean up game template and support new 3 games [\#465](https://github.com/playbasis/api/pull/465) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.20.9/get_remaining_pool_in_custompoints](https://github.com/playbasis/api/tree/2.20.9/get_remaining_pool_in_custompoints) (2016-11-11)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.8/change_value_of_point_to_string_instead_of_integer_in_engine...2.20.9/get_remaining_pool_in_custompoints)
-
-**Implemented enhancements:**
-
 - Hotfix/2.20.9/get remaining pool in custompoints [\#464](https://github.com/playbasis/api/pull/464) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.20.8/change_value_of_point_to_string_instead_of_integer_in_engine](https://github.com/playbasis/api/tree/2.20.8/change_value_of_point_to_string_instead_of_integer_in_engine) (2016-11-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.20.7/fix_value_in_engine_rule_for_point...2.20.8/change_value_of_point_to_string_instead_of_integer_in_engine)
+- Hotfix/2.20.5/log date expire in goods log and reponse in goods player [\#460](https://github.com/playbasis/api/pull/460) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.20.4/locationarea condition [\#458](https://github.com/playbasis/api/pull/458) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.20.3/sort player goods by date expire and name [\#457](https://github.com/playbasis/api/pull/457) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.20.2/add date expire in shcema in player goods [\#454](https://github.com/playbasis/api/pull/454) ([piya-playbasis](https://github.com/piya-playbasis))
+- support age and gender condition in quest [\#452](https://github.com/playbasis/api/pull/452) ([piya-playbasis](https://github.com/piya-playbasis))
 
 **Fixed bugs:**
 
 - Hotfix/2.20.8/change value of point to string instead of integer in engine [\#463](https://github.com/playbasis/api/pull/463) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.20.7/fix value in engine rule for point [\#462](https://github.com/playbasis/api/pull/462) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.20.6/fix value in engine  [\#461](https://github.com/playbasis/api/pull/461) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.20.4/fix date expired in player goods [\#459](https://github.com/playbasis/api/pull/459) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.20.1/get goods data in rule [\#453](https://github.com/playbasis/api/pull/453) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Merged pull requests:**
+
+- sentry for iodocs [\#456](https://github.com/playbasis/api/pull/456) ([piya-playbasis](https://github.com/piya-playbasis))
+- Sentry [\#455](https://github.com/playbasis/api/pull/455) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.20.15/location_condition_without_area](https://github.com/playbasis/api/tree/2.20.15/location_condition_without_area) (2016-11-17)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.14/limit_goods_to_random_for_performance...2.20.15/location_condition_without_area)
+
+## [2.20.14/limit_goods_to_random_for_performance](https://github.com/playbasis/api/tree/2.20.14/limit_goods_to_random_for_performance) (2016-11-15)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.13/filter_url_in_player_action_count...2.20.14/limit_goods_to_random_for_performance)
+
+## [2.20.13/filter_url_in_player_action_count](https://github.com/playbasis/api/tree/2.20.13/filter_url_in_player_action_count) (2016-11-15)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.12/response_peruser_quantity_badge...2.20.13/filter_url_in_player_action_count)
+
+## [2.20.12/response_peruser_quantity_badge](https://github.com/playbasis/api/tree/2.20.12/response_peruser_quantity_badge) (2016-11-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.11/include_parameter_field_in_activity_api...2.20.12/response_peruser_quantity_badge)
+
+## [2.20.11/include_parameter_field_in_activity_api](https://github.com/playbasis/api/tree/2.20.11/include_parameter_field_in_activity_api) (2016-11-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.11/game_bingo_api...2.20.11/include_parameter_field_in_activity_api)
+
+## [2.20.11/game_bingo_api](https://github.com/playbasis/api/tree/2.20.11/game_bingo_api) (2016-11-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.10/condition_location...2.20.11/game_bingo_api)
+
+## [2.20.10/condition_location](https://github.com/playbasis/api/tree/2.20.10/condition_location) (2016-11-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.10/clean_up_game_template_and_support_new_3_games...2.20.10/condition_location)
+
+## [2.20.10/clean_up_game_template_and_support_new_3_games](https://github.com/playbasis/api/tree/2.20.10/clean_up_game_template_and_support_new_3_games) (2016-11-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.9/get_remaining_pool_in_custompoints...2.20.10/clean_up_game_template_and_support_new_3_games)
+
+## [2.20.9/get_remaining_pool_in_custompoints](https://github.com/playbasis/api/tree/2.20.9/get_remaining_pool_in_custompoints) (2016-11-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.8/change_value_of_point_to_string_instead_of_integer_in_engine...2.20.9/get_remaining_pool_in_custompoints)
+
+## [2.20.8/change_value_of_point_to_string_instead_of_integer_in_engine](https://github.com/playbasis/api/tree/2.20.8/change_value_of_point_to_string_instead_of_integer_in_engine) (2016-11-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.20.7/fix_value_in_engine_rule_for_point...2.20.8/change_value_of_point_to_string_instead_of_integer_in_engine)
 
 ## [2.20.7/fix_value_in_engine_rule_for_point](https://github.com/playbasis/api/tree/2.20.7/fix_value_in_engine_rule_for_point) (2016-11-09)
 [Full Changelog](https://github.com/playbasis/api/compare/2.20.6/fix_value_in_engine_...2.20.7/fix_value_in_engine_rule_for_point)
 
-**Fixed bugs:**
-
-- Hotfix/2.20.7/fix value in engine rule for point [\#462](https://github.com/playbasis/api/pull/462) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.20.6/fix_value_in_engine_](https://github.com/playbasis/api/tree/2.20.6/fix_value_in_engine_) (2016-11-09)
 [Full Changelog](https://github.com/playbasis/api/compare/2.20.5/log_date_expire_in_goods_log_and_reponse_in_goods_player...2.20.6/fix_value_in_engine_)
 
-**Fixed bugs:**
-
-- Hotfix/2.20.6/fix value in engine  [\#461](https://github.com/playbasis/api/pull/461) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.20.5/log_date_expire_in_goods_log_and_reponse_in_goods_player](https://github.com/playbasis/api/tree/2.20.5/log_date_expire_in_goods_log_and_reponse_in_goods_player) (2016-11-09)
 [Full Changelog](https://github.com/playbasis/api/compare/2.20.4/locationarea_condition...2.20.5/log_date_expire_in_goods_log_and_reponse_in_goods_player)
-
-**Implemented enhancements:**
-
-- Hotfix/2.20.5/log date expire in goods log and reponse in goods player [\#460](https://github.com/playbasis/api/pull/460) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.20.4/locationarea_condition](https://github.com/playbasis/api/tree/2.20.4/locationarea_condition) (2016-11-09)
 [Full Changelog](https://github.com/playbasis/api/compare/2.20.4/fix_date_expired_in_player_goods...2.20.4/locationarea_condition)
@@ -105,43 +202,14 @@
 ## [2.20.4/fix_date_expired_in_player_goods](https://github.com/playbasis/api/tree/2.20.4/fix_date_expired_in_player_goods) (2016-11-09)
 [Full Changelog](https://github.com/playbasis/api/compare/2.20.3/sort_player_goods_by_date_expire_and_name...2.20.4/fix_date_expired_in_player_goods)
 
-**Implemented enhancements:**
-
-- Hotfix/2.20.4/locationarea condition [\#458](https://github.com/playbasis/api/pull/458) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/2.20.4/fix date expired in player goods [\#459](https://github.com/playbasis/api/pull/459) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.20.3/sort_player_goods_by_date_expire_and_name](https://github.com/playbasis/api/tree/2.20.3/sort_player_goods_by_date_expire_and_name) (2016-11-09)
 [Full Changelog](https://github.com/playbasis/api/compare/2.20.2/add_date_expire_in_shcema_in_player_goods...2.20.3/sort_player_goods_by_date_expire_and_name)
-
-**Implemented enhancements:**
-
-- Hotfix/2.20.3/sort player goods by date expire and name [\#457](https://github.com/playbasis/api/pull/457) ([piya-playbasis](https://github.com/piya-playbasis))
-
-**Merged pull requests:**
-
-- sentry for iodocs [\#456](https://github.com/playbasis/api/pull/456) ([piya-playbasis](https://github.com/piya-playbasis))
-- Sentry [\#455](https://github.com/playbasis/api/pull/455) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.20.2/add_date_expire_in_shcema_in_player_goods](https://github.com/playbasis/api/tree/2.20.2/add_date_expire_in_shcema_in_player_goods) (2016-11-07)
 [Full Changelog](https://github.com/playbasis/api/compare/2.20.1/get_goods_data_in_rule...2.20.2/add_date_expire_in_shcema_in_player_goods)
 
-**Implemented enhancements:**
-
-- Hotfix/2.20.2/add date expire in shcema in player goods [\#454](https://github.com/playbasis/api/pull/454) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.20.1/get_goods_data_in_rule](https://github.com/playbasis/api/tree/2.20.1/get_goods_data_in_rule) (2016-11-03)
 [Full Changelog](https://github.com/playbasis/api/compare/2.20.0...2.20.1/get_goods_data_in_rule)
-
-**Implemented enhancements:**
-
-- support age and gender condition in quest [\#452](https://github.com/playbasis/api/pull/452) ([piya-playbasis](https://github.com/piya-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/2.20.1/get goods data in rule [\#453](https://github.com/playbasis/api/pull/453) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.20.0](https://github.com/playbasis/api/tree/2.20.0) (2016-11-01)
 [Full Changelog](https://github.com/playbasis/api/compare/2.19.13/support_=_in_cl_player_id...2.20.0)
@@ -1687,13 +1755,13 @@
 - - Merge generate content PIN into create/update content [\#193](https://github.com/playbasis/api/pull/193) ([niti-playbasis](https://github.com/niti-playbasis))
 
 ## [2.8.0-alpha.1](https://github.com/playbasis/api/tree/2.8.0-alpha.1) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.8.0-alpha.1)
-
-## [v2.7.6](https://github.com/playbasis/api/tree/v2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...v2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...2.8.0-alpha.1)
 
 ## [2.7.6](https://github.com/playbasis/api/tree/2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.7.6)
+
+## [v2.7.6](https://github.com/playbasis/api/tree/v2.7.6) (2016-04-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...v2.7.6)
 
 **Implemented enhancements:**
 
@@ -1804,17 +1872,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.5.10...2.6.0-alpha.6)
 
 ## [2.5.10](https://github.com/playbasis/api/tree/2.5.10) (2016-03-15)
-[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.5...2.5.10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.4...2.5.10)
 
 **Fixed bugs:**
 
 - Hotfix/2.5.10 [\#176](https://github.com/playbasis/api/pull/176) ([narut-playbasis](https://github.com/narut-playbasis))
 
-## [2.6.0-alpha.5](https://github.com/playbasis/api/tree/2.6.0-alpha.5) (2016-03-09)
-[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.4...2.6.0-alpha.5)
-
 ## [2.6.0-alpha.4](https://github.com/playbasis/api/tree/2.6.0-alpha.4) (2016-03-09)
-[Full Changelog](https://github.com/playbasis/api/compare/2.5.9...2.6.0-alpha.4)
+[Full Changelog](https://github.com/playbasis/api/compare/2.6.0-alpha.5...2.6.0-alpha.4)
+
+## [2.6.0-alpha.5](https://github.com/playbasis/api/tree/2.6.0-alpha.5) (2016-03-09)
+[Full Changelog](https://github.com/playbasis/api/compare/2.5.9...2.6.0-alpha.5)
 
 ## [2.5.9](https://github.com/playbasis/api/tree/2.5.9) (2016-03-09)
 [Full Changelog](https://github.com/playbasis/api/compare/2.5.8...2.5.9)
