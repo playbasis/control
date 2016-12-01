@@ -12,6 +12,7 @@ define('SITE_ID_TRUE', '52ea1ebd8d8c89001a00004e');
 define('SITE_ID_BURUFLY', '52ea1eac8d8c89401c0000e7');
 define('SITE_ID_ASSOPOKER', '53a9422f988040355a8b45d3');
 define('SITE_ID_TRUE_MONEY', '5423ce3dbe120b680f8b456c');
+define('SITE_ID_DIGI', '57aab56572d3e1e0418b456a');
 define('SITE_ID_COMPARE_AND_SHARE', '5461fd2d99804019418b5025');
 define('SITE_ID_CHIANGMAI_U', '5424045598804099678b457b');
 
@@ -60,6 +61,7 @@ class Report_weekly extends CI_Controller
         $allowed_site_ids = array( // true = send email, false = will not send
             SITE_ID_DEMO => true,
             SITE_ID_TRUE_MONEY => true,
+            SITE_ID_DIGI => true
         );
         $to_pbteam_email = array(
             'devteam@playbasis.com',
