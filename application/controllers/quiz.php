@@ -689,8 +689,7 @@ class Quiz extends REST2_Controller
         }
 
         /* check to see if grade has any reward associated with it */
-        $rewards = isset($grade['rewards']) ? $this->update_rewards($this->client_id, $this->site_id, $pb_player_id,
-            $player_id, $grade['rewards']) : array();
+        $rewards = isset($grade['rewards']) ? $this->update_rewards($this->client_id, $this->site_id, $pb_player_id, $player_id, $grade['rewards']) : array();
         $grade['rewards'] = $this->filter_levelup($rewards);
         $grade['score'] = $score;
         $grade['max_score'] = $max_score;
@@ -1055,6 +1054,7 @@ class Quiz extends REST2_Controller
                     'amount' => $event['value']
                 ));
                 break;
+            case 'REWARD_PENDING':
             case 'REWARD_RECEIVED':
                 switch ($event['reward_type']) {
                     case 'badge':
@@ -1090,7 +1090,8 @@ class Quiz extends REST2_Controller
                             'reward_type' => 'point',
                             'reward_id' => $event['reward_id'],
                             'reward_name' => $event['reward_type'],
-                            'amount' => $event['value']
+                            'amount' => $event['value'],
+                            'transaction_id' => isset($event['transaction_id']) && $event['transaction_id']? $event['transaction_id'] : null
                         ));
                         break;
                 }

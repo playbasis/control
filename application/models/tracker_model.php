@@ -77,6 +77,7 @@ class Tracker_model extends MY_Model
             'node_id' => (isset($input['node_id'])) ? $input['node_id'] : null,
             'sender' => (isset($input['sent_pb_player_id'])) ? $input['sent_pb_player_id'] : null,
             'gift_log_id' => (isset($input['gift_log_id'])) ? $input['gift_log_id'] : null,
+            'transaction_id' => (isset($input['transaction_id'])) ? $input['transaction_id'] : null,
             'date_added' => $mongoDate,
             'date_modified' => $mongoDate
         ), $options);

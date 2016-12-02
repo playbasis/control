@@ -1038,7 +1038,7 @@ class Quest extends REST2_Controller
                     $reward_name = $this->reward_model->getRewardName($reward_config, $r["reward_id"]);
 
                     $return_data = array();
-                    $reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"],
+                    $this->client_model->updateCustomReward($reward_name, $r["reward_value"],
                         $update_config, $return_data, $anonymous);
 
                     $reward_type_message = 'point';
@@ -1063,6 +1063,7 @@ class Quest extends REST2_Controller
                     'reward_id' => $r["reward_id"],
                     'reward_name' => $reward_type_name,
                     'reward_value' => $r["reward_value"],
+                    'transaction_id' => isset($event['transaction_id']) && $event['transaction_id']? $event['transaction_id'] : null
                 );
                 $this->trackQuest($player_id, $validToken, $data_reward, $sub_events["quest_id"],
                     isset($sub_events["mission_id"]) ? $sub_events["mission_id"] : null);
@@ -1103,6 +1104,7 @@ class Quest extends REST2_Controller
             'reward_id' => $data_reward['reward_id'],
             'reward_name' => $data_reward['reward_name'],
             'amount' => $data_reward['reward_value'],
+            'transaction_id' => isset($data_reward['transaction_id']) && $data_reward['transaction_id']? $data_reward['transaction_id'] : null,
             'message' => $eventMessage
         );
         $this->tracker_model->trackQuest($data);
