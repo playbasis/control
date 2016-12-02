@@ -261,4 +261,13 @@ class Custompoints_model extends MY_Model
         $result = $this->mongo_db->get("playbasis_reward_to_client");
         return isset($result[0]['reward_id']) ? $result[0]['reward_id'] : null;
     }
+
+    public function getRewardStatus($id)
+    {
+        $this->mongo_db->select(array('status'));
+        $this->mongo_db->where('_id', $id);
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get("playbasis_reward_status_to_player");
+        return isset($result[0]) ? $result[0]['status'] : null;
+    }
 }
