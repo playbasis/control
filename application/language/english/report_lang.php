@@ -25,6 +25,7 @@ $lang['column_date_added']                      = 'DateTime';
 $lang['column_date_expire']                     = 'Date Expire';
 $lang['column_reward_name']                     = 'Reward';
 $lang['column_reward_value']                    = 'Value';
+$lang['column_reward_status']                   = 'Status';
 $lang['column_goods_amount']                    = 'Amount';
 $lang['column_goods_status']                    = 'Status';
 $lang['column_goods_redeemwith']                = 'Redeem with';
