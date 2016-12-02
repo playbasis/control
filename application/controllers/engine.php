@@ -1086,7 +1086,8 @@ class Engine extends Quest
                                     array_merge($input, array(
                                         'reward_id' => $jigsawConfig['reward_id'],
                                         'reward_name' => $jigsawConfig['reward_name'],
-                                        'amount' => $jigsawConfig['quantity']
+                                        'amount' => $jigsawConfig['quantity'],
+                                        'transaction_id' => isset($event['transaction_id']) && $event['transaction_id']? $event['transaction_id'] : null
                                     )));
 
                                 //publish to node stream
@@ -1194,7 +1195,8 @@ class Engine extends Quest
                                         array_merge($input, array(
                                             'reward_id' => $jigsawConfig['reward_id'],
                                             'reward_name' => $jigsawConfig['reward_name'],
-                                            'amount' => $jigsawConfig['quantity']
+                                            'amount' => $jigsawConfig['quantity'],
+                                            'transaction_id' => isset($event['transaction_id']) && $event['transaction_id']? $event['transaction_id'] : null
                                         )));
                                     //publish to node stream
                                     $this->node->publish(array_merge($input, array(
