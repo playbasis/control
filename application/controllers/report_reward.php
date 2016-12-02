@@ -9,6 +9,7 @@ class Report_reward extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
+        $this->load->model('Custompoints_model');
         if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
@@ -185,7 +186,7 @@ class Report_reward extends MY_Controller
         $this->data['reports'] = array();
 
         foreach ($results as $result) {
-
+            $status = null;
             $badge_name = null;
             $reward_name = null;
 
@@ -209,6 +210,10 @@ class Report_reward extends MY_Controller
                 $date_added = $date_added->format("Y-m-d H:i:s");;
             }
 
+            if(isset($result['transaction_id']) && $result['transaction_id']){
+                $status = $this->Custompoints_model->getRewardStatus($result['transaction_id']);
+            }
+
             $this->data['reports'][] = array(
                 'cl_player_id' => $player['cl_player_id'],
                 'username' => $player['username'],
@@ -217,7 +222,8 @@ class Report_reward extends MY_Controller
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
                 'reward_name' => isset($reward_name) ? $reward_name : null,
                 'badge_name' => isset($badge_name) ? $badge_name : null,
-                'value' => $result['value']
+                'value' => $result['value'],
+                'status' => isset($status) ? $status : null
             );
         }
 
@@ -395,12 +401,11 @@ class Report_reward extends MY_Controller
         $this->data['reports'] = array();
 
         foreach ($results as $result) {
-
+            $status = null;
             $badge_name = null;
             $reward_name = null;
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-
             if (!empty($player['image'])) {
                 $thumb = $player['image'];
             } else {
@@ -419,6 +424,10 @@ class Report_reward extends MY_Controller
                 $date_added = $date_added->format("Y-m-d H:i:s");;
             }
 
+            if(isset($result['transaction_id']) && $result['transaction_id']){
+                $status = $this->Custompoints_model->getRewardStatus($result['transaction_id']);
+            }
+
             $this->data['reports'][] = array(
                 'cl_player_id' => $player['cl_player_id'],
                 'username' => $player['username'],
@@ -427,7 +436,8 @@ class Report_reward extends MY_Controller
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
                 'reward_name' => isset($reward_name) ? $reward_name : null,
                 'badge_name' => isset($badge_name) ? $badge_name : null,
-                'value' => $result['value']
+                'value' => $result['value'],
+                'status' => isset($status) ? $status : null
             );
         }
 
@@ -445,6 +455,7 @@ class Report_reward extends MY_Controller
                 $this->lang->line('column_email'),
                 $this->lang->line('column_reward_name'),
                 $this->lang->line('column_reward_value'),
+                $this->lang->line('column_reward_status'),
                 $this->lang->line('column_date_added')
             )
         );
