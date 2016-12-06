@@ -42,17 +42,11 @@ class Report_goods_model extends MY_Model
             ));
         }
 
-        if (isset($data['is_group']) && $data['is_group']) {
-            if (isset($data['goods_id']) && $data['goods_id'] != '') {
-                $ids = $this->listGoodsIdByGroup($data['goods_id']);
-                $this->mongo_db->where_in('goods_id', array_map(function ($obj) {return $obj['goods_id'];}, $ids));
-            }
-        } else {
-            if (isset($data['goods_id']) && $data['goods_id'] != '') {
-                $goodsRewards = array(
-                    'goods_id' => new MongoID($data['goods_id']),
-                );
-                $this->mongo_db->where($goodsRewards);
+        if (isset($data['goods_id']) && $data['goods_id'] != '') {
+            if (isset($data['is_group']) && $data['is_group']) {
+                $this->mongo_db->where_in('goods_id', $data['goods_id']);
+            } else {
+                $this->mongo_db->where('goods_id', new MongoID($data['goods_id']));
             }
         }
 
@@ -101,17 +95,11 @@ class Report_goods_model extends MY_Model
             ));
         }
 
-        if (isset($data['is_group']) && $data['is_group']) {
-            if (isset($data['goods_id']) && $data['goods_id'] != '') {
-                $ids = $this->listGoodsIdByGroup($data['goods_id']);
-                $this->mongo_db->where_in('goods_id', array_map(function ($obj) {return $obj['goods_id'];}, $ids));
-            }
-        } else {
-            if (isset($data['goods_id']) && $data['goods_id'] != '') {
-                $goodsRewards = array(
-                    'goods_id' => new MongoID($data['goods_id']),
-                );
-                $this->mongo_db->where($goodsRewards);
+        if (isset($data['goods_id']) && $data['goods_id'] != '') {
+            if (isset($data['is_group']) && $data['is_group']) {
+                $this->mongo_db->where_in('goods_id', $data['goods_id']);
+            } else {
+                $this->mongo_db->where('goods_id', new MongoID($data['goods_id']));
             }
         }
 
@@ -165,9 +153,11 @@ class Report_goods_model extends MY_Model
 
     }
 
-    public function listGoodsIdByGroup($group)
+    public function listGoodsIdByGroup($site_id, $group)
     {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->select(array('goods_id'));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('group', $group);
         return $this->mongo_db->get('playbasis_goods_to_client');
     }

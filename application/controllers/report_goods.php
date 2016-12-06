@@ -77,6 +77,8 @@ class Report_goods extends MY_Controller
         $this->load->model('Image_model');
         $this->load->model('Player_model');
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
 
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
@@ -137,6 +139,10 @@ class Report_goods extends MY_Controller
             $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
             $is_group = array_key_exists('group', $goods);
             $parameter_url .= "&goods_id=" . $filter_goods_id;
+            if ($is_group){
+                $goods_list = $this->Report_goods_model->listGoodsIdByGroup($site_id, $goods['group']);
+                $goods_list = array_map(function ($obj) {return $obj['goods_id'];}, $goods_list);
+            }
         } else {
             $filter_goods_id = '';
         }
@@ -151,16 +157,13 @@ class Report_goods extends MY_Controller
 
         $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
 
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-
         $data = array(
             'client_id' => $client_id,
             'site_id' => $site_id,
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'goods_id' => ($is_group ? $goods['group'] : $filter_goods_id),
+            'goods_id' => ($is_group ? $goods_list : $filter_goods_id),
             'is_group' => $is_group,
             'start' => $offset,
             'limit' => $limit
@@ -194,6 +197,8 @@ class Report_goods extends MY_Controller
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
             $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
+            $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
+
             if(!is_null($goods_player)){
                 $status = $goods_player > 0 ? "active" : "used";
             } else {
@@ -224,8 +229,9 @@ class Report_goods extends MY_Controller
                     'email' => $player['email'],
                     'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
                     'date_expire' => isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null,
-                    'goods_name' => $result['goods_name'],
+                    'goods_name' => isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
                     // 'value'             => $result['value']
+                    'code' => $goods_data['code'],
                     'value' => $result['amount'],
                     'status' => $status
                     // 'redeem'            => $result['redeem']
@@ -338,12 +344,13 @@ class Report_goods extends MY_Controller
 
     public function actionDownload()
     {
-
         $parameter_url = "?t=" . rand();
         $this->load->model('Report_goods_model');
         $this->load->model('Image_model');
         $this->load->model('Player_model');
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
 
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
@@ -403,12 +410,13 @@ class Report_goods extends MY_Controller
             $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
             $is_group = array_key_exists('group', $goods);
             $parameter_url .= "&goods_id=" . $filter_goods_id;
+            if ($is_group){
+                $goods_list = $this->Report_goods_model->listGoodsIdByGroup($site_id, $goods['group']);
+                $goods_list = array_map(function ($obj) {return $obj['goods_id'];}, $goods_list);
+            }
         } else {
             $filter_goods_id = '';
         }
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
 
         $data = array(
             'client_id' => $client_id,
@@ -416,7 +424,7 @@ class Report_goods extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'goods_id' => ($is_group ? $goods['group'] : $filter_goods_id),
+            'goods_id' => ($is_group ? $goods_list : $filter_goods_id),
             'is_group' => $is_group
         );
 
@@ -434,6 +442,8 @@ class Report_goods extends MY_Controller
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
             $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
+            $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
+
             if(!is_null($goods_player)){
                 $status = $goods_player > 0 ? "active" : "used";
             } else {
@@ -459,7 +469,8 @@ class Report_goods extends MY_Controller
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
                 'date_expire' => isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null,
                 'status' => $status,
-                'goods_name' => $result['goods_name'],
+                'goods_name' => isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
+                'code' => $goods_data['code'],
                 // 'value'             => $result['value']
                 'amount' => $result['amount'],
                 // 'redeem'            => $result['redeem']
@@ -479,6 +490,7 @@ class Report_goods extends MY_Controller
                 $this->lang->line('column_username'),
                 $this->lang->line('column_email'),
                 $this->lang->line('column_goods_name'),
+                $this->lang->line('column_goods_code'),
                 $this->lang->line('column_goods_amount'),
                 $this->lang->line('column_status'),
                 $this->lang->line('column_date_added'),
@@ -492,6 +504,7 @@ class Report_goods extends MY_Controller
                     $row['username'],
                     $row['email'],
                     $row['goods_name'],
+                    $row['code'],
                     $row['amount'],
                     $row['status'],
                     $row['date_added'],
