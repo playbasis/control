@@ -30,6 +30,7 @@ $lang['column_goods_amount']                    = 'Amount';
 $lang['column_goods_status']                    = 'Status';
 $lang['column_goods_redeemwith']                = 'Redeem with';
 $lang['column_goods_name']                      = 'Goods';
+$lang['column_goods_code']                      = 'Coupon Code';
 $lang['column_date_registered']                 = 'Date Registered';
 $lang['column_quest_name']                      = 'Quest';
 $lang['column_mission_name']                    = 'Mission Name';

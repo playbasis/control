@@ -78,6 +78,7 @@
                     <!-- <td class="left"><?php //echo $this->lang->line('column_level'); ?></td>
                     <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
                     <td class="right"><?php echo $this->lang->line('column_goods_name'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_goods_code'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_goods_amount'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_goods_status'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
@@ -102,6 +103,7 @@
                             }                            
                             ?>
                         </td>
+                        <td class="right"><?php echo $report['code']; ?></td>
                         <td class="right"><?php echo $report['value']; ?></td>
                         <td class="right"><?php echo isset($report['status']) ? $report['status']: ""; ?></td>
                         <td class="right"><?php echo $report['date_added']; ?></td>
@@ -110,7 +112,7 @@
                         <?php } ?>
                     <?php } else { ?>
                 <tr>
-                    <td class="center" colspan="9"><?php echo $text_no_results; ?></td>
+                    <td class="center" colspan="10"><?php echo $text_no_results; ?></td>
                 </tr>
                     <?php } ?>
                 </tbody>
