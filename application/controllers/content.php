@@ -777,22 +777,14 @@ class Content extends REST2_Controller
         }
 
         if($action) {
-
+            $platform = $this->auth_model->getOnePlatform($this->validToken['client_id'], $this->validToken['site_id']);
             // Sent action to action log
-            $result = $this->restclient->post($this->config->base_url() . 'Engine/rule', array(
-                'token'      => $this->input->post('token'),
-                'api_key'    => $this->input->post('api_key'),
-                'action'     => $actionInfo['action'],
-                'player_id'  => $player_id,
+            $this->utility->request('engine', 'json', http_build_query(array(
+                'api_key' => $platform['api_key'],
+                'pb_player_id' => $pb_player_id."",
+                'action' => $actionInfo['action'],
                 'content_id' => json_decode(json_encode($actionInfo['content_id']), true)['$id']
-            ));
-
-            if(!isset($result->success)){
-                $this->response($this->error->setError('INTERNAL_ERROR', isset($result->error) ? $result->error :null), 200);
-            }
-            else if($result->success == false){
-                $this->response($this->error->setError('INTERNAL_ERROR', isset($result->message) ? $result->message :null ), 200);
-            }
+            )));
         }
 
         $this->benchmark->mark('end');
