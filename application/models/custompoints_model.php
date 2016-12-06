@@ -146,6 +146,18 @@ class Custompoints_model extends MY_Model
         }
     }
 
+    public function getCustompointByName($site_id, $custompoint_name)
+    {
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('name', $custompoint_name);
+        $this->mongo_db->where('is_custom', true);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->limit(1);
+
+        $result =  $this->mongo_db->get('playbasis_reward_to_client');
+        return $result ? $result[0] : null;
+    }
+
     public function updateCustompoints($data)
     {
         if (!empty($data['tags'])){

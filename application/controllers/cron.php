@@ -23,6 +23,9 @@ define('DAYS_TO_BECOME_ACTIVE', 3);
 
 define('ENERGY_UPDATER_THRESHOLD', 5);
 
+define('CLIENT_ID_HSBCHK', '5821d319be120b24548b45e6');
+define('SITE_ID_HSBCHK', '5821d3cfbe120ba34a8b6ede');
+
 define('WIDGET_NUMBER_OF_CUSTOMERS', '166318-19e7a021-f8a7-42fe-be4e-7c51464706a7');
 define('WIDGET_NUMBER_OF_ACTIVE_USAGE_CUSTOMERS', '166318-83c41412-4d61-4fd8-b42f-067b907d961e');
 define('WIDGET_NUMBER_OF_ACTIVE_PAYING_CUSTOMERS', '166318-b0ca1250-c8f0-4084-a073-b5efecd7d07c');
@@ -39,6 +42,8 @@ class Cron extends CI_Controller
         parent::__construct();
         $this->load->model('auth_model');
         $this->load->model('client_model');
+        $this->load->model('campaign_model');
+        $this->load->model('custompoints_model');
         $this->load->model('player_model');
         $this->load->model('email_model');
         $this->load->model('plan_model');
@@ -2684,7 +2689,17 @@ class Cron extends CI_Controller
         return true;
     }
 
+    public function processTokenDeductByCampaign()
+    {
+        $campaign = $this->campaign_model->getActiveCampaign(new MongoId(CLIENT_ID_HSBCHK), new MongoId(SITE_ID_HSBCHK));
 
+        if (!$campaign) {
+            $custompoint = $this->custompoints_model->getCustompointByName(new MongoId(SITE_ID_HSBCHK), 'token');
+            if ($custompoint){
+                $this->player_model->deductAllPlayerRewardBySite(new MongoId(SITE_ID_HSBCHK), $custompoint['reward_id']);
+            }
+        }
+    }
 }
 
 function urlsafe_b64encode($string)
