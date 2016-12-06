@@ -1450,6 +1450,7 @@
               "description":  { "-type": "string"},
               "amount":       { "-type": "number"},
               "hint":         { "-type": "string"},
+              "per_user":     { "-type": "integer" , "-optional": "true"},
               "tags":         { "-type": "any", "-optional": "true"}
             }
           ]
@@ -1486,6 +1487,7 @@
               "description":  { "-type": "string"},
               "hint":         { "-type": "string"},
               "sponsor":      { "-type": "boolean"},
+              "per_user":     { "-type": "integer" , "-optional": "true"},
               "tags":         { "-type": "any", "-optional": "true"},
               "amount":       { "-type": "number"}
             }
