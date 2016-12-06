@@ -109,4 +109,24 @@ class Campaign_model extends MY_Model
 
         return $results;
     }
+
+    public function getActiveCampaign($client_id, $site_id)
+    {
+        //get badge name by $badge_id
+        $this->set_site_mongodb($site_id);
+        $d = new MongoDate();
+        $this->mongo_db->select(array('name','image','date_start','date_end','weight'));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false
+        ));
+        $this->mongo_db->where(array('$and' => array( array('$or' => array(array("date_start" => null), array("date_start" => array('$lte'=> $d)))),
+                                                      array('$or' => array(array("date_end" => array('$gte'=> $d)), array("date_end" => null))))));
+        $this->mongo_db->order_by(array('weight' => 'desc','date_start' => 'desc', "date_end" => 'asc' , 'name' => 'asc'));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_campaign_to_client');
+
+        return $result ? $result[0]:array();
+    }
 }

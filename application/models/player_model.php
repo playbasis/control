@@ -121,6 +121,18 @@ class Player_model extends MY_Model
         return $point ? $point[0]['value'] : 0;
     }
 
+    public function deductAllPlayerRewardBySite($site_id, $reward_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('reward_id', $reward_id);
+        $this->mongo_db->where_gt('value', 0);
+        $this->mongo_db->set('value', 0);
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $this->mongo_db->update_all('playbasis_reward_to_player');
+    }
+
     private function getPlayerAction($site_id, $client_id, $player_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
