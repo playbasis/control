@@ -470,6 +470,7 @@
     var jsonString_Condition = <?php echo json_encode($conditionList); ?>;
     var jsonString_ConditionGroup = <?php echo json_encode($conditionGroupList); ?>;
     var jsonString_Reward    = <?php echo json_encode($rewardList); ?>;
+    var jsonString_RewardSequence = <?php echo json_encode($rewardSequenceList); ?>;
     var jsonString_Feedback  = <?php echo json_encode($feedbackList); ?>;
     var jsonString_Group     = <?php echo json_encode($groupList); ?>;
     var jsonString_Email     = <?php echo json_encode($emailList); ?>;
@@ -479,6 +480,7 @@
     var jsonString_Webhook   = <?php echo json_encode($webhookList); ?>;
     var jsonString_Game   = <?php echo json_encode($gameList); ?>;
     var jsonString_Location   = <?php echo json_encode($locationList); ?>;
+    var jsonString_SequenceFile   = <?php echo json_encode($sequenceFile); ?>;
 
     //var jsonString_RulesList= '<?php //print_r($ruleList);?>';
     var requestedSet         = '<?php echo $requestParams; ?>';

@@ -23,6 +23,7 @@ class Rule extends MY_Controller
         $this->load->model('Push_model');
         $this->load->model('Game_model');
         $this->load->model('Location_model');
+        $this->load->model('Sequence_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -78,7 +79,7 @@ class Rule extends MY_Controller
         //if($s_clientId){
         $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
         $conditionList = $this->Rule_model->getConditionJigsawList($site_id, $client_id);
-        $rewardList = $this->Rule_model->getRewardJigsawList($site_id, $client_id);
+        $rewardList = $rewardSequenceList = $this->Rule_model->getRewardJigsawList($site_id, $client_id);
         $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
         $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
         $pushList = $this->Push_model->listTemplatesBySiteId($site_id);
@@ -89,6 +90,7 @@ class Rule extends MY_Controller
         $levelConditionList = $this->Level_model->getLevelConditions();
         $gameList = $this->Game_model->getGameList($client_id, $site_id);
         $locationList = $this->Location_model->getLocationList($client_id, $site_id);
+        $sequenceFile = $this->Sequence_model->retrieveSequence(array('client_id'=>$client_id, 'site_id'=>$site_id));
         if($gameList){
             foreach ($gameList as &$game) {
                 $game['name'] = $game['game_name'];
@@ -118,11 +120,48 @@ class Rule extends MY_Controller
                 }
             }
         }
+        if (is_array($rewardSequenceList)) {
+            foreach ($rewardSequenceList as $index => &$rewardSequence ) {
+                if($rewardSequence["name"]== "customPointReward") {
+                    unset($rewardSequenceList[$index]);
+                }else{
+                    $rewardSequence['category'] = "REWARD_SEQUENCE";
+                    if (is_array($rewardSequence['dataSet'])) {
+                        foreach ($rewardSequence['dataSet'] as &$dataset) {
+                            if (strtolower($dataset['param_name']) == "quantity") {
+                                $dataset['param_name']  = 'sequence_id';
+                                $dataset['label']       = 'Quantity (Sequence file)';
+                                $dataset['placeholder'] = 'Quantity (Sequence file)';
+                                $dataset['field_type']  = 'select';
+                                $dataset['type']        = 'reward_sequence';
+                                $dataset['value']       = '';
+                            }
+                        }
+                        $rewardSequence['dataSet'][]=array( "param_name" => "loop",
+                                                            "label" => "Loop",
+                                                            "placeholder" => "",
+                                                            "sortOrder" => "0",
+                                                            "field_type" => "boolean",
+                                                            "value" => true);
+                        $rewardSequence['dataSet'][]=array( "param_name" => "global",
+                                                            "label" => "Global",
+                                                            "placeholder" => "",
+                                                            "sortOrder" => "0",
+                                                            "field_type" => "boolean",
+                                                            "value" => true);
+
+                    }
+                }
+
+            }
+        }
+
 
         $this->data['actionList'] = $actionList;
         $this->data['conditionList'] = $conditionList;
         $this->data['levelConditionList'] = $levelConditionList;
         $this->data['rewardList'] = $rewardList;
+        $this->data['rewardSequenceList'] = $rewardSequenceList;
         $this->data['feedbackList'] = array_merge($rewardList, $feedbackList);
         $this->data['groupList'] = $groupList;
         $this->data['conditionGroupList'] = $conditionGroupList;
@@ -132,6 +171,7 @@ class Rule extends MY_Controller
         $this->data['webhookList'] = $webhookList;
         $this->data['gameList'] = $gameList;
         $this->data['locationList'] = $locationList;
+        $this->data['sequenceFile'] = $sequenceFile;
 
         //}
 
@@ -279,7 +319,7 @@ class Rule extends MY_Controller
             $rule_info['site_id'] = null;
             $rule_info['action_id'] = $rule_info['action_id']."";
             foreach($rule_info['jigsaw_set'] as &$jigsaw){
-                if( $jigsaw['category']=="REWARD"){
+                if( $jigsaw['category']=="REWARD" || $jigsaw['category']=="REWARD_SEQUENCE"){
                     $this->setRewards($client_id, $site_id, $jigsaw);
                 }elseif( $jigsaw['category']=="GROUP"){// reward group
                     foreach($jigsaw['dataSet'][0]['value'] as &$dataSet){
@@ -406,7 +446,7 @@ class Rule extends MY_Controller
             $rule_info['date_modified'] = "";
             //$rule_info['active_status'] = $rule_info['active_status'] ? 1 : 0;
             foreach($rule_info['jigsaw_set'] as &$jigsaw){
-                if( $jigsaw['category']=="REWARD"){
+                if( $jigsaw['category']=="REWARD" || $jigsaw['category']=="REWARD_SEQUENCE"){
                     $vResult = $this->validateRewards($client_id, $site_id, $jigsaw);
                     if($vResult){ // if $vResult is not NULL then mean that the validation got error
                         $this->push_validation_error($validation_result, $vResult['jigsaw'], $vResult['name']);

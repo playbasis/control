@@ -720,6 +720,13 @@ text-transform: uppercase;
 }
 
 
+.pbd_one_rule_holder .cate_REWARD_SEQUENCE .pbd_rule_label{
+    background: rgb(212, 181, 245);width:135px
+}
+.pbd_one_rule_holder .cate_REWARD_SEQUENCE .pbd_rule_label .help{
+    color: rgb(186, 141, 235);
+}
+
 
 .pbd_one_rule_holder .pbd_rule_label .help{
   float: right; margin: 5px -4px 0px 0px; cursor: pointer; 

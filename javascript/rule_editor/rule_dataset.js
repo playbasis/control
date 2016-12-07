@@ -64,6 +64,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         case 'webhook' : template = jsonString_Webhook;break;
                         case 'gameLevel' : template = jsonString_Game;break;
                         case 'locationArea' : template = jsonString_Location;break;
+                        case 'reward_sequence' : template = jsonString_SequenceFile;break;
                     }
                     return {
                         'hidden': '<input type="text" class="hide" value="'+v.value+'" />',
@@ -214,6 +215,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         case 'webhook' : template = jsonString_Webhook;break;
                         case 'gameLevel' : template = jsonString_Game;break;
                         case 'locationArea' : template = jsonString_Location;break;
+                        case 'reward_sequence' : template = jsonString_SequenceFile;break;
                     }
                     ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type + '">' + get_selected_option_text(template, v.value) + '</span>');
                 }

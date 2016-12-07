@@ -256,7 +256,7 @@ toolstip = {
 		}
 	},
 
-	reward:{
+	reward_sequence:{
 		point:{ 
 			description:'Reward a user with the specified amount of points',
 			field_desc:{
@@ -305,18 +305,51 @@ toolstip = {
 		}
 	},
 
-	feedback: {
-		email: {
-			description: 'Email',
-			field_desc: {
-				template_id: 'template id',
-				subject: 'email subject'
+	reward:{
+		point:{
+			description:'Reward a user with the specified amount of points',
+			field_desc:{
+				reward_name:'reward name',
+				quantity:'amount of point to award',
+				custom_log:'custom parameter to log'
 			}
 		},
-		sms: {
-			description: 'SMS',
-			field_desc: {
-				template_id: 'template id'
+		exp:{
+			description:'Reward a user with the specified amount of exp',
+			field_desc:{
+				reward_name:'reward name',
+				quantity:'amount of exp to award',
+				custom_log:'custom parameter to log'
+			}
+		},
+		badge:{
+			description:'Reward a item to a user',
+			field_desc:{
+				reward_name:'item to award',
+				item_id:'which item to give to user',
+				quantity:'amount to award (this is usually one, however, the same item can be acquired more than once)'
+			}
+		},
+		level:{
+			description:'Reward a user with the specified amount of level',
+			field_desc:{
+				reward_name:'reward name',
+				quantity:'amount of level to award'
+			}
+		},
+		customPointReward:{
+			description:'Reward a user with the specified type and amount of point, where the type and/or amount of point to award can be dynamically calculated and passed in via POST parameters in the request to the /Engine/rule method.',
+			field_desc:{
+				reward_name:'name of point to award',
+				quantity:'amount of point to award'
+			}
+		},
+		etc:{
+			description:'Reward a user with the specified type and amount of point',
+			field_desc:{
+				reward_name:'name of custom point to award',
+				quantity:'amount of custom point to award',
+				custom_log:'custom parameter to log'
 			}
 		}
 	},
