@@ -190,17 +190,101 @@ class jigsaw extends MY_Model
         return $result;
     }
 
-    public function reward($config, $input, &$exInfo = array(), $cache = array())
+    // this is the same function in client_model, need to log earlier to update sequence index
+    private function log_sequence($logData, $jigsawOptionData = array())
+    {
+        assert($logData);
+        assert(is_array($logData));
+        assert($logData['pb_player_id']);
+        assert($logData['action_id']);
+        assert(is_string($logData['action_name']));
+        assert($logData['client_id']);
+        assert($logData['site_id']);
+        assert(is_string($logData['site_name']));
+        if (isset($logData['input'])) //			$logData['input'] = serialize(array_merge($logData['input'], $jigsawOptionData));
+        {
+            $logData['input'] = array_merge($logData['input'], $jigsawOptionData);
+        } else {
+            $logData['input'] = 'NO-INPUT';
+        }
+        $this->set_site_mongodb($logData['site_id']);
+        $mongoDate = new MongoDate(time());
+        $this->mongo_db->insert('jigsaw_log', array(
+            'pb_player_id' => $logData['pb_player_id'],
+            'input' => $logData['input'],
+            'client_id' => $logData['client_id'],
+            'site_id' => $logData['site_id'],
+            'site_name' => $logData['site_name'],
+            'action_log_id' => (isset($logData['action_log_id'])) ? $logData['action_log_id'] : 0,
+            'action_id' => (isset($logData['action_id'])) ? $logData['action_id'] : 0,
+            'action_name' => (isset($logData['action_name'])) ? $logData['action_name'] : '',
+            'rule_id' => (isset($logData['rule_id'])) ? $logData['rule_id'] : 0,
+            'rule_name' => (isset($logData['rule_name'])) ? $logData['rule_name'] : '',
+            'jigsaw_id' => (isset($logData['jigsaw_id'])) ? $logData['jigsaw_id'] : 0,
+            'jigsaw_name' => (isset($logData['jigsaw_name'])) ? $logData['jigsaw_name'] : '',
+            'jigsaw_category' => (isset($logData['jigsaw_category'])) ? $logData['jigsaw_category'] : '',
+            'jigsaw_index' => (isset($logData['jigsaw_index'])) ? $logData['jigsaw_index'] : '',
+            'site_name' => (isset($logData['site_name'])) ? $logData['site_name'] : '',
+            'date_added' => (isset($logData['rule_time'])) ? $logData['rule_time'] : $mongoDate,
+            'date_modified' => $mongoDate
+        ), array("w" => 0, "j" => false));
+    }
+
+    private function getSequenceFile($client_id, $site_id, $sequence_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('sequence_list'));
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            '_id' => new MongoId($sequence_id)
+        ));
+        $this->mongo_db->limit(1);
+        $sequence_list = $this->mongo_db->get('playbasis_sequence_to_client');
+        if (isset($sequence_list[0]['sequence_list']) && $sequence_list[0]['sequence_list']) {
+            return $sequence_list[0]['sequence_list'];
+        } else {
+            return false;
+        }
+    }
+
+    public function reward(&$config, $input, &$exInfo = array(), $cache = array())
     {
         assert($config != false);
         assert(is_array($config));
         assert(isset($config['reward_id']));
         assert(isset($config['reward_name']));
         assert($config["item_id"] == null || isset($config["item_id"]));
-        assert(isset($config['quantity']));
+        assert(isset($config['quantity']) || isset($config['sequence_id']));
         assert($input != false);
         assert(is_array($input));
         assert($input['pb_player_id']);
+        $global = (isset($config["global"]) && $config["global"] === "true") ? true : false;
+        $loop   = (isset($config["loop"]) && $config["loop"] === "true") ? true : false;
+
+        if(isset($config['sequence_id']) && isset($input['jigsaw_category']) && ($input['jigsaw_category'] == "REWARD_SEQUENCE") ){
+            $sequence_list = $this->getSequenceFile($input['client_id'],$input['site_id'],$config['sequence_id']);
+            if($sequence_list){
+                $jigsaw = $this->getMostRecentJigsaw($input, array('input'),$global);
+                $index = (isset($jigsaw['input']['current_index'])) ? ((int)$jigsaw['input']['current_index'])+1 : 0;
+                if ($index > count($sequence_list) - 1) {
+                    if ($loop) {
+                        $index = 0; // looping, reset to be starting at 0
+                    }else{
+                        $exInfo['current_index'] = $jigsaw['input']['current_index'] ;// ensure that "index" has not been changed
+                        return false;
+                    }
+                }
+
+                $exInfo['current_index'] = $index;
+                $config['quantity'] = (int)$sequence_list[$index];
+                $exInfo['quantity'] = $config['quantity'];
+                $this->log_sequence($input,$exInfo);
+            }else{
+                return false;
+            }
+
+        }
 
         if (is_null($config['item_id']) || $config['item_id'] == '') {
             $result =  $this->checkReward($config['reward_id'], $input['site_id']);
