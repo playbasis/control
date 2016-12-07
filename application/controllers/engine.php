@@ -1045,7 +1045,7 @@ class Engine extends Quest
                     }
 
                     /* process 'REWARD' or 'FEEDBACK' */
-                    if ($jigsawCategory == 'REWARD') {
+                    if ($jigsawCategory == 'REWARD' || $jigsawCategory == 'REWARD_SEQUENCE') {
                         if (isset($exInfo['dynamic'])) {
                             //reward is a custom point
                             assert('$exInfo["dynamic"]["reward_name"]');
@@ -1393,7 +1393,7 @@ class Engine extends Quest
                         }  // close if(isset($exInfo['objective_complete']))*/
                     }  // close if($jigsaw['category'] == 'REWARD')
                     // success, log jigsaw - ACTION, CONDITION, REWARD, or FEEDBACK
-                    if (!$input["test"]) {
+                    if (!$input["test"] && $jigsawCategory != 'REWARD_SEQUENCE') {
                         $this->client_model->log($input, $exInfo);
                     }
 
