@@ -2707,6 +2707,7 @@
               "quantity":     { "-type": "integer"},
               "per_user":     { "-type": "integer"},
               "hint":         { "-type": "string"},
+              "status":       { "-type": "boolean"},
               "sponsor":      { "-type": "boolean"},
               "tags":         { "-type": "any", "-optional": "true"}
             }

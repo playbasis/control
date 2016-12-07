@@ -31,6 +31,11 @@ class Badge_model extends MY_Model
             'site_id' => $data['site_id'],
             'deleted' => false
         ));
+
+        if (isset($data['status'])) {
+            $this->mongo_db->where('status', $data['status']);
+        }
+
         if (isset($data['tags'])) {
             $this->mongo_db->where_in('tags', $data['tags']);
         }
@@ -58,6 +63,7 @@ class Badge_model extends MY_Model
             'hint',
             'sponsor',
             'tags',
+            'status',
             'sort_order'
         ));
         $this->mongo_db->select(array(), array('_id'));
