@@ -1161,6 +1161,7 @@ class Rule_model extends MY_Model
                         }
                         break;
                     case 'REWARD':
+                    case 'REWARD_SEQUENCE':
                         $is_condition = false;
                         $check_reward = true;
                         if (empty($each['specific_id'])) {
