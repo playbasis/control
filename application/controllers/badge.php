@@ -43,7 +43,8 @@ class Badge extends REST2_Controller
         } else {
             //get all badge relate to  clients
             $badgesList['badges'] = $this->badge_model->getAllBadges(array_merge($data, array(
-                'tags' => $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null
+                'tags' => $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null,
+                'status' => true
             )));
             $this->response($this->resp->setRespond($badgesList), 200);
         }

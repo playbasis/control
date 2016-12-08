@@ -1078,6 +1078,7 @@ class jigsaw extends MY_Model
         $this->mongo_db->where(array(
             'site_id' => $site_id,
             'badge_id' => $badgeId,
+            'status' => true,
             'deleted' => false
         ));
         $this->mongo_db->limit(1);
