@@ -190,46 +190,6 @@ class jigsaw extends MY_Model
         return $result;
     }
 
-    // this is the same function in client_model, need to log earlier to update sequence index
-    private function log_sequence($logData, $jigsawOptionData = array())
-    {
-        assert($logData);
-        assert(is_array($logData));
-        assert($logData['pb_player_id']);
-        assert($logData['action_id']);
-        assert(is_string($logData['action_name']));
-        assert($logData['client_id']);
-        assert($logData['site_id']);
-        assert(is_string($logData['site_name']));
-        if (isset($logData['input'])) //			$logData['input'] = serialize(array_merge($logData['input'], $jigsawOptionData));
-        {
-            $logData['input'] = array_merge($logData['input'], $jigsawOptionData);
-        } else {
-            $logData['input'] = 'NO-INPUT';
-        }
-        $this->set_site_mongodb($logData['site_id']);
-        $mongoDate = new MongoDate(time());
-        $this->mongo_db->insert('jigsaw_log', array(
-            'pb_player_id' => $logData['pb_player_id'],
-            'input' => $logData['input'],
-            'client_id' => $logData['client_id'],
-            'site_id' => $logData['site_id'],
-            'site_name' => $logData['site_name'],
-            'action_log_id' => (isset($logData['action_log_id'])) ? $logData['action_log_id'] : 0,
-            'action_id' => (isset($logData['action_id'])) ? $logData['action_id'] : 0,
-            'action_name' => (isset($logData['action_name'])) ? $logData['action_name'] : '',
-            'rule_id' => (isset($logData['rule_id'])) ? $logData['rule_id'] : 0,
-            'rule_name' => (isset($logData['rule_name'])) ? $logData['rule_name'] : '',
-            'jigsaw_id' => (isset($logData['jigsaw_id'])) ? $logData['jigsaw_id'] : 0,
-            'jigsaw_name' => (isset($logData['jigsaw_name'])) ? $logData['jigsaw_name'] : '',
-            'jigsaw_category' => (isset($logData['jigsaw_category'])) ? $logData['jigsaw_category'] : '',
-            'jigsaw_index' => (isset($logData['jigsaw_index'])) ? $logData['jigsaw_index'] : '',
-            'site_name' => (isset($logData['site_name'])) ? $logData['site_name'] : '',
-            'date_added' => (isset($logData['rule_time'])) ? $logData['rule_time'] : $mongoDate,
-            'date_modified' => $mongoDate
-        ), array("w" => 0, "j" => false));
-    }
-
     private function getSequenceFile($client_id, $site_id, $sequence_id)
     {
         $this->set_site_mongodb($site_id);
@@ -259,27 +219,24 @@ class jigsaw extends MY_Model
         assert($input != false);
         assert(is_array($input));
         assert($input['pb_player_id']);
-        $global = (isset($config["global"]) && $config["global"] === "true") ? true : false;
-        $loop   = (isset($config["loop"]) && $config["loop"] === "true") ? true : false;
 
         if(isset($config['sequence_id']) && isset($input['jigsaw_category']) && ($input['jigsaw_category'] == "REWARD_SEQUENCE") ){
+
             $sequence_list = $this->getSequenceFile($input['client_id'],$input['site_id'],$config['sequence_id']);
             if($sequence_list){
-                $jigsaw = $this->getMostRecentJigsaw($input, array('input'),$global);
-                $index = (isset($jigsaw['input']['current_index'])) ? ((int)$jigsaw['input']['current_index'])+1 : 0;
-                if ($index > count($sequence_list) - 1) {
-                    if ($loop) {
-                        $index = 0; // looping, reset to be starting at 0
-                    }else{
-                        $exInfo['current_index'] = $jigsaw['input']['current_index'] ;// ensure that "index" has not been changed
-                        return false;
-                    }
-                }
+                
+                $global = (isset($config["global"]) && $config["global"] === "true") ? true : false;
+                $loop = (isset($config["loop"]) && $config["loop"] === "true") ? true : false;
 
-                $exInfo['current_index'] = $index;
-                $config['quantity'] = (int)$sequence_list[$index];
-                $exInfo['quantity'] = $config['quantity'];
-                $this->log_sequence($input,$exInfo);
+                $index = $this->getSequenceIndex($input, array('input'),count($sequence_list) - 1,$global,$loop);
+
+                if($index === false){
+                    return false;
+                }else{
+                    $config['quantity'] = (int)$sequence_list[$index];
+                    $exInfo['quantity'] = $config['quantity'];
+
+                }
             }else{
                 return false;
             }
@@ -935,24 +892,22 @@ class jigsaw extends MY_Model
     {
         $this->set_site_mongodb($input['site_id']);
         $global = (isset($config["global"]) && $config["global"] === "true") ? true : false;
+        $loop = (isset($config["loop"]) && $config["loop"] === "true") ? true : false;
 
-        $result = $this->getMostRecentJigsaw($input, array('input'),$global);
+        $index = $this->getSequenceIndex($input, array('input'),count($config['group_container']) - 1,$global,$loop);
 
-        $i = !$result || !isset($result['input']['index']) ? 0 : $result['input']['index'] + 1;
-        $exInfo['index'] = $i;
-        $exInfo['break'] = true; // generally, "sequence" will block
-        if ($i > count($config['group_container']) - 1) {
-            $exInfo['index'] = $result['input']['index']; // ensure that "index" has not been changed
-            if ($config['loop'] === 'false' || !$config['loop']) {
-                return false;
-            }
-            $i = 0; // looping, reset to be starting at 0
-            $exInfo['index'] = 0;
+        if($index === false){
+            return false;
+        }else{
+            $exInfo['index'] = $index;
+            $exInfo['break'] = true;
+
         }
-        if ($i == count($config['group_container']) - 1) {
+
+        if ($index == count($config['group_container']) - 1) {
             $exInfo['break'] = false;
         } // if this is last item in the sequence jigsaw, we allow the rule to process next jigsaw
-        $conf = $config['group_container'][$i];
+        $conf = $config['group_container'][$index];
         if (array_key_exists('reward_name', $conf)) {
             foreach (array('item_id', 'reward_id') as $field) {
                 if (array_key_exists($field, $conf)) {
@@ -1024,20 +979,112 @@ class jigsaw extends MY_Model
         return $ok;
     }
 
-    public function getMostRecentJigsaw($input, $fields, $global = false)
+    public function getSequenceIndex($input, $fields, $last_index, $global = false, $loop = false)
+    {
+        assert(isset($input['site_id']));
+
+        $this->set_site_mongodb($input['site_id']);
+        $this->mongo_db->select($fields);
+        $this->mongo_db->where(array(
+            'client_id' => $input['client_id'],
+            'site_id' => $input['site_id'],
+            'rule_id' => $input['rule_id'],
+            'jigsaw_id' => $input['jigsaw_id'],
+            'jigsaw_index' => $input['jigsaw_index'],
+
+        ));
+        $this->mongo_db->where_gt('input.index',$last_index);
+        if(!$global){
+            $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
+        }else{
+            $this->mongo_db->where('global', true);
+        }
+
+        $this->mongo_db->order_by(array(
+            'date_added' => 'desc'
+        ));
+        $this->mongo_db->limit(1);
+
+        $mongoDate = new MongoDate(time());
+
+        if($loop){
+            $this->mongo_db->set('input.index',1);
+            $this->mongo_db->set('date_modified',$mongoDate);
+            $this->mongo_db->set('index',1);
+            $index = 0;
+        }else{
+            $this->mongo_db->set('input.index',$last_index+1);
+            $this->mongo_db->set('date_modified',$mongoDate);
+            //$this->mongo_db->set('index',$last_index+1);
+            $index = false;
+        }
+
+        $result = $this->mongo_db->findAndModify('jigsaw_log',array('upsert' => false));
+
+        if(!$result){
+            $this->mongo_db->select($fields);
+            $this->mongo_db->where(array(
+                'client_id' => $input['client_id'],
+                'site_id' => $input['site_id'],
+                'rule_id' => $input['rule_id'],
+                'jigsaw_id' => $input['jigsaw_id'],
+                'jigsaw_index' => $input['jigsaw_index'],
+
+            ));
+
+            if(!$global){
+                $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
+            }else{
+                $this->mongo_db->where('global', true);
+            }
+
+            $this->mongo_db->order_by(array(
+                'date_added' => 'desc'
+            ));
+
+            $this->mongo_db->limit(1);
+            $this->mongo_db->set(array(
+                    'input.group_container' => (isset($input['input']['group_container'])) ?$input['input']['group_container'] : array(),
+                    'input.group_id' => (isset($input['input']['group_id'])) ?$input['input']['group_id'] : null,
+                    'input.global' => (isset($input['input']['global'])) ?$input['input']['global'] : false,
+                    'input.loop' => (isset($input['input']['loop'])) ?$input['input']['loop'] : false,
+                    'client_id' => $input['client_id'],
+                    'site_id' => $input['site_id'],
+                    'site_name' => $input['site_name'],
+                    'action_log_id' => (isset($input['action_log_id'])) ? $input['action_log_id'] : 0,
+                    'action_id' => (isset($input['action_id'])) ? $input['action_id'] : 0,
+                    'action_name' => (isset($input['action_name'])) ? $input['action_name'] : '',
+                    'rule_id' => (isset($input['rule_id'])) ? $input['rule_id'] : 0,
+                    'rule_name' => (isset($input['rule_name'])) ? $input['rule_name'] : '',
+                    'jigsaw_id' => (isset($input['jigsaw_id'])) ? $input['jigsaw_id'] : 0,
+                    'jigsaw_name' => (isset($input['jigsaw_name'])) ? $input['jigsaw_name'] : '',
+                    'jigsaw_category' => (isset($input['jigsaw_category'])) ? $input['jigsaw_category'] : '',
+                    'jigsaw_index' => (isset($input['jigsaw_index'])) ? $input['jigsaw_index'] : '',
+                    'site_name' => (isset($input['site_name'])) ? $input['site_name'] : '',
+                    'date_added' => (isset($input['rule_time'])) ? $input['rule_time'] : $mongoDate,
+                    'date_modified' => $mongoDate)
+            );
+            $this->mongo_db->inc('input.index',1);
+            //$this->mongo_db->inc('index',1);
+            $result = $this->mongo_db->findAndModify('jigsaw_log',array('upsert' => true));
+            $index = isset($result['input']['index']) ? $result['input']['index'] : 0;
+        }
+
+        return  $index;
+    }
+
+    public function getMostRecentJigsaw($input, $fields)
     {
         assert(isset($input['site_id']));
         $this->set_site_mongodb($input['site_id']);
         $this->mongo_db->select($fields);
         $this->mongo_db->where(array(
+            'pb_player_id' => $input['pb_player_id'],
             'site_id' => $input['site_id'],
             'rule_id' => $input['rule_id'],
             'jigsaw_id' => $input['jigsaw_id'],
             'jigsaw_index' => $input['jigsaw_index']
         ));
-        if(!$global){
-            $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
-        }
 
         $this->mongo_db->order_by(array(
             'date_added' => 'desc'
@@ -1048,13 +1095,11 @@ class jigsaw extends MY_Model
         if (!$result) {
             $this->mongo_db->select($fields);
             $this->mongo_db->where(array(
+                'pb_player_id' => $input['pb_player_id'],
                 'site_id' => $input['site_id'],
                 'rule_id' => $input['rule_id'],
                 'jigsaw_id' => $input['jigsaw_id'],
             ));
-            if(!$global){
-                $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
-            }
 
             $this->mongo_db->order_by(array(
                 'date_added' => 'desc'

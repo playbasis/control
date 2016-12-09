@@ -1161,6 +1161,44 @@ class Mongo_db
     }
 
 	/**
+	 * FindAndModify a document.
+	 *
+	 * FindAndModify a document
+	 *
+	 * <code>
+	 * $this->mongo_db->findAndModify('foo', $data = array());
+	 * </code>
+	 *
+	 * @param string $collection Name of the collection
+	 * @param array  $options    Array of update options
+	 *
+	 * @access public
+	 * @return boolean
+	 */
+	public function findAndModify($collection = '', $options = array())
+	{
+		if (empty($collection))
+		{
+			$this->_show_error('No Mongo collection selected to update', 500);
+		}
+
+		try
+		{
+			/* $options = array_merge(array($this->_query_safety => TRUE, 'multiple' => FALSE), $options); */
+			$options = array_merge(array('multiple' => FALSE), $options);
+			$result = $this->_dbhandle->{$collection}->findAndModify($this->wheres, $this->updates, null, $options);
+			$this->_clear($collection, 'findAndModify');
+
+			return $result;
+		}
+
+		catch (MongoCursorException $exception)
+		{
+			$this->_show_error('FindAndModify of data into MongoDB failed: ' . $exception->getMessage(), 500);
+		}
+	}
+
+	/**
 	 * Update a document.
 	 *
 	 * Updates a document
