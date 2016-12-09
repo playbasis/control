@@ -2284,6 +2284,56 @@
           }
         },
         {
+          "MethodName": "Deduct Badge",
+          "Synopsis": "Deduct a badge from a given player.",
+          "HTTPMethod": "POST",
+          "URI": "Player/:id/deduct/badge",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "id",
+              "Required": "URI",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "badge",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "the name of the badge"
+            },
+            {
+              "Name": "amount",
+              "Required": "Y",
+              "Default": "",
+              "Type": "number",
+              "Description": "amount"
+            },
+            {
+              "Name": "force",
+              "Required": "N",
+              "Default": "0",
+              "Type": "number",
+              "Description": "0 = not force if player has not enough badge to deduct, 1 = force to do the deduct (and player's badge becomes zero)"
+            }
+          ],
+          "response": {
+            "old_value":      { "-type": "number"},
+            "new_value":      { "-type": "number"},
+            "value_deducted": { "-type": "number"}
+          }
+        },
+        {
           "MethodName": "Gift",
           "Synopsis": "Unlock player for authentication",
           "HTTPMethod": "POST",

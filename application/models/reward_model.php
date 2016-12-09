@@ -210,6 +210,20 @@ class Reward_model extends MY_Model
         return $result ? $result[0] : array();
     }
 
+    public function getPlayerBadge($client_id, $site_id, $pb_player_id, $badge_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('reward_id', 'value'));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'pb_player_id' => $pb_player_id,
+            'badge_id' => $badge_id,
+        ));
+        $result = $this->mongo_db->get('playbasis_reward_to_player');
+        return $result ? $result[0] : array();
+    }
+
     public function getItemToPlayerRecords($client_id, $site_id, $pb_player_id, $badge_id)
     {
         $this->mongo_db->where(array(
@@ -232,6 +246,21 @@ class Reward_model extends MY_Model
             'site_id' => $site_id,
             'pb_player_id' => $pb_player_id,
             'reward_id' => $reward_id,
+        ));
+        $this->mongo_db->set('value', $value);
+        $this->mongo_db->set('date_modified', $d);
+        $this->mongo_db->update('playbasis_reward_to_player');
+    }
+
+    public function setPlayerBadge($client_id, $site_id, $pb_player_id, $badge_id, $value)
+    {
+        $d = new MongoDate(time());
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'pb_player_id' => $pb_player_id,
+            'badge_id' => $badge_id,
         ));
         $this->mongo_db->set('value', $value);
         $this->mongo_db->set('date_modified', $d);

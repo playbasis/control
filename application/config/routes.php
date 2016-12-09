@@ -130,6 +130,7 @@ $route['Player/questAll'] = 'quest/questAll';
 $route['Player/questAll/'.ANY_STRING] = 'quest/questAll/$1';
 
 $route['Player/'.ANY_STRING.'/deduct'] = 'player/deduct_reward/$1';
+$route['Player/'.ANY_STRING.'/deduct/badge'] = 'player/deduct_badge/$1';
 
 $route['Player/'.ANY_STRING.'/giveGift/'.ANY_STRING] = 'player/giveGift/$1/$2';          // ANY_STRING = sent_player_id/gift_type
 

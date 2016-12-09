@@ -246,6 +246,14 @@ class Error extends CI_Model
                 $errorData['message'] = "OS type is invalid.";
                 $errorData['error_code'] = '0218';
                 break;
+            case "BADGE_FOR_USER_NOT_EXIST":
+                $errorData["message"] = "The user has no such badge";
+                $errorData["error_code"] = "0219";
+                break;
+            case "BADGE_FOR_USER_NOT_ENOUGH":
+                $errorData["message"] = "The user has not enough badge";
+                $errorData["error_code"] = "0220";
+                break;
             case 'ACTION_NOT_FOUND':
                 $errorData['message'] = "Action not available";
                 $errorData['error_code'] = '0301';
