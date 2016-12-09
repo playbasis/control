@@ -1393,7 +1393,7 @@ class Engine extends Quest
                         }  // close if(isset($exInfo['objective_complete']))*/
                     }  // close if($jigsaw['category'] == 'REWARD')
                     // success, log jigsaw - ACTION, CONDITION, REWARD, or FEEDBACK
-                    if (!$input["test"] && $jigsawCategory != 'REWARD_SEQUENCE') {
+                    if (!$input["test"] && $jigsawCategory != 'REWARD_SEQUENCE' && $input['jigsaw_name'] != 'sequence') {
                         $this->client_model->log($input, $exInfo);
                     }
 
@@ -1407,7 +1407,7 @@ class Engine extends Quest
                         }
                     } else {
                         // fail, log jigsaw - ACTION or CONDITION
-                        if (!$input["test"]) {
+                        if (!$input["test"] && $jigsawCategory != 'REWARD_SEQUENCE' && $input['jigsaw_name'] != 'sequence') {
                             $this->client_model->log($input, $exInfo);
                         }
                         break;
