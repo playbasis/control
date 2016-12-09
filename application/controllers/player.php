@@ -2170,6 +2170,62 @@ class Player extends REST2_Controller
         )), 200);
     }
 
+
+    public function deduct_badge_post($player_id)
+    {
+        /* param "player_id" */
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        }
+        $pb_player_id = $this->player_model->getPlaybasisId(array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'cl_player_id' => $player_id,
+        ));
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        /* param "reward" */
+        $badge_name = $this->input->post('badge');
+        $badge_id = $this->badge_model->getBadgeIDByName($this->client_id, $this->site_id, $badge_name);
+
+        if (!$badge_id) {
+            $this->response($this->error->setError('BADGE_NOT_FOUND'), 200);
+        }
+
+        /* param "amount" */
+        $amount = intval($this->input->post('amount'));
+
+        /* param "force" */
+        $force = $this->input->post('force');
+
+        /* get current reward value */
+        $record = $this->reward_model->getPlayerBadge($this->client_id, $this->site_id, $pb_player_id, $badge_id);
+        if (!$record) {
+            $this->response($this->error->setError('BADGE_FOR_USER_NOT_EXIST'), 200);
+        }
+
+        /* set new reward value */
+        if (!$force && $record['value'] < $amount) {
+            $this->response($this->error->setError('BADGE_FOR_USER_NOT_ENOUGH'), 200);
+        }
+        $new_value = $record['value'] - $amount;
+        if ($new_value < 0) {
+            $new_value = 0;
+        }
+        $value_deducted = $record['value'] - $new_value;
+        $this->reward_model->setPlayerBadge($this->client_id, $this->site_id, $pb_player_id, $badge_id, $new_value);
+
+        $this->response($this->resp->setRespond(array(
+            "old_value" => $record['value'],
+            "new_value" => $new_value,
+            "value_deducted" => $value_deducted
+        )), 200);
+    }
+
     public function total_get()
     {
         $log = array();
