@@ -130,7 +130,8 @@ class Reward_model extends MY_Model
                     $this->mongo_db->where(array(
                         'client_id' => $data['client_id'],
                         'site_id' => $data['site_id'],
-                        'reward_id' => $pending_reward['reward_id']
+                        'reward_id' => $pending_reward['reward_id'],
+                        'pb_player_id' => $pending_reward['pb_player_id']
                     ));
                     $this->mongo_db->inc('value', intval($pending_reward['value']));
                     $this->mongo_db->set('date_modified', new MongoDate());
