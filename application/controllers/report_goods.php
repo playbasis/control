@@ -436,6 +436,25 @@ class Report_goods extends MY_Controller
 
         $this->data['reports'] = array();
 
+        $this->load->helper('export_data');
+
+        $exporter = new ExportDataExcel('browser', "GoodsReport_" . date("YmdHis") . ".xls");
+
+        $exporter->initialize(); // starts streaming data to web browser
+
+        $exporter->addRow(array(
+                $this->lang->line('column_player_id'),
+                $this->lang->line('column_username'),
+                $this->lang->line('column_email'),
+                $this->lang->line('column_goods_name'),
+                $this->lang->line('column_goods_code'),
+                $this->lang->line('column_goods_amount'),
+                $this->lang->line('column_status'),
+                $this->lang->line('column_date_added'),
+                $this->lang->line('column_date_expire')
+            )
+        );
+
         foreach ($results as $result) {
 
             $goods_name = null;
@@ -475,40 +494,16 @@ class Report_goods extends MY_Controller
                 'amount' => $result['amount'],
                 // 'redeem'            => $result['redeem']
             );
-        }
-
-        $results = $this->data['reports'];
-
-        $this->load->helper('export_data');
-
-        $exporter = new ExportDataExcel('browser', "GoodsReport_" . date("YmdHis") . ".xls");
-
-        $exporter->initialize(); // starts streaming data to web browser
-
-        $exporter->addRow(array(
-                $this->lang->line('column_player_id'),
-                $this->lang->line('column_username'),
-                $this->lang->line('column_email'),
-                $this->lang->line('column_goods_name'),
-                $this->lang->line('column_goods_code'),
-                $this->lang->line('column_goods_amount'),
-                $this->lang->line('column_status'),
-                $this->lang->line('column_date_added'),
-                $this->lang->line('column_date_expire')
-            )
-        );
-
-        foreach ($results as $row) {
             $exporter->addRow(array(
-                    $row['cl_player_id'],
-                    $row['username'],
-                    $row['email'],
-                    $row['goods_name'],
-                    $row['code'],
-                    $row['amount'],
-                    $row['status'],
-                    $row['date_added'],
-                    $row['date_expire']
+                    $player['cl_player_id'],
+                    $player['username'],
+                    $player['email'],
+                    isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
+                    $goods_data['code'],
+                    $result['amount'],
+                    $status,
+                    $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
+                    isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null
                 )
             );
         }
