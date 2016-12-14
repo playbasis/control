@@ -901,7 +901,6 @@ class jigsaw extends MY_Model
         }else{
             $exInfo['index'] = $index;
             $exInfo['break'] = true;
-
         }
 
         if ($index == count($config['group_container']) - 1) {
@@ -979,7 +978,7 @@ class jigsaw extends MY_Model
         return $ok;
     }
 
-    public function getSequenceIndex($input, $fields, $last_index, $global = false, $loop = false)
+    public function getSequenceIndex($input, $fields, $last_index, $global, $loop)
     {
         assert(isset($input['site_id']));
 
@@ -991,9 +990,8 @@ class jigsaw extends MY_Model
             'rule_id' => $input['rule_id'],
             'jigsaw_id' => $input['jigsaw_id'],
             'jigsaw_index' => $input['jigsaw_index'],
-
         ));
-        $this->mongo_db->where_gt('input.index',$last_index);
+        $this->mongo_db->where_lte('input.index',$last_index);
         if(!$global){
             $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
         }else{
@@ -1007,20 +1005,14 @@ class jigsaw extends MY_Model
 
         $mongoDate = new MongoDate(time());
 
-        if($loop){
-            $this->mongo_db->set('input.index',1);
-            $this->mongo_db->set('date_modified',$mongoDate);
-            $this->mongo_db->set('index',1);
-            $index = 0;
-        }else{
-            $this->mongo_db->set('input.index',$last_index+1);
-            $this->mongo_db->set('date_modified',$mongoDate);
-            //$this->mongo_db->set('index',$last_index+1);
-            $index = false;
-        }
+        $this->mongo_db->set(array(
+                'date_added' => (isset($input['rule_time'])) ? $input['rule_time'] : $mongoDate,
+                'date_modified' => $mongoDate)
+        );
+        $this->mongo_db->inc('input.index',1);
+        $result = $this->mongo_db->findAndModify('jigsaw_log');
 
-        $result = $this->mongo_db->findAndModify('jigsaw_log',array('upsert' => false));
-
+        $index = isset($result['input']['index']) ? $result['input']['index'] : 0;
         if(!$result){
             $this->mongo_db->select($fields);
             $this->mongo_db->where(array(
@@ -1031,7 +1023,7 @@ class jigsaw extends MY_Model
                 'jigsaw_index' => $input['jigsaw_index'],
 
             ));
-
+            $this->mongo_db->where_gt('input.index',$last_index);
             if(!$global){
                 $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
             }else{
@@ -1041,33 +1033,70 @@ class jigsaw extends MY_Model
             $this->mongo_db->order_by(array(
                 'date_added' => 'desc'
             ));
-
             $this->mongo_db->limit(1);
-            $this->mongo_db->set(array(
-                    'input.group_container' => (isset($input['input']['group_container'])) ?$input['input']['group_container'] : array(),
-                    'input.group_id' => (isset($input['input']['group_id'])) ?$input['input']['group_id'] : null,
-                    'input.global' => (isset($input['input']['global'])) ?$input['input']['global'] : false,
-                    'input.loop' => (isset($input['input']['loop'])) ?$input['input']['loop'] : false,
+
+            if($loop) {
+                $this->mongo_db->set(array(
+                        'input.index' => 1,
+                        'date_modified' => $mongoDate)
+                );
+                $index = 0;
+            }else{
+                $this->mongo_db->set(array(
+                        'date_modified' => $mongoDate)
+                );
+                $index = false;
+            }
+            $result = $this->mongo_db->findAndModify('jigsaw_log');
+
+            if(!$result){
+                $this->mongo_db->select($fields);
+                $this->mongo_db->where(array(
                     'client_id' => $input['client_id'],
                     'site_id' => $input['site_id'],
-                    'site_name' => $input['site_name'],
-                    'action_log_id' => (isset($input['action_log_id'])) ? $input['action_log_id'] : 0,
-                    'action_id' => (isset($input['action_id'])) ? $input['action_id'] : 0,
-                    'action_name' => (isset($input['action_name'])) ? $input['action_name'] : '',
-                    'rule_id' => (isset($input['rule_id'])) ? $input['rule_id'] : 0,
-                    'rule_name' => (isset($input['rule_name'])) ? $input['rule_name'] : '',
-                    'jigsaw_id' => (isset($input['jigsaw_id'])) ? $input['jigsaw_id'] : 0,
-                    'jigsaw_name' => (isset($input['jigsaw_name'])) ? $input['jigsaw_name'] : '',
-                    'jigsaw_category' => (isset($input['jigsaw_category'])) ? $input['jigsaw_category'] : '',
-                    'jigsaw_index' => (isset($input['jigsaw_index'])) ? $input['jigsaw_index'] : '',
-                    'site_name' => (isset($input['site_name'])) ? $input['site_name'] : '',
-                    'date_added' => (isset($input['rule_time'])) ? $input['rule_time'] : $mongoDate,
-                    'date_modified' => $mongoDate)
-            );
-            $this->mongo_db->inc('input.index',1);
-            //$this->mongo_db->inc('index',1);
-            $result = $this->mongo_db->findAndModify('jigsaw_log',array('upsert' => true));
-            $index = isset($result['input']['index']) ? $result['input']['index'] : 0;
+                    'rule_id' => $input['rule_id'],
+                    'jigsaw_id' => $input['jigsaw_id'],
+                    'jigsaw_index' => $input['jigsaw_index'],
+                ));
+
+                if(!$global){
+                    $this->mongo_db->where('pb_player_id', $input['pb_player_id']);
+                }else{
+                    $this->mongo_db->where('global', true);
+                }
+
+                $this->mongo_db->order_by(array(
+                    'date_added' => 'desc'
+                ));
+
+                $this->mongo_db->limit(1);
+
+                $this->mongo_db->set(array(
+                        'input.group_container' => (isset($input['input']['group_container'])) ?$input['input']['group_container'] : array(),
+                        'input.group_id' => (isset($input['input']['group_id'])) ?$input['input']['group_id'] : null,
+                        'input.global' => (isset($input['input']['global'])) ?$input['input']['global'] : false,
+                        'input.loop' => (isset($input['input']['loop'])) ?$input['input']['loop'] : false,
+                        'client_id' => $input['client_id'],
+                        'site_id' => $input['site_id'],
+                        'site_name' => $input['site_name'],
+                        'action_log_id' => (isset($input['action_log_id'])) ? $input['action_log_id'] : 0,
+                        'action_id' => (isset($input['action_id'])) ? $input['action_id'] : 0,
+                        'action_name' => (isset($input['action_name'])) ? $input['action_name'] : '',
+                        'rule_id' => (isset($input['rule_id'])) ? $input['rule_id'] : 0,
+                        'rule_name' => (isset($input['rule_name'])) ? $input['rule_name'] : '',
+                        'jigsaw_id' => (isset($input['jigsaw_id'])) ? $input['jigsaw_id'] : 0,
+                        'jigsaw_name' => (isset($input['jigsaw_name'])) ? $input['jigsaw_name'] : '',
+                        'jigsaw_category' => (isset($input['jigsaw_category'])) ? $input['jigsaw_category'] : '',
+                        'jigsaw_index' => (isset($input['jigsaw_index'])) ? $input['jigsaw_index'] : '',
+                        'site_name' => (isset($input['site_name'])) ? $input['site_name'] : '',
+                        'date_added' => (isset($input['rule_time'])) ? $input['rule_time'] : $mongoDate,
+                        'date_modified' => $mongoDate)
+                );
+                $this->mongo_db->inc('input.index',1);
+                $result = $this->mongo_db->findAndModify('jigsaw_log',array('upsert' => true));
+
+                $index = isset($result['input']['index']) ? $result['input']['index'] : 0;
+            }
         }
 
         return  $index;
