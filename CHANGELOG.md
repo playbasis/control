@@ -1,25 +1,83 @@
 # Change Log
+## [2.24.0](https://github.com/playbasis/control/tree/2.24.0) (2016-12-15)
+[Full Changelog](https://github.com/playbasis/control/compare/2.23.0...2.24.0)
+
+## [2.23.5/fix_download_goods_report](https://github.com/playbasis/control/tree/2.23.5/fix_download_goods_report) (2016-12-14)
+[Full Changelog](https://github.com/playbasis/control/compare/2.23.4/add_unilver_to_weekly_report...2.23.5/fix_download_goods_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.23.5/fix download goods report [\#338](https://github.com/playbasis/control/pull/338) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.23.4/add_unilver_to_weekly_report](https://github.com/playbasis/control/tree/2.23.4/add_unilver_to_weekly_report) (2016-12-08)
+[Full Changelog](https://github.com/playbasis/control/compare/2.23.3/sequence_file...2.23.4/add_unilver_to_weekly_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.23.4/add unilver to weekly report [\#337](https://github.com/playbasis/control/pull/337) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.23.3/sequence_file](https://github.com/playbasis/control/tree/2.23.3/sequence_file) (2016-12-07)
+[Full Changelog](https://github.com/playbasis/control/compare/2.23.2/fix_goods_report...2.23.3/sequence_file)
+
+**Merged pull requests:**
+
+- Hotfix/2.23.3/sequence file [\#336](https://github.com/playbasis/control/pull/336) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.23.2/fix_goods_report](https://github.com/playbasis/control/tree/2.23.2/fix_goods_report) (2016-12-06)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.2/cron_to_deduct_token_for_hsbchk...2.23.2/fix_goods_report)
+
+**Fixed bugs:**
+
+- Hotfix/2.23.2/fix goods report [\#335](https://github.com/playbasis/control/pull/335) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.24.2/cron_to_deduct_token_for_hsbchk](https://github.com/playbasis/control/tree/2.24.2/cron_to_deduct_token_for_hsbchk) (2016-12-06)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.1/report_status_reward...2.24.2/cron_to_deduct_token_for_hsbchk)
+
+**Merged pull requests:**
+
+- Hotfix/2.24.2/cron to deduct token for hsbchk [\#334](https://github.com/playbasis/control/pull/334) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.24.1/report_status_reward](https://github.com/playbasis/control/tree/2.24.1/report_status_reward) (2016-12-02)
+[Full Changelog](https://github.com/playbasis/control/compare/2.23.1/add_digi_to_master_report...2.24.1/report_status_reward)
+
+**Implemented enhancements:**
+
+- Hotfix/2.24.1/report status reward [\#333](https://github.com/playbasis/control/pull/333) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.23.1/add_digi_to_master_report](https://github.com/playbasis/control/tree/2.23.1/add_digi_to_master_report) (2016-12-01)
+[Full Changelog](https://github.com/playbasis/control/compare/2.23.0...2.23.1/add_digi_to_master_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.23.1/add digi to master report [\#332](https://github.com/playbasis/control/pull/332) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.23.0](https://github.com/playbasis/control/tree/2.23.0) (2016-11-30)
-[Full Changelog](https://github.com/playbasis/control/compare/2.22.0...2.23.0)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.8/fix_date_in_report__action_download...2.23.0)
 
 **Implemented enhancements:**
 
 - support time in campaign [\#331](https://github.com/playbasis/control/pull/331) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.22.8/fix_date_in_report__action_download](https://github.com/playbasis/control/tree/2.22.8/fix_date_in_report__action_download) (2016-11-29)
-[Full Changelog](https://github.com/playbasis/control/compare/2.22.7/enable_custom_log...2.22.8/fix_date_in_report__action_download)
+- Hotfix/2.22.7/enable custom log [\#328](https://github.com/playbasis/control/pull/328) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- pagination mark as used in goods [\#324](https://github.com/playbasis/control/pull/324) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.22.6/timezone in report [\#323](https://github.com/playbasis/control/pull/323) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.22.4/upload manual spin [\#321](https://github.com/playbasis/control/pull/321) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.22.3/location image [\#320](https://github.com/playbasis/control/pull/320) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.22.2/limit point amount per day [\#319](https://github.com/playbasis/control/pull/319) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 **Fixed bugs:**
 
 - Hotfix/2.22.8/fix date in report  action download [\#330](https://github.com/playbasis/control/pull/330) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.22.1/fix tabs in game [\#318](https://github.com/playbasis/control/pull/318) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Merged pull requests:**
+
+- Hotfix/2.22.5/multi language in content [\#322](https://github.com/playbasis/control/pull/322) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.22.8/fix_date_in_report__action_download](https://github.com/playbasis/control/tree/2.22.8/fix_date_in_report__action_download) (2016-11-29)
+[Full Changelog](https://github.com/playbasis/control/compare/2.22.7/enable_custom_log...2.22.8/fix_date_in_report__action_download)
 
 ## [2.22.7/enable_custom_log](https://github.com/playbasis/control/tree/2.22.7/enable_custom_log) (2016-11-29)
 [Full Changelog](https://github.com/playbasis/control/compare/fix_bug_tags_not_working_for_custompoints...2.22.7/enable_custom_log)
-
-**Implemented enhancements:**
-
-- Hotfix/2.22.7/enable custom log [\#328](https://github.com/playbasis/control/pull/328) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [fix_bug_tags_not_working_for_custompoints](https://github.com/playbasis/control/tree/fix_bug_tags_not_working_for_custompoints) (2016-11-28)
 [Full Changelog](https://github.com/playbasis/control/compare/fix_perf_checkOwnerGoods...fix_bug_tags_not_working_for_custompoints)
@@ -34,49 +92,24 @@
 **Implemented enhancements:**
 
 - Hotfix/fix perf check owner goods [\#326](https://github.com/playbasis/control/pull/326) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
-- pagination mark as used in goods [\#324](https://github.com/playbasis/control/pull/324) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.22.6/timezone_in_report](https://github.com/playbasis/control/tree/2.22.6/timezone_in_report) (2016-11-24)
 [Full Changelog](https://github.com/playbasis/control/compare/2.22.5/multi_language_in_content...2.22.6/timezone_in_report)
 
-**Implemented enhancements:**
-
-- Hotfix/2.22.6/timezone in report [\#323](https://github.com/playbasis/control/pull/323) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.22.5/multi_language_in_content](https://github.com/playbasis/control/tree/2.22.5/multi_language_in_content) (2016-11-24)
 [Full Changelog](https://github.com/playbasis/control/compare/2.22.4/upload_manual_spin...2.22.5/multi_language_in_content)
-
-**Merged pull requests:**
-
-- Hotfix/2.22.5/multi language in content [\#322](https://github.com/playbasis/control/pull/322) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.22.4/upload_manual_spin](https://github.com/playbasis/control/tree/2.22.4/upload_manual_spin) (2016-11-22)
 [Full Changelog](https://github.com/playbasis/control/compare/2.22.3/location_image...2.22.4/upload_manual_spin)
 
-**Implemented enhancements:**
-
-- Hotfix/2.22.4/upload manual spin [\#321](https://github.com/playbasis/control/pull/321) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.22.3/location_image](https://github.com/playbasis/control/tree/2.22.3/location_image) (2016-11-18)
 [Full Changelog](https://github.com/playbasis/control/compare/2.22.2/limit_point_amount_per_day...2.22.3/location_image)
-
-**Implemented enhancements:**
-
-- Hotfix/2.22.3/location image [\#320](https://github.com/playbasis/control/pull/320) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.22.2/limit_point_amount_per_day](https://github.com/playbasis/control/tree/2.22.2/limit_point_amount_per_day) (2016-11-18)
 [Full Changelog](https://github.com/playbasis/control/compare/2.22.1/fix_tabs_in_game...2.22.2/limit_point_amount_per_day)
 
-**Implemented enhancements:**
-
-- Hotfix/2.22.2/limit point amount per day [\#319](https://github.com/playbasis/control/pull/319) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.22.1/fix_tabs_in_game](https://github.com/playbasis/control/tree/2.22.1/fix_tabs_in_game) (2016-11-17)
 [Full Changelog](https://github.com/playbasis/control/compare/2.22.0...2.22.1/fix_tabs_in_game)
-
-**Fixed bugs:**
-
-- Hotfix/2.22.1/fix tabs in game [\#318](https://github.com/playbasis/control/pull/318) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.22.0](https://github.com/playbasis/control/tree/2.22.0) (2016-11-17)
 [Full Changelog](https://github.com/playbasis/control/compare/2.21.8/manual-spin_for_digi...2.22.0)
