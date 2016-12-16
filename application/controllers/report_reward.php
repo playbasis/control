@@ -400,6 +400,23 @@ class Report_reward extends MY_Controller
 
         $this->data['reports'] = array();
 
+        $this->load->helper('export_data');
+
+        $exporter = new ExportDataExcel('browser', "RewardReport_" . date("YmdHis") . ".xls");
+
+        $exporter->initialize(); // starts streaming data to web browser
+
+        $exporter->addRow(array(
+                $this->lang->line('column_player_id'),
+                $this->lang->line('column_username'),
+                $this->lang->line('column_email'),
+                $this->lang->line('column_reward_name'),
+                $this->lang->line('column_reward_value'),
+                $this->lang->line('column_reward_status'),
+                $this->lang->line('column_date_added')
+            )
+        );
+
         foreach ($results as $result) {
             $status = null;
             $badge_name = null;
@@ -439,44 +456,21 @@ class Report_reward extends MY_Controller
                 'value' => $result['value'],
                 'status' => isset($status) ? $status : null
             );
-        }
 
-        $results = $this->data['reports'];
-
-        $this->load->helper('export_data');
-
-        $exporter = new ExportDataExcel('browser', "RewardReport_" . date("YmdHis") . ".xls");
-
-        $exporter->initialize(); // starts streaming data to web browser
-
-        $exporter->addRow(array(
-                $this->lang->line('column_player_id'),
-                $this->lang->line('column_username'),
-                $this->lang->line('column_email'),
-                $this->lang->line('column_reward_name'),
-                $this->lang->line('column_reward_value'),
-                $this->lang->line('column_reward_status'),
-                $this->lang->line('column_date_added')
-            )
-        );
-
-        foreach ($results as $row) {
-            if ($row['badge_name'] != null) {
-                $badge_name = $row['badge_name'];
-            } else {
-                $reward_name = $row['reward_name']['name'];
-            }
             $exporter->addRow(array(
-                    $row['cl_player_id'],
-                    $row['username'],
-                    $row['email'],
-                    isset($badge_name) ? $badge_name : $reward_name,
-                    $row['value'],
-                    $row['date_added']
+                    $player['cl_player_id'],
+                    $player['username'],
+                    $player['email'],
+                    isset($badge_name) ? $badge_name : $reward_name['name'],
+                    $result['value'],
+                    isset($status) ? $status : null,
+                    $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added'])
                 )
             );
         }
+
         $exporter->finalize();
+
     }
 }
 
