@@ -45,15 +45,19 @@ class Goods_model extends MY_Model
         }
 
         if(isset($data['date_start']) && !empty($data['date_start']) && isset($data['date_end']) && !empty($data['date_end'])){
-            $this->mongo_db->where(array('$and' => array( array('$or' => array(array("date_start" => null), array("date_start" => array('$gte'=> $data['date_start'])))),
-                                                          array('$or' => array(array("date_expire" => null), array("date_expire" => array('$lte'=> $data['date_end'])))))));
+            $this->mongo_db->where(array('$and' => array(array('$and' => array(array('$or' => array(array("date_start" => null), array("date_start" => array('$lte'=> $data['date_start'])))),
+                                                                               array('$or' => array(array("date_expire" => null), array("date_expire" => array('$gte'=> $data['date_start'])))))),
+                                                         array('$and' => array(array('$or' => array(array("date_start" => null), array("date_start" => array('$lte'=> $data['date_end'])))),
+                                                                               array('$or' => array(array("date_expire" => null), array("date_expire" => array('$gte'=> $data['date_end'])))))))));
         } else {
             if(isset($data['date_start']) && !empty($data['date_start'])){
-                $this->mongo_db->where(array('$or' => array(array("date_start" => null), array("date_start" => array('$gte'=> $data['date_start'])))));
+                $this->mongo_db->where(array('$and' => array( array('$or' => array(array("date_start" => null), array("date_start" => array('$lte'=> $data['date_start'])))),
+                                                              array('$or' => array(array("date_expire" => null), array("date_expire" => array('$gte'=> $data['date_start'])))))));
             }
 
             if(isset($data['date_end']) && !empty($data['date_end'])){
-                $this->mongo_db->where(array('$or' => array(array("date_expire" => null), array("date_expire" => array('$lte'=> $data['date_end'])))));
+                $this->mongo_db->where(array('$and' => array( array('$or' => array(array("date_start" => null), array("date_start" => array('$lte'=> $data['date_end'])))),
+                                                              array('$or' => array(array("date_expire" => null), array("date_expire" => array('$gte'=> $data['date_end'])))))));
             }
         }
 
