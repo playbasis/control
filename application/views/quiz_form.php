@@ -111,7 +111,7 @@ function find_template($data, $type, $template_id) {
                         <tr>
                             <td><?php echo $this->lang->line('entry_tags'); ?>:</td>
                             <td>
-                                <input type="text" class="tags" name="tags" value="<?php echo isset($quiz)&&isset($quiz['tags'])&&$quiz['tags'] ? implode($quiz['tags'],',') : set_value('tags'); ?>" />
+                                <input type="text" class="tags" name="tags" value="<?php echo isset($quiz)&&isset($quiz['tags'])&&$quiz['tags'] ? implode(',',$quiz['tags']) : set_value('tags'); ?>" />
                             </td>
 
                         </tr>

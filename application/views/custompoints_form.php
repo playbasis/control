@@ -158,7 +158,7 @@
                     <tr>
                         <td><?php echo $this->lang->line('entry_tags'); ?>:</td>
                         <td>
-                            <input type="text" class="tags" name="tags" value="<?php echo !empty($tags) ? implode($tags,',') : set_value('tags'); ?>"
+                            <input type="text" class="tags" name="tags" value="<?php echo !empty($tags) ? implode(',',$tags) : set_value('tags'); ?>"
                                    size="5" class="tooltips" data-placement="right" title="Tag(s) input"/>
                         </td>
                     </tr>

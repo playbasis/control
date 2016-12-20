@@ -106,7 +106,7 @@
                                                     <td class="right"><?php echo (isset($badge['quantity']) && !is_null($badge['quantity'])) ? $badge['quantity'] : 'Unlimited'; ?></td>
                                                     <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
                                                     <td class="right"><?php echo $badge['sort_order']; ?></td>
-                                                    <td class="right"><?php echo (((isset($badge['tags'])) && $badge['tags'])? implode($badge['tags'],',') : null); ?></td>
+                                                    <td class="right"><?php echo (((isset($badge['tags'])) && $badge['tags'])? implode(',',$badge['tags']) : null); ?></td>
                                                     <td class="right">
                                                         <?php
                                                             if((!$client_id) || (!(isset($badge['sponsor']) && $badge['sponsor']))) {

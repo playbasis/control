@@ -47,7 +47,7 @@
                                 <td style="text-align: center;"> <input type="checkbox" name="selected[]" value="<?php echo $sequence['_id']; ?>" /> </td>
                                 <td class="left"><?php echo $sequence['name']; ?></td>
                                 <td class="left"><?php echo $sequence['file_name']; ?></td>
-                                <td class="left" ><?php echo (((isset($sequence['tags'])) && $sequence['tags'])? implode($sequence['tags'],',') : null); ?></td>
+                                <td class="left" ><?php echo (((isset($sequence['tags'])) && $sequence['tags'])? implode(',',$sequence['tags']) : null); ?></td>
                                 <td class="center" >
                                     <?php
                                         echo anchor('sequence/update/'.$sequence['_id'], "<i class='fa fa-edit fa-lg''></i>",

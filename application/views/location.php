@@ -58,7 +58,7 @@
                                 <td class="left" width="14%"><?php echo $location['object_type']; ?></td>
                                 <td class="left" width="14%"><?php echo $location['object_name']; ?></td>
                                 <td class="left" width="9%"><?php echo isset($location['status']) && $location['status'] ? "enable" : "disable"; ?></td>
-                                <td class="left" width="11%"><?php echo (((isset($location['tags'])) && $location['tags'])? implode($location['tags'],',') : null); ?></td>
+                                <td class="left" width="11%"><?php echo (((isset($location['tags'])) && $location['tags'])? implode(',',$location['tags']) : null); ?></td>
                                 <td class="center" width="4%">
                                     <?php
                                         echo anchor('location/update/'.$location['_id'], "<i class='fa fa-edit fa-lg''></i>",

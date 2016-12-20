@@ -51,7 +51,7 @@
                                 <td class="left" width="10%"><?php echo isset($cs['type']) ? $cs['type'] : ""; ?></td>
                                 <td class="left" width="10%"><?php echo isset($cs['quantity']) ? $cs['quantity'] : "Unlimited"; ?></td>
                                 <td class="left" width="10%"><?php echo isset($cs['pending']) && $cs['pending'] === 'on' ? "true" : "false"; ?></td>
-                                <td class="right" width="20%"><?php echo (((isset($cs['tags'])) && $cs['tags'])? implode($cs['tags'],',') : null); ?></td>
+                                <td class="right" width="20%"><?php echo (((isset($cs['tags'])) && $cs['tags'])? implode(',',$cs['tags']) : null); ?></td>
                                 <td class="right" width="10%">
                                     <?php
                                         echo anchor('custompoints/update/'.$cs['reward_id'], "<i class='fa fa-edit fa-lg''></i>",
