@@ -58,7 +58,7 @@
                                 <td class="left"><?php echo $language['language']; ?></td>
                                 <td class="left"><?php echo $language['abbreviation']; ?></td>
                                 <td class="left"><?php echo isset($language['status']) && $language['status'] ? "enable" : "disable"; ?></td>
-                                <td class="left"><?php echo (((isset($language['tags'])) && $language['tags'])? implode(',',$language['tags']) : null); ?></td>
+                                <td class="right" style="word-wrap:break-word;"><?php echo (isset($language['tags']) && $language['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $language['tags']).'</span>' : null); ?></td>
                                 <td class="center">
                                     <?php
                                         echo anchor('language/update/'.$language['_id'], "<i class='fa fa-edit fa-lg''></i>",

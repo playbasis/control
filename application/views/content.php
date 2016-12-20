@@ -119,7 +119,7 @@
                                                     <td class="right"><?php echo isset($content['category']['name']) ? $content['category']['name'] : ""; ?></td>
                                                     <td class="right"><?php echo isset($content['player_id']) ? $content['player_id'] : ""; ?></td>
                                                     <td class="right"><?php echo isset($content['date_start']) ? dateMongotoReadable($content['date_start']) : "N/A"; ?>&nbsp;-&nbsp;<?php echo isset($content['date_end']) ? dateMongotoReadable($content['date_end']) : "N/A"; ?></td>
-                                                    <td class="right"><?php echo (isset($content['tags']) && $content['tags']) ? implode(',',$content['tags']) : null; ?></td>
+                                                    <td class="right" style="word-wrap:break-word;"><?php echo (isset($content['tags']) && $content['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $content['tags']).'</span>' : null); ?></td>
                                                     <td class="right"><?php echo isset($content['status']) ? ( $content['status'] ? "Enable" : "Disabled") : "N/A"; ?></td>
                                                     <?php if($org_status){?>
                                                         <td class="right"><?php echo (isset($content['organization_node']) && !is_null($content['organization_node']))?$content['organization_node']:''; ?></td>
