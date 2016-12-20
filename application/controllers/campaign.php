@@ -28,8 +28,8 @@ class Campaign extends REST2_Controller
     public function activeCampaign_get()
     {
         $result = $this->campaign_model->getActiveCampaign($this->client_id, $this->site_id);
-        unset($result['_id']);
         if($result){
+            unset($result['_id']);
             array_walk_recursive($result, array($this, "convert_mongo_object_and_optional"));
         }
 
