@@ -123,6 +123,12 @@ class Goods extends REST2_Controller
                 $data['selected_field'] = array_values($data['selected_field']);
             }
 
+            if ($this->input->get('active_filter') == "true"){
+                if(!$this->input->get('date_start') && ! $this->input->get('date_end')){
+                    $data['date_start'] = new MongoDate();
+                }
+            }
+
             if ($this->input->get('date_start')){
                 $data['date_start'] = new MongoDate(strtotime($this->input->get('date_start')));
             }
