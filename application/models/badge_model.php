@@ -1005,7 +1005,7 @@ class Badge_model extends MY_Model
                 $badge["status"] = false;
                 $badge["client_id"] = $client_id;
                 $badge["site_id"] = $site_id;
-                isset($badge["tags"])? $badge["tags"] = implode($badge['tags'],',') : null;
+                isset($badge["tags"]) ? $badge["tags"] = implode(',',$badge['tags']) : null;
 
                 $this->addBadgeToClient($badge);
             }

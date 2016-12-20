@@ -62,7 +62,7 @@
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_tags'); ?>:</td>
-                            <td><input type="text" class="tags" name="tags" size="100" value="<?php echo isset($editQuest['tags']) && ($editQuest['tags']) ? implode($editQuest['tags'],',') :  set_value('tags'); ?>" /></td>
+                            <td><input type="text" class="tags" name="tags" size="100" value="<?php echo isset($editQuest['tags']) && ($editQuest['tags']) ? implode(',',$editQuest['tags']) :  set_value('tags'); ?>" /></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_sort_order'); ?>:</td>
