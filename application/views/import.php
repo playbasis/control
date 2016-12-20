@@ -66,20 +66,20 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;">
+                        <td width="7" style="text-align: center;">
                             <input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                         </td>
                         <td class="center" ><?php echo $this->lang->line('entry_name'); ?></td>
-                        <td class="center" width="60"><?php echo $this->lang->line('entry_hosttype'); ?></td>
+                        <td class="center" style="width:60px;"><?php echo $this->lang->line('entry_hosttype'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_hostname'); ?></td>
-                        <td class="center" width="40"><?php echo $this->lang->line('entry_port'); ?></td>
+                        <td class="center" style="width:40px;"><?php echo $this->lang->line('entry_port'); ?></td>
                         <td class="center" ><?php echo $this->lang->line('entry_username'); ?></td>
-                        <td class="center" width="130"><?php echo $this->lang->line('entry_filename'); ?></td>
-                        <td class="center" width="130"><?php echo $this->lang->line('column_directory'); ?></td>
-                        <td class="center" width="80"><?php echo $this->lang->line('entry_import_type'); ?></td>
-                        <td class="center" width="60"><?php echo $this->lang->line('entry_occur'); ?></td>
-                        <td class="center" width="60"><?php echo $this->lang->line('entry_execution_time'); ?></td>
-                        <td class="center" width="130"><?php echo $this->lang->line('column_action'); ?></td>
+                        <td class="center" style="width:130px;"><?php echo $this->lang->line('entry_filename'); ?></td>
+                        <td class="center" style="width:130px;"><?php echo $this->lang->line('column_directory'); ?></td>
+                        <td class="center" style="width:80px;"><?php echo $this->lang->line('entry_import_type'); ?></td>
+                        <td class="center" style="width:60px;"><?php echo $this->lang->line('entry_occur'); ?></td>
+                        <td class="center" style="width:60px;"><?php echo $this->lang->line('entry_execution_time'); ?></td>
+                        <td class="center" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -202,12 +202,12 @@
                         <thead>
                         <tr>
                             <td class="center" ><?php echo $this->lang->line('entry_name'); ?></td>
-                            <td class="center" width="100"><?php echo $this->lang->line('entry_import_method'); ?></td>
-                            <td class="center" width="130"><?php echo $this->lang->line('entry_import_type'); ?></td>
-                            <td class="center" width="110"><?php echo $this->lang->line('entry_occur'); ?></td>
-                            <td class="center" width="150"><?php echo $this->lang->line('entry_date_execute'); ?></td>
+                            <td class="center" style="width:100px;"><?php echo $this->lang->line('entry_import_method'); ?></td>
+                            <td class="center" style="width:130px;"><?php echo $this->lang->line('entry_import_type'); ?></td>
+                            <td class="center" style="width:110px;"><?php echo $this->lang->line('entry_occur'); ?></td>
+                            <td class="center" style="width:150px;"><?php echo $this->lang->line('entry_date_execute'); ?></td>
                             <td class="center" ><?php echo $this->lang->line('entry_results'); ?></td>
-                            <td class="center" width="150"><?php echo $this->lang->line('column_action'); ?></td>
+                            <td class="center" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>
                         <tbody>

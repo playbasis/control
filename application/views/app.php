@@ -45,7 +45,7 @@
                     <table class="list app-table">
                         <tbody>
                             <tr class="app-table-label">
-                                <td style="text-align: center;" width="5%">
+                                <td style="text-align: center;" width="7">
                                     <input type="checkbox" name="app_selected[]" value="<?php echo $site['site_id']; ?>" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);">
                                 </td>
                                 <td class="center" width="10%">

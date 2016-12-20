@@ -34,13 +34,13 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                        <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="left" style="width:200px;"><?php echo $this->lang->line('column_name'); ?></td>
                         <td class="left"><?php echo $this->lang->line('column_url'); ?></td>
                         <td class="left" ><?php echo $this->lang->line('column_body'); ?></td>
-                        <td class="left" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
+                        <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
+                        <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
+                        <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -60,7 +60,12 @@
                                 <td class="left"><?php echo ($webhook['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $webhook['sort_order']; ?></td>
                                 <td class="right">
-                                    [ <?php echo anchor('webhook/update/'.$webhook['_id'], 'Edit'); ?> ]
+                                    <?php echo anchor('webhook/update/'.$webhook['_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                        array('class'=>'tooltips',
+                                            'title' => 'Edit',
+                                            'data-placement' => 'top'
+                                        ));
+                                    ?>
                                     <?php echo anchor('webhook/inscrease_order/'.$webhook['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$webhook['_id'], 'style'=>'text-decoration:none'));?>
                                     <?php echo anchor('webhook/decrease_order/'.$webhook['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$webhook['_id'], 'style'=>'text-decoration:none' ));?>
                                 </td>

@@ -328,6 +328,9 @@ input[type=radio]:checked + label {
 	width: 60px;
 	text-align: center;
 }
+table.list {
+	table-layout: fixed;
+}
 .app-col-action a{
 	color: #999;
 	margin: 0 5px;

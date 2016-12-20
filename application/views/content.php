@@ -42,7 +42,7 @@
                                     <table class="list">
                                         <thead>
                                         <tr>
-                                            <td rowspan="2" width="1" style="text-align: center;">
+                                            <td rowspan="2" width="7" style="text-align: center;">
                                                 <input type="checkbox"
                                                        onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                                             </td>
@@ -52,11 +52,11 @@
                                             <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_author'); ?></td>
                                             <td rowspan="2" class="center" style="width:135px;"><?php echo $this->lang->line('column_date_range'); ?></td>
                                             <td rowspan="2" class="center" style="width:150px;"><?php echo $this->lang->line('column_tags'); ?></td>
-                                            <td rowspan="2" class="center" style="width:65px;"><?php echo $this->lang->line('column_status'); ?></td>
+                                            <td rowspan="2" class="center" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
                                             <?php if($org_status){?>
                                                 <td colspan="3" class="center" style="width:150px;"><?php echo $this->lang->line('column_organization'); ?></td>
                                             <?php }?>
-                                            <td rowspan="2" class="center" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
+                                            <td rowspan="2" class="center" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                                         </tr>
 
                                         <?php if($org_status){?>
@@ -119,7 +119,7 @@
                                                     <td class="right"><?php echo isset($content['category']['name']) ? $content['category']['name'] : ""; ?></td>
                                                     <td class="right"><?php echo isset($content['player_id']) ? $content['player_id'] : ""; ?></td>
                                                     <td class="right"><?php echo isset($content['date_start']) ? dateMongotoReadable($content['date_start']) : "N/A"; ?>&nbsp;-&nbsp;<?php echo isset($content['date_end']) ? dateMongotoReadable($content['date_end']) : "N/A"; ?></td>
-                                                    <td class="right"><?php echo (isset($content['tags']) && $content['tags']) ? implode(',',$content['tags']) : null; ?></td>
+                                                    <td class="right" style="word-wrap:break-word;"><?php echo (isset($content['tags']) && $content['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $content['tags']).'</span>' : null); ?></td>
                                                     <td class="right"><?php echo isset($content['status']) ? ( $content['status'] ? "Enable" : "Disabled") : "N/A"; ?></td>
                                                     <?php if($org_status){?>
                                                         <td class="right"><?php echo (isset($content['organization_node']) && !is_null($content['organization_node']))?$content['organization_node']:''; ?></td>

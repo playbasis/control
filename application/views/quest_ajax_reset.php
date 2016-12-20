@@ -6,15 +6,15 @@
             <table class="list">
                 <thead>
                     <tr>
-                    <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                    <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                     <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
-                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_name'); ?></td>
-                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_status'); ?></td>
+                    <td class="right" style="width:200px;"><?php echo $this->lang->line('column_quest_name'); ?></td>
+                    <td class="right" style="width:50px;"><?php echo $this->lang->line('column_quest_status'); ?></td>
                     <?php if($org_status){?>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_organization'); ?></td>
+                        <td class="right" style="min-width:30px;"><?php echo $this->lang->line('column_organization'); ?></td>
                     <?php }?>
-                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_sort_order'); ?></td>
-                    <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
+                    <td class="right" style="width:60px;"><?php echo $this->lang->line('column_quest_sort_order'); ?></td>
+                    <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                 </thead>
                 <tbody>

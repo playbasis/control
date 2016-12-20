@@ -5,7 +5,7 @@
                     <table class="list">
                         <thead>
                         <tr>
-                            <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                            <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                             <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
                             <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
                             <?php if(!$client_id){?>
@@ -15,9 +15,9 @@
                             <td class="right" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
                             <td class="right" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
                             <td class="right" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
-                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
-                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_tags'); ?></td>
-                            <td class="right" style="width:150px;"><?php echo $this->lang->line('column_action'); ?></td>
+                            <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
+                            <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
+                            <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>
                         <tbody>
@@ -51,7 +51,7 @@
                                 <td class="right"><?php echo (isset($badge['quantity']) && !is_null($badge['quantity'])) ? $badge['quantity'] : 'Unlimited'; ?></td>
                                 <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $badge['sort_order']; ?></td>
-                                <td class="right"><?php echo (((isset($badge['tags'])) && $badge['tags'])? implode(',',$badge['tags']) : null); ?></td>
+                                <td class="right" style="word-wrap:break-word;"><?php echo (isset($badge['tags']) && $badge['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $badge['tags']).'</span>' : null); ?></td>
                                 <td class="right">
                                     <?php
                                     if((!$client_id) || (!(isset($badge['sponsor']) && $badge['sponsor']))) {

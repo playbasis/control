@@ -25,7 +25,7 @@
 <table id="user-list" class="list">
     <thead>
     <tr>
-        <td class="left"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+        <td width="7" class="left"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
         <td class="left">#</td>
         <td class="left"><?php echo $this->lang->line('column_title'); ?></td>
         <td class="left"><?php echo $this->lang->line('column_username'); ?></td>

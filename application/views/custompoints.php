@@ -29,13 +29,13 @@
                     <table class="list">
                         <thead>
                         <tr>
-                            <td width="5%" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                            <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                             <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
-                            <td class="center"><?php echo $this->lang->line('column_type'); ?></td>
-                            <td class="center"><?php echo $this->lang->line('column_quantity'); ?></td>
-                            <td class="center"><?php echo $this->lang->line('entry_pending'); ?></td>
-                            <td class="center"><?php echo $this->lang->line('column_tags'); ?></td>
-                            <td class="center" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
+                            <td class="center" style="width:60px;"><?php echo $this->lang->line('column_type'); ?></td>
+                            <td class="center" style="width:60px;"><?php echo $this->lang->line('column_quantity'); ?></td>
+                            <td class="center" style="width:50px;"><?php echo $this->lang->line('entry_pending'); ?></td>
+                            <td class="center" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
+                            <td class="center" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>
                         <tbody>
@@ -47,12 +47,12 @@
                                         <input type="checkbox" name="selected[]" value="<?php echo $cs['reward_id']; ?>" />
                                     <?php }?>
                                 </td>
-                                <td class="left" width="40%"><?php echo $cs['name']; ?></td>
-                                <td class="left" width="10%"><?php echo isset($cs['type']) ? $cs['type'] : ""; ?></td>
-                                <td class="left" width="10%"><?php echo isset($cs['quantity']) ? $cs['quantity'] : "Unlimited"; ?></td>
-                                <td class="left" width="10%"><?php echo isset($cs['pending']) && $cs['pending'] === 'on' ? "true" : "false"; ?></td>
-                                <td class="right" width="20%"><?php echo (((isset($cs['tags'])) && $cs['tags'])? implode(',',$cs['tags']) : null); ?></td>
-                                <td class="right" width="10%">
+                                <td class="left"><?php echo $cs['name']; ?></td>
+                                <td class="left"><?php echo isset($cs['type']) ? $cs['type'] : ""; ?></td>
+                                <td class="left"><?php echo isset($cs['quantity']) ? $cs['quantity'] : "Unlimited"; ?></td>
+                                <td class="left"><?php echo isset($cs['pending']) && $cs['pending'] === 'on' ? "true" : "false"; ?></td>
+                                <td class="right" style="word-wrap:break-word;"><?php echo (isset($cs['tags']) && $cs['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $cs['tags']).'</span>' : null); ?></td>
+                                <td class="right">
                                     <?php
                                         echo anchor('custompoints/update/'.$cs['reward_id'], "<i class='fa fa-edit fa-lg''></i>",
                                                     array('class'=>'tooltips',

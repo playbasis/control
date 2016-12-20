@@ -58,8 +58,7 @@
             <table class="list">
                 <thead>
                 <tr>
-
-                    <td rowspan="2" width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                    <td rowspan="2" width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                     <td rowspan="2" class="left" style="width:100px;"><?php echo $this->lang->line('column_player_id'); ?></td>
                     <td rowspan="2" class="left" style="width:180px;"><?php echo $this->lang->line('column_name'); ?></td>
                     <td rowspan="2" class="left" style="width:180px;"><?php echo $this->lang->line('column_email'); ?></td>
@@ -67,8 +66,7 @@
                     <?php if($org_status){?>
                     <td colspan="3" class="center" style="width:200px;"><?php echo $this->lang->line('column_organization'); ?></td>
                     <?php }?>
-                    <td rowspan="2" class="right app-col-action" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
-
+                    <td rowspan="2" class="right app-col-action" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                 </tr>
                 <?php if($org_status){?>
                 <tr>
@@ -77,7 +75,6 @@
                     <td style="text-align: center;"><?php echo $this->lang->line('column_role'); ?></td>
                 </tr>
                 <?php }?>
-
                 </thead>
 
                 <tbody>

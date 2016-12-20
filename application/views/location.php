@@ -33,14 +33,14 @@
                     <table class="list">
                         <thead>
                         <tr>
-                            <td rowspan="2" width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                            <td rowspan="2" width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                             <td rowspan="2" class="center"><?php echo $this->lang->line('column_name'); ?></td>
                             <td rowspan="2" class="center"><?php echo $this->lang->line('column_latitude'); ?></td>
                             <td rowspan="2" class="center"><?php echo $this->lang->line('column_longitude'); ?></td>
                             <td colspan="2" class="center"><?php echo $this->lang->line('column_object'); ?></td>
-                            <td rowspan="2" class="center"><?php echo $this->lang->line('column_status'); ?></td>
-                            <td rowspan="2" class="center"><?php echo $this->lang->line('column_tags'); ?></td>
-                            <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
+                            <td rowspan="2" class="center" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
+                            <td rowspan="2" class="center" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
+                            <td rowspan="2" class="center" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         <tr>
                             <td class="center"><?php echo $this->lang->line('column_object_type'); ?></td>
@@ -52,14 +52,14 @@
                             <?php foreach ($locations as $location) { ?>
                             <tr>
                                 <td style="text-align: center;"> <input type="checkbox" name="selected[]" value="<?php echo $location['_id']; ?>" /> </td>
-                                <td class="left" width="18%"><?php echo $location['name']; ?></td>
-                                <td class="left" width="15%"><?php echo $location['latitude']; ?></td>
-                                <td class="left" width="15%"><?php echo $location['longitude']; ?></td>
-                                <td class="left" width="14%"><?php echo $location['object_type']; ?></td>
-                                <td class="left" width="14%"><?php echo $location['object_name']; ?></td>
-                                <td class="left" width="9%"><?php echo isset($location['status']) && $location['status'] ? "enable" : "disable"; ?></td>
-                                <td class="left" width="11%"><?php echo (((isset($location['tags'])) && $location['tags'])? implode(',',$location['tags']) : null); ?></td>
-                                <td class="center" width="4%">
+                                <td class="left"><?php echo $location['name']; ?></td>
+                                <td class="left"><?php echo $location['latitude']; ?></td>
+                                <td class="left"><?php echo $location['longitude']; ?></td>
+                                <td class="left"><?php echo $location['object_type']; ?></td>
+                                <td class="left"><?php echo $location['object_name']; ?></td>
+                                <td class="left"><?php echo isset($location['status']) && $location['status'] ? "enable" : "disable"; ?></td>
+                                <td class="right" style="word-wrap:break-word;"><?php echo (isset($location['tags']) && $location['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $location['tags']).'</span>' : null); ?></td>
+                                <td class="center">
                                     <?php
                                         echo anchor('location/update/'.$location['_id'], "<i class='fa fa-edit fa-lg''></i>",
                                                     array('class'=>'tooltips',
