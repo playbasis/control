@@ -29,7 +29,10 @@ class Campaign extends REST2_Controller
     {
         $result = $this->campaign_model->getActiveCampaign($this->client_id, $this->site_id);
         unset($result['_id']);
-        array_walk_recursive($result, array($this, "convert_mongo_object_and_optional"));
+        if($result){
+            array_walk_recursive($result, array($this, "convert_mongo_object_and_optional"));
+        }
+
         $this->response($this->resp->setRespond($result), 200);
     }
 
