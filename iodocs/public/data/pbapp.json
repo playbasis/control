@@ -2786,6 +2786,17 @@
               "Description": "player id as used in client's website"
             },
             {
+              "Name": "active_filter",
+              "Required": "N",
+              "Default": "false",
+              "Type": "enumerated",
+              "Description": "filter only active goods on today",
+              "EnumeratedList": [
+                "true",
+                "false"
+              ]
+            },
+            {
               "Name": "date_start",
               "Required": "N",
               "Default": "",
