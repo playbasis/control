@@ -54,9 +54,9 @@
                                                 <td class="right" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
                                                 <td class="right" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
                                                 <td class="right" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
-                                                <td class="right" style="width:100px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
-                                                <td class="right" style="width:100px;"><?php echo $this->lang->line('column_tags'); ?></td>
-                                                <td class="right" style="width:150px;"><?php echo $this->lang->line('column_action'); ?></td>
+                                                <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
+                                                <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
+                                                <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                                             </tr>
                                             </thead>
                                             <tr class="filter">

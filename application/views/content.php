@@ -52,11 +52,11 @@
                                             <td rowspan="2" class="center" style="width:100px;"><?php echo $this->lang->line('column_author'); ?></td>
                                             <td rowspan="2" class="center" style="width:135px;"><?php echo $this->lang->line('column_date_range'); ?></td>
                                             <td rowspan="2" class="center" style="width:150px;"><?php echo $this->lang->line('column_tags'); ?></td>
-                                            <td rowspan="2" class="center" style="width:65px;"><?php echo $this->lang->line('column_status'); ?></td>
+                                            <td rowspan="2" class="center" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
                                             <?php if($org_status){?>
                                                 <td colspan="3" class="center" style="width:150px;"><?php echo $this->lang->line('column_organization'); ?></td>
                                             <?php }?>
-                                            <td rowspan="2" class="center" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
+                                            <td rowspan="2" class="center" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                                         </tr>
 
                                         <?php if($org_status){?>

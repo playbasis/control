@@ -9,20 +9,20 @@ echo form_open('goods/delete',$attributes);
             <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
             <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
             <?php if($org_status){?>
-                <td class="left" style="width:50px;"><?php echo $this->lang->line('column_organization'); ?></td>
+                <td class="left" style="min-width:30px;"><?php echo $this->lang->line('column_organization'); ?></td>
             <?php }?>
             <?php if(!$client_id){?>
                 <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
             <?php }?>
             <?php if($client_id){?>
-                <td class="left" style="width:50px;"><?php echo $this->lang->line('column_is_group'); ?></td>
+                <td class="left" style="width:40px;"><?php echo $this->lang->line('column_is_group'); ?></td>
             <?php }?>
             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
             <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
-            <td class="right" style="width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
-            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
+            <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
+            <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
         </tr>
         </thead>
         <tbody>

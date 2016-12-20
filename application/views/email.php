@@ -46,9 +46,9 @@
                                                 <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                                                 <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
                                                 <td class="left" ><?php echo $this->lang->line('column_body'); ?></td>
-                                                <td class="left" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
-                                                <td class="right" style="width:100px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
-                                                <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
+                                                <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
+                                                <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
+                                                <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                                             </tr>
                                             </thead>
                                             <tbody>

@@ -67,7 +67,7 @@
                         </td>
                         <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('entry_game_name'); ?></td>
                         <td colspan="4" class="center" style="width:150px;"><?php echo $this->lang->line('entry_campaign'); ?></td>
-                        <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('entry_campaign_status'); ?></td>
+                        <td rowspan="2" class="center" style="width:50px;"><?php echo $this->lang->line('entry_campaign_status'); ?></td>
                     </tr>
                     <tr>
                         <td class="center" style="width:80px;"><?php echo $this->lang->line('entry_campaign_name'); ?></td>
@@ -80,17 +80,17 @@
                     <?php if (isset($campaigns) && $campaigns) { ?>
                         <?php foreach ($campaigns as $campaign) { ?>
                             <tr>
-                                <td width="1%" style="text-align: center;">
+                                <td style="text-align: center;">
                                     <?php if ($client_id){?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $campaign['_id']; ?>" />
                                     <?php }?>
                                 </td>
-                                <td class="left" width="20%"><?php echo isset($campaign['game_name']) && !empty($campaign['game_name']) ? $campaign['game_name'] : ""; ?></td>
-                                <td class="left" width="20%"><?php echo isset($campaign['name']) && !empty($campaign['name']) ? $campaign['name'] : ""; ?></td>
-                                <td class="right" width="10%"><?php echo isset($campaign['date_start']) && !empty($campaign['date_start'])  ? dateMongotoReadable($campaign['date_start']) : "N/A"; ?></td>
-                                <td class="right" width="10%"><?php echo isset($campaign['date_end']) && !empty($campaign['date_end'])  ? dateMongotoReadable($campaign['date_end']) : "N/A"; ?></td>
-                                <td class="right" width="5%"><?php echo isset($campaign['weight']) && !empty($campaign['weight']) ? $campaign['weight'] : "0"; ?></td>
-                                <td class="center" width="10%"><input class="checkbox" type="checkbox" name="status" id="status" value="<?php echo $campaign['_id']; ?>" <?php echo isset($campaign['status']) && !empty($campaign['status']) && $campaign['status']? "checked" : "" ?>></td>
+                                <td class="left"><?php echo isset($campaign['game_name']) && !empty($campaign['game_name']) ? $campaign['game_name'] : ""; ?></td>
+                                <td class="left"><?php echo isset($campaign['name']) && !empty($campaign['name']) ? $campaign['name'] : ""; ?></td>
+                                <td class="right"><?php echo isset($campaign['date_start']) && !empty($campaign['date_start'])  ? dateMongotoReadable($campaign['date_start']) : "N/A"; ?></td>
+                                <td class="right"><?php echo isset($campaign['date_end']) && !empty($campaign['date_end'])  ? dateMongotoReadable($campaign['date_end']) : "N/A"; ?></td>
+                                <td class="right"><?php echo isset($campaign['weight']) && !empty($campaign['weight']) ? $campaign['weight'] : "0"; ?></td>
+                                <td class="center"><input class="checkbox" type="checkbox" name="status" id="status" value="<?php echo $campaign['_id']; ?>" <?php echo isset($campaign['status']) && !empty($campaign['status']) && $campaign['status']? "checked" : "" ?>></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>

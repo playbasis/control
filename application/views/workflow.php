@@ -66,7 +66,7 @@
                     <?php if($org_status){?>
                     <td colspan="3" class="center" style="width:200px;"><?php echo $this->lang->line('column_organization'); ?></td>
                     <?php }?>
-                    <td rowspan="2" class="right app-col-action" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
+                    <td rowspan="2" class="right app-col-action" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                 </tr>
                 <?php if($org_status){?>
                 <tr>

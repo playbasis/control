@@ -28,14 +28,14 @@
                     <tr>
                         <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <!-- <td class="left" style="width:72px;"><?php //echo $this->lang->line('column_image'); ?></td> -->
-                        <td class="left"><?php echo $this->lang->line('column_first_name'); ?></td>
+                        <td class="left" style="width:60px;"><?php echo $this->lang->line('column_first_name'); ?></td>
                         <td class="right" style="width:70px;"><?php echo $this->lang->line('column_last_name'); ?></td>
-                        <td class="right" style="width:50px;"><?php echo $this->lang->line('column_company_name'); ?></td>
-                        <td class="right" style="width:20px;"><?php echo $this->lang->line('column_email'); ?></td>
-                        <td class="right" style="width:20px;"><?php echo $this->lang->line('column_plan_name'); ?></td>
-                        <td class="right" style="width:30px;"><?php echo $this->lang->line('column_app'); ?></td>
-                        <td class="right" style="width:20px;"><?php echo $this->lang->line('column_status'); ?></td>
-                        <td class="right" style="width:240px;"><?php echo $this->lang->line('column_action'); ?></td>
+                        <td class="right" style="width:60px;"><?php echo $this->lang->line('column_company_name'); ?></td>
+                        <td class="right" style="width:110px;"><?php echo $this->lang->line('column_email'); ?></td>
+                        <td class="right" style="width:40px;"><?php echo $this->lang->line('column_plan_name'); ?></td>
+                        <td class="right" style="width:20px;"><?php echo $this->lang->line('column_app'); ?></td>
+                        <td class="right" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
+                        <td class="right" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -71,7 +71,13 @@
                             <td class="right"><?php echo $client['quantity']; ?></td>
                             <td class="right"><?php echo ($client['status'])? "Enabled" : "Disabled"; ?></td>
                             <td class="right">
-                                [ <?php echo anchor('client/update/'.$client['client_id'], 'Edit'); ?> ]
+                                <?php
+                                echo anchor('client/update/'.$client['client_id'], "<i class='fa fa-edit fa-lg''></i>",
+                                    array('class'=>'tooltips',
+                                        'title' => 'Edit',
+                                        'data-placement' => 'top'
+                                    ));
+                                ?>
                             </td>
                         </tr>
                             <?php } ?>

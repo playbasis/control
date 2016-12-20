@@ -39,7 +39,7 @@
                         <td class="center" style="width:10px;"><?php echo $this->lang->line('column_total_followers'); ?></td>
                         <td class="center" style="width:10px;"><?php echo $this->lang->line('column_total_views'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_creator'); ?></td>
-                        <td class="center" style="width:40px;"><?php echo $this->lang->line('column_status'); ?></td>
+                        <td class="center" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
