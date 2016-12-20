@@ -45,12 +45,12 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                        <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="right" style="width:50px;"><?php echo $this->lang->line('column_level'); ?></td>
                         <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_exp'); ?></td>
                         <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
+                        <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
                     <tbody>

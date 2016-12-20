@@ -33,33 +33,33 @@
                     <table class="list">
                         <thead>
                         <tr>
-                            <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                            <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                             <td class="center"><?php echo $this->lang->line('column_language'); ?></td>
                             <td class="center"><?php echo $this->lang->line('column_abbreviation'); ?></td>
-                            <td class="center"><?php echo $this->lang->line('column_status'); ?></td>
-                            <td class="center"><?php echo $this->lang->line('column_tags'); ?></td>
-                            <td class="center" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
+                            <td class="center" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
+                            <td class="center" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
+                            <td class="center" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td></td>
-                                <td class="left" width="30%">English (default)</td>
-                                <td class="left" width="20%">en</td>
-                                <td class="left" width="20%">enable</td>
-                                <td class="left" width="20%">english</td>
-                                <td class="center" width="10%"></td>
+                                <td class="left">English (default)</td>
+                                <td class="left"">en</td>
+                                <td class="left">enable</td>
+                                <td class="left"">english</td>
+                                <td class="center"></td>
                             </tr>
 
                             <?php if (isset($languages) && $languages) { ?>
                             <?php foreach ($languages as $language) { ?>
                             <tr>
                                 <td style="text-align: center;" > <input type="checkbox" name="selected[]" value="<?php echo $language['_id']; ?>" /> </td>
-                                <td class="left" width="30%"><?php echo $language['language']; ?></td>
-                                <td class="left" width="20%"><?php echo $language['abbreviation']; ?></td>
-                                <td class="left" width="20%"><?php echo isset($language['status']) && $language['status'] ? "enable" : "disable"; ?></td>
-                                <td class="left" width="20%"><?php echo (((isset($language['tags'])) && $language['tags'])? implode(',',$language['tags']) : null); ?></td>
-                                <td class="center" width="10%">
+                                <td class="left"><?php echo $language['language']; ?></td>
+                                <td class="left"><?php echo $language['abbreviation']; ?></td>
+                                <td class="left"><?php echo isset($language['status']) && $language['status'] ? "enable" : "disable"; ?></td>
+                                <td class="right" style="word-wrap:break-word;"><?php echo (isset($language['tags']) && $language['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $language['tags']).'</span>' : null); ?></td>
+                                <td class="center">
                                     <?php
                                         echo anchor('language/update/'.$language['_id'], "<i class='fa fa-edit fa-lg''></i>",
                                                     array('class'=>'tooltips',

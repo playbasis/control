@@ -33,11 +33,11 @@
                     <table class="list">
                         <thead>
                         <tr>
-                            <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                            <td width="35%" class="left"><?php echo $this->lang->line('column_name'); ?></td>
-                            <td width="35%" class="left"><?php echo $this->lang->line('column_file'); ?></td>
-                            <td width="20%" class="left"><?php echo $this->lang->line('column_tags'); ?></td>
-                            <td width="10%" class="center" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
+                            <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                            <td class="left" style="min-width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
+                            <td class="left"><?php echo $this->lang->line('column_file'); ?></td>
+                            <td class="left" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
+                            <td class="center" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>
                         <tbody>
@@ -47,7 +47,7 @@
                                 <td style="text-align: center;"> <input type="checkbox" name="selected[]" value="<?php echo $sequence['_id']; ?>" /> </td>
                                 <td class="left"><?php echo $sequence['name']; ?></td>
                                 <td class="left"><?php echo $sequence['file_name']; ?></td>
-                                <td class="left" ><?php echo (((isset($sequence['tags'])) && $sequence['tags'])? implode(',',$sequence['tags']) : null); ?></td>
+                                <td class="right" style="word-wrap:break-word;"><?php echo (isset($sequence['tags']) && $sequence['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $sequence['tags']).'</span>' : null); ?></td>
                                 <td class="center" >
                                     <?php
                                         echo anchor('sequence/update/'.$sequence['_id'], "<i class='fa fa-edit fa-lg''></i>",

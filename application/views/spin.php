@@ -46,7 +46,7 @@
                     <thead>
                     <tr>
                         <td class="center" width="1%"><?php echo $this->lang->line('column_number'); ?></td>
-                        <td width="5%" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                        <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="left" width="85%"><?php echo $this->lang->line('column_player_id'); ?></td>
                         <td class="center" width="10%"><?php echo $this->lang->line('column_manual_grant'); ?></td>
                         <!--
@@ -62,17 +62,17 @@
                     <?php if (isset($report) && $report) { ?>
                         <?php foreach ($report as $index => $r) { ?>
                             <tr>
-                                <td class="center" width="1%"><?php echo $index +1 ?></td>
-                                <td width="5%" style="text-align: center;"><input type="checkbox" name="selected[]" value="<?php echo $r['_id'].','.$r['manual_grant']?>" /></td>
-                                <td class="left" width="30%"><?php echo isset($r['_id']) ? $r['_id'] : ""; ?></td>
-                                <td class="right" width="10%"><?php echo isset($r['manual_grant']) ? $r['manual_grant'] : 0; ?></td>
+                                <td class="center"><?php echo $index +1 ?></td>
+                                <td style="text-align: center;"><input type="checkbox" name="selected[]" value="<?php echo $r['_id'].','.$r['manual_grant']?>" /></td>
+                                <td class="left"><?php echo isset($r['_id']) ? $r['_id'] : ""; ?></td>
+                                <td class="right"><?php echo isset($r['manual_grant']) ? $r['manual_grant'] : 0; ?></td>
                                 <!--
-                                <td class="right" width="10%"><?php echo isset($r['n']) ? $r['n'] : 0; ?></td>
-                                <td class="right" width="10%"><?php echo isset($r['n']) ? $r['n'] : 0; ?></td>
-                                <td class="right" width="10%"><?php echo isset($r['n']) ? $r['n'] : 0; ?></td>
-                                <td class="right" width="10%"><?php echo isset($r['out_standing_spin']) ? $r['out_standing_spin'] : 0 ?></td>
+                                <td class="right"><?php echo isset($r['n']) ? $r['n'] : 0; ?></td>
+                                <td class="right"><?php echo isset($r['n']) ? $r['n'] : 0; ?></td>
+                                <td class="right"><?php echo isset($r['n']) ? $r['n'] : 0; ?></td>
+                                <td class="right"><?php echo isset($r['out_standing_spin']) ? $r['out_standing_spin'] : 0 ?></td>
                                 <input type="hidden" name="out_standing_spin[]" value="<?php echo $r['out_standing_spin']; ?>" />
-                                <td class="right" width="10%"><?php echo isset($r['n']) ? $r['n'] : 0; ?></td>-->
+                                <td class="right"><?php echo isset($r['n']) ? $r['n'] : 0; ?></td>-->
                             </tr>
                         <?php } ?>
                     <?php } else { ?>

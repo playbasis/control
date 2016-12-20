@@ -29,7 +29,7 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                        <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="center" style="width:10px;"><?php echo $this->lang->line('column_id'); ?></td>
                         <td class="center" style="width:20px;"><?php echo $this->lang->line('column_name'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_description'); ?></td>
