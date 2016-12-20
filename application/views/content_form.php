@@ -189,7 +189,7 @@
                        for="inputTitle"><?php echo $this->lang->line('entry_tags'); ?></label>
                 <div class="controls">
                     <input class="tags" type="text" name="tags" size="100"
-                           value="<?php echo isset($tags) ? implode($tags,',')  : set_value('tags'); ?>"/>
+                           value="<?php echo isset($tags) ? implode(',',$tags) : set_value('tags'); ?>"/>
                 </div>
             </div>
 

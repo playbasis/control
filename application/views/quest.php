@@ -65,7 +65,7 @@
                                 <?php if($org_status){?>
                                     <td class="right"><?php echo (isset($quest['organize_name']) && !is_null($quest['organize_name']))?$quest['organize_name']:''; ?></td>
                                 <?php }?>
-                                <td class="right"><?php echo (isset($quest['tags']) && $quest['tags']) ? implode($quest['tags'],',') : null; ?></td>
+                                <td class="right"><?php echo (isset($quest['tags']) && $quest['tags']) ? implode(',',$quest['tags']) : null; ?></td>
                                 <td class="right"><?php echo $quest['sort_order'];?></td>
                                 <td class="right">
 
