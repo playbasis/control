@@ -93,7 +93,7 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'feature_data\']').attr('checked', this.checked);" /></td>
+                        <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'feature_data\']').attr('checked', this.checked);" /></td>
                         <td class="left"><?php echo $this->lang->line('column_name_feature'); ?></td>
                     </tr>
                     </thead>
@@ -126,7 +126,7 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;"></td>
+                        <td width="7" style="text-align: center;"></td>
                         <td class="left"><?php echo $this->lang->line('column_name_action'); ?></td>
                         <td class="left"><?php echo $this->lang->line('column_name_owner'); ?></td>
                     </tr>
@@ -158,7 +158,7 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'jigsaw_data\']').attr('checked', this.checked);" /></td>
+                        <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'jigsaw_data\']').attr('checked', this.checked);" /></td>
                         <td class="left"><?php echo $this->lang->line('column_name_jigsaw'); ?></td>
                     </tr>
                     </thead>

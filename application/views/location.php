@@ -33,7 +33,7 @@
                     <table class="list">
                         <thead>
                         <tr>
-                            <td rowspan="2" width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                            <td rowspan="2" width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                             <td rowspan="2" class="center"><?php echo $this->lang->line('column_name'); ?></td>
                             <td rowspan="2" class="center"><?php echo $this->lang->line('column_latitude'); ?></td>
                             <td rowspan="2" class="center"><?php echo $this->lang->line('column_longitude'); ?></td>

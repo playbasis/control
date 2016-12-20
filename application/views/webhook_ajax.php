@@ -5,7 +5,7 @@ echo form_open('webhook/delete',$attributes);
     <table class="list">
         <thead>
         <tr>
-            <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+            <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
             <td class="left" style="width:200px;"><?php echo $this->lang->line('column_name'); ?></td>
             <td class="left"><?php echo $this->lang->line('column_url'); ?></td>
             <td class="left" ><?php echo $this->lang->line('column_body'); ?></td>

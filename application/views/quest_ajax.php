@@ -3,7 +3,7 @@
             <table class="list">
                 <thead>
                     <tr>
-                    <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                    <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                     <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_name'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_status'); ?></td>

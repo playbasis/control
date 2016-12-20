@@ -66,7 +66,7 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;">
+                        <td width="7" style="text-align: center;">
                             <input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                         </td>
                         <td class="center" ><?php echo $this->lang->line('entry_name'); ?></td>
