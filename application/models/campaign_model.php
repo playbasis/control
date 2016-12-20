@@ -46,6 +46,6 @@ class Campaign_model extends MY_Model
         $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_campaign_to_client');
 
-        return $result ? $result[0]:array();
+        return $result ? $result[0]:null;
     }
 }
