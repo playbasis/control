@@ -83,29 +83,8 @@
         file_name = "<?php echo $file_name?>";
         file_id = "<?php echo $file_id?>";
 
-        $.ajax({
-            url: baseUrlPath+'sequence/ajax_getFile?',
-            data: 'file_ID='+file_id ,
-            dataType:"json",
-            success: function(json) {
-                downloadCSV(file_name,json.file_content)
-            }
-        });
-    }
+        location = baseUrlPath+'sequence/getSequenceFile?file_name='+file_name+'&file_id='+file_id;
 
-    function downloadCSV(filename,array_data) {
-        var data, link;
-
-        var csvContent = "data:text/csv;charset=utf-8,";
-        array_data.forEach(function(infoArray, index){
-            csvContent +=  infoArray;
-        });
-        data = encodeURI(csvContent);
-
-        link = document.createElement('a');
-        link.setAttribute('href', data);
-        link.setAttribute('download', filename);
-        link.click();
     }
 
     $(".tags").select2({
