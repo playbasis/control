@@ -115,7 +115,7 @@ class Sequence extends MY_Controller
 
             if ( $this->data['message'] == null && $this->form_validation->run() ) {
 
-                $maxsize = 2097152;
+                $maxsize = 4194304;
                 $csv_mimetypes = array(
                     'text/csv',
                     'text/plain',
@@ -189,7 +189,7 @@ class Sequence extends MY_Controller
 
             if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
 
-                $maxsize = 2097152;
+                $maxsize = 4194304;
                 $csv_mimetypes = array(
                     'text/csv',
                     'text/plain',
@@ -391,16 +391,33 @@ class Sequence extends MY_Controller
         $this->render_page('template');
     }
 
-    public function ajax_getFile()
+    public function getSequenceFile()
     {
         $json = array();
 
-        if ($this->input->get('file_ID')) {
-            $sequence_file = $this->Sequence_model->retrieveSequenceFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_ID'));
-            $json = $sequence_file;
+        if ($this->input->get('file_id')) {
+            $sequence_file = $this->Sequence_model->retrieveSequenceFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_id'));
         }
 
-        $this->output->set_output(json_encode($json));
+        if ($this->input->get('file_name')) {
+            $file_name = $this->input->get('file_name');
+        }else{
+            $file_name = "sequence.csv";
+        }
+
+        if(isset($sequence_file['file_content'])){
+            $this->load->helper('export_data');
+
+            $exporter = new ExportDataCSVSequence('browser', $file_name);
+
+            $exporter->initialize(); // starts streaming data to web browser
+
+            foreach ($sequence_file['file_content'] as $row) {
+                $exporter->addRow(array($row) );
+            }
+            $exporter->finalize();
+        }
+
     }
 
     private function validateModify()
