@@ -84,6 +84,7 @@ abstract class REST2_Controller extends REST_Controller
             'format' => null,
             'ip' => $this->input->ip_address(),
             'agent' => array_key_exists('HTTP_USER_AGENT', $_SERVER) ? $_SERVER['HTTP_USER_AGENT'] : null,
+            'server' => isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : null
         ));
 
         /* 1.2 Client-Site Limit Requests */
