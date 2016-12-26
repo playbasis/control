@@ -777,14 +777,17 @@ class jigsaw extends MY_Model
         if (is_array($data_set)) {
             foreach ($data_set as $param) {
                 $param_name = $param['param_name'];
-                if (isset($input[$param_name])) {
-                    $params[$param_name] = $input[$param_name];
-                }
+                $params[$param_name] = isset($input[$param_name]) ? $input[$param_name] : null;
             }
         }
         $c = $this->countActionWithParams($input['client_id'], $input['site_id'], $input['pb_player_id'],
             $input['action_id'], $params, isset($input['pb_player_id-2']) && $input['pb_player_id-2'] ? $input['pb_player_id-2']:null );
-        return $c == 0;
+        if(isset($config['limit']) && $config['limit']){
+            $result = (bool)($c < $config['limit']);
+        }else{
+            $result = (bool)($c == 0);
+        }
+        return $result;
     }
 
     private function countActionWithParams($client_id, $site_id, $pb_player_id, $action_id, $parameters, $pb_player_id_2=null)
