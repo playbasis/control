@@ -122,7 +122,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><?php echo $this->lang->line('entry_status') ?>:</td>
+                                            <td><?php echo $this->lang->line('entry_verification_status') ?>:</td>
                                             <td>
                                                 <label id="status-label" >
                                                     <?php echo (isset($domain["verification_status"]) && $domain["verification_status"]) ? $domain["verification_status"] : ""; ?>
