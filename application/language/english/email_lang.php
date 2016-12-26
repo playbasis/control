@@ -28,7 +28,8 @@ $lang['entry_name']             		= 'Template ID';
 $lang['entry_body']                     = 'Message Body';
 $lang['entry_sort_order']               = 'Sort Order';
 $lang['entry_email']                    = 'Email';
-$lang['entry_status']                   = 'Verification Status';
+$lang['entry_verification_status']      = 'Verification Status';
+$lang['entry_status']                   = 'Status';
 
 // Error
 $lang['error_warning']                  = 'Warning: Please check the form carefully for errors!';
