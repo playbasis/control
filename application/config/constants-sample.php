@@ -94,6 +94,7 @@ define('MEDIA_MANAGER_MAX_IMAGE_WIDTH', 4000);
 define('EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS', 'notifyInactiveClients');
 define('EMAIL_BCC_PLAYBASIS_EMAIL', 'pascal@playbasis.com');
 define('EMAIL_DEBUG_MODE', true);
+define('EMAIL_TYPE_REPORT', 'report');
 define('EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION', 'remindClientsToSetupSubscription');
 define('EMAIL_TYPE_CLIENT_REGISTRATION', 'listClientRegistration');
 define('EMAIL_TYPE_USER', 'user');
