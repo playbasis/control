@@ -2831,7 +2831,8 @@ class Cron extends CI_Controller
         $this->utility->elapsed_time('email');
         $email_to = array(
             'piya.p@playbasis.com',
-            //'pechpras@playbasis.com'
+            'pechpras@playbasis.com',
+            'steffen.r@playbasis.com'
         );
         $subject = '[Playbasis] DBS weekly report' . ' (' . $from . ' - ' . $to . ')';
         $message = "";
