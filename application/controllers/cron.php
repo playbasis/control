@@ -25,6 +25,14 @@ define('ENERGY_UPDATER_THRESHOLD', 5);
 
 define('CLIENT_ID_HSBCHK', '5821d319be120b24548b45e6');
 define('SITE_ID_HSBCHK', '5821d3cfbe120ba34a8b6ede');
+define('CLIENT_ID_DBSHK', '57ce8150b350cf766d8bcde6');
+define('SITE_ID_DBSHK', '57ce8338b350cf680b8b4a02');
+define('DBS_GAME_NAME_1', '1');
+define('DBS_GAME_NAME_2', '2');
+define('DBS_GAME_NAME_3', '3');
+define('ACTION_TRANSFER', 'transfer');
+define('DBS_DOLLAR', 'dbs-dollar');
+define('COMPASS_DOLLAR', 'compass-dollar');
 
 define('WIDGET_NUMBER_OF_CUSTOMERS', '166318-19e7a021-f8a7-42fe-be4e-7c51464706a7');
 define('WIDGET_NUMBER_OF_ACTIVE_USAGE_CUSTOMERS', '166318-83c41412-4d61-4fd8-b42f-067b907d961e');
@@ -43,6 +51,7 @@ class Cron extends CI_Controller
         $this->load->model('auth_model');
         $this->load->model('client_model');
         $this->load->model('campaign_model');
+        $this->load->model('custom_model');
         $this->load->model('custompoints_model');
         $this->load->model('player_model');
         $this->load->model('email_model');
@@ -2699,6 +2708,142 @@ class Cron extends CI_Controller
                 $this->player_model->deductAllPlayerRewardBySite(new MongoId(SITE_ID_HSBCHK), $custompoint['reward_id']);
             }
         }
+    }
+
+    public function processReportDBS($ref=null)
+    {
+        $to = $ref ? $ref : date('Y-m-d', strtotime('-1 day', time())); // yesterday is default
+        $from = date('Y-m-d', strtotime('-1 week', strtotime($to)));
+
+        $concurrent = $this->custom_model->getConcurrentUser(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER));
+        $traffic = $this->custom_model->getTrafficAndUnique(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER));
+        $game1 = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'game_name' => DBS_GAME_NAME_1));
+        $game2 = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'game_name' => DBS_GAME_NAME_2));
+        $game3 = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'game_name' => DBS_GAME_NAME_3));
+        $ios = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'ios' => true));
+        $android = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'ios' => false));
+
+        $results = array();
+
+        for($i = 1; $i < 8 ; $i++){
+            $results[date('d', strtotime('-'. $i .' day', strtotime($to)))]['date'] = date('d M Y', strtotime('-'. $i .' day', strtotime($to)));
+            $results[date('d', strtotime('-'. $i .' day', strtotime($to)))]['concurrent'] = 0;
+        }
+
+        foreach (array_column(array_column($concurrent, '_id'),'day') as $index => $data)
+        {
+            if($results[$data]['concurrent'] < $concurrent[$index]['n']){
+                $results[$data]['concurrent'] = $concurrent[$index]['n'];
+            }
+        }
+
+        foreach ($traffic as $data){
+            $results[$data['_id']]['traffic'] = sizeof($data['traffic']);
+            $results[$data['_id']]['unique'] = sizeof($data['unique']);
+        }
+
+        foreach ($game1 as $data){
+            $results[$data['_id']]['game1']['n'] = $data['n'];
+            $results[$data['_id']]['game1']['dbs'] = $data['dbs'];
+            $results[$data['_id']]['game1']['compass'] = $data['compass'];
+        }
+
+        foreach ($game2 as $data){
+            $results[$data['_id']]['game2']['n'] = $data['n'];
+            $results[$data['_id']]['game2']['dbs'] = $data['dbs'];
+            $results[$data['_id']]['game2']['compass'] = $data['compass'];
+        }
+
+        foreach ($game3 as $data){
+            $results[$data['_id']]['game3']['n'] = $data['n'];
+            $results[$data['_id']]['game3']['dbs'] = $data['dbs'];
+            $results[$data['_id']]['game3']['compass'] = $data['compass'];
+        }
+
+        foreach ($ios as $data){
+            $results[$data['_id']]['ios'] = $data['n'];
+        }
+
+        foreach ($android as $data){
+            $results[$data['_id']]['android'] = $data['n'];
+        }
+
+        $this->load->helper('export_data');
+
+        $exporter = new ExportDataExcel('file');
+        $file_name = "DBS_weekly_report_" . date("YmdHis") . ".xls";
+        $exporter->filename = $file_name;
+        $exporter->initialize(); // starts streaming data to web browser
+
+        $exporter->addRow(array(
+                "Date",
+                "Traffic",
+                "Concurrent User",
+                "Unique User",
+                "Game1",
+                "Prize Issued DBS$",
+                "Prize Issued C$",
+                "Game2",
+                "Prize Issued DBS$",
+                "Prize Issued C$",
+                "Game3",
+                "Prize Issued DBS$",
+                "Prize Issued C$",
+                "Total Prize Issued",
+                "iOS",
+                "Android"
+            )
+        );
+
+        foreach ($results as $key => $result) {
+
+
+            $dbs1 = isset($result['game1']['dbs']) ? $result['game1']['dbs'] : 0;
+            $compass1 = isset($result['game1']['compass']) ? $result['game1']['compass'] : 0;
+            $dbs2 = isset($result['game2']['dbs']) ? $result['game2']['dbs'] : 0;
+            $compass2 = isset($result['game2']['compass']) ? $result['game2']['compass'] : 0;
+            $dbs3 = isset($result['game3']['dbs']) ? $result['game3']['dbs'] : 0;
+            $compass3 = isset($result['game3']['compass']) ? $result['game3']['compass'] : 0;
+
+            $exporter->addRow(array(
+                    $result['date'],
+                    isset($result['traffic']) ? $result['traffic'] : 0,
+                    isset($result['concurrent']) ? $result['concurrent'] : 0,
+                    isset($result['unique']) ? $result['unique'] : 0,
+                    isset($result['game1']['n']) ? $result['game1']['n'] : 0,
+                    $dbs1,
+                    $compass1,
+                    isset($result['game2']['n']) ? $result['game2']['n'] : 0,
+                    $dbs2,
+                    $compass2,
+                    isset($result['game3']['n']) ? $result['game3']['n'] : 0,
+                    $dbs3,
+                    $compass3,
+                    $dbs1 + $compass1 +  $dbs2 + $compass2 + $dbs3 + $compass3,
+                    isset($result['ios']) ? $result['ios'] : 0,
+                    isset($result['android']) ? $result['android'] : 0,
+                )
+            );
+        }
+
+        $exporter->finalize();
+
+        $this->utility->elapsed_time('email');
+        $email_to = array(
+            'piya.p@playbasis.com',
+            //'pechpras@playbasis.com'
+        );
+        $subject = '[Playbasis] DBS weekly report' . ' (' . $from . ' - ' . $to . ')';
+        $message = "";
+        $message_alt = "";
+        $file_path = $file_name;
+        $file = array($file_path => $file_name);
+        $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message, $message_alt, $file);
+        $this->email_model->log(EMAIL_TYPE_REPORT, null, null, $resp, EMAIL_FROM, $email_to, $subject, $message, $message_alt , array());
+        log_message('debug', 'email = ' . print_r($resp, true));
+        log_message('debug', 'Elapsed time = ' . $this->utility->elapsed_time('email') . ' sec (email)');
+
+        unlink($file_name); // remove file
     }
 }
 
