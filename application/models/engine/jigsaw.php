@@ -182,8 +182,22 @@ class jigsaw extends MY_Model
         $result = false;
 
         foreach ($input['player_badge'] as $key => $badge) {
-            if (($badge['badge_id'] == $config['badge_id']) && $badge['amount'] >= $config['value']) {
-                $result = true;
+            if (($badge['badge_id'] == $config['badge_id']) ) {
+                if(isset($config['param_operator'])){
+                    if ($config['param_operator'] == '=') {
+                        $result = ($badge['amount'] == $config['value']);
+                    } elseif ($config['param_operator'] == '>') {
+                        $result = ($badge['amount'] > $config['value']);
+                    } elseif ($config['param_operator'] == '<') {
+                        $result = ($badge['amount'] < $config['value']);
+                    } elseif ($config['param_operator'] == '>=') {
+                        $result = ($badge['amount'] >= $config['value']);
+                    } elseif ($config['param_operator'] == '<=') {
+                        $result = ($badge['amount'] <= $config['value']);
+                    }
+                }else{
+                    $result = $badge['amount'] >= $config['value'];
+                }
                 break;
             }
         }
