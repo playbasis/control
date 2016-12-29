@@ -241,7 +241,7 @@
               "gender":           { "-type": "integer"},
               "birth_date":       { "-type": "string"},
               "registered":       { "-type": "string"},
-              "percent_of_level": { "-type": "double"},
+              "percent_of_level": { "-type": "number"},
               "level_title":      { "-type": "string"},
               "level_image":      { "-type": "string"},
               "badges": [
