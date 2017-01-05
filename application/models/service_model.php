@@ -337,6 +337,10 @@ class Service_model extends MY_Model
             if (isset($event['player']) && empty($event['player'])) {
                 unset($event_log[$key]);
             }
+            
+            if (isset($event['parameters']) && empty($event['parameters'])){
+                $event['parameters'] = null;
+            }
             array_push($events_output, $event);
         }
 
