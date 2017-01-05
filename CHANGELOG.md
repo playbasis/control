@@ -1,84 +1,107 @@
 # Change Log
+
+## [2.24.0](https://github.com/playbasis/api/tree/2.24.0) (2017-01-05)
+[Full Changelog](https://github.com/playbasis/api/compare/2.23.0...2.24.0)
+
+**Implemented enhancements:**
+
+- check player's badge by specific operator [\#511](https://github.com/playbasis/api/pull/511) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- modified condition distinct to have parameter limit [\#510](https://github.com/playbasis/api/pull/510) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.23.1/fix percent of level is number [\#512](https://github.com/playbasis/api/pull/512) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.23.8/use_HTTP_HOST_in_stead_of_SERVER_NAME_to_be_log](https://github.com/playbasis/api/tree/2.23.8/use_HTTP_HOST_in_stead_of_SERVER_NAME_to_be_log) (2016-12-23)
+[Full Changelog](https://github.com/playbasis/api/compare/2.23.7/log_server_in_web_service_log...2.23.8/use_HTTP_HOST_in_stead_of_SERVER_NAME_to_be_log)
+
+**Fixed bugs:**
+
+- Hotfix/2.23.8/use http host in stead of server name to be log [\#509](https://github.com/playbasis/api/pull/509) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.23.7/log_server_in_web_service_log](https://github.com/playbasis/api/tree/2.23.7/log_server_in_web_service_log) (2016-12-22)
+[Full Changelog](https://github.com/playbasis/api/compare/2.23.6/return_null_instead_of_empty_array_in_active_campaign...2.23.7/log_server_in_web_service_log)
+
+**Implemented enhancements:**
+
+- Hotfix/2.23.7/log server in web service log [\#508](https://github.com/playbasis/api/pull/508) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.23.6/return_null_instead_of_empty_array_in_active_campaign](https://github.com/playbasis/api/tree/2.23.6/return_null_instead_of_empty_array_in_active_campaign) (2016-12-20)
+[Full Changelog](https://github.com/playbasis/api/compare/2.23.5/filter_active_goods...2.23.6/return_null_instead_of_empty_array_in_active_campaign)
+
+**Implemented enhancements:**
+
+- Hotfix/2.23.6/return null instead of empty array in active campaign [\#506](https://github.com/playbasis/api/pull/506) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.23.5/filter_active_goods](https://github.com/playbasis/api/tree/2.23.5/filter_active_goods) (2016-12-20)
+[Full Changelog](https://github.com/playbasis/api/compare/2.23.4/fix_goods_filter_date...2.23.5/filter_active_goods)
+
+**Implemented enhancements:**
+
+- Hotfix/2.23.5/filter active goods [\#505](https://github.com/playbasis/api/pull/505) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.23.4/fix_goods_filter_date](https://github.com/playbasis/api/tree/2.23.4/fix_goods_filter_date) (2016-12-19)
+[Full Changelog](https://github.com/playbasis/api/compare/2.23.0...2.23.4/fix_goods_filter_date)
+
+**Fixed bugs:**
+
+- Hotfix/2.23.4/fix goods filter date [\#504](https://github.com/playbasis/api/pull/504) ([piya-playbasis](https://github.com/piya-playbasis))
+
 ## [2.23.0](https://github.com/playbasis/api/tree/2.23.0) (2016-12-15)
-[Full Changelog](https://github.com/playbasis/api/compare/2.22.0...2.23.0)
-
-
-## [2.22.8/sequence_concurrency_control](https://github.com/playbasis/api/tree/2.22.8/sequence_concurrency_control) (2016-12-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.22.7/fix_approve_custompoint...2.22.8/sequence_concurrency_control)
+[Full Changelog](https://github.com/playbasis/api/compare/2.22.8/sequence_concurrency_control...2.23.0)
 
 **Implemented enhancements:**
 
 - Hotfix/2.22.8/sequence concurrency control [\#503](https://github.com/playbasis/api/pull/503) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.22.7/fix_approve_custompoint](https://github.com/playbasis/api/tree/2.22.7/fix_approve_custompoint) (2016-12-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.22.6/improve_sequence_log...2.22.7/fix_approve_custompoint)
+- Hotfix/2.22.6/improve sequence log [\#501](https://github.com/playbasis/api/pull/501) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.22.5/deduct player badge [\#500](https://github.com/playbasis/api/pull/500) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.22.2/fix log action in content [\#497](https://github.com/playbasis/api/pull/497) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.23.2/badge response peruser [\#495](https://github.com/playbasis/api/pull/495) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.23.1/to support report status reward in control [\#494](https://github.com/playbasis/api/pull/494) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.22.1/disable roundup function [\#493](https://github.com/playbasis/api/pull/493) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 **Fixed bugs:**
 
 - Hotfix/2.22.7/fix approve custompoint [\#502](https://github.com/playbasis/api/pull/502) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.22.6/improve_sequence_log](https://github.com/playbasis/api/tree/2.22.6/improve_sequence_log) (2016-12-09)
-[Full Changelog](https://github.com/playbasis/api/compare/2.22.5/deduct_player_badge...2.22.6/improve_sequence_log)
-
-**Implemented enhancements:**
-
-- Hotfix/2.22.6/improve sequence log [\#501](https://github.com/playbasis/api/pull/501) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.22.5/deduct_player_badge](https://github.com/playbasis/api/tree/2.22.5/deduct_player_badge) (2016-12-09)
-[Full Changelog](https://github.com/playbasis/api/compare/2.22.4/fix_reward_disable_badge...2.22.5/deduct_player_badge)
-
-**Implemented enhancements:**
-
-- Hotfix/2.22.5/deduct player badge [\#500](https://github.com/playbasis/api/pull/500) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.22.4/fix_reward_disable_badge](https://github.com/playbasis/api/tree/2.22.4/fix_reward_disable_badge) (2016-12-08)
-[Full Changelog](https://github.com/playbasis/api/compare/2.22.3/sequence_file...2.22.4/fix_reward_disable_badge)
-
-**Fixed bugs:**
-
 - Hotfix/2.22.4/fix reward disable badge [\#499](https://github.com/playbasis/api/pull/499) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.22.3/sequence_file](https://github.com/playbasis/api/tree/2.22.3/sequence_file) (2016-12-07)
-[Full Changelog](https://github.com/playbasis/api/compare/2.22.2/fix_log_action_in_content...2.22.3/sequence_file)
+- Hotfix/2.23.3/fix camppaign active for null [\#496](https://github.com/playbasis/api/pull/496) ([piya-playbasis](https://github.com/piya-playbasis))
 
 **Merged pull requests:**
 
 - Hotfix/2.22.3/sequence file [\#498](https://github.com/playbasis/api/pull/498) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
+## [2.22.8/sequence_concurrency_control](https://github.com/playbasis/api/tree/2.22.8/sequence_concurrency_control) (2016-12-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.22.7/fix_approve_custompoint...2.22.8/sequence_concurrency_control)
+
+## [2.22.7/fix_approve_custompoint](https://github.com/playbasis/api/tree/2.22.7/fix_approve_custompoint) (2016-12-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.22.6/improve_sequence_log...2.22.7/fix_approve_custompoint)
+
+## [2.22.6/improve_sequence_log](https://github.com/playbasis/api/tree/2.22.6/improve_sequence_log) (2016-12-09)
+[Full Changelog](https://github.com/playbasis/api/compare/2.22.5/deduct_player_badge...2.22.6/improve_sequence_log)
+
+## [2.22.5/deduct_player_badge](https://github.com/playbasis/api/tree/2.22.5/deduct_player_badge) (2016-12-09)
+[Full Changelog](https://github.com/playbasis/api/compare/2.22.4/fix_reward_disable_badge...2.22.5/deduct_player_badge)
+
+## [2.22.4/fix_reward_disable_badge](https://github.com/playbasis/api/tree/2.22.4/fix_reward_disable_badge) (2016-12-08)
+[Full Changelog](https://github.com/playbasis/api/compare/2.22.3/sequence_file...2.22.4/fix_reward_disable_badge)
+
+## [2.22.3/sequence_file](https://github.com/playbasis/api/tree/2.22.3/sequence_file) (2016-12-07)
+[Full Changelog](https://github.com/playbasis/api/compare/2.22.2/fix_log_action_in_content...2.22.3/sequence_file)
+
 ## [2.22.2/fix_log_action_in_content](https://github.com/playbasis/api/tree/2.22.2/fix_log_action_in_content) (2016-12-06)
 [Full Changelog](https://github.com/playbasis/api/compare/2.23.3/fix_camppaign_active_for_null...2.22.2/fix_log_action_in_content)
-
-**Implemented enhancements:**
-
-- Hotfix/2.22.2/fix log action in content [\#497](https://github.com/playbasis/api/pull/497) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.23.3/fix_camppaign_active_for_null](https://github.com/playbasis/api/tree/2.23.3/fix_camppaign_active_for_null) (2016-12-06)
 [Full Changelog](https://github.com/playbasis/api/compare/2.23.2/badge_response_peruser...2.23.3/fix_camppaign_active_for_null)
 
-**Fixed bugs:**
-
-- Hotfix/2.23.3/fix camppaign active for null [\#496](https://github.com/playbasis/api/pull/496) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.23.2/badge_response_peruser](https://github.com/playbasis/api/tree/2.23.2/badge_response_peruser) (2016-12-06)
 [Full Changelog](https://github.com/playbasis/api/compare/2.23.1/to_support_report_status_reward_in_control...2.23.2/badge_response_peruser)
-
-**Implemented enhancements:**
-
-- Hotfix/2.23.2/badge response peruser [\#495](https://github.com/playbasis/api/pull/495) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.23.1/to_support_report_status_reward_in_control](https://github.com/playbasis/api/tree/2.23.1/to_support_report_status_reward_in_control) (2016-12-02)
 [Full Changelog](https://github.com/playbasis/api/compare/2.22.1/disable_roundup_function...2.23.1/to_support_report_status_reward_in_control)
 
-**Implemented enhancements:**
-
-- Hotfix/2.23.1/to support report status reward in control [\#494](https://github.com/playbasis/api/pull/494) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.22.1/disable_roundup_function](https://github.com/playbasis/api/tree/2.22.1/disable_roundup_function) (2016-11-30)
 [Full Changelog](https://github.com/playbasis/api/compare/2.22.0...2.22.1/disable_roundup_function)
-
-**Implemented enhancements:**
-
-- Hotfix/2.22.1/disable roundup function [\#493](https://github.com/playbasis/api/pull/493) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.22.0](https://github.com/playbasis/api/tree/2.22.0) (2016-11-30)
 [Full Changelog](https://github.com/playbasis/api/compare/2.21.16/add_register_log_after_auto_add_player_in_rule...2.22.0)
@@ -1414,17 +1437,17 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.16...v2.10.0)
 
 ## [2.10.0-alpha.16](https://github.com/playbasis/api/tree/2.10.0-alpha.16) (2016-05-30)
-[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.15...2.10.0-alpha.16)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.14...2.10.0-alpha.16)
 
 **Implemented enhancements:**
 
 - revise "get content count" to compatable with "get content count" [\#260](https://github.com/playbasis/api/pull/260) ([piya-playbasis](https://github.com/piya-playbasis))
 
-## [2.10.0-alpha.15](https://github.com/playbasis/api/tree/2.10.0-alpha.15) (2016-05-30)
-[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.14...2.10.0-alpha.15)
-
 ## [2.10.0-alpha.14](https://github.com/playbasis/api/tree/2.10.0-alpha.14) (2016-05-30)
-[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.13...2.10.0-alpha.14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.15...2.10.0-alpha.14)
+
+## [2.10.0-alpha.15](https://github.com/playbasis/api/tree/2.10.0-alpha.15) (2016-05-30)
+[Full Changelog](https://github.com/playbasis/api/compare/2.10.0-alpha.13...2.10.0-alpha.15)
 
 **Implemented enhancements:**
 
@@ -1793,13 +1816,13 @@
 - - Merge generate content PIN into create/update content [\#193](https://github.com/playbasis/api/pull/193) ([niti-playbasis](https://github.com/niti-playbasis))
 
 ## [2.8.0-alpha.1](https://github.com/playbasis/api/tree/2.8.0-alpha.1) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.8.0-alpha.1)
-
-## [v2.7.6](https://github.com/playbasis/api/tree/v2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...v2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.6...2.8.0-alpha.1)
 
 ## [2.7.6](https://github.com/playbasis/api/tree/2.7.6) (2016-04-18)
-[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...2.7.6)
+[Full Changelog](https://github.com/playbasis/api/compare/v2.7.6...2.7.6)
+
+## [v2.7.6](https://github.com/playbasis/api/tree/v2.7.6) (2016-04-18)
+[Full Changelog](https://github.com/playbasis/api/compare/2.7.5...v2.7.6)
 
 **Implemented enhancements:**
 
@@ -2123,13 +2146,13 @@
 - Feature/run rule in bg [\#144](https://github.com/playbasis/api/pull/144) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [2.3.0-alpha.5](https://github.com/playbasis/api/tree/2.3.0-alpha.5) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.3.4...2.3.0-alpha.5)
-
-## [2.3.4](https://github.com/playbasis/api/tree/2.3.4) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/Bug_rankPeerByAccAction_wrong_month_type...2.3.4)
+[Full Changelog](https://github.com/playbasis/api/compare/Bug_rankPeerByAccAction_wrong_month_type...2.3.0-alpha.5)
 
 ## [Bug_rankPeerByAccAction_wrong_month_type](https://github.com/playbasis/api/tree/Bug_rankPeerByAccAction_wrong_month_type) (2016-02-05)
-[Full Changelog](https://github.com/playbasis/api/compare/2.2.4...Bug_rankPeerByAccAction_wrong_month_type)
+[Full Changelog](https://github.com/playbasis/api/compare/2.3.4...Bug_rankPeerByAccAction_wrong_month_type)
+
+## [2.3.4](https://github.com/playbasis/api/tree/2.3.4) (2016-02-05)
+[Full Changelog](https://github.com/playbasis/api/compare/2.2.4...2.3.4)
 
 ## [2.2.4](https://github.com/playbasis/api/tree/2.2.4) (2016-02-05)
 [Full Changelog](https://github.com/playbasis/api/compare/2.3.0-alpha.4...2.2.4)
@@ -2267,17 +2290,17 @@
 - Hotfix/hotfix php error in engine [\#125](https://github.com/playbasis/api/pull/125) ([narut-playbasis](https://github.com/narut-playbasis))
 
 ## [Optimize_saleBoard_to_calculate_faster](https://github.com/playbasis/api/tree/Optimize_saleBoard_to_calculate_faster) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...Optimize_saleBoard_to_calculate_faster)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...Optimize_saleBoard_to_calculate_faster)
 
 **Implemented enhancements:**
 
 - Hotfix/optimize sale board to calculate faster [\#124](https://github.com/playbasis/api/pull/124) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
-## [2.1.43-alpha.12](https://github.com/playbasis/api/tree/2.1.43-alpha.12) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.11...2.1.43-alpha.12)
-
 ## [2.1.43-alpha.11](https://github.com/playbasis/api/tree/2.1.43-alpha.11) (2016-01-14)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.12...2.1.43-alpha.11)
+
+## [2.1.43-alpha.12](https://github.com/playbasis/api/tree/2.1.43-alpha.12) (2016-01-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.43-alpha.10...2.1.43-alpha.12)
 
 **Implemented enhancements:**
 
@@ -3268,13 +3291,13 @@
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.3...2.1.24-alpha.4)
 
 ## [2.1.24-alpha.3](https://github.com/playbasis/api/tree/2.1.24-alpha.3) (2015-04-27)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.3)
-
-## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.2)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.1...2.1.24-alpha.3)
 
 ## [2.1.24-alpha.1](https://github.com/playbasis/api/tree/2.1.24-alpha.1) (2015-04-10)
-[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.1)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.24-alpha.2...2.1.24-alpha.1)
+
+## [2.1.24-alpha.2](https://github.com/playbasis/api/tree/2.1.24-alpha.2) (2015-04-10)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.20-alpha.1...2.1.24-alpha.2)
 
 ## [2.1.20-alpha.1](https://github.com/playbasis/api/tree/2.1.20-alpha.1) (2015-03-18)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.19-alpha.1...2.1.20-alpha.1)
