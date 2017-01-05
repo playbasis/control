@@ -1,55 +1,112 @@
 # Change Log
-## [2.24.0](https://github.com/playbasis/control/tree/2.24.0) (2016-12-15)
-[Full Changelog](https://github.com/playbasis/control/compare/2.23.0...2.24.0)
 
-## [2.23.5/fix_download_goods_report](https://github.com/playbasis/control/tree/2.23.5/fix_download_goods_report) (2016-12-14)
-[Full Changelog](https://github.com/playbasis/control/compare/2.23.4/add_unilver_to_weekly_report...2.23.5/fix_download_goods_report)
+## [2.25.0](https://github.com/playbasis/control/tree/2.25.0) (2017-01-05)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.0...2.25.0)
+
+**Implemented enhancements:**
+
+- Modified badge condition to able to set operator [\#347](https://github.com/playbasis/control/pull/347) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- fixed - button to show import result not work. [\#348](https://github.com/playbasis/control/pull/348) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.24.7/add_DBS_email_to_DBS_weekly_report](https://github.com/playbasis/control/tree/2.24.7/add_DBS_email_to_DBS_weekly_report) (2016-12-28)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.6/Add_email_to_DBS_weekly_report...2.24.7/add_DBS_email_to_DBS_weekly_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.24.7/add dbs email to dbs weekly report [\#346](https://github.com/playbasis/control/pull/346) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.24.6/Add_email_to_DBS_weekly_report](https://github.com/playbasis/control/tree/2.24.6/Add_email_to_DBS_weekly_report) (2016-12-27)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.5/DBS_weekly_report...2.24.6/Add_email_to_DBS_weekly_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.24.6/add email to dbs weekly report [\#345](https://github.com/playbasis/control/pull/345) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.24.5/DBS_weekly_report](https://github.com/playbasis/control/tree/2.24.5/DBS_weekly_report) (2016-12-27)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.4/incorrect_message_in_dashboard...2.24.5/DBS_weekly_report)
+
+**Merged pull requests:**
+
+- Hotfix/2.24.5/dbs weekly report [\#344](https://github.com/playbasis/control/pull/344) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.24.4/incorrect_message_in_dashboard](https://github.com/playbasis/control/tree/2.24.4/incorrect_message_in_dashboard) (2016-12-26)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.3/increase_max_file_size...2.24.4/incorrect_message_in_dashboard)
+
+**Fixed bugs:**
+
+- Hotfix/2.24.4/incorrect text in email form [\#343](https://github.com/playbasis/control/pull/343) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.24.3/increase_max_file_size](https://github.com/playbasis/control/tree/2.24.3/increase_max_file_size) (2016-12-21)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.2/improve_display_of_tags_in_list_view...2.24.3/increase_max_file_size)
+
+**Implemented enhancements:**
+
+- Hotfix/2.24.3/increase max file size [\#342](https://github.com/playbasis/control/pull/342) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.24.3/increase max file size [\#342](https://github.com/playbasis/control/pull/342) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.24.2/improve_display_of_tags_in_list_view](https://github.com/playbasis/control/tree/2.24.2/improve_display_of_tags_in_list_view) (2016-12-20)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.1/fix_download_report_of_reward...2.24.2/improve_display_of_tags_in_list_view)
+
+**Implemented enhancements:**
+
+- Hotfix/2.24.2/improve display of tags in list view [\#341](https://github.com/playbasis/control/pull/341) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.24.1 [\#340](https://github.com/playbasis/control/pull/340) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [2.24.1/fix_download_report_of_reward](https://github.com/playbasis/control/tree/2.24.1/fix_download_report_of_reward) (2016-12-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.0...2.24.1/fix_download_report_of_reward)
+
+**Implemented enhancements:**
+
+- Hotfix/2.24.1/fix download report of reward [\#339](https://github.com/playbasis/control/pull/339) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.24.0](https://github.com/playbasis/control/tree/2.24.0) (2016-12-15)
+[Full Changelog](https://github.com/playbasis/control/compare/2.23.5/fix_download_goods_report...2.24.0)
 
 **Implemented enhancements:**
 
 - Hotfix/2.23.5/fix download goods report [\#338](https://github.com/playbasis/control/pull/338) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.23.4/add_unilver_to_weekly_report](https://github.com/playbasis/control/tree/2.23.4/add_unilver_to_weekly_report) (2016-12-08)
-[Full Changelog](https://github.com/playbasis/control/compare/2.23.3/sequence_file...2.23.4/add_unilver_to_weekly_report)
-
-**Implemented enhancements:**
-
 - Hotfix/2.23.4/add unilver to weekly report [\#337](https://github.com/playbasis/control/pull/337) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.23.3/sequence_file](https://github.com/playbasis/control/tree/2.23.3/sequence_file) (2016-12-07)
-[Full Changelog](https://github.com/playbasis/control/compare/2.23.2/fix_goods_report...2.23.3/sequence_file)
-
-**Merged pull requests:**
-
-- Hotfix/2.23.3/sequence file [\#336](https://github.com/playbasis/control/pull/336) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.23.2/fix_goods_report](https://github.com/playbasis/control/tree/2.23.2/fix_goods_report) (2016-12-06)
-[Full Changelog](https://github.com/playbasis/control/compare/2.24.2/cron_to_deduct_token_for_hsbchk...2.23.2/fix_goods_report)
+- Hotfix/2.24.1/report status reward [\#333](https://github.com/playbasis/control/pull/333) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.23.1/add digi to master report [\#332](https://github.com/playbasis/control/pull/332) ([piya-playbasis](https://github.com/piya-playbasis))
 
 **Fixed bugs:**
 
 - Hotfix/2.23.2/fix goods report [\#335](https://github.com/playbasis/control/pull/335) ([piya-playbasis](https://github.com/piya-playbasis))
 
-## [2.24.2/cron_to_deduct_token_for_hsbchk](https://github.com/playbasis/control/tree/2.24.2/cron_to_deduct_token_for_hsbchk) (2016-12-06)
-[Full Changelog](https://github.com/playbasis/control/compare/2.24.1/report_status_reward...2.24.2/cron_to_deduct_token_for_hsbchk)
-
 **Merged pull requests:**
 
+- Hotfix/2.23.3/sequence file [\#336](https://github.com/playbasis/control/pull/336) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 - Hotfix/2.24.2/cron to deduct token for hsbchk [\#334](https://github.com/playbasis/control/pull/334) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.23.5/fix_download_goods_report](https://github.com/playbasis/control/tree/2.23.5/fix_download_goods_report) (2016-12-14)
+[Full Changelog](https://github.com/playbasis/control/compare/2.23.4/add_unilver_to_weekly_report...2.23.5/fix_download_goods_report)
+
+## [2.23.4/add_unilver_to_weekly_report](https://github.com/playbasis/control/tree/2.23.4/add_unilver_to_weekly_report) (2016-12-08)
+[Full Changelog](https://github.com/playbasis/control/compare/2.23.3/sequence_file...2.23.4/add_unilver_to_weekly_report)
+
+## [2.23.3/sequence_file](https://github.com/playbasis/control/tree/2.23.3/sequence_file) (2016-12-07)
+[Full Changelog](https://github.com/playbasis/control/compare/2.23.2/fix_goods_report...2.23.3/sequence_file)
+
+## [2.23.2/fix_goods_report](https://github.com/playbasis/control/tree/2.23.2/fix_goods_report) (2016-12-06)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.2/cron_to_deduct_token_for_hsbchk...2.23.2/fix_goods_report)
+
+## [2.24.2/cron_to_deduct_token_for_hsbchk](https://github.com/playbasis/control/tree/2.24.2/cron_to_deduct_token_for_hsbchk) (2016-12-06)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.1/report_status_reward...2.24.2/cron_to_deduct_token_for_hsbchk)
 
 ## [2.24.1/report_status_reward](https://github.com/playbasis/control/tree/2.24.1/report_status_reward) (2016-12-02)
 [Full Changelog](https://github.com/playbasis/control/compare/2.23.1/add_digi_to_master_report...2.24.1/report_status_reward)
 
-**Implemented enhancements:**
-
-- Hotfix/2.24.1/report status reward [\#333](https://github.com/playbasis/control/pull/333) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.23.1/add_digi_to_master_report](https://github.com/playbasis/control/tree/2.23.1/add_digi_to_master_report) (2016-12-01)
 [Full Changelog](https://github.com/playbasis/control/compare/2.23.0...2.23.1/add_digi_to_master_report)
-
-**Implemented enhancements:**
-
-- Hotfix/2.23.1/add digi to master report [\#332](https://github.com/playbasis/control/pull/332) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.23.0](https://github.com/playbasis/control/tree/2.23.0) (2016-11-30)
 [Full Changelog](https://github.com/playbasis/control/compare/2.22.8/fix_date_in_report__action_download...2.23.0)

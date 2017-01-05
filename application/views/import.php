@@ -165,10 +165,10 @@
                             <td>
                                 <span class="dropdown">
                                     <select id="import_type" class="span3"  name ="import_type">
-                                        <option label="Player"         value="player"      <?php echo $import_type =="player"?"selected":""?>>
-                                        <option label="Transaction"    value="transaction" <?php echo $import_type =="transaction"?"selected":""?>>
-                                        <option label="Store organize" value="storeorg"    <?php echo $import_type =="storeorg"?"selected":""?>>
-                                        <option label="Content"        value="content"     <?php echo $import_type =="content"?"selected":""?>>
+                                        <option label="Player"         value="player"      >
+                                        <option label="Transaction"    value="transaction" >
+                                        <option label="Store organize" value="storeorg"    >
+                                        <option label="Content"        value="content"     >
                                     </select>
                                 </span>
                                 <a onclick="showDemo()" title="Show file example" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>
@@ -250,14 +250,8 @@
                                     <td class="center"><?php echo isset($logData['result']) ? $logData['result'] : null; ?></td>
                                     <td class="center">
                                         <?php if (isset($logData['log_results']) && !is_null($logData['log_results'])) { ?>
-
-
-                                            <a onclick="showLog('<?php echo $logData['import_key']?>',<?php echo htmlspecialchars(json_encode($logData['log_results']), ENT_QUOTES, 'UTF-8'); ?>)" title="Show full result" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>
-
-
+                                            <a onclick="showLog('<?php echo $logData['import_key']?>',<?php echo htmlspecialchars(json_encode($logData['log_results']), ENT_QUOTES, 'UTF-8'); ?>)" title="Result" class="tooltips"><i class="fa fa-file-text-o fa-lg"></i></a>
                                         <?php } ?>
-
-                                        <!--<a data-toggle="modal" href="#formLogModal" title="Show full result" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>-->
                                     </td>
                                 </tr>
                             <?php } ?>
