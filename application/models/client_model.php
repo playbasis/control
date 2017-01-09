@@ -260,7 +260,7 @@ class Client_model extends MY_Model
                             'date_added' => $mongoDate,
                             'date_modified' => $mongoDate
                         );
-                        if ((intval($quantity) >= intval($amount))){
+                        if (is_null($quantity) || (intval($quantity) >= intval($amount))){
                             $inset_data['value'] = intval($amount);
                         } else {
                             $inset_data['value'] = intval($quantity);
@@ -284,7 +284,7 @@ class Client_model extends MY_Model
                             if ($overrideOldValue) {
                                 $this->mongo_db->set('value', intval($amount));
                             } else {
-                                if ((intval($quantity) >= intval($amount)) || is_null($quantity)){
+                                if (is_null($quantity) || (intval($quantity) >= intval($amount))){
                                     $this->mongo_db->inc('value', intval($amount));
                                 } else {
                                     $this->mongo_db->inc('value', intval($quantity));
@@ -302,7 +302,7 @@ class Client_model extends MY_Model
                                 'date_added' => $mongoDate,
                                 'date_modified' => $mongoDate
                             );
-                            if ((intval($quantity) >= intval($amount)) || is_null($quantity)){
+                            if (is_null($quantity) || (intval($quantity) >= intval($amount))){
                                 $insert_reward['value'] = intval($amount);
                             } else {
                                 $insert_reward['value'] = intval($quantity);

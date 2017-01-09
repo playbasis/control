@@ -149,6 +149,7 @@ class Reward_model extends MY_Model
                     '_id' => $data['transaction_id']
                 ));
                 $this->mongo_db->set('status', 'reject');
+                $this->mongo_db->set('date_modified', new MongoDate());
                 $this->mongo_db->update('playbasis_reward_status_to_player');
 
                 $this->mongo_db->where(array(
