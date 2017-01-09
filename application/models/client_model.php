@@ -260,7 +260,7 @@ class Client_model extends MY_Model
                             'date_added' => $mongoDate,
                             'date_modified' => $mongoDate
                         );
-                        if ((intval($quantity) >= intval($amount))){
+                        if ((intval($quantity) >= intval($amount))  || is_null($quantity)){
                             $inset_data['value'] = intval($amount);
                         } else {
                             $inset_data['value'] = intval($quantity);
