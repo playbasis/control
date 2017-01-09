@@ -97,6 +97,7 @@ class Reward_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_reward_status_to_player');
         return $result? $result[0]: null;
     }
+
     public function approvePendingReward($data,$approve)
     {
         $this->set_site_mongodb($data['site_id']);
@@ -117,6 +118,7 @@ class Reward_model extends MY_Model
                     '_id' => $data['transaction_id']
                 ));
                 $this->mongo_db->set('status', 'approve');
+                $this->mongo_db->set('date_modified', new MongoDate());
                 $this->mongo_db->update('playbasis_reward_status_to_player');
 
                 $this->mongo_db->where(array(
@@ -157,9 +159,18 @@ class Reward_model extends MY_Model
                     'site_id' => $data['site_id'],
                     'reward_id' => $pending_reward['reward_id']
                 ));
-                $this->mongo_db->inc('quantity', intval($pending_reward['value']));
-                $this->mongo_db->set('date_modified', new MongoDate());
-                $this->mongo_db->update('playbasis_reward_to_client');
+                $reward_data = $this->mongo_db->get('playbasis_reward_to_client');
+
+                if (isset($reward_data[0]['quantity']) && !is_null($reward_data[0]['quantity'])){
+                    $this->mongo_db->where(array(
+                        'client_id' => $data['client_id'],
+                        'site_id' => $data['site_id'],
+                        'reward_id' => $pending_reward['reward_id']
+                    ));
+                    $this->mongo_db->inc('quantity', intval($pending_reward['value']));
+                    $this->mongo_db->set('date_modified', new MongoDate());
+                    $this->mongo_db->update('playbasis_reward_to_client');
+                }
             }
             return true;
         } else {
