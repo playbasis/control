@@ -1298,7 +1298,8 @@ class jigsaw extends MY_Model
                 }
 
                 $total = $this->countPointAwardInDay($reward_id, $client_id, $site_id, $startTimeFilter);
-                if(($total + $quantity) > $reward['limit_per_day']){
+                $rejected_point_amount = $this->countRejectedPointInDay($reward_id, $client_id, $site_id, $startTimeFilter);
+                if((($total-$rejected_point_amount) + $quantity) > $reward['limit_per_day']){
                     return false;
                 }
             }
@@ -1323,6 +1324,32 @@ class jigsaw extends MY_Model
                 '$group' => array(
                     '_id' => null,
                     'sum' => array('$sum' => '$quantity')
+                )
+            ),
+        ));
+
+        $total = $results['result'] ? $results['result'][0]['sum'] : 0;
+
+        return $total;
+    }
+
+    private function countRejectedPointInDay($reward_id, $client_id, $site_id, $startTime){
+
+        $results = $this->mongo_db->aggregate('playbasis_reward_status_to_player', array(
+            array(
+                '$match' => array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id,
+                    'reward_id' => $reward_id,
+                    'date_modified' => array('$gte' => new MongoDate($startTime)),
+                    'status' => "reject"
+                ),
+            ),
+
+            array(
+                '$group' => array(
+                    '_id' => null,
+                    'sum' => array('$sum' => '$value')
                 )
             ),
         ));
