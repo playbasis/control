@@ -260,6 +260,9 @@ class jigsaw extends MY_Model
             if($result == true){
                 $timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
                 $result = $this->checkRewardLimitPerDay($config['reward_id'], $input['client_id'], $input['site_id'], $config['quantity'], $timeNow);
+                if($result == true){
+                    $result = $this->checkRewardLimitPerUser($config['reward_id'], $input['pb_player_id'], $input['client_id'], $input['site_id'], $config['quantity']);
+                }
             }
             return $result;
         }
@@ -1305,6 +1308,36 @@ class jigsaw extends MY_Model
             }
             return true;
         }
+    }
+
+    private function checkRewardLimitPerUser($reward_id, $pb_player_id, $client_id,  $site_id, $quantity)
+    {
+        $reward = $this->getRewardInfo($client_id, $site_id, $reward_id);
+        if(!$reward){
+            return false;
+        }else {
+
+            if(isset($reward['per_user']) && $reward['per_user']){
+                /* get current reward value */
+                $reward_to_player = $this->reward_model->getPlayerReward($client_id, $site_id, $pb_player_id, $reward_id);
+                if(isset($reward_to_player['value']) && $reward_to_player['value']){
+                    $total = $reward_to_player['value'];
+                }else{
+                    $total = 0;
+                }
+
+                if(isset($reward['pending']) && !empty($reward['pending']) && $reward['pending'] != false){
+                    $pending_point_amount = $this->countPendingPointToPlayer($reward_id, $pb_player_id, $client_id, $site_id);
+                }else{
+                    $pending_point_amount = 0;
+                }
+
+                if((($total + $pending_point_amount) + $quantity) > $reward['per_user']){
+                    return false;
+                }
+            }
+            return true;
+        }
 
     }
 
@@ -1343,6 +1376,32 @@ class jigsaw extends MY_Model
                     'reward_id' => $reward_id,
                     'date_modified' => array('$gte' => new MongoDate($startTime)),
                     'status' => "reject"
+                ),
+            ),
+
+            array(
+                '$group' => array(
+                    '_id' => null,
+                    'sum' => array('$sum' => '$value')
+                )
+            ),
+        ));
+
+        $total = $results['result'] ? $results['result'][0]['sum'] : 0;
+
+        return $total;
+    }
+
+    private function countPendingPointToPlayer($reward_id, $pb_player_id, $client_id, $site_id){
+
+        $results = $this->mongo_db->aggregate('playbasis_reward_status_to_player', array(
+            array(
+                '$match' => array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id,
+                    'reward_id' => $reward_id,
+                    'pb_player_id' => $pb_player_id,
+                    'status' => "pending"
                 ),
             ),
 
