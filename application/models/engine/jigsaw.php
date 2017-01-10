@@ -301,6 +301,9 @@ class jigsaw extends MY_Model
         if($result == true){
             $timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
             $result = $this->checkRewardLimitPerDay($rewardId, $input['client_id'], $input['site_id'], $quantity, $timeNow);
+            if($result == true){
+                $result = $this->checkRewardLimitPerUser($rewardId, $input['pb_player_id'], $input['client_id'], $input['site_id'], $quantity);
+            }
         }
         return $result;
     }
