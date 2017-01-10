@@ -26,6 +26,7 @@ $lang = array(
     'entry_status'                      => 'Status',
     'entry_type'                        => 'Type',
     'entry_quantity'                    => 'Quantity',
+    'entry_per_user'                    => 'Maximum quantity per an user',
     'entry_limit_per_day'               => 'Limit quantity to award per day',
     'entry_limit_per_day_placeholder'   => 'If blank or 0 mean no limit',
     'entry_limit_start_time'            => 'Default = 00:00',

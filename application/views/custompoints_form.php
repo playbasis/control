@@ -96,6 +96,17 @@
                     </tr>
                     <tr>
                         <td>
+                            <span id="per_user"></span> <?php echo $this->lang->line('entry_per_user'); ?>:
+                        </td>
+                        <td>
+                            <input type="text"
+                                   placeholder="<?php echo $this->lang->line('entry_per_user'); ?>"
+                                   name="per_user" id="input_per_user"
+                                   value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <span id="limit_per_day_span"></span> <?php echo $this->lang->line('entry_limit_per_day'); ?>:
                         </td>
                         <td>
@@ -205,6 +216,7 @@
         var energy_inputs = $('[id^=input_energy_]'),
             quantity_input = $('[id=input_quantity]'),
             quantity_span = $('[id=quantity_required]'),
+            per_user = $('[id=input_per_user]'),
             limit_per_day = $('[id=input_limit_per_day]'),
             limit_start_time = $('[id=input_limit_start_time]'),
             energy_required_span = $('[id=energy_required]'),
@@ -214,6 +226,7 @@
         if(custompoint_type_radio_value != "normal"){
             quantity_input.attr('disabled',true);
             limit_per_day.attr('disabled',true);
+            per_user.attr('disabled',true);
             limit_start_time.attr('disabled',true);
             quantity_span.hide();
             energy_inputs.attr('disabled',false);
@@ -221,6 +234,7 @@
         } else {
             quantity_input.attr('disabled',false);
             limit_per_day.attr('disabled',false);
+            per_user.attr('disabled',false);
             limit_start_time.attr('disabled',false);
             quantity_span.show();
             energy_inputs.attr('disabled',true);
@@ -231,6 +245,7 @@
             if ($(this).val() != 'normal') {
                 quantity_input.attr('disabled',true);
                 limit_per_day.attr('disabled',true);
+                per_user.attr('disabled',true);
                 limit_start_time.attr('disabled',true);
                 quantity_span.hide();
                 energy_inputs.attr('disabled',false);
@@ -238,6 +253,7 @@
             } else {
                 quantity_input.attr('disabled',false);
                 limit_per_day.attr('disabled',false);
+                per_user.attr('disabled',false);
                 limit_start_time.attr('disabled',false);
                 quantity_span.show();
                 energy_inputs.attr('disabled',true);
