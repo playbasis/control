@@ -100,6 +100,7 @@ class Custompoints extends MY_Controller
                     'numeric|xss_clean');
             }
 
+            $this->form_validation->set_rules('per_user',  $this->lang->line('entry_per_user'), 'numeric|xss_clean');
             $this->form_validation->set_rules('limit_per_day',  $this->lang->line('entry_limit_per_day'), 'numeric|xss_clean');
 
             if ($this->form_validation->run()) {
@@ -109,6 +110,7 @@ class Custompoints extends MY_Controller
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['name'] = $custompoints_data['name'];
                 $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
+                $data['per_user'] = isset($custompoints_data['per_user']) && !is_null($custompoints_data['per_user']) && $custompoints_data['per_user'] !== "" ? intval($custompoints_data['per_user']) : null;
                 $data['limit_per_day'] = isset($custompoints_data['limit_per_day']) && !is_null($custompoints_data['limit_per_day']) && $custompoints_data['limit_per_day'] !== "" ? intval($custompoints_data['limit_per_day']) : null;
                 $limit_start_time = isset($custompoints_data['limit_start_time']) && !is_null($custompoints_data['limit_start_time']) && $custompoints_data['limit_start_time'] !== "" ? $custompoints_data['limit_start_time'] : "00:00";
                 $data['limit_start_time'] = is_null($data['limit_per_day']) || $data['limit_per_day'] == 0 ? "00:00" : $limit_start_time;
@@ -305,6 +307,14 @@ class Custompoints extends MY_Controller
             $this->data['quantity'] = "";
         }
 
+        if ($this->input->post('per_user')) {
+            $this->data['per_user'] = $this->input->post('per_user');
+        } elseif (isset($custompoints_info['per_user'])) {
+            $this->data['per_user'] = $custompoints_info['per_user'];
+        } else {
+            $this->data['per_user'] = "";
+        }
+
         if ($this->input->post('limit_per_day')) {
             $this->data['limit_per_day'] = $this->input->post('limit_per_day');
         } elseif (isset($custompoints_info['limit_per_day'])) {
@@ -377,6 +387,7 @@ class Custompoints extends MY_Controller
                     'numeric|xss_clean');
             }
 
+            $this->form_validation->set_rules('per_user',  $this->lang->line('entry_per_user'), 'numeric|xss_clean');
             $this->form_validation->set_rules('limit_per_day',  $this->lang->line('entry_limit_per_day'), 'numeric|xss_clean');
 
             if ($this->form_validation->run()) {
@@ -387,6 +398,7 @@ class Custompoints extends MY_Controller
                 $data['reward_id'] = $custompoints_id;
                 $data['name'] = $custompoints_data['name'];
                 $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
+                $data['per_user'] = isset($custompoints_data['per_user']) && !is_null($custompoints_data['per_user']) && $custompoints_data['per_user'] !== "" ? intval($custompoints_data['per_user']) : null;
                 $data['limit_per_day'] = isset($custompoints_data['limit_per_day']) && !is_null($custompoints_data['limit_per_day']) && $custompoints_data['limit_per_day'] !== "" ? intval($custompoints_data['limit_per_day']) : null;
                 $limit_start_time = isset($custompoints_data['limit_start_time']) && !is_null($custompoints_data['limit_start_time']) && $custompoints_data['limit_start_time'] !== "" ? $custompoints_data['limit_start_time'] : "00:00";
                 $data['limit_start_time'] = is_null($data['limit_per_day']) || $data['limit_per_day'] == 0 ? null : $limit_start_time;
