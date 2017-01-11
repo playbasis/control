@@ -258,7 +258,8 @@ class Service_model extends MY_Model
         $last_read_activity_id = null,
         $mode = 'all',
         $event_type = null,
-        $action_name = null
+        $action_name = null,
+        $reward_name = null
     ) {
         $this->set_site_mongodb($site_id);
 
@@ -294,6 +295,11 @@ class Service_model extends MY_Model
         if(is_array($action_name)){
             $this->mongo_db->where(array('$or' => array(array('$and' => array(array("event_type" => "ACTION"),
                 array("action_name" => array('$in' => $action_name)))), array("event_type" => array('$ne' => "ACTION" )))));
+        }
+
+        if(is_array($reward_name)){
+            $this->mongo_db->where(array('$or' => array(array('$and' => array(array("event_type" => "REWARD"),
+                array("reward_name" => array('$in' => $reward_name)))), array("event_type" => array('$ne' => "REWARD" )))));
         }
 
         $this->mongo_db->limit((int)$limit);

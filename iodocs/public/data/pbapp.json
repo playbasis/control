@@ -6588,6 +6588,13 @@
               "Default": "",
               "Type": "string",
               "Description": "filter action name Ex. like,comment,login"
+            },
+            {
+              "Name": "reward_name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "filter reward name Ex. exp,point"
             }
           ],
           "responses": {
