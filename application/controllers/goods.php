@@ -739,11 +739,6 @@ class Goods extends MY_Controller
                     $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                 }
 
-                /*if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
-                    $image = $this->Image_model->resize($result['image'], 50, 50);
-                } else {
-                    $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                }*/
                 $goodsIsPublic = $this->checkGoodsIsPublic($result['_id']);
                 $org_name = null;
                 if ($this->data['org_status']) {
@@ -768,28 +763,23 @@ class Goods extends MY_Controller
                 );
             }
         } else {
-            $results = $this->Goods_model->getGroupsAggregate($this->session->userdata('site_id'));
-            $ids = array();
-            $group_name = array();
-            foreach ($results as $i => $result) {
-                $group = $result['_id']['group'];
-                $quantity = $result['quantity'];
-                $list = $result['list'];
-                $first = array_shift($list); // skip first one
-                $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
-                $ids = array_merge($ids, $list);
+            $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'));
+            $in_goods = array();
+            foreach ($group_list as $group_name){
+                $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name);
+                array_push($in_goods, new MongoId($goods_group_detail));
             }
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId(array(
                 'site_id' => $site_id,
                 'sort' => 'sort_order',
-                '$nin' => $ids
+                'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ))
             ));
             $goods_list = $this->Goods_model->getGoodsBySiteId(array(
                 'site_id' => $site_id,
                 'limit' => $per_page,
                 'start' => $offset,
                 'sort' => 'sort_order',
-                '$nin' => $ids
+                'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ))
             ));
 
             $this->data['no_image'] = S3_IMAGE . "cache/no_image-50x50.jpg";
@@ -809,15 +799,8 @@ class Goods extends MY_Controller
                 } else {
                     $image = S3_IMAGE . "cache/no_image-50x50.jpg";
                 }
-                /*if ($goods['image'] && (S3_IMAGE . $goods['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods['image'] != 'HTTP/1.0 403 Forbidden')) {
-                    $image = $this->Image_model->resize($goods['image'], 50, 50);
-                }
-                else {
-                    $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                }*/
 
-                $_id = $goods['_id']->{'$id'};
-                $is_group = array_key_exists($_id, $group_name);
+                $is_group = array_key_exists('group', $goods);
                 $org_name = null;
                 if ($this->data['org_status']) {
                     if (isset($goods['organize_id']) && !empty($goods['organize_id'])) {
@@ -828,14 +811,13 @@ class Goods extends MY_Controller
 
                 $this->data['goods_list'][] = array(
                     'goods_id' => $goods['_id'],
-                    'name' => $is_group ? $group_name[$_id]['group'] : $goods['name'],
-                    'quantity' => $is_group ? $group_name[$_id]['quantity'] : $goods['quantity'],
+                    'name' => $is_group ? $goods['group'] : $goods['name'],
+                    'quantity' => $is_group ? $this->Goods_model->checkGoodsGroupQuantity($this->session->userdata('site_id'), $goods['group']) : $goods['quantity'],
                     'per_user' => $goods['per_user'],
                     'status' => $goods['status'],
                     'image' => $image,
                     'sort_order' => $goods['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($goods['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
                     'sponsor' => isset($goods['sponsor']) ? $goods['sponsor'] : null,
                     'is_group' => $is_group,
                     'organize_name' => $org_name,
