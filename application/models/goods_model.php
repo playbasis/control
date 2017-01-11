@@ -229,6 +229,10 @@ class Goods_model extends MY_Model
 
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id', new MongoId($data['site_id']));
+
+        if(array_key_exists('specific', $data)){
+            $this->mongo_db->where($data['specific']);
+        }
         if (array_key_exists('$nin', $data)) {
             $this->mongo_db->where_not_in('_id', $data['$nin']);
         }
@@ -252,6 +256,11 @@ class Goods_model extends MY_Model
         }
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id', $data['site_id'] ? new MongoId($data['site_id']) : null);
+        
+        if(array_key_exists('specific', $data)){
+            $this->mongo_db->where($data['specific']);
+        }
+        
         if (array_key_exists('$nin', $data)) {
             $this->mongo_db->where_not_in('_id', $data['$nin']);
         }
@@ -309,12 +318,30 @@ class Goods_model extends MY_Model
         return $results ? $results['result'] : array();
     }
 
+    public function getGroupsList($site_id)
+    {
+        $this->set_site_mongodb($site_id);
+       
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->distinct('group', 'playbasis_goods_to_client');
+    }
+
     public function checkExists($site_id, $group)
     {
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('group', $group);
         return $this->mongo_db->count("playbasis_goods_to_client") > 0;
+    }
+
+    public function checkGoodsGroupQuantity($site_id, $group)
+    {
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('quantity', 1);
+        return $this->mongo_db->count("playbasis_goods_to_client");
     }
 
     public function getAvailableGoodsByGroup($data = array())
@@ -609,7 +636,7 @@ class Goods_model extends MY_Model
     public function addGoodsToClient_bulk($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        return $this->mongo_db->batch_insert('playbasis_goods_to_client', $data, array("w" => 0, "j" => false));
+        return $this->mongo_db->batch_insert('playbasis_goods_to_client', $data);
     }
 
     public function editGoods($goods_id, $data)
