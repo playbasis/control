@@ -478,8 +478,8 @@ class Service_model extends MY_Model
             $actionAndStringFilter = $this->getActionLogDetail($event['action_log_id']);
             if ($actionAndStringFilter) {
                 $event['action_name'] = $actionAndStringFilter['action_name'];
-                $event['string_filter'] = $actionAndStringFilter['url'];
-                $event['action_icon'] = $actionAndStringFilter['icon'];
+                $event['string_filter'] = isset($actionAndStringFilter['url']) ? $actionAndStringFilter['url'] : null;
+                $event['action_icon'] = isset($actionAndStringFilter['icon']) ? $actionAndStringFilter['icon'] : null;
             }
             unset($event['action_log_id']);
         }
