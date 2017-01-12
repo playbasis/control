@@ -1872,6 +1872,36 @@ class Player extends REST2_Controller
         $this->response($this->resp->setRespond($goodsList), 200);
     }
 
+    public function goodsCount_get($player_id = '')
+    {
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        }
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+        $status = $this->input->get('status');
+        if($status){
+            if ($status != "all" && $status != "active" && $status != "used" && $status != "expired") {
+                $this->response($this->error->setError('INVALID_STATUS'), 200);
+            }
+            $status = ($status == "all") ? null : $status;
+        } else {
+            $status = "active";
+        }
+        //get player goods
+        $n = $this->player_model->getGoodsCount($pb_player_id, $this->site_id,
+            $this->input->get('tags') ? explode(',', $this->input->get('tags')) : null, $status);
+
+        $this->response($this->resp->setRespond(array('n' => $n)), 200);
+    }
+
     public function code_get($player_id = '')
     {
         if (!$player_id) {

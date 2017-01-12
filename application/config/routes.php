@@ -122,6 +122,7 @@ $route['Player/'.ANY_STRING.'/badgeAll'] = 'player/badgeAll/$1';
 $route['Player/badgeAll'] = 'player/badgeAll';
 
 $route['Player/'.ANY_STRING.'/goods'] = 'player/goods/$1';
+$route['Player/'.ANY_STRING.'/goods/count'] = 'player/goodsCount/$1';
 
 $route['Player/quest'] = 'quest/questOfPlayer';
 $route['Player/quest/'.ANY_STRING] = 'quest/questOfPlayer/$1';
