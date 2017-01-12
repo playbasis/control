@@ -19,6 +19,7 @@ class Goods_model extends MY_Model
             'code',
             'description',
             'quantity',
+            'per_user',
             'redeem',
             'group',
             'tags',
