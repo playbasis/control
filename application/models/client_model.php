@@ -1491,7 +1491,7 @@ class Client_model extends MY_Model
             'status' => true,
             'deleted' => false
         );
-        $this->mongo_db->select(array('client_id', 'site_name'));
+        $this->mongo_db->select(array('client_id', 'site_name', 'report_client', 'report_site'));
         $this->mongo_db->where($where);
         return $this->mongo_db->get('playbasis_client_site');
     }

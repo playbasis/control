@@ -13,6 +13,8 @@ define('SITE_ID_BURUFLY', '52ea1eac8d8c89401c0000e7');
 define('SITE_ID_ASSOPOKER', '53a9422f988040355a8b45d3');
 define('SITE_ID_TRUE_MONEY', '5423ce3dbe120b680f8b456c');
 define('SITE_ID_DIGI', '57aab56572d3e1e0418b456a');
+define('SITE_ID_DBS', '57ce8338b350cf680b8b4a02');
+define('SITE_ID_HSBC', '5821d3cfbe120ba34a8b6ede');
 define('SITE_ID_UNILEVER', '5715ed9bbe120b68558bbfcc');
 define('SITE_ID_COMPARE_AND_SHARE', '5461fd2d99804019418b5025');
 define('SITE_ID_CHIANGMAI_U', '5424045598804099678b457b');
@@ -60,10 +62,11 @@ class Report_weekly extends CI_Controller
 
         /* init */
         $allowed_site_ids = array( // true = send email, false = will not send
-            SITE_ID_DEMO => true,
             SITE_ID_TRUE_MONEY => true,
             SITE_ID_DIGI => true,
-            SITE_ID_UNILEVER => true
+            SITE_ID_UNILEVER => true,
+            SITE_ID_DBS => true,
+            SITE_ID_HSBC => true
         );
         $to_pbteam_email = array(
             'devteam@playbasis.com',
@@ -151,12 +154,12 @@ class Report_weekly extends CI_Controller
                     $conf['report_email_client'] ? array($params['CLIENT_EMAIL']) : array(),
                     $to_pbteam_email
                 );
-                $subject = '[Playbasis] Weekly Report for ' . $params['SITE_NAME'] . ' (' . $params['FROM'] . ' - ' . $params['TO'] . ')';
+                $subject = '[Playbasis] Weekly Report for ' . $params['REPORT_SITE'] . ' (' . $params['FROM'] . ' - ' . $params['TO'] . ')';
                 $message = str_replace('{' . CANNOT_VIEW_EMAIL . '}',
                     '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="' . $params['REPORT_URL'] . '" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>',
                     $html);
                 $file_path = $conf['report_dir'] . $params['DIR'] . '/' . str_replace('.html', '.pdf', $params['FILE']);
-                $file_name = 'report-' . $params['SITE_NAME'] . '-' . str_replace('.html', '.pdf', $params['FILE']);
+                $file_name = 'report-' . $params['REPORT_SITE'] . '-' . str_replace('.html', '.pdf', $params['FILE']);
                 $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message,
                     'If you cannot view this email, please visit ' . $params['REPORT_URL'],
                     $conf['report_pdf'] ? array($file_path => $file_name) : array());
@@ -220,6 +223,8 @@ class Report_weekly extends CI_Controller
             'CLIENT_EMAIL' => $client['email'],
             'SITE_ID' => $site['_id'],
             'SITE_NAME' => $site['site_name'],
+            'REPORT_CLIENT' => isset($site['report_client']) && $site['report_client'] ? $site['report_client'] : $client['first_name'],
+            'REPORT_SITE' => isset($site['report_site']) && $site['report_site'] ? $site['report_site'] : $site['site_name'],
             'FROM' => date(REPORT_DATE_FORMAT, strtotime('+1 day', strtotime($from))),
             'TO' => date(REPORT_DATE_FORMAT, strtotime($to)),
         );
