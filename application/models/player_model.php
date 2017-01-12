@@ -1683,6 +1683,101 @@ class Player_model extends MY_Model
         return $playerGoods;
     }
 
+    public function getGoodsCount($pb_player_id, $site_id, $tags = null, $status = null)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $match_condition = array(
+            'site_id' => new MongoId($site_id),
+            'pb_player_id' => new MongoId($pb_player_id)
+        );
+
+        $query_array = array(
+            array(
+                '$match' => $match_condition
+            ),
+            array(
+                '$group' => array('_id' => '$goods_id',
+                    'date_expire' => array('$push' => '$date_expire'),
+                    'current' => array('$sum' => 1))
+            )
+        );
+        $results = $this->mongo_db->aggregate('playbasis_goods_log', $query_array);
+        if (!$results) {
+            return 0;
+        }
+
+        $playerGoods = array();
+        foreach ($results["result"] as $goods) {
+            if (isset($goods['_id'])) {
+                //get goods data
+                $this->mongo_db->select(array(
+                    'image',
+                    'name',
+                    'description',
+                    'code',
+                    'group',
+                    'tags'
+                ));
+                $this->mongo_db->select(array(), array('_id'));
+                $this->mongo_db->where(array(
+                    'goods_id' => $goods['_id'],
+                    'site_id' => $site_id,
+                ));
+                if($tags){
+                    $this->mongo_db->where_in('tags',$tags);
+                }
+                $this->mongo_db->limit(1);
+                $result = $this->mongo_db->get('playbasis_goods_to_client');
+
+                if (!$result) {
+                    continue;
+                }
+                $result = $result[0];
+
+                $this->mongo_db->select(array(
+                    'goods_id',
+                    'value',
+                    'date_expire'
+                ));
+                $this->mongo_db->select(array(), array('_id'));
+                $this->mongo_db->where(array(
+                    'pb_player_id' => $pb_player_id,
+                    'goods_id' => $goods['_id'],
+                ));
+                $goods_data = $this->mongo_db->get('playbasis_goods_to_player');
+                if ($goods_data) {
+                    $goods_data = $goods_data[0];
+                    if(isset($goods_data['date_expire'])) $goods_data['date_expire'] = datetimeMongotoReadable($goods_data['date_expire']);
+                    $goods_data['status'] = $goods_data['value'] > 0 ? "active" : "used";
+                    $goods_data['date_expire'] = isset($goods_data['date_expire']) ? $goods_data['date_expire'] : null;
+                } else {
+                    $goods_data = array();
+                    $goods_data['value'] = 0;
+                    $goods_data['status'] = "expired";
+                    $goods_data['date_expire'] = isset($goods['date_expire'][0]) ? datetimeMongotoReadable($goods['date_expire'][0]) : null;
+                }
+                if ($status && $status != $goods_data['status']){
+                    continue;
+                }
+                $goods_data['goods_id'] = $goods['_id'] . "";
+                $goods_data['image'] = $this->config->item('IMG_PATH') . $result['image'];
+                $goods_data['name'] = $result['name'];
+                $goods_data['description'] = $result['description'];
+                $goods_data['code'] = $result['code'];
+                $goods_data['tags'] = isset($result['tags']) && !empty($result['tags']) ? $result['tags'] : null;
+                if (isset($result['group'])) {
+                    $goods_data['group'] = $result['group'];
+                }
+
+                $goods_data['amount'] = $goods_data['value'];
+                unset($goods_data['value']);
+                array_push($playerGoods, $goods_data);
+            }
+        }
+        return count($playerGoods);
+    }
+
     public function getGoodsByGoodsId($pb_player_id, $site_id, $goods_id=false, $goods_list=false, $quantity=false)
     {
         $this->set_site_mongodb($site_id);

@@ -1656,7 +1656,7 @@
         },
         {
           "MethodName": "Goods",
-          "Synopsis": "Returns information about all the goods list that a player has redeem.",
+          "Synopsis": "Returns information about all the goods list that a player has.",
           "HTTPMethod": "GET",
           "URI": "Player/:id/goods",
           "RequiresOAuth": "N",
@@ -1705,6 +1705,46 @@
                 "status":       { "-type": "string"}
               }
             ]
+          }
+        },
+        {
+          "MethodName": "Goods Count",
+          "Synopsis": "Returns information about the number of goods that a player has.",
+          "HTTPMethod": "GET",
+          "URI": "Player/:id/goods/count",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "id",
+              "Required": "URI",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            },
+            {
+              "Name": "status",
+              "Required": "N",
+              "Default": "active",
+              "Type": "enumerated",
+              "Description": "Specific status to find (e.g. active,expired,used)",
+              "EnumeratedList": [
+                "active",
+                "all",
+                "expired",
+                "used"
+              ]
+            }
+          ],
+          "response": {
+            "n":          { "-type": "number"},
           }
         },
         {
