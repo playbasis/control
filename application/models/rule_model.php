@@ -103,7 +103,10 @@ class Rule_model extends MY_Model
                     $jigsaw_id = strval($rowx['jigsaw_id']);
                     $rowx['id'] = $jigsaw_id;
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
-                    $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
+                    if($rowx['name'] != "specialRewardCondition"){
+                        $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
+                    }
+
                     $rowx['dataSet'] = $rowx['init_dataset'];
                     $rowx['specific_id'] = $jigsaw_id; // no specific id for condition so using the same id with jigsaw id.
                     $rowx['category'] = 'CONDITION';
