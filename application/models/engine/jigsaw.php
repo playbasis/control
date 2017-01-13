@@ -308,6 +308,118 @@ class jigsaw extends MY_Model
         return $result;
     }
 
+    private function getPlayerPointByName($client_id, $site_id, $pb_player_id, $reward_name)
+    {
+        $value = null;
+        $points = $this->player_model->getPlayerPoints($pb_player_id, $site_id);
+        foreach ($points as $point) {
+            if($reward_name == $this->point_model->getRewardNameById(array( 'reward_id' => $point['reward_id'], 'client_id'=> $client_id, 'site_id' =>  $site_id ))){
+                $value = $point['value'];
+                break;
+            }
+        }
+        return $value;
+    }
+
+    private function getGoodsInfo($client_id, $site_id, $goods_id){
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'goods_id' => $goods_id
+        ));
+        $ret = $this->mongo_db->get('playbasis_goods_to_client');
+        return  $ret && isset($ret[0]) ? $ret[0] : array();;
+    }
+
+    private function getPlayerAllGoods($client_id, $site_id, $pb_player_id){
+        $this->mongo_db->select(array('goods_id','value'));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'pb_player_id' => $pb_player_id
+        ));
+        $goods = $this->mongo_db->get('playbasis_goods_to_player');
+        return $goods;
+    }
+
+    private function getPlayerGoodsQuantityByName($client_id, $site_id, $pb_player_id, $goods_name)
+    {
+        $value = 0;
+        $found_goods = false;
+        $goods_list = $this->getPlayerAllGoods($client_id, $site_id, $pb_player_id);
+        foreach ($goods_list as $goods) {
+            $goods_info = $this->getGoodsInfo($client_id, $site_id, $goods['goods_id']);
+            if($goods_info['name'] == $goods_name && !isset($goods_info['group'])){
+                $value += $goods['value'];
+                $found_goods = true;
+            }
+        }
+        return $found_goods ? $value : null;
+    }
+
+    private function getPlayerGoodsGroupQuantityByName($client_id, $site_id, $pb_player_id, $goodsgroup_name)
+    {
+        $value = null;
+        $found_goods = false;
+        $goods_list = $this->getPlayerAllGoods($client_id, $site_id, $pb_player_id);
+        foreach ($goods_list as $goods) {
+            $goods_info = $this->getGoodsInfo($client_id, $site_id, $goods['goods_id']);
+            if(isset($goods_info['group']) && $goods_info['group'] == $goodsgroup_name ){
+                $value += $goods['value'];
+                $found_goods = true;
+            }
+        }
+        return $found_goods ? $value : null;
+    }
+
+    public function specialRewardCondition($config, $input, &$exInfo = array())
+    {
+        if(!isset($input['condition-rewardtype']) || !isset($input['condition-rewardname']) || !isset($input['condition-operator']) || !isset($input['condition-quantity'])){
+            return false;
+        }
+
+        $point = null;
+        $result = false;
+        if(strtolower($input['condition-rewardtype']) == "badge"){
+            foreach ($input['player_badge'] as $key => $badge) {
+                if (($badge['name'] == $input['condition-rewardname']) ) {
+                    $point = $badge['amount'];
+                    break;
+                }
+            }
+        }else if(strtolower($input['condition-rewardtype']) == "goods"){
+            $point = $this->getPlayerGoodsQuantityByName($input['client_id'], $input['site_id'],$input['pb_player_id'],$input['condition-rewardname']);
+        }else if(strtolower($input['condition-rewardtype']) == "goods_group"){
+            $point = $this->getPlayerGoodsGroupQuantityByName($input['client_id'], $input['site_id'],$input['pb_player_id'],$input['condition-rewardname']);
+        }else if(strtolower($input['condition-rewardtype']) == "point"){
+            if($input['condition-rewardname'] == "exp"){
+                $point = $input['user_profile']['exp'];
+            }else{
+                //point and custom point
+                $point = $this->getPlayerPointByName( $input['client_id'], $input['site_id'],$input['pb_player_id'],$input['condition-rewardname']);
+            }
+        }
+
+        if(!is_null($point)) {
+            if ($input['condition-operator'] == '=') {
+                $result = ($point == $input['condition-quantity']);
+            } elseif ($input['condition-operator'] == '!=') {
+                $result = ($point != $input['condition-quantity']);
+            } elseif ($input['condition-operator'] == '>') {
+                $result = ($point > $input['condition-quantity']);
+            } elseif ($input['condition-operator'] == '<') {
+                $result = ($point < $input['condition-quantity']);
+            } elseif ($input['condition-operator'] == '>=') {
+                $result = ($point >= $input['condition-quantity']);
+            } elseif ($input['condition-operator'] == '<=') {
+                $result = ($point <= $input['condition-quantity']);
+            } else {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
     public function specialReward($config, $input, &$exInfo = array())
     {
         return $this->customPointReward($config, $input, $exInfo);
