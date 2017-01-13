@@ -902,7 +902,7 @@ class Engine extends Quest
                 }
 
                 // User profile condition
-                if (($input['jigsaw_name']) == 'userProfile') {
+                if (($input['jigsaw_name']) == 'userProfile' || ($input['jigsaw_name']) == 'specialRewardCondition') {
                     //read player information
                     $player_profile = $this->player_model->readPlayer($input['pb_player_id'], $this->site_id, array(
                         'exp','gender','birth_date'
@@ -928,7 +928,7 @@ class Engine extends Quest
                 }
 
                 // Badge condition
-                if (($input['jigsaw_name']) == 'badge') {
+                if (($input['jigsaw_name']) == 'badge' || ($input['jigsaw_name']) == 'specialRewardCondition') {
                     //read player badge information
                     $badge = $this->player_model->getBadge($input['pb_player_id'], $this->site_id);
 
@@ -1000,7 +1000,8 @@ class Engine extends Quest
 
                 if($processor=="groupNot" || $processor=="groupOr"){
                     // check if condition group containing item group
-                    if(array_search("badge", array_column($jigsawConfig['condition_group_container'], 'param_name')) !== false){
+                    if( (array_search("badge", array_column($jigsawConfig['condition_group_container'], 'param_name')) !== false) ||
+                        (array_search("specialRewardCondition", array_column($jigsawConfig['condition_group_container'], 'param_name')) !== false)){
                         //read player badge information
                         $badge = $this->player_model->getBadge($input['pb_player_id'], $this->site_id);
                         $input['player_badge'] = $badge;
