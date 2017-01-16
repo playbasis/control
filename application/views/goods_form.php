@@ -100,13 +100,13 @@
                             <tr>
                                 <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
                                 <td>
-                                    <input type="text" class="date" name="date_start" value="<?php if ($date_start && strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_start)));} else { echo $date_start; } ?>" size="50" />
+                                    <input type="text" class="date" name="date_start" value="<?php if ($date_start && strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_start)));} else { echo $date_start; } ?>" size="50" />
                                 </td>
                             </tr>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
                                 <td>
-                                    <input type="text" class="date" name="date_expire" value="<?php if ($date_expire && strtotime(datetimeMongotoReadable($date_expire))) { echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_expire))); } else { echo $date_expire; } ?>" size="50" />
+                                    <input type="text" class="date" name="date_expire" value="<?php if ($date_expire && strtotime(datetimeMongotoReadable($date_expire))) { echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_expire))); } else { echo $date_expire; } ?>" size="50" />
                                 </td>
                             </tr>
                             <?php if ($is_group) { ?>
@@ -305,6 +305,8 @@
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
+<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css" />
+<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 
 <script type="text/javascript"><!--
     Pace.on("done", function () {
@@ -316,9 +318,7 @@
 //--></script>
 <script type="text/javascript">
     $(function(){
-
-        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
-
+        $('.date').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
     })
 </script>
 <script type="text/javascript"><!--
