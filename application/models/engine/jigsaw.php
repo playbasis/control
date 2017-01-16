@@ -400,23 +400,23 @@ class jigsaw extends MY_Model
             }
         }
 
-        if(!is_null($point)) {
+        //if(!is_null($point)) {
             if ($config['param_operator'] == '=') {
-                $result = ($point == $input['condition-quantity']);
+                $result = !is_null($point) && ($point == $input['condition-quantity']);
             } elseif ($config['param_operator'] == '!=') {
-                $result = ($point != $input['condition-quantity']);
+                $result = !is_null($point) && ($point != $input['condition-quantity']);
             } elseif ($config['param_operator'] == '>') {
-                $result = ($point > $input['condition-quantity']);
+                $result = !is_null($point) && ($point > $input['condition-quantity']);
             } elseif ($config['param_operator'] == '<') {
-                $result = ($point < $input['condition-quantity']);
+                $result = is_null($point) || ($point < $input['condition-quantity']);
             } elseif ($config['param_operator'] == '>=') {
-                $result = ($point >= $input['condition-quantity']);
+                $result = !is_null($point) && ($point >= $input['condition-quantity']);
             } elseif ($config['param_operator'] == '<=') {
-                $result = ($point <= $input['condition-quantity']);
+                $result = is_null($point) || ($point <= $input['condition-quantity']);
             } else {
                 $result = false;
             }
-        }
+        //}
         return $result;
     }
 
