@@ -134,7 +134,11 @@ class Goods extends REST2_Controller
             }
 
             if ($this->input->get('date_end')){
-                $data['date_end'] = new MongoDate(strtotime($this->input->get('date_end')));
+                if (strpos($this->input->get('date_end'), ':') !== false) {
+                    $data['date_end'] = new MongoDate(strtotime($this->input->get('date_end')));
+                } else {
+                    $data['date_end'] = new MongoDate(strtotime($this->input->get('date_end') . " 23:59:59"));
+                }
             }
 
             $data['offset'] = ($this->input->get('offset')) ? $this->input->get('offset') : 0;

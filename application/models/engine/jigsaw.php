@@ -1575,6 +1575,7 @@ class jigsaw extends MY_Model
     public function getGoods($site_id, $goodsId)
     {
         $this->set_site_mongodb($site_id);
+        $d = new MongoDate();
         $this->mongo_db->select(array(
             'goods_id',
             'name',
@@ -1592,17 +1593,13 @@ class jigsaw extends MY_Model
             '$and' => array(
                 array(
                     '$or' => array(
-                        array('date_start' => array('$lte' => $this->new_mongo_date(date('Y-m-d')))),
+                        array('date_start' => array('$lte' => $d)),
                         array('date_start' => null)
                     )
                 ),
                 array(
                     '$or' => array(
-                        array(
-                            'date_expire' => array(
-                                '$gte' => $this->new_mongo_date(date('Y-m-d'), '23:59:59')
-                            )
-                        ),
+                        array('date_expire' => array('$gte' => $d)),
                         array('date_expire' => null)
                     )
                 )
