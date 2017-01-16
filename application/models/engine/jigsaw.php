@@ -374,7 +374,7 @@ class jigsaw extends MY_Model
 
     public function specialRewardCondition($config, $input, &$exInfo = array())
     {
-        if(!isset($input['condition-rewardtype']) || !isset($input['condition-rewardname']) || !isset($input['condition-operator']) || !isset($input['condition-quantity'])){
+        if(!isset($input['condition-rewardtype']) || !isset($input['condition-rewardname']) || !isset($config['param_operator']) || !isset($input['condition-quantity'])){
             return false;
         }
 
@@ -401,17 +401,17 @@ class jigsaw extends MY_Model
         }
 
         if(!is_null($point)) {
-            if ($input['condition-operator'] == '=') {
+            if ($config['param_operator'] == '=') {
                 $result = ($point == $input['condition-quantity']);
-            } elseif ($input['condition-operator'] == '!=') {
+            } elseif ($config['param_operator'] == '!=') {
                 $result = ($point != $input['condition-quantity']);
-            } elseif ($input['condition-operator'] == '>') {
+            } elseif ($config['param_operator'] == '>') {
                 $result = ($point > $input['condition-quantity']);
-            } elseif ($input['condition-operator'] == '<') {
+            } elseif ($config['param_operator'] == '<') {
                 $result = ($point < $input['condition-quantity']);
-            } elseif ($input['condition-operator'] == '>=') {
+            } elseif ($config['param_operator'] == '>=') {
                 $result = ($point >= $input['condition-quantity']);
-            } elseif ($input['condition-operator'] == '<=') {
+            } elseif ($config['param_operator'] == '<=') {
                 $result = ($point <= $input['condition-quantity']);
             } else {
                 $result = false;
