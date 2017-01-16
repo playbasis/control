@@ -400,23 +400,21 @@ class jigsaw extends MY_Model
             }
         }
 
-        //if(!is_null($point)) {
-            if ($config['param_operator'] == '=') {
-                $result = !is_null($point) && ($point == $input['condition-quantity']);
-            } elseif ($config['param_operator'] == '!=') {
-                $result = !is_null($point) && ($point != $input['condition-quantity']);
-            } elseif ($config['param_operator'] == '>') {
-                $result = !is_null($point) && ($point > $input['condition-quantity']);
-            } elseif ($config['param_operator'] == '<') {
-                $result = is_null($point) || ($point < $input['condition-quantity']);
-            } elseif ($config['param_operator'] == '>=') {
-                $result = !is_null($point) && ($point >= $input['condition-quantity']);
-            } elseif ($config['param_operator'] == '<=') {
-                $result = is_null($point) || ($point <= $input['condition-quantity']);
-            } else {
-                $result = false;
-            }
-        //}
+        if ($config['param_operator'] == '=') {
+            $result = !is_null($point) && ($point == $input['condition-quantity']);
+        } elseif ($config['param_operator'] == '!=') {
+            $result = !is_null($point) && ($point != $input['condition-quantity']);
+        } elseif ($config['param_operator'] == '>') {
+            $result = !is_null($point) && ($point > $input['condition-quantity']);
+        } elseif ($config['param_operator'] == '<') {
+            $result = is_null($point) || ($point < $input['condition-quantity']);
+        } elseif ($config['param_operator'] == '>=') {
+            $result = !is_null($point) && ($point >= $input['condition-quantity']);
+        } elseif ($config['param_operator'] == '<=') {
+            $result = is_null($point) || ($point <= $input['condition-quantity']);
+        } else {
+            $result = false;
+        }
         return $result;
     }
 
