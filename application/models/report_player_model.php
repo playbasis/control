@@ -68,7 +68,7 @@ class Report_player_model extends MY_Model
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
-
+        $this->mongo_db->order_by(array('date_added' => 'ASC'));
         $result = $this->mongo_db->get("playbasis_player");
 
         return $result;
