@@ -378,9 +378,12 @@ class jigsaw extends MY_Model
             return false;
         }
 
-        $point = null;
-        $result = false;
+        $point = 0;
         if(strtolower($input['condition-rewardtype']) == "badge"){
+            $badge_id = $this->badge_model->getBadgeIDByName($input['client_id'], $input['site_id'], $input['condition-rewardname']);
+            if (!$badge_id) {
+                return false;
+            }
             foreach ($input['player_badge'] as $key => $badge) {
                 if (($badge['name'] == $input['condition-rewardname']) ) {
                     $point = $badge['amount'];
@@ -388,30 +391,48 @@ class jigsaw extends MY_Model
                 }
             }
         }else if(strtolower($input['condition-rewardtype']) == "goods"){
-            $point = $this->getPlayerGoodsQuantityByName($input['client_id'], $input['site_id'],$input['pb_player_id'],$input['condition-rewardname']);
+            $goods_id = $this->goods_model->getGoodsIDByName($input['client_id'], $input['site_id'], $input['condition-rewardname']);
+            if (!$goods_id) {
+                return false;
+            }
+            $player_point = $this->getPlayerGoodsQuantityByName($input['client_id'], $input['site_id'],$input['pb_player_id'],$input['condition-rewardname']);
+            $point = is_null($player_point) ? 0 : $player_point;
         }else if(strtolower($input['condition-rewardtype']) == "goods_group"){
-            $point = $this->getPlayerGoodsGroupQuantityByName($input['client_id'], $input['site_id'],$input['pb_player_id'],$input['condition-rewardname']);
+            $goods_id = $this->goods_model->getGoodsIDByName($input['client_id'], $input['site_id'], null,$input['condition-rewardname']);
+            if (!$goods_id) {
+                return false;
+            }
+            $player_point = $this->getPlayerGoodsGroupQuantityByName($input['client_id'], $input['site_id'],$input['pb_player_id'],$input['condition-rewardname']);
+            $point = is_null($player_point) ? 0 : $player_point;
         }else if(strtolower($input['condition-rewardtype']) == "point"){
             if($input['condition-rewardname'] == "exp"){
                 $point = $input['user_profile']['exp'];
             }else{
                 //point and custom point
-                $point = $this->getPlayerPointByName( $input['client_id'], $input['site_id'],$input['pb_player_id'],$input['condition-rewardname']);
+                $point_id = $this->point_model->findOnlyPoint(array(
+                    'client_id' => $input['client_id'],
+                    'site_id' => $input['site_id'],
+                    'reward_name' => $input['condition-rewardname']));
+                if (!$point_id) {
+                    return false;
+                }
+                $player_point = $this->getPlayerPointByName( $input['client_id'], $input['site_id'],$input['pb_player_id'],$input['condition-rewardname']);
+                $point = is_null($player_point) ? 0 : $player_point;
             }
         }
 
         if ($config['param_operator'] == '=') {
-            $result = !is_null($point) && ($point == $input['condition-quantity']);
+            $result = ($point == $input['condition-quantity']);
         } elseif ($config['param_operator'] == '!=') {
-            $result = !is_null($point) && ($point != $input['condition-quantity']);
+            $result = ($point != $input['condition-quantity']);
         } elseif ($config['param_operator'] == '>') {
-            $result = !is_null($point) && ($point > $input['condition-quantity']);
+            $result = ($point > $input['condition-quantity']);
         } elseif ($config['param_operator'] == '<') {
-            $result = is_null($point) || ($point < $input['condition-quantity']);
+            $result = ($point < $input['condition-quantity']);
         } elseif ($config['param_operator'] == '>=') {
-            $result = !is_null($point) && ($point >= $input['condition-quantity']);
+            $result = ($point >= $input['condition-quantity']);
         } elseif ($config['param_operator'] == '<=') {
-            $result = is_null($point) || ($point <= $input['condition-quantity']);
+            $result = ($point <= $input['condition-quantity']);
         } else {
             $result = false;
         }
