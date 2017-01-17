@@ -62,68 +62,67 @@
             <table class="list">
                 <thead>
                 <tr>
-                    <td class="left"><?php echo $this->lang->line('column_avatar'); ?></td>
+                    <td width="40" class="left"><?php echo $this->lang->line('column_avatar'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_player_id'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_username'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
-
                     <td class="right"><?php echo $this->lang->line('column_quiz_name'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_question_name'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_option'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_score'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_max_score'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
+                    <td width="80" class="right"><?php echo $this->lang->line('column_score'); ?></td>
+                    <td width="80" class="right"><?php echo $this->lang->line('column_max_score'); ?></td>
+                    <td width="120" class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
                 </tr>
                 </thead>
                 <tbody>
                 <?php if ($reports) { ?>
                     <?php foreach ($reports as $report) { ?>
                         <tr>
-                            <td class="left"><img width="40" height="40" src="<?php echo $report['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></td>
-                            <td class="left"><?php echo $report['cl_player_id']; ?></td>
-                            <td class="left"><?php echo $report['username']; ?></td>
-                            <td class="left"><?php echo $report['email']; ?></td>
+                            <td style="word-wrap:break-word;" class="left"><img width="40" height="40" src="<?php echo $report['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></td>
+                            <td style="word-wrap:break-word;" class="left"><?php echo $report['cl_player_id']; ?></td>
+                            <td style="word-wrap:break-word;" class="left"><?php echo $report['username']; ?></td>
+                            <td style="word-wrap:break-word;" class="left"><?php echo $report['email']; ?></td>
 
-                            <td class="right">
+                            <td style="word-wrap:break-word;" class="right">
                                 <?php
                                 if(isset($report['quiz_name'])&&$report['quiz_name']!=null){
                                     echo $report['quiz_name'];
                                 }
                                 ?>
                             </td>
-                            <td class="right"><?php
+                            <td style="word-wrap:break-word;" class="right"><?php
                                 if(isset($report['question_name'])&&$report['question_name']!=null){
                                     echo $report['question_name'];
                                 }
                                 ?>
                             </td>
-                            <td class="right">
+                            <td style="word-wrap:break-word;" class="right">
                                 <?php
                                 if(isset($report['option'])&&$report['option']!=null){
                                     echo $report['option'];
                                 }
                                 ?>
                             </td>
-                            <td class="right">
+                            <td style="word-wrap:break-word;" class="right">
                                 <?php
                                 if(isset($report['score'])&&$report['score']!=null){
                                     echo $report['score'];
                                 }
                                 ?>
                             </td>
-                            <td class="right">
+                            <td style="word-wrap:break-word;" class="right">
                                 <?php
                                 if(isset($report['max_score'])&&$report['max_score']!=null){
                                     echo $report['max_score'];
                                 }
                                 ?>
                             </td>
-                            <td class="right"><?php echo $report['date_added']; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo $report['date_added']; ?></td>
                         </tr>
                     <?php } ?>
                 <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="9"><?php echo $text_no_results; ?></td>
+                        <td class="center" colspan="10"><?php echo $text_no_results; ?></td>
                     </tr>
                 <?php } ?>
                 </tbody>

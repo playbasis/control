@@ -97,7 +97,7 @@ class Report_reward_model extends MY_Model
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
-
+        $this->mongo_db->order_by(array('date_added' => 'ASC'));
         $results = $this->mongo_db->get("playbasis_event_log");
 
         return $results;
