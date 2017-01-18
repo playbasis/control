@@ -17,5 +17,6 @@ $lang['entry_password'] = 'Password';
 $lang['button_login']   = 'Login';
 
 // Error
-$lang['error_login']    = 'No match for Username and/or Password.';
-$lang['error_token']    = 'Invalid token session. Please login again.';
+$lang['error_login']            = 'No match for Username and/or Password.';
+$lang['error_account_locked']   = 'Account is locked due to exhausted number of retries, please contact Playbasis';
+$lang['error_token']            = 'Invalid token session. Please login again.';
