@@ -636,7 +636,7 @@ class Account extends MY_Controller
         }
 
         $user = $this->User_model->getUserInfo($user_id);
-        if (dohash(DEFAULT_PASSWORD, $user['salt']) != $user['password']) {
+        if ((dohash("", $user['salt']) != $user['password'])) {
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
 

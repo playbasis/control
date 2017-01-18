@@ -232,9 +232,9 @@ class User extends MY_Controller
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'),
-            'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
+            'trim|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'),
-            'required|matches[password]');
+            'matches[password]');
         $this->form_validation->set_rules('user_group', "", '');
         $this->form_validation->set_rules('status', "", '');
 
@@ -305,9 +305,9 @@ class User extends MY_Controller
         $this->form_validation->set_rules('email', $this->lang->line('form_email'),
             'trim|valid_email|xss_clean|required|check_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'),
-            'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
+            'trim|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'),
-            'required|matches[password]');
+            'matches[password]');
         //$this->form_validation->set_rules('user_group', $this->lang->line('form_user_group'), 'required');
 
         $json = array();

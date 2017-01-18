@@ -193,7 +193,7 @@ class User_model extends MY_Model
                 'base_url' => site_url()
             );
 
-            if ($insert_password == DEFAULT_PASSWORD) {
+            if ($insert_password == "") {
                 $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
             } else {
                 $htmlMessage = $this->parser->parse('emails/user_activateaccountwithpassword.html', $vars, true);
