@@ -592,8 +592,8 @@ class User extends MY_Controller
                 $u = $this->input->post('username');
                 $pw = $this->input->post('password');
 
-                $this->User_model->login($u, $pw);
-
+                $is_lock = false;
+                $this->User_model->login($u, $pw, $is_lock);
 
                 if ($this->session->userdata('user_id')) {
 
@@ -609,11 +609,17 @@ class User extends MY_Controller
                     }
                     redirect($redirect, 'refresh');
                 }
+
+                if($is_lock){
+                    $msg_alert = $this->lang->line('error_account_locked');
+                }else{
+                    $msg_alert = $this->lang->line('error_login');
+                }
                 if ($this->input->post('format') == 'json') {
-                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_login')));
+                    echo json_encode(array('status' => 'error', 'message' => $msg_alert));
                     exit();
                 }
-                $this->data['message'] = $this->lang->line('error_login');
+                $this->data['message'] = $msg_alert;
             } else {
                 if ($this->input->post('format') == 'json') {
                     echo json_encode(array('status' => 'error', 'message' => validation_errors()));
