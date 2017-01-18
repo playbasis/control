@@ -386,16 +386,18 @@ class User_model extends MY_Model
         $this->mongo_db->delete("user_to_client");
     }
 
-    public function login($u, $p)
+    public function login($u, $p, &$is_locked = false)
     {
         $this->set_site_mongodb(0);
-        $this->mongo_db->select(array('salt'));
+        $this->mongo_db->select(array('_id', 'salt', 'locked', 'login_attempt'));
         $regex = array('$regex' => new MongoRegex("/^" . preg_quote(db_clean($u, 255)) . "$/i"));
         $this->mongo_db->where('username', $regex);
         $this->mongo_db->limit(1);
         $Q = $this->mongo_db->get('user');
+        $user_info = $Q[0];
+        $is_locked = (isset($user_info['locked']) && $user_info['locked']) ? $user_info['locked'] : false;
 
-        if (count($Q) > 0) {
+        if (count($Q) > 0 && !$is_locked) {
             $row = $Q[0];
 
             $this->mongo_db->select(array('_id', 'user_id', 'username', 'user_group_id', 'database', 'ip' , 'last_app'));
@@ -425,6 +427,8 @@ class User_model extends MY_Model
                 $this->user_group_id = $row['user_group_id'];
                 $this->database = $row['database'];
                 $ip = $row['ip'];
+
+                $this->resetLoginAttempt($row['_id']);
 
                 // $this->client_id
                 $this->mongo_db->select(array('client_id'));
@@ -546,6 +550,11 @@ class User_model extends MY_Model
                 }
 
             } else {
+                $this->increaseLoginAttempt($user_info['_id']);
+                if ( isset($user_info['login_attempt']) && ($user_info['login_attempt']+1 >= LIMIT_USER_LOGIN_ATTEMP)){
+                    $this->lockUser( $user_info['_id']);
+                }
+
                 $this->logout();
             }
         }
@@ -1083,6 +1092,35 @@ class User_model extends MY_Model
 
         $this->mongo_db->where('mobile', $mobile);
         return $this->mongo_db->count('playbasis_client');
+    }
+
+    public function increaseLoginAttempt( $user_id)
+    {
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->inc('login_attempt', 1);
+        $this->mongo_db->update("user");
+    }
+
+    public function resetLoginAttempt( $user_id)
+    {
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('login_attempt', 0);
+        $this->mongo_db->update("user");
+    }
+
+    public function lockUser( $user_id)
+    {
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('locked', true);
+        $this->mongo_db->update("user");
+    }
+
+    public function unlockPlayer( $user_id)
+    {
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('locked', false);
+        $this->mongo_db->set('login_attempt', 0);
+        $this->mongo_db->update("user");
     }
 }
 
