@@ -641,8 +641,8 @@ class User extends MY_Controller
     {
         $this->load->model('User_model');
         $this->User_model->logout();
-        setcookie("client_id", null);
-        setcookie("site_id", null);
+        $this->input->set_cookie("client_id", null);
+        $this->input->set_cookie("site_id", null);
 
         redirect('/', 'refresh');
     }

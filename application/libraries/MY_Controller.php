@@ -11,16 +11,15 @@ class  MY_Controller  extends  CI_Controller  {
         $this->load->model('Plan_model');
 
         if ($this->session->userdata('user_id')) {
-            setcookie("client_id", $this->session->userdata('client_id'));
-            setcookie("site_id", $this->session->userdata('site_id'));
-
+            $this->input->set_cookie("client_id", $this->session->userdata('client_id'));
+            $this->input->set_cookie("site_id", $this->session->userdata('site_id'));
             if ($this->input->get('site_id')) {
                 $this->User_model->updateSiteId($this->input->get('site_id'));
                 $this->User_model->set_last_app();
             }
         } else {
-            setcookie("client_id", null);
-            setcookie("site_id", null);
+            $this->input->set_cookie("client_id", null);
+            $this->input->set_cookie("site_id", null);
         }
 
     }

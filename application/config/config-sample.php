@@ -276,6 +276,7 @@ $config['cookie_prefix']	= "";
 $config['cookie_domain']	= ".pbapp.net";
 $config['cookie_path']		= "/";
 $config['cookie_secure']	= FALSE;
+$config['cookie_httponly'] 	= FALSE;
 
 /*
 |--------------------------------------------------------------------------
