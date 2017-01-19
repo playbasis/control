@@ -120,11 +120,11 @@
                             <td><input type="text" name="user_email" value="" size="50" class="tooltips" data-placement="right" title="Email address is used to log into the system"/></td>
                         </tr>
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_password'); ?>:</td>
+                            <td><?php echo $this->lang->line('entry_password'); ?>:</td>
                             <td><input type="password" name="user_password" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_password_confirm'); ?>:</td>
+                            <td><?php echo $this->lang->line('entry_password_confirm'); ?>:</td>
                             <td><input type="password" name="user_password_confirm" value="" size="50" /></td>
                         </tr>
                         <tr>

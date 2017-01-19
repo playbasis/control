@@ -232,9 +232,9 @@ class User extends MY_Controller
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'),
-            'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
+            'trim|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'),
-            'required|matches[password]');
+            'matches[password]');
         $this->form_validation->set_rules('user_group', "", '');
         $this->form_validation->set_rules('status', "", '');
 
@@ -305,9 +305,9 @@ class User extends MY_Controller
         $this->form_validation->set_rules('email', $this->lang->line('form_email'),
             'trim|valid_email|xss_clean|required|check_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'),
-            'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
+            'trim|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'),
-            'required|matches[password]');
+            'matches[password]');
         //$this->form_validation->set_rules('user_group', $this->lang->line('form_user_group'), 'required');
 
         $json = array();
@@ -972,6 +972,32 @@ class User extends MY_Controller
         redirect('/pending_users', 'refresh');
     }
 
+    public function set_user_password()
+    {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['main'] = 'set user password';
+        $this->data['title'] = $this->lang->line('title');
+
+        if (isset($_GET['key'])) {
+            $random_key = $_GET['key'];
+            $user = $this->User_model->checkRandomKey($random_key, false);
+            if ($user != null) {
+                redirect('account/update_password?random_key='.$random_key, 'refresh');
+            } else {
+                $this->data['topic_message'] = 'Your validation key is invalid,';
+                $this->data['message'] = 'Please contact Playbasis.';
+                $this->data['main'] = 'partial/something_wrong';
+                $this->render_page('template_beforelogin');
+            }
+        } else {
+            $this->data['topic_message'] = 'Your validation key is invalid,';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->render_page('template_beforelogin');
+        }
+    }
+
     public function enable_user()
     {
         $this->load->library('parser');
@@ -984,41 +1010,29 @@ class User extends MY_Controller
             $user = $this->User_model->checkRandomKey($random_key);
             if ($user != null) {
                 $user_id = $user[0]['_id'];
-
-                /* generate initial password */
-//                if(dohash(DEFAULT_PASSWORD,$user[0]['salt']) == $user[0]['password']){
-//                    $initial_password = get_random_password(8,8);
-//                    $this->User_model->insertNewPassword($user_id, $initial_password);
-//                }else{
-//                    $initial_password = '******';
-//                }
-
-                /* check free/paid */
-//                $client_id = $this->User_model->getClientIdByUserId($user_id);
-//                $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-//                $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-//                if (!array_key_exists('price', $plan)) {
-//                    $plan['price'] = DEFAULT_PLAN_PRICE;
-//                }
-//                $price = $plan['price'];
-//                $free_flag = $price <= 0;
-//                $paid_flag = !$free_flag;
-
-                /* send email */
-                /*$user = $this->User_model->getById($user_id);
-                $vars = array(
-                    'firstname' => $user['firstname'],
-                    'lastname' => $user['lastname'],
-                    'username' => $user['username'],
-                    'password' => $initial_password,
-                    'paid_flag' => $paid_flag ? array(array('force' => 1)) : array(),
-                );
-                $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
-                $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);*/
-
-                /* force login, so that user doesn't have to type email and password (obtained by email) */
                 $this->User_model->force_login($user_id);
-                redirect('account/update_profile', 'refresh');
+
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+
+                $data = array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id
+                );
+
+                if ($client_id) {
+                    $total = $this->App_model->getTotalAppsByClientId($data);
+                } else {
+                    $total = $this->App_model->getTotalApps($data);
+                }
+
+                if ($total == 0) {
+                    $this->session->unset_userdata('site_id');
+                    redirect('/first_app', 'refresh');
+                } else {
+                    redirect('/', 'refresh');
+                }
+
             } else {
                 $this->data['topic_message'] = 'Your validation key is invalid,';
                 $this->data['message'] = 'Please contact Playbasis.';

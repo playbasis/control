@@ -158,7 +158,13 @@ class User_model extends MY_Model
 
             $insert_password = $this->input->post('password');
 
-            $password = dohash($insert_password, $salt);
+            if($insert_password != ""){
+                $password = dohash($insert_password, $salt);
+            } else {
+                $randdom_password = get_random_password(8, 8);
+                $password = dohash($randdom_password, $salt);
+            }
+
 
             $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
@@ -189,11 +195,11 @@ class User_model extends MY_Model
                 'username' => $email,
                 'password' => $insert_password,
                 'key' => $random_key,
-                'url' => site_url('enable_user/?key='),
+                'url' => ($insert_password == "") ? site_url('user_password/?key=')  : site_url('enable_user/?key='),
                 'base_url' => site_url()
             );
 
-            if ($insert_password == DEFAULT_PASSWORD) {
+            if ($insert_password == "") {
                 $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
             } else {
                 $htmlMessage = $this->parser->parse('emails/user_activateaccountwithpassword.html', $vars, true);
@@ -909,7 +915,7 @@ class User_model extends MY_Model
         return $this->mongo_db->count('playbasis_client_site');
     }
 
-    public function checkRandomKey($random_key)
+    public function checkRandomKey($random_key, $clear = true)
     {
         $this->set_site_mongodb($this->site_id);
 
@@ -917,12 +923,12 @@ class User_model extends MY_Model
         $user = $this->mongo_db->get('user');
 
         if ($user) {
-
-            $this->mongo_db->where('_id', new MongoID($user[0]['_id']));
-            $this->mongo_db->set('status', true);
-            $this->mongo_db->set('random_key', null);
-            $this->mongo_db->update('user');
-
+            if ($clear) {
+                $this->mongo_db->where('_id', new MongoID($user[0]['_id']));
+                $this->mongo_db->set('status', true);
+                $this->mongo_db->set('random_key', null);
+                $this->mongo_db->update('user');
+            }
             return $user;
         } else {
             return false;
