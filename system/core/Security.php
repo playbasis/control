@@ -180,13 +180,14 @@ class CI_Security {
 	{
 		$expire = time() + $this->_csrf_expire;
 		$secure_cookie = (config_item('cookie_secure') === TRUE) ? 1 : 0;
-
+		$httponly_cookie = True;
+		
 		if ($secure_cookie && (empty($_SERVER['HTTPS']) OR strtolower($_SERVER['HTTPS']) === 'off'))
 		{
 			return FALSE;
 		}
 
-		setcookie($this->_csrf_cookie_name, $this->_csrf_hash, $expire, config_item('cookie_path'), config_item('cookie_domain'), $secure_cookie);
+		setcookie($this->_csrf_cookie_name, $this->_csrf_hash, $expire, config_item('cookie_path'), config_item('cookie_domain'), $secure_cookie, $httponly_cookie);
 
 		log_message('debug', "CRSF cookie Set");
 
