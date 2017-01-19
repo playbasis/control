@@ -63,7 +63,9 @@ class CI_Session {
         unset($_SESSION);
         if ( isset( $_COOKIE[session_name()] ) )
         {
-            setcookie(session_name(), '', time()-42000, '/');
+            $secure_cookie = $this->object->config->item('cookie_secure');
+            $httponly_cookie = $this->object->config->item('cookie_httponly');
+            setcookie(session_name(), '', time()-42000, '/', null, $secure_cookie, $httponly_cookie);
         }
         session_destroy();
     }

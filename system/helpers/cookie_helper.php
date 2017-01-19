@@ -30,7 +30,7 @@
 /**
  * Set cookie
  *
- * Accepts six parameter, or you can submit an associative
+ * Accepts seven parameters, or you can submit an associative
  * array in the first parameter containing all the values.
  *
  * @access	public
@@ -44,11 +44,11 @@
  */
 if ( ! function_exists('set_cookie'))
 {
-	function set_cookie($name = '', $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE)
+	function set_cookie($name = '', $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE)
 	{
 		// Set the config file options
 		$CI =& get_instance();
-		$CI->input->set_cookie($name, $value, $expire, $domain, $path, $prefix, $secure);
+		$CI->input->set_cookie($name, $value, $expire, $domain, $path, $prefix, $secure, $httponly);
 	}
 }
 
