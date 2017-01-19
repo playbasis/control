@@ -65,7 +65,7 @@ class CI_Session {
         {
             $secure_cookie = True;
             $httponly_cookie = True;
-            setcookie(session_name(), '', time()-42000, '/', null, null, $secure_cookie, $httponly_cookie);
+            setcookie(session_name(), '', time()-42000, '/', null, $secure_cookie, $httponly_cookie);
         }
         session_destroy();
     }
