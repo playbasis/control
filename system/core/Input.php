@@ -230,7 +230,7 @@ class CI_Input {
 	/**
 	* Set cookie
 	*
-	* Accepts six parameter, or you can submit an associative
+	* Accepts seven parameters, or you can submit an associative
 	* array in the first parameter containing all the values.
 	*
 	* @access	public
@@ -243,12 +243,12 @@ class CI_Input {
 	* @param	bool	true makes the cookie secure
 	* @return	void
 	*/
-	function set_cookie($name = '', $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE)
+	function set_cookie($name = '', $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE)
 	{
 		if (is_array($name))
 		{
 			// always leave 'name' in last place, as the loop will break otherwise, due to $$item
-			foreach (array('value', 'expire', 'domain', 'path', 'prefix', 'secure', 'name') as $item)
+			foreach (array('value', 'expire', 'domain', 'path', 'prefix', 'secure', 'httponly', 'name') as $item)
 			{
 				if (isset($name[$item]))
 				{
@@ -274,6 +274,11 @@ class CI_Input {
 			$secure = config_item('cookie_secure');
 		}
 
+		if ($httponly == FALSE && config_item('cookie_httponly') != FALSE)
+		{
+			$httponly = config_item('cookie_httponly');
+		}
+
 		if ( ! is_numeric($expire))
 		{
 			$expire = time() - 86500;
@@ -283,7 +288,7 @@ class CI_Input {
 			$expire = ($expire > 0) ? time() + $expire : 0;
 		}
 
-		setcookie($prefix.$name, $value, $expire, $path, $domain, $secure);
+		setcookie($prefix.$name, $value, $expire, $path, $domain, $secure, $httponly);
 	}
 
 	// --------------------------------------------------------------------
