@@ -594,6 +594,7 @@ class User extends MY_Controller
 
                 $is_lock = false;
                 $this->User_model->login($u, $pw, $is_lock);
+                $this->session->regenerate_id();
 
                 if ($this->session->userdata('user_id')) {
 
