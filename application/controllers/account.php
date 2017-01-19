@@ -580,9 +580,8 @@ class Account extends MY_Controller
         $this->render_page('template');
     }
 
-    public function update_profile()
+    public function update_password()
     {
-
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
@@ -599,7 +598,11 @@ class Account extends MY_Controller
 
             if ($this->form_validation->run()) {
                 $new_password = $this->input->post('password');
+                $random_key = $this->input->post('random_key');
                 $this->User_model->insertNewPassword($user_id, $new_password);
+                $user = $this->User_model->checkRandomKey($random_key);
+                $user_id = $user[0]['_id'];
+                $this->User_model->force_login($user_id);
 
                 if ($this->input->post('format') == 'json') {
                     echo json_encode(array('status' => 'success', 'message' => 'Your password has been update!'));
@@ -635,33 +638,10 @@ class Account extends MY_Controller
             }
         }
 
-        $user = $this->User_model->getUserInfo($user_id);
-        if (dohash(DEFAULT_PASSWORD, $user['salt']) != $user['password']) {
-            $client_id = $this->User_model->getClientId();
-            $site_id = $this->User_model->getSiteId();
-
-            $data = array(
-                'client_id' => $client_id,
-                'site_id' => $site_id
-            );
-
-            if ($client_id) {
-                $total = $this->App_model->getTotalAppsByClientId($data);
-            } else {
-                $total = $this->App_model->getTotalApps($data);
-            }
-
-            if ($total == 0) {
-                $this->session->unset_userdata('site_id');
-                redirect('/first_app', 'refresh');
-            } else {
-                redirect('/', 'refresh');
-            }
-        }
         $this->data['heading_title'] = $this->lang->line('add_site_title');
         $this->data['main'] = 'partial/completeprofile_partial';
-        $this->data['form'] = 'account/update_profile';
-
+        $this->data['form'] = 'account/update_password';
+        $this->data['random_key'] = $this->input->get('random_key');
         $this->load->vars($this->data);
         $this->render_page('template_beforelogin');
     }
