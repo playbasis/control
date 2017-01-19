@@ -1,54 +1,124 @@
 # Change Log
+## [2.26.0](https://github.com/playbasis/control/tree/2.26.0) (2017-01-19)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.0...2.26.0)
+
+
+## [2.25.11/regenerate_session_id_every_user_login](https://github.com/playbasis/control/tree/2.25.11/regenerate_session_id_every_user_login) (2017-01-19)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.10/suppport_httponly...2.25.11/regenerate_session_id_every_user_login)
+
+**Implemented enhancements:**
+
+- Hotfix/2.25.11/regenerate session id every user login [\#360](https://github.com/playbasis/control/pull/360) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+**Fixed bugs:**
+
+- Js Prompt show up when editing plan [\#13](https://github.com/playbasis/control/issues/13)
+
+## [2.25.10/suppport_httponly](https://github.com/playbasis/control/tree/2.25.10/suppport_httponly) (2017-01-19)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.9/using_empty_password_as_default_when_create_user...2.25.10/suppport_httponly)
+
+**Implemented enhancements:**
+
+- support httponly [\#359](https://github.com/playbasis/control/pull/359) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.25.9/using_empty_password_as_default_when_create_user](https://github.com/playbasis/control/tree/2.25.9/using_empty_password_as_default_when_create_user) (2017-01-19)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.8/limit_login_attemp...2.25.9/using_empty_password_as_default_when_create_user)
+
+**Implemented enhancements:**
+
+- Hotfix/2.25.9/using empty password as default when create user [\#357](https://github.com/playbasis/control/pull/357) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.25.8/limit_login_attemp](https://github.com/playbasis/control/tree/2.25.8/limit_login_attemp) (2017-01-18)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.7/fix_overlap_data_in_report...2.25.8/limit_login_attemp)
+
+**Implemented enhancements:**
+
+- Hotfix/2.25.8/limit login attemps [\#356](https://github.com/playbasis/control/pull/356) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.25.7/fix_overlap_data_in_report](https://github.com/playbasis/control/tree/2.25.7/fix_overlap_data_in_report) (2017-01-17)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.6/support_time_for_date_start_date_expire_in_goods...2.25.7/fix_overlap_data_in_report)
+
+**Fixed bugs:**
+
+- Hotfix/2.25.7/fix overlap data in report [\#355](https://github.com/playbasis/control/pull/355) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.25.6/support_time_for_date_start_date_expire_in_goods](https://github.com/playbasis/control/tree/2.25.6/support_time_for_date_start_date_expire_in_goods) (2017-01-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.5/special_condition_with_operator...2.25.6/support_time_for_date_start_date_expire_in_goods)
+
+**Implemented enhancements:**
+
+- support date time in goods [\#354](https://github.com/playbasis/control/pull/354) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.25.5/special_condition_with_operator](https://github.com/playbasis/control/tree/2.25.5/special_condition_with_operator) (2017-01-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.4/special_condition_in_rules...2.25.5/special_condition_with_operator)
+
+**Implemented enhancements:**
+
+- Hotfix/2.25.5/special condition with operator [\#353](https://github.com/playbasis/control/pull/353) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.25.4/special_condition_in_rules](https://github.com/playbasis/control/tree/2.25.4/special_condition_in_rules) (2017-01-13)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.3/change_report_client_site_name...2.25.4/special_condition_in_rules)
+
+**Merged pull requests:**
+
+- Hotfix/2.25.4/special condition in rules [\#352](https://github.com/playbasis/control/pull/352) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.25.3/change_report_client_site_name](https://github.com/playbasis/control/tree/2.25.3/change_report_client_site_name) (2017-01-12)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.2/revise_goods_list...2.25.3/change_report_client_site_name)
+
+**Implemented enhancements:**
+
+- Hotfix/2.25.3/change report client site name [\#351](https://github.com/playbasis/control/pull/351) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.25.2/revise_goods_list](https://github.com/playbasis/control/tree/2.25.2/revise_goods_list) (2017-01-11)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.1/custom_point_per_user...2.25.2/revise_goods_list)
+
+**Implemented enhancements:**
+
+- Hotfix/2.25.2/revise goods list [\#350](https://github.com/playbasis/control/pull/350) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.25.1/custom_point_per_user](https://github.com/playbasis/control/tree/2.25.1/custom_point_per_user) (2017-01-10)
+[Full Changelog](https://github.com/playbasis/control/compare/2.25.0...2.25.1/custom_point_per_user)
+
+**Implemented enhancements:**
+
+- Hotfix/2.25.1/custom point per user [\#349](https://github.com/playbasis/control/pull/349) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.25.0](https://github.com/playbasis/control/tree/2.25.0) (2017-01-05)
-[Full Changelog](https://github.com/playbasis/control/compare/2.24.0...2.25.0)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.7/add_DBS_email_to_DBS_weekly_report...2.25.0)
 
 **Implemented enhancements:**
 
 - Modified badge condition to able to set operator [\#347](https://github.com/playbasis/control/pull/347) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.24.7/add dbs email to dbs weekly report [\#346](https://github.com/playbasis/control/pull/346) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.24.6/add email to dbs weekly report [\#345](https://github.com/playbasis/control/pull/345) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.24.3/increase max file size [\#342](https://github.com/playbasis/control/pull/342) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.24.1/fix download report of reward [\#339](https://github.com/playbasis/control/pull/339) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 **Fixed bugs:**
 
 - fixed - button to show import result not work. [\#348](https://github.com/playbasis/control/pull/348) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.24.7/add_DBS_email_to_DBS_weekly_report](https://github.com/playbasis/control/tree/2.24.7/add_DBS_email_to_DBS_weekly_report) (2016-12-28)
-[Full Changelog](https://github.com/playbasis/control/compare/2.24.6/Add_email_to_DBS_weekly_report...2.24.7/add_DBS_email_to_DBS_weekly_report)
-
-**Implemented enhancements:**
-
-- Hotfix/2.24.7/add dbs email to dbs weekly report [\#346](https://github.com/playbasis/control/pull/346) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.24.6/Add_email_to_DBS_weekly_report](https://github.com/playbasis/control/tree/2.24.6/Add_email_to_DBS_weekly_report) (2016-12-27)
-[Full Changelog](https://github.com/playbasis/control/compare/2.24.5/DBS_weekly_report...2.24.6/Add_email_to_DBS_weekly_report)
-
-**Implemented enhancements:**
-
-- Hotfix/2.24.6/add email to dbs weekly report [\#345](https://github.com/playbasis/control/pull/345) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.24.5/DBS_weekly_report](https://github.com/playbasis/control/tree/2.24.5/DBS_weekly_report) (2016-12-27)
-[Full Changelog](https://github.com/playbasis/control/compare/2.24.4/incorrect_message_in_dashboard...2.24.5/DBS_weekly_report)
+- Hotfix/2.24.4/incorrect text in email form [\#343](https://github.com/playbasis/control/pull/343) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.24.3/increase max file size [\#342](https://github.com/playbasis/control/pull/342) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 **Merged pull requests:**
 
 - Hotfix/2.24.5/dbs weekly report [\#344](https://github.com/playbasis/control/pull/344) ([piya-playbasis](https://github.com/piya-playbasis))
 
+## [2.24.7/add_DBS_email_to_DBS_weekly_report](https://github.com/playbasis/control/tree/2.24.7/add_DBS_email_to_DBS_weekly_report) (2016-12-28)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.6/Add_email_to_DBS_weekly_report...2.24.7/add_DBS_email_to_DBS_weekly_report)
+
+## [2.24.6/Add_email_to_DBS_weekly_report](https://github.com/playbasis/control/tree/2.24.6/Add_email_to_DBS_weekly_report) (2016-12-27)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.5/DBS_weekly_report...2.24.6/Add_email_to_DBS_weekly_report)
+
+## [2.24.5/DBS_weekly_report](https://github.com/playbasis/control/tree/2.24.5/DBS_weekly_report) (2016-12-27)
+[Full Changelog](https://github.com/playbasis/control/compare/2.24.4/incorrect_message_in_dashboard...2.24.5/DBS_weekly_report)
+
 ## [2.24.4/incorrect_message_in_dashboard](https://github.com/playbasis/control/tree/2.24.4/incorrect_message_in_dashboard) (2016-12-26)
 [Full Changelog](https://github.com/playbasis/control/compare/2.24.3/increase_max_file_size...2.24.4/incorrect_message_in_dashboard)
 
-**Fixed bugs:**
-
-- Hotfix/2.24.4/incorrect text in email form [\#343](https://github.com/playbasis/control/pull/343) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.24.3/increase_max_file_size](https://github.com/playbasis/control/tree/2.24.3/increase_max_file_size) (2016-12-21)
 [Full Changelog](https://github.com/playbasis/control/compare/2.24.2/improve_display_of_tags_in_list_view...2.24.3/increase_max_file_size)
-
-**Implemented enhancements:**
-
-- Hotfix/2.24.3/increase max file size [\#342](https://github.com/playbasis/control/pull/342) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/2.24.3/increase max file size [\#342](https://github.com/playbasis/control/pull/342) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.24.2/improve_display_of_tags_in_list_view](https://github.com/playbasis/control/tree/2.24.2/improve_display_of_tags_in_list_view) (2016-12-20)
 [Full Changelog](https://github.com/playbasis/control/compare/2.24.1/fix_download_report_of_reward...2.24.2/improve_display_of_tags_in_list_view)
@@ -63,10 +133,6 @@
 
 ## [2.24.1/fix_download_report_of_reward](https://github.com/playbasis/control/tree/2.24.1/fix_download_report_of_reward) (2016-12-16)
 [Full Changelog](https://github.com/playbasis/control/compare/2.24.0...2.24.1/fix_download_report_of_reward)
-
-**Implemented enhancements:**
-
-- Hotfix/2.24.1/fix download report of reward [\#339](https://github.com/playbasis/control/pull/339) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.24.0](https://github.com/playbasis/control/tree/2.24.0) (2016-12-15)
 [Full Changelog](https://github.com/playbasis/control/compare/2.23.5/fix_download_goods_report...2.24.0)
