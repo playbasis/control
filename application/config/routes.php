@@ -49,6 +49,7 @@ $route['register'] = 'user/register';
 $route['logout'] = 'user/logout';
 $route['pending_users'] = 'user/list_pending_users';
 $route['enable_user'] = 'user/enable_user';
+$route['user_password'] = 'user/set_user_password';
 $route['forgot_password'] = '/user/forgot_password';
 $route['reset_password'] = '/user/reset_password';
 $route['block'] = "user/block";
