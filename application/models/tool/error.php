@@ -254,6 +254,10 @@ class Error extends CI_Model
                 $errorData["message"] = "The user has not enough badge";
                 $errorData["error_code"] = "0220";
                 break;
+            case 'REFRESH_TOKEN_INCORRECT':
+                $errorData['message'] = "Refresh Token incorrect";
+                $errorData['error_code'] = '0210';
+                break;
             case 'ACTION_NOT_FOUND':
                 $errorData['message'] = "Action not available";
                 $errorData['error_code'] = '0301';

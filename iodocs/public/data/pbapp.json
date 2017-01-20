@@ -60,6 +60,219 @@
             "token":        { "-type": "string"},
             "date_expire":  { "-type": "string"}
           }
+        },
+        {
+          "MethodName": "Auth Player",
+          "Synopsis": "Request access player's token from playbasis server.",
+          "HTTPMethod": "POST",
+          "URI": "Auth/player/:player_id",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "api_key",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "api key issued by Playbasis"
+            },
+            {
+              "Name": "player_id",
+              "Required": "URI",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website "
+            },
+            {
+              "Name": "password",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "player's password"
+            }
+          ],
+          "responses": {
+            "token":        { "-type": "string"},
+            "date_expire":  { "-type": "string"}
+          }
+        },
+        {
+          "MethodName": "Auth Renew Player's token",
+          "Synopsis": "Create a new token and discard the current token",
+          "HTTPMethod": "POST",
+          "URI": "Auth/player/:player_id/renew",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "api_key",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "api key issued by Playbasis"
+            },
+            {
+              "Name": "player_id",
+              "Required": "URI",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website "
+            },
+            {
+              "Name": "refresh_token",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "refresh_token "
+            }
+          ],
+          "responses": {
+            "token":        { "-type": "string"},
+            "date_expire":  { "-type": "string"}
+          }
+        },
+        {
+          "MethodName": "Auth Player Register",
+          "Synopsis": "Register a user from client's website as a Playbasis player.",
+          "HTTPMethod": "POST",
+          "URI": "Auth/player/:player_id/register",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "api_key",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            },
+            {
+              "Name": "player_id",
+              "Required": "URI",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website *** It's available only [A-Za-z0-9_-]"
+            },
+            {
+              "Name": "password",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "password of the player"
+            },
+            {
+              "Name": "username",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "username of the player"
+            },
+            {
+              "Name": "email",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "email address of the player"
+            },
+            {
+              "Name": "image",
+              "Required": "N",
+              "Default": "https://www.pbapp.net/images/default_profile.jpg",
+              "Type": "string",
+              "Description": "url to the player profile image"
+            },
+            {
+              "Name": "phone_number",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "+66xxyyyzzzz"
+            },
+            {
+              "Name": "facebook_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "facebook id of the player"
+            },
+            {
+              "Name": "twitter_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "twitter id of the player"
+            },
+            {
+              "Name": "first_name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "first name of the player"
+            },
+            {
+              "Name": "last_name",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "last name of the player"
+            },
+            {
+              "Name": "gender",
+              "Required": "N",
+              "Default": "",
+              "Type": "enumerated",
+              "Description": "1=Male, 2=Female",
+              "EnumeratedList": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "Name": "birth_date",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
+            },
+            {
+              "Name": "code",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "referral code of another player for invitation system"
+            },
+            {
+              "Name": "anonymous",
+              "Required": "N",
+              "Default": "",
+              "Type": "enumerated",
+              "Description": "anonymous flag",
+              "EnumeratedList": [
+                "0",
+                "1"
+              ]
+            },
+            {
+              "Name": "device_id",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "device id to verify with SMS verification process"
+            },
+            {
+              "Name": "approve_status",
+              "Required": "N",
+              "Default": "",
+              "Type": "enumerated",
+              "Description": "approval status",
+              "EnumeratedList": [
+                "approved",
+                "rejected",
+                "pending"
+              ]
+            }
+          ],
+          "response": []
         }
       ]
     },
@@ -70,6 +283,26 @@
       ],
       "Public": "Y",
       "methods": [
+        {
+          "MethodName": "Player Token Security",
+          "Synopsis": "Check player token security in setting",
+          "HTTPMethod": "GET",
+          "URI": "Setting/security",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "api_key",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Auth"
+            }
+          ],
+          "responses": {
+            "token_required": { "-type": "boolean"}
+          }
+        },
         {
           "MethodName": "App Status",
           "Synopsis": "Check app enable in setting",
