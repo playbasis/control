@@ -157,6 +157,17 @@ class Player_model extends MY_Model
         return $result;
     }
 
+    public function checkPlayerPassword($data)
+    {
+        $this->mongo_db->where('client_id', $data['client_id']);
+        $this->mongo_db->where('site_id', $data['site_id']);
+        $this->mongo_db->where('_id', $data['pb_player_id']);
+        $this->mongo_db->where('password', $data['password']);
+
+        $result = $this->mongo_db->get('playbasis_player');
+        return $result ? $result[0] : array();
+    }
+
     public function readListPlayer($list_id, $site_id, $fields)
     {
         if (empty($list_id)) {
