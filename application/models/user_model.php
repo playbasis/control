@@ -395,7 +395,7 @@ class User_model extends MY_Model
     public function login($u, $p, &$is_locked = false)
     {
         $this->set_site_mongodb(0);
-        $this->mongo_db->select(array('_id', 'salt', 'locked', 'login_attempt'));
+        $this->mongo_db->select(array('_id', 'salt', 'locked', 'login_attempt', 'user_group_id'));
         $regex = array('$regex' => new MongoRegex("/^" . preg_quote(db_clean($u, 255)) . "$/i"));
         $this->mongo_db->where('username', $regex);
         $this->mongo_db->limit(1);
@@ -556,9 +556,12 @@ class User_model extends MY_Model
                 }
 
             } else {
-                $this->increaseLoginAttempt($user_info['_id']);
-                if ( isset($user_info['login_attempt']) && ($user_info['login_attempt']+1 >= LIMIT_USER_LOGIN_ATTEMP)){
-                    $this->lockUser( $user_info['_id']);
+                if ($user_info['user_group_id'] != $this->getAdminGroupID()) {
+                    $this->increaseLoginAttempt($user_info['_id']);
+                    $limit = defined('LIMIT_USER_LOGIN_ATTEMPT') ? LIMIT_USER_LOGIN_ATTEMPT : 3;
+                    if (isset($user_info['login_attempt']) && ($user_info['login_attempt'] + 1 >= $limit)) {
+                        $this->lockUser($user_info['_id']);
+                    }
                 }
 
                 $this->logout();
