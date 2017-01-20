@@ -586,8 +586,6 @@ class Account extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $user_id = $this->session->userdata('user_id') . "";
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->data['message'] = null;
 
@@ -599,9 +597,9 @@ class Account extends MY_Controller
             if ($this->form_validation->run()) {
                 $new_password = $this->input->post('password');
                 $random_key = $this->input->post('random_key');
-                $this->User_model->insertNewPassword($user_id, $new_password);
                 $user = $this->User_model->checkRandomKey($random_key);
                 $user_id = $user[0]['_id'];
+                $this->User_model->insertNewPassword($user_id, $new_password);
                 $this->User_model->force_login($user_id);
 
                 if ($this->input->post('format') == 'json') {
