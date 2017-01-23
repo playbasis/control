@@ -132,6 +132,31 @@
           }
         },
         {
+          "MethodName": "Auth Revoke Player's token",
+          "Synopsis": "Revoke exist token",
+          "HTTPMethod": "POST",
+          "URI": "Auth/player/:player_id/revoke",
+          "RequiresOAuth": "N",
+          "Public": "Y",
+          "parameters": [
+            {
+              "Name": "api_key",
+              "Required": "Y",
+              "Default": "",
+              "Type": "string",
+              "Description": "api key issued by Playbasis"
+            },
+            {
+              "Name": "player_id",
+              "Required": "URI",
+              "Default": "",
+              "Type": "string",
+              "Description": "player id as used in client's website "
+            }
+          ],
+          "responses": {}
+        },
+        {
           "MethodName": "Auth Player Register",
           "Synopsis": "Register a user from client's website as a Playbasis player.",
           "HTTPMethod": "POST",
@@ -334,6 +359,8 @@
           "URI": "Player/:id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -341,6 +368,13 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "token",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Player Auth"
             }
           ],
           "response": {
@@ -367,6 +401,8 @@
           "URI": "Player/:id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -384,7 +420,7 @@
             }
           ],
           "response": {
-            "player": { 
+            "player": {
               "cl_player_id": { "-type": "string"},
               "image":        { "-type": "string"},
               "email":        { "-type": "string"},
@@ -454,6 +490,8 @@
           "URI": "Player/:id/data/all",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -517,6 +555,8 @@
           "URI": "Player/:id/data/all",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -602,6 +642,8 @@
           "URI": "Player/:id/custom",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -626,6 +668,8 @@
           "URI": "Player/:id/custom",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -665,6 +709,8 @@
           "URI": "Player/:id/register",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -840,6 +886,8 @@
           "URI": "Player/:id/update",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -1029,7 +1077,7 @@
         },
         {
           "MethodName": "Delete",
-          "Synopsis": "Permenently delete a player from Playbasis database.",
+          "Synopsis": "Permanently delete a player from Playbasis database.",
           "HTTPMethod": "POST",
           "URI": "Player/:id/delete",
           "RequiresOAuth": "N",
@@ -1059,6 +1107,8 @@
           "URI": "Player/:id/login",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -1148,6 +1198,8 @@
           "URI": "Player/auth/:id/requestOTPCode",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -1210,6 +1262,8 @@
           "URI": "Player/auth/:id/setupPhone",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -1279,6 +1333,8 @@
           "URI": "Player/auth/:id/verifyOTPCode",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -1311,6 +1367,8 @@
           "URI": "Player/:id/logout",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -1395,6 +1453,8 @@
           "URI": "Player/:id/points",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -1421,6 +1481,8 @@
           "URI": "Player/:id/point/:point_name",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -1454,6 +1516,8 @@
           "URI": "Player/:id/point_history",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -1501,7 +1565,7 @@
                 "date_added":               { "-type": "string", "-optional": "true"},
                 "action_name":              { "-type": "string", "-optional": "true"},
                 "action_parameters": {        "-optional": "true",
-                    "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any", "-optional": "true"}
+                  "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any", "-optional": "true"}
                 },
                 "action_time":              { "-type": "string", "-optional": "true"},
                 "string_filter":            { "-type": "string", "-optional": "true"}
@@ -1516,6 +1580,8 @@
           "URI": "Player/:id/action/:action_name/time",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -1547,6 +1613,8 @@
           "URI": "Player/:id/action/time",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -1571,6 +1639,8 @@
           "URI": "Player/:id/action/:action_name/count",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -1659,6 +1729,8 @@
           "URI": "Player/:id/badge",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -1695,6 +1767,8 @@
           "URI": "Player/:id/badgeAll",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -1894,6 +1968,8 @@
           "URI": "Player/:id/goods",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -1947,6 +2023,8 @@
           "URI": "Player/:id/goods/count",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -1987,6 +2065,8 @@
           "URI": "Player/quest/:id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "id",
@@ -2036,7 +2116,7 @@
                   "reward_id":                { "-type": "string"},
                   "reward_value":             { "-type": "string"},
                   "reward_data": {
-                      "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
+                    "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
                   }
                 },
                 {
@@ -2049,8 +2129,8 @@
                   "template_id":      { "-type": "string"},
                   "subject":          { "-type": "string", "-optional": "true"},
                   "feedback_data": {
-                      "name":         { "-type": "string"},
-                      "message":      { "-type": "string"}
+                    "name":         { "-type": "string"},
+                    "message":      { "-type": "string"}
                   }
                 },
                 {
@@ -2095,7 +2175,7 @@
                       "reward_id":                  { "-type": "string"},
                       "reward_value":               { "-type": "string"},
                       "reward_data": {
-                          "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
+                        "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
                       }
                     },
                     {
@@ -2108,8 +2188,8 @@
                       "template_id":      { "-type": "string"},
                       "subject":          { "-type": "string", "-optional": "true"},
                       "feedback_data": {
-                          "name":         { "-type": "string"},
-                          "message":      { "-type": "string"}
+                        "name":         { "-type": "string"},
+                        "message":      { "-type": "string"}
                       }
                     },
                     {
@@ -2141,7 +2221,7 @@
               "date_added":         { "-type": "string", "-optional": "true"},
               "date_modified":      { "-type": "string", "-optional": "true"},
               "num_missions":       { "-type": "any"}
-            }  
+            }
           }
         },
         {
@@ -2151,6 +2231,8 @@
           "URI": "Player/quest",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -2201,7 +2283,7 @@
                     "reward_id":                { "-type": "string"},
                     "reward_value":             { "-type": "string"},
                     "reward_data": {
-                        "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
+                      "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
                     }
                   },
                   {
@@ -2214,8 +2296,8 @@
                     "template_id":      { "-type": "string"},
                     "subject":          { "-type": "string", "-optional": "true"},
                     "feedback_data": {
-                        "name":         { "-type": "string"},
-                        "message":      { "-type": "string"}
+                      "name":         { "-type": "string"},
+                      "message":      { "-type": "string"}
                     }
                   },
                   {
@@ -2260,7 +2342,7 @@
                         "reward_id":                  { "-type": "string"},
                         "reward_value":               { "-type": "string"},
                         "reward_data": {
-                            "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
+                          "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
                         }
                       },
                       {
@@ -2273,8 +2355,8 @@
                         "template_id":      { "-type": "string"},
                         "subject":          { "-type": "string", "-optional": "true"},
                         "feedback_data": {
-                            "name":         { "-type": "string"},
-                            "message":      { "-type": "string"}
+                          "name":         { "-type": "string"},
+                          "message":      { "-type": "string"}
                         }
                       },
                       {
@@ -2353,7 +2435,7 @@
                     "reward_id":                { "-type": "string"},
                     "reward_value":             { "-type": "string"},
                     "reward_data": {
-                        "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
+                      "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
                     }
                   }
                 ],
@@ -2363,8 +2445,8 @@
                     "template_id":      { "-type": "string"},
                     "subject":          { "-type": "string", "-optional": "true"},
                     "feedback_data": {
-                        "name":         { "-type": "string"},
-                        "message":      { "-type": "string"}
+                      "name":         { "-type": "string"},
+                      "message":      { "-type": "string"}
                     }
                   },
                   {
@@ -2409,7 +2491,7 @@
                         "reward_id":                  { "-type": "string"},
                         "reward_value":               { "-type": "string"},
                         "reward_data": {
-                            "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
+                          "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
                         }
                       },
                       {
@@ -2422,8 +2504,8 @@
                         "template_id":      { "-type": "string"},
                         "subject":          { "-type": "string", "-optional": "true"},
                         "feedback_data": {
-                            "name":         { "-type": "string"},
-                            "message":      { "-type": "string"}
+                          "name":         { "-type": "string"},
+                          "message":      { "-type": "string"}
                         }
                       },
                       {
@@ -2789,8 +2871,8 @@
             "organize_type": { "-type": "string"},
             "roles": [
               {
-                  "role": { "-type": "string"},
-                  "join_date": { "-type": "string"}
+                "role": { "-type": "string"},
+                "join_date": { "-type": "string"}
               }
             ]
           }
@@ -4228,7 +4310,7 @@
                     "reward_id":                { "-type": "string"},
                     "reward_value":             { "-type": "string"},
                     "reward_data": {
-                        "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
+                      "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
                     }
                   }
                 ],
@@ -4238,8 +4320,8 @@
                     "template_id":      { "-type": "string"},
                     "subject":          { "-type": "string", "-optional": "true"},
                     "feedback_data": {
-                        "name":         { "-type": "string"},
-                        "message":      { "-type": "string"}
+                      "name":         { "-type": "string"},
+                      "message":      { "-type": "string"}
                     }
                   },
                   {
@@ -4284,7 +4366,7 @@
                         "reward_id":                  { "-type": "string"},
                         "reward_value":               { "-type": "string"},
                         "reward_data": {
-                            "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
+                          "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
                         }
                       },
                       {
@@ -4297,8 +4379,8 @@
                         "template_id":      { "-type": "string"},
                         "subject":          { "-type": "string", "-optional": "true"},
                         "feedback_data": {
-                            "name":         { "-type": "string"},
-                            "message":      { "-type": "string"}
+                          "name":         { "-type": "string"},
+                          "message":      { "-type": "string"}
                         }
                       },
                       {
@@ -4362,7 +4444,7 @@
                     "reward_id":                { "-type": "string"},
                     "reward_value":             { "-type": "string"},
                     "reward_data": {
-                        "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
+                      "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
                     }
                   }
                 ],
@@ -4372,8 +4454,8 @@
                     "template_id":      { "-type": "string"},
                     "subject":          { "-type": "string", "-optional": "true"},
                     "feedback_data": {
-                        "name":         { "-type": "string"},
-                        "message":      { "-type": "string"}
+                      "name":         { "-type": "string"},
+                      "message":      { "-type": "string"}
                     }
                   },
                   {
@@ -4418,7 +4500,7 @@
                         "reward_id":                  { "-type": "string"},
                         "reward_value":               { "-type": "string"},
                         "reward_data": {
-                            "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
+                          "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
                         }
                       },
                       {
@@ -4431,8 +4513,8 @@
                         "template_id":      { "-type": "string"},
                         "subject":          { "-type": "string", "-optional": "true"},
                         "feedback_data": {
-                            "name":         { "-type": "string"},
-                            "message":      { "-type": "string"}
+                          "name":         { "-type": "string"},
+                          "message":      { "-type": "string"}
                         }
                       },
                       {
@@ -4495,7 +4577,7 @@
                   "reward_id":                { "-type": "string"},
                   "reward_value":             { "-type": "string"},
                   "reward_data": {
-                      "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
+                    "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
                   }
                 },
                 {
@@ -4508,8 +4590,8 @@
                   "template_id":      { "-type": "string"},
                   "subject":          { "-type": "string", "-optional": "true"},
                   "feedback_data": {
-                      "name":         { "-type": "string"},
-                      "message":      { "-type": "string"}
+                    "name":         { "-type": "string"},
+                    "message":      { "-type": "string"}
                   }
                 },
                 {
@@ -4554,7 +4636,7 @@
                       "reward_id":                  { "-type": "string"},
                       "reward_value":               { "-type": "string"},
                       "reward_data": {
-                          "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
+                        "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
                       }
                     },
                     {
@@ -4567,8 +4649,8 @@
                       "template_id":      { "-type": "string"},
                       "subject":          { "-type": "string", "-optional": "true"},
                       "feedback_data": {
-                          "name":         { "-type": "string"},
-                          "message":      { "-type": "string"}
+                        "name":         { "-type": "string"},
+                        "message":      { "-type": "string"}
                       }
                     },
                     {
@@ -4600,7 +4682,7 @@
               "date_added":         { "-type": "string", "-optional": "true"},
               "date_modified":      { "-type": "string", "-optional": "true"},
               "num_missions":       { "-type": "any", "-optional": "true"}
-            }  
+            }
           }
         },
         {
@@ -4662,7 +4744,7 @@
                 "reward_id":                  { "-type": "string"},
                 "reward_value":               { "-type": "string"},
                 "reward_data": {
-                    "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
+                  "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
                 }
               },
               {
@@ -4675,8 +4757,8 @@
                 "template_id":      { "-type": "string"},
                 "subject":          { "-type": "string", "-optional": "true"},
                 "feedback_data": {
-                    "name":         { "-type": "string"},
-                    "message":      { "-type": "string"}
+                  "name":         { "-type": "string"},
+                  "message":      { "-type": "string"}
                 }
               },
               {
@@ -4729,7 +4811,7 @@
                     "reward_id":                { "-type": "string"},
                     "reward_value":             { "-type": "string"},
                     "reward_data": {
-                        "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
+                      "[a-zA-Z0-9-%_:\\.]+":  { "-type": "any"}
                     }
                   },
                   {
@@ -4742,8 +4824,8 @@
                     "template_id":      { "-type": "string"},
                     "subject":          { "-type": "string", "-optional": "true"},
                     "feedback_data": {
-                        "name":         { "-type": "string"},
-                        "message":      { "-type": "string"}
+                      "name":         { "-type": "string"},
+                      "message":      { "-type": "string"}
                     }
                   },
                   {
@@ -4788,7 +4870,7 @@
                         "reward_id":                  { "-type": "string"},
                         "reward_value":               { "-type": "string"},
                         "reward_data": {
-                            "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
+                          "[a-zA-Z0-9-%_:\\.]+":    { "-type": "any"}
                         }
                       },
                       {
@@ -4801,8 +4883,8 @@
                         "template_id":      { "-type": "string"},
                         "subject":          { "-type": "string", "-optional": "true"},
                         "feedback_data": {
-                            "name":         { "-type": "string"},
-                            "message":      { "-type": "string"}
+                          "name":         { "-type": "string"},
+                          "message":      { "-type": "string"}
                         }
                       },
                       {
@@ -6753,7 +6835,7 @@
           ],
           "responses": [
             {
-              "messages":   { "-type": "string"},  
+              "messages":   { "-type": "string"},
               "date_added": { "-type": "string", "-optional": "true"}
             }
           ]
@@ -8889,18 +8971,18 @@
               "Description": "feedback for player given to content"
             },
             {
-                "Name": "key",
-                "Required": "N",
-                "Default": "",
-                "Type": "string",
-                "Description": "custom field keys separated by comma"
+              "Name": "key",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field keys separated by comma"
             },
             {
-                "Name": "value",
-                "Required": "N",
-                "Default": "",
-                "Type": "string",
-                "Description": "custom field values separated by comma"
+              "Name": "value",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "custom field values separated by comma"
             }
           ],
           "responses": {
@@ -9109,7 +9191,7 @@
                 "tags":           {"-type": "any", "-optional": "true"}
               }
             ]
-           }
+          }
         },
         {
           "MethodName": "Get Reward log",
