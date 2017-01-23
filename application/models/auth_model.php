@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-define('TOKEN_EXPIRE', (3 * 24 * 3600)); // 3 days
+
 class Auth_model extends MY_Model
 {
     public function __construct()
@@ -101,7 +101,8 @@ class Auth_model extends MY_Model
             $newToken = $this->token($data['key'], $data['secret'], $r << 1);
         } // prevent duplicate tokens being returned
         $token['token'] = $newToken;
-        $expire = new MongoDate(time() + TOKEN_EXPIRE);
+        $client_expire = defined('TOKEN_CLIENT_EXPIRE') ? TOKEN_CLIENT_EXPIRE : (3 * 24 * 3600);  //default 3 days
+        $expire = new MongoDate(time() + $client_expire);
         $updated = array();
         foreach (self::$dblist as $key => $value) {
             //keep track of which db is already updated
@@ -162,7 +163,8 @@ class Auth_model extends MY_Model
         } // prevent duplicate tokens being returned
 
         $token['token'] = $newToken;
-        $expire = new MongoDate(time() + TOKEN_EXPIRE);
+        $player_expire = defined('TOKEN_CLIENT_EXPIRE') ? TOKEN_PLAYER_EXPIRE : (3 * 24 * 3600);  //default 3 days
+        $expire = new MongoDate(time() + $player_expire);
 
         if($oldToken){
             $this->mongo_db->where(array(
