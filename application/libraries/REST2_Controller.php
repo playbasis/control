@@ -31,6 +31,9 @@ abstract class REST2_Controller extends REST_Controller
     protected function early_checks()
     {
         $token = $this->input->post('token'); // token: POST
+        if(empty($token)){
+            $token = $this->input->get('token');
+        }
         $api_key = $this->input->get('api_key'); // api_key: GET/POST
         if (empty($api_key)) {
             $api_key = $this->input->post('api_key');
@@ -62,12 +65,16 @@ abstract class REST2_Controller extends REST_Controller
 
         /* 1.1 Log request */
         if (!$token && !$api_key) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array('api_key','token')), 200);
             return; // return early if neither token or api_key is found
         }
         $this->validToken = !empty($token) ? $this->auth_model->findToken($token) : (!empty($api_key) ? $this->auth_model->createTokenFromAPIKey($api_key) : null);
+        $this->auth_method = $this->auth_model->auth_method;
         $this->client_id = !empty($this->validToken) ? $this->validToken['client_id'] : null;
         $this->site_id = !empty($this->validToken) ? $this->validToken['site_id'] : null;
         $this->app_enable = $this->setting_model->appStatus($this->client_id, $this->site_id);
+        $client_setting = $this->setting_model->retrieveSetting($this->client_id,$this->site_id);
+        $this->player_auth_enable = isset($client_setting['player_authentication_enable']) ? $client_setting['player_authentication_enable'] : false;
         $this->log_id = $this->rest_model->logRequest(array(
             'client_id' => $this->client_id,
             'site_id' => $this->site_id,
@@ -235,15 +242,25 @@ abstract class REST2_Controller extends REST_Controller
                         //$this->response(array('status' => false, 'error' => 'Unknown method.'), 404);
                     }
                 }
+
                 switch ($this->request->method) {
-                    case 'get': // every GET call requires 'api_key'
-                        $required = $this->input->checkParam(array(
-                            'api_key'
-                        ));
-                        if ($required)
-                            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-                        if (!$this->validToken)
-                            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+                    case 'get':
+                        if(isset($this->player_auth_enable) && $this->player_auth_enable && isset($this->method_data['PlayerAuthRequired']) && strtoupper($this->method_data['PlayerAuthRequired']) == 'Y'){
+                            $required = $this->input->checkParam(array(
+                                'token'
+                            ));
+                            if ($required)
+                                $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+                        }
+
+                        if (!$this->validToken){
+                            if($this->auth_method == "api_key"){
+                                $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+                            }else{
+                                $this->response($this->error->setError('INVALID_TOKEN'), 200);
+                            }
+                        }
+
                         break;
                     case 'post': // every POST call requires 'token'
                         $required = $this->input->checkParam(array(
@@ -255,10 +272,41 @@ abstract class REST2_Controller extends REST_Controller
                             $this->response($this->error->setError('INVALID_TOKEN'), 200);
                         break;
                 }
+
+                $player_auth_failed = false;
+                if($found_endpoint){
+                    if(($this->auth_method == "player_token") && isset($this->method_data['PlayerAuthRequired']) && strtoupper($this->method_data['PlayerAuthRequired']) == 'Y'){
+                        $player_id_to_check = null;
+                        foreach($this->method_data['parameters'] as $parameter){
+                            if($parameter['Name'] == $this->method_data['PlayerTokenCheckWith']){
+                                if(strtoupper($parameter['Required'])  == "URI"){
+                                    foreach(explode('/', $this->method_data['URI']) as $index => $key){
+                                        if($key == ':'.$this->method_data['PlayerTokenCheckWith']){
+                                            $player_id_to_check= $this->uri->segments[$index+1];
+                                        }
+                                    }
+                                }else{
+                                    $player_id_to_check = $_REQUEST[$this->method_data['PlayerTokenCheckWith']];
+                                }
+                                break;
+                            }
+                        }
+                        // get player_id attached in input token
+                        $player_info = isset($this->validToken['pb_player_id']) ? $this->player_model->getPlayerByPlayer($this->site_id, $this->validToken['pb_player_id'], array('cl_player_id')) : array();
+
+                        //verify if input player_id is valid with the input token
+                        if( !isset($player_info['cl_player_id']) || $player_info['cl_player_id'] != $player_id_to_check){
+                            $player_auth_failed = true;
+                        }
+                    }
+                }
+
                 if (!empty($missing_parameter)) {
                     $this->response($this->error->setError('PARAMETER_MISSING', $missing_parameter), 200);
                 }
-
+                if ($player_auth_failed) {
+                    $this->response($this->error->setError('INVALID_TOKEN'), 200);
+                }
             }
             /* 2.2 Process request */
             call_user_func_array($method, $args);

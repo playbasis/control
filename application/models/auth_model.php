@@ -248,14 +248,29 @@ class Auth_model extends MY_Model
         $this->set_site_mongodb(0);
         $this->mongo_db->select(array(
             'client_id',
-            'site_id'
+            'site_id',
+            'pb_player_id'
         ));
         $this->mongo_db->where(array(
             'token' => $token,
         ));
         $this->mongo_db->where_gt('date_expire', new MongoDate(time()));
         $this->mongo_db->limit(1);
-        $result = $this->mongo_db->get('playbasis_token');
+        $result = $this->mongo_db->get('playbasis_player_token');
+        $this->auth_method = "player_token";
+        if(!$result){
+            $this->mongo_db->select(array(
+                'client_id',
+                'site_id'
+            ));
+            $this->mongo_db->where(array(
+                'token' => $token,
+            ));
+            $this->mongo_db->where_gt('date_expire', new MongoDate(time()));
+            $this->mongo_db->limit(1);
+            $result = $this->mongo_db->get('playbasis_token');
+            $this->auth_method = "user_token";
+        }
         if ($result && $result[0]) {
             $info = $result[0];
             $info['_id'] = $info['site_id'];
@@ -299,7 +314,7 @@ class Auth_model extends MY_Model
     public function createTokenFromAPIKey($apiKey)
     {
         $this->set_site_mongodb(0);
-
+        $this->auth_method = "api_key";
         $this->mongo_db->select(array(
             'site_id',
             'client_id'
