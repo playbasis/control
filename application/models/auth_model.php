@@ -165,8 +165,9 @@ class Auth_model extends MY_Model
         $token['token'] = $newToken;
         $player_expire = defined('TOKEN_CLIENT_EXPIRE') ? TOKEN_PLAYER_EXPIRE : (3 * 24 * 3600);  //default 3 days
         $expire = new MongoDate(time() + $player_expire);
-
-        if($oldToken){
+        $check_player = $this->getPlayerToken($data,false,false);
+        if($check_player){
+            $token['refresh_token'] = $check_player['refresh_token'];
             $this->mongo_db->where(array(
                 'client_id' => $data['client_id'],
                 'site_id' => $data['site_id'],
@@ -202,7 +203,19 @@ class Auth_model extends MY_Model
         return $token;
     }
 
-    public function getPlayerToken($data, $refresh_token = false)
+    public function revokePlayerToken($data)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'platform_id' => $data['platform_id'],
+            'pb_player_id' => $data['pb_player_id']
+        ));
+        $this->mongo_db->set('date_expire', new MongoDate(strtotime("-1 day", time())));
+        $this->mongo_db->update('playbasis_player_token');
+    }
+
+    public function getPlayerToken($data, $refresh_token = false, $check_player = true)
     {
         $this->set_site_mongodb($data['site_id']);
         $this->mongo_db->select(array(
@@ -217,10 +230,12 @@ class Auth_model extends MY_Model
             'pb_player_id' => $data['pb_player_id']
         ));
 
-        if ($refresh_token) {
-            $this->mongo_db->where('refresh_token', $refresh_token);
-        } else {
-            $this->mongo_db->where_gt('date_expire', new MongoDate(time()));
+        if($check_player){
+            if ($refresh_token) {
+                $this->mongo_db->where('refresh_token', $refresh_token);
+            } else {
+                $this->mongo_db->where_gt('date_expire', new MongoDate(time()));
+            }
         }
 
         $this->mongo_db->limit(1);

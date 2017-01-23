@@ -49,6 +49,7 @@ $route['Auth/renew'] = 'auth/renew';
 $route['Auth/player/'.ANY_STRING] = 'auth/player/$1';
 $route['Auth/player/'.ANY_STRING.'/register'] = 'auth/player_register/$1';
 $route['Auth/player/'.ANY_STRING.'/renew'] = 'auth/player_renew/$1';
+$route['Auth/player/'.ANY_STRING.'/revoke'] = 'auth/player_revoke/$1';
 
 $route['Setting/appStatus'] = 'setting/appStatus';
 
