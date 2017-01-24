@@ -243,9 +243,48 @@ abstract class REST2_Controller extends REST_Controller
                     }
                 }
 
+                $player_auth_failed = false;
+                $ignore_player_auth = false;
+                $auth_param_is_required = true;
+                if($found_endpoint){
+                    if( isset($this->method_data['PlayerAuthRequired']) && strtoupper($this->method_data['PlayerAuthRequired']) == 'Y'){
+                        $player_id_to_check = null;
+                        foreach($this->method_data['parameters'] as $parameter){
+                            if($parameter['Name'] == $this->method_data['PlayerTokenCheckWith']){
+                                if(strtoupper($parameter['Required'])  == "URI"){
+                                    foreach(explode('/', $this->method_data['URI']) as $index => $key){
+                                        if($key == ':'.$this->method_data['PlayerTokenCheckWith']){
+                                            $player_id_to_check= $this->uri->segments[$index+1];
+                                        }
+                                    }
+                                }else if(strtoupper($parameter['Required'])  == "Y"){
+                                    $player_id_to_check = $_REQUEST[$this->method_data['PlayerTokenCheckWith']];
+                                }else{
+                                    $player_id_to_check = isset($_REQUEST[$this->method_data['PlayerTokenCheckWith']]) ? $_REQUEST[$this->method_data['PlayerTokenCheckWith']] : null;
+                                    $auth_param_is_required = false;
+                                    if(is_null($player_id_to_check)){
+                                        $ignore_player_auth = true;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+
+                        if(!$ignore_player_auth) {
+                            // get player_id attached in input token
+                            $player_info = isset($this->validToken['pb_player_id']) ? $this->player_model->getPlayerByPlayer($this->site_id, $this->validToken['pb_player_id'], array('cl_player_id')) : array();
+
+                            //verify if input player_id is valid with the input token
+                            if (($this->auth_method == "player_token") && (!isset($player_info['cl_player_id']) || $player_info['cl_player_id'] != $player_id_to_check)) {
+                                $player_auth_failed = true;
+                            }
+                        }
+                    }
+                }
+
                 switch ($this->request->method) {
                     case 'get':
-                        if(isset($this->player_auth_enable) && $this->player_auth_enable && isset($this->method_data['PlayerAuthRequired']) && strtoupper($this->method_data['PlayerAuthRequired']) == 'Y'){
+                        if(isset($this->player_auth_enable) && $this->player_auth_enable && isset($this->method_data['PlayerAuthRequired']) && (strtoupper($this->method_data['PlayerAuthRequired']) == 'Y') && $auth_param_is_required){
                             $required = $this->input->checkParam(array(
                                 'token'
                             ));
@@ -271,34 +310,6 @@ abstract class REST2_Controller extends REST_Controller
                         if (!$this->validToken)
                             $this->response($this->error->setError('INVALID_TOKEN'), 200);
                         break;
-                }
-
-                $player_auth_failed = false;
-                if($found_endpoint){
-                    if(($this->auth_method == "player_token") && isset($this->method_data['PlayerAuthRequired']) && strtoupper($this->method_data['PlayerAuthRequired']) == 'Y'){
-                        $player_id_to_check = null;
-                        foreach($this->method_data['parameters'] as $parameter){
-                            if($parameter['Name'] == $this->method_data['PlayerTokenCheckWith']){
-                                if(strtoupper($parameter['Required'])  == "URI"){
-                                    foreach(explode('/', $this->method_data['URI']) as $index => $key){
-                                        if($key == ':'.$this->method_data['PlayerTokenCheckWith']){
-                                            $player_id_to_check= $this->uri->segments[$index+1];
-                                        }
-                                    }
-                                }else{
-                                    $player_id_to_check = $_REQUEST[$this->method_data['PlayerTokenCheckWith']];
-                                }
-                                break;
-                            }
-                        }
-                        // get player_id attached in input token
-                        $player_info = isset($this->validToken['pb_player_id']) ? $this->player_model->getPlayerByPlayer($this->site_id, $this->validToken['pb_player_id'], array('cl_player_id')) : array();
-
-                        //verify if input player_id is valid with the input token
-                        if( !isset($player_info['cl_player_id']) || $player_info['cl_player_id'] != $player_id_to_check){
-                            $player_auth_failed = true;
-                        }
-                    }
                 }
 
                 if (!empty($missing_parameter)) {
