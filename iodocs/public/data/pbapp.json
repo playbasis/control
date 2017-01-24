@@ -854,6 +854,8 @@
           "URI": "Player/referral",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -1054,6 +1056,8 @@
           "URI": "Player/:id/email/verify",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -1401,6 +1405,8 @@
           "URI": "Player/:id/sessions",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -2399,6 +2405,8 @@
           "URI": "Player/questAll/:id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -2548,6 +2556,8 @@
           "URI": "Player/:id/quest_reward_history",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -2595,6 +2605,8 @@
           "URI": "Player/:id/deduct",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -2645,6 +2657,8 @@
           "URI": "Player/:id/deduct/badge",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -2695,6 +2709,8 @@
           "URI": "Player/:sent_player_id/giveGift/:type",
           "RequiresOAuth": "Y",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"sent_player_id",
           "parameters": [
             {
               "Name": "token",
@@ -2757,6 +2773,8 @@
           "URI": "Player/:id/code",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -2828,6 +2846,8 @@
           "URI": "Player/:id/getAssociatedNode",
           "RequiresOAuth": "Y",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -2851,6 +2871,8 @@
           "URI": "Player/:id/getRole/:node_id",
           "RequiresOAuth": "Y",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -2884,6 +2906,8 @@
           "URI": "Player/:id/saleReport",
           "RequiresOAuth": "Y",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -2937,6 +2961,8 @@
           "URI": "Player/:id/actionReport",
           "RequiresOAuth": "Y",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "id",
@@ -2997,6 +3023,8 @@
           "URI": "Player/:id/unlock",
           "RequiresOAuth": "Y",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"id",
           "parameters": [
             {
               "Name": "token",
@@ -3132,6 +3160,8 @@
           "URI": "Goods",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -3224,6 +3254,8 @@
           "URI": "Goods/field",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -3307,6 +3339,8 @@
           "URI": "Goods/:id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "id",
@@ -3359,6 +3393,8 @@
           "URI": "Redeem/goodsGroup",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -3417,6 +3453,8 @@
           "URI": "Redeem/sponsorGroup",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -3448,6 +3486,8 @@
           "URI": "Goods/ad",
           "RequiresOAuth": "N",
           "Public": "N",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -3634,6 +3674,8 @@
           "URI": "Point/custom/log",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -3744,6 +3786,8 @@
           "URI": "Merchant/goodsGroup/verify",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "goods_group",
@@ -3786,6 +3830,8 @@
           "URI": "Merchant/goodsGroup/redeem",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -3842,6 +3888,8 @@
           "URI": "Engine/rules",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "action",
@@ -3900,6 +3948,8 @@
           "URI": "Engine/rule/:id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "id",
@@ -3956,6 +4006,8 @@
           "URI": "Engine/rule",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -4775,6 +4827,8 @@
           "URI": "Quest/available",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -4927,6 +4981,8 @@
           "URI": "Quest/:id/available",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "id",
@@ -4956,6 +5012,8 @@
           "URI": "Quest/:id/join",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -4993,6 +5051,8 @@
           "URI": "Quest/joinAll",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -5020,6 +5080,8 @@
           "URI": "Quest/:id/cancel",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -5057,6 +5119,8 @@
           "URI": "Quest/reset",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -5092,6 +5156,8 @@
           "URI": "Quest/leader",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "quest_id",
@@ -5188,6 +5254,8 @@
           "URI": "Quiz/list",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -5233,6 +5301,8 @@
           "URI": "Quiz/:id/detail",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "id",
@@ -5338,6 +5408,8 @@
           "URI": "Quiz/random",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -5381,6 +5453,8 @@
           "URI": "Quiz/player/:player_id/:limit",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -5417,6 +5491,8 @@
           "URI": "Quiz/player/:player_id",
           "RequiresOAuth": "N",
           "Public": "N",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -5446,6 +5522,8 @@
           "URI": "Quiz/player/:player_id/pending/:limit",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -5482,6 +5560,8 @@
           "URI": "Quiz/player/:player_id/pending",
           "RequiresOAuth": "N",
           "Public": "N",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -5511,6 +5591,8 @@
           "URI": "Quiz/:id/question",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "id",
@@ -5575,6 +5657,8 @@
           "URI": "Quiz/:id/question",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -5645,6 +5729,8 @@
           "URI": "Quiz/:id/answer",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -5814,6 +5900,8 @@
           "URI": "Quiz/reset",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -5856,6 +5944,8 @@
           "URI": "Redeem/goods",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -5945,6 +6035,8 @@
           "URI": "Redeem/goodsGroup",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -6035,6 +6127,8 @@
           "URI": "Redeem/sponsor",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -6073,6 +6167,8 @@
           "URI": "Redeem/sponsorGroup",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -6118,6 +6214,8 @@
           "URI": "Email/send",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -6218,6 +6316,8 @@
           "URI": "Email/goods",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -6346,6 +6446,8 @@
           "URI": "Email/recent",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -6391,6 +6493,8 @@
           "URI": "Email/template/:template_id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "template_id",
@@ -6453,6 +6557,8 @@
           "URI": "Sms/send",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -6497,6 +6603,8 @@
           "URI": "Sms/goods",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -6548,6 +6656,8 @@
           "URI": "Sms/recent",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -6593,6 +6703,8 @@
           "URI": "Sms/template/:template_id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "template_id",
@@ -6618,13 +6730,15 @@
           "URI": "Push/deviceRegistration",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "player id"
+              "Description": "player id as used in client's website"
             },
             {
               "Name": "token",
@@ -6677,6 +6791,8 @@
           "URI": "Push/deviceDeRegistration",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -6732,6 +6848,8 @@
           "URI": "Push/send",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -6771,6 +6889,8 @@
           "URI": "Push/goods",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -6817,6 +6937,8 @@
           "URI": "Push/recent",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -6862,6 +6984,8 @@
           "URI": "Push/template/:template_id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "template_id",
@@ -6894,6 +7018,8 @@
           "URI": "Service/recentActivities",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -7055,6 +7181,8 @@
           "URI": "Service/likeActivityFeed/:activity_id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -7089,6 +7217,8 @@
           "URI": "Service/commentActivityFeed/:activity_id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -7199,6 +7329,8 @@
           "URI": "Service/recent_point/:player_id",
           "RequiresOAuth": "N",
           "Public": "N",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -7439,6 +7571,8 @@
           "URI": "StoreOrg/nodes/:node_id/addPlayer/:player_id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -7473,6 +7607,8 @@
           "URI": "StoreOrg/nodes/name/:node_name/type/:organize_type/addPlayer/:player_id",
           "RequiresOAuth": "N",
           "Public": "N",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -7511,6 +7647,8 @@
           "URI": "StoreOrg/nodes/:node_id/removePlayer/:player_id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -7545,6 +7683,8 @@
           "URI": "StoreOrg/nodes/:node_id/setPlayerRole/:player_id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -7586,6 +7726,8 @@
           "URI": "StoreOrg/nodes/:node_id/unsetPlayerRole/:player_id",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -7656,6 +7798,8 @@
           "URI": "StoreOrg/rankPeer/:node_id/:rank_by",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "node_id",
@@ -7784,6 +7928,8 @@
           "URI": "StoreOrg/rankPeerByAccAction/:node_id/:action/:parameter",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "node_id",
@@ -8208,6 +8354,8 @@
           "URI": "Content",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "node_id",
@@ -8360,6 +8508,8 @@
           "URI": "Content/count",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "title",
@@ -8437,6 +8587,8 @@
           "URI": "Content/addContent",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -8844,6 +8996,8 @@
           "URI": "Content/:node_id/player/:player_id/like",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -8893,6 +9047,8 @@
           "URI": "Content/:node_id/player/:player_id/dislike",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -8941,6 +9097,8 @@
           "URI": "Content/:node_id/player/:player_id/feedback",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -9045,6 +9203,8 @@
           "URI": "File/list",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "id",
@@ -9426,6 +9586,8 @@
       "name": "Health API",
       "endpoint": ["Fitbit"],
       "Public": "Y",
+      "PlayerAuthRequired": "Y",
+      "PlayerTokenCheckWith":"player_id",
       "methods": [
         {
           "MethodName": "Retrieve FitBit Player",
@@ -9434,6 +9596,8 @@
           "URI": "Fitbit",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -9466,6 +9630,8 @@
           "URI": "Fitbit/add",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -9510,6 +9676,8 @@
           "URI": "Fitbit/:player_id/update",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -9552,6 +9720,8 @@
           "URI": "Fitbit/:player_id/delete",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -9579,6 +9749,8 @@
           "URI": "Fitbit/:player_id/data",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -9635,6 +9807,8 @@
           "URI": "Trip",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -9682,6 +9856,8 @@
           "URI": "Trip/startTrip",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -9710,6 +9886,8 @@
           "URI": "Trip/finishTrip",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -9752,6 +9930,8 @@
           "URI": "Trip/getTripLog",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "player_id",
@@ -9791,6 +9971,8 @@
           "URI": "Trip/addTripLog",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
@@ -10027,6 +10209,8 @@
           "URI": "Game/playerItemStatus",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "game_name",
@@ -10084,6 +10268,8 @@
           "URI": "Game/setCurrentStage",
           "RequiresOAuth": "N",
           "Public": "Y",
+          "PlayerAuthRequired": "Y",
+          "PlayerTokenCheckWith":"player_id",
           "parameters": [
             {
               "Name": "token",
