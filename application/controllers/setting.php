@@ -93,6 +93,7 @@ class setting extends MY_Controller
                 $data['password_policy']['min_char'] = isset($data['password_policy']['min_char']) ? intval($data['password_policy']['min_char']) : 0;
                 $data['max_retries'] = isset($data['max_retries']) ? intval($data['max_retries']) : 0;
                 $data['email_verification_enable'] = (isset($data['email_verification_enable']) && $data['email_verification_enable'] == "on") ? true : false;
+                $data['player_authentication_enable'] = (isset($data['player_authentication_enable']) && $data['player_authentication_enable'] == "on") ? true : false;
 
                 $data['timeout'] = $this->wordToTime($data['timeout']);
 

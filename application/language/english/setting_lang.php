@@ -30,6 +30,7 @@ $lang['entry_blank_password']           = 'Disallow blank password';
 $lang['entry_max_retries']              = 'Max login attempts ';
 $lang['entry_timeout']                  = 'Timeout for inactivity';
 $lang['entry_email_verification']       = 'Allow only verified email to login';
+$lang['entry_player_authentication']    = 'Require player authentication for using API';
 $lang['placeholder_min_char']           = 'Numeric, if blank or 0 mean no minimum';
 $lang['placeholder_max_retries']        = 'Numeric, if blank or 0 mean no limit';
 
