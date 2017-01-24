@@ -120,6 +120,11 @@
                         <td><input type="checkbox" id="email_verification_enable" name="email_verification_enable" <?php echo (isset($email_verification_enable) && $email_verification_enable) ? "checked" : ''; ?>></td>
                     </tr>
 
+                    <tr>
+                        <td><?php echo $this->lang->line('entry_player_authentication'); ?>:</td>
+                        <td><input type="checkbox" id="player_authentication_enable" name="player_authentication_enable" <?php echo (isset($player_authentication_enable) && $player_authentication_enable) ? "checked" : ''; ?>></td>
+                    </tr>
+
                 </table>
                 <?php
                 echo form_close();?>
