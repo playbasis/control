@@ -171,7 +171,6 @@ class Auth_model extends MY_Model
             $this->mongo_db->where(array(
                 'client_id' => $data['client_id'],
                 'site_id' => $data['site_id'],
-                'platform_id' => $data['platform_id'],
                 'pb_player_id' => $data['pb_player_id']
             ));
             $this->mongo_db->set('token', $token['token']);
@@ -208,7 +207,6 @@ class Auth_model extends MY_Model
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
-            'platform_id' => $data['platform_id'],
             'pb_player_id' => $data['pb_player_id']
         ));
         $this->mongo_db->set('date_expire', new MongoDate(strtotime("-1 day", time())));
@@ -226,7 +224,6 @@ class Auth_model extends MY_Model
         $this->mongo_db->where(array(
             'site_id' => $data['site_id'],
             'client_id' => $data['client_id'],
-            'platform_id' => $data['platform_id'],
             'pb_player_id' => $data['pb_player_id']
         ));
 

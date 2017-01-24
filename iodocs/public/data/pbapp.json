@@ -140,11 +140,11 @@
           "Public": "Y",
           "parameters": [
             {
-              "Name": "api_key",
+              "Name": "token",
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "api key issued by Playbasis"
+              "Description": "access token returned from Auth"
             },
             {
               "Name": "player_id",
