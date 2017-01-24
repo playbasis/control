@@ -131,30 +131,20 @@ class Auth extends REST2_Controller
 
     public function player_revoke_post($player_id)
     {
-        $required = $this->input->checkParam(array(
-            'api_key',
-        ));
-        if ($required) {
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        if (!$this->validToken){
+            $this->response($this->error->setError('INVALID_TOKEN'), 200);
         }
 
-        $clientInfo = $this->auth_model->getApiInfo(array('key' => $this->input->post('api_key')));
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($clientInfo, array(
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
         )));
 
         if (!$pb_player_id) {
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
-        } else {
-            $clientInfo['pb_player_id'] = $pb_player_id;
         }
 
-        if ($clientInfo) {
-            $this->auth_model->revokePlayerToken($clientInfo);
-            $this->response($this->resp->setRespond(), 200);
-        } else {
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET', $required), 200);
-        }
+        $this->auth_model->revokePlayerToken(array_merge($this->validToken,array('pb_player_id' => $pb_player_id)));
+        $this->response($this->resp->setRespond(), 200);
     }
 
     public function player_register_post($player_id)
