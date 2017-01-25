@@ -46,10 +46,17 @@
 
 	</div>
 </footer><!-- /footer -->
-
+<script>
+    var csrf_token_name = '<?php echo $this->security->get_csrf_token_name(); ?>';
+    var csrf_token_hash = '<?php echo $this->security->get_csrf_hash(); ?>';
+</script>
 <script src="javascript/beforelogin/script.min.js"></script>
-
-
+<script type="text/javascript" src="javascript/beforelogin/jquery.jcryption.3.1.0.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#login_form").jCryption();
+    });
+</script>
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
