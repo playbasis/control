@@ -564,9 +564,17 @@ class User extends MY_Controller
         $this->render_page('template');
     }
 
+    public function jcryption()
+    {
+        require_once(APPPATH . '/libraries/jcryption/sqAES.php');
+        require_once(APPPATH . '/libraries/jcryption/JCryption.php');
+        $jc_obj = new JCryption(APPPATH.'third_party/keys/rsa_1024_pub.pem', APPPATH.'third_party/keys/rsa_1024_priv.pem');
+        $jc_obj->go();
+
+    }
+
     public function login()
     {
-
         if ($this->session->userdata('user_id')) {
             redirect('/', 'refresh');
         }
@@ -585,7 +593,9 @@ class User extends MY_Controller
         $this->lang->load('login', $lang['folder']);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+            require_once(APPPATH . '/libraries/jcryption/sqAES.php');
+            require_once(APPPATH . '/libraries/jcryption/JCryption.php');
+            JCryption::decrypt();
             $this->data['message'] = null;
             if ($this->form_validation->run()) {
                 $this->load->model('User_model');
@@ -604,7 +614,7 @@ class User extends MY_Controller
                     } else {
                         $redirect = '/';
                     }
-                    if ($this->input->post('format') == 'json') {
+                    if ($_REQUEST['format'] == 'json') {
                         echo json_encode(array('status' => 'success', 'message' => ''));
                         exit();
                     }
@@ -616,13 +626,13 @@ class User extends MY_Controller
                 }else{
                     $msg_alert = $this->lang->line('error_login');
                 }
-                if ($this->input->post('format') == 'json') {
+                if ($_REQUEST['format'] == 'json') {
                     echo json_encode(array('status' => 'error', 'message' => $msg_alert));
                     exit();
                 }
                 $this->data['message'] = $msg_alert;
             } else {
-                if ($this->input->post('format') == 'json') {
+                if ($_REQUEST['format'] == 'json') {
                     echo json_encode(array('status' => 'error', 'message' => validation_errors()));
                     exit();
                 }
