@@ -47,6 +47,7 @@ $route['404_override'] = '';
 $route['login'] = 'user/login';
 $route['register'] = 'user/register';
 $route['logout'] = 'user/logout';
+$route['jcryption'] = 'user/jcryption';
 $route['pending_users'] = 'user/list_pending_users';
 $route['enable_user'] = 'user/enable_user';
 $route['user_password'] = 'user/set_user_password';
