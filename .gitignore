@@ -5,6 +5,9 @@ application/config/constants.php
 application/config/mongodb.php
 application/config/twilio.php
 
+application/third_party/key/rsa_1024_priv.pem
+application/third_party/key/rsa_1024_pub.pem
+
 application/cache/*
 !application/cache/index.html
 !application/cache/.htaccess
