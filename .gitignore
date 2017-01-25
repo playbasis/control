@@ -5,6 +5,8 @@ application/config/constants.php
 application/config/mongodb.php
 application/config/twilio.php
 
+application/third_party/keys/*
+
 application/cache/*
 !application/cache/index.html
 !application/cache/.htaccess
