@@ -67,7 +67,7 @@ class Auth_model extends MY_Model
 
     private function token($key, $secret, $r)
     {
-        return hash('sha1', $key . time() . $secret . $r);
+        return substr(hash('sha512', $key . time() . $secret . $r), 10,70);
     }
 
     private function getToken($data)
@@ -195,9 +195,9 @@ class Auth_model extends MY_Model
     private function playerToken($key, $player_id, $r, $password = false)
     {
         if ($password){
-            $token = hash('sha1', $key . time() . $player_id . $password . $r);
+            $token = substr(hash('sha512', $key . time() . $player_id . $password . $r), 10,70);
         } else {
-            $token = hash('sha1', $key . time() . $player_id . $r);
+            $token = substr(hash('sha512', $key . time() . $player_id . $r), 10,70);
         }
         return $token;
     }
