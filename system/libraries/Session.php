@@ -180,7 +180,9 @@ class CI_Session {
         {
             // regenerate session id (session data stays the
             // same, but old session storage is destroyed)
-            $this->regenerate_id();
+            //$this->regenerate_id();
+            session_destroy();
+            return FALSE;
         }
 
         // delete old flashdata (from last request)
