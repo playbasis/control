@@ -11,8 +11,8 @@
  */
 class CI_Session {
 
-	private $_match_ip;
-	private $_match_useragent;
+    private $_match_ip;
+    private $_match_useragent;
 
     var $flash_key = 'flash'; // prefix for "flash" variables (eg. flash:new:message)
 
