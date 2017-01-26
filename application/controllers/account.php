@@ -600,7 +600,7 @@ class Account extends MY_Controller
                 $user = $this->User_model->checkRandomKey($random_key);
                 $user_id = $user[0]['_id'];
                 $this->User_model->insertNewPassword($user_id, $new_password);
-                $this->User_model->force_login($user_id);
+                $this->User_model->logout();
 
                 if ($this->input->post('format') == 'json') {
                     echo json_encode(array('status' => 'success', 'message' => 'Your password has been update!'));
