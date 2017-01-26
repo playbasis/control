@@ -81,6 +81,7 @@
                                     </select>
                                 </td>
                             </tr>
+                            <?php if(isset($user)){ ?>
                             <tr>
                                 <td><?php echo $this->lang->line('form_password'); ?>:</td>
                                 <td><input type="password" name="password" size="100" /></td>
@@ -89,6 +90,7 @@
                                 <td><?php echo $this->lang->line('form_confirm_password'); ?>:</td>
                                 <td><input type="password" name="confirm_password" size="100" /></td>
                             </tr>
+                            <?php } ?>
                             <?php if(!$this->session->userdata('client_id')){?>
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_status'); ?>:</td>
