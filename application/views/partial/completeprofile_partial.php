@@ -33,7 +33,7 @@
                  <div class="pbf-field-group">
                    <label for="confirm-password">Confirm Password <span>*</span></label>
                    <input type="password" name="confirm_password" placeholder="Confirm Password" id="completeprofile-confirm-password" required>
-                   <input type="hidden" name="random_key" value="<?php echo $random_key ?>">
+                   <input type="hidden" name="random_key" value="<?php echo isset($random_key) ? $random_key : "" ?>">
                  </div>
               </fieldset>
 
