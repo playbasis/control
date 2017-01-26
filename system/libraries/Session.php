@@ -11,12 +11,20 @@
  */
 class CI_Session {
 
+    private $_match_ip;
+    private $_match_useragent;
+
     var $flash_key = 'flash'; // prefix for "flash" variables (eg. flash:new:message)
 
     function CI_Session()
     {
         $this->object =& get_instance();
         log_message('debug', "Native_session Class Initialized");
+		$this->_match_ip = $this->object->config->item('sess_match_ip');
+		$this->_match_useragent = $this->object->config->item('sess_match_useragent');
+		$this->_sess_encrypt_cookie  = $this->object->config->item('sess_encrypt_cookie ');
+		$this->encryption = $this->object->config->item('sess_encrypt_cookie');
+
         $this->_sess_run();
     }
 
@@ -120,6 +128,11 @@ class CI_Session {
         }
     }
 
+	function sess_create()
+	{
+		$this->_sess_run();
+	}
+
     /**
      * Starts up the session system for current request
      */
@@ -141,6 +154,27 @@ class CI_Session {
             }
         }
 
+		if ($this->encryption == TRUE)
+		{
+			$this->object->load->library('encrypt');
+		}
+
+		// match IP address if necessary
+		if ($this->_match_ip == TRUE) {
+			if ($this->_ips_match() == FALSE) {
+				session_destroy();
+				return FALSE;
+			}
+		}
+
+		// match user agent if necessary
+		if ($this->_match_useragent == TRUE) {
+			if ($this->_useragents_match() == FALSE) {
+				session_destroy();
+				return FALSE;
+			}
+		}
+
         // check if session id needs regeneration
         if ( $this->_session_id_expired() )
         {
@@ -155,6 +189,26 @@ class CI_Session {
         // mark all new flashdata as old (data will be deleted before next request)
         $this->_flashdata_mark();
     }
+
+	function _ips_match() {
+		// if this is the first time coming in, initialize IP address
+		if (!$this->userdata('sess_ip_address')) {
+			$this->set_userdata('sess_ip_address',  $this->object->input->ip_address());
+			return TRUE;
+		}
+		return $this->userdata('sess_ip_address') == $this->object->input->ip_address();
+	}
+	/**
+	 * Checks if stored user agent matches current user agent
+	 */
+	function _useragents_match() {
+		// if this is the first time coming in, initialize user agent
+		if (!$this->userdata('sess_useragent')) {
+			$this->set_userdata('sess_useragent', trim(substr($this->object->input->user_agent(), 0, 50)));
+			return TRUE;
+		}
+		return $this->userdata('sess_useragent') == trim(substr($this->object->input->user_agent(), 0, 50));
+	}
 
     /**
      * Checks if session has expired
