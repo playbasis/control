@@ -314,7 +314,7 @@ jQuery(document).ready( function($) {
     submitHandler: function(form) {
       $.ajax({
         type:'post',
-        url: baseUrlPath+"account/update_password",
+        url: baseUrlPath+"user/update_password",
         data: $(form).serialize()+'&format=json',
         cache: false,
         dataType: 'json'
