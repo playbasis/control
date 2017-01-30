@@ -994,9 +994,7 @@ class User extends MY_Controller
             $random_key = $_GET['key'];
             $user = $this->User_model->checkRandomKey($random_key, false);
             if ($user != null) {
-                $user_id = $user[0]['_id'];
-                $this->User_model->force_login($user_id);
-                redirect('account/update_password?random_key='.$random_key, 'refresh');
+                redirect('user/update_password?random_key='.$random_key, 'refresh');
             } else {
                 $this->data['topic_message'] = 'Your validation key is invalid,';
                 $this->data['message'] = 'Please contact Playbasis.';
@@ -1009,6 +1007,69 @@ class User extends MY_Controller
             $this->data['main'] = 'partial/something_wrong';
             $this->render_page('template_beforelogin');
         }
+    }
+    public function update_password()
+    {
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->data['message'] = null;
+
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'),
+                'trim|required|min_length[5]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'),
+                'required|matches[password]');
+
+            if ($this->form_validation->run()) {
+                $new_password = $this->input->post('password');
+                $random_key = $this->input->post('random_key');
+                $user = $this->User_model->checkRandomKey($random_key);
+                $user_id = $user[0]['_id'];
+                $this->User_model->insertNewPassword($user_id, $new_password);
+                $this->User_model->logout();
+
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => 'success', 'message' => 'Your password has been update!'));
+                    exit();
+                }
+
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+
+                $data = array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id
+                );
+
+                if ($client_id) {
+                    $total = $this->App_model->getTotalAppsByClientId($data);
+                } else {
+                    $total = $this->App_model->getTotalApps($data);
+                }
+
+                if ($total == 0) {
+                    $this->session->unset_userdata('site_id');
+                    redirect('/first_app', 'refresh');
+                } else {
+                    redirect('/', 'refresh');
+                }
+
+            } else {
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => 'error', 'message' => validation_errors()));
+                    exit();
+                }
+            }
+        }
+
+        $this->data['heading_title'] = $this->lang->line('add_site_title');
+        $this->data['main'] = 'partial/completeprofile_partial';
+        $this->data['form'] = 'user/update_password';
+        $this->data['random_key'] = $this->input->get('random_key');
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
     }
 
     public function enable_user()
