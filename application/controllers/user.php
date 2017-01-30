@@ -994,6 +994,8 @@ class User extends MY_Controller
             $random_key = $_GET['key'];
             $user = $this->User_model->checkRandomKey($random_key, false);
             if ($user != null) {
+                $user_id = $user[0]['_id'];
+                $this->User_model->force_login($user_id);
                 redirect('account/update_password?random_key='.$random_key, 'refresh');
             } else {
                 $this->data['topic_message'] = 'Your validation key is invalid,';
