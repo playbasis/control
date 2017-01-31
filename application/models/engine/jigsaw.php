@@ -62,6 +62,8 @@ class jigsaw extends MY_Model
         if (isset($input[$param_name])) {
             if ($config['param_operation'] == '=') {
                 $result = ($input[$param_name] == $config['param_value']);
+            } elseif ($config['param_operation'] == '!=') {
+                $result = ($input[$param_name] != $config['param_value']);
             } elseif ($config['param_operation'] == '>') {
                 $result = ($input[$param_name] > $config['param_value']);
             } elseif ($config['param_operation'] == '<') {
@@ -89,6 +91,8 @@ class jigsaw extends MY_Model
         if (isset($input['level'])) {
             if ($config['type'] == '=') {
                 $result = ($input['level'] == $config['value']);
+            } elseif ($config['type'] == '!=') {
+                $result = ($input['level'] != $config['value']);
             } elseif ($config['type'] == '>') {
                 $result = ($input['level'] > $config['value']);
             } elseif ($config['type'] == '<') {
@@ -149,6 +153,8 @@ class jigsaw extends MY_Model
             if (isset($input['user_profile'][$config['profile']])) {
                 if ($config['operation'] == '=') {
                     $result = ($input['user_profile'][$config['profile']] == $config['value']);
+                } elseif ($config['operation'] == '!=') {
+                    $result = ($input['user_profile'][$config['profile']] !=  $config['value']);
                 } elseif ($config['operation'] == '>') {
                     $result = ($input['user_profile'][$config['profile']] >  $config['value']);
                 } elseif ($config['operation'] == '<') {
@@ -186,6 +192,8 @@ class jigsaw extends MY_Model
                 if(isset($config['param_operator'])){
                     if ($config['param_operator'] == '=') {
                         $result = ($badge['amount'] == $config['value']);
+                    } elseif ($config['param_operator'] == '!=') {
+                        $result = ($badge['amount'] != $config['value']);
                     } elseif ($config['param_operator'] == '>') {
                         $result = ($badge['amount'] > $config['value']);
                     } elseif ($config['param_operator'] == '<') {
