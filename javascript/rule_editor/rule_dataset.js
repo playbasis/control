@@ -535,6 +535,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 console.log('CUSTOMPARAMETER in if');
                                 var operation = {
                                     'equal': '=',
+                                    'notEqual': '!=',
                                     'equalOrGreater': '>=',
                                     'equalOrLess': '<=',
                                     'greater': '>',
@@ -560,6 +561,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 console.log('LEVEL in if');
                                 var operation = {
                                     'equal': '=',
+                                    'notEqual': '!=',
                                     'equalOrGreater': '>=',
                                     'equalOrLess': '<=',
                                     'greater': '>',
@@ -584,6 +586,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 console.log('BADGECONDITION in if');
                                 var operation = {
                                     'equal': '=',
+                                    'notEqual': '!=',
                                     'equalOrGreater': '>=',
                                     'equalOrLess': '<=',
                                     'greater': '>',
@@ -641,6 +644,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 }else{
                                     unit = {
                                         'equal': '=',
+                                        'notEqual': '!=',
                                         'equalOrGreater': '>=',
                                         'equalOrLess': '<=',
                                         'greater': '>',
