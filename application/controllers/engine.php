@@ -1077,7 +1077,7 @@ class Engine extends Quest
                             if (!$input["test"] && !$anonymousUser) {
                                 $eventMessage = $this->utility->getEventMessage(
                                     'point',
-                                    $jigsawConfig['quantity'],
+                                    $event['value'],
                                     $jigsawConfig['reward_name']);
 
                                 //log event - reward, custom point
@@ -1087,14 +1087,14 @@ class Engine extends Quest
                                     array_merge($input, array(
                                         'reward_id' => $jigsawConfig['reward_id'],
                                         'reward_name' => $jigsawConfig['reward_name'],
-                                        'amount' => $jigsawConfig['quantity'],
+                                        'amount' => $event['value'],
                                         'transaction_id' => isset($event['transaction_id']) && $event['transaction_id']? $event['transaction_id'] : null
                                     )));
 
                                 //publish to node stream
                                 $this->node->publish(array_merge($input, array(
                                     'message' => $eventMessage,
-                                    'amount' => $jigsawConfig['quantity'],
+                                    'amount' => $event['value'],
                                     'point' => $jigsawConfig['reward_name']
                                 )), $site_name, $site_id);
 
@@ -1187,7 +1187,7 @@ class Engine extends Quest
                                 if (!$input["test"]) {
                                     $eventMessage = $this->utility->getEventMessage(
                                         'point',
-                                        $jigsawConfig['quantity'],
+                                        $event['value'],
                                         $jigsawConfig['reward_name']);
                                     //log event - reward, non-custom point
                                     $this->tracker_model->trackEvent(
@@ -1196,13 +1196,13 @@ class Engine extends Quest
                                         array_merge($input, array(
                                             'reward_id' => $jigsawConfig['reward_id'],
                                             'reward_name' => $jigsawConfig['reward_name'],
-                                            'amount' => $jigsawConfig['quantity'],
+                                            'amount' => $event['value'],
                                             'transaction_id' => isset($event['transaction_id']) && $event['transaction_id']? $event['transaction_id'] : null
                                         )));
                                     //publish to node stream
                                     $this->node->publish(array_merge($input, array(
                                         'message' => $eventMessage,
-                                        'amount' => $jigsawConfig['quantity'],
+                                        'amount' => $event['value'],
                                         'point' => $jigsawConfig['reward_name']
                                     )), $site_name, $site_id);
                                     //publish to facebook notification
