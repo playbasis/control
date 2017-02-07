@@ -1,5 +1,6 @@
 <?php
 // Heading
+$lang['title']                  = 'Audience';
 $lang['heading_title']          = 'Player';
 
 // Text
@@ -18,7 +19,7 @@ $lang['text_female']				= 'Female';
 // Tab
 $lang['tab_token']					= 'Access Token';
 $lang['tab_badge']					= 'Badges';
-$lang['tab_friend']				= 'Friend';
+$lang['tab_friend']				    = 'Friend';
 
 // Column
 $lang['column_image']				= 'Avatar';

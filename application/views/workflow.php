@@ -62,6 +62,7 @@
                     <td rowspan="2" class="left" style="width:100px;"><?php echo $this->lang->line('column_player_id'); ?></td>
                     <td rowspan="2" class="left" style="width:180px;"><?php echo $this->lang->line('column_name'); ?></td>
                     <td rowspan="2" class="left" style="width:180px;"><?php echo $this->lang->line('column_email'); ?></td>
+                    <td rowspan="2" class="left" style="width:100px;"><?php echo $this->lang->line('column_tags'); ?></td>
                     <td rowspan="2" class="left" style="width:100px;"><?php echo $this->lang->line('column_phone'); ?></td>
                     <?php if($org_status){?>
                     <td colspan="3" class="center" style="width:200px;"><?php echo $this->lang->line('column_organization'); ?></td>
@@ -83,6 +84,7 @@
                     <td><input type="text" name="filter_id"    placeholder="by ID"    value="<?php echo (isset($_GET['filter_id']) && !is_null($_GET['filter_id']))?$_GET['filter_id']:''; ?>" style="width:80%;" /></td>
                     <td><input type="text" name="filter_name"  placeholder="by name"  value="<?php echo (isset($_GET['filter_name']) && !is_null($_GET['filter_name']))?$_GET['filter_name']:''; ?>" style="width:80%;" /></td>
                     <td><input type="text" name="filter_email" placeholder="by email" value="<?php echo (isset($_GET['filter_email']) && !is_null($_GET['filter_email']))?$_GET['filter_email']:''; ?>" style="width:80%;" /></td>
+                    <td><input type="text" name="filter_tag"   placeholder="by tag"   value="<?php echo (isset($_GET['filter_tag']) && !is_null($_GET['filter_tag']))?$_GET['filter_tag']:''; ?>" style="width:80%;" /></td>
                     <td></td>
                     <?php if($org_status){?>
                     <td></td>
@@ -106,6 +108,7 @@
                         <td class="left"><?php echo $player['cl_player_id']; ?></td>
                         <td class="left"><?php echo $player['first_name']."  ".$player['last_name']; ?></td>
                         <td class="left"><?php echo $player['email']; ?></td>
+                        <td class="left"><?php echo isset($player['tags']) ? implode(',',$player['tags']) : ''; ?></td>
                         <td class="left"><?php echo isset($player['phone_number']) ? $player['phone_number'] : ''; ?></td>
                         <?php if($org_status){?>
                         <td class="left"><?php echo (isset($player['organization_node']) && !is_null($player['organization_node']))?$player['organization_node']:''; ?></td>
@@ -123,13 +126,13 @@
                 <?php } else { ?>
                     <tr>
                         <?php if ($tab_status == "approved") { ?>
-                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_approved_results'); ?></td>
+                            <td class="center" colspan="10"><?php echo $this->lang->line('text_no_approved_results'); ?></td>
                         <?php }elseif($tab_status == "rejected"){?>
-                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_rejected_results'); ?></td>
+                            <td class="center" colspan="10"><?php echo $this->lang->line('text_no_rejected_results'); ?></td>
                         <?php }elseif($tab_status == "pending"){?>
-                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_pending_request'); ?></td>
+                            <td class="center" colspan="10"><?php echo $this->lang->line('text_no_pending_request'); ?></td>
                         <?php }else{?>
-                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_locked_results'); ?></td>
+                            <td class="center" colspan="10"><?php echo $this->lang->line('text_no_locked_results'); ?></td>
                         <?php }?>
                     </tr>
                 <?php } ?>
@@ -274,8 +277,9 @@
         var filter_name = $('input[name=\'filter_name\']').attr('value');
         var filter_id = $('input[name=\'filter_id\']').attr('value');
         var filter_email = $('input[name=\'filter_email\']').attr('value');
+        var filter_tag = $('input[name=\'filter_tag\']').attr('value');
 
-        url += '?filter_id=' + encodeURIComponent(filter_id)+'&filter_name=' + encodeURIComponent(filter_name)+'&filter_email=' + encodeURIComponent(filter_email);
+        url += '?filter_id=' + encodeURIComponent(filter_id)+'&filter_name=' + encodeURIComponent(filter_name)+'&filter_email=' + encodeURIComponent(filter_email)+'&filter_tag=' + encodeURIComponent(filter_tag);
 
         location = url;
     }

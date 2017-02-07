@@ -45,6 +45,10 @@ class Workflow_model extends MY_Model
             //$or_where[]=array('email' => $regex);
         }
 
+        if (isset($data['filter_tag']) && $data['filter_tag']) {
+            $this->mongo_db->where_in('tags', $data['filter_tag']);
+        }
+
         $results = $this->mongo_db->count("playbasis_player");
         return $results;
     }
@@ -91,6 +95,10 @@ class Workflow_model extends MY_Model
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_email'])) . "/i");
             $this->mongo_db->where('email', $regex);
             //$or_where[]=array('email' => $regex);
+        }
+
+        if (isset($data['filter_tag']) && $data['filter_tag']) {
+            $this->mongo_db->where_in('tags', $data['filter_tag']);
         }
 
         if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
@@ -260,6 +268,10 @@ class Workflow_model extends MY_Model
             }
         }
 
+        if ( isset($data['tags']) && $data['tags'] == "") {
+            $data['tags'] = "null";
+        }
+
         $status = $this->_api->updatePlayer($player_id, $data);
         return $status;
     }
@@ -385,6 +397,10 @@ class Workflow_model extends MY_Model
             //$or_where[]=array('email' => $regex);
         }
 
+        if (isset($data['filter_tag']) && $data['filter_tag']) {
+            $this->mongo_db->where_in('tags', $data['filter_tag']);
+        }
+
         $results = $this->mongo_db->count("playbasis_player");
 
         return $results;
@@ -422,6 +438,10 @@ class Workflow_model extends MY_Model
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_email'])) . "/i");
             $this->mongo_db->where('email', $regex);
             //$or_where[]=array('email' => $regex);
+        }
+
+        if (isset($data['filter_tag']) && $data['filter_tag']) {
+            $this->mongo_db->where_in('tags', $data['filter_tag']);
         }
 
         if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
