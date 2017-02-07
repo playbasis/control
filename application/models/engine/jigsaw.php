@@ -166,8 +166,7 @@ class jigsaw extends MY_Model
                     $result = true;
                 }
             }
-        }
-        else {
+        } else {
             if (isset($input['user_profile'][$config['profile']])) {
                 if ($config['operation'] == '=') {
                     $result = ($input['user_profile'][$config['profile']] == $config['value']);
