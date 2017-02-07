@@ -597,7 +597,7 @@ class Content extends REST2_Controller
         if ($this->input->post('pin')){
             $contentInfo['pin'] = $this->input->post('pin');
         }
-        $contentInfo['tags'] = $this->input->post('tags') && !is_null($this->input->post('status')) ? explode(',', $this->input->post('tags')) : null;
+        $contentInfo['tags'] = $this->input->post('tags') && !is_null($this->input->post('tags')) ? explode(',', $this->input->post('tags')) : null;
 
         if ($this->input->post('key')) {
             $data['custom'] = array();

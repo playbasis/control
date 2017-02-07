@@ -114,7 +114,7 @@ class jigsaw extends MY_Model
         assert(isset($config['profile']));
         assert(isset($config['operation']));
         $now = isset($input['rule_time']) ? $input['rule_time'] : new MongoDate();
-        if(!(isset($config['value']) && $config['value'])){
+        if(!(isset($config['value']) && $config['value']) && $config['profile'] != "tag"){
             return false;
         }
 
@@ -137,19 +137,37 @@ class jigsaw extends MY_Model
 
         $result = false;
 
-        if($config['profile'] == 'gender' && isset($input['user_profile']['gender']) && $config['operation'] == "="){
-            if($input['user_profile']['gender'] == 1){
-                $male = array("male","man","gentleman");
-                if(in_array($config['value'],$male)){
+        if($config['profile'] == 'gender' ){
+            if( isset($input['user_profile']['gender']) && $config['operation'] == "=") {
+                if ($input['user_profile']['gender'] == 1) {
+                    $male = array("male", "man", "gentleman");
+                    if (in_array($config['value'], $male)) {
+                        $result = true;
+                    }
+                } else if ($input['user_profile']['gender'] == 0) {
+                    $female = array("female", "woman", "lady");
+                    if (in_array($config['value'], $female)) {
+                        $result = true;
+                    }
+                }
+            }
+        } elseif($config['profile'] == 'tag' ){
+            if( $config['operation'] == "=" ) {
+                if( ($config['value'] != "" && isset($input['user_profile']['tags']) && is_array($input['user_profile']['tags']) && in_array($config['value'], $input['user_profile']['tags'])) ||
+                    ($config['value'] == "" && (!isset($input['user_profile']['tags']) || $input['user_profile']['tags'] == null || empty($input['user_profile']['tags'])))
+                ) {
                     $result = true;
                 }
-            }else if($input['user_profile']['gender'] == 0){
-                $female = array("female","woman","lady");
-                if(in_array($config['value'],$female)){
+            }elseif( $config['operation'] == "!=" ){
+                if( ($config['value'] != "" && (isset($input['user_profile']['tags']) && is_array($input['user_profile']['tags']) && !in_array($config['value'], $input['user_profile']['tags']) ||
+                                               (!isset($input['user_profile']['tags']) || $input['user_profile']['tags'] == null || empty($input['user_profile']['tags'])))) ||
+                    ($config['value'] == "" && !(!isset($input['user_profile']['tags']) || $input['user_profile']['tags'] == null || empty($input['user_profile']['tags'])))
+                ) {
                     $result = true;
                 }
             }
-        }else {
+        }
+        else {
             if (isset($input['user_profile'][$config['profile']])) {
                 if ($config['operation'] == '=') {
                     $result = ($input['user_profile'][$config['profile']] == $config['value']);

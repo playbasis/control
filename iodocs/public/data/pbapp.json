@@ -169,7 +169,7 @@
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "access token returned from Auth"
+              "Description": "api key issued by Playbasis"
             },
             {
               "Name": "player_id",
@@ -212,6 +212,13 @@
               "Default": "",
               "Type": "string",
               "Description": "+66xxyyyzzzz"
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
             },
             {
               "Name": "facebook_id",
@@ -321,7 +328,7 @@
               "Required": "Y",
               "Default": "",
               "Type": "string",
-              "Description": "access token returned from Auth"
+              "Description": "api key issued by Playbasis"
             }
           ],
           "responses": {
@@ -387,6 +394,7 @@
               "first_name":   { "-type": "string"},
               "last_name":    { "-type": "string"},
               "gender":       { "-type": "integer"},
+              "tags":         { "-type": "any", "-optional": "true"},
               "birth_date":   { "-type": "string"},
               "registered":   { "-type": "string"},
               "last_login":   { "-type": "string"},
@@ -431,6 +439,7 @@
               "first_name":   { "-type": "string"},
               "last_name":    { "-type": "string"},
               "gender":       { "-type": "integer"},
+              "tags":         { "-type": "any", "-optional": "true"},
               "birth_date":   { "-type": "string"},
               "registered":   { "-type": "string"},
               "last_login":   { "-type": "string"},
@@ -444,6 +453,7 @@
           "HTTPMethod": "POST",
           "URI": "Player/list",
           "RequiresOAuth": "N",
+          "parameters_or" : [["list_player_id","tags"]],
           "Public": "Y",
           "parameters": [
             {
@@ -455,10 +465,17 @@
             },
             {
               "Name": "list_player_id",
-              "Required": "Y",
+              "Required": "OR",
               "Default": "",
               "Type": "string",
-              "Description": "player id as used in client's website separate with ',' example '1,2,3'"
+              "Description": "player id as used in client's website separate with ',' example '1,2,3' (either list_player_id or tags is required)"
+            },
+            {
+              "Name": "tags",
+              "Required": "OR",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (either list_player_id or tags is required)"
             }
           ],
           "response": {
@@ -475,6 +492,7 @@
                 "first_name":   { "-type": "string"},
                 "last_name":    { "-type": "string"},
                 "gender":       { "-type": "integer"},
+                "tags":         { "-type": "any", "-optional": "true"},
                 "birth_date":   { "-type": "string"},
                 "registered":   { "-type": "string"},
                 "last_login":   { "-type": "string"},
@@ -499,6 +517,13 @@
               "Default": "",
               "Type": "string",
               "Description": "player id as used in client's website"
+            },
+            {
+              "Name": "token",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "access token returned from Player Auth"
             }
           ],
           "response": {
@@ -510,6 +535,7 @@
               "first_name":       { "-type": "string"},
               "last_name":        { "-type": "string"},
               "gender":           { "-type": "integer"},
+              "tags":             { "-type": "any", "-optional": "true"},
               "birth_date":       { "-type": "string"},
               "registered":       { "-type": "string"},
               "percent_of_level": { "-type": "number"},
@@ -584,6 +610,7 @@
               "first_name":       { "-type": "string"},
               "last_name":        { "-type": "string"},
               "gender":           { "-type": "integer"},
+              "tags":             { "-type": "any", "-optional": "true"},
               "birth_date":       { "-type": "string"},
               "registered":       { "-type": "string"},
               "percent_of_level": { "-type": "double"},
@@ -801,6 +828,13 @@
               ]
             },
             {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) to find (e.g. foo,bar)"
+            },
+            {
               "Name": "birth_date",
               "Required": "N",
               "Default": "",
@@ -992,6 +1026,13 @@
                 "1",
                 "2"
               ]
+            },
+            {
+              "Name": "tags",
+              "Required": "N",
+              "Default": "",
+              "Type": "string",
+              "Description": "Specific tag(s) for finding (set as 'null' to clear)"
             },
             {
               "Name": "birth_date",

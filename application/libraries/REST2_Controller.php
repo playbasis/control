@@ -258,7 +258,7 @@ abstract class REST2_Controller extends REST_Controller
                                         }
                                     }
                                 }else if(strtoupper($parameter['Required'])  == "Y"){
-                                    $player_id_to_check = $_REQUEST[$this->method_data['PlayerTokenCheckWith']];
+                                    $player_id_to_check = isset($_REQUEST[$this->method_data['PlayerTokenCheckWith']]) ? $_REQUEST[$this->method_data['PlayerTokenCheckWith']] : null;
                                 }else{
                                     $player_id_to_check = isset($_REQUEST[$this->method_data['PlayerTokenCheckWith']]) ? $_REQUEST[$this->method_data['PlayerTokenCheckWith']] : null;
                                     $auth_param_is_required = false;

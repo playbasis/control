@@ -905,7 +905,7 @@ class Engine extends Quest
                 if (($input['jigsaw_name']) == 'userProfile' || ($input['jigsaw_name']) == 'specialRewardCondition') {
                     //read player information
                     $player_profile = $this->player_model->readPlayer($input['pb_player_id'], $this->site_id, array(
-                        'exp','gender','birth_date'
+                        'exp','gender','birth_date','tags'
                     ));
 
                     $level = $this->level_model->getLevelByExp($player_profile['exp'], $this->validToken['client_id'],

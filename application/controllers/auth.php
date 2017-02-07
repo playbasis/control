@@ -220,6 +220,7 @@ class Auth extends REST2_Controller
                 $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
             }
         }
+        $playerInfo['tags'] = $this->input->post('tags') && !is_null($this->input->post('tags')) ? explode(',', $this->input->post('tags')) : null;
         $facebookId = $this->input->post('facebook_id');
         if ($facebookId) {
             $playerInfo['facebook_id'] = $facebookId;

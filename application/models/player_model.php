@@ -65,6 +65,7 @@ class Player_model extends MY_Model
             'device_id' => (isset($data['device_id'])) ? $data['device_id'] : null,
             'password' => (isset($data['password'])) ? $data['password'] : null,
             'gender' => (isset($data['gender'])) ? intval($data['gender']) : 0,
+            'tags' => (isset($data['tags'])) ? $data['tags'] : null,
             'birth_date' => (isset($data['birth_date'])) ? new MongoDate(strtotime($data['birth_date'])) : null,
             'approve_status' => (isset($data['approve_status'])) ? $data['approve_status'] : "pending",
             'date_added' => $mongoDate,
@@ -191,6 +192,19 @@ class Player_model extends MY_Model
             $this->mongo_db->select($fields);
         }
         $this->mongo_db->limit($limit, $offset);
+        $result = $this->mongo_db->get('playbasis_player');
+        return $result;
+    }
+
+    public function readPlayersWithFilter($site_id, $fields, $filter = array())
+    {
+        $this->set_site_mongodb($site_id);
+        if ($fields) {
+            $this->mongo_db->select($fields);
+        }
+        if(isset($filter['tags']) && is_array($filter['tags']) && $filter['tags']){
+            $this->mongo_db->where_in('tags', $filter['tags']);
+        }
         $result = $this->mongo_db->get('playbasis_player');
         return $result;
     }
