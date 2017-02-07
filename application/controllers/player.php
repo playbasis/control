@@ -51,6 +51,7 @@ class Player extends REST2_Controller
             'first_name',
             'last_name',
             'gender',
+            'tags',
             'image',
             'exp',
             'level',
@@ -86,6 +87,7 @@ class Player extends REST2_Controller
             'first_name',
             'last_name',
             'gender',
+            'tags',
             'image',
             'email',
             'phone_number',
@@ -129,7 +131,17 @@ class Player extends REST2_Controller
 
     public function list_post()
     {
-        $list_player_id = explode(",", $this->input->post('list_player_id'));
+        if(isset($_POST['list_player_id']) && $_POST['list_player_id']) {
+            $list_player_id = explode(",", $this->input->post('list_player_id'));
+        }else {
+            $filter['tags'] = explode(",", $this->input->post('tags'));
+            $player_list = $this->player_model->readPlayersWithFilter( $this->site_id, array('cl_player_id'), $filter);
+            $list_player_id = array();
+            foreach($player_list as $player){
+                $list_player_id[] = $player['cl_player_id'];
+            }
+        }
+        $player['player'] = array();
         //read player information
         for ($i = 0; $i < count($list_player_id); $i++) {
             $data = array(
@@ -145,6 +157,7 @@ class Player extends REST2_Controller
                 'first_name',
                 'last_name',
                 'gender',
+                'tags',
                 'image',
                 'email',
                 'phone_number',
@@ -187,6 +200,7 @@ class Player extends REST2_Controller
             'first_name',
             'last_name',
             'gender',
+            'tags',
             'image',
             'exp',
             'level',
@@ -257,6 +271,7 @@ class Player extends REST2_Controller
             'first_name',
             'last_name',
             'gender',
+            'tags',
             'image',
             'email',
             'phone_number',
@@ -417,6 +432,7 @@ class Player extends REST2_Controller
                 $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
             }
         }
+        $playerInfo['tags'] = $this->input->post('tags') && !is_null($this->input->post('tags')) ? explode(',', $this->input->post('tags')) : null;
         $facebookId = $this->input->post('facebook_id');
         if ($facebookId) {
             $playerInfo['facebook_id'] = $facebookId;
@@ -719,6 +735,13 @@ class Player extends REST2_Controller
                 $playerInfo['phone_number'] = $phoneNumber;
             } else {
                 $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
+            }
+        }
+        if ($this->input->post('tags')){
+            if(strtolower($this->input->post('tags')) == "null"){
+                $playerInfo['tags'] = null;
+            }else{
+                $playerInfo['tags'] = explode(',', $this->input->post('tags'));
             }
         }
         $facebookId = $this->input->post('facebook_id');
