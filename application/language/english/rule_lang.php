@@ -1,5 +1,6 @@
 <?php
 // Heading
+$lang['title']                      = 'Engine Rule';
 $lang['heading_title']              = 'Basic Rule';
 
 // Text
