@@ -341,19 +341,24 @@ class Workflow extends MY_Controller
             'limit' => $limit
         );
 
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && $_GET['filter_name']) {
             $data['filter_name'] = $_GET['filter_name'];
             $parameter_url .= "&filter_name=" . $_GET['filter_name'];
         }
 
-        if (isset($_GET['filter_id'])) {
+        if (isset($_GET['filter_id']) && $_GET['filter_id']) {
             $data['filter_id'] = $_GET['filter_id'];
             $parameter_url .= "&filter_id=" . $_GET['filter_id'];
         }
 
-        if (isset($_GET['filter_email'])) {
+        if (isset($_GET['filter_email'] ) && $_GET['filter_email']) {
             $data['filter_email'] = $_GET['filter_email'];
             $parameter_url .= "&filter_email=" . $_GET['filter_email'];
+        }
+
+        if (isset($_GET['filter_tag']) && $_GET['filter_tag']) {
+            $data['filter_tag'] = explode(',', $_GET['filter_tag']);
+            $parameter_url .= "&filter_tag=" . $_GET['filter_tag'];
         }
 
         $this->data['player_list'] = array();
@@ -760,6 +765,7 @@ class Workflow extends MY_Controller
         if (isset($_POST['username'])) {
             $this->data['requester'] = $_POST;
 
+            $this->data['requester']['tags'] = explode(',', $this->input->post('tags'));
             if ($this->data['org_status']) {
                 if (isset($_POST['organize_id']) && !empty($_POST['organize_id'])) {
                     $this->data['organize_id'] = $_POST['organize_id'];

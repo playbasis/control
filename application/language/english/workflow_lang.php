@@ -1,6 +1,8 @@
 <?php
 // Heading
-$lang['heading_title']          		= 'Work Flow';
+
+$lang['title']                          = 'Player';
+$lang['heading_title']          		= 'Player';
 $lang['heading_title_create']           = 'Create Account';
 $lang['heading_title_edit']             = 'Edit Account';
 $lang['heading_title_reject']           = 'Reject';
@@ -41,6 +43,7 @@ $lang['form_nickname']            = 'Nick name';
 $lang['form_gender']              = 'Gender';
 $lang['form_phone_number']        = 'Phone number';
 $lang['form_email']               = 'Email';
+$lang['form_tags']                = 'Tag(s)';
 $lang['form_approve']             = 'Approve status';
 $lang['form_organization']        = 'Organization';
 
@@ -58,6 +61,7 @@ $lang['column_player_id']				= 'Player ID';
 $lang['column_name']            		= 'Name';
 $lang['column_email']            		= 'Email';
 $lang['column_phone']            		= 'Phone number';
+$lang['column_tags']            		= 'Tag(s)';
 $lang['column_organization']      		= 'Organization';
 $lang['column_node']                    = 'Node';
 $lang['column_type']                    = 'Type';

@@ -46,7 +46,10 @@
                         <td><span class="required">*</span><?php echo $this->lang->line('form_username'); ?>:</td>
                         <td><input  type="text" name="username"  value="<?php echo isset($requester['username']) ? $requester['username'] :  set_value('username'); ?>" /></td>
                     </tr>
-
+                    <tr>
+                        <td><span class="required">*</span><?php echo $this->lang->line('form_email'); ?>:</td>
+                        <td><input  type="email" name="email" size="100" value="<?php echo isset($requester['email']) ? $requester['email'] :  set_value('email'); ?>" class="tooltips" data-placement="right" title="Email address is used to log into the system"/></td>
+                    </tr>
                     <?php if(isset($action) && $action=="create"){ ?>
                     <tr>
                         <td><?php echo $this->lang->line('form_password'); ?>:</td>
@@ -84,8 +87,8 @@
                         <td><input  type="text" name="phone_number"  value="<?php echo isset($requester['phone_number']) ? $requester['phone_number'] :  set_value('phone_number'); ?>" /></td>
                     </tr>
                     <tr>
-                        <td><span class="required">*</span><?php echo $this->lang->line('form_email'); ?>:</td>
-                        <td><input  type="email" name="email" size="100" value="<?php echo isset($requester['email']) ? $requester['email'] :  set_value('email'); ?>" class="tooltips" data-placement="right" title="Email address is used to log into the system"/></td>
+                        <td><span class="required"></span><?php echo $this->lang->line('form_tags'); ?>:</td>
+                        <td><input  class="tags" type="text" name="tags"  value="<?php echo isset($requester['tags']) ? implode(',',$requester['tags']) :  set_value('tags'); ?>"/></td>
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_approve'); ?>:</td>
@@ -264,6 +267,7 @@
             tags: true,
             tokenSeparators: [',', ' ']
         });
+
     });
 
     <?php for($i = 0;$i<count($organize_node);$i++){?>

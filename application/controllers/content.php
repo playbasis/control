@@ -259,12 +259,14 @@ class Content extends MY_Controller
                         if ($this->User_model->hasPermission('access', 'language') &&
                             $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'language'))
                         {
-                            foreach($content_data['language_list'] as $language){
-                                $content = $this->Content_model->getContentToLanguage($client_id, $site_id, $content_id, $language['language_id']);
-                                if($content){
-                                    $this->Content_model->updateContentToLanguage($client_id, $site_id, $content_id, $language['language_id'], $language['content_info']);
-                                }else {
-                                    $this->Content_model->createContentToLanguage($client_id, $site_id, $content_id, $language['language_id'], $language['content_info']);
+                            if(isset($content_data['language_list'])) {
+                                foreach ($content_data['language_list'] as $language) {
+                                    $content = $this->Content_model->getContentToLanguage($client_id, $site_id, $content_id, $language['language_id']);
+                                    if ($content) {
+                                        $this->Content_model->updateContentToLanguage($client_id, $site_id, $content_id, $language['language_id'], $language['content_info']);
+                                    } else {
+                                        $this->Content_model->createContentToLanguage($client_id, $site_id, $content_id, $language['language_id'], $language['content_info']);
+                                    }
                                 }
                             }
                         }

@@ -639,7 +639,8 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                         'gender': 'gender',
                                         'exp': 'exp',
                                         'age': 'age',
-                                        'level': 'level'
+                                        'level': 'level',
+                                        'tag': 'tag',
                                     }
                                 }else{
                                     unit = {
