@@ -697,23 +697,18 @@ class Rule extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Goods_model');
 
-        $results = $this->Goods_model->getGroupsAggregate($this->User_model->getSiteId());
-        $ids = array();
-        $group_name = array();
-        foreach ($results as $i => $result) {
-            $group = $result['_id']['group'];
-            $quantity = $result['quantity'];
-            $list = $result['list'];
-            $first = array_shift($list); // skip first one
-            $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
-            $ids = array_merge($ids, $list);
+        $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'));
+        $in_goods = array();
+        foreach ($group_list as $group_name){
+            $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name);
+            array_push($in_goods, new MongoId($goods_group_detail));
         }
-
         $goods_list = $this->Goods_model->getGoodsBySiteId(array(
-            'site_id' => $this->User_model->getSiteId(),
+            'site_id' => $this->session->userdata('site_id'),
             'sort' => 'sort_order',
-            '$nin' => $ids
+            'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ))
         ));
+
         foreach ($goods_list as &$g) {
             $g['_id'] = $g['_id'] . "";
             $g['goods_id'] = $g['goods_id'] . "";
