@@ -139,10 +139,6 @@ class Report_goods extends MY_Controller
             $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
             $is_group = array_key_exists('group', $goods);
             $parameter_url .= "&goods_id=" . $filter_goods_id;
-            if ($is_group){
-                $goods_list = $this->Report_goods_model->listGoodsIdByGroup($site_id, $goods['group']);
-                $goods_list = array_map(function ($obj) {return $obj['goods_id'];}, $goods_list);
-            }
         } else {
             $filter_goods_id = '';
         }
@@ -163,7 +159,7 @@ class Report_goods extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'goods_id' => ($is_group ? $goods_list : $filter_goods_id),
+            'goods_id' => ($is_group ? $goods['group'] : $filter_goods_id),
             'is_group' => $is_group,
             'start' => $offset,
             'limit' => $limit
@@ -299,7 +295,7 @@ class Report_goods extends MY_Controller
         // --> end
         $this->data['filter_username'] = $filter_username;
         $this->data['filter_goods_id'] = $filter_goods_id;
-
+        $this->data['filter_status'] = $filter_goods_status;
         $this->data['main'] = 'report_goods';
         $this->load->vars($this->data);
         $this->render_page('template');

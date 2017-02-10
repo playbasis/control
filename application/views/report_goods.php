@@ -54,10 +54,10 @@
                 <span>
                     <?php echo $this->lang->line('filter_status'); ?>
                     <select name="filter_goods_status" style="height: 30px; width:80px">
-                        <option value="all"><?php echo "All";    ?></option>
-                        <option value="active"><?php echo "Active"; ?></option>
-                        <option value="used"><?php echo "Used";   ?></option>
-                        <option value="expired"><?php echo "Expired";?></option>
+                        <option <?php if($filter_status == "all") echo "selected"; ?> value="all"><?php echo "All";    ?></option>
+                        <option <?php if($filter_status == "active") echo "selected"; ?> value="active"><?php echo "Active"; ?></option>
+                        <option <?php if($filter_status == "used") echo "selected"; ?> value="used"><?php echo "Used";   ?></option>
+                        <option <?php if($filter_status == "expired") echo "selected"; ?> value="expired"><?php echo "Expired";?></option>
                     </select>
                 </span>
                 <span>
