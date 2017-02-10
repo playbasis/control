@@ -307,21 +307,17 @@ class Report_goods extends MY_Controller
 
     private function getList($site_id)
     {
-        $results = $this->Goods_model->getGroupsAggregate($site_id);
-        $ids = array();
-        $group_name = array();
-        foreach ($results as $i => $result) {
-            $group = $result['_id']['group'];
-            $quantity = $result['quantity'];
-            $list = $result['list'];
-            $first = array_shift($list); // skip first one
-            $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
-            $ids = array_merge($ids, $list);
+        $group_list = $this->Goods_model->getGroupsList($site_id);
+        $in_goods = array();
+        foreach ($group_list as $group_name){
+            $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name);
+            array_push($in_goods, new MongoId($goods_group_detail));
         }
+
         return $this->Goods_model->getGoodsBySiteId(array(
             'site_id' => $site_id,
             'sort' => 'sort_order',
-            '$nin' => $ids
+            'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ))
         ));
     }
 
