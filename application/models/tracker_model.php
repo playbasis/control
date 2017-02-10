@@ -114,6 +114,7 @@ class Tracker_model extends MY_Model
             'site_id' => $input['site_id'],
             'goods_id' => $input['goods_id'],
             'goods_name' => $input['goods_name'],
+            'group' => (isset($input['group'])) ? $input['group'] : false,
             'is_sponsor' => (isset($input['is_sponsor'])) ? $input['is_sponsor'] : false,
             'redeem' => $input['redeem'],
             'amount' => $input['amount'],
