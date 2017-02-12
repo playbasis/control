@@ -160,7 +160,7 @@ class jigsaw extends MY_Model
                 }
             }elseif( $config['operation'] == "!=" ){
                 if( ($config['value'] != "" && (isset($input['user_profile']['tags']) && is_array($input['user_profile']['tags']) && !in_array($config['value'], $input['user_profile']['tags']) ||
-                                               (!isset($input['user_profile']['tags']) || $input['user_profile']['tags'] == null || empty($input['user_profile']['tags'])))) ||
+                            (!isset($input['user_profile']['tags']) || $input['user_profile']['tags'] == null || empty($input['user_profile']['tags'])))) ||
                     ($config['value'] == "" && !(!isset($input['user_profile']['tags']) || $input['user_profile']['tags'] == null || empty($input['user_profile']['tags'])))
                 ) {
                     $result = true;
@@ -262,7 +262,7 @@ class jigsaw extends MY_Model
         if(isset($config['sequence_id']) && isset($input['jigsaw_category']) && ($input['jigsaw_category'] == "REWARD_SEQUENCE") ){
             $sequence_list = $this->getSequenceFile($input['client_id'],$input['site_id'],$config['sequence_id']);
             if($sequence_list){
-                
+
                 $global = (isset($config["global"]) && $config["global"] === "true") ? true : false;
                 $loop = (isset($config["loop"]) && $config["loop"] === "true") ? true : false;
 
@@ -707,7 +707,7 @@ class jigsaw extends MY_Model
         $dist = sin($radlat1) * sin($radlat2) + cos($radlat1) * cos($radlat2) * cos($radtheta);
         $dist = acos($dist);
         $dist = $dist * (180/pi()) * 111.18957696 ;
-		return $dist;
+        return $dist;
     }
 
 
