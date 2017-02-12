@@ -160,7 +160,7 @@ class jigsaw extends MY_Model
                 }
             }elseif( $config['operation'] == "!=" ){
                 if( ($config['value'] != "" && (isset($input['user_profile']['tags']) && is_array($input['user_profile']['tags']) && !in_array($config['value'], $input['user_profile']['tags']) ||
-                                               (!isset($input['user_profile']['tags']) || $input['user_profile']['tags'] == null || empty($input['user_profile']['tags'])))) ||
+                            (!isset($input['user_profile']['tags']) || $input['user_profile']['tags'] == null || empty($input['user_profile']['tags'])))) ||
                     ($config['value'] == "" && !(!isset($input['user_profile']['tags']) || $input['user_profile']['tags'] == null || empty($input['user_profile']['tags'])))
                 ) {
                     $result = true;
@@ -262,7 +262,7 @@ class jigsaw extends MY_Model
         if(isset($config['sequence_id']) && isset($input['jigsaw_category']) && ($input['jigsaw_category'] == "REWARD_SEQUENCE") ){
             $sequence_list = $this->getSequenceFile($input['client_id'],$input['site_id'],$config['sequence_id']);
             if($sequence_list){
-                
+
                 $global = (isset($config["global"]) && $config["global"] === "true") ? true : false;
                 $loop = (isset($config["loop"]) && $config["loop"] === "true") ? true : false;
 
@@ -298,8 +298,9 @@ class jigsaw extends MY_Model
                 return $this->checkBadge($config['item_id'], $input['pb_player_id'], $input['site_id'],
                     $config['quantity']);
             case 'goods':
-                return $this->checkGoodsWithCache($cache, $config['item_id'], $input['pb_player_id'], $input['site_id'],
+                $ret = $this->checkGoodsWithCache($cache, $config['item_id'], $input['pb_player_id'], $input['client_id'], $input['site_id'],
                     $config['quantity']);
+                return $ret;
             default:
                 return false;
         }
@@ -707,7 +708,7 @@ class jigsaw extends MY_Model
         $dist = sin($radlat1) * sin($radlat2) + cos($radlat1) * cos($radlat2) * cos($radtheta);
         $dist = acos($dist);
         $dist = $dist * (180/pi()) * 111.18957696 ;
-		return $dist;
+        return $dist;
     }
 
 
@@ -1025,7 +1026,7 @@ class jigsaw extends MY_Model
             // invalid goods will be excluded from randomness
             if (!(array_key_exists('reward_name', $conf) && $conf['reward_name'] == 'goods')
                 || $this->checkGoodsWithCache($cache, new MongoId($conf['item_id']), $input['pb_player_id'],
-                    $input['site_id'], $conf['quantity'])
+                    $input['client_id'], $input['site_id'], $conf['quantity'])
             ) {
                 $sum += intval($conf['weight']);
                 $acc[$i] = $sum;
@@ -1377,17 +1378,17 @@ class jigsaw extends MY_Model
         return true;
     }
 
-    private function checkGoodsWithCache(&$cache, $goodsId, $pb_player_id, $site_id, $quantity = 0)
+    private function checkGoodsWithCache(&$cache, $goodsId, $pb_player_id, $client_id, $site_id, $quantity = 0)
     {
         $key = $goodsId . '-' . $pb_player_id . '-' . $site_id . '-' . $quantity;
         if (!array_key_exists($key, $cache)) {
-            $value = $this->checkGoods($goodsId, $pb_player_id, $site_id, $quantity);
+            $value = $this->checkGoods($goodsId, $pb_player_id, $client_id, $site_id, $quantity);
             $cache[$key] = $value;
         }
         return $cache[$key];
     }
 
-    private function checkGoods($goodsId, $pb_player_id, $site_id, $quantity = 0)
+    private function checkGoods($goodsId, $pb_player_id, $client_id, $site_id, $quantity = 0)
     {
         if (!$quantity) {
             return true;
@@ -1396,7 +1397,7 @@ class jigsaw extends MY_Model
         if (!$goods) {
             return false;
         }
-        $total = isset($goods['group']) ? $this->getGroupQuantity($site_id, $goods['group']) : $goods['quantity'];
+        $total = isset($goods['group']) ? $this->getGroupQuantity($client_id, $site_id, $goods['group'], $quantity) : $goods['quantity'];
         $max = isset($goods['per_user']) ? $goods['per_user'] : null;
         $used = isset($goods['group']) ? $this->getPlayerGoodsGroup($site_id, $goods['group'], $pb_player_id) : $this->getPlayerGoods($site_id, $goodsId, $pb_player_id);
         if ($total === 0 || $max === 0) {
@@ -1591,29 +1592,29 @@ class jigsaw extends MY_Model
         return $result ? $result[0] : null;
     }
 
-    private function getGroupQuantity($site_id, $group)
+    private function getGroupQuantity($client_id, $site_id, $group, $quantity=1)
     {
-        $results = $this->mongo_db->aggregate('playbasis_goods_to_client', array(
-            array(
-                '$match' => array(
-                    'deleted' => false,
-                    'site_id' => $site_id,
-                    'group' => $group
-                ),
-            ),
-            array(
-                '$project' => array('group' => 1, 'quantity' => 1, 'date_expired_coupon' => 1)
-            ),
-            array(
-                '$group' => array(
-                                '_id' => array('group' => '$group'),
-                                'quantity' => array('$sum' => array('$cond'=> array(array('$or' => array(array('$gt' => array('$date_expired_coupon', new MongoDate())) ,
-                                    array('$not' => array('$ifNull' => array('$date_expired_coupon', 0))))) , '$quantity', 0)))
-                            )
-            ),
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false,
+            'group' => $group,
         ));
-        $res = $results ? $results['result'] : array();
-        return $res ? $res[0]['quantity'] : $res;
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_goods_to_client');
+        $date_expired_coupon = $result && isset($result[0]['date_expired_coupon']) ? $result[0]['date_expired_coupon'] : null;
+        if ($date_expired_coupon && ($date_expired_coupon->sec <= time())) return 0;
+
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'deleted' => false,
+            'group' => $group,
+        ));
+        $this->mongo_db->where_gte('quantity', (int)$quantity);
+        $ret = $this->mongo_db->count('playbasis_goods_to_client');
+        return $ret;
     }
 
     public function getGoods($site_id, $goodsId)
