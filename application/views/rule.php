@@ -481,6 +481,7 @@
     var jsonString_Game   = <?php echo json_encode($gameList); ?>;
     var jsonString_Location   = <?php echo json_encode($locationList); ?>;
     var jsonString_SequenceFile   = <?php echo json_encode($sequenceFile); ?>;
+    var jsonString_Point   = <?php echo json_encode($pointList); ?>;
 
     //var jsonString_RulesList= '<?php //print_r($ruleList);?>';
     var requestedSet         = '<?php echo $requestParams; ?>';
