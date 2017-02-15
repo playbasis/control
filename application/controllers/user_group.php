@@ -158,7 +158,11 @@ class User_group extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            if ($this->form_validation->run()) {
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                     $this->User_group_model->editUserGroup($user_group_id, $this->input->post());
@@ -193,7 +197,11 @@ class User_group extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-            if ($this->form_validation->run()) {
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            if ($this->form_validation->run() && $this->data['message'] == null) {
                 $this->session->data['success'] = $this->lang->line('text_success');
                 if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                     $this->User_group_model->insertUserGroup();
@@ -241,6 +249,13 @@ class User_group extends MY_Controller
     public function delete()
     {
         $selectedUserGroups = $this->input->post('selected');
+
+        $this->error['warning'] = null;
+
+        if (!$this->validateModify()) {
+            $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+            redirect('/user_group', 'refresh');
+        }
 
         foreach ($selectedUserGroups as $selectedUserGroup) {
 
@@ -296,12 +311,26 @@ class User_group extends MY_Controller
         $this->output->set_output(json_encode($json));
     }
 
+    private function validateModify()
+    {
+        if ($this->User_model->hasPermission('modify', 'user_group')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private function validateAccess()
     {
         if ($this->User_model->isAdmin()) {
             return true;
         }
-        if ($this->User_model->hasPermission('access', 'user_group')) {
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access',
+                'user_group') && $this->Feature_model->getFeatureExistByClientId($client_id, 'user_group')
+        ) {
             return true;
         } else {
             return false;
