@@ -406,6 +406,14 @@ class Report_goods extends MY_Controller
             $filter_goods_id = '';
         }
 
+        if ($this->input->get('status')) {
+            $filter_goods_status = $this->input->get('status');
+            $parameter_url .= "&status=" . $filter_goods_status;
+            if ($filter_goods_status === "all") $filter_goods_status = null;
+        } else {
+            $filter_goods_status = null;
+        }
+
         $data = array(
             'client_id' => $client_id,
             'site_id' => $site_id,
@@ -415,11 +423,22 @@ class Report_goods extends MY_Controller
             'goods_id' => ($is_group ? $goods['group'] : $filter_goods_id),
             'is_group' => $is_group
         );
+        $report_total = 0;
 
         $results = array();
 
         if ($client_id) {
-            $results = $this->Report_goods_model->getReportGoods($data);
+            if ($filter_goods_status == "expired") {
+                $ex_id = $this->Goods_model->getPlayerGoods($data['site_id'], $filter_date_start, $filter_date_end);
+                $data['ex_id'] = is_array($ex_id) ? array_column($ex_id, 'goods_id') : array();
+            } elseif ($filter_goods_status == "active") {
+                $in_id = $this->Goods_model->getPlayerGoodsActive($data['site_id'], $filter_date_start, $filter_date_end);
+                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
+            } elseif ($filter_goods_status == "used") {
+                $in_id = $this->Goods_model->getPlayerGoodsUsed($data['site_id'], $filter_date_start, $filter_date_end);
+                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
+            }
+            $report_total = $this->Report_goods_model->getTotalReportGoods($data);
         }
 
         $this->data['reports'] = array();
@@ -442,58 +461,62 @@ class Report_goods extends MY_Controller
                 $this->lang->line('column_date_expire')
             )
         );
+        $data['limit'] = 10000;
+        for ($i = 0; $i < $report_total/10000; $i++){
+            $data['start'] = ($i * 10000);
+            $results = $this->Report_goods_model->getReportGoods($data);
+            foreach ($results as $result) {
 
-        foreach ($results as $result) {
+                $goods_name = null;
 
-            $goods_name = null;
+                $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
+                $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
+                $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
 
-            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-            $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
-            $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
+                if (!is_null($goods_player)) {
+                    $status = $goods_player > 0 ? "active" : "used";
+                } else {
+                    $status = "expired";
+                }
+                if (!empty($player['image'])) {
+                    $thumb = $player['image'];
+                } else {
+                    $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
+                }
 
-            if(!is_null($goods_player)){
-                $status = $goods_player > 0 ? "active" : "used";
-            } else {
-                $status = "expired";
+                if ($this->input->get('time_zone')) {
+                    $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
+                    $date_added->setTimezone($newTZ);
+                    $date_added = $date_added->format("Y-m-d H:i:s");;
+                }
+
+                $this->data['reports'][] = array(
+                    'cl_player_id' => $player['cl_player_id'],
+                    'username' => $player['username'],
+                    'image' => $thumb,
+                    'email' => $player['email'],
+                    'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
+                    'date_expire' => isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null,
+                    'status' => $status,
+                    'goods_name' => isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
+                    'code' => $goods_data['code'],
+                    // 'value'             => $result['value']
+                    'amount' => $result['amount'],
+                    // 'redeem'            => $result['redeem']
+                );
+                $exporter->addRow(array(
+                        $player['cl_player_id'],
+                        $player['username'],
+                        $player['email'],
+                        isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
+                        $goods_data['code'],
+                        $result['amount'],
+                        $status,
+                        $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
+                        isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null
+                    )
+                );
             }
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-
-            if ($this->input->get('time_zone')){
-                $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
-                $date_added->setTimezone($newTZ);
-                $date_added = $date_added->format("Y-m-d H:i:s");;
-            }
-
-            $this->data['reports'][] = array(
-                'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
-                'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
-                'date_expire' => isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null,
-                'status' => $status,
-                'goods_name' => isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
-                'code' => $goods_data['code'],
-                // 'value'             => $result['value']
-                'amount' => $result['amount'],
-                // 'redeem'            => $result['redeem']
-            );
-            $exporter->addRow(array(
-                    $player['cl_player_id'],
-                    $player['username'],
-                    $player['email'],
-                    isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
-                    $goods_data['code'],
-                    $result['amount'],
-                    $status,
-                    $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
-                    isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null
-                )
-            );
         }
         $exporter->finalize();
 
