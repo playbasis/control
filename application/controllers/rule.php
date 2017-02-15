@@ -91,6 +91,7 @@ class Rule extends MY_Controller
         $gameList = $this->Game_model->getGameList($client_id, $site_id);
         $locationList = $this->Location_model->getLocationList($client_id, $site_id);
         $sequenceFile = $this->Sequence_model->retrieveSequence(array('client_id'=>$client_id, 'site_id'=>$site_id));
+        $pointList = $this->Reward_model->getPointsBySiteId($site_id);
         if($gameList){
             foreach ($gameList as &$game) {
                 $game['name'] = $game['game_name'];
@@ -172,6 +173,7 @@ class Rule extends MY_Controller
         $this->data['gameList'] = $gameList;
         $this->data['locationList'] = $locationList;
         $this->data['sequenceFile'] = $sequenceFile;
+        $this->data['pointList'] = $pointList;
 
         //}
 
