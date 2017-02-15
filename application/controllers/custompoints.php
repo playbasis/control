@@ -83,7 +83,7 @@ class Custompoints extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (!$this->validateModify()) {
-                $this->error['message'] = $this->lang->line('error_permission');
+                $this->data['message'] = $this->lang->line('error_permission');
             }
 
             if ($this->input->post('type_custompoint') != "normal") {
@@ -103,7 +103,7 @@ class Custompoints extends MY_Controller
             $this->form_validation->set_rules('per_user',  $this->lang->line('entry_per_user'), 'numeric|xss_clean');
             $this->form_validation->set_rules('limit_per_day',  $this->lang->line('entry_limit_per_day'), 'numeric|xss_clean');
 
-            if ($this->form_validation->run()) {
+            if ($this->form_validation->run() && $this->data['message'] == null) {
                 $custompoints_data = $this->input->post();
 
                 $data['client_id'] = $this->User_model->getClientId();
@@ -390,7 +390,7 @@ class Custompoints extends MY_Controller
             $this->form_validation->set_rules('per_user',  $this->lang->line('entry_per_user'), 'numeric|xss_clean');
             $this->form_validation->set_rules('limit_per_day',  $this->lang->line('entry_limit_per_day'), 'numeric|xss_clean');
 
-            if ($this->form_validation->run()) {
+            if ($this->form_validation->run() && $this->data['message'] == null) {
                 $custompoints_data = $this->input->post();
 
                 $data['client_id'] = $this->User_model->getClientId();
@@ -429,9 +429,13 @@ class Custompoints extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->error['message'] = null;
+        $this->error['warning'] = null;
 
-        if ($this->input->post('selected') && $this->error['message'] == null) {
+        if (!$this->validateModify()) {
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        if ($this->input->post('selected') && $this->error['warning'] == null) {
             foreach ($this->input->post('selected') as $reward_id) {
                 $this->Custompoints_model->deleteCustompoints($reward_id);
             }
