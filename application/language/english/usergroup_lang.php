@@ -11,14 +11,14 @@ $lang['column_action']				= 'Action';
 
 // Error 
 $lang['error_warning']          	= 'Warning: Please check the form carefully for errors!';
-$lang['error_permission']       	= 'Warning: You do not have permission to modify clients!';
-$lang['error_access']       	= 'Warning: You do not have permission to access this page!';
+$lang['error_permission']       	= 'Warning: You do not have permission to modify user group!';
+$lang['error_access']       	    = 'Warning: You do not have permission to access this page!';
 $lang['error_name']             	= 'Category Name must be between 2 and 32 characters!';
-$lang['error_required']			= 'Warning: Please check required field!!';
-$lang['error_user']				= 'Error: Username not availble!!!';
+$lang['error_required']			    = 'Warning: Please check required field!!';
+$lang['error_user']				    = 'Error: Username not availble!!!';
 
 //Text
-$lang['text_no_results']          = 'Result Not found.';
+$lang['text_no_results']            = 'Result Not found.';
 //$lang['text_edit']                = 'Edit';
 $lang['text_success']           	= 'You have successfully created a user group!';
 $lang['text_success_update']        = 'You have successfully updated a user group!';

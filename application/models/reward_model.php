@@ -118,6 +118,22 @@ class Reward_model extends MY_Model
         return $results;
     }
 
+    public function getPointsBySiteId($site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('group', 'POINT');
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where_not_in('name', array('badge', 'exp'));
+        $results = $this->mongo_db->get("playbasis_reward_to_client");
+        foreach($results as &$result) {
+            $result['_id'] = $result['reward_id'];
+        }
+
+        return $results;
+    }
+
     public function getAnotherRewardByClientId($client_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
