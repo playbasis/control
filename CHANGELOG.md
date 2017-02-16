@@ -1,99 +1,117 @@
 # Change Log
-## [2.27.0](https://github.com/playbasis/control/tree/2.27.0) (2017-02-02)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.0...2.27.0)
+
+## [2.28.0](https://github.com/playbasis/control/tree/2.28.0) (2017-02-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.27.0...2.28.0)
 
 
-## [2.26.11/fix_report_reward](https://github.com/playbasis/control/tree/2.26.11/fix_report_reward) (2017-02-02)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.10/add_not_equal_operator_in_condition...2.26.11/fix_report_reward)
+## [2.27.7/fix_download_goods_report_oversize_ram_limit](https://github.com/playbasis/control/tree/2.27.7/fix_download_goods_report_oversize_ram_limit) (2017-02-15)
+[Full Changelog](https://github.com/playbasis/control/compare/2.27.5/fix_download_goods_report_error...2.27.7/fix_download_goods_report_oversize_ram_limit)
+
+**Implemented enhancements:**
+
+- fix download issue [\#381](https://github.com/playbasis/control/pull/381) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.27.8/point condition [\#380](https://github.com/playbasis/control/pull/380) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 
 **Fixed bugs:**
 
-- Hotfix/2.26.11/fix report reward [\#373](https://github.com/playbasis/control/pull/373) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.27.8/point condition [\#380](https://github.com/playbasis/control/pull/380) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 
-## [2.26.10/add_not_equal_operator_in_condition](https://github.com/playbasis/control/tree/2.26.10/add_not_equal_operator_in_condition) (2017-01-31)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.9/fix_redirect_when_set_password2...2.26.10/add_not_equal_operator_in_condition)
+## [2.27.5/fix_download_goods_report_error](https://github.com/playbasis/control/tree/2.27.5/fix_download_goods_report_error) (2017-02-14)
+[Full Changelog](https://github.com/playbasis/control/compare/2.27.4/fix_goods_high_volume_in_rule...2.27.5/fix_download_goods_report_error)
+
+**Fixed bugs:**
+
+- Hotfix/2.27.5/fix download goods report error [\#378](https://github.com/playbasis/control/pull/378) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.27.4/fix_goods_high_volume_in_rule](https://github.com/playbasis/control/tree/2.27.4/fix_goods_high_volume_in_rule) (2017-02-10)
+[Full Changelog](https://github.com/playbasis/control/compare/2.27.3/fix_report_goods_high_volumn...2.27.4/fix_goods_high_volume_in_rule)
+
+**Fixed bugs:**
+
+- Hotfix/2.27.4/fix goods high volume in rule [\#377](https://github.com/playbasis/control/pull/377) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.27.3/fix_report_goods_high_volumn](https://github.com/playbasis/control/tree/2.27.3/fix_report_goods_high_volumn) (2017-02-10)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_goods_report_exceed_memory...2.27.3/fix_report_goods_high_volumn)
+
+**Fixed bugs:**
+
+- Hotfix/2.27.3/fix report goods high volumn [\#376](https://github.com/playbasis/control/pull/376) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [fix_goods_report_exceed_memory](https://github.com/playbasis/control/tree/fix_goods_report_exceed_memory) (2017-02-10)
+[Full Changelog](https://github.com/playbasis/control/compare/2.27.1/user_tags_condition...fix_goods_report_exceed_memory)
+
+**Implemented enhancements:**
+
+- Hotfix/fix goods report exceed memory [\#375](https://github.com/playbasis/control/pull/375) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.27.1/user_tags_condition](https://github.com/playbasis/control/tree/2.27.1/user_tags_condition) (2017-02-07)
+[Full Changelog](https://github.com/playbasis/control/compare/2.27.0...2.27.1/user_tags_condition)
+
+**Implemented enhancements:**
+
+- Hotfix/2.27.1/user tags condition [\#374](https://github.com/playbasis/control/pull/374) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+
+## [2.27.0](https://github.com/playbasis/control/tree/2.27.0) (2017-02-02)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.11/fix_report_reward...2.27.0)
 
 **Implemented enhancements:**
 
 - Hotfix/2.26.10/add not equal operator in condition [\#372](https://github.com/playbasis/control/pull/372) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.26.9/fix_redirect_when_set_password2](https://github.com/playbasis/control/tree/2.26.9/fix_redirect_when_set_password2) (2017-01-30)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.9/fix_redirect_when_set_password...2.26.9/fix_redirect_when_set_password2)
-
-**Fixed bugs:**
-
-- Hotfix/2.26.9/fix redirect when set password2 [\#371](https://github.com/playbasis/control/pull/371) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.26.9/fix_redirect_when_set_password](https://github.com/playbasis/control/tree/2.26.9/fix_redirect_when_set_password) (2017-01-30)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.8/destroy_session_when_expired...2.26.9/fix_redirect_when_set_password)
-
-**Fixed bugs:**
-
-- Hotfix/2.26.9/fix redirect when set password [\#369](https://github.com/playbasis/control/pull/369) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.26.8/destroy_session_when_expired](https://github.com/playbasis/control/tree/2.26.8/destroy_session_when_expired) (2017-01-26)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.7/session...2.26.8/destroy_session_when_expired)
-
-**Implemented enhancements:**
-
 - Hotfix/2.26.8/destroy session when expired [\#368](https://github.com/playbasis/control/pull/368) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/2.26.8/destroy session when expired [\#368](https://github.com/playbasis/control/pull/368) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.26.7/session](https://github.com/playbasis/control/tree/2.26.7/session) (2017-01-26)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.6/revise_set_password_login...2.26.7/session)
-
-**Implemented enhancements:**
-
 - Hotfix/2.26.7/session [\#367](https://github.com/playbasis/control/pull/367) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-## [2.26.6/revise_set_password_login](https://github.com/playbasis/control/tree/2.26.6/revise_set_password_login) (2017-01-26)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.5/ignore_file_rsa...2.26.6/revise_set_password_login)
-
-**Implemented enhancements:**
-
 - Hotfix/2.26.6/revise set password login [\#366](https://github.com/playbasis/control/pull/366) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.26.5/ignore_file_rsa](https://github.com/playbasis/control/tree/2.26.5/ignore_file_rsa) (2017-01-25)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.4/support_jcryption...2.26.5/ignore_file_rsa)
-
-**Implemented enhancements:**
-
 - Hotfix/2.26.5/ignore file rsa [\#365](https://github.com/playbasis/control/pull/365) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.26.4/support_jcryption](https://github.com/playbasis/control/tree/2.26.4/support_jcryption) (2017-01-25)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.3/set_player_auth_require...2.26.4/support_jcryption)
-
-**Implemented enhancements:**
-
 - Hotfix/2.26.4/support jcryption [\#364](https://github.com/playbasis/control/pull/364) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.26.2/changed login limit constant [\#362](https://github.com/playbasis/control/pull/362) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
-## [2.26.3/set_player_auth_require](https://github.com/playbasis/control/tree/2.26.3/set_player_auth_require) (2017-01-24)
-[Full Changelog](https://github.com/playbasis/control/compare/2.26.2/changed_login_limit_constant...2.26.3/set_player_auth_require)
+**Fixed bugs:**
+
+- Hotfix/2.26.11/fix report reward [\#373](https://github.com/playbasis/control/pull/373) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.26.9/fix redirect when set password2 [\#371](https://github.com/playbasis/control/pull/371) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.26.9/fix redirect when set password [\#369](https://github.com/playbasis/control/pull/369) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.26.8/destroy session when expired [\#368](https://github.com/playbasis/control/pull/368) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.26.2/changed login limit constant [\#362](https://github.com/playbasis/control/pull/362) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
+- Hotfix/2.26.1/fix set new password [\#361](https://github.com/playbasis/control/pull/361) ([piya-playbasis](https://github.com/piya-playbasis))
 
 **Merged pull requests:**
 
 - Hotfix/2.26.3/set player auth require [\#363](https://github.com/playbasis/control/pull/363) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
+## [2.26.11/fix_report_reward](https://github.com/playbasis/control/tree/2.26.11/fix_report_reward) (2017-02-02)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.10/add_not_equal_operator_in_condition...2.26.11/fix_report_reward)
+
+## [2.26.10/add_not_equal_operator_in_condition](https://github.com/playbasis/control/tree/2.26.10/add_not_equal_operator_in_condition) (2017-01-31)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.9/fix_redirect_when_set_password2...2.26.10/add_not_equal_operator_in_condition)
+
+## [2.26.9/fix_redirect_when_set_password2](https://github.com/playbasis/control/tree/2.26.9/fix_redirect_when_set_password2) (2017-01-30)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.9/fix_redirect_when_set_password...2.26.9/fix_redirect_when_set_password2)
+
+## [2.26.9/fix_redirect_when_set_password](https://github.com/playbasis/control/tree/2.26.9/fix_redirect_when_set_password) (2017-01-30)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.8/destroy_session_when_expired...2.26.9/fix_redirect_when_set_password)
+
+## [2.26.8/destroy_session_when_expired](https://github.com/playbasis/control/tree/2.26.8/destroy_session_when_expired) (2017-01-26)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.7/session...2.26.8/destroy_session_when_expired)
+
+## [2.26.7/session](https://github.com/playbasis/control/tree/2.26.7/session) (2017-01-26)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.6/revise_set_password_login...2.26.7/session)
+
+## [2.26.6/revise_set_password_login](https://github.com/playbasis/control/tree/2.26.6/revise_set_password_login) (2017-01-26)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.5/ignore_file_rsa...2.26.6/revise_set_password_login)
+
+## [2.26.5/ignore_file_rsa](https://github.com/playbasis/control/tree/2.26.5/ignore_file_rsa) (2017-01-25)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.4/support_jcryption...2.26.5/ignore_file_rsa)
+
+## [2.26.4/support_jcryption](https://github.com/playbasis/control/tree/2.26.4/support_jcryption) (2017-01-25)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.3/set_player_auth_require...2.26.4/support_jcryption)
+
+## [2.26.3/set_player_auth_require](https://github.com/playbasis/control/tree/2.26.3/set_player_auth_require) (2017-01-24)
+[Full Changelog](https://github.com/playbasis/control/compare/2.26.2/changed_login_limit_constant...2.26.3/set_player_auth_require)
+
 ## [2.26.2/changed_login_limit_constant](https://github.com/playbasis/control/tree/2.26.2/changed_login_limit_constant) (2017-01-20)
 [Full Changelog](https://github.com/playbasis/control/compare/2.26.1/fix_set_new_password...2.26.2/changed_login_limit_constant)
 
-**Implemented enhancements:**
-
-- Hotfix/2.26.2/changed login limit constant [\#362](https://github.com/playbasis/control/pull/362) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
-**Fixed bugs:**
-
-- Hotfix/2.26.2/changed login limit constant [\#362](https://github.com/playbasis/control/pull/362) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
-
 ## [2.26.1/fix_set_new_password](https://github.com/playbasis/control/tree/2.26.1/fix_set_new_password) (2017-01-20)
 [Full Changelog](https://github.com/playbasis/control/compare/2.26.0...2.26.1/fix_set_new_password)
-
-**Fixed bugs:**
-
-- Hotfix/2.26.1/fix set new password [\#361](https://github.com/playbasis/control/pull/361) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.26.0](https://github.com/playbasis/control/tree/2.26.0) (2017-01-19)
 [Full Changelog](https://github.com/playbasis/control/compare/2.25.11/regenerate_session_id_every_user_login...2.26.0)
