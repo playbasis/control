@@ -237,22 +237,18 @@ class Report_weekly extends CI_Controller
         // PLAYERS
         $this->utility->elapsed_time('PLAYERS');
         log_message('debug', 'PLAYERS start');
-        $params = array_merge($params,
-            $this->get_stat('TOTAL_USER_', $conf, $this->player_model->new_registration($opts, null, $to),
-                $this->player_model->new_registration($opts, null, $from)));
+        $params = array_merge($params, $this->get_stat('TOTAL_USER_', $conf,
+            $this->player_model->new_registration($opts, null, $to),
+            $this->player_model->new_registration($opts, null, $from)));
         $params = array_merge($params, $this->get_stat('NEW_USER_', $conf,
             $this->player_model->new_registration($opts, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to),
-            $this->player_model->new_registration($opts, date('Y-m-d', strtotime('+1 day', strtotime($from2))),
-                $from)));
+            $this->player_model->new_registration($opts, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from)));
         $params = array_merge($params, $this->get_stat('DAU_', $conf,
-            $this->player_model->daily_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from))),
-                $to),
-            $this->player_model->daily_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from2))),
-                $from)));
+            $this->player_model->daily_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to),
+            $this->player_model->daily_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from)));
         $params = array_merge($params, $this->get_stat('MAU_', $conf,
-            $this->player_model->monthy_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from))),
-                $to), $this->player_model->monthy_active_user_per_day($opts,
-                date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from)));
+            $this->player_model->monthy_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to),
+            $this->player_model->monthy_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from)));
         log_message('debug', 'PLAYERS end');
         log_message('debug', 'Elapsed time = ' . $this->utility->elapsed_time('PLAYERS') . ' sec (PLAYERS)');
 
@@ -332,51 +328,44 @@ class Report_weekly extends CI_Controller
         log_message('debug', 'ITEMS start');
         $arr = array();
         /* process group */
-        $results = $this->goods_model->getGroupsAggregate($opts['site_id']);
-        $ids = array();
-        $group_name = array();
-        foreach ($results as $i => $result) {
-            $group = $result['_id']['group'];
-            $quantity = $result['quantity'];
-            $list = $result['list'];
-            $first = array_shift($list); // skip first one
-            $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
-            $ids = array_merge($ids, $list);
+
+        $group_list = $this->goods_model->getGroupsList($opts['site_id'], SITE_ID_DIGI == $opts['site_id']);
+        $in_goods = array();
+        $group_data = array();
+        foreach ($group_list as $group_name){
+            $goods_group_id =  $this->goods_model->getGoodsIDByName($opts['client_id'], $opts['site_id'], "", $group_name, false ,SITE_ID_DIGI == $opts['site_id']);
+            $group_data[$goods_group_id]['quantity'] = $this->goods_model->checkGoodsGroupQuantity($opts['site_id'], $group_name, SITE_ID_DIGI == $opts['site_id']);
+            array_push($in_goods, new MongoId($goods_group_id));
         }
-        $goodsList = $this->goods_model->getAllGoods($opts, $ids);
+        $opts['specific'] = array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ));
+        $goodsList = $this->goods_model->getAllGoods($opts,array(), SITE_ID_DIGI == $opts['site_id']);
         $goodsList_ids = array_map('convert_id_to_mongoId', $goodsList);
-        $items = array_merge($this->goods_model->listActiveItems(array_merge($opts, array('in' => $goodsList_ids)),
-            date('Y-m-d', strtotime('+1 day', strtotime($from))), $to),
-            $this->goods_model->listExpiredItems(array_merge($opts, array('in' => $goodsList_ids)),
-                date('Y-m-d', strtotime('+1 day', strtotime($from))), $to));
+        $items = array_merge($this->goods_model->listActiveItems(array_merge($opts, array('in' => $goodsList_ids)), 
+                                 date('Y-m-d', strtotime('+1 day', strtotime($from))), $to, SITE_ID_DIGI == $opts['site_id']),
+                             $this->goods_model->listExpiredItems(array_merge($opts, array('in' => $goodsList_ids)), 
+                                 date('Y-m-d', strtotime('+1 day', strtotime($from))), $to, SITE_ID_DIGI == $opts['site_id']));
         foreach ($items as $item) {
             $goods_criteria = $item['redeem'];
-            $goods_id = array_key_exists('group', $item) ? array_map('index_goods_id',
-                $this->goods_model->listGoodsIdsByGroup($opts['client_id'], $opts['site_id'],
-                    $item['group'])) : $item['goods_id'];
-            $goods_qty_redeemed = $this->goods_model->redeemLogCount($opts, $goods_id);
-            $goods_qty_remain = array_key_exists('group',
-                $item) ? $group_name[$item['_id']->{'$id'}]['quantity'] : $item['quantity'];
+            $group = array_key_exists('group', $item) ? true : false;
+            $goods_id = $group ? $item['group'] : $item['goods_id'];
+            $goods_qty_remain = $group ? $group_data[$item['goods_id']->{'$id'}]['quantity'] : $item['quantity'];
+            $goods_qty_redeemed = $this->goods_model->redeemLogCount($opts, $goods_id, $group, null, null,  SITE_ID_DIGI == $opts['site_id']);
+            
             $goods_qty = $goods_qty_remain !== null ? $goods_qty_remain + $goods_qty_redeemed : $goods_qty_remain;
             $goods_players_can_redeem = $this->player_model->playerWithEnoughCriteria($opts, $goods_criteria);
             $arr[] = array_merge(
                 array(
-                    'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($item['image'],
-                        $conf['dynamic_image_url']) ? $conf['dynamic_image_url'] . $item['image'] : $conf['static_image_url'] . 'images/no_image.jpg',
+                    'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($item['image'], $conf['dynamic_image_url']) ? $conf['dynamic_image_url'] . $item['image'] : $conf['static_image_url'] . 'images/no_image.jpg',
                     'NAME' => array_key_exists('group', $item) ? $item['group'] : $item['name'],
-                    'START_DATE' => ($item['date_start'] ? date(REPORT_DATE_FORMAT,
-                        $item['date_start']->sec) : ITEM_DATE_NOT_CONFIG),
-                    'EXPIRATION_DATE' => ($item['date_expire'] ? date(REPORT_DATE_FORMAT,
-                        $item['date_expire']->sec) : ITEM_DATE_NOT_CONFIG),
+                    'START_DATE' => ($item['date_start'] ? date(REPORT_DATE_FORMAT, $item['date_start']->sec) : ITEM_DATE_NOT_CONFIG),
+                    'EXPIRATION_DATE' => ($item['date_expire'] ? date(REPORT_DATE_FORMAT, $item['date_expire']->sec) : ITEM_DATE_NOT_CONFIG),
                     'PEOPLE_CAN_REDEEM' => number_format($goods_players_can_redeem),
                     'QTY_REDEEMED' => number_format($goods_qty_redeemed),
                     'QTY_TOTAL' => ($goods_qty != null || $goods_qty === 0 ? number_format($goods_qty) : ITEM_QTY_NOT_CONFIG),
                     'QTY_REMAIN' => $goods_qty_remain != null ? number_format($goods_qty_remain) : ITEM_QTY_NOT_CONFIG,
                 ),
-                $this->get_stat('', $conf, $this->goods_model->redeemLog($opts, $goods_id,
-                    date('Y-m-d', strtotime('+1 day', strtotime($from))), $to),
-                    $this->goods_model->redeemLog($opts, $goods_id,
-                        date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from))
+                $this->get_stat('', $conf, $this->goods_model->redeemLog($opts, $goods_id, $group, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to, SITE_ID_DIGI == $opts['site_id']),
+                                           $this->goods_model->redeemLog($opts, $goods_id, $group, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from, SITE_ID_DIGI == $opts['site_id']))
             );
         }
         usort($arr, 'compare_TOTAL_NUM_desc');
