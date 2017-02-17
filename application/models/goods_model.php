@@ -97,13 +97,18 @@ class Goods_model extends MY_Model
         return $this->mongo_db->get("playbasis_goods_to_client");
     }
     
-    public function getGoodsIDByName($client_id, $site_id, $good_name, $good_group=null, $check_status=true)
+    public function getGoodsIDByName($client_id, $site_id, $good_name, $good_group=null, $check_status=true, $digi =false)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->select(array('goods_id'));
 
         $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
+        if ($digi){
+            $this->mongo_db->where_in('site_id', array(new MongoId($site_id) , "Digi"));
+        } else {
+            $this->mongo_db->where('site_id', new MongoId($site_id));
+        }
+        
         $this->mongo_db->where('deleted', false);
         if($check_status){
             $this->mongo_db->where('status', true);
@@ -320,11 +325,14 @@ class Goods_model extends MY_Model
         return $results ? $results['result'] : array();
     }
 
-    public function getGroupsList($site_id)
+    public function getGroupsList($site_id, $digi=false)
     {
         $this->set_site_mongodb($site_id);
-       
-        $this->mongo_db->where('site_id', new MongoId($site_id));
+        if($digi){
+            $this->mongo_db->where_in('site_id', array(new MongoId($site_id), "Digi"));
+        } else {
+            $this->mongo_db->where('site_id', new MongoId($site_id));
+        }
         $this->mongo_db->where('deleted', false);
         return $this->mongo_db->distinct('group', 'playbasis_goods_to_client');
     }
@@ -337,10 +345,15 @@ class Goods_model extends MY_Model
         return $this->mongo_db->count("playbasis_goods_to_client") > 0;
     }
 
-    public function checkGoodsGroupQuantity($site_id, $group)
+    public function checkGoodsGroupQuantity($site_id, $group, $digi = false)
     {
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('site_id', $site_id);
+        if ($digi){
+            $this->mongo_db->where_in('site_id', array($site_id, "Digi"));
+        } else {
+            $this->mongo_db->where('site_id', $site_id);
+        }
+        
         $this->mongo_db->where('group', $group);
         $this->mongo_db->where('quantity', 1);
         return $this->mongo_db->count("playbasis_goods_to_client");
@@ -1216,7 +1229,7 @@ class Goods_model extends MY_Model
         return $result ? $result[0] : array();
     }
 
-    public function getAllGoods($data, $nin = array())
+    public function getAllGoods($data, $nin = array(), $digi=false)
     {
         $this->set_site_mongodb($data['site_id']);
         $this->mongo_db->select(array(
@@ -1238,14 +1251,23 @@ class Goods_model extends MY_Model
         ));
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
             'deleted' => false,
             'status' => true,
         ));
+        if ($digi){
+            $this->mongo_db->where_in('site_id', array($data['site_id'] , "Digi"));
+        } else {
+            $this->mongo_db->where('site_id', $data['site_id']);
+        }
         $this->mongo_db->order_by(array('sort_order' => 'asc'));
         if (!empty($nin)) {
             $this->mongo_db->where_not_in('_id', $nin);
         }
+
+        if(array_key_exists('specific', $data)){
+            $this->mongo_db->where($data['specific']);
+        }
+        
         if (!empty($data['tags'])){
             $this->mongo_db->where_in('tags', $data['tags']);
         }
@@ -1297,9 +1319,13 @@ class Goods_model extends MY_Model
         return $goods;
     }
 
-    public function listActiveItems($data, $from, $to)
+    public function listActiveItems($data, $from, $to, $digi=false)
     {
-        $this->set_site_mongodb($data['site_id']);
+        if ($digi){
+            $this->mongo_db->where_in('site_id', array($data['site_id'] , "Digi"));
+        } else {
+            $this->mongo_db->where('site_id', $data['site_id']);
+        }
         $this->mongo_db->where(array(
             '$and' => array(
                 array(
@@ -1321,9 +1347,13 @@ class Goods_model extends MY_Model
         return $this->mongo_db->get('playbasis_goods_to_client');
     }
 
-    public function listExpiredItems($data, $from, $to)
+    public function listExpiredItems($data, $from, $to, $digi=false)
     {
-        $this->set_site_mongodb($data['site_id']);
+        if ($digi){
+            $this->mongo_db->where_in('site_id', array($data['site_id'] , "Digi"));
+        } else {
+            $this->mongo_db->where('site_id', $data['site_id']);
+        }
         $this->mongo_db->where(array(
             'date_expire' => array(
                 '$gte' => $this->new_mongo_date($from),
@@ -1349,10 +1379,10 @@ class Goods_model extends MY_Model
         return $this->mongo_db->get('playbasis_goods_to_client');
     }
 
-    public function redeemLogCount($data, $goods_id, $from = null, $to = null)
+    public function redeemLogCount($data, $goods_id, $group=false, $from = null, $to = null, $digi=false)
     {
         $this->set_site_mongodb($data['site_id']);
-        $query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+        $query = array('client_id' => $data['client_id']);
         if ($from || $to) {
             $query['date_added'] = array();
         }
@@ -1363,19 +1393,28 @@ class Goods_model extends MY_Model
             $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
         }
         $this->mongo_db->where($query);
-        $this->mongo_db->where_in('goods_id', is_array($goods_id) ? $goods_id : array($goods_id));
+        if ($digi){
+            $this->mongo_db->where_in('site_id', array($data['site_id'] , "Digi"));
+        } else {
+            $this->mongo_db->where('site_id', $data['site_id']);
+        }
+        
+        if($group){
+            $this->mongo_db->where('group', $goods_id);
+        } else {
+            $this->mongo_db->where_in('goods_id', is_array($goods_id) ? $goods_id : array($goods_id));
+        }
+        
         return $this->mongo_db->count('playbasis_goods_log');
     }
 
-    public function redeemLog($data, $goods_id, $from = null, $to = null)
+    public function redeemLog($data, $goods_id, $group=false, $from = null, $to = null,$digi =false)
     {
         $this->set_site_mongodb($data['site_id']);
         $map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.amount); }");
         $reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
         $query = array(
             'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
-            'goods_id' => array('$in' => is_array($goods_id) ? $goods_id : array($goods_id))
         );
         if ($from || $to) {
             $query['date_added'] = array();
@@ -1385,6 +1424,16 @@ class Goods_model extends MY_Model
         }
         if ($to) {
             $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
+        }
+        if ($group){
+            $query['group'] = $goods_id;
+        } else {
+            $query['goods_id'] = array('$in' => is_array($goods_id) ? $goods_id : array($goods_id));
+        }
+        if ($digi){
+            $query['site_id'] = array('$in' => array($data['site_id'] , "Digi"));
+        } else {
+            $query['site_id'] = $data['site_id'];
         }
         $result = $this->mongo_db->command(array(
             'mapReduce' => 'playbasis_goods_log',
