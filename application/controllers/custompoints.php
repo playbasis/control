@@ -375,6 +375,8 @@ class Custompoints extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
+            $this->data['message'] = null;
+
             if ($this->input->post('type_custompoint') != "normal") {
                 $this->form_validation->set_rules('energy_maximum', $this->lang->line('entry_energy_maximum'),
                     'required|numeric|is_natural_no_zero|xss_clean');
