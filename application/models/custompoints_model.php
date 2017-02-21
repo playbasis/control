@@ -136,15 +136,16 @@ class Custompoints_model extends MY_Model
 
     public function getCustompoint($custompoint_id)
     {
-
         $this->mongo_db->where('reward_id', new MongoId($custompoint_id));
         $c = $this->mongo_db->get('playbasis_reward_to_client');
+        return $c ? $c[0] : null;
+    }
 
-        if ($c) {
-            return $c[0];
-        } else {
-            return null;
-        }
+    public function getCustompointById($custompoint_id)
+    {
+        $this->mongo_db->where('_id', new MongoId($custompoint_id));
+        $c = $this->mongo_db->get('playbasis_reward_to_client');
+        return $c ? $c[0] : null;
     }
 
     public function getCustompointByName($site_id, $custompoint_name)
@@ -157,6 +158,43 @@ class Custompoints_model extends MY_Model
 
         $result =  $this->mongo_db->get('playbasis_reward_to_client');
         return $result ? $result[0] : null;
+    }
+
+    public function auditBeforeCustomPoint($event,$custompoint_id, $user_id)
+    {
+        $custompoint_data = $this->getCustompoint($custompoint_id);
+        $insert_data = array('client_id' => $custompoint_data['client_id'],
+                             'site_id' => $custompoint_data['site_id'],
+                             'reward_id' => $custompoint_data['reward_id'],
+                             'event' => $event,
+                             'before' => $custompoint_data,
+                             'user_id' => $user_id);
+        return $this->mongo_db->insert('playbasis_reward_to_client_audit', $insert_data);
+    }
+
+    public function auditAfterCustomPoint($event, $custompoint_id, $user_id, $audit_id=null)
+    {
+        $custompoint_data = $this->getCustompoint($custompoint_id);
+        $audit_log = array();
+        if ($audit_id){
+            $this->mongo_db->where('_id', new MongoID($audit_id));
+            $audit_log = $this->mongo_db->get('playbasis_reward_to_client_audit');
+        }
+
+        if ($audit_log){
+            $this->mongo_db->where('_id', new MongoID($audit_id));
+            $this->mongo_db->set('after', $custompoint_data);
+            $this->mongo_db->update('playbasis_reward_to_client_audit');
+        } else {
+            $insert_data = array('client_id' => $custompoint_data['client_id'],
+                                 'site_id' => $custompoint_data['site_id'],
+                                 'reward_id' => $custompoint_data['reward_id'],
+                                 'event' => $event,
+                                 'before' => null,
+                                 'after' => $custompoint_data,
+                                 'user_id' => $user_id);
+            $this->mongo_db->insert('playbasis_reward_to_client_audit', $insert_data);
+        }
     }
 
     public function updateCustompoints($data)

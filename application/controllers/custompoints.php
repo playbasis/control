@@ -125,6 +125,8 @@ class Custompoints extends MY_Controller
                 $data['tags'] = $custompoints_data['tags'];
 
                 $insert = $this->Custompoints_model->insertCustompoints($data);
+                $custompoints_data = $this->Custompoints_model->getCustompointById($insert);
+                $this->Custompoints_model->auditAfterCustomPoint('insert', $custompoints_data['reward_id'], $this->User_model->getId());
                 if ($insert) {
                     if($this->initPlayerPoint($data) || $data['type'] == "normal"){
                         redirect('/custompoints', 'refresh');
@@ -362,7 +364,7 @@ class Custompoints extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'custompoints/update/' . $custompoints_id;
-
+        $this->data['message'] = null;
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('type_custompoint', $this->lang->line('entry_type'), 'required');
@@ -411,7 +413,9 @@ class Custompoints extends MY_Controller
                 }
                 $data['tags'] = $custompoints_data['tags'];
 
+                $audit_id = $this->Custompoints_model->auditBeforeCustomPoint('update', $custompoints_id, $this->User_model->getId());
                 $update = $this->Custompoints_model->updateCustompoints($data);
+                $this->Custompoints_model->auditAfterCustomPoint('update', $custompoints_id, $this->User_model->getId(), $audit_id);
                 if ($update) {
                     redirect('/custompoints', 'refresh');
                 }
@@ -423,7 +427,6 @@ class Custompoints extends MY_Controller
 
     public function delete()
     {
-
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -437,7 +440,9 @@ class Custompoints extends MY_Controller
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             foreach ($this->input->post('selected') as $reward_id) {
+                $audit_id = $this->Custompoints_model->auditBeforeCustomPoint('delete', $reward_id, $this->User_model->getId());
                 $this->Custompoints_model->deleteCustompoints($reward_id);
+                $this->Custompoints_model->auditAfterCustomPoint('delete', $reward_id, $this->User_model->getId(), $audit_id);
             }
 
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
