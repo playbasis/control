@@ -712,7 +712,32 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 });
                                 rowField.children().hide();
                                 rowField.append(operation_option);
-                                $('#operation').val(rowText.html());
+                                $('#operator').val(rowText.html());
+                            }else{
+                                if(DEBUG)console.log('edit > text');
+                                rowField.find('input').val(rowText.html());
+                            }
+                        }
+                        else if(anotherType.match('COUNTERPARAMETER')) {
+                            if($thisrow.find('.dropdown').length > 0) {
+                                console.log('COUNTERPARAMETER in if');
+                                var operation = {
+                                    'equal': '=',
+                                    'notEqual': '!=',
+                                    'equalOrGreater': '>=',
+                                    'equalOrLess': '<=',
+                                    'greater': '>',
+                                    'less': '<'
+
+                                }
+                                var operation_option = $('<select id="operator">');
+                                $.each(operation, function (key, value) {
+                                    operation_option.append($('<option>', {value: key})
+                                        .text(value));
+                                });
+                                rowField.children().hide();
+                                rowField.append(operation_option);
+                                $('#operator').val(rowText.html());
                             }else{
                                 if(DEBUG)console.log('edit > text');
                                 rowField.find('input').val(rowText.html());
