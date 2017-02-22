@@ -451,6 +451,7 @@ class Goods extends MY_Controller
                             $goods_data['client_id'] = $this->User_model->getClientId();
                             $goods_data['site_id'] = $this->User_model->getSiteId();
                             $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+                            $goods_data['goods_id'] = $goods_info['goods_id'];
                             if ($goods_info && array_key_exists('group', $goods_info)) {
 
                                 /* if there is an uploaded file, then import it into the group */
@@ -689,7 +690,7 @@ class Goods extends MY_Controller
         $this->render_page('goods_ajax');
     }
 
-    private function getList($offset, $per_page = NUMBER_OF_RECORDS_PER_PAGE)
+    private function _getList($offset, $per_page = NUMBER_OF_RECORDS_PER_PAGE)
     {
 
         $this->load->library('pagination');
@@ -877,7 +878,11 @@ class Goods extends MY_Controller
         $this->data['main'] = 'goods';
         $this->data['tabs'] = $this->lang->line('heading_title_goods_list');
         $this->data['setting_group_id'] = $setting_group_id;
+    }
 
+    private function getList($offset)
+    {
+        $this->_getList($offset);
         $this->load->vars($this->data);
         $this->render_page('template');
     }
@@ -1090,6 +1095,16 @@ class Goods extends MY_Controller
             $this->data['days_expire'] = $goods_info['days_expire'];
         } else {
             $this->data['days_expire'] = "";
+        }
+
+        if (!empty($goods_info) && !array_key_exists('group', $goods_info)) {
+            if ($this->input->post('date_expired_coupon')) {
+                $this->data['date_expired_coupon'] = $this->input->post('date_expired_coupon');
+            } elseif (isset($goods_info['date_expired_coupon']) && !empty($goods_info['date_expired_coupon'])) {
+                $this->data['date_expired_coupon'] = $goods_info['date_expired_coupon'];
+            } else {
+                $this->data['date_expired_coupon'] = "";
+            }
         }
 
         if (isset($goods_id)) {

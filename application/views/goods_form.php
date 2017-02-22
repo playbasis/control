@@ -100,20 +100,27 @@
                             <tr>
                                 <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
                                 <td>
-                                    <input type="text" class="date" name="date_start" value="<?php if ($date_start && strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_start)));} else { echo $date_start; } ?>" size="50" />
+                                    <input type="text" class="date" name="date_start" placeholder="date start reward coupon"value="<?php if ($date_start && strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_start)));} else { echo $date_start; } ?>" size="50" />
                                 </td>
                             </tr>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
                                 <td>
-                                    <input type="text" class="date" name="date_expire" value="<?php if ($date_expire && strtotime(datetimeMongotoReadable($date_expire))) { echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_expire))); } else { echo $date_expire; } ?>" size="50" />
+                                    <input type="text" class="date" name="date_expire" placeholder="date end to reward coupon" value="<?php if ($date_expire && strtotime(datetimeMongotoReadable($date_expire))) { echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_expire))); } else { echo $date_expire; } ?>" size="50" />
                                 </td>
                             </tr>
                             <?php if ($is_group) { ?>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_days_expire'); ?>:</td>
                                 <td>
-                                    <input type="number" name="days_expire" placeholder="day to expire after get coupon" value="<?php if (isset($days_expire) && $days_expire && strtotime(datetimeMongotoReadable($days_expire))) { echo date('Y-m-d', strtotime(datetimeMongotoReadable($days_expire))); } else { echo isset($days_expire) ? $days_expire :""; } ?>" size="50" />
+                                    <input type="number" name="days_expire" placeholder="day to expire after get coupon" value="<?php echo isset($days_expire) ? $days_expire :""; ?>" size="50" />
+                                </td>
+                            </tr>
+                            <?php } else { ?>
+                            <tr>
+                                <td><?php echo $this->lang->line('entry_date_expire'); ?>:</td>
+                                <td>
+                                    <input type="text" class="date"  name="date_expired_coupon" placeholder="date to expire coupon" value="<?php if (isset($date_expired_coupon) && $date_expired_coupon && strtotime(datetimeMongotoReadable($date_expired_coupon))) { echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_expired_coupon))); } else { echo isset($date_expired_coupon) ? $date_expired_coupon :""; } ?>" size="50" />
                                 </td>
                             </tr>
                             <?php } ?>
