@@ -126,7 +126,7 @@ class Custompoints extends MY_Controller
 
                 $insert = $this->Custompoints_model->insertCustompoints($data);
                 if ($insert) {
-                    if($this->initPlayerPoint($data) || $data['type'] == "normal"){
+                    if($data['type'] == "normal" || $this->initPlayerPoint($data)){
                         redirect('/custompoints', 'refresh');
                     }
                 }
