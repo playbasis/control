@@ -823,6 +823,11 @@ class Goods_model extends MY_Model
             }
         }
 
+        if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
+            $date_expired_coupon = strtotime($data['date_expired_coupon']);
+            $this->mongo_db->set('date_expired_coupon', new MongoDate($date_expired_coupon));
+        }
+
         if (isset($data['image'])) {
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
         }
@@ -840,6 +845,9 @@ class Goods_model extends MY_Model
         }
 
         $this->mongo_db->update('playbasis_goods_to_client');
+        if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
+            $this->updateDateExpireGoodsPlayer($data['client_id'], $data['site_id'], $data['goods_id'], $date_expired_coupon);
+        }
     }
 
     public function editGoodsGroupToClient($group, $data)
@@ -885,6 +893,10 @@ class Goods_model extends MY_Model
                 $this->mongo_db->set('date_start', null);
                 $this->mongo_db->set('date_expire', null);
             }
+        }
+
+        if (isset($data['days_expire']) && $data['days_expire']){
+            $this->mongo_db->set('days_expire', $data['days_expire']);
         }
 
         if (isset($data['image'])) {
@@ -1177,6 +1189,17 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('goods_id', $data['goods_id']);
         $this->mongo_db->set('value', 0);
         $this->mongo_db->update('playbasis_goods_to_player');
+    }
+
+    public function updateDateExpireGoodsPlayer($client_id, $site_id, $goods_id, $date_expire)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('goods_id', new MongoId($goods_id));
+        $this->mongo_db->set('date_expire', new MongoDate($date_expire));
+        $this->mongo_db->set('date_modified', new MongoDate());
+        $this->mongo_db->update_all('playbasis_goods_to_player');
     }
 
     public function listGoods($goods_id_list, $fields = array())
