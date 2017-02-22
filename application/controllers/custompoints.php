@@ -128,7 +128,7 @@ class Custompoints extends MY_Controller
                 $custompoints_data = $this->Custompoints_model->getCustompointById($insert);
                 $this->Custompoints_model->auditAfterCustomPoint('insert', $custompoints_data['reward_id'], $this->User_model->getId());
                 if ($insert) {
-                    if($this->initPlayerPoint($data) || $data['type'] == "normal"){
+                    if($data['type'] == "normal" || $this->initPlayerPoint($data)){
                         redirect('/custompoints', 'refresh');
                     }
                 }
