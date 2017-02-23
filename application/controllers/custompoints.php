@@ -301,7 +301,7 @@ class Custompoints extends MY_Controller
 
         if ($this->input->post('quantity')) {
             $this->data['quantity'] = $this->input->post('quantity');
-        } elseif (!empty($custompoints_info)) {
+        } elseif (isset($custompoints_info['quantity'])) {
             $this->data['quantity'] = $custompoints_info['quantity'];
         } else {
             $this->data['quantity'] = "";
@@ -473,7 +473,7 @@ class Custompoints extends MY_Controller
                             'client_id' => $client_id,
                             'site_id' => $site_id,
                             'reward_id' => $reward_id,
-                            'value' => $data['maximum'],
+                            'value' => (int)$data['maximum'],
                             'date_cron_modified' => new MongoDate(),
                             'date_added' => new MongoDate(),
                             'date_modified' => new MongoDate()
