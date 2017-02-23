@@ -160,13 +160,13 @@ class Rule extends MY_Controller
         // Add deeplink generator in feedback
         $feedbackList[] = array(
             "_id" => "deeplink_feedback",
-	        "name" => "deeplink",
+            "name" => "deeplink",
             "description" => "Generate deeplink",
-	        "sort_order" => 10,
+            "sort_order" => 10,
             "status" => 1,
-	        "specific_id" => "deeplink_feedback",
-	        "dataSet" => array(),
-	        "id" => "deeplink_feedback",
+            "specific_id" => "deeplink_feedback",
+            "dataSet" => array(),
+            "id" => "deeplink_feedback",
             "category" => "FEEDBACK"
         );
 
