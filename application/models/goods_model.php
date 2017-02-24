@@ -1072,6 +1072,27 @@ class Goods_model extends MY_Model
         $this->mongo_db->update('playbasis_goods_to_client');
     }
 
+    public function increaseOrderOfGroupByOneClient($goods_id,$group, $data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($goods_id));
+        $goods = $this->mongo_db->get('playbasis_goods_to_client');
+
+        $currentOrder = $goods[0]['sort_order'];
+        $newOrder = $currentOrder + 1;
+
+        $this->mongo_db->where('_id', new MongoID($goods_id));
+        $this->mongo_db->set('sort_order', $newOrder);
+        $this->mongo_db->update('playbasis_goods_to_client');
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->set('sort_order', $newOrder);
+        $this->mongo_db->update_all('playbasis_goods_to_client', array("w" => 0, "j" => false));
+    }
+
     public function decreaseOrderByOneClient($goods_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -1087,6 +1108,30 @@ class Goods_model extends MY_Model
             $this->mongo_db->where('_id', new MongoID($goods_id));
             $this->mongo_db->set('sort_order', $newOrder);
             $this->mongo_db->update('playbasis_goods_to_client');
+        }
+    }
+
+    public function decreaseOrderOfGroupByOneClient($goods_id, $group, $data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($goods_id));
+        $goods = $this->mongo_db->get('playbasis_goods_to_client');
+
+        $currentOrder = $goods[0]['sort_order'];
+
+        if ($currentOrder != 0) {
+            $newOrder = $currentOrder - 1;
+
+            $this->mongo_db->where('_id', new MongoID($goods_id));
+            $this->mongo_db->set('sort_order', $newOrder);
+            $this->mongo_db->update('playbasis_goods_to_client');
+
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+            $this->mongo_db->where('group', $group);
+            $this->mongo_db->set('sort_order', $newOrder);
+            $this->mongo_db->update_all('playbasis_goods_to_client', array("w" => 0, "j" => false));
         }
     }
 

@@ -1315,7 +1315,15 @@ class Goods extends MY_Controller
     {
 
         if ($this->User_model->getClientId()) {
-            $this->Goods_model->increaseOrderByOneClient($goods_id);
+            $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+            if ($goods_info && array_key_exists('group', $goods_info)) {
+                $goods_data['client_id'] = $this->User_model->getClientId();
+                $goods_data['site_id'] = $this->User_model->getSiteId();
+                $this->Goods_model->increaseOrderOfGroupByOneClient($goods_id, $goods_info['group'], $goods_data);
+            }else{
+                $this->Goods_model->increaseOrderByOneClient($goods_id);
+            }
+
         } else {
             $this->Goods_model->increaseOrderByOne($goods_id);
         }
@@ -1329,7 +1337,14 @@ class Goods extends MY_Controller
     {
 
         if ($this->User_model->getClientId()) {
-            $this->Goods_model->decreaseOrderByOneClient($goods_id);
+            $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+            if ($goods_info && array_key_exists('group', $goods_info)) {
+                $goods_data['client_id'] = $this->User_model->getClientId();
+                $goods_data['site_id'] = $this->User_model->getSiteId();
+                $this->Goods_model->decreaseOrderOfGroupByOneClient($goods_id, $goods_info['group'], $goods_data);
+            }else {
+                $this->Goods_model->decreaseOrderByOneClient($goods_id);
+            }
         } else {
             $this->Goods_model->decreaseOrderByOne($goods_id);
         }
