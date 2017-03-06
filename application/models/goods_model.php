@@ -586,6 +586,49 @@ class Goods_model extends MY_Model
         return $b;
     }
 
+    public function auditBeforeGoods($event,$goods_id, $user_id)
+    {
+        $goods_data = $this->getGoodsToClient($goods_id);
+        if ($goods_data && array_key_exists('group', $goods_data)) {
+            $goods_data['quantity'] = $this->checkGoodsGroupQuantity($goods_data['site_id'], $goods_data['group']);
+        }
+        $insert_data = array('client_id' => $goods_data['client_id'],
+                             'site_id' => $goods_data['site_id'],
+                             'goods_id' => $goods_data['goods_id'],
+                             'event' => $event,
+                             'before' => $goods_data,
+                             'user_id' => $user_id);
+        return $this->mongo_db->insert('playbasis_goods_to_client_audit', $insert_data);
+    }
+
+    public function auditAfterGoods($event, $goods_id, $user_id, $audit_id=null)
+    {
+        $goods_data = $this->getGoodsToClient($goods_id);
+        if ($goods_data && array_key_exists('group', $goods_data)) {
+            $goods_data['quantity'] = $this->checkGoodsGroupQuantity($goods_data['site_id'], $goods_data['group']);
+        }
+        $audit_log = array();
+        if ($audit_id){
+            $this->mongo_db->where('_id', new MongoID($audit_id));
+            $audit_log = $this->mongo_db->get('playbasis_goods_to_client_audit');
+        }
+
+        if ($audit_log){
+            $this->mongo_db->where('_id', new MongoID($audit_id));
+            $this->mongo_db->set('after', $goods_data);
+            $this->mongo_db->update('playbasis_goods_to_client_audit');
+        } else {
+            $insert_data = array('client_id' => $goods_data['client_id'],
+                                 'site_id' => $goods_data['site_id'],
+                                 'goods_id' => $goods_data['goods_id'],
+                                 'event' => $event,
+                                 'before' => null,
+                                 'after' => $goods_data,
+                                 'user_id' => $user_id);
+            $this->mongo_db->insert('playbasis_goods_to_client_audit', $insert_data);
+        }
+    }
+
     public function addGoodsToClient($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -645,7 +688,7 @@ class Goods_model extends MY_Model
             $data_insert['organize_role'] = $data['organize_role'];
         }
 
-        $this->mongo_db->insert('playbasis_goods_to_client', $data_insert);
+        return $this->mongo_db->insert('playbasis_goods_to_client', $data_insert);
     }
 
     public function addGoodsToClient_bulk($data)

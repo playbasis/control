@@ -280,6 +280,7 @@ class Rule extends MY_Controller
         }
 
         $input = json_decode(html_entity_decode($this->input->post('json')), true);
+        $input['user'] = $this->User_model->getId();
         $this->output->set_output(json_encode($this->Rule_model->saveRule($input)));
     }
 
@@ -562,6 +563,7 @@ class Rule extends MY_Controller
 
         if(!$validation_result){ // passed data validation
             foreach($array_rules as $rule) {
+                $rule['user'] = $this->User_model->getId();
                 $import_result = $this->Rule_model->saveRule($rule);
             }
             $this->output->set_output(json_encode(array('status'=>'success')));

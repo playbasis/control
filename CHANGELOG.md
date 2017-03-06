@@ -1,55 +1,84 @@
 # Change Log
 
+## [2.29.0](https://github.com/playbasis/control/tree/2.29.0) (2017-03-06)
+[Full Changelog](https://github.com/playbasis/control/compare/2.28.0...2.29.0)
+
+**Implemented enhancements:**
+
+- Hotfix/2.28.6/deeplink feedback in engine rule [\#388](https://github.com/playbasis/control/pull/388) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+
+**Fixed bugs:**
+
+- Hotfix/2.28.8/fix setting sort order of goods [\#390](https://github.com/playbasis/control/pull/390) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.28.7/bug in custompoint controller [\#389](https://github.com/playbasis/control/pull/389) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+
+## [2.28.5/fix_custompoint_normal_timeout](https://github.com/playbasis/control/tree/2.28.5/fix_custompoint_normal_timeout) (2017-02-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.28.4/date_expire_in_normal_goods...2.28.5/fix_custompoint_normal_timeout)
+
+**Implemented enhancements:**
+
+- Hotfix/2.28.5/fix custompoint normal timeout [\#387](https://github.com/playbasis/control/pull/387) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.28.4/date_expire_in_normal_goods](https://github.com/playbasis/control/tree/2.28.4/date_expire_in_normal_goods) (2017-02-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.28.2/support_high_volume_goods_in_report...2.28.4/date_expire_in_normal_goods)
+
+**Implemented enhancements:**
+
+- Hotfix/2.28.4/date expire in normal goods [\#386](https://github.com/playbasis/control/pull/386) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.28.3/condition deeplink [\#385](https://github.com/playbasis/control/pull/385) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+
+**Merged pull requests:**
+
+- audit dashbaord for rule badge goods custompoint [\#384](https://github.com/playbasis/control/pull/384) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.28.2/support_high_volume_goods_in_report](https://github.com/playbasis/control/tree/2.28.2/support_high_volume_goods_in_report) (2017-02-17)
+[Full Changelog](https://github.com/playbasis/control/compare/2.28.1/fix_goods_disable...2.28.2/support_high_volume_goods_in_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.28.2/support high volume goods in report [\#383](https://github.com/playbasis/control/pull/383) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.28.1/fix_goods_disable](https://github.com/playbasis/control/tree/2.28.1/fix_goods_disable) (2017-02-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.28.0...2.28.1/fix_goods_disable)
+
+**Fixed bugs:**
+
+- Hotfix/2.28.1/fix goods disable [\#382](https://github.com/playbasis/control/pull/382) ([piya-playbasis](https://github.com/piya-playbasis))
+
 ## [2.28.0](https://github.com/playbasis/control/tree/2.28.0) (2017-02-16)
-[Full Changelog](https://github.com/playbasis/control/compare/2.27.0...2.28.0)
-
-
-## [2.27.7/fix_download_goods_report_oversize_ram_limit](https://github.com/playbasis/control/tree/2.27.7/fix_download_goods_report_oversize_ram_limit) (2017-02-15)
-[Full Changelog](https://github.com/playbasis/control/compare/2.27.5/fix_download_goods_report_error...2.27.7/fix_download_goods_report_oversize_ram_limit)
+[Full Changelog](https://github.com/playbasis/control/compare/2.27.7/fix_download_goods_report_oversize_ram_limit...2.28.0)
 
 **Implemented enhancements:**
 
 - fix download issue [\#381](https://github.com/playbasis/control/pull/381) ([piya-playbasis](https://github.com/piya-playbasis))
 - Hotfix/2.27.8/point condition [\#380](https://github.com/playbasis/control/pull/380) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/fix goods report exceed memory [\#375](https://github.com/playbasis/control/pull/375) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.27.1/user tags condition [\#374](https://github.com/playbasis/control/pull/374) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 **Fixed bugs:**
 
 - Hotfix/2.27.8/point condition [\#380](https://github.com/playbasis/control/pull/380) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.27.5/fix download goods report error [\#378](https://github.com/playbasis/control/pull/378) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.27.4/fix goods high volume in rule [\#377](https://github.com/playbasis/control/pull/377) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.27.3/fix report goods high volumn [\#376](https://github.com/playbasis/control/pull/376) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.27.7/fix_download_goods_report_oversize_ram_limit](https://github.com/playbasis/control/tree/2.27.7/fix_download_goods_report_oversize_ram_limit) (2017-02-15)
+[Full Changelog](https://github.com/playbasis/control/compare/2.27.5/fix_download_goods_report_error...2.27.7/fix_download_goods_report_oversize_ram_limit)
 
 ## [2.27.5/fix_download_goods_report_error](https://github.com/playbasis/control/tree/2.27.5/fix_download_goods_report_error) (2017-02-14)
 [Full Changelog](https://github.com/playbasis/control/compare/2.27.4/fix_goods_high_volume_in_rule...2.27.5/fix_download_goods_report_error)
 
-**Fixed bugs:**
-
-- Hotfix/2.27.5/fix download goods report error [\#378](https://github.com/playbasis/control/pull/378) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.27.4/fix_goods_high_volume_in_rule](https://github.com/playbasis/control/tree/2.27.4/fix_goods_high_volume_in_rule) (2017-02-10)
 [Full Changelog](https://github.com/playbasis/control/compare/2.27.3/fix_report_goods_high_volumn...2.27.4/fix_goods_high_volume_in_rule)
-
-**Fixed bugs:**
-
-- Hotfix/2.27.4/fix goods high volume in rule [\#377](https://github.com/playbasis/control/pull/377) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.27.3/fix_report_goods_high_volumn](https://github.com/playbasis/control/tree/2.27.3/fix_report_goods_high_volumn) (2017-02-10)
 [Full Changelog](https://github.com/playbasis/control/compare/fix_goods_report_exceed_memory...2.27.3/fix_report_goods_high_volumn)
 
-**Fixed bugs:**
-
-- Hotfix/2.27.3/fix report goods high volumn [\#376](https://github.com/playbasis/control/pull/376) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [fix_goods_report_exceed_memory](https://github.com/playbasis/control/tree/fix_goods_report_exceed_memory) (2017-02-10)
 [Full Changelog](https://github.com/playbasis/control/compare/2.27.1/user_tags_condition...fix_goods_report_exceed_memory)
 
-**Implemented enhancements:**
-
-- Hotfix/fix goods report exceed memory [\#375](https://github.com/playbasis/control/pull/375) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.27.1/user_tags_condition](https://github.com/playbasis/control/tree/2.27.1/user_tags_condition) (2017-02-07)
 [Full Changelog](https://github.com/playbasis/control/compare/2.27.0...2.27.1/user_tags_condition)
-
-**Implemented enhancements:**
-
-- Hotfix/2.27.1/user tags condition [\#374](https://github.com/playbasis/control/pull/374) ([pongsakorn-playbasis](https://github.com/pongsakorn-playbasis))
 
 ## [2.27.0](https://github.com/playbasis/control/tree/2.27.0) (2017-02-02)
 [Full Changelog](https://github.com/playbasis/control/compare/2.26.11/fix_report_reward...2.27.0)

@@ -58,6 +58,43 @@ class Badge_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function auditBeforeBadge($event,$badge_id, $user_id)
+    {
+        $badge_data = $this->getBadgeToClient($badge_id);
+        $insert_data = array('client_id' => $badge_data['client_id'],
+                             'site_id' => $badge_data['site_id'],
+                             'badge_id' => $badge_data['badge_id'],
+                             'event' => $event,
+                             'before' => $badge_data,
+                             'user_id' => $user_id);
+        return $this->mongo_db->insert('playbasis_badge_to_client_audit', $insert_data);
+    }
+
+    public function auditAfterBadge($event, $badge_id, $user_id, $audit_id=null)
+    {
+        $badge_data = $this->getBadgeToClient($badge_id);
+        $audit_log = array();
+        if ($audit_id){
+            $this->mongo_db->where('_id', new MongoID($audit_id));
+            $audit_log = $this->mongo_db->get('playbasis_badge_to_client_audit');
+        }
+
+        if ($audit_log){
+            $this->mongo_db->where('_id', new MongoID($audit_id));
+            $this->mongo_db->set('after', $badge_data);
+            $this->mongo_db->update('playbasis_badge_to_client_audit');
+        } else {
+            $insert_data = array('client_id' => $badge_data['client_id'],
+                                 'site_id' => $badge_data['site_id'],
+                                 'badge_id' => $badge_data['badge_id'],
+                                 'event' => $event,
+                                 'before' => null,
+                                 'after' => $badge_data,
+                                 'user_id' => $user_id);
+            $this->mongo_db->insert('playbasis_badge_to_client_audit', $insert_data);
+        }
+    }
+
     public function countItemCategory($client_id, $site_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -625,7 +662,7 @@ class Badge_model extends MY_Model
         $d = new MongoDate();
         $data['tags'] = isset($data['tags']) && $data['tags'] ? explode(',', $data['tags']) : null;
 
-        $this->mongo_db->insert('playbasis_badge_to_client', array(
+        return $this->mongo_db->insert('playbasis_badge_to_client', array(
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
             'badge_id' => new MongoID($data['badge_id']),

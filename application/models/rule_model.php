@@ -649,7 +649,7 @@ class Rule_model extends MY_Model
                 'date_added' => $d,
                 'date_modified' => $d
             ));
-
+            $this->auditAfterCustomPoint('insert', $res, isset($input['user']) ? $input['user'] : null );
             if ($res) {
                 return $response(true);
             } else {
@@ -658,6 +658,7 @@ class Rule_model extends MY_Model
         } else {
             // check that this rule is from template or not
             $rule = $this->getById($input['rule_id']);
+            $audit_id = $this->auditBeforeCustomPoint('update',$input['rule_id'], isset($input['user']) ? $input['user'] : null);
             if ($rule) {
                 $this->mongo_db->where('_id', new MongoID($input['rule_id']));
                 $this->mongo_db->set('client_id', $input['client_id'] ? new MongoID($input['client_id']) : null);
@@ -673,6 +674,7 @@ class Rule_model extends MY_Model
                     $this->mongo_db->unset_field('clone_id');
                 }
                 if ($this->mongo_db->update('playbasis_rule')) {
+                    $this->auditAfterCustomPoint('update', $input['rule_id'], isset($input['user']) ? $input['user'] : null, $audit_id);
                     return $response(true);
                 }
             }
@@ -681,6 +683,42 @@ class Rule_model extends MY_Model
         }
     }
 
+    public function auditBeforeCustomPoint($event,$rule_id, $user_id)
+    {
+        $rule_data = $this->getById($rule_id);
+        $insert_data = array('client_id' => $rule_data['client_id'],
+                             'site_id' => $rule_data['site_id'],
+                             'rule_id' => $rule_data['_id'],
+                             'event' => $event,
+                             'before' => $rule_data,
+                             'user_id' => $user_id);
+        return $this->mongo_db->insert('playbasis_rule_audit', $insert_data);
+    }
+
+    public function auditAfterCustomPoint($event, $rule_id, $user_id, $audit_id=null)
+    {
+        $rule_data = $this->getById($rule_id);
+        $audit_log = array();
+        if ($audit_id){
+            $this->mongo_db->where('_id', new MongoID($audit_id));
+            $audit_log = $this->mongo_db->get('playbasis_rule_audit');
+        }
+
+        if ($audit_log){
+            $this->mongo_db->where('_id', new MongoID($audit_id));
+            $this->mongo_db->set('after', $rule_data);
+            $this->mongo_db->update('playbasis_rule_audit');
+        } else {
+            $insert_data = array('client_id' => $rule_data['client_id'],
+                                 'site_id' => $rule_data['site_id'],
+                                 'rule_id' => $rule_data['_id'],
+                                 'event' => $event,
+                                 'before' => null,
+                                 'after' => $rule_data,
+                                 'user_id' => $user_id);
+            $this->mongo_db->insert('playbasis_rule_audit', $insert_data);
+        }
+    }
     private function listRulesTemplate()
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -857,12 +895,12 @@ class Rule_model extends MY_Model
     public function deleteRule($ruleId, $siteId, $clientId)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
+        $audit_id = $this->auditBeforeCustomPoint('update',$ruleId, $this->session->userdata('user_id') ? $this->session->userdata('user_id') : null);
         $this->mongo_db->where('_id', new MongoID($ruleId));
         $this->mongo_db->where('site_id', $siteId);
         $this->mongo_db->where('client_id', $clientId);
         $res = $this->mongo_db->delete('playbasis_rule');
-
+        $this->auditAfterCustomPoint('update', $ruleId, isset($input['user']) ? $input['user'] : null, $audit_id);
         if ($res) {
             return array('success' => true, 'message' => $res);
         } else {

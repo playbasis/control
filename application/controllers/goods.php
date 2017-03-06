@@ -193,8 +193,7 @@ class Goods extends MY_Controller
                 if ($this->User_model->getClientId()) {
 
                     try {
-                        $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()),
-                            array($this->User_model->getSiteId()));
+                        $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
                         fclose($handle);
                         redirect('/goods', 'refresh');
@@ -215,8 +214,7 @@ class Goods extends MY_Controller
                         }
 
                         try {
-                            $this->addGoods($handle, $data, $redeem, array(new MongoId($goods_data['admin_client_id'])),
-                                $list_site_id);
+                            $this->addGoods($handle, $data, $redeem, array(new MongoId($goods_data['admin_client_id'])), $list_site_id);
                             fclose($handle);
                             redirect('/goods', 'refresh');
                         } catch (Exception $e) {
@@ -329,7 +327,8 @@ class Goods extends MY_Controller
                     $goods_data['client_id'] = $this->User_model->getClientId();
                     $goods_data['site_id'] = $this->User_model->getSiteId();
 
-                    $this->Goods_model->addGoodsToClient($goods_data);
+                    $goods_client_id = $this->Goods_model->addGoodsToClient($goods_data);
+                    $this->Goods_model->auditAfterGoods('insert', $goods_client_id, $this->User_model->getId());
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
@@ -349,23 +348,25 @@ class Goods extends MY_Controller
                         $clients_sites = $this->Client_model->getSitesByClientId($goods_data['admin_client_id']);
 
                         $goods_data['goods_id'] = $this->Goods_model->addGoods($goods_data);
-
                         $goods_data['client_id'] = $goods_data['admin_client_id'];
 
                         foreach ($clients_sites as $client) {
                             $goods_data['site_id'] = $client['_id'];
-                            $this->Goods_model->addGoodsToClient($goods_data);
+                            $goods_client_id = $this->Goods_model->addGoodsToClient($goods_data);
+                            $this->Goods_model->auditAfterGoods('insert', $goods_client_id, $this->User_model->getId());
                         }
+
                     } else {
                         $goods_data['goods_id'] = $this->Goods_model->addGoods($goods_data);
-
                         $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
-
                         foreach ($all_sites_clients as $site) {
                             $goods_data['site_id'] = $site['_id'];
                             $goods_data['client_id'] = $site['client_id'];
-                            $this->Goods_model->addGoodsToClient($goods_data);
+                            
+                            $goods_client_id = $this->Goods_model->addGoodsToClient($goods_data);
+                            $this->Goods_model->auditAfterGoods('insert', $goods_client_id, $this->User_model->getId());
                         }
+
                     }
                     redirect('/goods', 'refresh');
                 }
@@ -446,7 +447,6 @@ class Goods extends MY_Controller
                 try {
 
                     if ($this->User_model->getClientId()) {
-
                         if (!$this->Goods_model->checkGoodsIsSponsor($goods_id)) {
                             $goods_data['client_id'] = $this->User_model->getClientId();
                             $goods_data['site_id'] = $this->User_model->getSiteId();
@@ -458,23 +458,26 @@ class Goods extends MY_Controller
                                 if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && !empty($_FILES['file']['tmp_name'])) {
                                     $data = array_merge($this->input->post(), array('quantity' => 1));
                                     $handle = fopen($_FILES['file']['tmp_name'], "r");
-                                    $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()),
-                                        array($this->User_model->getSiteId()));
+                                    $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
                                     fclose($handle);
                                 }
-
                                 /* update all existing records in the group */
+                                $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
                                 $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
+                                $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
                             } else {
+                                $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
                                 $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
+                                $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
                             }
                         } else {
                             redirect('/goods', 'refresh');
                         }
                     } else {
                         $this->Goods_model->editGoods($goods_id, $goods_data);
-
+                        $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
                         $this->Goods_model->editGoodsToClientFromAdmin($goods_id, $goods_data);
+                        $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
                     }
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
@@ -512,17 +515,22 @@ class Goods extends MY_Controller
                         if (!$this->Goods_model->checkGoodsIsSponsor($goods_id)) {
                             $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
                             if ($goods_info && array_key_exists('group', $goods_info)) {
-                                $this->Goods_model->deleteGoodsGroupClient($goods_info['group'],
-                                    $this->User_model->getClientId(), $this->User_model->getSiteId());
+                                $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
+                                $this->Goods_model->deleteGoodsGroupClient($goods_info['group'], $this->User_model->getClientId(), $this->User_model->getSiteId());
+                                $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
                             } else {
+                                $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
                                 $this->Goods_model->deleteGoodsClient($goods_id);
+                                $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
                             }
                         } else {
                             redirect('/goods', 'refresh');
                         }
                     } else {
                         $this->Goods_model->deleteGoods($goods_id);
+                        $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
                         $this->Goods_model->deleteGoodsClientFromAdmin($goods_id);
+                        $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
                     }
 
                 }
@@ -1415,7 +1423,6 @@ class Goods extends MY_Controller
         if (isset($data['organize_role'])) {
             $template['organize_role'] = $data['organize_role'];
         }
-
         /* loop insert into playbasis_goods */
         while (($line = fgets($handle)) !== false) {
             $line = trim($line);
@@ -1444,6 +1451,7 @@ class Goods extends MY_Controller
             }
         }
 
+
         /* check limit for goods group */
         $site_id = $this->User_model->getSiteId();
         $usage = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id));
@@ -1452,9 +1460,11 @@ class Goods extends MY_Controller
         if ($limit !== null && $usage + count($list) > $limit) {
             throw new Exception('Cannot process your request because of uploaded goods will go over the limit');
         }
-
+        $this->Goods_model->addGoodsToClient_bulk($list);
+        $goods_data = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
+        $this->Goods_model->auditAfterGoods('insert', $goods_data['_id'], $this->User_model->getId());
         /* bulk insert into playbasis_goods_to_client */
-        return $this->Goods_model->addGoodsToClient_bulk($list);
+        return $data;
     }
 
     /* Returns a set of pagination links. The parameters are:
