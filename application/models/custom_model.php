@@ -92,7 +92,7 @@ class Custom_model extends MY_Model
         );
         
         if(isset($data['game_name'])){
-            $default['request.game_name'] = $data['game_name'];
+            $default['request.game_name'] = array('$in' => is_array($data['game_name']) ? $data['game_name'] : array($data['game_name']));
         }
 
         if(isset($data['ios']))

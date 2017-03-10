@@ -27,9 +27,12 @@ define('CLIENT_ID_HSBCHK', '5821d319be120b24548b45e6');
 define('SITE_ID_HSBCHK', '5821d3cfbe120ba34a8b6ede');
 define('CLIENT_ID_DBSHK', '57ce8150b350cf766d8bcde6');
 define('SITE_ID_DBSHK', '57ce8338b350cf680b8b4a02');
-define('DBS_GAME_NAME_1', '1');
-define('DBS_GAME_NAME_2', '2');
-define('DBS_GAME_NAME_3', '3');
+define('DBS_GAME_NAME_1', 'egg');
+define('DBS_GAME_NAME_1_1', 'EGG_GAME');
+define('DBS_GAME_NAME_2', 'pairs');
+define('DBS_GAME_NAME_2_1', 'PAIR_CARD_GAME');
+define('DBS_GAME_NAME_3', 'catch_item');
+define('DBS_GAME_NAME_3_1', 'CATCH_ENVELOP_GAME');
 define('ACTION_TRANSFER', 'transfer');
 define('DBS_DOLLAR', 'dbs-dollar');
 define('COMPASS_DOLLAR', 'compass-dollar');
@@ -2717,9 +2720,9 @@ class Cron extends CI_Controller
 
         $concurrent = $this->custom_model->getConcurrentUser(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER));
         $traffic = $this->custom_model->getTrafficAndUnique(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER));
-        $game1 = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'game_name' => DBS_GAME_NAME_1));
-        $game2 = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'game_name' => DBS_GAME_NAME_2));
-        $game3 = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'game_name' => DBS_GAME_NAME_3));
+        $game1 = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'game_name' => array(DBS_GAME_NAME_1 , DBS_GAME_NAME_1_1)));
+        $game2 = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'game_name' => array(DBS_GAME_NAME_2 , DBS_GAME_NAME_2_1)));
+        $game3 = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'game_name' => array(DBS_GAME_NAME_3 , DBS_GAME_NAME_3_1)));
         $ios = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'ios' => true));
         $android = $this->custom_model->getGameReport(array('client_id' => CLIENT_ID_DBSHK, 'site_id' => SITE_ID_DBSHK, 'from' => $from, 'to' => $to, 'uri' => 'Engine/rule', 'action' => ACTION_TRANSFER, 'ios' => false));
 
