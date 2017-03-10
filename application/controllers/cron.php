@@ -2835,14 +2835,7 @@ class Cron extends CI_Controller
         $email_to = array(
             'devteam@playbasis.com',
             'piya.p@playbasis.com',
-            'steffen.r@playbasis.com',
             'pongsakorn.r@playbasis.com',
-            'hazelchengky@dbs.com',
-            'emilyip@dbs.com',
-            'williamyu@dbs.com',
-            'DBSOmniTech@dbs.com',
-
-
         );
         $subject = '[Playbasis] DBS weekly report' . ' (' . $from . ' - ' . $to . ')';
         $message = "";
