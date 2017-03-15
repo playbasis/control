@@ -428,23 +428,22 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
-            $goods_data = $this->input->post();
-            if ($this->input->post('quantity') === false) {
-                $goods_data = array_merge($goods_data, array('quantity' => 1));
-            }
-            $goods_data['redeem'] = $redeem;
-
-            if ($this->User_model->hasPermission('access', 'store_org') &&
-                $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
-            ) {
-                if ($this->input->post('global_goods')) {
-                    $goods_data['organize_id'] = null;
-                    $goods_data['organize_role'] = null;
-                }
-            }
-
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 try {
+                    $goods_data = $this->input->post();
+                    if ($this->input->post('quantity') === false) {
+                        $goods_data = array_merge($goods_data, array('quantity' => 1));
+                    }
+                    $goods_data['redeem'] = $redeem;
+
+                    if ($this->User_model->hasPermission('access', 'store_org') &&
+                        $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+                    ) {
+                        if ($this->input->post('global_goods')) {
+                            $goods_data['organize_id'] = null;
+                            $goods_data['organize_role'] = null;
+                        }
+                    }
 
                     if ($this->User_model->getClientId()) {
                         if (!$this->Goods_model->checkGoodsIsSponsor($goods_id)) {
