@@ -1,49 +1,58 @@
 # Change Log
 
+## [2.30.0](https://github.com/playbasis/control/tree/2.30.0) (2017-03-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.29.0...2.30.0)
+
+**Fixed bugs:**
+
+- Hotfix/2.29.3/fix goods updating with trim [\#393](https://github.com/playbasis/control/pull/393) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+
+## [2.29.2/remove_customer_email_for_dbs](https://github.com/playbasis/control/tree/2.29.2/remove_customer_email_for_dbs) (2017-03-10)
+[Full Changelog](https://github.com/playbasis/control/compare/2.29.1/fix_dbs_report...2.29.2/remove_customer_email_for_dbs)
+
+**Implemented enhancements:**
+
+- Hotfix/2.29.2/remove customer email for dbs [\#392](https://github.com/playbasis/control/pull/392) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.29.1/fix_dbs_report](https://github.com/playbasis/control/tree/2.29.1/fix_dbs_report) (2017-03-10)
+[Full Changelog](https://github.com/playbasis/control/compare/2.29.0...2.29.1/fix_dbs_report)
+
+**Fixed bugs:**
+
+- Hotfix/2.29.1/fix dbs report [\#391](https://github.com/playbasis/control/pull/391) ([piya-playbasis](https://github.com/piya-playbasis))
+
 ## [2.29.0](https://github.com/playbasis/control/tree/2.29.0) (2017-03-06)
-[Full Changelog](https://github.com/playbasis/control/compare/2.28.0...2.29.0)
+[Full Changelog](https://github.com/playbasis/control/compare/2.28.5/fix_custompoint_normal_timeout...2.29.0)
 
 **Implemented enhancements:**
 
 - Hotfix/2.28.6/deeplink feedback in engine rule [\#388](https://github.com/playbasis/control/pull/388) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.28.5/fix custompoint normal timeout [\#387](https://github.com/playbasis/control/pull/387) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.28.4/date expire in normal goods [\#386](https://github.com/playbasis/control/pull/386) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.28.3/condition deeplink [\#385](https://github.com/playbasis/control/pull/385) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.28.2/support high volume goods in report [\#383](https://github.com/playbasis/control/pull/383) ([piya-playbasis](https://github.com/piya-playbasis))
 
 **Fixed bugs:**
 
 - Hotfix/2.28.8/fix setting sort order of goods [\#390](https://github.com/playbasis/control/pull/390) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 - Hotfix/2.28.7/bug in custompoint controller [\#389](https://github.com/playbasis/control/pull/389) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
-
-## [2.28.5/fix_custompoint_normal_timeout](https://github.com/playbasis/control/tree/2.28.5/fix_custompoint_normal_timeout) (2017-02-22)
-[Full Changelog](https://github.com/playbasis/control/compare/2.28.4/date_expire_in_normal_goods...2.28.5/fix_custompoint_normal_timeout)
-
-**Implemented enhancements:**
-
-- Hotfix/2.28.5/fix custompoint normal timeout [\#387](https://github.com/playbasis/control/pull/387) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.28.4/date_expire_in_normal_goods](https://github.com/playbasis/control/tree/2.28.4/date_expire_in_normal_goods) (2017-02-22)
-[Full Changelog](https://github.com/playbasis/control/compare/2.28.2/support_high_volume_goods_in_report...2.28.4/date_expire_in_normal_goods)
-
-**Implemented enhancements:**
-
-- Hotfix/2.28.4/date expire in normal goods [\#386](https://github.com/playbasis/control/pull/386) ([piya-playbasis](https://github.com/piya-playbasis))
-- Hotfix/2.28.3/condition deeplink [\#385](https://github.com/playbasis/control/pull/385) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.28.1/fix goods disable [\#382](https://github.com/playbasis/control/pull/382) ([piya-playbasis](https://github.com/piya-playbasis))
 
 **Merged pull requests:**
 
 - audit dashbaord for rule badge goods custompoint [\#384](https://github.com/playbasis/control/pull/384) ([piya-playbasis](https://github.com/piya-playbasis))
 
+## [2.28.5/fix_custompoint_normal_timeout](https://github.com/playbasis/control/tree/2.28.5/fix_custompoint_normal_timeout) (2017-02-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.28.4/date_expire_in_normal_goods...2.28.5/fix_custompoint_normal_timeout)
+
+## [2.28.4/date_expire_in_normal_goods](https://github.com/playbasis/control/tree/2.28.4/date_expire_in_normal_goods) (2017-02-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.28.2/support_high_volume_goods_in_report...2.28.4/date_expire_in_normal_goods)
+
 ## [2.28.2/support_high_volume_goods_in_report](https://github.com/playbasis/control/tree/2.28.2/support_high_volume_goods_in_report) (2017-02-17)
 [Full Changelog](https://github.com/playbasis/control/compare/2.28.1/fix_goods_disable...2.28.2/support_high_volume_goods_in_report)
 
-**Implemented enhancements:**
-
-- Hotfix/2.28.2/support high volume goods in report [\#383](https://github.com/playbasis/control/pull/383) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.28.1/fix_goods_disable](https://github.com/playbasis/control/tree/2.28.1/fix_goods_disable) (2017-02-16)
 [Full Changelog](https://github.com/playbasis/control/compare/2.28.0...2.28.1/fix_goods_disable)
-
-**Fixed bugs:**
-
-- Hotfix/2.28.1/fix goods disable [\#382](https://github.com/playbasis/control/pull/382) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.28.0](https://github.com/playbasis/control/tree/2.28.0) (2017-02-16)
 [Full Changelog](https://github.com/playbasis/control/compare/2.27.7/fix_download_goods_report_oversize_ram_limit...2.28.0)
