@@ -55,19 +55,27 @@ class Report_weekly extends CI_Controller
         $this->load->library('rssparser');
     }
 
-    public function generate($ref = null)
+    public function generate($indicated = null,$ref = null)
     {
         $msg = array();
         $this->utility->elapsed_time('report');
 
         /* init */
-        $allowed_site_ids = array( // true = send email, false = will not send
-            SITE_ID_TRUE_MONEY => true,
-            SITE_ID_DIGI => true,
-            SITE_ID_UNILEVER => true,
-            SITE_ID_DBS => true,
-            SITE_ID_HSBC => true
-        );
+        if ($indicated && ($indicated != "null")) {
+            $allowed_site_ids = array(
+                $indicated => true,
+            );
+        } else {
+            $allowed_site_ids = array( // true = send email, false = will not send
+                SITE_ID_TRUE_MONEY => true,
+                SITE_ID_UNILEVER => true,
+                SITE_ID_DBS => true,
+                SITE_ID_HSBC => true
+            );
+        }
+        
+        
+        
         $to_pbteam_email = array(
             'devteam@playbasis.com',
             'notjiam@gmail.com',
@@ -175,39 +183,41 @@ class Report_weekly extends CI_Controller
         $master['CLIENTS'] = $master_clients;
         log_message('debug', 'master = ' . print_r($master, true));
 
-        $html = $this->parser->parse('report_master.html', $master, true);
-        $this->utility->save_file($conf['report_dir'] . $master['DIR'], $master['FILE'],
-            str_replace('{' . CANNOT_VIEW_EMAIL . '}', '', $html));
-        log_message('debug', 'html = ' . print_r($html, true));
-
-        $pdf_html = $this->parser->parse('report_master_pdf.html', $master, true);
-        $this->utility->save_file($conf['report_dir'] . $master['DIR'],
-            str_replace('.html', '.pdf.html', $master['FILE']), $pdf_html);
-        log_message('debug', 'pdf_html = ' . print_r($pdf_html, true));
-
-        if ($conf['report_pdf']) {
-            $pdf = $this->utility->html2mpdf($pdf_html, true);
+        if(!$indicated || ($indicated == "null")){
+            $html = $this->parser->parse('report_master.html', $master, true);
+            $this->utility->save_file($conf['report_dir'] . $master['DIR'], $master['FILE'],
+                str_replace('{' . CANNOT_VIEW_EMAIL . '}', '', $html));
+            log_message('debug', 'html = ' . print_r($html, true));
+    
+            $pdf_html = $this->parser->parse('report_master_pdf.html', $master, true);
             $this->utility->save_file($conf['report_dir'] . $master['DIR'],
-                str_replace('.html', '.pdf', $master['FILE']), $pdf);
-            log_message('debug', 'pdf = DONE');
-        }
-
-        if ($conf['report_email']) {
-            $this->utility->elapsed_time('email');
-            $email_to = $to_pbteam_email;
-            $subject = '[Playbasis] Weekly Master Report' . ' (' . $master['FROM'] . ' - ' . $master['TO'] . ')';
-            $message = str_replace('{' . CANNOT_VIEW_EMAIL . '}',
-                '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="' . $master['REPORT_URL'] . '" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>',
-                $html);
-            $file_path = $conf['report_dir'] . $master['DIR'] . '/' . str_replace('.html', '.pdf', $master['FILE']);
-            $file_name = 'report-master-' . str_replace('.html', '.pdf', $master['FILE']);
-            $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message,
-                'If you cannot view this email, please visit ' . $master['REPORT_URL'],
-                $conf['report_pdf'] ? array($file_path => $file_name) : array());
-            $this->email_model->log(EMAIL_TYPE_REPORT, null, null, $resp, EMAIL_FROM, $email_to, $subject, $message,
-                'If you cannot view this email, please visit ' . $master['REPORT_URL'], array());
-            log_message('debug', 'email = ' . print_r($resp, true));
-            log_message('debug', 'Elapsed time = ' . $this->utility->elapsed_time('email') . ' sec (email)');
+                str_replace('.html', '.pdf.html', $master['FILE']), $pdf_html);
+            log_message('debug', 'pdf_html = ' . print_r($pdf_html, true));
+    
+            if ($conf['report_pdf']) {
+                $pdf = $this->utility->html2mpdf($pdf_html, true);
+                $this->utility->save_file($conf['report_dir'] . $master['DIR'],
+                    str_replace('.html', '.pdf', $master['FILE']), $pdf);
+                log_message('debug', 'pdf = DONE');
+            }
+    
+            if ($conf['report_email']) {
+                $this->utility->elapsed_time('email');
+                $email_to = $to_pbteam_email;
+                $subject = '[Playbasis] Weekly Master Report' . ' (' . $master['FROM'] . ' - ' . $master['TO'] . ')';
+                $message = str_replace('{' . CANNOT_VIEW_EMAIL . '}',
+                    '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="' . $master['REPORT_URL'] . '" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>',
+                    $html);
+                $file_path = $conf['report_dir'] . $master['DIR'] . '/' . str_replace('.html', '.pdf', $master['FILE']);
+                $file_name = 'report-master-' . str_replace('.html', '.pdf', $master['FILE']);
+                $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message,
+                    'If you cannot view this email, please visit ' . $master['REPORT_URL'],
+                    $conf['report_pdf'] ? array($file_path => $file_name) : array());
+                $this->email_model->log(EMAIL_TYPE_REPORT, null, null, $resp, EMAIL_FROM, $email_to, $subject, $message,
+                    'If you cannot view this email, please visit ' . $master['REPORT_URL'], array());
+                log_message('debug', 'email = ' . print_r($resp, true));
+                log_message('debug', 'Elapsed time = ' . $this->utility->elapsed_time('email') . ' sec (email)');
+            }
         }
 
         log_message('debug', 'Elapsed time = ' . $this->utility->elapsed_time('report') . ' sec (report)');
