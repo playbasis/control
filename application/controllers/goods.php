@@ -452,7 +452,7 @@ class Goods extends MY_Controller
                             $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
                             $goods_data['goods_id'] = $goods_info['goods_id'];
                             if ($goods_info && array_key_exists('group', $goods_info)) {
-
+                                $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
                                 /* if there is an uploaded file, then import it into the group */
                                 if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && !empty($_FILES['file']['tmp_name'])) {
                                     $data = array_merge($this->input->post(), array('quantity' => 1));
@@ -461,8 +461,12 @@ class Goods extends MY_Controller
                                     fclose($handle);
                                 }
                                 /* update all existing records in the group */
-                                $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
                                 $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
+                                if ($goods_info['group'] != $goods_data['name']){
+                                    $this->Goods_model->editGoodsGroupLog($goods_info['group'], $goods_data);
+                                    $this->Goods_model->editGoodsGroupPLayer($goods_info['group'], $goods_data);
+                                }
+
                                 $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
                             } else {
                                 $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
