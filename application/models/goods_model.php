@@ -918,6 +918,24 @@ class Goods_model extends MY_Model
         $this->mongo_db->update_all('playbasis_goods_to_client');
     }
 
+    public function editGoodsGroupLog($group, $data)
+    {
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->set('group', $data['name']);
+        $this->mongo_db->update_all('playbasis_goods_log');
+    }
+
+    public function editGoodsGroupPLayer($group, $data)
+    {
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->set('group', $data['name']);
+        $this->mongo_db->update_all('playbasis_goods_to_player');
+    }
+
     public function editGoodsToClientFromAdmin($goods_id, $data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
