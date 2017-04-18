@@ -18,6 +18,8 @@ $lang = array(
     'column_action'                     => 'Action',
     'button_clear_filter'               => 'Clear Filter',
     'button_filter'                     => 'Filter',
+    'button_import'                     => 'Import',
+    'button_export'                     => 'Export',
     'tab_general'                       => 'General',
     'tab_mission'                       => 'Manage Mission',
     'text_confirm'                      => 'Are you sure you want to delete?',
@@ -37,7 +39,11 @@ $lang = array(
     'entry_energy_loss_based'           => 'Loss based',
     'entry_energy_changing_period'      => 'Changing period',
     'entry_energy_changing_per_period'  => 'Energy changing per period',
-    'entry_tags'                        => 'Tags'
+    'entry_tags'                        => 'Tags',
+    'entry_file'                        => 'JSON File To Import',
+    'text_error_duplicate_custom_point' => 'The Currency is already exist!',
+    'error_permission_import'           => 'Warning: You do not have permission to import Currency!',
+    'error_permission_import'           => 'Warning: You do not have permission to import Currency!'
 
 );
 
