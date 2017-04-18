@@ -1,25 +1,38 @@
 # Change Log
+## [2.31.0](https://github.com/playbasis/control/tree/2.31.0) (2017-04-18)
+[Full Changelog](https://github.com/playbasis/control/compare/2.30.0...2.31.0)
 
-## [2.30.0](https://github.com/playbasis/control/tree/2.30.0) (2017-03-16)
-[Full Changelog](https://github.com/playbasis/control/compare/2.29.0...2.30.0)
+## [2.30.2/fix_report_issue_due_to_change_group_name](https://github.com/playbasis/control/tree/2.30.2/fix_report_issue_due_to_change_group_name) (2017-03-28)
+[Full Changelog](https://github.com/playbasis/control/compare/2.30.1/indicated_site_in_weekly_report...2.30.2/fix_report_issue_due_to_change_group_name)
 
 **Fixed bugs:**
 
-- Hotfix/2.29.3/fix goods updating with trim [\#393](https://github.com/playbasis/control/pull/393) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.30.2/fix report issue due to change group name [\#395](https://github.com/playbasis/control/pull/395) ([piya-playbasis](https://github.com/piya-playbasis))
 
-## [2.29.2/remove_customer_email_for_dbs](https://github.com/playbasis/control/tree/2.29.2/remove_customer_email_for_dbs) (2017-03-10)
-[Full Changelog](https://github.com/playbasis/control/compare/2.29.1/fix_dbs_report...2.29.2/remove_customer_email_for_dbs)
+## [2.30.1/indicated_site_in_weekly_report](https://github.com/playbasis/control/tree/2.30.1/indicated_site_in_weekly_report) (2017-03-20)
+[Full Changelog](https://github.com/playbasis/control/compare/2.30.0...2.30.1/indicated_site_in_weekly_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.30.1/indicated site in weekly report [\#394](https://github.com/playbasis/control/pull/394) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.30.0](https://github.com/playbasis/control/tree/2.30.0) (2017-03-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.29.2/remove_customer_email_for_dbs...2.30.0)
 
 **Implemented enhancements:**
 
 - Hotfix/2.29.2/remove customer email for dbs [\#392](https://github.com/playbasis/control/pull/392) ([piya-playbasis](https://github.com/piya-playbasis))
 
-## [2.29.1/fix_dbs_report](https://github.com/playbasis/control/tree/2.29.1/fix_dbs_report) (2017-03-10)
-[Full Changelog](https://github.com/playbasis/control/compare/2.29.0...2.29.1/fix_dbs_report)
-
 **Fixed bugs:**
 
+- Hotfix/2.29.3/fix goods updating with trim [\#393](https://github.com/playbasis/control/pull/393) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 - Hotfix/2.29.1/fix dbs report [\#391](https://github.com/playbasis/control/pull/391) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.29.2/remove_customer_email_for_dbs](https://github.com/playbasis/control/tree/2.29.2/remove_customer_email_for_dbs) (2017-03-10)
+[Full Changelog](https://github.com/playbasis/control/compare/2.29.1/fix_dbs_report...2.29.2/remove_customer_email_for_dbs)
+
+## [2.29.1/fix_dbs_report](https://github.com/playbasis/control/tree/2.29.1/fix_dbs_report) (2017-03-10)
+[Full Changelog](https://github.com/playbasis/control/compare/2.29.0...2.29.1/fix_dbs_report)
 
 ## [2.29.0](https://github.com/playbasis/control/tree/2.29.0) (2017-03-06)
 [Full Changelog](https://github.com/playbasis/control/compare/2.28.5/fix_custompoint_normal_timeout...2.29.0)
