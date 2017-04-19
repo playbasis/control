@@ -94,6 +94,8 @@ class Goods extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/import';
+        $referred_page = explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']);
+        $this->data['refer_page'] = $referred_page[1];
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_group'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
@@ -264,6 +266,8 @@ class Goods extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/insert';
+        $referred_page = explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']);
+        $this->data['refer_page'] = strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
@@ -331,8 +335,8 @@ class Goods extends MY_Controller
                     $this->Goods_model->auditAfterGoods('insert', $goods_client_id, $this->User_model->getId());
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
-
-                    redirect('/goods', 'refresh');
+                    $this->session->set_flashdata('refer_page', $goods_data['refer_page']);
+                    redirect('/goods/update/'.$goods_client_id, 'refresh');
                 } else {
 
                     $this->load->model('Client_model');
@@ -368,7 +372,9 @@ class Goods extends MY_Controller
                         }
 
                     }
-                    redirect('/goods', 'refresh');
+                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                    $this->session->set_flashdata('refer_page', $goods_data['refer_page']);
+                    redirect('/goods/update/'.$goods_data['goods_id'], 'refresh');
                 }
             }
         }
@@ -382,7 +388,21 @@ class Goods extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/update/' . $goods_id;
+        $referred_page = explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']);
+        $this->data['refer_page'] = strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
 
+        if (isset($this->session->data['success'])) {
+            $this->data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $this->data['success'] = '';
+        }
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('reward_point', $this->lang->line('entry_point'),
@@ -474,7 +494,7 @@ class Goods extends MY_Controller
                                 $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
                             }
                         } else {
-                            redirect('/goods', 'refresh');
+                            redirect($_SERVER['HTTP_REFERER'], 'refresh');
                         }
                     } else {
                         $this->Goods_model->editGoods($goods_id, $goods_data);
@@ -484,8 +504,8 @@ class Goods extends MY_Controller
                     }
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-
-                    redirect('/goods', 'refresh');
+                    $this->session->set_flashdata('refer_page', $goods_data['refer_page']);
+                    redirect('/goods/update/'.$goods_id, 'refresh');
 
                 } catch (Exception $e) {
                     $this->data['message'] = $e->getMessage();
@@ -540,7 +560,7 @@ class Goods extends MY_Controller
             }
 
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/goods', 'refresh');
+            redirect($_SERVER['HTTP_REFERER'], 'refresh');
         }
 
         $this->getList(0);
@@ -707,7 +727,7 @@ class Goods extends MY_Controller
         $this->load->library('pagination');
 
         $config['base_url'] = site_url('goods/page');
-
+        $parameter_url = "?";
         $this->load->model('Image_model');
 
         $site_id = $this->User_model->getSiteId();
@@ -775,7 +795,12 @@ class Goods extends MY_Controller
                 );
             }
         } else {
-            $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'));
+            if (isset($_GET['filter_goods'])) {
+                $parameter_url .= "&filter_category=" . $_GET['filter_goods'];
+                $filter_goods = $_GET['filter_goods'];
+            }
+
+            $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'), false , isset($filter_goods) && $filter_goods ? $filter_goods : null);
             $in_goods = array();
             foreach ($group_list as $group_name){
                 $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name,false);
@@ -784,14 +809,16 @@ class Goods extends MY_Controller
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId(array(
                 'site_id' => $site_id,
                 'sort' => 'sort_order',
-                'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ))
+                'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) )),
+                'filter_name' => isset($filter_goods) && $filter_goods ? $filter_goods : null
             ));
             $goods_list = $this->Goods_model->getGoodsBySiteId(array(
                 'site_id' => $site_id,
                 'limit' => $per_page,
                 'start' => $offset,
                 'sort' => 'sort_order',
-                'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ))
+                'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) )),
+                'filter_name' => isset($filter_goods) && $filter_goods ? $filter_goods : null
             ));
 
             $this->data['no_image'] = S3_IMAGE . "cache/no_image-50x50.jpg";
@@ -851,6 +878,9 @@ class Goods extends MY_Controller
         } else {
             $this->data['success'] = '';
         }
+
+        $config['suffix'] =  $parameter_url == "?" ? "" : $parameter_url;
+        $config['first_url'] = $parameter_url == "?" ? $config['base_url'] : $config['base_url'].$parameter_url;
 
         $config['total_rows'] = $goods_total;
         $config['per_page'] = $per_page;

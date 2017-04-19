@@ -4,12 +4,15 @@
 <div class="cover"></div>
 <link rel="stylesheet" media="screen" type="text/css" href="<?php echo base_url();?>stylesheet/goods/style.css" />
 <div id="content" class="span10">
+    <?php if ($this->session->flashdata('success')) { ?>
+        <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
+    <?php } ?>
     <div class="box">
         <div class="heading">
             <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="<?php if($is_group){ ?> fromcheck() <?php }else{ ?> $('#form').submit(); <?php } ?>" type="button"><?php echo $this->lang->line('button_save'); ?></button>
-                <button class="btn btn-info" onclick="location = baseUrlPath+'goods'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+                <button class="btn btn-info" onclick="location = baseUrlPath+'<?php echo $this->session->flashdata('refer_page') ? $this->session->flashdata('refer_page') : $refer_page; ?>'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div>
         </div>
         <div class="content">
@@ -44,6 +47,7 @@
             ?>
                 <div id="tab-general">
                         <table class="form">
+                            <input type="hidden" name="refer_page" value="<?php echo $this->session->flashdata('refer_page') ? $this->session->flashdata('refer_page') : $refer_page; ?>" id="refer_page" />
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line($is_group ? 'entry_group' : 'entry_name'); ?>:</td>
                                 <td><input type="text" name="name" size="100" value="<?php echo $is_group ? (isset($group) ? $group : set_value('group')) : (isset($name) ? $name : set_value('name')); ?>" /></td>

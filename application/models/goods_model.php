@@ -325,7 +325,7 @@ class Goods_model extends MY_Model
         return $results ? $results['result'] : array();
     }
 
-    public function getGroupsList($site_id, $digi=false)
+    public function getGroupsList($site_id, $digi=false, $filter_group=null)
     {
         $this->set_site_mongodb($site_id);
         if($digi){
@@ -333,6 +333,12 @@ class Goods_model extends MY_Model
         } else {
             $this->mongo_db->where('site_id', new MongoId($site_id));
         }
+        
+        if($filter_group){
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($filter_group)) . "/i");
+            $this->mongo_db->where('group', $regex);
+        }
+        
         $this->mongo_db->where('deleted', false);
         return $this->mongo_db->distinct('group', 'playbasis_goods_to_client');
     }

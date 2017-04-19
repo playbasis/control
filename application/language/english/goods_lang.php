@@ -1,5 +1,6 @@
 <?php
 // Heading
+$lang['title']                          = 'Goods';
 $lang['heading_title']                  = 'Goods';
 $lang['heading_title_goods_list']       = 'Goods List';
 $lang['heading_title_mark_as_used']     = 'Mark as Used';
@@ -19,6 +20,9 @@ $lang['text_no_redeemed_goods']         = 'You do not have any goods redeemed';
 
 // Button
 $lang['button_import']                  = 'Import';
+
+$lang['button_filter']                  = 'Filter';
+$lang['button_clear_filter']            = 'Clear';
 
 // Tab
 $lang['tab_colection']                  = 'Collection';

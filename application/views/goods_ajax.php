@@ -25,6 +25,22 @@ echo form_open('goods/delete',$attributes);
             <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
         </tr>
         </thead>
+        <tr class="filter">
+            <td></td>
+            <td></td>
+            <td class="right" ><input style="width:95%;" title="filter_goods" type="text" name="filter_goods" value="<?php echo isset($_GET['filter_goods']) ? $_GET['filter_goods'] : "" ?>"/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="right">
+                <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
+                <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+            </td>
+        </tr>
         <tbody>
         <?php if (isset($goods_list)) { ?>
             <?php foreach ($goods_list as $goods) { ?>

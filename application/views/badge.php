@@ -63,7 +63,7 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
-                                                <td class="right"><input title="category" type="text" name="filter_category" value="<?php echo isset($_GET['filter_category']) ? $_GET['filter_category'] : "" ?>"/></td>
+                                                <td class="right"><input title="category" style="width: 90px;" type="text" name="filter_category" value="<?php echo isset($_GET['filter_category']) ? $_GET['filter_category'] : "" ?>"/></td>
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
