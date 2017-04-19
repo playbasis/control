@@ -66,6 +66,22 @@
                                 <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                             </tr>
                             </thead>
+                            <tr class="filter">
+                                <td></td>
+                                <td></td>
+                                <td class="right" ><input style="width:95%;" title="filter_goods" type="text" name="filter_goods" value="<?php echo isset($_GET['filter_goods']) ? $_GET['filter_goods'] : "" ?>"/></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="right">
+                                    <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
+                                    <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                                </td>
+                            </tr>
                             <tbody>
                             <?php if (isset($goods_list) && $goods_list) { ?>
                                 <?php foreach ($goods_list as $goods) { ?>
@@ -318,6 +334,27 @@
         $markAsUsedTable = $('#MarkAsUsedTable'),
         marked_goods_id;
 
+    <?php if (!isset($_GET['filter_goods'])){?>
+    $("#clear_filter").hide();
+    <?php }else{?>
+    $("#clear_filter").show();
+    <?php }?>
+
+    function clear_filter() {
+        window.location.replace(baseUrlPath + 'goods');
+    }
+    function filter() {
+        url = baseUrlPath + 'goods';
+
+        var filter_goods = $('input[name=\'filter_goods\']').attr('value');
+
+        if (filter_goods) {
+            url += '?filter_goods=' + encodeURIComponent(filter_goods);
+        }
+
+        location = url;
+    }
+    
     $('#goods')
         .on("click", ".push_down", function (e) {
             e.preventDefault();
