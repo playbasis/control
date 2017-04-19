@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']              = 'Quiz';
+$lang['title']                      = 'Quiz';
 
 
 $lang['quiz_name']                  = 'Name';
