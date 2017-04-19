@@ -661,6 +661,8 @@ class Quiz extends MY_Controller
 
         $array_quizs = array();
         foreach($this->input->post('array_quizs') as $quiz_id){
+            if($quiz_id == "on")continue;
+
             $quiz_info = $this->Quiz_model->getQuiz($quiz_id);
             unset($quiz_info['_id']);
 
