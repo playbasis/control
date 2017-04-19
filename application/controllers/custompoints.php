@@ -106,30 +106,35 @@ class Custompoints extends MY_Controller
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 $custompoints_data = $this->input->post();
 
-                $data['client_id'] = $this->User_model->getClientId();
-                $data['site_id'] = $this->User_model->getSiteId();
-                $data['name'] = $custompoints_data['name'];
-                $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
-                $data['per_user'] = isset($custompoints_data['per_user']) && !is_null($custompoints_data['per_user']) && $custompoints_data['per_user'] !== "" ? intval($custompoints_data['per_user']) : null;
-                $data['limit_per_day'] = isset($custompoints_data['limit_per_day']) && !is_null($custompoints_data['limit_per_day']) && $custompoints_data['limit_per_day'] !== "" ? intval($custompoints_data['limit_per_day']) : null;
-                $limit_start_time = isset($custompoints_data['limit_start_time']) && !is_null($custompoints_data['limit_start_time']) && $custompoints_data['limit_start_time'] !== "" ? $custompoints_data['limit_start_time'] : "00:00";
-                $data['limit_start_time'] = is_null($data['limit_per_day']) || $data['limit_per_day'] == 0 ? "00:00" : $limit_start_time;
-                $data['pending'] = isset($custompoints_data['pending']) && !empty($custompoints_data['pending']) ? $custompoints_data['pending'] : false;
-                $data['status'] = true;
-                $data['type'] = $custompoints_data['type_custompoint'];
-                if ($custompoints_data['type_custompoint'] != "normal") {
-                    $data['maximum'] = $custompoints_data['energy_maximum'];
-                    $data['changing_period'] = $custompoints_data['energy_changing_period'];
-                    $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
-                }
-                $data['tags'] = $custompoints_data['tags'];
+                $chk_name = $this->Custompoints_model->getCustompointByName( $site_id, $custompoints_data['name']);
+                if($chk_name){
+                    $this->data['message'] = $this->lang->line('text_error_duplicate_custom_point');
+                }else {
+                    $data['client_id'] = $this->User_model->getClientId();
+                    $data['site_id'] = $this->User_model->getSiteId();
+                    $data['name'] = $custompoints_data['name'];
+                    $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
+                    $data['per_user'] = isset($custompoints_data['per_user']) && !is_null($custompoints_data['per_user']) && $custompoints_data['per_user'] !== "" ? intval($custompoints_data['per_user']) : null;
+                    $data['limit_per_day'] = isset($custompoints_data['limit_per_day']) && !is_null($custompoints_data['limit_per_day']) && $custompoints_data['limit_per_day'] !== "" ? intval($custompoints_data['limit_per_day']) : null;
+                    $limit_start_time = isset($custompoints_data['limit_start_time']) && !is_null($custompoints_data['limit_start_time']) && $custompoints_data['limit_start_time'] !== "" ? $custompoints_data['limit_start_time'] : "00:00";
+                    $data['limit_start_time'] = is_null($data['limit_per_day']) || $data['limit_per_day'] == 0 ? "00:00" : $limit_start_time;
+                    $data['pending'] = isset($custompoints_data['pending']) && !empty($custompoints_data['pending']) ? $custompoints_data['pending'] : false;
+                    $data['status'] = true;
+                    $data['type'] = $custompoints_data['type_custompoint'];
+                    if ($custompoints_data['type_custompoint'] != "normal") {
+                        $data['maximum'] = $custompoints_data['energy_maximum'];
+                        $data['changing_period'] = $custompoints_data['energy_changing_period'];
+                        $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
+                    }
+                    $data['tags'] = $custompoints_data['tags'];
 
-                $insert = $this->Custompoints_model->insertCustompoints($data);
-                $custompoints_data = $this->Custompoints_model->getCustompointById($insert);
-                $this->Custompoints_model->auditAfterCustomPoint('insert', $custompoints_data['reward_id'], $this->User_model->getId());
-                if ($insert) {
-                    if($data['type'] == "normal" || $this->initPlayerPoint($data)){
-                        redirect('/custompoints', 'refresh');
+                    $insert = $this->Custompoints_model->insertCustompoints($data);
+                    $custompoints_data = $this->Custompoints_model->getCustompointById($insert);
+                    $this->Custompoints_model->auditAfterCustomPoint('insert', $custompoints_data['reward_id'], $this->User_model->getId());
+                    if ($insert) {
+                        if ($data['type'] == "normal" || $this->initPlayerPoint($data)) {
+                            redirect('/custompoints', 'refresh');
+                        }
                     }
                 }
             }
@@ -397,29 +402,35 @@ class Custompoints extends MY_Controller
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 $custompoints_data = $this->input->post();
 
-                $data['client_id'] = $this->User_model->getClientId();
-                $data['site_id'] = $this->User_model->getSiteId();
-                $data['reward_id'] = $custompoints_id;
-                $data['name'] = $custompoints_data['name'];
-                $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
-                $data['per_user'] = isset($custompoints_data['per_user']) && !is_null($custompoints_data['per_user']) && $custompoints_data['per_user'] !== "" ? intval($custompoints_data['per_user']) : null;
-                $data['limit_per_day'] = isset($custompoints_data['limit_per_day']) && !is_null($custompoints_data['limit_per_day']) && $custompoints_data['limit_per_day'] !== "" ? intval($custompoints_data['limit_per_day']) : null;
-                $limit_start_time = isset($custompoints_data['limit_start_time']) && !is_null($custompoints_data['limit_start_time']) && $custompoints_data['limit_start_time'] !== "" ? $custompoints_data['limit_start_time'] : "00:00";
-                $data['limit_start_time'] = is_null($data['limit_per_day']) || $data['limit_per_day'] == 0 ? null : $limit_start_time;
-                $data['pending'] = isset($custompoints_data['pending']) && !empty($custompoints_data['pending']) ? $custompoints_data['pending'] : false;
-                $data['type'] = $custompoints_data['type_custompoint'];
-                if ($custompoints_data['type_custompoint'] != "normal") {
-                    $data['maximum'] = $custompoints_data['energy_maximum'];
-                    $data['changing_period'] = $custompoints_data['energy_changing_period'];
-                    $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
-                }
-                $data['tags'] = $custompoints_data['tags'];
+                $chk_name = $this->Custompoints_model->getCustompointByNameButNotID( $this->User_model->getSiteId(), $custompoints_data['name'], $custompoints_id);
+                if($chk_name){
+                    $this->data['message'] = $this->lang->line('text_error_duplicate_custom_point');
+                }else {
 
-                $audit_id = $this->Custompoints_model->auditBeforeCustomPoint('update', $custompoints_id, $this->User_model->getId());
-                $update = $this->Custompoints_model->updateCustompoints($data);
-                $this->Custompoints_model->auditAfterCustomPoint('update', $custompoints_id, $this->User_model->getId(), $audit_id);
-                if ($update) {
-                    redirect('/custompoints', 'refresh');
+                    $data['client_id'] = $this->User_model->getClientId();
+                    $data['site_id'] = $this->User_model->getSiteId();
+                    $data['reward_id'] = $custompoints_id;
+                    $data['name'] = $custompoints_data['name'];
+                    $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
+                    $data['per_user'] = isset($custompoints_data['per_user']) && !is_null($custompoints_data['per_user']) && $custompoints_data['per_user'] !== "" ? intval($custompoints_data['per_user']) : null;
+                    $data['limit_per_day'] = isset($custompoints_data['limit_per_day']) && !is_null($custompoints_data['limit_per_day']) && $custompoints_data['limit_per_day'] !== "" ? intval($custompoints_data['limit_per_day']) : null;
+                    $limit_start_time = isset($custompoints_data['limit_start_time']) && !is_null($custompoints_data['limit_start_time']) && $custompoints_data['limit_start_time'] !== "" ? $custompoints_data['limit_start_time'] : "00:00";
+                    $data['limit_start_time'] = is_null($data['limit_per_day']) || $data['limit_per_day'] == 0 ? null : $limit_start_time;
+                    $data['pending'] = isset($custompoints_data['pending']) && !empty($custompoints_data['pending']) ? $custompoints_data['pending'] : false;
+                    $data['type'] = $custompoints_data['type_custompoint'];
+                    if ($custompoints_data['type_custompoint'] != "normal") {
+                        $data['maximum'] = $custompoints_data['energy_maximum'];
+                        $data['changing_period'] = $custompoints_data['energy_changing_period'];
+                        $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
+                    }
+                    $data['tags'] = $custompoints_data['tags'];
+
+                    $audit_id = $this->Custompoints_model->auditBeforeCustomPoint('update', $custompoints_id, $this->User_model->getId());
+                    $update = $this->Custompoints_model->updateCustompoints($data);
+                    $this->Custompoints_model->auditAfterCustomPoint('update', $custompoints_id, $this->User_model->getId(), $audit_id);
+                    if ($update) {
+                        redirect('/custompoints', 'refresh');
+                    }
                 }
             }
         }
@@ -504,6 +515,87 @@ class Custompoints extends MY_Controller
             }
         }
         return $completed_flag;
+    }
+
+    public function importCustompoint()
+    {
+        if (!$this->input->post('array_custompoints')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission_import'));
+            return;
+        }
+
+        $array_custompoints = json_decode($this->input->post('array_custompoints'),true);
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $validation_result = array();
+        foreach($array_custompoints as $custompoint){
+            $check_name = $this->Custompoints_model->getCustompointByName($site_id, $custompoint['name']);
+            if($check_name){
+                $validation_result[] = $check_name['name'];
+            }
+        }
+
+        if(!$validation_result){ // passed data validation
+            foreach($array_custompoints as $custompoint) {
+                $custompoint['client_id'] = $client_id;
+                $custompoint['site_id'] = $site_id;
+                $insert = $this->Custompoints_model->insertCustompoints($custompoint);
+                //$import_result = $this->Quiz_model->addQuizToClient($quiz2);
+            }
+            $this->output->set_output(json_encode(array('status'=>'success')));
+        }else{ // failed data validation
+            $this->output->set_output(json_encode(array('status'=>'fail','results'=>$validation_result)));
+        }
+    }
+
+    public function exportCustompoint()
+    {
+        if (!$this->input->post('array_custompoints')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission_export'));
+            return;
+        }
+
+        $array_custompoints = array();
+        foreach($this->input->post('array_custompoints') as $customPoint_id){
+            if($customPoint_id == "on")continue;
+            $currency_info = $this->Custompoints_model->getCustompoint($customPoint_id);
+
+            unset($currency_info['_id']);
+
+            $currency_info['client_id'] = null;
+            $currency_info['site_id'] = null;
+            $currency_info['reward_id'] = null;
+            $currency_info['date_added'] = $this->datetimeMongotoReadable($currency_info['date_added']);
+            $currency_info['date_modified'] = $this->datetimeMongotoReadable($currency_info['date_modified']);
+
+            $array_custompoints[] = $currency_info;
+        }
+
+        $this->output->set_output(json_encode($array_custompoints));
+    }
+
+    private function datetimeMongotoReadable($dateTimeMongo)
+    {
+        if ($dateTimeMongo) {
+            if (isset($dateTimeMongo->sec)) {
+                $dateTimeMongo = date("Y-m-d", $dateTimeMongo->sec);
+            } else {
+                $dateTimeMongo = $dateTimeMongo;
+            }
+        } else {
+            $dateTimeMongo = null;
+        }
+        return $dateTimeMongo;
     }
 
 }

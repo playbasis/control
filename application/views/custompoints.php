@@ -11,7 +11,9 @@
             <?php //if($user_group_id != $setting_group_id){ ?>
             <div class="buttons">
                 <button class="btn btn-info" onclick="location = baseUrlPath+'custompoints/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
-                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
+                <button class="btn btn-info" onclick="$('#customPointImportModal').modal({'backdrop': true});$('#file-import').val('');" type="button"><?php echo $this->lang->line('button_import'); ?></button>
+                <button class="btn btn-info" onclick="custompoint_export();" type="button"><?php echo $this->lang->line('button_export'); ?></button>
+                <button class="btn btn-info" onclick="custompoint_delete()" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
             </div>
             <?php //}?>
         </div>
@@ -84,6 +86,264 @@
     </div>
 </div>
 
+
+<!-- Error Modal -->
+<div id="errorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Warning !</h3>
+    </div>
+    <div class="modal-body red">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Warning !</h3>
+    </div>
+    <div class="modal-body">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<!-- Import Modal -->
+<div id="customPointImportModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="customPointImportLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="customPointImportLabel">Import Currency</h3>
+    </div>
+    <div class="modal-body">
+        <br>
+        &emsp;<span class="required">*</span><?php echo $this->lang->line('entry_file'); ?>&emsp;:&emsp;
+        <input id="file-import" type="file" size="100" value=""/>
+        <br>&emsp;
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" onclick="custompoint_import();" type="button"><?php echo $this->lang->line('button_import'); ?></button>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<style type="text/css">
+    .modal {
+        width: 40%;
+        margin-left:-20%;
+    }
+</style>
+
+<script type="text/javascript">
+
+    preventUnusual ={
+        message:function(msg,title){
+            if(msg=='' || msg== undefined)return;
+
+            if(title!='' && title!= undefined) {
+                $('#errorModal').find('#myModalLabel').html(title);
+            }else{
+                $('#errorModal').find('#myModalLabel').html("Warning !");
+            }
+            $('#errorModal').modal({'backdrop': true});
+            $('#errorModal .modal-body').html(msg);
+        }
+    }
+
+    var progressDialog = (function($){
+        var obj = {};
+        obj.show = function(text){
+
+            $('body').prepend('<div class="custom_blackdrop"><img src="./image/white_loading.gif" /><br><span>'+text+'</span></div>');
+        }
+
+        obj.hide = function(){
+
+            setTimeout(function(){
+                $('.custom_blackdrop').remove();
+            },1000)
+        }
+
+        return obj;
+    }(jQuery))
+
+    $("#successModal").on("hidden.bs.modal", function () {
+        window.location.replace(baseUrlPath+'custompoints');
+    });
+
+    function custompoint_import() {
+        var myfile = document.getElementById("file-import");
+
+        if(myfile.files[0] != undefined){
+            //
+            //var textType = 'text/csv';
+
+            if (myfile.value.match(/\.json/gi)==".json") {
+                var file = myfile.files[0];
+                var reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                        try {
+                            json = JSON.parse(e.target.result);
+                            var array_custompoints =  JSON.stringify(json);
+                            var import_status = false;
+
+                            $.ajax({
+                                url: baseUrlPath+'custompoints/importCustompoint',
+                                data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','array_custompoints': array_custompoints},
+                                type:'POST',
+                                // dataType:'json',
+                                beforeSend:function(){
+                                    $('#customPointImportModal').modal('hide');
+                                    progressDialog.show('Importing Currency ...');
+                                },
+                                success:function(data){
+
+                                    if($.parseJSON(data).status=='success'){
+
+                                        $('#successModal .modal-body').html('Import Currency(s) successfully');
+                                        $('#successModal').find('#myModalLabel').html("Success !".fontcolor( '12984C' ));
+
+
+                                        import_status = true;
+
+
+                                    }
+                                    else if($.parseJSON(data).status=='fail') {
+                                        var msg = "";
+                                        for (var k in $.parseJSON(data).results){
+                                            if ($.parseJSON(data).results.hasOwnProperty(k)) {
+                                                msg += $.parseJSON(data).results[k] +"<br>";
+                                            }
+                                        }
+
+                                        preventUnusual.message(msg,'Error to import!!! The following Currency(s) are already exist in this site');
+
+                                    }else{
+                                        preventUnusual.message($.parseJSON(data).msg);
+
+                                    }
+
+                                },
+                                error:function(){
+                                    //console.log('on error')
+                                    dialogMsg = 'Unable to import Currency to server,\n Please try again later';
+
+                                },
+                                complete:function(){
+                                    //console.log('on complete')
+                                    progressDialog.hide();
+
+                                    if(import_status){
+
+                                        $('#successModal').modal({'backdrop': true});
+
+                                    }
+                                }
+                            });
+                        } catch (ex) {
+
+                            preventUnusual.message('Error when trying to parse json : ' + ex+'<br><br><br>');
+                        }
+                    }
+                })(file);
+                reader.onerror = function() {
+                    preventUnusual.message('Unable to read ' + file.fileName+'<br><br><br>');
+                };
+
+
+            } else {
+                preventUnusual.message('File type is invalid! ( only JSON file is supported)<br><br><br>');
+            }
+
+        }else{
+            preventUnusual.message('Please choose a file to execute!<br><br><br>');
+        }
+    }
+
+    function custompoint_export() {
+        var array_custompoints = new Array();
+        $("input:checkbox[name=selected[]]:checked").each(function(){
+            array_custompoints.push($(this).val());
+        });
+        if(array_custompoints.length == 0){
+            preventUnusual.message('Please select at least 1 Currency to export!');
+        }
+        else{
+            var export_status = false;
+
+            $.ajax({
+                url: baseUrlPath+'custompoints/exportCustompoint',
+                data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','array_custompoints': array_custompoints},
+                type:'POST',
+                // dataType:'json',
+                beforeSend:function(){
+                    progressDialog.show('Exporting Currency(s) ...');
+                },
+                success:function(data){
+
+                    if(($.parseJSON(data)).success==false) {
+                        dialogMsg = ($.parseJSON(data)).msg;
+                    }else {
+                        if (($.parseJSON(data))) {
+                            var output_data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($.parseJSON(data),null, 2));
+                            link = document.createElement('a');
+                            link.setAttribute('href', 'data:' + output_data);
+                            link.setAttribute('download', 'custompoints.json');
+                            link.click();
+                            export_status = true;
+                            dialogMsg = 'Export Currency(s) successfully';
+                        }
+                        else {
+                            dialogMsg = 'Unable to export Currency(s) from server ';
+                        }
+                    }
+
+                },
+                error:function(){
+                    //console.log('on error')
+                    dialogMsg = 'Unable to export Currency(s) from server,\n Please try again later';
+
+                },
+                complete:function(){
+                    //console.log('on complete')
+                    progressDialog.hide();
+
+                    if(export_status){
+                        preventUnusual.message(dialogMsg.fontcolor( '010040' ), "Success !".fontcolor( '12984C' ));
+
+                    }else{
+                        preventUnusual.message(dialogMsg, "Error !!!");
+                    }
+                }
+            });
+        }
+        return true;
+    }
+
+    function custompoint_delete() {
+        var array_custompoints = new Array();
+        $("input:checkbox[name=selected[]]:checked").each(function(){
+            array_custompoints.push($(this).val());
+        });
+        if(array_custompoints.length == 0){
+            preventUnusual.message('Please select at least 1 Currency to delete!');
+        }
+        else{
+            $('#form').submit();
+        }
+        return true;
+    }
+
+</script>
+
 <script type="text/javascript">
 
 $('.push_down').live("click", function(){
@@ -128,4 +388,6 @@ $('.push_up').live("click", function(){
 });
 
 </script>
+
+<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/blackdrop/blackdrop.css" />
 

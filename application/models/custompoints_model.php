@@ -160,6 +160,19 @@ class Custompoints_model extends MY_Model
         return $result ? $result[0] : null;
     }
 
+    public function getCustompointByNameButNotID($site_id, $custompoint_name, $custompoint_id)
+    {
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_ne('reward_id', new MongoId($custompoint_id));
+        $this->mongo_db->where('name', $custompoint_name);
+        $this->mongo_db->where('is_custom', true);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->limit(1);
+
+        $result =  $this->mongo_db->get('playbasis_reward_to_client');
+        return $result ? $result[0] : null;
+    }
+
     public function auditBeforeCustomPoint($event,$custompoint_id, $user_id)
     {
         $custompoint_data = $this->getCustompoint($custompoint_id);
