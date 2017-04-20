@@ -557,7 +557,7 @@ class Merchant extends MY_Controller
                 }
             }
 
-            $this->data['goodsgroups'] = $this->Goods_model->getGroupsAggregate($site_id);
+            $this->data['goodsgroups'] = $this->Goods_model->getGroupsList($site_id);
 
             $this->data['merchantGoodsGroupsJSON'] = $this->Merchant_model->retrieveMerchantGoodsGroupsJSON($client_id,
                 $site_id,
@@ -626,7 +626,7 @@ class Merchant extends MY_Controller
 
     function alpha_dash_space($str)
     {
-        if (!preg_match("/([ _-\d\w])+/i", $str)) {
+        if (!preg_match('/([ _-])\d\w+/i', $str)) {
             $this->form_validation->set_message('alpha_dash_space',
                 'The %s field may only contain alpha-numeric characters, spaces, underscores, and dashes');
             return false;
