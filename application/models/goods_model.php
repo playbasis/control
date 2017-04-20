@@ -665,6 +665,7 @@ class Goods_model extends MY_Model
             'sponsor' => isset($data['sponsor']) ? $data['sponsor'] : false,
             'date_start' => null,
             'date_expire' => null,
+            'custom_param' => isset($data['custom_param']) ? $data['custom_param'] : array(),
         );
 
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
@@ -684,6 +685,10 @@ class Goods_model extends MY_Model
                 $date_expire_another = strtotime($data['date_expire']);
                 $data_insert['date_expire'] = new MongoDate($date_expire_another);
             }
+        }
+
+        if (isset($data['date_expired_coupon'])){
+            $data_insert['date_expired_coupon'] = $data['date_expired_coupon'] ? new MongoDate(strtotime($data['date_expired_coupon'])) : null;
         }
 
         if (isset($data['organize_id'])) {
@@ -800,6 +805,8 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('redeem', $data['redeem']);
         $this->mongo_db->set('code', isset($data['code']) ? $data['code'] : '');
         $this->mongo_db->set('tags', isset($tags) ? $tags : null);
+        $this->mongo_db->set('custom_param', isset($data['custom_param']) ? $data['custom_param'] : array());
+
         if (isset($data['sponsor'])) {
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
         } else {
@@ -829,9 +836,8 @@ class Goods_model extends MY_Model
             }
         }
 
-        if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
-            $date_expired_coupon = strtotime($data['date_expired_coupon']);
-            $this->mongo_db->set('date_expired_coupon', new MongoDate($date_expired_coupon));
+        if (isset($data['date_expired_coupon'])){
+            $this->mongo_db->set('date_expired_coupon', $data['date_expired_coupon'] ? new MongoDate(strtotime($data['date_expired_coupon'])) : null);
         }
 
         if (isset($data['image'])) {
@@ -852,7 +858,7 @@ class Goods_model extends MY_Model
 
         $this->mongo_db->update('playbasis_goods_to_client');
         if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
-            $this->updateDateExpireGoodsPlayer($data['client_id'], $data['site_id'], $data['goods_id'], $date_expired_coupon);
+            $this->updateDateExpireGoodsPlayer($data['client_id'], $data['site_id'], $data['goods_id'], strtotime($data['date_expired_coupon']));
         }
     }
 
@@ -877,6 +883,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('redeem', $data['redeem']);
         $this->mongo_db->set('tags', isset($tags) ? $tags : null);
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
+        $this->mongo_db->set('custom_param', isset($data['custom_param']) ? $data['custom_param'] : array());
 
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);

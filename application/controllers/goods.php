@@ -192,13 +192,27 @@ class Goods extends MY_Controller
 
                 $data = array_merge($this->input->post(), array('quantity' => 1));
 
+                if (isset($data['custom_param'])){
+                    if(is_array($data['custom_param'])){
+                        $custom_param = array();
+                        foreach ($data['custom_param'] as $param){
+                            if($param['key'] && $param['value']){
+                                array_push($custom_param, $param);
+                            }
+                        }
+                        $data['custom_param'] = $custom_param;
+                    } else {
+                        $data['custom_param'] = array();
+                    }
+                }
+
                 if ($this->User_model->getClientId()) {
 
                     try {
-                        $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
+                        $data = $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
                         fclose($handle);
-                        redirect('/goods', 'refresh');
+                        redirect('/goods/update/'.$data['goods_id'], 'refresh');
                     } catch (Exception $e) {
                         $this->data['message'] = $e->getMessage();
                     }
@@ -216,9 +230,9 @@ class Goods extends MY_Controller
                         }
 
                         try {
-                            $this->addGoods($handle, $data, $redeem, array(new MongoId($goods_data['admin_client_id'])), $list_site_id);
+                            $data = $this->addGoods($handle, $data, $redeem, array(new MongoId($goods_data['admin_client_id'])), $list_site_id);
                             fclose($handle);
-                            redirect('/goods', 'refresh');
+                            redirect('/goods/update/'.$data['goods_id'], 'refresh');
                         } catch (Exception $e) {
                             $this->data['message'] = $e->getMessage();
                         }
@@ -232,9 +246,9 @@ class Goods extends MY_Controller
                         }
 
                         try {
-                            $this->addGoods($handle, $data, $redeem, array_keys($hash_client_id), array($list_site_id));
+                            $data = $this->addGoods($handle, $data, $redeem, array_keys($hash_client_id), array($list_site_id));
                             fclose($handle);
-                            redirect('/goods', 'refresh');
+                            redirect('/goods/update/'.$data['goods_id'], 'refresh');
                         } catch (Exception $e) {
                             $this->data['message'] = $e->getMessage();
                         }
@@ -322,6 +336,20 @@ class Goods extends MY_Controller
             $goods_data['redeem'] = $redeem;
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
+
+                if (isset($goods_data['custom_param'])){
+                    if(is_array($goods_data['custom_param'])){
+                        $custom_param = array();
+                        foreach ($goods_data['custom_param'] as $param){
+                            if($param['key'] && $param['value']){
+                                array_push($custom_param, $param);
+                            }
+                        }
+                        $goods_data['custom_param'] = $custom_param;
+                    } else {
+                        $goods_data['custom_param'] = array();
+                    }
+                }
 
                 if ($this->User_model->getClientId()) {
 
@@ -462,6 +490,20 @@ class Goods extends MY_Controller
                         if ($this->input->post('global_goods')) {
                             $goods_data['organize_id'] = null;
                             $goods_data['organize_role'] = null;
+                        }
+                    }
+
+                    if (isset($goods_data['custom_param'])){
+                        if(is_array($goods_data['custom_param'])){
+                            $custom_param = array();
+                            foreach ($goods_data['custom_param'] as $param){
+                                if($param['key'] && $param['value']){
+                                    array_push($custom_param, $param);
+                                }
+                            }
+                            $goods_data['custom_param'] = $custom_param;
+                        } else {
+                            $goods_data['custom_param'] = array();
                         }
                     }
 
@@ -1002,6 +1044,14 @@ class Goods extends MY_Controller
             $this->data['tags'] = null;
         }
 
+        if ($this->input->post('custom_param')) {
+            $this->data['custom_param'] = $this->input->post('custom_param');
+        } elseif (isset($goods_info['custom_param']) && !empty($goods_info['custom_param'])) {
+            $this->data['custom_param'] = $goods_info['custom_param'];
+        } else {
+            $this->data['custom_param'] = null;
+        }
+
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
         } elseif (isset($goods_info['image']) && !empty($goods_info['image'])) {
@@ -1424,12 +1474,14 @@ class Goods extends MY_Controller
             'sort_order' => (int)$data['sort_order'] | 1,
             'language_id' => 1,
             'redeem' => $redeem,
+            'custom_param' => isset($data['custom_param']) ? $data['custom_param'] : array(),
             'tags' => isset($tags) ? $tags : null,
             'date_start' => null,
             'date_expire' => null,
             'days_expire' => isset($data['days_expire']) && !empty($data['days_expire']) ? $data['days_expire'] : null,
             'date_added' => $d,
             'date_modified' => $d,
+
         );
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);
@@ -1495,6 +1547,7 @@ class Goods extends MY_Controller
         }
         $this->Goods_model->addGoodsToClient_bulk($list);
         $goods_data = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
+        $data['goods_id'] = $goods_data['_id'];
         $this->Goods_model->auditAfterGoods('insert', $goods_data['_id'], $this->User_model->getId());
         /* bulk insert into playbasis_goods_to_client */
         return $data;

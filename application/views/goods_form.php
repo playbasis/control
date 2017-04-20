@@ -128,8 +128,45 @@
                                 </td>
                             </tr>
                             <?php } ?>
+                            <tr>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('column_param'); ?>:</td>
+                                <td>
+                                    <div class="row-fluid">
+                                        <table class="table table-bordered" id="new-branches-table">
+                                            <thead>
+                                            <th><?php echo $this->lang->line('column_key'); ?></th>
+                                            <th><?php echo $this->lang->line('column_value'); ?></th>
+                                            </thead>
+                                            <tbody>
+                                            <?php if(isset($custom_param) && is_array($custom_param) ){?>
+                                                <?php foreach($custom_param as $key => $param){?>
+                                                    <tr>
+                                                        <td><input type="text" name="<?php echo "custom_param[".$key."][key]" ?>"
+                                                                   value="<?php echo isset($param['key']) ? $param['key']: set_value('parameter'); ?>"
+                                                        </td>
+                                                        <td><input type="text" name="<?php echo "custom_param[".$key."][value]" ?>"
+                                                                   value="<?php echo isset($param['value']) ? $param['value']: set_value('parameter'); ?>"
+                                                        </td>
+                                                    </tr>
+                                                <?php }?>
+                                            <?php }?>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3" style="text-align: center">
+                                                        <div class="row-fluid">
+                                                            <div class="offset3 span3">
+                                                                <a class="btn btn-primary btn-block" id="add" onclick="createParameterRow()"><i class="fa fa-plus"></i>&nbsp;Add</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
                         </table>
-
                         <?php if (isset($members)) { ?>
                             <div class="member_wrapper">
                                 <table id="members" class="display form no-footer" cellspacing="0" width="100%">
@@ -312,6 +349,16 @@
     </div>
 </div>
 
+<div id="newParam_emptyElement" class="hide invisible">
+    <table>
+        <tr>
+            <td><input type="text" name="custom_param[{{id}}][key]" value=""></td>
+            <td><input type="text" name="custom_param[{{id}}][value]" value=""></td>
+        </tr>
+    </table>
+</div>
+
+
 <script type="text/javascript" src="<?php echo base_url();?>javascript/ckeditor/ckeditor.js"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
@@ -380,6 +427,24 @@ $('#tabs a').tabs();
     function organizeFormatSelection(organize) {
         return organize.name;
     }
+    var globalNewIndex = <?php echo isset($custom_param) ?count($custom_param):0; ?>;
+    function createParameterRow(numToCreate){
+        numToCreate = typeof numToCreate !== 'undefined' ? numToCreate : 1;
+
+        if ($.isNumeric(numToCreate) && numToCreate > 0) {
+            for (idx = 0; idx < numToCreate; idx++) {
+                var tableRowHTML = $('#newParam_emptyElement').find('tbody').html();
+                var newIndex = globalNewIndex;
+
+                tableRowHTML = tableRowHTML.replace(new RegExp('{{id}}', 'g'), newIndex);
+
+                $('#new-branches-table').find('tbody').append(tableRowHTML);
+
+                globalNewIndex++;
+            }
+            //$(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']:not([name*='id'])").bootstrapSwitch();
+        }
+    };
 
 $(document).ready(function(){
     $(".point").hide();
