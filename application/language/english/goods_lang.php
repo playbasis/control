@@ -88,9 +88,13 @@ $lang['column_client_name']             = 'Name';
 $lang['column_client_status']           = 'Status';
 $lang['column_client_action']           = 'Action';
 $lang['column_client_modified']         = 'Modified';
+$lang['column_param']                   = 'Custom Parameter';
+$lang['column_key']                     = 'Key';
+$lang['column_value']                   = 'Value';
 
 $lang['entry_client']                   = 'Type Client Name:';
 $lang['text_no_client']                 = 'No client assign to this goods';
+
 
 // Error 
 $lang['error_warning']                  = 'Warning: Please check the form carefully for errors!';
