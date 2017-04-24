@@ -343,8 +343,7 @@ class Report_weekly extends CI_Controller
         $in_goods = array();
         $group_data = array();
         foreach ($group_list as $group_name){
-            $goods_group_id =  $this->goods_model->getGoodsIDByName($opts['client_id'], $opts['site_id'], "", $group_name, false);
-            $group_data[$goods_group_id]['quantity'] = $this->goods_model->checkGoodsGroupQuantity($opts['site_id'], $group_name);
+            $goods_group_id =  $this->goods_model->getGoodsIDByName($opts['client_id'], $opts['site_id'], "", $group_name['name'], false);
             array_push($in_goods, new MongoId($goods_group_id));
         }
         $opts['specific'] = array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ));
@@ -358,7 +357,7 @@ class Report_weekly extends CI_Controller
             $goods_criteria = $item['redeem'];
             $group = array_key_exists('group', $item) ? true : false;
             $goods_id = $group ? $item['group'] : $item['goods_id'];
-            $goods_qty_remain = $group ? $group_data[$item['goods_id']->{'$id'}]['quantity'] : $item['quantity'];
+            $goods_qty_remain = $group ? $this->goods_model->checkGoodsGroupQuantity($opts['site_id'], $item['group']) : $item['quantity'];
             $goods_qty_redeemed = $this->goods_model->redeemLogCount($opts, $goods_id, $group, null, null);
             
             $goods_qty = $goods_qty_remain !== null ? $goods_qty_remain + $goods_qty_redeemed : $goods_qty_remain;

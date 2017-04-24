@@ -716,7 +716,7 @@ class Rule extends MY_Controller
         $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'));
         $in_goods = array();
         foreach ($group_list as $group_name){
-            $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name,false);
+            $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name['name'],false);
             array_push($in_goods, new MongoId($goods_group_detail));
         }
         $goods_list = $this->Goods_model->getGoodsBySiteId(array(

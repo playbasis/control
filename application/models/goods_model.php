@@ -324,6 +324,7 @@ class Goods_model extends MY_Model
 
     public function getGroupsList($site_id, $filter_group =null)
     {
+        $this->mongo_db->select(array('name'));
         $this->mongo_db->where('site_id', new MongoId($site_id));
         
         if($filter_group){
@@ -332,7 +333,7 @@ class Goods_model extends MY_Model
         }
         $this->mongo_db->where('is_group', true);
         $this->mongo_db->where('deleted', false);
-        return $this->mongo_db->distinct('name', 'playbasis_goods_distinct_to_client');
+        return $this->mongo_db->get('playbasis_goods_distinct_to_client');
     }
 
     public function getGoodsDistinctByName($site_id, $goods_name, $is_group=null)
