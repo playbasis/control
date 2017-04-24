@@ -339,27 +339,27 @@ class Report_weekly extends CI_Controller
         $arr = array();
         /* process group */
 
-        $group_list = $this->goods_model->getGroupsList($opts['site_id'], SITE_ID_DIGI == $opts['site_id']);
+        $group_list = $this->goods_model->getGroupsList($opts['site_id']);
         $in_goods = array();
         $group_data = array();
         foreach ($group_list as $group_name){
-            $goods_group_id =  $this->goods_model->getGoodsIDByName($opts['client_id'], $opts['site_id'], "", $group_name, false ,SITE_ID_DIGI == $opts['site_id']);
-            $group_data[$goods_group_id]['quantity'] = $this->goods_model->checkGoodsGroupQuantity($opts['site_id'], $group_name, SITE_ID_DIGI == $opts['site_id']);
+            $goods_group_id =  $this->goods_model->getGoodsIDByName($opts['client_id'], $opts['site_id'], "", $group_name, false);
+            $group_data[$goods_group_id]['quantity'] = $this->goods_model->checkGoodsGroupQuantity($opts['site_id'], $group_name);
             array_push($in_goods, new MongoId($goods_group_id));
         }
         $opts['specific'] = array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ));
-        $goodsList = $this->goods_model->getAllGoods($opts,array(), SITE_ID_DIGI == $opts['site_id']);
+        $goodsList = $this->goods_model->getAllGoods($opts);
         $goodsList_ids = array_map('convert_id_to_mongoId', $goodsList);
         $items = array_merge($this->goods_model->listActiveItems(array_merge($opts, array('in' => $goodsList_ids)), 
-                                 date('Y-m-d', strtotime('+1 day', strtotime($from))), $to, SITE_ID_DIGI == $opts['site_id']),
+                                 date('Y-m-d', strtotime('+1 day', strtotime($from))), $to),
                              $this->goods_model->listExpiredItems(array_merge($opts, array('in' => $goodsList_ids)), 
-                                 date('Y-m-d', strtotime('+1 day', strtotime($from))), $to, SITE_ID_DIGI == $opts['site_id']));
+                                 date('Y-m-d', strtotime('+1 day', strtotime($from))), $to));
         foreach ($items as $item) {
             $goods_criteria = $item['redeem'];
             $group = array_key_exists('group', $item) ? true : false;
             $goods_id = $group ? $item['group'] : $item['goods_id'];
             $goods_qty_remain = $group ? $group_data[$item['goods_id']->{'$id'}]['quantity'] : $item['quantity'];
-            $goods_qty_redeemed = $this->goods_model->redeemLogCount($opts, $goods_id, $group, null, null,  SITE_ID_DIGI == $opts['site_id']);
+            $goods_qty_redeemed = $this->goods_model->redeemLogCount($opts, $goods_id, $group, null, null);
             
             $goods_qty = $goods_qty_remain !== null ? $goods_qty_remain + $goods_qty_redeemed : $goods_qty_remain;
             $goods_players_can_redeem = $this->player_model->playerWithEnoughCriteria($opts, $goods_criteria);
@@ -374,8 +374,8 @@ class Report_weekly extends CI_Controller
                     'QTY_TOTAL' => ($goods_qty != null || $goods_qty === 0 ? number_format($goods_qty) : ITEM_QTY_NOT_CONFIG),
                     'QTY_REMAIN' => $goods_qty_remain != null ? number_format($goods_qty_remain) : ITEM_QTY_NOT_CONFIG,
                 ),
-                $this->get_stat('', $conf, $this->goods_model->redeemLog($opts, $goods_id, $group, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to, SITE_ID_DIGI == $opts['site_id']),
-                                           $this->goods_model->redeemLog($opts, $goods_id, $group, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from, SITE_ID_DIGI == $opts['site_id']))
+                $this->get_stat('', $conf, $this->goods_model->redeemLog($opts, $goods_id, $group, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to),
+                                           $this->goods_model->redeemLog($opts, $goods_id, $group, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from))
             );
         }
         usort($arr, 'compare_TOTAL_NUM_desc');
