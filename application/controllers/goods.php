@@ -209,6 +209,7 @@ class Goods extends MY_Controller
                 if ($this->User_model->getClientId()) {
 
                     try {
+                        $this->Goods_model->addGoodsDistinct(array_merge($data, array('client_id'=>$this->User_model->getClientId(), 'site_id' => $this->User_model->getSiteId(), 'redeem' => $redeem)), true);
                         $data = $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
                         fclose($handle);
@@ -230,6 +231,7 @@ class Goods extends MY_Controller
                         }
 
                         try {
+                            $this->Goods_model->addGoodsDistinct(array_merge($data, array('client_id'=>$this->User_model->getClientId(), 'site_id' => $this->User_model->getSiteId(), 'redeem' => $redeem)), true);
                             $data = $this->addGoods($handle, $data, $redeem, array(new MongoId($goods_data['admin_client_id'])), $list_site_id);
                             fclose($handle);
                             redirect('/goods/update/'.$data['goods_id'], 'refresh');
@@ -246,6 +248,7 @@ class Goods extends MY_Controller
                         }
 
                         try {
+                            $this->Goods_model->addGoodsDistinct(array_merge($data, array('client_id'=> $this->User_model->getClientId(), 'site_id' => $this->User_model->getSiteId(), 'redeem' => $redeem)), true);
                             $data = $this->addGoods($handle, $data, $redeem, array_keys($hash_client_id), array($list_site_id));
                             fclose($handle);
                             redirect('/goods/update/'.$data['goods_id'], 'refresh');
@@ -261,7 +264,6 @@ class Goods extends MY_Controller
 
     public function insert()
     {
-
         // Get Usage
         $site_id = $this->User_model->getSiteId();
         $usage = $this->Goods_model->getTotalGoodsBySiteId(
@@ -352,13 +354,13 @@ class Goods extends MY_Controller
                 }
 
                 if ($this->User_model->getClientId()) {
-
                     $goods_id = $this->Goods_model->addGoods($goods_data);
 
                     $goods_data['goods_id'] = $goods_id;
                     $goods_data['client_id'] = $this->User_model->getClientId();
                     $goods_data['site_id'] = $this->User_model->getSiteId();
 
+                    $this->Goods_model->addGoodsDistinct($goods_data, false);
                     $goods_client_id = $this->Goods_model->addGoodsToClient($goods_data);
                     $this->Goods_model->auditAfterGoods('insert', $goods_client_id, $this->User_model->getId());
 
@@ -523,6 +525,7 @@ class Goods extends MY_Controller
                                     fclose($handle);
                                 }
                                 /* update all existing records in the group */
+                                $this->Goods_model->editGoodsDistinct($this->User_model->getSiteId(),$goods_info['group'],$goods_data);
                                 $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
                                 if ($goods_info['group'] != $goods_data['name']){
                                     $this->Goods_model->editGoodsGroupLog($goods_info['group'], $goods_data);
@@ -531,6 +534,7 @@ class Goods extends MY_Controller
 
                                 $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
                             } else {
+                                $this->Goods_model->editGoodsDistinct($this->User_model->getSiteId(),$goods_info['name'],$goods_data);
                                 $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
                                 $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
                                 $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
@@ -580,10 +584,12 @@ class Goods extends MY_Controller
                         if (!$this->Goods_model->checkGoodsIsSponsor($goods_id)) {
                             $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
                             if ($goods_info && array_key_exists('group', $goods_info)) {
+                                $this->Goods_model->deleteGoodsDistinct($this->User_model->getSiteId(), $goods_info['group']);
                                 $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
                                 $this->Goods_model->deleteGoodsGroupClient($goods_info['group'], $this->User_model->getClientId(), $this->User_model->getSiteId());
                                 $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
                             } else {
+                                $this->Goods_model->deleteGoodsDistinct($this->User_model->getSiteId(), $goods_info['name']);
                                 $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
                                 $this->Goods_model->deleteGoodsClient($goods_id);
                                 $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
@@ -842,10 +848,10 @@ class Goods extends MY_Controller
                 $filter_goods = $_GET['filter_goods'];
             }
 
-            $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'), false , isset($filter_goods) && $filter_goods ? $filter_goods : null);
+            $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'), isset($filter_goods) && $filter_goods ? $filter_goods : null);
             $in_goods = array();
             foreach ($group_list as $group_name){
-                $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name,false);
+                $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name['name'],false);
                 array_push($in_goods, new MongoId($goods_group_detail));
             }
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId(array(

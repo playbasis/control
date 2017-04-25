@@ -97,17 +97,14 @@ class Goods_model extends MY_Model
         return $this->mongo_db->get("playbasis_goods_to_client");
     }
     
-    public function getGoodsIDByName($client_id, $site_id, $good_name, $good_group=null, $check_status=true, $digi =false)
+    public function getGoodsIDByName($client_id, $site_id, $good_name, $good_group=null, $check_status=true)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->select(array('goods_id'));
 
         $this->mongo_db->where('client_id', new MongoId($client_id));
-        if ($digi){
-            $this->mongo_db->where_in('site_id', array(new MongoId($site_id) , "Digi"));
-        } else {
-            $this->mongo_db->where('site_id', new MongoId($site_id));
-        }
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
         
         $this->mongo_db->where('deleted', false);
         if($check_status){
@@ -325,22 +322,157 @@ class Goods_model extends MY_Model
         return $results ? $results['result'] : array();
     }
 
-    public function getGroupsList($site_id, $digi=false, $filter_group=null)
+    public function getGroupsList($site_id, $filter_group =null)
     {
-        $this->set_site_mongodb($site_id);
-        if($digi){
-            $this->mongo_db->where_in('site_id', array(new MongoId($site_id), "Digi"));
-        } else {
-            $this->mongo_db->where('site_id', new MongoId($site_id));
-        }
+        $this->mongo_db->select(array('name'));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
         
         if($filter_group){
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($filter_group)) . "/i");
-            $this->mongo_db->where('group', $regex);
+            $this->mongo_db->where('name', $regex);
+        }
+        $this->mongo_db->where('is_group', true);
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->get('playbasis_goods_distinct_to_client');
+    }
+
+    public function getGoodsDistinctByName($site_id, $goods_name, $is_group=null)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('name', $goods_name);
+        $this->mongo_db->where('deleted', false);
+        if(!is_null($is_group)){
+            $this->mongo_db->where('is_group', $is_group);
+        }
+        return $this->mongo_db->get('playbasis_goods_distinct_to_client');
+    }
+
+    public function addGoodsDistinct($data, $is_group)
+    {
+        $data_insert = array(
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id']),
+            'name' => $data['name'],
+            'is_group' => $is_group,
+            'deleted' => false,
+            'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
+            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'status' => (bool)$data['status'],
+            'sort_order' => (int)$data['sort_order'] | 1,
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'description' => $data['description'] | '',
+            'language_id' => (int)1,
+            'redeem' => $data['redeem'],
+            'tags' => isset($tags) ? $tags : null,
+            'sponsor' => isset($data['sponsor']) ? $data['sponsor'] : false,
+            'date_start' => null,
+            'date_expire' => null,
+            'custom_param' => isset($data['custom_param']) ? $data['custom_param'] : array(),
+        );
+        if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
+            $date_start_another = strtotime($data['date_start']);
+            $date_expire_another = strtotime($data['date_expire']);
+
+            if ($date_start_another < $date_expire_another) {
+                $data_insert['date_start'] = new MongoDate($date_start_another);
+                $data_insert['date_expire'] = new MongoDate($date_expire_another);
+            }
+        } else {
+            if (isset($data['date_start']) && $data['date_start']) {
+                $date_start_another = strtotime($data['date_start']);
+                $data_insert['date_start'] = new MongoDate($date_start_another);
+            }
+            if (isset($data['date_expire']) && $data['date_expire']) {
+                $date_expire_another = strtotime($data['date_expire']);
+                $data_insert['date_expire'] = new MongoDate($date_expire_another);
+            }
+        }
+
+        if (isset($data['date_expired_coupon'])){
+            $data_insert['date_expired_coupon'] = $data['date_expired_coupon'] ? new MongoDate(strtotime($data['date_expired_coupon'])) : null;
+        }
+
+        if (isset($data['organize_id'])) {
+            $data_insert['organize_id'] = new MongoID($data['organize_id']);
+        }
+
+        if (isset($data['organize_role'])) {
+            $data_insert['organize_role'] = $data['organize_role'];
+        }
+        return $this->mongo_db->insert('playbasis_goods_distinct_to_client', $data_insert);
+    }
+
+    public function editGoodsDistinct($site_id, $goods_name, $data)
+    {
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
         }
         
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('name', $goods_name);
         $this->mongo_db->where('deleted', false);
-        return $this->mongo_db->distinct('group', 'playbasis_goods_to_client');
+        $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
+        $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('language_id', (int)1);
+        $this->mongo_db->set('redeem', $data['redeem']);
+        $this->mongo_db->set('tags', isset($tags) ? $tags : null);
+        $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
+        $this->mongo_db->set('custom_param', isset($data['custom_param']) ? $data['custom_param'] : array());
+
+        if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
+            $date_start_another = strtotime($data['date_start']);
+            $date_expire_another = strtotime($data['date_expire']);
+
+            if ($date_start_another < $date_expire_another) {
+                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
+                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
+            }
+        } else {
+            if (isset($data['date_start']) && $data['date_start']) {
+                $date_start_another = strtotime($data['date_start']);
+                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
+                $this->mongo_db->set('date_expire', null);
+            } elseif (isset($data['date_expire']) && $data['date_expire']) {
+                $date_expire_another = strtotime($data['date_expire']);
+                $this->mongo_db->set('date_start', null);
+                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
+            } else {
+                $this->mongo_db->set('date_start', null);
+                $this->mongo_db->set('date_expire', null);
+            }
+        }
+
+        if (isset($data['days_expire'])){
+            $this->mongo_db->set('days_expire', $data['days_expire'] ? $data['days_expire'] : null);
+        }
+
+        if (isset($data['date_expired_coupon'])){
+            $this->mongo_db->set('date_expired_coupon', $data['date_expired_coupon'] ? new MongoDate(strtotime($data['date_expired_coupon'])) : null);
+        }
+
+        if (isset($data['image'])) {
+            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+        }
+
+        $this->mongo_db->set('organize_id', isset($data['organize_id']) ? new MongoID($data['organize_id']) : null);
+        $this->mongo_db->set('organize_role', isset($data['organize_role']) ? $data['organize_role'] : null);
+
+        $this->mongo_db->update('playbasis_goods_distinct_to_client');
+    }
+
+    public function deleteGoodsDistinct($site_id, $goods_name)
+    {
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('name', $goods_name);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update('playbasis_goods_distinct_to_client');
     }
 
     public function checkExists($site_id, $group)
@@ -351,15 +483,10 @@ class Goods_model extends MY_Model
         return $this->mongo_db->count("playbasis_goods_to_client") > 0;
     }
 
-    public function checkGoodsGroupQuantity($site_id, $group, $digi = false)
+    public function checkGoodsGroupQuantity($site_id, $group)
     {
         $this->mongo_db->where('deleted', false);
-        if ($digi){
-            $this->mongo_db->where_in('site_id', array($site_id, "Digi"));
-        } else {
-            $this->mongo_db->where('site_id', $site_id);
-        }
-        
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('group', $group);
         $this->mongo_db->where('quantity', 1);
         return $this->mongo_db->count("playbasis_goods_to_client");
@@ -806,12 +933,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('code', isset($data['code']) ? $data['code'] : '');
         $this->mongo_db->set('tags', isset($tags) ? $tags : null);
         $this->mongo_db->set('custom_param', isset($data['custom_param']) ? $data['custom_param'] : array());
-
-        if (isset($data['sponsor'])) {
-            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
-        } else {
-            $this->mongo_db->set('sponsor', false);
-        }
+        $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] :false);
 
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);
@@ -844,17 +966,8 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
         }
 
-        if (isset($data['organize_id'])) {
-            $this->mongo_db->set('organize_id', new MongoID($data['organize_id']));
-        } else {
-            $this->mongo_db->set('organize_id', null);
-        }
-
-        if (isset($data['organize_role'])) {
-            $this->mongo_db->set('organize_role', $data['organize_role']);
-        } else {
-            $this->mongo_db->set('organize_role', null);
-        }
+        $this->mongo_db->set('organize_id', isset($data['organize_id']) ? new MongoID($data['organize_id']) : null);
+        $this->mongo_db->set('organize_role', isset($data['organize_role']) ? $data['organize_role'] : null);
 
         $this->mongo_db->update('playbasis_goods_to_client');
         if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
@@ -908,25 +1021,16 @@ class Goods_model extends MY_Model
             }
         }
 
-        if (isset($data['days_expire']) && $data['days_expire']){
-            $this->mongo_db->set('days_expire', $data['days_expire']);
+        if (isset($data['days_expire'])){
+            $this->mongo_db->set('days_expire', $data['days_expire'] ? $data['days_expire'] : null);
         }
 
         if (isset($data['image'])) {
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
         }
 
-        if (isset($data['organize_id'])) {
-            $this->mongo_db->set('organize_id', new MongoID($data['organize_id']));
-        } else {
-            $this->mongo_db->set('organize_id', null);
-        }
-
-        if (isset($data['organize_role'])) {
-            $this->mongo_db->set('organize_role', $data['organize_role']);
-        } else {
-            $this->mongo_db->set('organize_role', null);
-        }
+        $this->mongo_db->set('organize_id', isset($data['organize_id']) ? new MongoID($data['organize_id']) : null);
+        $this->mongo_db->set('organize_role', isset($data['organize_role']) ? $data['organize_role'] : null);
 
         $this->mongo_db->update_all('playbasis_goods_to_client');
     }
@@ -963,24 +1067,9 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
-
-        if (isset($data['sponsor'])) {
-            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
-        } else {
-            $this->mongo_db->set('sponsor', false);
-        }
-
-        if (isset($data['organize_id'])) {
-            $this->mongo_db->set('organize_id', new MongoID($data['organize_id']));
-        } else {
-            $this->mongo_db->set('organize_id', null);
-        }
-
-        if (isset($data['organize_role'])) {
-            $this->mongo_db->set('organize_role', $data['organize_role']);
-        } else {
-            $this->mongo_db->set('organize_role', null);
-        }
+        $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
+        $this->mongo_db->set('organize_id', isset($data['organize_id']) ? new MongoID($data['organize_id']) : null);
+        $this->mongo_db->set('organize_role', isset($data['organize_role']) ? $data['organize_role'] : null);
 
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);
@@ -1371,7 +1460,7 @@ class Goods_model extends MY_Model
         return $result ? $result[0] : array();
     }
 
-    public function getAllGoods($data, $nin = array(), $digi=false)
+    public function getAllGoods($data, $nin = array())
     {
         $this->set_site_mongodb($data['site_id']);
         $this->mongo_db->select(array(
@@ -1396,11 +1485,8 @@ class Goods_model extends MY_Model
             'deleted' => false,
             'status' => true,
         ));
-        if ($digi){
-            $this->mongo_db->where_in('site_id', array($data['site_id'] , "Digi"));
-        } else {
-            $this->mongo_db->where('site_id', $data['site_id']);
-        }
+        $this->mongo_db->where('site_id', $data['site_id']);
+
         $this->mongo_db->order_by(array('sort_order' => 'asc'));
         if (!empty($nin)) {
             $this->mongo_db->where_not_in('_id', $nin);
@@ -1461,13 +1547,10 @@ class Goods_model extends MY_Model
         return $goods;
     }
 
-    public function listActiveItems($data, $from, $to, $digi=false)
+    public function listActiveItems($data, $from, $to)
     {
-        if ($digi){
-            $this->mongo_db->where_in('site_id', array($data['site_id'] , "Digi"));
-        } else {
-            $this->mongo_db->where('site_id', $data['site_id']);
-        }
+
+        $this->mongo_db->where('site_id', $data['site_id']);
         $this->mongo_db->where(array(
             '$and' => array(
                 array(
@@ -1489,13 +1572,9 @@ class Goods_model extends MY_Model
         return $this->mongo_db->get('playbasis_goods_to_client');
     }
 
-    public function listExpiredItems($data, $from, $to, $digi=false)
+    public function listExpiredItems($data, $from, $to)
     {
-        if ($digi){
-            $this->mongo_db->where_in('site_id', array($data['site_id'] , "Digi"));
-        } else {
-            $this->mongo_db->where('site_id', $data['site_id']);
-        }
+        $this->mongo_db->where('site_id', $data['site_id']);
         $this->mongo_db->where(array(
             'date_expire' => array(
                 '$gte' => $this->new_mongo_date($from),
@@ -1521,7 +1600,7 @@ class Goods_model extends MY_Model
         return $this->mongo_db->get('playbasis_goods_to_client');
     }
 
-    public function redeemLogCount($data, $goods_id, $group=false, $from = null, $to = null, $digi=false)
+    public function redeemLogCount($data, $goods_id, $group=false, $from = null, $to = null)
     {
         $this->set_site_mongodb($data['site_id']);
         $query = array('client_id' => $data['client_id']);
@@ -1535,11 +1614,8 @@ class Goods_model extends MY_Model
             $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
         }
         $this->mongo_db->where($query);
-        if ($digi){
-            $this->mongo_db->where_in('site_id', array($data['site_id'] , "Digi"));
-        } else {
-            $this->mongo_db->where('site_id', $data['site_id']);
-        }
+        $this->mongo_db->where('site_id', $data['site_id']);
+
         
         if($group){
             $this->mongo_db->where('group', $goods_id);
@@ -1550,7 +1626,7 @@ class Goods_model extends MY_Model
         return $this->mongo_db->count('playbasis_goods_log');
     }
 
-    public function redeemLog($data, $goods_id, $group=false, $from = null, $to = null,$digi =false)
+    public function redeemLog($data, $goods_id, $group=false, $from = null, $to = null)
     {
         $this->set_site_mongodb($data['site_id']);
         $map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.amount); }");
@@ -1572,11 +1648,8 @@ class Goods_model extends MY_Model
         } else {
             $query['goods_id'] = array('$in' => is_array($goods_id) ? $goods_id : array($goods_id));
         }
-        if ($digi){
-            $query['site_id'] = array('$in' => array($data['site_id'] , "Digi"));
-        } else {
-            $query['site_id'] = $data['site_id'];
-        }
+        $query['site_id'] = $data['site_id'];
+
         $result = $this->mongo_db->command(array(
             'mapReduce' => 'playbasis_goods_log',
             'map' => $map,
