@@ -95,8 +95,10 @@ class Goods extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/import';
-        $referred_page = explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']);
-        $this->data['refer_page'] = $referred_page[1];
+        $referred_page = strpos($_SERVER['HTTP_REFERER'], $_SERVER['SCRIPT_NAME']) ?
+            explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']) :
+            explode($_SERVER['HTTP_HOST'].'/', $_SERVER['HTTP_REFERER']);
+        $this->data['refer_page'] = isset($referred_page[1]) && strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_group'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
@@ -336,8 +338,10 @@ class Goods extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/insert';
-        $referred_page = explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']);
-        $this->data['refer_page'] = strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
+        $referred_page = strpos($_SERVER['HTTP_REFERER'], $_SERVER['SCRIPT_NAME']) ?
+            explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']) :
+            explode($_SERVER['HTTP_HOST'].'/', $_SERVER['HTTP_REFERER']);
+        $this->data['refer_page'] = isset($referred_page[1]) && strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
@@ -531,8 +535,10 @@ class Goods extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/update/' . $goods_id;
-        $referred_page = explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']);
-        $this->data['refer_page'] = strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
+        $referred_page = strpos($_SERVER['HTTP_REFERER'], $_SERVER['SCRIPT_NAME']) ?
+            explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']) :
+            explode($_SERVER['HTTP_HOST'].'/', $_SERVER['HTTP_REFERER']);
+        $this->data['refer_page'] = isset($referred_page[1]) && strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
