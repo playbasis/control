@@ -242,6 +242,18 @@
                                     <?php } ?>
                                 </select></td>
                         </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_whitelist'); ?>:</td>
+                            <td>
+                                <input type="checkbox" name="whitelist_enable" id="whitelist_enable" value=true <?php echo $whitelist_enable ? "checked":""?> /> <?php echo $this->lang->line('entry_whitelist_enable'); ?><br>
+
+                                <p name="whitelist_file_name" id="whitelist_file_name" >
+                                       <?php echo isset($whitelist_file_name) && $whitelist_file_name ? $whitelist_file_name."&nbsp;&nbsp;<a onclick=\"downloadFile()\" title=\"Download files\" class=\"tooltips\" data-placement=\"top\"><i class=\"fa fa-file-text-o fa-lg\"></i></a>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" : ''; ?>
+                                        <input type="file" id="whitelist_file" name="whitelist_file" size="20" /></p>
+                            </td>
+
+                        </tr>
                         <?php if($org_status){?>
                         <tr>
                             <td><?php echo $this->lang->line('entry_organize_name'); ?>:
@@ -249,7 +261,7 @@
                             <td>
                                 <input type="checkbox" name="global_goods" id="global_goods" value=true <?php echo isset($organize_id)?"":"checked"?> /> <?php echo $this->lang->line('entry_global_goods'); ?>
 
-                                <br><br>Type : <input type='hidden' name="organize_id" id="organize_id" style="width:220px;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
+                                <br>Type : <input type='hidden' name="organize_id" id="organize_id" style="width:220px;" value="<?php echo isset($organize_id) ? $organize_id : set_value('organize_id'); ?>">
 
                                 <br>Role : <input type="text" name="organize_role" id="organize_role" value="<?php echo isset($organize_role) ? $organize_role : set_value('organize_role'); ?>" size="1" />
                             </td>
@@ -498,6 +510,29 @@ $(document).ready(function(){
 
     });
 
+    $("#whitelist_enable").change(function(e){
+        e.preventDefault();
+        if (document.getElementById('whitelist_enable').checked) {
+            //alert("checked");
+            document.getElementById("whitelist_file").disabled = false;
+            document.getElementById("whitelist_file_name").style.display = "inline";
+        } else {
+            document.getElementById("whitelist_file").value = null;
+            document.getElementById("whitelist_file").disabled = true;
+            document.getElementById("whitelist_file_name").style.display = "none";
+
+        }
+    });
+
+    if (document.getElementById('whitelist_enable').checked) {
+        //alert("checked");
+        document.getElementById("whitelist_file").disabled = false;
+        document.getElementById("whitelist_file_name").style.display = "inline";
+    } else {
+        document.getElementById("whitelist_file").disabled = true;
+        document.getElementById("whitelist_file_name").style.display = "none";
+    }
+
     <?php if($org_status){?>
         $("#global_goods").change(function(e){
             e.preventDefault();
@@ -611,6 +646,12 @@ $(document).ready(function(){
 <?php } ?>
 
 <script type="text/javascript">
+
+    function downloadFile(){
+        distinct_id = "<?php echo $distinct_id?>";
+        location = baseUrlPath+'goods/getWhitelistFile?distinct_id='+distinct_id;
+
+    }
 
     $(document).ready(function(){
 

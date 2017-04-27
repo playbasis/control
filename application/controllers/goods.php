@@ -77,6 +77,7 @@ class Goods extends MY_Controller
     {
 
         // Get Usage
+        $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $usage = $this->Goods_model->getTotalGoodsBySiteId(
             array('site_id' => $site_id));
@@ -120,7 +121,7 @@ class Goods extends MY_Controller
 
             if (isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
 
-                $maxsize = 2097152;
+                $maxsize = 4194304;
                 $csv_mimetypes = array(
                     'text/csv',
                     'text/plain',
@@ -180,11 +181,56 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
-            if ($this->User_model->getClientId() && $this->User_model->getSiteId()) {
-                if ($this->input->post('name') && $this->Goods_model->checkExists($this->User_model->getSiteId(),
-                        $this->input->post('name'))
-                ) {
-                    $this->data['message'] = $this->lang->line('error_group_exists');
+            if ($client_id && $site_id) {
+                if ($this->input->post('name') && $this->Goods_model->checkExists($site_id, $this->input->post('name')))
+                {
+                    $this->data['message'] = $this->lang->line('error_goods_exists');
+                }
+            }
+
+            $whitelist_data = array();
+            $whitelist_enable = $this->input->post('whitelist_enable') ? true : false;
+            if ($this->data['message'] == null && $whitelist_enable) {
+                if (empty($_FILES) || !isset($_FILES['whitelist_file']['tmp_name']) || $_FILES['whitelist_file']['tmp_name'] == '') {
+                    $this->data['message'] = $this->lang->line('error_file_whitelist');
+                }
+
+                if ( $this->data['message'] == null ) {
+
+                    $maxsize = 4194304;
+                    $csv_mimetypes = array(
+                        'text/csv',
+                        'text/plain',
+                        'application/csv',
+                        'text/comma-separated-values',
+                        'application/excel',
+                        'application/vnd.ms-excel',
+                        'application/vnd.msexcel',
+                        'text/anytext',
+                        'application/octet-stream',
+                        'application/txt',
+                    );
+
+                    if (($_FILES['whitelist_file']['size'] >= $maxsize) || ($_FILES["whitelist_file"]["size"] == 0)) {
+                        $this->data['message'] = $this->lang->line('error_file_too_large_whitelist');
+                    }
+
+                    if (!in_array($_FILES['whitelist_file']['type'], $csv_mimetypes) && (!empty($_FILES["whitelist_file"]["type"]))) {
+                        $this->data['message'] = $this->lang->line('error_type_accepted_whitelist');
+                    }
+
+                    $handle_whitelist = fopen($_FILES['whitelist_file']['tmp_name'], "r");
+                    if (!$handle_whitelist) {
+                        $this->data['message'] = $this->lang->line('error_upload_whitelist');
+                    }
+
+                    if ( $this->data['message'] == null){
+                        // prepare data of user white list
+                        $this->generateWhiteListData($handle_whitelist,$whitelist_data);
+                        $whitelist_data['file_name'] = $_FILES['whitelist_file']['name'];
+
+                    }
+
                 }
             }
 
@@ -206,11 +252,18 @@ class Goods extends MY_Controller
                     }
                 }
 
-                if ($this->User_model->getClientId()) {
+                if ($client_id) {
 
                     try {
-                        $this->Goods_model->addGoodsDistinct(array_merge($data, array('client_id'=>$this->User_model->getClientId(), 'site_id' => $this->User_model->getSiteId(), 'redeem' => $redeem)), true);
+                        $distinct_id = $this->Goods_model->addGoodsDistinct(array_merge($data, array('client_id' => $client_id, 'site_id' => $site_id,
+                                                                                        'redeem' => $redeem, 'whitelist_enable' => $whitelist_enable)), true);
+                        $data['distinct_id'] = $distinct_id;
                         $data = $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
+                        //insert whitelist
+                        if($whitelist_enable) {
+                            $whitelist_data['cl_player_id_list'] = $this->generateWhiteListBatch($whitelist_data['cl_player_id_list'], $client_id, $site_id, $distinct_id);
+                            $this->Goods_model->setGoodsWhiteList($client_id, $site_id, $distinct_id, $whitelist_data);
+                        }
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
                         fclose($handle);
                         redirect('/goods/update/'.$data['goods_id'], 'refresh');
@@ -231,7 +284,7 @@ class Goods extends MY_Controller
                         }
 
                         try {
-                            $this->Goods_model->addGoodsDistinct(array_merge($data, array('client_id'=>$this->User_model->getClientId(), 'site_id' => $this->User_model->getSiteId(), 'redeem' => $redeem)), true);
+                            //$this->Goods_model->addGoodsDistinct(array_merge($data, array('client_id'=> $client_id, 'site_id' => $site_id, 'redeem' => $redeem)), true);
                             $data = $this->addGoods($handle, $data, $redeem, array(new MongoId($goods_data['admin_client_id'])), $list_site_id);
                             fclose($handle);
                             redirect('/goods/update/'.$data['goods_id'], 'refresh');
@@ -248,7 +301,7 @@ class Goods extends MY_Controller
                         }
 
                         try {
-                            $this->Goods_model->addGoodsDistinct(array_merge($data, array('client_id'=> $this->User_model->getClientId(), 'site_id' => $this->User_model->getSiteId(), 'redeem' => $redeem)), true);
+                            //$this->Goods_model->addGoodsDistinct(array_merge($data, array('client_id'=> $client_id, 'site_id' => $site_id, 'redeem' => $redeem)), true);
                             $data = $this->addGoods($handle, $data, $redeem, array_keys($hash_client_id), array($list_site_id));
                             fclose($handle);
                             redirect('/goods/update/'.$data['goods_id'], 'refresh');
@@ -265,6 +318,7 @@ class Goods extends MY_Controller
     public function insert()
     {
         // Get Usage
+        $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $usage = $this->Goods_model->getTotalGoodsBySiteId(
             array('site_id' => $site_id));
@@ -334,8 +388,61 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
+            if ($this->User_model->getClientId() && $this->User_model->getSiteId()) {
+                if ($this->input->post('name') && $this->Goods_model->checkExists($this->User_model->getSiteId(), $this->input->post('name'))
+                ) {
+                    $this->data['message'] = $this->lang->line('error_goods_exists');
+                }
+            }
+
+            $whitelist_data = array();
+            $whitelist_enable = $this->input->post('whitelist_enable') ? true : false;
+            if ($this->data['message'] == null && $whitelist_enable) {
+                if (empty($_FILES) || !isset($_FILES['whitelist_file']['tmp_name']) || $_FILES['whitelist_file']['tmp_name'] == '') {
+                    $this->data['message'] = $this->lang->line('error_file_whitelist');
+                }
+
+                if ( $this->data['message'] == null ) {
+
+                    $maxsize = 4194304;
+                    $csv_mimetypes = array(
+                        'text/csv',
+                        'text/plain',
+                        'application/csv',
+                        'text/comma-separated-values',
+                        'application/excel',
+                        'application/vnd.ms-excel',
+                        'application/vnd.msexcel',
+                        'text/anytext',
+                        'application/octet-stream',
+                        'application/txt',
+                    );
+
+                    if (($_FILES['whitelist_file']['size'] >= $maxsize) || ($_FILES["whitelist_file"]["size"] == 0)) {
+                        $this->data['message'] = $this->lang->line('error_file_too_large_whitelist');
+                    }
+
+                    if (!in_array($_FILES['whitelist_file']['type'], $csv_mimetypes) && (!empty($_FILES["whitelist_file"]["type"]))) {
+                        $this->data['message'] = $this->lang->line('error_type_accepted_whitelist');
+                    }
+
+                    $handle = fopen($_FILES['whitelist_file']['tmp_name'], "r");
+                    if (!$handle) {
+                        $this->data['message'] = $this->lang->line('error_upload_whitelist');
+                    }
+
+                    if ( $this->data['message'] == null){
+                        // prepare data of user white list
+                        $this->generateWhiteListData($handle,$whitelist_data);
+                        $whitelist_data['file_name'] = $_FILES['whitelist_file']['name'];
+                    }
+
+                }
+            }
+
             $goods_data = $this->input->post();
             $goods_data['redeem'] = $redeem;
+            $goods_data['whitelist_enable'] = $whitelist_enable;
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
@@ -353,16 +460,23 @@ class Goods extends MY_Controller
                     }
                 }
 
-                if ($this->User_model->getClientId()) {
+                if ($client_id) {
                     $goods_id = $this->Goods_model->addGoods($goods_data);
 
                     $goods_data['goods_id'] = $goods_id;
-                    $goods_data['client_id'] = $this->User_model->getClientId();
-                    $goods_data['site_id'] = $this->User_model->getSiteId();
+                    $goods_data['client_id'] = $client_id;
+                    $goods_data['site_id'] = $site_id;
 
-                    $this->Goods_model->addGoodsDistinct($goods_data, false);
+                    $distinct_id = $this->Goods_model->addGoodsDistinct($goods_data, false);
+                    $goods_data['distinct_id'] = $distinct_id;
                     $goods_client_id = $this->Goods_model->addGoodsToClient($goods_data);
                     $this->Goods_model->auditAfterGoods('insert', $goods_client_id, $this->User_model->getId());
+
+                    //insert whitelist
+                    if(isset($goods_data['whitelist_enable']) && $goods_data['whitelist_enable'] == true) {
+                        $whitelist_data['cl_player_id_list'] = $this->generateWhiteListBatch($whitelist_data['cl_player_id_list'], $client_id, $site_id, $distinct_id);
+                        $this->Goods_model->setGoodsWhiteList($client_id, $site_id, $distinct_id, $whitelist_data);
+                    }
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
                     $this->session->set_flashdata('refer_page', $goods_data['refer_page']);
@@ -396,7 +510,6 @@ class Goods extends MY_Controller
                         foreach ($all_sites_clients as $site) {
                             $goods_data['site_id'] = $site['_id'];
                             $goods_data['client_id'] = $site['client_id'];
-                            
                             $goods_client_id = $this->Goods_model->addGoodsToClient($goods_data);
                             $this->Goods_model->auditAfterGoods('insert', $goods_client_id, $this->User_model->getId());
                         }
@@ -420,6 +533,9 @@ class Goods extends MY_Controller
         $this->data['form'] = 'goods/update/' . $goods_id;
         $referred_page = explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']);
         $this->data['refer_page'] = strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
         if (isset($this->error['warning'])) {
             $this->data['error_warning'] = $this->error['warning'];
         } else {
@@ -478,6 +594,63 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
+            if ($this->User_model->getClientId() && $this->User_model->getSiteId()) {
+                if ($this->input->post('name') && $this->Goods_model->checkExists($this->User_model->getSiteId(), $this->input->post('name'),$goods_id)
+                ) {
+                    $this->data['message'] = $this->lang->line('error_goods_exists');
+                }
+            }
+
+            $whitelist_data = array();
+            $whitelist_enable = $this->input->post('whitelist_enable') ? true : false;
+            $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+            $distinct_id = $goods_info['distinct_id'];
+            if ($this->data['message'] == null && $whitelist_enable) {
+
+                $distinct_info = $this->Goods_model->getGoodsDistinctByID($site_id,$distinct_id);
+                if ( (!isset($distinct_info['whitelist_enable']) || $distinct_info['whitelist_enable'] == false) &&
+                     (empty($_FILES) || !isset($_FILES['whitelist_file']['tmp_name']) || $_FILES['whitelist_file']['tmp_name'] == '')) {
+                    $this->data['message'] = $this->lang->line('error_file_whitelist');
+                }
+
+                if ( $this->data['message'] == null && (isset($_FILES['whitelist_file']['tmp_name']) && $_FILES['whitelist_file']['tmp_name'] != '') ) {
+
+                    $maxsize = 4194304;
+                    $csv_mimetypes = array(
+                        'text/csv',
+                        'text/plain',
+                        'application/csv',
+                        'text/comma-separated-values',
+                        'application/excel',
+                        'application/vnd.ms-excel',
+                        'application/vnd.msexcel',
+                        'text/anytext',
+                        'application/octet-stream',
+                        'application/txt',
+                    );
+
+                    if (($_FILES['whitelist_file']['size'] >= $maxsize) || ($_FILES["whitelist_file"]["size"] == 0)) {
+                        $this->data['message'] = $this->lang->line('error_file_too_large_whitelist');
+                    }
+
+                    if (!in_array($_FILES['whitelist_file']['type'], $csv_mimetypes) && (!empty($_FILES["whitelist_file"]["type"]))) {
+                        $this->data['message'] = $this->lang->line('error_type_accepted_whitelist');
+                    }
+
+                    $handle = fopen($_FILES['whitelist_file']['tmp_name'], "r");
+                    if (!$handle) {
+                        $this->data['message'] = $this->lang->line('error_upload_whitelist');
+                    }
+
+                    if ( $this->data['message'] == null){
+                        // prepare data of user white list
+                        $this->generateWhiteListData($handle,$whitelist_data);
+                        $whitelist_data['file_name'] = $_FILES['whitelist_file']['name'];
+                    }
+
+                }
+            }
+
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 try {
                     $goods_data = $this->input->post();
@@ -485,9 +658,10 @@ class Goods extends MY_Controller
                         $goods_data = array_merge($goods_data, array('quantity' => 1));
                     }
                     $goods_data['redeem'] = $redeem;
+                    $goods_data['whitelist_enable'] = $whitelist_enable;
 
                     if ($this->User_model->hasPermission('access', 'store_org') &&
-                        $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+                        $this->Feature_model->getFeatureExistByClientId($client_id, 'store_org')
                     ) {
                         if ($this->input->post('global_goods')) {
                             $goods_data['organize_id'] = null;
@@ -509,11 +683,10 @@ class Goods extends MY_Controller
                         }
                     }
 
-                    if ($this->User_model->getClientId()) {
+                    if ($client_id) {
                         if (!$this->Goods_model->checkGoodsIsSponsor($goods_id)) {
-                            $goods_data['client_id'] = $this->User_model->getClientId();
-                            $goods_data['site_id'] = $this->User_model->getSiteId();
-                            $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+                            $goods_data['client_id'] = $client_id;
+                            $goods_data['site_id'] = $site_id;
                             $goods_data['goods_id'] = $goods_info['goods_id'];
                             if ($goods_info && array_key_exists('group', $goods_info)) {
                                 $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
@@ -521,11 +694,11 @@ class Goods extends MY_Controller
                                 if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && !empty($_FILES['file']['tmp_name'])) {
                                     $data = array_merge($this->input->post(), array('quantity' => 1));
                                     $handle = fopen($_FILES['file']['tmp_name'], "r");
-                                    $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
+                                    $this->addGoods($handle, $data, $redeem, array($client_id), array($site_id));
                                     fclose($handle);
                                 }
                                 /* update all existing records in the group */
-                                $this->Goods_model->editGoodsDistinct($this->User_model->getSiteId(),$goods_info['group'],$goods_data);
+                                $this->Goods_model->editGoodsDistinct($site_id,$goods_info['group'],$goods_data);
                                 $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
                                 if ($goods_info['group'] != $goods_data['name']){
                                     $this->Goods_model->editGoodsGroupLog($goods_info['group'], $goods_data);
@@ -533,12 +706,24 @@ class Goods extends MY_Controller
                                 }
 
                                 $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
+
                             } else {
-                                $this->Goods_model->editGoodsDistinct($this->User_model->getSiteId(),$goods_info['name'],$goods_data);
+                                $this->Goods_model->editGoodsDistinct($site_id,$goods_info['name'],$goods_data);
                                 $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
                                 $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
                                 $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
+
                             }
+
+                            //update whitelist
+                            if(isset($goods_data['whitelist_enable']) && ($goods_data['whitelist_enable'] == true) && (isset($_FILES['whitelist_file']['tmp_name']) && $_FILES['whitelist_file']['tmp_name'] != '')) {
+                                $this->Goods_model->deleteGoodsWhiteList($client_id, $site_id, $distinct_id);
+                                $whitelist_data['cl_player_id_list'] = $this->generateWhiteListBatch($whitelist_data['cl_player_id_list'], $client_id, $site_id, $distinct_id);
+                                $this->Goods_model->setGoodsWhiteList($client_id, $site_id, $distinct_id, $whitelist_data);
+                            }elseif(!isset($goods_data['whitelist_enable']) || ($goods_data['whitelist_enable'] == false)){
+                                $this->Goods_model->deleteGoodsWhiteList($client_id, $site_id, $distinct_id);
+                            }
+
                         } else {
                             redirect($_SERVER['HTTP_REFERER'], 'refresh');
                         }
@@ -983,8 +1168,11 @@ class Goods extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Reward_model');
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
         if (isset($goods_id) && ($goods_id != 0)) {
-            if ($this->User_model->getClientId()) {
+            if ($client_id) {
                 $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
             } else {
                 $goods_info = $this->Goods_model->getGoods($goods_id);
@@ -1002,7 +1190,7 @@ class Goods extends MY_Controller
             $limit_group = 10;
 
             $data = array(
-                'site_id' => $this->User_model->getSiteId(),
+                'site_id' => $site_id,
                 'group' => $goods_info['group'],
                 'limit' => $limit_group,
                 'start' => 0
@@ -1098,8 +1286,23 @@ class Goods extends MY_Controller
             $this->data['status'] = 1;
         }
 
+        if ($this->input->post('whitelist_enable')) {
+            $this->data['whitelist_enable'] = $this->input->post('whitelist_enable');
+        } elseif (isset($goods_info['distinct_id'])) {
+            $this->data['distinct_id']  = $goods_info['distinct_id'];
+            $distinct_id = $goods_info['distinct_id'];
+            $distinct_info = $this->Goods_model->getGoodsDistinctByID($site_id,$distinct_id);
+            $whitelist_info = $this->Goods_model->getGoodsWhiteList($client_id, $site_id, $distinct_id);
+            $this->data['whitelist_enable'] = isset($distinct_info['whitelist_enable']) ? $distinct_info['whitelist_enable'] : false;
+            if($this->data['whitelist_enable'] == true) {
+                $this->data['whitelist_file_name'] = isset($whitelist_info['file_name']) ? $whitelist_info['file_name'] : "";
+            }
+        } else {
+            $this->data['whitelist_enable'] = false;
+        }
+
         if ($this->User_model->hasPermission('access', 'store_org') &&
-            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
+            $this->Feature_model->getFeatureExistByClientId($client_id, 'store_org')
         ) {
             $this->data['org_status'] = true;
             if ($this->input->post('organize_id')) {
@@ -1210,7 +1413,7 @@ class Goods extends MY_Controller
             $this->data['goods_id'] = null;
         }
 
-        if ($this->User_model->getClientId()) {
+        if ($client_id) {
             if ($this->data['sponsor']) {
                 redirect('/goods', 'refresh');
             }
@@ -1218,8 +1421,7 @@ class Goods extends MY_Controller
 
         $this->load->model('Client_model');
         $this->data['to_clients'] = $this->Client_model->getClients(array());
-        $this->data['client_id'] = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
+        $this->data['client_id'] = $client_id;
         $this->data['site_id'] = $site_id;
 
         $setting_group_id = $this->User_model->getAdminGroupID();
@@ -1481,6 +1683,7 @@ class Goods extends MY_Controller
             'language_id' => 1,
             'redeem' => $redeem,
             'custom_param' => isset($data['custom_param']) ? $data['custom_param'] : array(),
+            'distinct_id' => isset($data['distinct_id']) ? $data['distinct_id'] : null,
             'tags' => isset($tags) ? $tags : null,
             'date_start' => null,
             'date_expire' => null,
@@ -1714,5 +1917,63 @@ class Goods extends MY_Controller
             }
         }
         return !empty($indexes) ? $indexes : null;
+    }
+
+    private function generateWhiteListData($handle,&$data){
+        $result = true;
+        $cl_player_id_list = array();
+        $file_content = array();
+        while ((($line = fgets($handle)) !== false) && $result ) {
+            $file_content[]= $line;
+            $line = str_replace(' ', '', trim($line));
+            if (empty($line)) {
+                // skip empty line
+                continue;
+            }
+            $obj = explode(',', $line);
+            foreach($obj as $cl_player_id){
+                if($cl_player_id){
+                    $cl_player_id_list[]= $cl_player_id;
+                }
+            }
+        }
+        $data['file_content'] = $file_content;
+        $data['cl_player_id_list'] = $cl_player_id_list;
+        return $result;
+    }
+
+    private function generateWhiteListBatch($cl_player_id_list, $client_id, $site_id, $distinct_id){
+        $result = array();
+        $date_added = new MongoDate();
+        foreach ($cl_player_id_list as $cl_player_id){
+            $result[] = array(
+                'client_id' => new MongoId($client_id),
+                'site_id' => new MongoId($site_id),
+                'distinct_id' => new MongoId($distinct_id),
+                'cl_player_id' => $cl_player_id,
+                'date_added' => $date_added
+            );
+        }
+
+        return $result;
+    }
+
+    public function getWhitelistFile()
+    {
+        $whitelist_file = $this->Goods_model->retrieveWhiteListFile($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('distinct_id'));
+
+        if(isset($whitelist_file['file_content'])){
+            $this->load->helper('export_data');
+
+            $exporter = new ExportDataCSVSequence('browser', $whitelist_file['file_name']);
+
+            $exporter->initialize(); // starts streaming data to web browser
+
+            foreach ($whitelist_file['file_content'] as $row) {
+                $exporter->addRow(array($row) );
+            }
+            $exporter->finalize();
+        }
+
     }
 }
