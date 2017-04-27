@@ -348,6 +348,26 @@ class Goods_model extends MY_Model
         return $this->mongo_db->get('playbasis_goods_distinct_to_client');
     }
 
+    public function getGoodsDistinctByID($site_id, $distinct_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('_id', new MongoId($distinct_id));
+
+        $result =  $this->mongo_db->get('playbasis_goods_distinct_to_client');
+        return isset($result[0]) ? $result[0] : null;
+    }
+
+    public function getGoodsDistinctID($site_id, $goods_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('_id', new MongoId($goods_id));
+
+        $result = $this->mongo_db->get('playbasis_goods_to_client');
+        return isset($result[0]['distinct_id']) ? $result[0]['distinct_id'] : null;
+    }
+
     public function addGoodsDistinct($data, $is_group)
     {
         $data_insert = array(
@@ -370,6 +390,7 @@ class Goods_model extends MY_Model
             'date_start' => null,
             'date_expire' => null,
             'custom_param' => isset($data['custom_param']) ? $data['custom_param'] : array(),
+            'whitelist_enable' => isset($data['whitelist_enable']) ? $data['whitelist_enable'] : false,
         );
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);
@@ -424,6 +445,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('tags', isset($tags) ? $tags : null);
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
         $this->mongo_db->set('custom_param', isset($data['custom_param']) ? $data['custom_param'] : array());
+        $this->mongo_db->set('whitelist_enable', isset($data['whitelist_enable']) ? $data['whitelist_enable'] : false);
 
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);
@@ -475,12 +497,91 @@ class Goods_model extends MY_Model
         $this->mongo_db->update('playbasis_goods_distinct_to_client');
     }
 
-    public function checkExists($site_id, $group)
+    public function setGoodsWhiteList($client_id, $site_id, $distinct_id, $whitelist_data)
     {
+        $result = $this->mongo_db->batch_insert('playbasis_goods_white_list_to_player', $whitelist_data['cl_player_id_list']);
+
+        $data_insert = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'distinct_id' => new MongoId($distinct_id),
+            'deleted' => false,
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'file_name' => $whitelist_data['file_name'],
+            'file_content' => $whitelist_data['file_content']
+        );
+
+        return $this->mongo_db->insert('playbasis_goods_white_list', $data_insert);
+    }
+
+    public function getGoodsWhiteList($client_id, $site_id, $distinct_id)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'distinct_id' => new MongoId($distinct_id),
+            'deleted' => false
+        ));
+
+        $this->mongo_db->limit(1);
+
+        $result = $this->mongo_db->get('playbasis_goods_white_list');
+
+        return isset($result[0]) ? $result[0] : null;
+    }
+
+    public function deleteGoodsWhiteList($client_id, $site_id, $distinct_id)
+    {
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'distinct_id' => new MongoId($distinct_id),
+        ));
+        $this->mongo_db->delete_all("playbasis_goods_white_list_to_player");
+
+        $this->mongo_db->where(array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'distinct_id' => new MongoId($distinct_id),
+            'deleted' => false
+        ));
+
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+
+        return $this->mongo_db->update('playbasis_goods_white_list');
+    }
+
+    public function retrieveWhiteListFile($client_id, $site_id, $distinct_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('distinct_id', new MongoId($distinct_id));
+        $this->mongo_db->where('deleted', false);
+
+        $result = $this->mongo_db->get('playbasis_goods_white_list');
+
+        return $result ? $result[0] : null;
+    }
+
+    public function checkExists($site_id, $goods, $goods_id=null)
+    {
+        if(!is_null($goods_id)){
+            $this->mongo_db->where('_id', new MongoId($goods_id));
+            $goods_data = $this->mongo_db->get("playbasis_goods_to_client");
+            $distinct_id = $goods_data ? $goods_data[0]['distinct_id'] : null;
+            if($distinct_id){
+                $this->mongo_db->where_ne('_id', new MongoId($distinct_id));
+            }
+        }
+
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('group', $group);
-        return $this->mongo_db->count("playbasis_goods_to_client") > 0;
+        $this->mongo_db->where('name', $goods);
+        return $this->mongo_db->count("playbasis_goods_distinct_to_client") > 0;
     }
 
     public function checkGoodsGroupQuantity($site_id, $group)
@@ -793,6 +894,7 @@ class Goods_model extends MY_Model
             'date_start' => null,
             'date_expire' => null,
             'custom_param' => isset($data['custom_param']) ? $data['custom_param'] : array(),
+            'distinct_id' => isset($data['distinct_id']) ? $data['distinct_id'] : null,
         );
 
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
@@ -1666,4 +1768,5 @@ class Goods_model extends MY_Model
         }
         return $result;
     }
+
 }

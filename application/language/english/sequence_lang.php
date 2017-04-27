@@ -32,7 +32,7 @@ $lang['text_fail_update']               = 'Failed to update the sequence file, P
 $lang['text_success_delete']            = 'The sequence(s) was deleted successfully.';
 $lang['error_file']                     = 'Please provide a file to import.';
 $lang['error_upload']                   = 'Our system cannot access your uploaded file.';
-$lang['error_file_too_large']           = 'File too large. File must be less than 2 megabytes.';
+$lang['error_file_too_large']           = 'File too large. File must be less than 4 megabytes.';
 $lang['error_type_accepted']            = 'Invalid file type. Only CSV types are accepted.';
 $lang['error_non_numeric']              = 'Invalid data type. There are non-numeric value in the file';
 ?>
