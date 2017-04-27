@@ -425,7 +425,7 @@ class Goods_model extends MY_Model
         return $this->mongo_db->insert('playbasis_goods_distinct_to_client', $data_insert);
     }
 
-    public function editGoodsDistinct($site_id, $goods_name, $data, $whitelist = array())
+    public function editGoodsDistinct($site_id, $goods_name, $data)
     {
         if (!empty($data['tags'])){
             $tags = explode(',', $data['tags']);
