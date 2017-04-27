@@ -82,6 +82,8 @@ $lang['entry_node_type']                = 'Node Type';
 $lang['entry_store_id']                 = 'Store Id';
 $lang['entry_operate']                  = 'Operate';
 $lang['entry_tags']                     = 'Tags';
+$lang['entry_whitelist_enable']         = 'Enable?';
+$lang['entry_whitelist']                = 'Users White List';
 
 $lang['column_client_image']            = 'Logo';
 $lang['column_client_name']             = 'Name';
@@ -105,7 +107,11 @@ $lang['error_limit']                    = 'You have reached goods limit.';
 $lang['error_redeem']                   = 'Please provide point or item.';
 $lang['error_file']                     = 'Please provide a file to import.';
 $lang['error_upload']                   = 'Our system cannot access your uploaded file.';
-$lang['error_group_exists']             = 'Group already exists.';
-$lang['error_file_too_large']           = 'File too large. File must be less than 2 megabytes.';
+$lang['error_goods_exists']             = 'Goods already exists.';
+$lang['error_file_too_large']           = 'File too large. File must be less than 4 megabytes.';
 $lang['error_type_accepted']            = 'Invalid file type. Only CSV types are accepted.';
+$lang['error_file_whitelist']           = '[Whitelist file] Please provide a white list file.';
+$lang['error_upload_whitelist']         = '[Whitelist file] Our system cannot access your uploaded file.';
+$lang['error_file_too_large_whitelist'] = '[Whitelist file] File too large. File must be less than 4 megabytes.';
+$lang['error_type_accepted_whitelist']  = '[Whitelist file] Invalid file type. Only CSV types are accepted.';
 ?>
