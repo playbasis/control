@@ -192,7 +192,8 @@ class Goods_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('name', $regex);
+            $this->mongo_db->where(array('$or' => array(array('group', array('$exists' => false) , 'name', $regex),
+                                                        array('group', array('$exists' => true), 'group', $regex))));
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -252,12 +253,14 @@ class Goods_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
-            $this->mongo_db->where('name', $regex);
+            $this->mongo_db->where(array('$or' => array(array('group', array('$exists' => false) , 'name', $regex),
+                                                        array('group', array('$exists' => true), 'group', $regex))));
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
+
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id', $data['site_id'] ? new MongoId($data['site_id']) : null);
         
@@ -322,16 +325,26 @@ class Goods_model extends MY_Model
         return $results ? $results['result'] : array();
     }
 
-    public function getGroupsList($site_id, $filter_group =null)
+    public function getGroupsList($site_id, $data=array())
     {
-        $this->mongo_db->select(array('name'));
+        $this->mongo_db->select(array('name','is_group'));
         $this->mongo_db->where('site_id', new MongoId($site_id));
         
-        if($filter_group){
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($filter_group)) . "/i");
+        if(isset($data['filter_goods']) && $data['filter_goods']){
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_goods'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
-        $this->mongo_db->where('is_group', true);
+        if(isset($data['filter_status']) && !is_null($data['filter_status'])){
+            $this->mongo_db->where('status', $data['filter_status']);
+        }
+        if(isset($data['filter_tags']) && $data['filter_tags']){
+            $tags = explode(',', $data['filter_tags']);
+            $this->mongo_db->where_in('tags', $tags);
+        }
+        if(isset($data['filter_group']) && !is_null($data['filter_group'])){
+            $this->mongo_db->where('is_group', $data['filter_group']);
+        }
+
         $this->mongo_db->where('deleted', false);
         return $this->mongo_db->get('playbasis_goods_distinct_to_client');
     }
