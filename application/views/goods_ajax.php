@@ -20,6 +20,7 @@ echo form_open('goods/delete',$attributes);
             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
+            <td class="left" style="width:50px;"><?php echo $this->lang->line('column_white_list'); ?></td>
             <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
             <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
             <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
@@ -29,13 +30,39 @@ echo form_open('goods/delete',$attributes);
             <td></td>
             <td></td>
             <td class="right" ><input style="width:95%;" title="filter_goods" type="text" name="filter_goods" value="<?php echo isset($_GET['filter_goods']) ? $_GET['filter_goods'] : "" ?>"/></td>
+            <?php if ($org_status) { ?>
+                <td></td>
+            <?php } if (!$client_id) {?>
+                <td></td>
+            <?php } if ($client_id) { ?>
+                <td>
+                    <select name="filter_group" style="width:95%">
+                        <?php if ($status) { ?>
+                            <option value="1" selected="selected"><?php echo $this->lang->line('text_yes'); ?></option>
+                            <option value="0"><?php echo $this->lang->line('text_no'); ?></option>
+                        <?php } else { ?>
+                            <option value="1"><?php echo $this->lang->line('text_yes'); ?></option>
+                            <option value="0" selected="selected"><?php echo $this->lang->line('text_no'); ?></option>
+                        <?php } ?>
+                    </select>
+                </td>
+            <?php } ?>
             <td></td>
             <td></td>
+            <td>
+                <select name="filter_status" style="width:95%">
+                    <?php if ($status) { ?>
+                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
+                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
+                    <?php } else { ?>
+                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
+                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
+                    <?php } ?>
+                </select>
+            </td>
             <td></td>
             <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td class="right" ><input style="width:95%;" title="filter_tags" type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : "" ?>"/></td>
             <td class="right">
                 <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
                 <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
@@ -76,6 +103,7 @@ echo form_open('goods/delete',$attributes);
                     <td class="right"><?php echo (isset($goods['per_user']) && !is_null($goods['per_user']))?$goods['per_user']:'Unlimited'; ?></td>
                     <td class="right"><?php echo (isset($goods['quantity']) && !is_null($goods['quantity']))?$goods['quantity']:'Unlimited'; ?></td>
                     <td class="left"><?php echo ($goods['status'])? "Enabled" : "Disabled"; ?></td>
+                    <td class="left"><?php echo (isset($goods['white_list']) && $goods['white_list']) ? "Enabled" : "Disabled"; ?></td>
                     <td class="right"><?php echo $goods['sort_order']; ?></td>
                     <td class="right" style="word-wrap:break-word;"><?php echo (isset($goods['tags']) && $goods['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $goods['tags']).'</span>' : null); ?></td>
                     <td class="right">
