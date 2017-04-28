@@ -381,6 +381,16 @@ class Goods_model extends MY_Model
         return isset($result[0]['distinct_id']) ? $result[0]['distinct_id'] : null;
     }
 
+    public function checkGoodsWhiteList($site_id, $distinct_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('_id', new MongoId($distinct_id));
+        
+        $result = $this->mongo_db->get('playbasis_goods_distinct_to_client');
+        return isset($result[0]['whitelist_enable']) ? $result[0]['whitelist_enable'] : false;
+    }
+
     public function addGoodsDistinct($data, $is_group)
     {
         $data_insert = array(

@@ -1101,6 +1101,12 @@ class Goods extends MY_Controller
                         $org_name = $org["name"];
                     }
                 }
+                if(isset($goods['custom_param'])){
+                    $param_array = array();
+                    foreach ($goods['custom_param'] as $param){
+                        array_push($param_array, implode(' : ', $param));
+                    }
+                }
 
                 $this->data['goods_list'][] = array(
                     'goods_id' => $goods['_id'],
@@ -1111,6 +1117,8 @@ class Goods extends MY_Controller
                     'image' => $image,
                     'sort_order' => $goods['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
+                    'white_list' => isset($goods['distinct_id']) ? $this->Goods_model->checkGoodsWhiteList($site_id, $goods['distinct_id']) : false,
+                    'custom_param' => isset($goods['custom_param']) && $param_array? $param_array : null,
                     'sponsor' => isset($goods['sponsor']) ? $goods['sponsor'] : null,
                     'is_group' => $is_group,
                     'organize_name' => $org_name,
