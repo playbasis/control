@@ -625,7 +625,7 @@ class Quest extends MY_Controller
 
         $this->data['badges'] = $this->Quest_model->getBadgesByClientSiteId($data);
 
-        $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'));
+        $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'),array('filter_group' => true));
         $in_goods = array();
         foreach ($group_list as $group_name){
             $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name['name'],false);

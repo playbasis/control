@@ -39,10 +39,12 @@ $lang['column_sort_order']              = 'Sort Order';
 $lang['column_quantity']                = 'Quantity';
 $lang['column_peruser']                 = 'Per User';
 $lang['column_status']                  = 'Status';
+$lang['column_white_list']              = 'White List';
 $lang['column_action']                  = 'Action';
 $lang['column_owner']                   = 'Owner';
 $lang['column_is_group']                = 'Group';
 $lang['column_tags']                    = 'Tag(s)';
+$lang['column_custom_param']            = 'Custom Param';
 
 // Entry
 $lang['entry_system_id']                = 'System Generated ID';

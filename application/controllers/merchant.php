@@ -557,7 +557,7 @@ class Merchant extends MY_Controller
                 }
             }
 
-            $this->data['goodsgroups'] = $this->Goods_model->getGroupsList($site_id);
+            $this->data['goodsgroups'] = $this->Goods_model->getGroupsList($this->session->userdata('site_id'),array('filter_group' => true));
 
             $this->data['merchantGoodsGroupsJSON'] = $this->Merchant_model->retrieveMerchantGoodsGroupsJSON($client_id,
                 $site_id,

@@ -339,7 +339,7 @@ class Report_weekly extends CI_Controller
         $arr = array();
         /* process group */
 
-        $group_list = $this->goods_model->getGroupsList($opts['site_id']);
+        $group_list = $this->Goods_model->getGroupsList($opts['site_id'], array('filter_group' => true));;
         $in_goods = array();
         $group_data = array();
         foreach ($group_list as $group_name){

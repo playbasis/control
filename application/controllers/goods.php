@@ -1034,30 +1034,45 @@ class Goods extends MY_Controller
                 );
             }
         } else {
+            $filter_array = array();
             if (isset($_GET['filter_goods'])) {
-                $parameter_url .= "&filter_category=" . $_GET['filter_goods'];
-                $filter_goods = $_GET['filter_goods'];
+                $parameter_url .= "&filter_goods=" . $_GET['filter_goods'];
+                $filter_array['filter_goods'] = $_GET['filter_goods'];
+            }
+            if (isset($_GET['filter_group'])) {
+                $parameter_url .= "&filter_group=" . $_GET['filter_group'];
+                $filter_array['filter_group'] = $_GET['filter_group'] == "yes" ? true: false;
+            }
+            if (isset($_GET['filter_status'])) {
+                $parameter_url .= "&filter_status=" . $_GET['filter_status'];
+                $filter_array['filter_status'] = $_GET['filter_status'] == "enable" ? true : false;
+            }
+            if (isset($_GET['filter_tags'])) {
+                $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
+                $filter_array['filter_tags'] = $_GET['filter_tags'];
             }
 
-            $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'), isset($filter_goods) && $filter_goods ? $filter_goods : null);
+            $good_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'), $filter_array);
             $in_goods = array();
-            foreach ($group_list as $group_name){
-                $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name['name'],false);
-                array_push($in_goods, new MongoId($goods_group_detail));
+            foreach ($good_list as $good_name){
+                if($good_name['is_group']){
+                    $goods_id =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $good_name['name'],false);
+                } else {
+                    $goods_id =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), $good_name['name'],"",false);
+                }
+                array_push($in_goods, new MongoId($goods_id));
             }
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId(array(
                 'site_id' => $site_id,
                 'sort' => 'sort_order',
-                'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) )),
-                'filter_name' => isset($filter_goods) && $filter_goods ? $filter_goods : null
+                'specific' => array("goods_id" => array('$in' => $in_goods )),
             ));
             $goods_list = $this->Goods_model->getGoodsBySiteId(array(
                 'site_id' => $site_id,
                 'limit' => $per_page,
                 'start' => $offset,
                 'sort' => 'sort_order',
-                'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) )),
-                'filter_name' => isset($filter_goods) && $filter_goods ? $filter_goods : null
+                'specific' => array("goods_id" => array('$in' => $in_goods )),
             ));
 
             $this->data['no_image'] = S3_IMAGE . "cache/no_image-50x50.jpg";
@@ -1086,6 +1101,12 @@ class Goods extends MY_Controller
                         $org_name = $org["name"];
                     }
                 }
+                if(isset($goods['custom_param'])){
+                    $param_array = array();
+                    foreach ($goods['custom_param'] as $param){
+                        array_push($param_array, implode(' : ', $param));
+                    }
+                }
 
                 $this->data['goods_list'][] = array(
                     'goods_id' => $goods['_id'],
@@ -1096,6 +1117,8 @@ class Goods extends MY_Controller
                     'image' => $image,
                     'sort_order' => $goods['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
+                    'white_list' => isset($goods['distinct_id']) ? $this->Goods_model->checkGoodsWhiteList($site_id, $goods['distinct_id']) : false,
+                    'custom_param' => isset($goods['custom_param']) && $param_array? $param_array : null,
                     'sponsor' => isset($goods['sponsor']) ? $goods['sponsor'] : null,
                     'is_group' => $is_group,
                     'organize_name' => $org_name,
