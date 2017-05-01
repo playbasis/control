@@ -393,8 +393,8 @@ class Goods extends MY_Controller
             }
 
             if ($this->User_model->getClientId() && $this->User_model->getSiteId()) {
-                if ($this->input->post('name') && $this->Goods_model->checkExists($this->User_model->getSiteId(), $this->input->post('name'))
-                ) {
+                if ($this->input->post('name') && $this->Goods_model->checkExists($this->User_model->getSiteId(), $this->input->post('name')))
+                {
                     $this->data['message'] = $this->lang->line('error_goods_exists');
                 }
             }
@@ -600,17 +600,18 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
+            $whitelist_data = array();
+            $whitelist_enable = $this->input->post('whitelist_enable') ? true : false;
+            $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+            $distinct_id = $goods_info['distinct_id'];
+
             if ($this->User_model->getClientId() && $this->User_model->getSiteId()) {
-                if ($this->input->post('name') && $this->Goods_model->checkExists($this->User_model->getSiteId(), $this->input->post('name'),$goods_id)
+                if ($this->input->post('name') && $this->Goods_model->checkExists($this->User_model->getSiteId(), $this->input->post('name'),$distinct_id)
                 ) {
                     $this->data['message'] = $this->lang->line('error_goods_exists');
                 }
             }
 
-            $whitelist_data = array();
-            $whitelist_enable = $this->input->post('whitelist_enable') ? true : false;
-            $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
-            $distinct_id = $goods_info['distinct_id'];
             if ($this->data['message'] == null && $whitelist_enable) {
 
                 $distinct_info = $this->Goods_model->getGoodsDistinctByID($site_id,$distinct_id);
