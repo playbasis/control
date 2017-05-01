@@ -590,15 +590,10 @@ class Goods_model extends MY_Model
         return $result ? $result[0] : null;
     }
 
-    public function checkExists($site_id, $goods, $goods_id=null)
+    public function checkExists($site_id, $goods, $distinct_id=null)
     {
-        if(!is_null($goods_id)){
-            $this->mongo_db->where('_id', new MongoId($goods_id));
-            $goods_data = $this->mongo_db->get("playbasis_goods_to_client");
-            $distinct_id = $goods_data ? $goods_data[0]['distinct_id'] : null;
-            if($distinct_id){
-                $this->mongo_db->where_ne('_id', new MongoId($distinct_id));
-            }
+        if(!is_null($distinct_id)){
+            $this->mongo_db->where_ne('_id', new MongoId($distinct_id));
         }
 
         $this->mongo_db->where('deleted', false);
