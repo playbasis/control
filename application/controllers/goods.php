@@ -695,11 +695,12 @@ class Goods extends MY_Controller
                             $goods_data['client_id'] = $client_id;
                             $goods_data['site_id'] = $site_id;
                             $goods_data['goods_id'] = $goods_info['goods_id'];
+                            $goods_data['distinct_id'] = $goods_info['distinct_id'];
                             if ($goods_info && array_key_exists('group', $goods_info)) {
                                 $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
                                 /* if there is an uploaded file, then import it into the group */
                                 if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && !empty($_FILES['file']['tmp_name'])) {
-                                    $data = array_merge($this->input->post(), array('quantity' => 1));
+                                    $data = array_merge($this->input->post(), array('quantity' => 1, 'distinct_id' => $distinct_id));
                                     $handle = fopen($_FILES['file']['tmp_name'], "r");
                                     $this->addGoods($handle, $data, $redeem, array($client_id), array($site_id));
                                     fclose($handle);
