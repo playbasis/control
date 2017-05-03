@@ -1054,6 +1054,9 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('tags', isset($tags) ? $tags : null);
         $this->mongo_db->set('custom_param', isset($data['custom_param']) ? $data['custom_param'] : array());
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] :false);
+        if(isset($data['distinct_id']) && !is_null($data['distinct_id'])){
+            $this->mongo_db->set('distinct_id', $data['distinct_id']);
+        }
 
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);
@@ -1117,6 +1120,9 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('tags', isset($tags) ? $tags : null);
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
         $this->mongo_db->set('custom_param', isset($data['custom_param']) ? $data['custom_param'] : array());
+        if(isset($data['distinct_id']) && !is_null($data['distinct_id'])){
+            $this->mongo_db->set('distinct_id', $data['distinct_id']);
+        }
 
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);
