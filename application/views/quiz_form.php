@@ -269,7 +269,15 @@ function find_template($data, $type, $template_id) {
                                                                         Option
                                                                     </td>
                                                                      <td>
-                                                                        <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option]" value = "<?php echo $option["option"]; ?>">
+                                                                        Is Not Choice?
+                                                                        <input type="checkbox" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][is_choice]"
+                                                                               id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_is_choice"
+                                                                               onchange="checkChoiceBox(this);"
+                                                                               <?php echo isset($option["is_choice"])&& $option["is_choice"] == true ? "checked":null; ?>>
+                                                                        <br><input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option]"
+                                                                               id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_option"
+                                                                               value = "<?php echo isset($option["option"]) && $option["option"] ? $option["option"]:null; ?>"
+                                                                               <?php echo isset($option["is_choice"]) && $option["is_choice"] == true ? "disabled":null; ?>>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -759,6 +767,16 @@ function find_template($data, $type, $template_id) {
 
     });
 
+    function checkChoiceBox(check,question_id,option_id){
+        var check_id = check.id.split('_');
+        if (check.checked) {
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').disabled = true;
+        } else {
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').disabled = false;
+        }
+    }
+
     var countGrades = 0;
     var countQuestions = 0;
     var countOptions = 0;
@@ -1046,9 +1064,13 @@ function find_template($data, $type, $template_id) {
                         <tbody>\
                         <tr>\
                             <td>Option</td>\
-                             <td>\
-                             <input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][option]" value = "">\
-                                </td>\
+                            <td>\
+                            Is Not Choice?\
+                            <input type="checkbox" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][is_choice]"\
+                                id="quiz_'+currentQuestion+'_'+countOptions+'_is_choice" onchange="checkChoiceBox(this);">\
+                            <br><input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][option]"\
+                                id="quiz_'+currentQuestion+'_'+countOptions+'_option" value = "">\
+                            </td>\
                             </tr>\
                             <tr>\
                                <td>Score</td>\

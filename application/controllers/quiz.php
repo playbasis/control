@@ -265,6 +265,15 @@ class Quiz extends MY_Controller
 
                                             foreach ($qqqvalue as $okey => $ovalue) {
                                                 $option = $ovalue;
+                                                if(isset($ovalue['is_choice']) && $ovalue['is_choice'] == "on"){
+                                                    $option['is_choice'] = true;
+                                                } else {
+                                                    $option['is_choice'] = false;
+                                                }
+
+                                                if(!(isset($ovalue['option']) && $ovalue['option'])){
+                                                    $option['option'] = "";
+                                                }
                                                 $option['option_id'] = new MongoId($okey);
 
                                                 $options[] = $option;
