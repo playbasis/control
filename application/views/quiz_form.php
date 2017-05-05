@@ -277,9 +277,9 @@ function find_template($data, $type, $template_id) {
                                                                         <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option]"
                                                                                id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_option"
                                                                                value = "<?php echo isset($option["option"]) && $option["option"] ? $option["option"]:null; ?>"
-                                                                               style="display : <?php echo isset($option["is_range_option"]) && $option["is_range_option"] == false ? "inline": "none"; ?>" >
+                                                                               style="display : <?php echo isset($option["is_range_option"]) && $option["is_range_option"] == true ? "none": "inline"; ?>" >
                                                                         <p id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_option_range"
-                                                                           style="display : <?php echo isset($option["is_range_option"]) && $option["is_range_option"] == true ? "inline": "none"; ?>">
+                                                                               style="display : <?php echo isset($option["is_range_option"]) && $option["is_range_option"] == true ? "inline": "none"; ?>">
                                                                         <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][range_min]"
                                                                                id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_range_min"
                                                                                placeholder="min"
