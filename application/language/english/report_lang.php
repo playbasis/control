@@ -1,7 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']                          = 'Report';
-
+$lang['title']                                  = 'Report';
 // Text
 $lang['text_success']                           = 'Success: You have modified clients!';
 $lang['text_default']                           = 'Default';

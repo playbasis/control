@@ -55,4 +55,5 @@ $lang['error_access']               = 'Warning: You do not have permission to ac
 $lang['error_quiz_limit']           = 'You have reached Quiz Limit.';
 $lang['error_permission_export']       	= 'Warning: You do not have permission to export quiz!';
 $lang['error_permission_import']       	= 'Warning: You do not have permission to import quiz!';
+$lang['error_range_error']       	= 'min/max value in range option are required and have to be numeric!';
 ?>
