@@ -265,10 +265,13 @@ class Quiz extends MY_Controller
 
                                             foreach ($qqqvalue as $okey => $ovalue) {
                                                 $option = $ovalue;
-                                                if(isset($ovalue['is_choice']) && $ovalue['is_choice'] == "on"){
-                                                    $option['is_choice'] = true;
+                                                if(isset($ovalue['is_range_option']) && $ovalue['is_range_option'] == "on"){
+                                                    if(!is_numeric($ovalue['range_min']) || !is_numeric($ovalue['range_max'])){
+                                                        $this->data['message'] = "[Error in question '".$qqvalue["question"]."' ] ".$this->lang->line('error_range_error');
+                                                    }
+                                                    $option['is_range_option'] = true;
                                                 } else {
-                                                    $option['is_choice'] = false;
+                                                    $option['is_range_option'] = false;
                                                 }
 
                                                 if(!(isset($ovalue['option']) && $ovalue['option'])){

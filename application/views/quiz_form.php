@@ -268,16 +268,27 @@ function find_template($data, $type, $template_id) {
                                                                     <td>
                                                                         Option
                                                                     </td>
-                                                                     <td>
-                                                                        Is Not Choice?
-                                                                        <input type="checkbox" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][is_choice]"
-                                                                               id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_is_choice"
-                                                                               onchange="checkChoiceBox(this);"
-                                                                               <?php echo isset($option["is_choice"])&& $option["is_choice"] == true ? "checked":null; ?>>
-                                                                        <br><input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option]"
+                                                                    <td>
+                                                                        Is Range Options?
+                                                                        <input type="checkbox" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][is_range_option]"
+                                                                               id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_is_range_option"
+                                                                               onchange="checkRangeOptionBox(this);"
+                                                                               <?php echo isset($option["is_range_option"])&& $option["is_range_option"] == true ? "checked":null; ?>><br>
+                                                                        <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option]"
                                                                                id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_option"
                                                                                value = "<?php echo isset($option["option"]) && $option["option"] ? $option["option"]:null; ?>"
-                                                                               <?php echo isset($option["is_choice"]) && $option["is_choice"] == true ? "disabled":null; ?>>
+                                                                               style="display : <?php echo isset($option["is_range_option"]) && $option["is_range_option"] == false ? "inline": "none"; ?>" >
+                                                                        <p id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_option_range"
+                                                                           style="display : <?php echo isset($option["is_range_option"]) && $option["is_range_option"] == true ? "inline": "none"; ?>">
+                                                                        <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][range_min]"
+                                                                               id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_range_min"
+                                                                               placeholder="min"
+                                                                               value = "<?php echo isset($option["range_min"]) && !is_null($option["range_min"]) ? $option["range_min"]:"0"; ?>" > -
+                                                                        <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][range_max]"
+                                                                               id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_range_max"
+                                                                               placeholder="max"
+                                                                               value = "<?php echo isset($option["range_max"]) && $option["range_max"] ? $option["range_max"]:null; ?>" >
+                                                                        </p>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -767,13 +778,17 @@ function find_template($data, $type, $template_id) {
 
     });
 
-    function checkChoiceBox(check,question_id,option_id){
+    function checkRangeOptionBox(check){
         var check_id = check.id.split('_');
         if (check.checked) {
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').value = "";
-            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').disabled = true;
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').style.display = "none";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option_range').style.display = "inline";
         } else {
-            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').disabled = false;
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_min').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_max').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').style.display = "inline";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option_range').style.display = "none";
         }
     }
 
@@ -1065,11 +1080,18 @@ function find_template($data, $type, $template_id) {
                         <tr>\
                             <td>Option</td>\
                             <td>\
-                            Is Not Choice?\
-                            <input type="checkbox" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][is_choice]"\
-                                id="quiz_'+currentQuestion+'_'+countOptions+'_is_choice" onchange="checkChoiceBox(this);">\
+                            Is Range Options?\
+                            <input type="checkbox" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][is_range_option]"\
+                                id="quiz_'+currentQuestion+'_'+countOptions+'_is_range_option" onchange="checkRangeOptionBox(this);">\
                             <br><input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][option]"\
                                 id="quiz_'+currentQuestion+'_'+countOptions+'_option" value = "">\
+                            <p id="quiz_'+currentQuestion+'_'+countOptions+'_option_range" style="display:none">\
+                            <input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][range_min]"\
+                                id="quiz_'+currentQuestion+'_'+countOptions+'_range_min" visible="false" placeholder="min" value = "" >\
+                            -\
+                            <input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][range_max]"\
+                                id="quiz_'+currentQuestion+'_'+countOptions+'_range_max" visible="false" placeholder="max" value = "" >\
+                            </p>\
                             </td>\
                             </tr>\
                             <tr>\
