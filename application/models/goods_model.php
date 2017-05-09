@@ -434,8 +434,8 @@ class Goods_model extends MY_Model
             }
         }
 
-        if (isset($data['date_expired_coupon'])){
-            $data_insert['date_expired_coupon'] = $data['date_expired_coupon'] ? new MongoDate(strtotime($data['date_expired_coupon'])) : null;
+        if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
+            $this->mongo_db->set('date_expired_coupon', new MongoDate(strtotime($data['date_expired_coupon'])) );
         }
 
         if (isset($data['organize_id'])) {
@@ -497,8 +497,10 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('days_expire', $data['days_expire'] ? $data['days_expire'] : null);
         }
 
-        if (isset($data['date_expired_coupon'])){
-            $this->mongo_db->set('date_expired_coupon', $data['date_expired_coupon'] ? new MongoDate(strtotime($data['date_expired_coupon'])) : null);
+        if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
+            $this->mongo_db->set('date_expired_coupon', new MongoDate(strtotime($data['date_expired_coupon'])) );
+        }else{
+            $this->mongo_db->unset_field('date_expired_coupon');
         }
 
         if (isset($data['image'])) {
@@ -934,8 +936,8 @@ class Goods_model extends MY_Model
             }
         }
 
-        if (isset($data['date_expired_coupon'])){
-            $data_insert['date_expired_coupon'] = $data['date_expired_coupon'] ? new MongoDate(strtotime($data['date_expired_coupon'])) : null;
+        if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
+            $this->mongo_db->set('date_expired_coupon', new MongoDate(strtotime($data['date_expired_coupon'])) );
         }
 
         if (isset($data['organize_id'])) {
@@ -1081,8 +1083,10 @@ class Goods_model extends MY_Model
             }
         }
 
-        if (isset($data['date_expired_coupon'])){
-            $this->mongo_db->set('date_expired_coupon', $data['date_expired_coupon'] ? new MongoDate(strtotime($data['date_expired_coupon'])) : null);
+        if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
+            $this->mongo_db->set('date_expired_coupon', new MongoDate(strtotime($data['date_expired_coupon'])) );
+        }else{
+            $this->mongo_db->unset_field('date_expired_coupon');
         }
 
         if (isset($data['image'])) {
@@ -1095,6 +1099,8 @@ class Goods_model extends MY_Model
         $this->mongo_db->update('playbasis_goods_to_client');
         if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
             $this->updateDateExpireGoodsPlayer($data['client_id'], $data['site_id'], $data['goods_id'], strtotime($data['date_expired_coupon']));
+        }else{
+            $this->updateDateExpireGoodsPlayer($data['client_id'], $data['site_id'], $data['goods_id'], null);
         }
     }
 
@@ -1488,7 +1494,11 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('goods_id', new MongoId($goods_id));
-        $this->mongo_db->set('date_expire', new MongoDate($date_expire));
+        if(!is_null($date_expire)) {
+            $this->mongo_db->set('date_expire', new MongoDate($date_expire));
+        }else{
+            $this->mongo_db->unset_field('date_expire');
+        }
         $this->mongo_db->set('date_modified', new MongoDate());
         $this->mongo_db->update_all('playbasis_goods_to_player');
     }
