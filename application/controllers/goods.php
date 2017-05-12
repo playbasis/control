@@ -239,6 +239,7 @@ class Goods extends MY_Controller
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 $data = array_merge($this->input->post(), array('quantity' => 1));
+                $data['per_user_include_inactive'] = $this->input->post('per_user_include_inactive') ? true : false;
 
                 if (isset($data['custom_param'])){
                     if(is_array($data['custom_param'])){
@@ -447,6 +448,7 @@ class Goods extends MY_Controller
             $goods_data = $this->input->post();
             $goods_data['redeem'] = $redeem;
             $goods_data['whitelist_enable'] = $whitelist_enable;
+            $goods_data['per_user_include_inactive'] = $this->input->post('per_user_include_inactive') ? true : false;
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
@@ -666,6 +668,7 @@ class Goods extends MY_Controller
                     }
                     $goods_data['redeem'] = $redeem;
                     $goods_data['whitelist_enable'] = $whitelist_enable;
+                    $goods_data['per_user_include_inactive'] = $this->input->post('per_user_include_inactive') ? true : false;
 
                     if ($this->User_model->hasPermission('access', 'store_org') &&
                         $this->Feature_model->getFeatureExistByClientId($client_id, 'store_org')
@@ -1372,6 +1375,14 @@ class Goods extends MY_Controller
             $this->data['per_user'] = null;
         }
 
+        if ($this->input->post('per_user_include_inactive')) {
+            $this->data['per_user_include_inactive'] = $this->input->post('per_user_include_inactive');
+        } elseif (isset($goods_info['per_user_include_inactive']) && !empty($goods_info['per_user_include_inactive'])) {
+            $this->data['per_user_include_inactive'] = $goods_info['per_user_include_inactive'];
+        } else {
+            $this->data['per_user_include_inactive'] = null;
+        }
+
         if ($this->input->post('reward_point')) {
             $this->data['reward_point'] = $this->input->post('reward_point');
         } elseif (isset($goods_info['redeem']['point']) && !empty($goods_info['redeem']['point'])) {
@@ -1706,6 +1717,7 @@ class Goods extends MY_Controller
             'description' => $data['description'] | '',
             'quantity' => (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null,
             'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
+            'per_user_include_inactive' => (isset($data['per_user_include_inactive']) && !empty($data['per_user_include_inactive'])) ? (bool)$data['per_user_include_inactive'] : false,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
             'deleted' => false,

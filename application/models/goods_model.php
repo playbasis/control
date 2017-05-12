@@ -400,6 +400,7 @@ class Goods_model extends MY_Model
             'is_group' => $is_group,
             'deleted' => false,
             'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
+            'per_user_include_inactive'=> isset($data['per_user_include_inactive']) ? $data['per_user_include_inactive'] : false,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
             'sort_order' => (int)$data['sort_order'] | 1,
@@ -462,6 +463,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
+        $this->mongo_db->set('per_user_include_inactive', isset($data['per_user_include_inactive']) ? $data['per_user_include_inactive'] : false);
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
@@ -794,6 +796,7 @@ class Goods_model extends MY_Model
             // 'quantity' => (int)$data['quantity']|0 ,
             'quantity' => (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null,
             'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
+            'per_user_include_inactive' => (isset($data['per_user_include_inactive']) && !empty($data['per_user_include_inactive'])) ? (bool)$data['per_user_include_inactive'] : false,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
             'sort_order' => (int)$data['sort_order'] | 1,
@@ -898,6 +901,7 @@ class Goods_model extends MY_Model
             // 'quantity' => (int)$data['quantity']|0 ,
             'quantity' => (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null,
             'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
+            'per_user_include_inactive' => (isset($data['per_user_include_inactive']) && !empty($data['per_user_include_inactive'])) ? (bool)$data['per_user_include_inactive'] : false,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
             'sort_order' => (int)$data['sort_order'] | 1,
@@ -968,6 +972,7 @@ class Goods_model extends MY_Model
         // $this->mongo_db->set('per_user', (int)$data['per_user']);
         $this->mongo_db->set('per_user',
             (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
+        $this->mongo_db->set('per_user_include_inactive', isset($data['per_user_include_inactive']) ? $data['per_user_include_inactive'] : false);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
@@ -1045,6 +1050,7 @@ class Goods_model extends MY_Model
         // $this->mongo_db->set('per_user', (int)$data['per_user']);
         $this->mongo_db->set('per_user',
             (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
+        $this->mongo_db->set('per_user_include_inactive', isset($data['per_user_include_inactive']) ? $data['per_user_include_inactive'] : false);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
@@ -1120,6 +1126,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('group', $data['name']);
         $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
+        $this->mongo_db->set('per_user_include_inactive', isset($data['per_user_include_inactive']) ? $data['per_user_include_inactive'] : false);
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
