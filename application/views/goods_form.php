@@ -224,7 +224,11 @@
                         <?php } ?>
                         <tr>
                             <td><?php echo $this->lang->line('entry_per_user'); ?>:</td>
-                            <td><input type="text" name="per_user" value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>" size="5" class="tooltips" data-placement="right" title="Number of Goods that a user can redeem, if left blank it is unlimited"/></td>
+                            <td>
+                                <input type="checkbox" name="per_user_include_inactive" id="per_user_include_inactive" value=true <?php echo $per_user_include_inactive ? "checked":""?> /> <?php echo $this->lang->line('entry_per_user_include_inactive'); ?>
+
+                                <br><input type="text" name="per_user" value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>" size="5" class="tooltips" data-placement="right" title="Number of Goods that a user can redeem, if left blank it is unlimited"/>
+                                                  </td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
