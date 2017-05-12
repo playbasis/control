@@ -16,10 +16,10 @@
             <div class="buttons">
                 <?php if ($client_id) { ?>
                     <button class="btn btn-info" onclick="location = baseUrlPath+'goods/import'"
-                            type="button"><?php echo $this->lang->line('button_import'); ?></button>
+                            type="button"><?php echo $this->lang->line('button_insert_goods_group'); ?></button>
                 <?php } ?>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'goods/insert'"
-                        type="button"><?php echo $this->lang->line('button_insert'); ?></button>
+                        type="button"><?php echo $this->lang->line('button_insert_goods'); ?></button>
                 <button class="btn btn-info" onclick="$('#form').submit();"
                         type="button"><?php echo $this->lang->line('button_delete'); ?></button>
             </div>

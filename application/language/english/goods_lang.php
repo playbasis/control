@@ -19,7 +19,8 @@ $lang['text_no_results']                = 'You do not have any goods created';
 $lang['text_no_redeemed_goods']         = 'You do not have any goods redeemed';
 
 // Button
-$lang['button_import']                  = 'Import';
+$lang['button_insert_goods']            = 'Insert Goods';
+$lang['button_insert_goods_group']      = 'Insert Goods Group';
 
 $lang['button_filter']                  = 'Filter';
 $lang['button_clear_filter']            = 'Clear';
@@ -74,6 +75,7 @@ $lang['entry_expire_date_coupon']       = 'Coupon Expire Date';
 $lang['entry_days_expire']              = 'Days To Expire Coupon';
 $lang['entry_date_expire']              = 'Date To Expire Coupon';
 $lang['entry_per_user']                 = 'Per User';
+$lang['entry_per_user_include_inactive']= 'Include used & expired goods?';
 $lang['entry_code']                     = 'Code';
 $lang['entry_player_id']                = 'Player Id';
 $lang['entry_player_name']              = 'Player Name';
