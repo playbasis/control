@@ -436,7 +436,7 @@ class Goods_model extends MY_Model
         }
 
         if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
-            $this->mongo_db->set('date_expired_coupon', new MongoDate(strtotime($data['date_expired_coupon'])) );
+            $data_insert['date_expired_coupon'] = new MongoDate(strtotime($data['date_expired_coupon']));
         }
 
         if (isset($data['organize_id'])) {
@@ -941,7 +941,7 @@ class Goods_model extends MY_Model
         }
 
         if (isset($data['date_expired_coupon']) && $data['date_expired_coupon']){
-            $this->mongo_db->set('date_expired_coupon', new MongoDate(strtotime($data['date_expired_coupon'])) );
+            $data_insert['date_expired_coupon'] = new MongoDate(strtotime($data['date_expired_coupon'])) ;
         }
 
         if (isset($data['organize_id'])) {

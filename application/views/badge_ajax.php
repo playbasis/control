@@ -15,11 +15,32 @@
                             <td class="right" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
                             <td class="right" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
                             <td class="right" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
+                            <td class="right" style="width:50px;"><?php echo $this->lang->line('column_visible'); ?></td>
                             <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
                             <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
                             <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         </thead>
+                        <tr class="filter">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <?php if(!$client_id){?>
+                                <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
+                            <?php }?>
+                            <td class="right"><input title="category" style="width: 90px;" type="text" name="filter_category" value="<?php echo isset($_GET['filter_category']) ? $_GET['filter_category'] : "" ?>"/></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="right">
+                                <a onclick="clear_filter();" class="button"
+                                   id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
+                                <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                            </td>
+                        </tr>
                         <tbody>
                             <?php if (isset($badges) && $badges) { ?>
                             <?php foreach ($badges as $badge) { ?>
@@ -50,6 +71,7 @@
                                 <td class="right"><?php echo (isset($badge['per_user']) && !is_null($badge['per_user'])) ? $badge['per_user'] : 'Unlimited'; ?></td>
                                 <td class="right"><?php echo (isset($badge['quantity']) && !is_null($badge['quantity'])) ? $badge['quantity'] : 'Unlimited'; ?></td>
                                 <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
+                                <td class="left"><?php echo ($badge['visible'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $badge['sort_order']; ?></td>
                                 <td class="right" style="word-wrap:break-word;"><?php echo (isset($badge['tags']) && $badge['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $badge['tags']).'</span>' : null); ?></td>
                                 <td class="right">
@@ -69,10 +91,43 @@
                                 <?php } ?>
                             <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="<?php echo !$client_id ? 8 : 7; ?>"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="<?php echo !$client_id ? 12 : 11; ?>"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                             <?php } ?>
                         </tbody>
                     </table>
                 <?php
                 echo form_close();?>
+
+<script type="text/javascript">
+
+    var $formCategoryModal = $('#formCategoryModal'),
+        $waitDialog = $('#pleaseWaitDialog'),
+        $savedDialog = $('#savedDialog'),
+        $categoryItemTable = $('#categoryItemTable'),
+        $categoryItemToolbarRemove = $('#categoryItemToolbar').find('#remove'),
+        categorySelections = [],
+        $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html(),
+        $categoryErrorDialog = $('#categoryErrorDialog');
+
+    <?php if (!isset($_GET['filter_category'])){?>
+    $("#clear_filter").hide();
+    <?php }else{?>
+    $("#clear_filter").show();
+    <?php }?>
+
+    function clear_filter() {
+        window.location.replace(baseUrlPath + 'badge');
+    }
+    function filter() {
+        url = baseUrlPath + 'badge';
+
+        var filter_category = $('input[name=\'filter_category\']').attr('value');
+
+        if (filter_category) {
+            url += '?filter_category=' + encodeURIComponent(filter_category);
+        }
+
+        location = url;
+    }
+</script>

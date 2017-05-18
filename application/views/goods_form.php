@@ -129,7 +129,7 @@
                             </tr>
                             <?php } ?>
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('column_param'); ?>:</td>
+                                <td><?php echo $this->lang->line('column_param'); ?>:</td>
                                 <td>
                                     <div class="row-fluid">
                                         <table class="table table-bordered" id="new-branches-table">
