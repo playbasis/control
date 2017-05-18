@@ -1,5 +1,6 @@
 <?php
 // Heading
+$lang['title']                          = 'Badge';
 $lang['heading_title']                  = 'Item List';
 
 // Text
@@ -10,7 +11,7 @@ $lang['text_default']                   = 'Default';
 $lang['text_image_manager']             = 'Image Manager';
 $lang['text_browse']                    = 'Browse Files';
 $lang['text_clear']                     = 'Clear Image';
-$lang['text_reach_limit_item']         = 'You have reached the limit of creating items, please contact Playbasis';
+$lang['text_reach_limit_item']          = 'You have reached the limit of creating items, please contact Playbasis';
 $lang['text_no_results']                = 'You do not have any items created';
 
 // Tab
@@ -27,6 +28,7 @@ $lang['column_category']                = 'Category';
 $lang['column_peruser']                 = 'Per User';
 $lang['column_quantity']                = 'Quantity';
 $lang['column_status']                  = 'Status';
+$lang['column_visible']                 = 'Visibility';
 $lang['column_action']                  = 'Action';
 $lang['column_owner']                   = 'Owner';
 $lang['column_tags']                    = 'Tag(s)';
@@ -45,6 +47,7 @@ $lang['entry_quantity']                 = 'Quantity';
 $lang['entry_per_user']                 = 'Per User';
 $lang['entry_substract']                = 'Substract';
 $lang['entry_status']                   = 'Status';
+$lang['entry_visible']                  = 'Visibility';
 $lang['entry_image']                    = 'Image';
 $lang['entry_sponsor']                  = 'Sponsor';
 $lang['entry_claim']                    = 'Claim';
