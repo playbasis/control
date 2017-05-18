@@ -348,6 +348,7 @@ class Badge extends MY_Controller
                     'category' => (isset($result['category']) && !empty($result['category'])) ? $result['category']: null ,
                     'per_user' => (isset($result['per_user']) && !is_null($result['per_user'])) ? $result['per_user']: null ,
                     'status' => $result['status'],
+                    'visible' => (isset($result['visible']) && $result['visible'] == false) ? false: true ,
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
                     'tags' => isset($result['tags']) ? $result['tags'] : null,
@@ -431,6 +432,7 @@ class Badge extends MY_Controller
                                 'per_user' => (isset($badge_info['per_user']) && !is_null($badge_info['per_user'])) ? $badge_info['per_user']: null ,
                                 'tags' => isset($badge_info['tags']) ? $badge_info['tags'] : null,
                                 'status' => $badge_info['status'],
+                                'visible' => (isset($badge_info['visible']) && $badge_info['visible'] == false) ? false: true ,
                                 'image' => $image,
                                 'sort_order' => $badge_info['sort_order'],
                                 'selected' => ($this->input->post('selected') && in_array($badge_info['_id'],
@@ -575,6 +577,7 @@ class Badge extends MY_Controller
                     'category' => (isset($result['category']) && !empty($result['category'])) ? $result['category']: null ,
                     'per_user' => (isset($result['per_user']) && !is_null($result['per_user'])) ? $result['per_user']: null ,
                     'status' => $result['status'],
+                    'visible' => (isset($result['visible']) && $result['visible'] == false) ? false: true ,
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'],
@@ -654,6 +657,7 @@ class Badge extends MY_Controller
                                 'per_user' => (isset($badge_info['per_user']) && !is_null($badge_info['per_user'])) ? $badge_info['per_user']: null,
                                 'tags' => isset($badge_info['tags']) ? $badge_info['tags'] : null,
                                 'status' => $badge_info['status'],
+                                'visible' => (isset($badge_info['visible']) && $badge_info['visible'] == false) ? false: true ,
                                 'image' => $image,
                                 'sort_order' => $badge_info['sort_order'],
                                 'selected' => ($this->input->post('selected') && in_array($badge_info['_id'],
@@ -818,6 +822,14 @@ class Badge extends MY_Controller
             $this->data['status'] = $badge_info['status'];
         } else {
             $this->data['status'] = 1;
+        }
+
+        if ($this->input->post('visible')) {
+            $this->data['visible'] = $this->input->post('visible');
+        } elseif (!empty($badge_info) && isset($badge_info['visible'])) {
+            $this->data['visible'] = $badge_info['visible'];
+        } else {
+            $this->data['visible'] = 1;
         }
 
         if ($this->input->post('auto_notify')) {

@@ -635,6 +635,7 @@ class Badge_model extends MY_Model
             'per_user' => (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
+            'visible' => (bool)$data['visible'],
             'auto_notify' => (bool)$data['auto_notify'],
             'sort_order' => (int)$data['sort_order'] | 1,
             'date_modified' => $d,
@@ -673,6 +674,7 @@ class Badge_model extends MY_Model
             'per_user' => (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null,
             'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
+            'visible' => (bool)$data['visible'],
             'auto_notify' => (bool)$data['auto_notify'],
             'sort_order' => (int)$data['sort_order'] | 1,
             'date_modified' => $d,
@@ -703,6 +705,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('category', (isset($data['category']) && !empty($data['category'])) ? new MongoID($data['category']) : null);
         $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('visible', (bool)$data['visible']);
         $this->mongo_db->set('auto_notify', (bool)$data['auto_notify']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate());
@@ -752,6 +755,7 @@ class Badge_model extends MY_Model
                 $this->mongo_db->set('category', (isset($data['category']) && !empty($data['category'])) ? new MongoID($data['category']) : null);
                 $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
                 $this->mongo_db->set('status', (bool)$data['status']);
+                $this->mongo_db->set('visible', (bool)$data['visible']);
                 $this->mongo_db->set('auto_notify', (bool)$data['auto_notify']);
                 $this->mongo_db->set('sort_order', (int)$data['sort_order']);
                 $this->mongo_db->set('description', $data['description']);
@@ -789,6 +793,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('category', (isset($data['category']) && !empty($data['category'])) ?  new MongoID($data['category']) : null);
         $this->mongo_db->set('per_user', (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null);
         $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('visible', (bool)$data['visible']);
         $this->mongo_db->set('auto_notify', (bool)$data['auto_notify']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate());
@@ -1067,6 +1072,7 @@ class Badge_model extends MY_Model
     {
         $badge2["claim"] = isset($badge2["claim"]) ? (bool)$badge2["claim"] : false;
         $badge2["redeem"] = isset($badge2["redeem"]) ? (bool)$badge2["redeem"] : false;
+        $badge2["visible"] = isset($badge2["visible"]) ? (bool)$badge2["visible"] : false;
         $badge2["auto_notify"] = isset($badge2["auto_notify"]) ? (bool)$badge2["auto_notify"] : false;
         $badge2["image"] = html_entity_decode($badge2['image'], ENT_QUOTES, "UTF-8");
 
@@ -1087,6 +1093,7 @@ class Badge_model extends MY_Model
             $badge1["redeem"] == $badge2["redeem"] &&
             $badge1["image"] == $badge2["image"] &&
             $badge1["status"] == (bool)$badge2["status"] &&
+            ((isset($badge1["visible"]) ? (bool)$badge1["visible"] : false) == $badge2["visible"]) &&
             ((isset($badge1["auto_notify"]) ? (bool)$badge1["auto_notify"] : false) == $badge2["auto_notify"])
         );
     }

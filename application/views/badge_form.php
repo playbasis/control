@@ -151,6 +151,18 @@
                             </select></td>
                         </tr>
                         <tr>
+                            <td><?php echo $this->lang->line('entry_visible'); ?>:</td>
+                            <td><select name="visible">
+                                    <?php if ($visible) { ?>
+                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                    <?php } else { ?>
+                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                    <?php } ?>
+                                </select></td>
+                        </tr>
+                        <tr>
                             <td><?php echo $this->lang->line('entry_auto_notify'); ?>:</td>
                             <td><select name="auto_notify">
                                 <?php if ($auto_notify) { ?>
