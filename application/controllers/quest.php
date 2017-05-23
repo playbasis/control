@@ -122,8 +122,19 @@ class Quest extends MY_Controller
             $actionList = $this->makeListOfId($this->Rule_model->getActionJigsawList($site_id, $client_id), 'specific_id');
             $rewardList = $this->makeListOfId($this->Rule_model->getRewardJigsawList($site_id, $client_id), 'specific_id');
             $badgeList = $this->makeListOfId($this->Badge_model->getBadgeBySiteId(array('site_id' => $site_id->{'$id'})), 'badge_id');
-            $quizList = $this->makeListOfId($this->Quest_model->getQuizsByClientSiteId(array('client_id' => $client_id,'site_id' => $site_id)), '_id');
-            $goodlist = $this->makeListOfId($this->Goods_model->getGoodsBySiteId(array( 'site_id' => $site_id )),'goods_id');
+            $quizList = $this->makeListOfId($this->Quest_model->getQuizsByClientSiteId(array('client_id' => $client_id,'site_id' => $site_id)), '_id');;
+            $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'),array('filter_group' => true));
+            $in_goods = array();
+            foreach ($group_list as $group_name){
+                $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name['name'],false);
+                array_push($in_goods, new MongoId($goods_group_detail));
+            }
+            $goods_list = $this->Goods_model->getGoodsBySiteId(array(
+                'site_id' => $this->session->userdata('site_id'),
+                'sort' => 'sort_order',
+                'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ))
+            ));
+            $goodlist = $this->makeListOfId($goods_list,'goods_id');
 
             foreach ($this->data['quests'] as &$quest) {
 //                $quest['image'] = $this->Image_model->resize($quest['image'], 100, 100);
@@ -1778,7 +1789,13 @@ class Quest extends MY_Controller
                             $error[] = '[REWARD] [reward_id] for ' . (isset($reward['reward_data']['group']) ? $reward['reward_data']['group'] : $reward['reward_data']['name']) . ' is missing';
                         } else {
                             if (!$goodList || !in_array($reward['reward_id']->{'$id'}, $goodList)) {
-                                $error[] = '[REWARD] ' . $reward['reward_type'] . ' [' . (isset($reward['reward_data']['group']) ? $reward['reward_data']['group'] : $reward['reward_data']['name']) . '] is invalid';
+                                if(isset($reward['reward_data']['group'])){
+                                    if($this->Goods_model->getTotalAvailableGoodsByGroup(array('site_id' => $quest['site_id'], 'group' => $reward['reward_data']['group'])) == 0) {
+                                        $error[] = '[REWARD] ' . $reward['reward_type'] . ' [' . (isset($reward['reward_data']['group']) ? $reward['reward_data']['group'] : $reward['reward_data']['name']) . '] is invalid';
+                                    }
+                                } else {
+                                    $error[] = '[REWARD] ' . $reward['reward_type'] . ' [' . (isset($reward['reward_data']['group']) ? $reward['reward_data']['group'] : $reward['reward_data']['name']) . '] is invalid';
+                                }
                             }
                         }
                         break;
@@ -1867,7 +1884,13 @@ class Quest extends MY_Controller
                                     $error[] = '[M' . strval($i) . ',' . strval($j) . ':REWARD] [reward_id] for ' . $goods_name . ' is missing';
                                 } else {
                                     if (!$goodList || !in_array($reward['reward_id']->{'$id'}, $goodList)) {
-                                        $error[] = '[M' . strval($i) . ',' . strval($j) . ':REWARD] ' . $reward['reward_type'] . ' [' . $goods_name . '] is invalid';
+                                        if(isset($reward['reward_data']['group'])){
+                                            if($this->Goods_model->getTotalAvailableGoodsByGroup(array('site_id' => $quest['site_id'], 'group' => $reward['reward_data']['group'])) == 0) {
+                                                $error[] = '[M' . strval($i) . ',' . strval($j) . ':REWARD] ' . $reward['reward_type'] .  ' [' . (isset($reward['reward_data']['group']) ? $reward['reward_data']['group'] : $reward['reward_data']['name']) . '] is invalid';
+                                            }
+                                        } else {
+                                            $error[] = '[M' . strval($i) . ',' . strval($j) . ':REWARD] ' . $reward['reward_type'] .  ' [' . (isset($reward['reward_data']['group']) ? $reward['reward_data']['group'] : $reward['reward_data']['name']) . '] is invalid';
+                                        }
                                     }
                                 }
                                 break;
