@@ -139,7 +139,8 @@
                                             </thead>
                                             <tbody>
                                             <?php if(isset($custom_param) && is_array($custom_param) ){?>
-                                                <?php foreach($custom_param as $key => $param){?>
+                                                <?php foreach($custom_param as $key => $param){
+                                                    if(strpos( $param['key'], POSTFIX_NUMERIC_PARAM ) == false){?>
                                                     <tr>
                                                         <td><input type="text" name="<?php echo "custom_param[".$key."][key]" ?>"
                                                                    value="<?php echo isset($param['key']) ? $param['key']: set_value('parameter'); ?>"
@@ -148,8 +149,9 @@
                                                                    value="<?php echo isset($param['value']) ? $param['value']: set_value('parameter'); ?>"
                                                         </td>
                                                     </tr>
-                                                <?php }?>
-                                            <?php }?>
+                                                <?php }
+                                                }
+                                            }?>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
