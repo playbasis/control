@@ -46,6 +46,19 @@ class Goods_model extends MY_Model
         return isset($goods[0]) ? $goods[0]['value'] : null;
     }
 
+    public function getPlayerGoodsModifiedDateById($site_id, $goodsId, $pb_player_id)
+    {
+        $this->mongo_db->select(array('date_modified'));
+        $this->mongo_db->where(array(
+            'site_id' => $site_id,
+            'goods_id' => $goodsId,
+            'pb_player_id' => $pb_player_id
+        ));
+        $this->mongo_db->limit(1);
+        $goods = $this->mongo_db->get('playbasis_goods_to_player');
+        return isset($goods[0]) ? $goods[0]['date_modified'] : null;
+    }
+
 
     public function getPlayerGoods($site_id, $date_start, $date_end)
     {

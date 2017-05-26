@@ -107,10 +107,9 @@ class Report_goods extends MY_Controller
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         }
+        $UTC_7 = new DateTimeZone("Asia/Bangkok");
 
         if ($this->input->get('time_zone')){
-            $UTC_7 = new DateTimeZone("Asia/Bangkok");
-
             $filter_time_zone = $this->input->get('time_zone');
             $parameter_url .= "&time_zone=" . urlencode($filter_time_zone);
             $newTZ = new DateTimeZone($filter_time_zone);
@@ -123,6 +122,7 @@ class Report_goods extends MY_Controller
             $filter_date_end2 = $date_end->format("Y-m-d H:i:s");
         } else {
             $filter_time_zone = "Asia/Bangkok";
+            $newTZ = new DateTimeZone($filter_time_zone);
         }
 
         if ($this->input->get('username')) {
@@ -194,9 +194,18 @@ class Report_goods extends MY_Controller
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
             $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
             $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
-
+            $date_used = null;
             if(!is_null($goods_player)){
-                $status = $goods_player > 0 ? "active" : "used";
+                if( $goods_player > 0 ){
+                    $status = "active";
+                }else{
+                    $status = "used";
+                    $date_used = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
+                    $date_used = new DateTime(datetimeMongotoReadable($date_used), $UTC_7);
+                    $date_used->setTimezone($newTZ);
+                    $date_used = $date_used->format("Y-m-d H:i:s");
+                }
+
             } else {
                 $status = "expired";
             }
@@ -211,10 +220,22 @@ class Report_goods extends MY_Controller
                 $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
             }*/
 
+            $date_expire = null;
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
                 $date_added->setTimezone($newTZ);
-                $date_added = $date_added->format("Y-m-d H:i:s");;
+                $date_added = $date_added->format("Y-m-d H:i:s");
+
+                if(isset($result['date_expire']) && $result['date_expire']){
+                    $date_expire = new DateTime(datetimeMongotoReadable($result['date_expire']), $UTC_7);
+                    $date_expire->setTimezone($newTZ);
+                    $date_expire = $date_expire->format("Y-m-d H:i:s");
+                }
+            }else{
+                $date_added = datetimeMongotoReadable($result['date_added']);
+                if(isset($result['date_expire']) && $result['date_expire']){
+                    $date_expire = datetimeMongotoReadable($result['date_expire']);
+                }
             }
 
             if (is_null($filter_goods_status) || $filter_goods_status === $status){
@@ -223,8 +244,9 @@ class Report_goods extends MY_Controller
                     'username' => $player['username'],
                     'image' => $thumb,
                     'email' => $player['email'],
-                    'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
-                    'date_expire' => isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null,
+                    'date_added' => $date_added ,
+                    'date_expire' => $date_expire,
+                    'date_used' => $date_used,
                     'goods_name' => isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
                     // 'value'             => $result['value']
                     'code' => $goods_data['code'],
@@ -372,8 +394,8 @@ class Report_goods extends MY_Controller
             //--> end
         }
 
+        $UTC_7 = new DateTimeZone("Asia/Bangkok");
         if ($this->input->get('time_zone')){
-            $UTC_7 = new DateTimeZone("Asia/Bangkok");
 
             $filter_time_zone = $this->input->get('time_zone');
             $newTZ = new DateTimeZone($filter_time_zone);
@@ -386,6 +408,7 @@ class Report_goods extends MY_Controller
             $filter_date_end2 = $date_end->format("Y-m-d H:i:s");
         } else {
             $filter_time_zone = "Asia/Bangkok";
+            $newTZ = new DateTimeZone($filter_time_zone);
         }
 
         if ($this->input->get('username')) {
@@ -458,6 +481,7 @@ class Report_goods extends MY_Controller
                 $this->lang->line('column_goods_amount'),
                 $this->lang->line('column_status'),
                 $this->lang->line('column_date_added'),
+                $this->lang->line('column_date_used'),
                 $this->lang->line('column_date_expire')
             )
         );
@@ -473,37 +497,40 @@ class Report_goods extends MY_Controller
                 $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
                 $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
 
-                if (!is_null($goods_player)) {
-                    $status = $goods_player > 0 ? "active" : "used";
+                $date_used = null;
+                if(!is_null($goods_player)){
+                    if( $goods_player > 0 ){
+                        $status = "active";
+                    }else{
+                        $status = "used";
+                        $date_used = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
+                        $date_used = new DateTime(datetimeMongotoReadable($date_used), $UTC_7);
+                        $date_used->setTimezone($newTZ);
+                        $date_used = $date_used->format("Y-m-d H:i:s");
+                    }
+
                 } else {
                     $status = "expired";
                 }
-                if (!empty($player['image'])) {
-                    $thumb = $player['image'];
-                } else {
-                    $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-                }
 
-                if ($this->input->get('time_zone')) {
+                $date_expire = null;
+                if ($this->input->get('time_zone')){
                     $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
                     $date_added->setTimezone($newTZ);
-                    $date_added = $date_added->format("Y-m-d H:i:s");;
+                    $date_added = $date_added->format("Y-m-d H:i:s");
+
+                    if(isset($result['date_expire']) && $result['date_expire']){
+                        $date_expire = new DateTime(datetimeMongotoReadable($result['date_expire']), $UTC_7);
+                        $date_expire->setTimezone($newTZ);
+                        $date_expire = $date_expire->format("Y-m-d H:i:s");
+                    }
+                }else{
+                    $date_added = datetimeMongotoReadable($result['date_added']);
+                    if(isset($result['date_expire']) && $result['date_expire']){
+                        $date_expire = datetimeMongotoReadable($result['date_expire']);
+                    }
                 }
 
-                $this->data['reports'][] = array(
-                    'cl_player_id' => $player['cl_player_id'],
-                    'username' => $player['username'],
-                    'image' => $thumb,
-                    'email' => $player['email'],
-                    'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
-                    'date_expire' => isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null,
-                    'status' => $status,
-                    'goods_name' => isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
-                    'code' => $goods_data['code'],
-                    // 'value'             => $result['value']
-                    'amount' => $result['amount'],
-                    // 'redeem'            => $result['redeem']
-                );
                 $exporter->addRow(array(
                         $player['cl_player_id'],
                         $player['username'],
@@ -512,8 +539,9 @@ class Report_goods extends MY_Controller
                         $goods_data['code'],
                         $result['amount'],
                         $status,
-                        $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
-                        isset($result['date_expire']) && $result['date_expire'] ? datetimeMongotoReadable($result['date_expire']) : null
+                        $date_added,
+                        $date_used,
+                        $date_expire
                     )
                 );
             }
