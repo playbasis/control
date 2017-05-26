@@ -107,10 +107,9 @@ class Report_goods extends MY_Controller
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         }
+        $UTC_7 = new DateTimeZone("Asia/Bangkok");
 
         if ($this->input->get('time_zone')){
-            $UTC_7 = new DateTimeZone("Asia/Bangkok");
-
             $filter_time_zone = $this->input->get('time_zone');
             $parameter_url .= "&time_zone=" . urlencode($filter_time_zone);
             $newTZ = new DateTimeZone($filter_time_zone);
@@ -123,6 +122,7 @@ class Report_goods extends MY_Controller
             $filter_date_end2 = $date_end->format("Y-m-d H:i:s");
         } else {
             $filter_time_zone = "Asia/Bangkok";
+            $newTZ = new DateTimeZone($filter_time_zone);
         }
 
         if ($this->input->get('username')) {
@@ -394,8 +394,8 @@ class Report_goods extends MY_Controller
             //--> end
         }
 
+        $UTC_7 = new DateTimeZone("Asia/Bangkok");
         if ($this->input->get('time_zone')){
-            $UTC_7 = new DateTimeZone("Asia/Bangkok");
 
             $filter_time_zone = $this->input->get('time_zone');
             $newTZ = new DateTimeZone($filter_time_zone);
@@ -408,6 +408,7 @@ class Report_goods extends MY_Controller
             $filter_date_end2 = $date_end->format("Y-m-d H:i:s");
         } else {
             $filter_time_zone = "Asia/Bangkok";
+            $newTZ = new DateTimeZone($filter_time_zone);
         }
 
         if ($this->input->get('username')) {
