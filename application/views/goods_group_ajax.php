@@ -5,6 +5,8 @@
             <th><?php echo $this->lang->line('entry_system_id'); ?></th>
             <th><?php echo $this->lang->line('entry_name'); ?></th>
             <th><?php echo $this->lang->line('entry_code'); ?></th>
+            <th><?php echo $this->lang->line('entry_start_date'); ?></th>
+            <th><?php echo $this->lang->line('entry_expire_date'); ?></th>
             <th><?php echo $this->lang->line('entry_expire_date_coupon'); ?></th>
         </tr>
         </thead>
@@ -16,6 +18,8 @@
                     <td><?php echo $member['goods_id']->{'$id'}; ?></td>
                     <td><?php echo $member['name']; ?></td>
                     <td><?php echo isset($member['code']) ? $member['code'] : ''; ?></td>
+                    <td><?php echo isset($member['date_start']) ? $member['date_start'] : ""; ?></td>
+                    <td><?php echo isset($member['date_expire']) ? $member['date_expire'] : ""; ?></td>
                     <td align="center"><?php echo isset($member['date_expired_coupon']) ? $member['date_expired_coupon'] : ''; ?></td>
                 </tr>
             <?php

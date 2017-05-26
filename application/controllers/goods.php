@@ -1238,7 +1238,9 @@ class Goods extends MY_Controller
                 'site_id' => $site_id,
                 'group' => $goods_info['group'],
                 'limit' => $limit_group,
-                'start' => 0
+                'start' => 0,
+                'order' => 'asc',
+                'sort' => 'date_start'
             );
             $this->data['members'] = $this->Goods_model->getAvailableGoodsByGroup($data);
             $this->data['members_total'] = $this->Goods_model->getTotalAvailableGoodsByGroup($data);
@@ -1525,7 +1527,9 @@ class Goods extends MY_Controller
                 'site_id' => $this->User_model->getSiteId(),
                 'group' => $goods_info['group'],
                 'limit' => $limit,
-                'start' => $offset * $limit
+                'start' => $offset * $limit,
+                'order' => 'asc',
+                'sort' => 'date_start'
             );
             $this->data['members'] = $this->Goods_model->getAvailableGoodsByGroup($data);
             $this->data['members_total'] = $this->Goods_model->getTotalAvailableGoodsByGroup($data);
