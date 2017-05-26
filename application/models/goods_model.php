@@ -632,7 +632,7 @@ class Goods_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->select(array('name', 'code', 'goods_id' ,'date_expired_coupon'));
+        $this->mongo_db->select(array('name', 'code', 'goods_id', 'date_start', 'date_expire', 'date_expired_coupon'));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
@@ -641,6 +641,8 @@ class Goods_model extends MY_Model
 
         $sort_data = array(
             '_id',
+            'date_start',
+            'date_expire',
             'name',
             'code'
         );
@@ -652,7 +654,7 @@ class Goods_model extends MY_Model
         }
 
         if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-            $this->mongo_db->order_by(array($data['sort'] => $order));
+            $this->mongo_db->order_by(array($data['sort'] => $order, 'name' => $order));
         } else {
             $this->mongo_db->order_by(array('name' => $order));
         }
@@ -677,6 +679,8 @@ class Goods_model extends MY_Model
 
         $results = $this->mongo_db->get("playbasis_goods_to_client");
         if(is_array($results)) foreach ($results as $index => $goods){
+            if(isset($goods['date_start'])) $results[$index]['date_start'] = datetimeMongotoReadable($goods['date_start']);
+            if(isset($goods['date_expire'])) $results[$index]['date_expire'] = datetimeMongotoReadable($goods['date_expire']);
             if(isset($goods['date_expired_coupon'])) $results[$index]['date_expired_coupon'] = datetimeMongotoReadable($goods['date_expired_coupon']);
         }
 
