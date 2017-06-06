@@ -1,0 +1,9 @@
+coupon_name,coupon_code,date_start,date_end,date_expire,batch_name
+coupon_name1,code1,1-6-2017 00:00:00,,,batch1
+coupon_name2,code2,,31-7-2017 00:59:59,,batch1
+coupon_name3,code3,,,31-12-2017 00:59:59,batch2
+coupon_name4,code4,1-6-2017 00:00:00,,,batch2
+coupon_name5,code5,,31-7-2017 00:59:59,,batch2
+coupon_name6,code6,1-6-2017 00:00:00,31-7-2017 00:59:59,,batch1
+coupon_name7,code7,1-6-2017 00:00:00,31-7-2017 00:59:59,,batch3
+coupon_name8,code8,1-6-2017 00:00:00,31-7-2017 00:59:59,31-12-2017 00:59:59,batch3

@@ -11,7 +11,7 @@
         <div class="heading">
             <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <button class="btn btn-info" onclick="<?php if($is_group){ ?> fromcheck() <?php }else{ ?> $('#form').submit(); <?php } ?>" type="button"><?php echo $this->lang->line('button_save'); ?></button>
+                <button class="btn btn-info" id="submit_button" onclick="<?php if($is_group){ ?> fromcheck() <?php }else{ ?> $('#form').submit(); <?php } ?>" type="button"><?php echo $this->lang->line('button_save'); ?></button>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'<?php echo $this->session->flashdata('refer_page') ? $this->session->flashdata('refer_page') : $refer_page; ?>'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div>
         </div>
@@ -23,6 +23,9 @@
             <?php }?>
             <div id="tabs" class="htabs">
                 <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
+                <?php if ($is_group && isset($group)) { ?>
+                <a href="#tab-coupon"><?php echo $this->lang->line('tab_coupon'); ?></a>
+                <?php } ?>
                 <a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a>
                 <a href="#tab-redeem"><?php echo $this->lang->line('tab_redeem'); ?></a>
             </div>
@@ -46,173 +49,134 @@
             echo form_open_multipart($form ,$attributes);
             ?>
                 <div id="tab-general">
-                        <table class="form">
-                            <input type="hidden" name="refer_page" value="<?php echo $this->session->flashdata('refer_page') ? $this->session->flashdata('refer_page') : $refer_page; ?>" id="refer_page" />
-                            <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line($is_group ? 'entry_group' : 'entry_name'); ?>:</td>
-                                <td><input type="text" name="name" size="100" value="<?php echo $is_group ? (isset($group) ? $group : set_value('group')) : (isset($name) ? $name : set_value('name')); ?>" /></td>
-                            </tr>
-                            <?php if ($client_id && $is_group) { ?>
-                            <tr>
-                                <td><?php if ($is_import) { ?><span class="required">*</span>  <?php } ?><?php echo $this->lang->line('entry_file'); ?>:</td>
-                                <td><input id="file" type="file" name="file" size="100" /></td>
-                            </tr>
-                            <?php } ?>
-                            <tr>
-                                <?php if(!$client_id && !$name){?>
-                                    <td><span class="required">*</span> <?php echo $this->lang->line('entry_for_client'); ?>:</td>
-                                    <td>
-                                        <select id="client-choose" name="admin_client_id">
-                                            <?php if(isset($to_clients)){?>
-                                            <option value = 'all_clients'>All Clients</option>
-                                                <?php foreach($to_clients as $client){?>
-                                                    <option value ="<?php echo $client['_id']?>"><?php echo $client['company'] ? $client['company'] : $client['first_name']." ".$client['last_name'];?></option>
-                                                <?php }?>
+                    <table class="form">
+                        <input type="hidden" name="refer_page" value="<?php echo $this->session->flashdata('refer_page') ? $this->session->flashdata('refer_page') : $refer_page; ?>" id="refer_page" />
+                        <tr>
+                            <td><span class="required">*</span> <?php echo $this->lang->line($is_group ? 'entry_group' : 'entry_name'); ?>:</td>
+                            <td><input type="text" name="name" size="100" value="<?php echo $is_group ? (isset($group) ? $group : set_value('group')) : (isset($name) ? $name : set_value('name')); ?>" /></td>
+                        </tr>
+                        <?php if ($client_id && $is_group && !isset($group)) { ?>
+                        <tr>
+                            <td><?php if ($is_import) { ?><span class="required">*</span><?php } ?><?php echo $this->lang->line('entry_file'); ?>:</td>
+                            <td>
+                                <input id="file" type="file" name="file" size="100" />
+                                <a onclick="showDemo()" title="Show file example" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>
+                            </td>
+                        </tr>
+                        <?php } ?>
+                        <tr>
+                            <?php if(!$client_id && !$name){?>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('entry_for_client'); ?>:</td>
+                                <td>
+                                    <select id="client-choose" name="admin_client_id">
+                                        <?php if(isset($to_clients)){?>
+                                        <option value = 'all_clients'>All Clients</option>
+                                            <?php foreach($to_clients as $client){?>
+                                                <option value ="<?php echo $client['_id']?>"><?php echo $client['company'] ? $client['company'] : $client['first_name']." ".$client['last_name'];?></option>
                                             <?php }?>
-                                        </select>
-                                    </td>
-                                <?php }?>
-                            </tr>
-                            <?php if(!$client_id){?>
-                                <tr>
-                                    <td><?php echo $this->lang->line('entry_sponsor'); ?>:</td>
-                                    <td>
-                                        <input type="checkbox" name="sponsor" value = 1 <?php echo ($sponsor)?'checked':'unchecked'?> class="tooltips" data-placement="right" title="Sponsor badge cannot be modified by clients"/>
-                                    </td>
-                                </tr>
+                                        <?php }?>
+                                    </select>
+                                </td>
                             <?php }?>
+                        </tr>
+                        <?php if(!$client_id){?>
                             <tr>
-                                <td><?php echo $this->lang->line('entry_description'); ?>:</td>
-                                <td><textarea name="description" id="description"><?php echo isset($description) ? $description : set_value('description'); ?></textarea></td>
-                            </tr>
-                            <?php if (!$is_group) { ?>
-                            <tr>
-                                <td><?php echo $this->lang->line('entry_code'); ?>:</td>
+                                <td><?php echo $this->lang->line('entry_sponsor'); ?>:</td>
                                 <td>
-                                    <input type="text" name="code" value="<?php echo isset($code) ? $code : set_value('code'); ?>" size="5" class="tooltips" data-placement="right" title="Code for reddem or do something"/>
+                                    <input type="checkbox" name="sponsor" value = 1 <?php echo ($sponsor)?'checked':'unchecked'?> class="tooltips" data-placement="right" title="Sponsor badge cannot be modified by clients"/>
                                 </td>
                             </tr>
-                            <?php } ?>
-                            <?php if ($client_id) { ?>
-                            <tr>
-                                <td><?php echo $this->lang->line('entry_tags'); ?>:</td>
-                                <td>
-                                    <input type="text" class="tags" name="tags" value="<?php echo isset($tags) ? implode(',',$tags) : set_value('tags'); ?>" size="5" class="tooltips" data-placement="right" title="Tag(s) input"/>
-                                </td>
-                            </tr>
-                            <?php } ?>
-                            <tr>
-                                <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
-                                <td>
-                                    <input type="text" class="date" name="date_start" placeholder="date start reward coupon"value="<?php if ($date_start && strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_start)));} else { echo $date_start; } ?>" size="50" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
-                                <td>
-                                    <input type="text" class="date" name="date_expire" placeholder="date end to reward coupon" value="<?php if ($date_expire && strtotime(datetimeMongotoReadable($date_expire))) { echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_expire))); } else { echo $date_expire; } ?>" size="50" />
-                                </td>
-                            </tr>
-                            <?php if ($is_group) { ?>
-                            <tr>
-                                <td><?php echo $this->lang->line('entry_days_expire'); ?>:</td>
-                                <td>
-                                    <input type="number" name="days_expire" placeholder="day to expire after get coupon" value="<?php echo isset($days_expire) ? $days_expire :""; ?>" size="50" />
-                                </td>
-                            </tr>
-                            <?php } else { ?>
-                            <tr>
-                                <td><?php echo $this->lang->line('entry_date_expire'); ?>:</td>
-                                <td>
-                                    <input type="text" class="date"  name="date_expired_coupon" placeholder="date to expire coupon" value="<?php if (isset($date_expired_coupon) && $date_expired_coupon && strtotime(datetimeMongotoReadable($date_expired_coupon))) { echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_expired_coupon))); } else { echo isset($date_expired_coupon) ? $date_expired_coupon :""; } ?>" size="50" />
-                                </td>
-                            </tr>
-                            <?php } ?>
-                            <tr>
-                                <td><?php echo $this->lang->line('column_param'); ?>:</td>
-                                <td>
-                                    <div class="row-fluid">
-                                        <table class="table table-bordered" id="new-branches-table">
-                                            <thead>
-                                            <th><?php echo $this->lang->line('column_key'); ?></th>
-                                            <th><?php echo $this->lang->line('column_value'); ?></th>
-                                            </thead>
-                                            <tbody>
-                                            <?php if(isset($custom_param) && is_array($custom_param) ){?>
-                                                <?php foreach($custom_param as $key => $param){
-                                                    if(strpos( $param['key'], POSTFIX_NUMERIC_PARAM ) == false){?>
-                                                    <tr>
-                                                        <td><input type="text" name="<?php echo "custom_param[".$key."][key]" ?>"
-                                                                   value="<?php echo isset($param['key']) ? $param['key']: set_value('parameter'); ?>"
-                                                        </td>
-                                                        <td><input type="text" name="<?php echo "custom_param[".$key."][value]" ?>"
-                                                                   value="<?php echo isset($param['value']) ? $param['value']: set_value('parameter'); ?>"
-                                                        </td>
-                                                    </tr>
-                                                <?php }
-                                                }
-                                            }?>
-                                            </tbody>
-                                            <tfoot>
+                        <?php }?>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_description'); ?>:</td>
+                            <td><textarea name="description" id="description"><?php echo isset($description) ? $description : set_value('description'); ?></textarea></td>
+                        </tr>
+                        <?php if (!$is_group) { ?>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_code'); ?>:</td>
+                            <td>
+                                <input type="text" name="code" value="<?php echo isset($code) ? $code : set_value('code'); ?>" size="5" class="tooltips" data-placement="right" title="Code for reddem or do something"/>
+                            </td>
+                        </tr>
+                        <?php } ?>
+                        <?php if ($client_id) { ?>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_tags'); ?>:</td>
+                            <td>
+                                <input type="text" class="tags" name="tags" value="<?php echo isset($tags) ? implode(',',$tags) : set_value('tags'); ?>" size="5" class="tooltips" data-placement="right" title="Tag(s) input"/>
+                            </td>
+                        </tr>
+                        <?php } ?>
+                        <?php if (!$is_group) { ?>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
+                            <td>
+                                <input type="text" class="date" name="date_start" placeholder="date start reward coupon"value="<?php if ($date_start && strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_start)));} else { echo $date_start; } ?>" size="50" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
+                            <td>
+                                <input type="text" class="date" name="date_expire" placeholder="date end to reward coupon" value="<?php if ($date_expire && strtotime(datetimeMongotoReadable($date_expire))) { echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_expire))); } else { echo $date_expire; } ?>" size="50" />
+                            </td>
+                        </tr>
+                        <?php } ?>
+                        <?php if ($is_group) { ?>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_days_expire'); ?>:</td>
+                            <td>
+                                <input type="number" name="days_expire" placeholder="day to expire after get coupon" value="<?php echo isset($days_expire) ? $days_expire :""; ?>" size="50" />
+                            </td>
+                        </tr>
+                        <?php } else { ?>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_date_expire'); ?>:</td>
+                            <td>
+                                <input type="text" class="date"  name="date_expired_coupon" placeholder="date to expire coupon" value="<?php if (isset($date_expired_coupon) && $date_expired_coupon && strtotime(datetimeMongotoReadable($date_expired_coupon))) { echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($date_expired_coupon))); } else { echo isset($date_expired_coupon) ? $date_expired_coupon :""; } ?>" size="50" />
+                            </td>
+                        </tr>
+                        <?php } ?>
+                        <tr>
+                            <td><?php echo $this->lang->line('column_param'); ?>:</td>
+                            <td>
+                                <div class="row-fluid">
+                                    <table class="table table-bordered" id="new-branches-table">
+                                        <thead>
+                                        <th><?php echo $this->lang->line('column_key'); ?></th>
+                                        <th><?php echo $this->lang->line('column_value'); ?></th>
+                                        </thead>
+                                        <tbody>
+                                        <?php if(isset($custom_param) && is_array($custom_param) ){?>
+                                            <?php foreach($custom_param as $key => $param){
+                                                if(strpos( $param['key'], POSTFIX_NUMERIC_PARAM ) == false){?>
                                                 <tr>
-                                                    <td colspan="3" style="text-align: center">
-                                                        <div class="row-fluid">
-                                                            <div class="offset3 span3">
-                                                                <a class="btn btn-primary btn-block" id="add" onclick="createParameterRow()"><i class="fa fa-plus"></i>&nbsp;Add</a>
-                                                            </div>
-                                                        </div>
+                                                    <td><input type="text" name="<?php echo "custom_param[".$key."][key]" ?>"
+                                                               value="<?php echo isset($param['key']) ? $param['key']: set_value('parameter'); ?>"
+                                                    </td>
+                                                    <td><input type="text" name="<?php echo "custom_param[".$key."][value]" ?>"
+                                                               value="<?php echo isset($param['value']) ? $param['value']: set_value('parameter'); ?>"
                                                     </td>
                                                 </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                        <?php if (isset($members)) { ?>
-                            <div class="member_wrapper">
-                                <table id="members" class="display form no-footer" cellspacing="0" width="100%">
-                                    <thead>
-                                    <tr>
-                                        <th><?php echo $this->lang->line('entry_system_id'); ?></th>
-                                        <th><?php echo $this->lang->line('entry_name'); ?></th>
-                                        <th><?php echo $this->lang->line('entry_code'); ?></th>
-                                        <th><?php echo $this->lang->line('entry_start_date'); ?></th>
-                                        <th><?php echo $this->lang->line('entry_expire_date'); ?></th>
-                                        <th><?php echo $this->lang->line('entry_expire_date_coupon'); ?></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php if (is_array($members)){
-                                        $count = 0;
-                                        foreach ($members as $member) { ?>
-                                            <tr class="<?php echo (++$count%2 ? "odd" : "even") ?>">
-                                                <td><?php echo $member['goods_id']->{'$id'}; ?></td>
-                                                <td><?php echo $member['name']; ?></td>
-                                                <td><?php echo isset($member['code']) ? $member['code'] : ''; ?></td>
-                                                <td><?php echo isset($member['date_start']) ? $member['date_start'] : ""; ?></td>
-                                                <td><?php echo isset($member['date_expire']) ? $member['date_expire'] : ""; ?></td>
-                                                <td align="center"><?php echo isset($member['date_expired_coupon']) ? $member['date_expired_coupon'] : ''; ?></td>
+                                            <?php }
+                                            }
+                                        }?>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3" style="text-align: center">
+                                                    <div class="row-fluid">
+                                                        <div class="offset3 span3">
+                                                            <a class="btn btn-primary btn-block" id="add" onclick="createParameterRow()"><i class="fa fa-plus"></i>&nbsp;Add</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
                                             </tr>
-                                        <?php
-                                        }
-                                    }
-                                    ?>
-                                    </tbody>
-                                </table>
-                                <div id="members_info" class="paging_info" role="status" aria-live="polite">Showing 1 to <?php echo $members_current_total_page; ?> of <?php echo $members_total; ?> entries</div>
-                                <div class="paging_simple_numbers" id="members_paginate">
-                                    <span>
-                                        <?php echo $total_page; ?>
-                                    </span>
+                                        </tfoot>
+                                    </table>
                                 </div>
-                            </div>
-                            <div class="hide" id="member_current">1</div>
-                            <div class="hide" id="member_order"></div>
-                            <div class="hide" id="member_sort"></div>
-
-                        <?php } ?>
-
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <div id="tab-data">
                     <table class="form">
@@ -367,6 +331,101 @@
             <?php
             echo form_close();
             ?>
+            <div id="tab-coupon">
+                <table>
+                    <?php if ($client_id && $is_group && isset($group)) { ?>
+                        <tr>
+                            <td><?php if ($is_import) { ?><span class="required">*</span><?php } ?><?php echo $this->lang->line('entry_file'); ?>:</td>
+                            <td>
+                                <?php echo form_open_multipart($form ,array('id' => 'form_coupon')); ?>
+                                <input id="file" type="file" name="file" size="100" />
+                                <a onclick="showDemo()" title="Show file example" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>
+                                <button class="btn btn-info" type="button" onclick="uploadCoupon();"><?php echo $this->lang->line('button_upload'); ?></button>
+                                <?php echo form_close(); ?>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </table>
+                <?php if (isset($members)) { ?>
+                    <div class="member_wrapper">
+                        <table id="members" class="display form no-footer" cellspacing="0" border="1" width="100%">
+                            <thead>
+                            <tr>
+                                <th style="width:80px;"><?php echo $this->lang->line('entry_goods_id'); ?></th>
+                                <th style="width:180px;"><?php echo $this->lang->line('entry_batch_name'); ?></th>
+                                <th style="width:180px;"><?php echo $this->lang->line('entry_name'); ?></th>
+                                <th style="width:180px;"><?php echo $this->lang->line('entry_code'); ?></th>
+                                <th style="width:80px;"><?php echo $this->lang->line('entry_start_date'); ?></th>
+                                <th style="width:80px;"><?php echo $this->lang->line('entry_expire_date'); ?></th>
+                                <th style="width:80px;"><?php echo $this->lang->line('entry_expire_date_coupon'); ?></th>
+                                <th style="width:40px;"><?php echo $this->lang->line('entry_action'); ?></th>
+                            </tr>
+                            <tr class="filter">
+                                <td class="left" ><input style="width:150px;" title="filter_goods" type="text" name="filter_goods" value="<?php echo isset($_GET['filter_goods']) ? $_GET['filter_goods'] : "" ?>"/></td>
+                                <td class="left" >
+                                    <select name="filter_batch" style="width:80px;">
+                                    <?php foreach ($members_batch as $batch) {?>
+                                        <option value="<?php echo $batch;?>" <?php echo isset($_GET['filter_batch']) && $_GET['filter_batch'] == $batch? 'selected' : "" ?>><?php echo $batch;?></option>
+                                    <?php } ?>
+                                    </select>
+                                </td>
+                                <td class="left" ><input style="width:180px;" title="filter_coupon_name" type="text" name="filter_coupon_name" value="<?php echo isset($_GET['filter_coupon_name']) ? $_GET['filter_coupon_name'] : "" ?>"/></td>
+                                <td class="left" ><input style="width:180px;" title="filter_voucher_code" type="text" name="filter_voucher_code" value="<?php echo isset($_GET['filter_voucher_code']) ? $_GET['filter_voucher_code'] : "" ?>"/></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="width:80px;">
+                                    <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                                    <a onclick="update_table();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
+                                    <?php if (is_array($members)){ ?>
+                                        <a onclick="delete_filtered_coupon('<?php echo $members[0]['goods_id']->{'$id'}?>',);" class="button" id="delete_filtered" title="Delete All Match Filtered"><i class='fa fa-trash fa-lg' title="Delete All Match Filtered"></i></a>
+                                    <?php } ?>
+                                </td>
+                                </td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php if (is_array($members)){
+                                $count = 0;
+                                foreach ($members as $index => $member) { ?>
+                                    <tr class="<?php echo (++$count%2 ? "odd" : "even") ?>">
+                                        <td><?php echo $member['goods_id']->{'$id'}; ?></td>
+                                        <td><?php echo isset($member['batch_name']) ? $member['batch_name'] : 'default'; ?></td>
+                                        <td><?php echo $member['name']; ?></td>
+                                        <td><?php echo isset($member['code']) ? $member['code'] : ''; ?></td>
+                                        <td align="center"><?php echo isset($member['date_start']) ? $member['date_start'] : ""; ?></td>
+                                        <td align="center"><?php echo isset($member['date_expire']) ? $member['date_expire'] : ""; ?></td>
+                                        <td align="center"><?php echo isset($member['date_expired_coupon']) ? $member['date_expired_coupon'] : ''; ?></td>
+                                        <td align="center">
+                                            <a onclick="showCouponModalForm('<?php echo $member['goods_id']->{'$id'}?>',
+                                                '<?php echo isset($member['batch_name']) ? $member['batch_name'] : 'default'; ?>',
+                                                '<?php echo $member['name']; ?>',
+                                                '<?php echo isset($member['code']) ? $member['code'] : ''; ?>',
+                                                '<?php echo isset($member['date_start']) ? $member['date_start'] : ""; ?>',
+                                                '<?php echo isset($member['date_expire']) ? $member['date_expire'] : ""; ?>',
+                                                '<?php echo isset($member['date_expired_coupon']) ? $member['date_expired_coupon'] : ""; ?>'
+                                                );" class="button" title="Edit"><i class='fa fa-edit fa-lg' title="Edit"></i></a>
+                                            <a onclick="delete_coupon('<?php echo $member['goods_id']->{'$id'}?>',);" class="button" title="Delete"><i class='fa fa-times fa-lg' title="Delete"></i></a>
+                                    </tr>
+                                    <?php
+                                }
+                            }
+                            ?>
+                            </tbody>
+                        </table>
+                        <div id="members_info" class="paging_info" role="status" aria-live="polite">Showing 1 to <?php echo $members_current_total_page; ?> of <?php echo $members_total; ?> entries</div>
+                        <div class="paging_simple_numbers" id="members_paginate">
+                                    <span>
+                                        <?php echo $total_page; ?>
+                                    </span>
+                        </div>
+                    </div>
+                    <div class="hide" id="member_current">1</div>
+                    <div class="hide" id="member_order"></div>
+                    <div class="hide" id="member_sort"></div>
+
+                <?php } ?>
+            </div>
         </div>
     </div>
 </div>
@@ -380,6 +439,98 @@
     </table>
 </div>
 
+<div id="formDemoModal" class="modal hide fade"   tabindex="-1" role="dialog" aria-labelledby="formDemoModalLabel"  aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="formDemoModalLabel">File demo</h3>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row-fluid">
+
+                <table  id="example-table" border="2"></table>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary"  onclick='downloadCSV();'><i class="">&nbsp;</i>Download</button>
+
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+
+    </div>
+</div>
+
+<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <h1>Please Wait</h1>
+    </div>
+    <div class="modal-body">
+        <div class="offset5 ">
+            <i class="fa fa-spinner fa-spin fa-5x"></i>
+        </div>
+    </div>
+</div>
+
+<div id="pleaseWaitSpanDiv" class="hide">
+    <span id="pleaseWaitSpan"><i class="fa fa-spinner fa-spin"></i></span>
+</div>
+
+<div id="formCouponModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formCouponModalLabel" aria-hidden="true"">
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="formCouponModalLabel">Coupon</h3>
+</div>
+<div class="modal-body" style="max-height: 100%;">
+    <div class="container-fluid">
+        <?php echo form_open(null, array('class' => 'form-horizontal Coupon-form')); ?>
+        <table class="form">
+            <tr>
+                <td><?php echo $this->lang->line('entry_goods_id'); ?>:</td>
+                <td><input type="text" id="coupon_id" name="coupon_id" size="100" value="" disabled/></td>
+            </tr>
+            <tr>
+                <td><?php echo $this->lang->line('entry_batch_name'); ?>:</td>
+                <td><input type="text" id="coupon_batch_name" name="coupon_batch_name" size="100" value="" /></td>
+            </tr>
+            <tr>
+                <td><?php echo $this->lang->line('entry_name'); ?>:</td>
+                <td><input type="text" id="coupon_name" name="coupon_name" size="100" value="" /></td>
+            </tr>
+            <tr>
+                <td><?php echo $this->lang->line('entry_code'); ?>:</td>
+                <td><input type="text" id="coupon_code" name="coupon_code" size="100" value="" /></td>
+            </tr>
+            <tr>
+                <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
+                <td>
+                    <input type="text" class="date" id="coupon_date_start" name="coupon_date_start" placeholder="date start reward coupon"value="" size="50" />
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
+                <td>
+                    <input type="text" class="date" id="coupon_date_expire" name="coupon_date_expire" placeholder="date end to reward coupon" value="" size="50" />
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo $this->lang->line('entry_date_expire'); ?>:</td>
+                <td>
+                    <input type="text" class="date"  id="coupon_date_expired_coupon" name="coupon_date_expired_coupon" placeholder="date to expire coupon" value="" size="50" />
+                </td>
+            </tr>
+        </table>
+        <?php echo form_close(); ?>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary" onclick="edit_coupon()" id="coupon-modal-submit"><i class="fa fa-plus">&nbsp;</i>Edit</button>
+    <button class="btn btn-primary hide" onclick="edit_filtered_coupon()" id="coupon-modal-filter-submit"><i class="fa fa-plus">&nbsp;</i>Edit All Coupon Matching Filtered</button>
+</div>
+</div>
+
+
 
 <script type="text/javascript" src="<?php echo base_url();?>javascript/ckeditor/ckeditor.js"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
@@ -387,6 +538,7 @@
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
 <link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css" />
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
+<script src="<?php echo base_url(); ?>javascript/import/d3.v3.min.js"></script>
 
 <script type="text/javascript"><!--
     Pace.on("done", function () {
@@ -395,6 +547,8 @@
     CKEDITOR.replace('description', {
         filebrowserImageBrowseUrl: 'mediamanager/dialog/'
     });
+    $("#clear_filter").hide();
+    $("#delete_filtered").hide();
 //--></script>
 <script type="text/javascript">
     $(function(){
@@ -433,9 +587,254 @@
             }
         });
     }
+
 //--></script>
 <script type="text/javascript"><!--
 $('#tabs a').tabs();
+    $('#tabs a').click(function(){
+        if ($(this)[0].hash == "#tab-coupon"){
+            $('#submit_button').addClass('hide');
+        } else {
+            $('#submit_button').removeClass('hide');
+        }
+    });
+    var $waitDialog = $('#pleaseWaitDialog');
+    var filter_goods = "";
+    var filter_batch = "";
+    var filter_coupon_name = "";
+    var filter_voucher_code = "";
+
+    function showCouponModalForm(coupon_id,batch,coupon_name,coupon_code,coupon_date_start,coupon_date_expire,coupon_date_expire_coupon) {
+        document.getElementById('coupon_id').value =  coupon_id;
+        document.getElementById('coupon_batch_name').value =  batch;
+        document.getElementById('coupon_name').value =  coupon_name;
+        document.getElementById('coupon_code').value =  coupon_code;
+        document.getElementById('coupon_date_start').value =  coupon_date_start;
+        document.getElementById('coupon_date_expire').value =  coupon_date_expire;
+        document.getElementById('coupon_date_expired_coupon').value =  coupon_date_expire_coupon;
+        $('#formCouponModal').modal('show');
+    }
+
+    function edit_coupon() {
+        
+        var goods_id = $('#coupon_id').val();
+        var formData = $('form.Coupon-form').serialize();
+        $.ajax({
+            type: "POST",
+            url: baseUrlPath + "goods/updateGoodsFromAjax/"+goods_id,
+            data: formData,
+            timeout: 3000,
+            beforeSend: function (xhr) {
+                $('#formCouponModal').modal('hide');
+                $waitDialog.modal('show');
+            }
+        }).done(function (data) {
+            $waitDialog.modal('hide');
+            update_table();
+        }).fail(function (xhr, textStatus, errorThrown) {
+            if(JSON.parse(xhr.responseText).status == "error") {
+                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                $waitDialog.modal('hide');
+            }
+        }).always(function () {
+            $waitDialog.modal('hide');
+        });
+        
+    }
+
+    function edit_filtered_coupon() {
+        var goods_id = $('#coupon_id').val();
+        var formData = $('form.Coupon-form').serialize();
+        var url = baseUrlPath + "goods/updateGoodsFromAjax/"+goods_id+"?";
+        if (filter_goods) {
+            url += '&filter_goods=' + encodeURIComponent(filter_goods);
+        }
+        if (filter_batch) {
+            url += '&filter_batch=' + encodeURIComponent(filter_batch);
+        }
+        if (filter_coupon_name) {
+            url += '&filter_coupon_name=' + encodeURIComponent(filter_coupon_name);
+        }
+        if (filter_voucher_code) {
+            url += '&filter_voucher_code=' + encodeURIComponent(filter_voucher_code);
+        }
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: formData,
+            timeout: 3000,
+            beforeSend: function (xhr) {
+                $('#formCouponModal').modal('hide');
+                $waitDialog.modal('show');
+            }
+        }).done(function (data) {
+            $waitDialog.modal('hide');
+            update_table();
+        }).fail(function (xhr, textStatus, errorThrown) {
+            if(JSON.parse(xhr.responseText).status == "error") {
+                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                $waitDialog.modal('hide');
+            }
+        }).always(function () {
+            $waitDialog.modal('hide');
+        });
+    }
+
+    function delete_coupon(goods_id) {
+        $.ajax({
+            type: "POST",
+            url: baseUrlPath + "goods/deleteGoodsFromAjax/"+goods_id,
+            data: null,
+            timeout: 3000,
+            beforeSend: function (xhr) {
+                $waitDialog.modal('show');
+            }
+        }).done(function (data) {
+            $waitDialog.modal('hide');
+            if($.parseJSON(data).status == 'deleted'){
+                window.location= baseUrlPath + "goods";
+            }
+            if($.parseJSON(data).status == 'success'){
+                update_table();
+            }
+        }).fail(function (xhr, textStatus, errorThrown) {
+            if(JSON.parse(xhr.responseText).status == "error") {
+                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                $waitDialog.modal('hide');
+            }
+        }).always(function () {
+            $waitDialog.modal('hide');
+        });
+
+    }
+
+    function delete_filtered_coupon(goods_id) {
+        var url = baseUrlPath + "goods/deleteGoodsFromAjax/"+goods_id+"?";
+        if (filter_goods) {
+            url += '&filter_goods=' + encodeURIComponent(filter_goods);
+        }
+        if (filter_batch) {
+            url += '&filter_batch=' + encodeURIComponent(filter_batch);
+        }
+        if (filter_coupon_name) {
+            url += '&filter_coupon_name=' + encodeURIComponent(filter_coupon_name);
+        }
+        if (filter_voucher_code) {
+            url += '&filter_voucher_code=' + encodeURIComponent(filter_voucher_code);
+        }
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: null,
+            timeout: 3000,
+            beforeSend: function (xhr) {
+                $waitDialog.modal('show');
+            }
+        }).done(function (data) {
+            $waitDialog.modal('hide');
+            if($.parseJSON(data).status == 'deleted'){
+                window.location= baseUrlPath + "goods";
+            }
+            if($.parseJSON(data).status == 'success'){
+                update_table();
+            }
+
+        }).fail(function (xhr, textStatus, errorThrown) {
+            if(JSON.parse(xhr.responseText).status == "error") {
+                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
+                $waitDialog.modal('hide');
+            }
+        }).always(function () {
+            $waitDialog.modal('hide');
+        });
+
+    }
+
+    function filter() {
+        $("#clear_filter").show();
+        $("#coupon-modal-filter-submit").show();
+        $("#delete_filtered").show();
+
+        var url = baseUrlPath+"goods/getGoodsGroupAjax/<?php echo $goods_id; ?>?";
+
+        filter_goods = $('input[name=\'filter_goods\']').attr('value');
+        filter_batch = $('select[name=\'filter_batch\']').attr('value');
+        filter_coupon_name = $('input[name=\'filter_coupon_name\']').attr('value');
+        filter_voucher_code = $('input[name=\'filter_voucher_code\']').attr('value');
+
+
+        if (filter_goods) {
+            url += '&filter_goods=' + encodeURIComponent(filter_goods);
+        }
+        if (filter_batch) {
+            url += '&filter_batch=' + encodeURIComponent(filter_batch);
+        }
+        if (filter_coupon_name) {
+            url += '&filter_coupon_name=' + encodeURIComponent(filter_coupon_name);
+        }
+        if (filter_voucher_code) {
+            url += '&filter_voucher_code=' + encodeURIComponent(filter_voucher_code);
+        }
+        $('.member_wrapper').append('<div class="backgrund-load"><div class="loading-img"><img src="<?php echo base_url();?>image/white_loading.gif" /></div></div>');
+        $(".backgrund-load").css({"width": $("#members").width(), "height": $("#members").height(), "top": $("#members").height()*(-1)});
+        $(".loading-img").css({"top": ($("#members").height()/3)});
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: { page: 1 },
+            dataType: "html"
+        }).done(function( data ) {
+            $('.member_wrapper').html(data);
+
+            pagination_click();
+        });
+
+    }
+
+    function uploadCoupon(){
+        var file = document.getElementById('file').files[0];
+        var paras = document.getElementsByClassName('messages');
+        while(paras[0]) {
+            paras[0].parentNode.removeChild(paras[0]);
+        }
+
+        if(file){
+            if(file.size < 2097152) { // 2MB (this size is in bytes)
+                var formData = new FormData($('#form_coupon')[0]);
+                $.ajax({
+                    type: "POST",
+                    url: baseUrlPath + "goods/upload/<?php echo $goods_id; ?>",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function (xhr) {
+                        $waitDialog.modal('show');
+                    }
+                })
+                .done(function (data) {
+                    $(".content").prepend('<div class="content messages half-width"><div class="success"><?php echo $this->lang->line('text_uploaded'); ?></div> </div>');
+                    $waitDialog.modal('hide');
+                    update_table();
+                })
+                .fail(function (xhr, textStatus, errorThrown) {
+                    alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+                })
+            } else {
+                //Prevent default and display error
+                $(".content").prepend('<div class="content messages half-width"><div class="warning"><?php echo $this->lang->line('error_file_too_large'); ?></div> </div>');
+                $waitDialog.modal('hide');
+            }
+        }else{
+            $(".content").prepend('<div class="content messages half-width"><div class="warning"><?php echo $this->lang->line('error_file'); ?></div> </div>');
+            $waitDialog.modal('hide');
+        }
+    };
 
     var $organizeParent = $("#organize_id");
 
@@ -652,17 +1051,78 @@ $(document).ready(function(){
         });
     }
 
+    function update_table(){
+
+        $('.member_wrapper').append('<div class="backgrund-load"><div class="loading-img"><img src="<?php echo base_url();?>image/white_loading.gif" /></div></div>');
+
+        $(".backgrund-load").css({"width": $("#members").width(), "height": $("#members").height(), "top": $("#members").height()*(-1)});
+        $(".loading-img").css({"top": ($("#members").height()/3)});
+
+        $.ajax({
+            type: "GET",
+            url: baseUrlPath+"goods/getGoodsGroupAjax/<?php echo $goods_id; ?>",
+            data: { page: 1 },
+            dataType: "html"
+        }).done(function( data ) {
+            $('.member_wrapper').html(data);
+            pagination_click();
+            filter_goods = "";
+            filter_batch = "";
+            filter_coupon_name = "";
+            filter_voucher_code = "";
+            $("#clear_filter").hide();
+            $("#coupon-modal-filter-submit").hide();
+            $("#delete_filtered").hide();
+        });
+
+    }
+
+    function showDemo(){
+        $('#formDemoModalLabel').html("File demo for goods group importing");
+        filename = "goods-example.csv";
+
+        $("#example-table").empty();
+
+        d3.text("<?php echo base_url();?>image/import/"+filename, function(data) {
+            var parsedCSV = d3.csv.parseRows(data);
+            csvData = data;
+
+            var container = d3.select('#example-table')
+
+                .selectAll("tr")
+                .data(parsedCSV).enter()
+                .append("tr")
+
+                .selectAll("td")
+                .data(function(d) { return d; }).enter()
+                .append("td")
+                .text(function(d) { return d; });
+        });
+
+
+        $('#formDemoModal').modal('show');
+    }
+
+    function downloadCSV() {
+        var data, link;
+
+        var csv = csvData;
+        if (csv == null) return;
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = 'data:text/csv;charset=utf-8,' + csv;
+        }
+        data = encodeURI(csv);
+
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+    }
 </script>
 <?php } ?>
 
 <script type="text/javascript">
-
-    function downloadFile(){
-        distinct_id = "<?php echo $distinct_id?>";
-        location = baseUrlPath+'goods/getWhitelistFile?distinct_id='+distinct_id;
-
-    }
-
     $(document).ready(function(){
 
         $(".tags").select2({
@@ -671,5 +1131,10 @@ $(document).ready(function(){
             tokenSeparators: [',', ' ']
         });
     });
-
+    <?php if(isset($distinct_id)) {?>
+    function downloadFile() {
+        distinct_id = "<?php echo $distinct_id?>";
+        location = baseUrlPath + 'goods/getWhitelistFile?distinct_id=' + distinct_id;
+    }
+    <?php }?>
 </script>

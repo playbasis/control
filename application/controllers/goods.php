@@ -95,9 +95,11 @@ class Goods extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/import';
-        $referred_page = strpos($_SERVER['HTTP_REFERER'], $_SERVER['SCRIPT_NAME']) ?
-            explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']) :
-            explode($_SERVER['HTTP_HOST'].'/', $_SERVER['HTTP_REFERER']);
+        if(isset($_SERVER['HTTP_REFERER'])){
+            $referred_page = strpos($_SERVER['HTTP_REFERER'], $_SERVER['SCRIPT_NAME']) ?
+                explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']) :
+                explode($_SERVER['HTTP_HOST'].'/', $_SERVER['HTTP_REFERER']);
+        }
         $this->data['refer_page'] = isset($referred_page[1]) && strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_group'),
@@ -342,9 +344,11 @@ class Goods extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/insert';
-        $referred_page = strpos($_SERVER['HTTP_REFERER'], $_SERVER['SCRIPT_NAME']) ?
-            explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']) :
-            explode($_SERVER['HTTP_HOST'].'/', $_SERVER['HTTP_REFERER']);
+        if(isset($_SERVER['HTTP_REFERER'])){
+            $referred_page = strpos($_SERVER['HTTP_REFERER'], $_SERVER['SCRIPT_NAME']) ?
+                explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']) :
+                explode($_SERVER['HTTP_HOST'].'/', $_SERVER['HTTP_REFERER']);
+        }
         $this->data['refer_page'] = isset($referred_page[1]) && strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
@@ -543,9 +547,12 @@ class Goods extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/update/' . $goods_id;
-        $referred_page = strpos($_SERVER['HTTP_REFERER'], $_SERVER['SCRIPT_NAME']) ?
-            explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']) :
-            explode($_SERVER['HTTP_HOST'].'/', $_SERVER['HTTP_REFERER']);
+        if(isset($_SERVER['HTTP_REFERER'])){
+            $referred_page = strpos($_SERVER['HTTP_REFERER'], $_SERVER['SCRIPT_NAME']) ?
+                explode($_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'/', $_SERVER['HTTP_REFERER']) :
+                explode($_SERVER['HTTP_HOST'].'/', $_SERVER['HTTP_REFERER']);
+        }
+
         $this->data['refer_page'] = isset($referred_page[1]) && strpos( $referred_page[1], 'page') ?  $referred_page[1] : 'goods';
 
         $client_id = $this->User_model->getClientId();
@@ -708,32 +715,19 @@ class Goods extends MY_Controller
                             $goods_data['site_id'] = $site_id;
                             $goods_data['goods_id'] = $goods_info['goods_id'];
                             $goods_data['distinct_id'] = $goods_info['distinct_id'];
+
+                            $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
+                            $this->Goods_model->editGoodsDistinct($site_id,$goods_info['name'],$goods_data);
                             if ($goods_info && array_key_exists('group', $goods_info)) {
-                                $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
-                                /* if there is an uploaded file, then import it into the group */
-                                if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && !empty($_FILES['file']['tmp_name'])) {
-                                    $data = array_merge($this->input->post(), array('quantity' => 1, 'distinct_id' => $distinct_id));
-                                    $handle = fopen($_FILES['file']['tmp_name'], "r");
-                                    $this->addGoods($handle, $data, $redeem, array($client_id), array($site_id));
-                                    fclose($handle);
-                                }
-                                /* update all existing records in the group */
-                                $this->Goods_model->editGoodsDistinct($site_id,$goods_info['group'],$goods_data);
                                 $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
                                 if ($goods_info['group'] != $goods_data['name']){
                                     $this->Goods_model->editGoodsGroupLog($goods_info['group'], $goods_data);
                                     $this->Goods_model->editGoodsGroupPLayer($goods_info['group'], $goods_data);
                                 }
-
-                                $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
-
                             } else {
-                                $this->Goods_model->editGoodsDistinct($site_id,$goods_info['name'],$goods_data);
-                                $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
                                 $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
-                                $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
-
                             }
+                            $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
 
                             //update whitelist
                             if(isset($goods_data['whitelist_enable']) && ($goods_data['whitelist_enable'] == true) && (isset($_FILES['whitelist_file']['tmp_name']) && $_FILES['whitelist_file']['tmp_name'] != '')) {
@@ -765,6 +759,127 @@ class Goods extends MY_Controller
         }
 
         $this->getForm($goods_id);
+    }
+
+    public function updateGoodsFromAjax($goods_id)
+    {
+        if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            if ($goods_id && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+                $goods_info = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
+                $group = isset($goods_info['group']) ? $goods_info['group'] : null;
+                $goods_data = $this->input->post();
+                $filter_data = $this->input->get();
+                $goods_data['client_id'] = $client_id;
+                $goods_data['site_id'] = $site_id;
+                if($group){
+                    $goods_data['coupon_batch_name'] = isset($goods_data['coupon_batch_name']) && $goods_data['coupon_batch_name'] ? $goods_data['coupon_batch_name'] : 'default';
+                    $audit_id = $this->Goods_model->auditBeforeCoupon('update_coupon', $goods_id, $this->User_model->getId());
+                    $this->Goods_model->editGoodsGroupCoupon($group, $goods_id, $goods_data, $filter_data);
+                    $this->Goods_model->auditAfterCoupon('update_coupon', $goods_id, $this->User_model->getId(), $audit_id);
+                    $n = $this->Goods_model->checkBatchNameExistInDistinct($group,array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $goods_data['coupon_batch_name']));
+                    if(!$n) {
+                        $this->Goods_model->addBatchNameInDistinct($group, array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $goods_data['coupon_batch_name']));
+                    }
+                    $d = $this->Goods_model->checkBatchNameExistInClient($group,array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $goods_info['batch_name']));
+                    if(!$d) {
+                        $this->Goods_model->removeBatchNameInDistinct($group, array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $goods_info['batch_name']));
+                    }
+                    echo json_encode(array('status' => 'success'));
+                } else {
+                    echo json_encode(array("status" => 'error'));
+                }
+            }
+        }
+    }
+
+    public function deleteGoodsFromAjax($goods_id)
+    {
+        if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            if ($goods_id && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+                $goods_info = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
+                $group = isset($goods_info['group']) ? $goods_info['group'] : null;
+                $filter_data = $this->input->get();
+                $goods_data['client_id'] = $client_id;
+                $goods_data['site_id'] = $site_id;
+                if($group){
+                    $audit_id = $this->Goods_model->auditBeforeCoupon('delete_coupon', $goods_id, $this->User_model->getId());
+                    $this->Goods_model->deleteGoodsGroupCoupon($group, $goods_id, $goods_data,$filter_data);
+                    $this->Goods_model->auditAfterCoupon('delete_coupon', $goods_id, $this->User_model->getId(), $audit_id);
+                    $d = $this->Goods_model->checkBatchNameExistInClient($group,array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $goods_info['batch_name']));
+                    if(!$d) {
+                        $this->Goods_model->removeBatchNameInDistinct($group, array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $goods_info['batch_name']));
+                    }
+                    $n = $this->Goods_model->checkGoodsGroupQuantity($site_id, $group);
+                    if(!$n){
+                        $this->Goods_model->deleteGoodsDistinct($site_id, $group);
+                        echo json_encode(array('status' => 'deleted'));
+                    } else {
+                        echo json_encode(array('status' => 'success'));
+                    }
+                } else {
+                    echo json_encode(array("status" => 'error'));
+                }
+            }
+        }
+    }
+
+    public function upload($goods_id)
+    {
+        if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            if ($goods_id && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (!$this->validateModify()) {
+                    $this->output->set_status_header('403');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_permission')));
+                    die();
+                }
+  
+                if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && !empty($_FILES['file']['tmp_name'])) {
+                    $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+                    $goods_data = array(
+                        'name' => $goods_info['group'],
+                        'quantity' => 1,
+                        'description' => $goods_info['description'],
+                        'image' => $goods_info['image'],
+                        'status' => $goods_info['status'],
+                        'per_user' => $goods_info['per_user'],
+                        'custom_param' => $goods_info['custom_param'],
+                        'tags' => $goods_info['tags'],
+                        'days_expire' => $goods_info['days_expire'],
+                        'distinct_id' => $goods_info['distinct_id'],
+                        'per_user_include_inactive' => $goods_info['per_user_include_inactive']
+                    );
+                    if(isset($goods_info['organize_id']) && isset($goods_info['organize_role'])){
+                        $goods_data['organize_id'] = $goods_info['organize_id'];
+                        $goods_data['organize_role'] = $goods_info['organize_role'];
+                    }
+                    $handle = fopen($_FILES['file']['tmp_name'], "r");
+                    $audit_id = $this->Goods_model->auditBeforeGoods('upload', $goods_id, $this->User_model->getId());
+                    $this->addGoods($handle, $goods_data, $goods_info['redeem'], array($client_id), array($site_id));
+                    $this->Goods_model->auditAfterGoods('upload', $goods_id, $this->User_model->getId(), $audit_id);
+                    fclose($handle);
+                    echo json_encode(array('status' => 'success'));
+                }
+            }
+        }
     }
 
     public function delete()
@@ -1243,6 +1358,7 @@ class Goods extends MY_Controller
                 'sort' => 'date_start'
             );
             $this->data['members'] = $this->Goods_model->getAvailableGoodsByGroup($data);
+            $this->data['members_batch'] = $this->Goods_model->getGoodBatchByDistinctID($this->User_model->getClientId(), $this->User_model->getSiteId(),$goods_info['distinct_id']);
             $this->data['members_total'] = $this->Goods_model->getTotalAvailableGoodsByGroup($data);
             $this->data['members_current_total_page'] = $this->data['members_total'] > $limit_group ? $limit_group : $this->data['members_total'];
 
@@ -1531,7 +1647,27 @@ class Goods extends MY_Controller
                 'order' => 'asc',
                 'sort' => 'date_start'
             );
+
+            $this->data['filter'] = array();
+            if (isset($_GET['filter_goods'])) {
+                $this->data['filter']['filter_goods'] = $_GET['filter_goods'];
+                $data['filter_goods'] = $_GET['filter_goods'];
+            }
+            if (isset($_GET['filter_batch'])) {
+                $this->data['filter']['filter_batch'] = $_GET['filter_batch'];
+                $data['filter_batch'] = $_GET['filter_batch'];
+            }
+            if (isset($_GET['filter_coupon_name'])) {
+                $this->data['filter']['filter_coupon_name'] =  $_GET['filter_coupon_name'];
+                $data['filter_name'] = $_GET['filter_coupon_name'];
+            }
+            if (isset($_GET['filter_voucher_code'])) {
+                $this->data['filter']['filter_voucher_code'] =  $_GET['filter_voucher_code'];
+                $data['filter_voucher_code'] = $_GET['filter_voucher_code'];
+            }
+
             $this->data['members'] = $this->Goods_model->getAvailableGoodsByGroup($data);
+            $this->data['members_batch'] = $this->Goods_model->getGoodBatchByDistinctID($this->User_model->getClientId(), $this->User_model->getSiteId(),$goods_info['distinct_id']);
             $this->data['members_total'] = $this->Goods_model->getTotalAvailableGoodsByGroup($data);
             $this->data['members_current_total_page'] = ($limit * ($offset + 1)) >= $limit ? ($limit * ($offset + 1)) : $this->data['members_total'];
             $this->data['members_current_start_page'] = (($limit * $offset) + 1) >= 1 ? (($limit * $offset) + 1) : 1;
@@ -1726,7 +1862,11 @@ class Goods extends MY_Controller
         /* build template */
         $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         if (!empty($data['tags'])){
-            $tags = explode(',', $data['tags']);
+            if(!is_array($data['tags'])) {
+                $tags = explode(',', $data['tags']);
+            } else {
+                $tags = $data['tags'];
+            }
         }
         $template = array(
             'description' => $data['description'] | '',
@@ -1750,23 +1890,6 @@ class Goods extends MY_Controller
             'date_modified' => $d,
 
         );
-        if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
-            $date_start_another = strtotime($data['date_start']);
-            $date_expire_another = strtotime($data['date_expire']);
-            if ($date_start_another < $date_expire_another) {
-                $template['date_start'] = new MongoDate($date_start_another);
-                $template['date_expire'] = new MongoDate($date_expire_another);
-            }
-        } else {
-            if (isset($data['date_start']) && $data['date_start']) {
-                $date_start_another = strtotime($data['date_start']);
-                $template['date_start'] = new MongoDate($date_start_another);
-            }
-            if (isset($data['date_expire']) && $data['date_expire']) {
-                $date_expire_another = strtotime($data['date_expire']);
-                $template['date_expire'] = new MongoDate($date_expire_another);
-            }
-        }
 
         if (isset($data['organize_id'])) {
             $template['organize_id'] = new MongoID($data['organize_id']);
@@ -1776,21 +1899,44 @@ class Goods extends MY_Controller
             $template['organize_role'] = $data['organize_role'];
         }
         /* loop insert into playbasis_goods */
+        $parameter_set = null;
         while (($line = fgets($handle)) !== false) {
             $line = trim($line);
-            if (empty($line) || $line == ',') {
+            if (empty($line) || $line == ',' || (!$parameter_set && strpos($line,'date_start'))) {
+                $line = trim($line);
+                $parameter_set = $line;
                 continue;
             } // skip empty line
             $obj = explode(',', $line);
             $name = trim($obj[0]);
             $code = trim(isset($obj[1]) ? $obj[1] : $name);
-            $date_expired_coupon = trim(isset($obj[2]) && !empty($obj[2]) ? $obj[2] : null);
+            $date_start = trim(isset($obj[2]) && !empty($obj[2]) ? $obj[2] : null);
+            $date_end = trim(isset($obj[3]) && !empty($obj[3]) ? $obj[3] : null);
+            $date_expired_coupon = trim(isset($obj[4]) && !empty($obj[4]) ? $obj[4] : null);
+            $batch_name = trim(isset($obj[5]) && !empty($obj[5]) ? $obj[5] : 'default');
             $each = array_merge($template, array('name' => $name));
+            if(!empty($date_start) && !empty($date_end)){
+                $date_start_another = strtotime($date_start);
+                $date_expire_another = strtotime($date_end);
+                if ($date_start_another < $date_expire_another) {
+                    $each['date_start'] = new MongoDate($date_start_another);
+                    $each['date_expire'] = new MongoDate($date_expire_another);
+                }
+            } else {
+                if (!empty($date_start)) {
+                    $date_start_another = strtotime($date_start);
+                    $each['date_start'] = new MongoDate($date_start_another);
+                }
+                if (!empty($date_end)) {
+                    $date_expire_another = strtotime($date_end);
+                    $each['date_expire'] = new MongoDate($date_expire_another);
+                }
+            }
             if(!empty($date_expired_coupon)){
                 $each = array_merge($each, array('date_expired_coupon' => new MongoDate(strtotime($date_expired_coupon))));
             }
             $goods_id = $this->Goods_model->addGoods($each);
-            $each = array_merge($each, array('code' => $code));
+            $each = array_merge($each, array('code' => $code, 'batch_name' => $batch_name));
             foreach ($list_client_id as $client_id) {
                 foreach ($list_site_id as $site_id) {
                     array_push($list, array_merge($each, array(
@@ -1799,6 +1945,10 @@ class Goods extends MY_Controller
                         'goods_id' => $goods_id,
                         'group' => $data['name'],
                     )));
+                    $n = $this->Goods_model->checkBatchNameExistInDistinct($data['name'],array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $batch_name));
+                    if($n == 0){
+                        $this->Goods_model->addBatchNameInDistinct($data['name'], array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $batch_name));
+                    }
                 }
             }
         }
