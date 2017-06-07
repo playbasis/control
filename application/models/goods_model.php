@@ -1272,20 +1272,39 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('group', $group);
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->set('batch_name', $data['coupon_batch_name']);
-        if(isset($data['coupon_name']) && $data['coupon_name']){
-            $this->mongo_db->set('name', $data['coupon_name']);
+
+        if(isset($data['coupon_check_batch_name']) && $data['coupon_check_batch_name'] === "on") {
+            $this->mongo_db->set('batch_name', $data['coupon_batch_name']);
         }
-        if(isset($data['coupon_code']) && $data['coupon_code']){
-            $this->mongo_db->set('code', $data['coupon_code']);
+
+        if(isset($data['coupon_check_name']) && $data['coupon_check_name'] === "on") {
+            if(isset($data['coupon_name']) && $data['coupon_name']){
+                $this->mongo_db->set('name', $data['coupon_name']);
+            }
         }
-        $this->mongo_db->set('date_start', $data['coupon_date_start'] ? new MongoDate(strtotime($data['coupon_date_start'])) : null);
-        $this->mongo_db->set('date_expire', $data['coupon_date_expire'] ? new MongoDate(strtotime($data['coupon_date_expire'])) : null);
-        if($data['coupon_date_expired_coupon']){
-            $this->mongo_db->set('date_expired_coupon', new MongoDate(strtotime($data['coupon_date_expired_coupon'])));
-        } else {
-            $this->mongo_db->unset_field('date_expired_coupon');
+
+        if(isset($data['coupon_check_code']) && $data['coupon_check_code'] === "on") {
+            if (isset($data['coupon_code']) && $data['coupon_code']) {
+                $this->mongo_db->set('code', $data['coupon_code']);
+            }
         }
+
+        if(isset($data['coupon_check_date_start']) && $data['coupon_check_date_start'] === "on") {
+            $this->mongo_db->set('date_start', $data['coupon_date_start'] ? new MongoDate(strtotime($data['coupon_date_start'])) : null);
+        }
+
+        if(isset($data['coupon_check_date_expire']) && $data['coupon_check_date_expire'] === "on") {
+            $this->mongo_db->set('date_expire', $data['coupon_date_expire'] ? new MongoDate(strtotime($data['coupon_date_expire'])) : null);
+        }
+
+        if($data['coupon_check_date_expired_coupon'] === "on"){
+            if($data['coupon_date_expired_coupon']){
+                $this->mongo_db->set('date_expired_coupon', new MongoDate(strtotime($data['coupon_date_expired_coupon'])));
+            } else {
+                $this->mongo_db->unset_field('date_expired_coupon');
+            }
+        }
+        $this->mongo_db->set('date_modified', new MongoDate());
 
         $this->mongo_db->update_all('playbasis_goods_to_client');
     }
@@ -1313,7 +1332,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->set('deleted', true);
-
+        $this->mongo_db->set('date_modified', new MongoDate());
         $this->mongo_db->update_all('playbasis_goods_to_client');
     }
 
