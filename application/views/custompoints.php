@@ -35,7 +35,8 @@
                             <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
                             <td class="center" style="width:60px;"><?php echo $this->lang->line('column_type'); ?></td>
                             <td class="center" style="width:60px;"><?php echo $this->lang->line('column_quantity'); ?></td>
-                            <td class="center" style="width:100px;"><?php echo $this->lang->line('entry_pending'); ?></td>
+                            <td class="center" style="width:60px;"><?php echo $this->lang->line('column_peruser'); ?></td>
+                            <td class="center" style="width:100px;"><?php echo $this->lang->line('column_pending'); ?></td>
                             <td class="center" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
                             <td class="center" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
@@ -52,6 +53,7 @@
                                 <td class="left"><?php echo $cs['name']; ?></td>
                                 <td class="left"><?php echo isset($cs['type']) ? $cs['type'] : ""; ?></td>
                                 <td class="left"><?php echo isset($cs['quantity']) ? $cs['quantity'] : "Unlimited"; ?></td>
+                                <td class="left"><?php echo isset($cs['per_user']) ? $cs['per_user'] : "Unlimited"; ?></td>
                                 <td class="left"><?php echo isset($cs['pending']) && $cs['pending'] === 'on' ? "true" : "false"; ?></td>
                                 <td class="right" style="word-wrap:break-word;"><?php echo (isset($cs['tags']) && $cs['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $cs['tags']).'</span>' : null); ?></td>
                                 <td class="center">
@@ -67,7 +69,7 @@
                                 <?php } ?>
                             <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="7"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                             <?php } ?>
                         </tbody>
