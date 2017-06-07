@@ -276,6 +276,10 @@ class Goods extends MY_Controller
                         fclose($handle);
                         redirect('/goods/update/'.$data['goods_id'], 'refresh');
                     } catch (Exception $e) {
+                        $n = $this->Goods_model->checkGoodsGroupQuantity($site_id, $data['name']);
+                        if(!$n){
+                            $this->Goods_model->deleteGoodsDistinct($site_id, $data['name']);
+                        }
                         $this->data['message'] = $e->getMessage();
                     }
                 } else {
