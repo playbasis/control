@@ -115,6 +115,7 @@ class Custompoints extends MY_Controller
                     $data['name'] = $custompoints_data['name'];
                     $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
                     $data['per_user'] = isset($custompoints_data['per_user']) && !is_null($custompoints_data['per_user']) && $custompoints_data['per_user'] !== "" ? intval($custompoints_data['per_user']) : null;
+                    $data['per_user_include_deducted'] = isset($custompoints_data['per_user_include_deducted']) && !empty($custompoints_data['per_user_include_deducted']) ? true : false;
                     $data['limit_per_day'] = isset($custompoints_data['limit_per_day']) && !is_null($custompoints_data['limit_per_day']) && $custompoints_data['limit_per_day'] !== "" ? intval($custompoints_data['limit_per_day']) : null;
                     $limit_start_time = isset($custompoints_data['limit_start_time']) && !is_null($custompoints_data['limit_start_time']) && $custompoints_data['limit_start_time'] !== "" ? $custompoints_data['limit_start_time'] : "00:00";
                     $data['limit_start_time'] = is_null($data['limit_per_day']) || $data['limit_per_day'] == 0 ? "00:00" : $limit_start_time;
@@ -314,6 +315,14 @@ class Custompoints extends MY_Controller
             $this->data['quantity'] = "";
         }
 
+        if ($this->input->post('per_user_include_deducted')) {
+            $this->data['per_user_include_deducted'] = $this->input->post('per_user_include_deducted');
+        } elseif (isset($custompoints_info['per_user_include_deducted']) && !empty($custompoints_info['per_user_include_deducted'])) {
+            $this->data['per_user_include_deducted'] = $custompoints_info['per_user_include_deducted'];
+        } else {
+            $this->data['per_user_include_deducted'] = null;
+        }
+
         if ($this->input->post('per_user')) {
             $this->data['per_user'] = $this->input->post('per_user');
         } elseif (isset($custompoints_info['per_user'])) {
@@ -413,6 +422,7 @@ class Custompoints extends MY_Controller
                     $data['name'] = $custompoints_data['name'];
                     $data['quantity'] = isset($custompoints_data['quantity']) && !is_null($custompoints_data['quantity']) && $custompoints_data['quantity'] !== "" ? intval($custompoints_data['quantity']) : null;
                     $data['per_user'] = isset($custompoints_data['per_user']) && !is_null($custompoints_data['per_user']) && $custompoints_data['per_user'] !== "" ? intval($custompoints_data['per_user']) : null;
+                    $data['per_user_include_deducted'] = isset($custompoints_data['per_user_include_deducted']) && !empty($custompoints_data['per_user_include_deducted']) ? true : false;
                     $data['limit_per_day'] = isset($custompoints_data['limit_per_day']) && !is_null($custompoints_data['limit_per_day']) && $custompoints_data['limit_per_day'] !== "" ? intval($custompoints_data['limit_per_day']) : null;
                     $limit_start_time = isset($custompoints_data['limit_start_time']) && !is_null($custompoints_data['limit_start_time']) && $custompoints_data['limit_start_time'] !== "" ? $custompoints_data['limit_start_time'] : "00:00";
                     $data['limit_start_time'] = is_null($data['limit_per_day']) || $data['limit_per_day'] == 0 ? null : $limit_start_time;

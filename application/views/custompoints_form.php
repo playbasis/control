@@ -99,7 +99,8 @@
                             <span id="per_user"></span> <?php echo $this->lang->line('entry_per_user'); ?>:
                         </td>
                         <td>
-                            <input type="text"
+                            <input type="checkbox" name="per_user_include_deducted" id="per_user_include_deducted" value=true <?php echo $per_user_include_deducted ? "checked":""?> /> <?php echo $this->lang->line('entry_per_user_include_deducted'); ?>
+                            <br><input type="text"
                                    placeholder="<?php echo $this->lang->line('entry_per_user'); ?>"
                                    name="per_user" id="input_per_user"
                                    value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>">

@@ -46,6 +46,7 @@ class Custompoints_model extends MY_Model
             'name' => strtolower($data['name']),
             'quantity' => $data['quantity'],
             'per_user' => $data['per_user'],
+            'per_user_include_deducted' => $data['per_user_include_deducted'],
             'limit_per_day' => $data['limit_per_day'],
             'limit_start_time' => $data['limit_start_time'],
             'limit' => null,
@@ -223,6 +224,7 @@ class Custompoints_model extends MY_Model
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('quantity', $data['quantity']);
         $this->mongo_db->set('per_user', $data['per_user']);
+        $this->mongo_db->set('per_user_include_deducted', $data['per_user_include_deducted']);
         $this->mongo_db->set('limit_per_day', $data['limit_per_day']);
         $this->mongo_db->set('limit_start_time', $data['limit_start_time']);
         $this->mongo_db->set('pending', $data['pending']);
