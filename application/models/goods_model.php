@@ -427,6 +427,7 @@ class Goods_model extends MY_Model
             'date_start' => null,
             'date_expire' => null,
             'custom_param' => isset($data['custom_param']) ? $data['custom_param'] : array(),
+            'batch_name' => array(),
             'whitelist_enable' => isset($data['whitelist_enable']) ? $data['whitelist_enable'] : false,
         );
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
@@ -619,6 +620,16 @@ class Goods_model extends MY_Model
         return $this->mongo_db->count("playbasis_goods_distinct_to_client") > 0;
     }
 
+    public function getGoodBatchByDistinctID($client_id, $site_id, $distinct_id)
+    {
+        $this->mongo_db->where('_id', new MongoId($distinct_id));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        $result = $this->mongo_db->get("playbasis_goods_distinct_to_client");
+        return isset($result[0]['batch_name']) ? $result[0]['batch_name'] : array();
+    }
+
     public function checkGoodsGroupQuantity($site_id, $group)
     {
         $this->mongo_db->where('deleted', false);
@@ -632,11 +643,21 @@ class Goods_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->select(array('name', 'code', 'goods_id', 'date_start', 'date_expire', 'date_expired_coupon'));
+        $this->mongo_db->select(array('name', 'code', 'goods_id', 'date_start', 'date_expire', 'date_expired_coupon','batch_name'));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
+        }
+        if(isset($data['filter_goods'])){
+            $this->mongo_db->where('goods_id', new MongoId($data['filter_goods']));
+        }
+        if(isset($data['filter_batch'])){
+            $this->mongo_db->where('batch_name', $data['filter_batch']);
+        }
+        if(isset($data['filter_voucher_code'])){
+            $regex_code = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_voucher_code'])) . "/i");
+            $this->mongo_db->where('code', $regex_code);
         }
 
         $sort_data = array(
@@ -644,7 +665,7 @@ class Goods_model extends MY_Model
             'date_start',
             'date_expire',
             'name',
-            'code'
+            'code',
         );
 
         if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
@@ -694,6 +715,16 @@ class Goods_model extends MY_Model
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
+        }
+        if(isset($data['filter_goods'])){
+            $this->mongo_db->where('goods_id', new MongoId($data['filter_goods']));
+        }
+        if(isset($data['filter_batch'])){
+            $this->mongo_db->where('batch_name', $data['filter_batch']);
+        }
+        if(isset($data['filter_voucher_code'])){
+            $regex_code = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_voucher_code'])) . "/i");
+            $this->mongo_db->where('code', $regex_code);
         }
 
         $this->mongo_db->where('deleted', false);
@@ -858,6 +889,48 @@ class Goods_model extends MY_Model
 
         $b = $this->mongo_db->insert('playbasis_goods', $data_insert);
         return $b;
+    }
+    public function auditBeforeCoupon($event,$goods_id, $user_id)
+    {
+        $goods_data = $this->getGoodsOfClientPrivate($goods_id);
+        if ($goods_data && array_key_exists('group', $goods_data)) {
+            $goods_data['quantity'] = $this->checkGoodsGroupQuantity($goods_data['site_id'], $goods_data['group']);
+        }
+        $insert_data = array('client_id' => $goods_data['client_id'],
+            'site_id' => $goods_data['site_id'],
+            'goods_id' => $goods_data['goods_id'],
+            'event' => $event,
+            'before' => $goods_data,
+            'user_id' => $user_id);
+        return $this->mongo_db->insert('playbasis_goods_to_client_audit', $insert_data);
+    }
+
+    public function auditAfterCoupon($event, $goods_id, $user_id, $audit_id=null)
+    {
+        $goods_data = $this->getGoodsOfClientPrivate($goods_id);
+        if ($goods_data && array_key_exists('group', $goods_data)) {
+            $goods_data['quantity'] = $this->checkGoodsGroupQuantity($goods_data['site_id'], $goods_data['group']);
+        }
+        $audit_log = array();
+        if ($audit_id){
+            $this->mongo_db->where('_id', new MongoID($audit_id));
+            $audit_log = $this->mongo_db->get('playbasis_goods_to_client_audit');
+        }
+
+        if ($audit_log){
+            $this->mongo_db->where('_id', new MongoID($audit_id));
+            $this->mongo_db->set('after', $goods_data);
+            $this->mongo_db->update('playbasis_goods_to_client_audit');
+        } else {
+            $insert_data = array('client_id' => $goods_data['client_id'],
+                'site_id' => $goods_data['site_id'],
+                'goods_id' => $goods_data['goods_id'],
+                'event' => $event,
+                'before' => null,
+                'after' => $goods_data,
+                'user_id' => $user_id);
+            $this->mongo_db->insert('playbasis_goods_to_client_audit', $insert_data);
+        }
     }
 
     public function auditBeforeGoods($event,$goods_id, $user_id)
@@ -1153,30 +1226,6 @@ class Goods_model extends MY_Model
         if(isset($data['distinct_id']) && !is_null($data['distinct_id'])){
             $this->mongo_db->set('distinct_id', $data['distinct_id']);
         }
-
-        if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
-            $date_start_another = strtotime($data['date_start']);
-            $date_expire_another = strtotime($data['date_expire']);
-
-            if ($date_start_another < $date_expire_another) {
-                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
-                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
-            }
-        } else {
-            if (isset($data['date_start']) && $data['date_start']) {
-                $date_start_another = strtotime($data['date_start']);
-                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
-                $this->mongo_db->set('date_expire', null);
-            } elseif (isset($data['date_expire']) && $data['date_expire']) {
-                $date_expire_another = strtotime($data['date_expire']);
-                $this->mongo_db->set('date_start', null);
-                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
-            } else {
-                $this->mongo_db->set('date_start', null);
-                $this->mongo_db->set('date_expire', null);
-            }
-        }
-
         if (isset($data['days_expire'])){
             $this->mongo_db->set('days_expire', $data['days_expire'] ? $data['days_expire'] : null);
         }
@@ -1198,6 +1247,114 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->set('group', $data['name']);
         $this->mongo_db->update_all('playbasis_goods_log');
+    }
+
+    public function editGoodsGroupCoupon($group, $goods_id, $data, $filter)
+    {
+        if(isset($filter['filter_batch'])){
+            $this->mongo_db->where('batch_name', $filter['filter_batch']);
+            if(isset($filter['filter_goods'])){
+                $this->mongo_db->where('goods_id', new MongoID($filter['filter_goods']));
+            }
+        } else {
+            $this->mongo_db->where('goods_id', new MongoID($goods_id));
+        }
+
+        if (isset($filter['filter_coupon_name']) && !is_null($filter['filter_coupon_name'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($filter['filter_coupon_name'])) . "/i");
+            $this->mongo_db->where('name', $regex);
+        }
+
+        if(isset($filter['filter_voucher_code'])){
+            $regex_code = new MongoRegex("/" . preg_quote(utf8_strtolower($filter['filter_voucher_code'])) . "/i");
+            $this->mongo_db->where('code', $regex_code);
+        }
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->set('batch_name', $data['coupon_batch_name']);
+        if(isset($data['coupon_name']) && $data['coupon_name']){
+            $this->mongo_db->set('name', $data['coupon_name']);
+        }
+        if(isset($data['coupon_code']) && $data['coupon_code']){
+            $this->mongo_db->set('code', $data['coupon_code']);
+        }
+        $this->mongo_db->set('date_start', $data['coupon_date_start'] ? new MongoDate(strtotime($data['coupon_date_start'])) : null);
+        $this->mongo_db->set('date_expire', $data['coupon_date_expire'] ? new MongoDate(strtotime($data['coupon_date_expire'])) : null);
+        if($data['coupon_date_expired_coupon']){
+            $this->mongo_db->set('date_expired_coupon', new MongoDate(strtotime($data['coupon_date_expired_coupon'])));
+        } else {
+            $this->mongo_db->unset_field('date_expired_coupon');
+        }
+
+        $this->mongo_db->update_all('playbasis_goods_to_client');
+    }
+    public function deleteGoodsGroupCoupon($group, $goods_id, $data, $filter)
+    {
+        if(isset($filter['filter_batch'])){
+            $this->mongo_db->where('batch_name', $filter['filter_batch']);
+            if(isset($filter['filter_goods'])){
+                $this->mongo_db->where('goods_id', new MongoID($filter['filter_goods']));
+            }
+        } else {
+            $this->mongo_db->where('goods_id', new MongoID($goods_id));
+        }
+
+        if (isset($filter['filter_coupon_name']) && !is_null($filter['filter_coupon_name'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($filter['filter_coupon_name'])) . "/i");
+            $this->mongo_db->where('name', $regex);
+        }
+
+        if(isset($filter['filter_voucher_code'])){
+            $regex_code = new MongoRegex("/" . preg_quote(utf8_strtolower($filter['filter_voucher_code'])) . "/i");
+            $this->mongo_db->where('code', $regex_code);
+        }
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->set('deleted', true);
+
+        $this->mongo_db->update_all('playbasis_goods_to_client');
+    }
+
+    public function checkBatchNameExistInClient($group, $data)
+    {
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('batch_name', $data['batch_name']);
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->count('playbasis_goods_to_client');
+    }
+
+    public function checkBatchNameExistInDistinct($group, $data)
+    {
+        $this->mongo_db->where('name', $group);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where_in('batch_name', array($data['batch_name']));
+        return $this->mongo_db->count('playbasis_goods_distinct_to_client');
+    }
+
+    public function removeBatchNameInDistinct($group, $data)
+    {
+        $this->mongo_db->where('name', $group);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->pull('batch_name', $data['batch_name']);
+        $this->mongo_db->update('playbasis_goods_distinct_to_client');
+    }
+
+    public function addBatchNameInDistinct($group, $data)
+    {
+        $this->mongo_db->where('name', $group);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->push('batch_name', $data['batch_name']);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->update('playbasis_goods_distinct_to_client');
     }
 
     public function editGoodsGroupPLayer($group, $data)
