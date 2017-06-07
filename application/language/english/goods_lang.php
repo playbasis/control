@@ -24,11 +24,13 @@ $lang['button_insert_goods_group']      = 'Insert Goods Group';
 
 $lang['button_filter']                  = 'Filter';
 $lang['button_clear_filter']            = 'Clear';
+$lang['button_upload']                  = 'Upload';
 
 // Tab
 $lang['tab_colection']                  = 'Collection';
 $lang['tab_assign']                     = 'Assign';
 $lang['tab_redeem']                     = 'Redeem';
+$lang['tab_coupon']                     = 'Coupon';
 $lang['tab_sms']                        = 'SMS';
 $lang['tab_modify_status']              = 'Modify Status';
 
@@ -48,9 +50,11 @@ $lang['column_tags']                    = 'Tag(s)';
 $lang['column_custom_param']            = 'Custom Param';
 
 // Entry
-$lang['entry_system_id']                = 'System Generated ID';
+$lang['entry_goods_id']                 = 'Goods ID';
 $lang['entry_group']                    = 'Group';
 $lang['entry_name']                     = 'Name';
+$lang['entry_batch_name']               = 'Batch Name';
+$lang['entry_action']                   = 'Action';
 $lang['entry_file']                     = 'CSV File To Import';
 $lang['entry_for_client']               = 'Client';
 $lang['entry_description']              = 'Description';
@@ -100,7 +104,7 @@ $lang['column_value']                   = 'Value';
 
 $lang['entry_client']                   = 'Type Client Name:';
 $lang['text_no_client']                 = 'No client assign to this goods';
-
+$lang['text_uploaded']                  = 'Uploaded Success';
 
 // Error 
 $lang['error_warning']                  = 'Warning: Please check the form carefully for errors!';
@@ -109,7 +113,7 @@ $lang['error_access']                   = 'Warning: You do not have permission t
 $lang['error_name']                     = 'Category Name must be between 2 and 32 characters!';
 $lang['error_limit']                    = 'You have reached goods limit.';
 $lang['error_redeem']                   = 'Please provide point or item.';
-$lang['error_file']                     = 'Please provide a file to import.';
+$lang['error_file']                     = 'Please provide a file to upload.';
 $lang['error_upload']                   = 'Our system cannot access your uploaded file.';
 $lang['error_goods_exists']             = 'Goods already exists.';
 $lang['error_file_too_large']           = 'File too large. File must be less than 4 megabytes.';
