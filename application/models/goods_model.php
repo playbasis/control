@@ -1297,7 +1297,7 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('date_expire', $data['coupon_date_expire'] ? new MongoDate(strtotime($data['coupon_date_expire'])) : null);
         }
 
-        if($data['coupon_check_date_expired_coupon'] === "on"){
+        if(isset($data['coupon_check_date_expired_coupon']) && $data['coupon_check_date_expired_coupon'] === "on"){
             if($data['coupon_date_expired_coupon']){
                 $this->mongo_db->set('date_expired_coupon', new MongoDate(strtotime($data['coupon_date_expired_coupon'])));
             } else {
