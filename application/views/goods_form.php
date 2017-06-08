@@ -351,29 +351,30 @@
                         <table id="members" class="display form no-footer" cellspacing="0" border="1" width="100%">
                             <thead>
                             <tr>
-                                <th style="width:80px;"><?php echo $this->lang->line('entry_goods_id'); ?></th>
-                                <th style="width:180px;"><?php echo $this->lang->line('entry_batch_name'); ?></th>
-                                <th style="width:180px;"><?php echo $this->lang->line('entry_name'); ?></th>
-                                <th style="width:180px;"><?php echo $this->lang->line('entry_code'); ?></th>
-                                <th style="width:80px;"><?php echo $this->lang->line('entry_start_date'); ?></th>
-                                <th style="width:80px;"><?php echo $this->lang->line('entry_expire_date'); ?></th>
-                                <th style="width:80px;"><?php echo $this->lang->line('entry_expire_date_coupon'); ?></th>
-                                <th style="width:40px;"><?php echo $this->lang->line('entry_action'); ?></th>
+                                <th style="width:100px;"><?php echo $this->lang->line('entry_goods_id'); ?></th>
+                                <th style="width:80px;"><?php echo $this->lang->line('entry_batch_name'); ?></th>
+                                <th style="width:200px;"><?php echo $this->lang->line('entry_name'); ?></th>
+                                <th style="width:200px;"><?php echo $this->lang->line('entry_code'); ?></th>
+                                <th style="width:120px;"><?php echo $this->lang->line('entry_start_date'); ?></th>
+                                <th style="width:120px;"><?php echo $this->lang->line('entry_expire_date'); ?></th>
+                                <th style="width:120px;"><?php echo $this->lang->line('entry_expire_date_coupon'); ?></th>
+                                <th style="width:30px;"><?php echo $this->lang->line('entry_action'); ?></th>
                             </tr>
                             <tr class="filter">
-                                <td class="left" ><input style="width:150px;" title="filter_goods" type="text" name="filter_goods" value="<?php echo isset($_GET['filter_goods']) ? $_GET['filter_goods'] : "" ?>"/></td>
+                                <td class="left" ><input style="width:150px;" title="filter_goods" type="text" id="filter_goods" name="filter_goods" value="<?php echo isset($_GET['filter_goods']) ? $_GET['filter_goods'] : "" ?>"/></td>
                                 <td class="left" >
-                                    <select name="filter_batch" style="width:80px;">
+                                    <select id="filter_batch" name="filter_batch" style="width:80px;">
+                                        <option value=""></option>
                                     <?php foreach ($members_batch as $batch) {?>
                                         <option value="<?php echo $batch;?>" <?php echo isset($_GET['filter_batch']) && $_GET['filter_batch'] == $batch? 'selected' : "" ?>><?php echo $batch;?></option>
                                     <?php } ?>
                                     </select>
                                 </td>
-                                <td class="left" ><input style="width:180px;" title="filter_coupon_name" type="text" name="filter_coupon_name" value="<?php echo isset($_GET['filter_coupon_name']) ? $_GET['filter_coupon_name'] : "" ?>"/></td>
-                                <td class="left" ><input style="width:180px;" title="filter_voucher_code" type="text" name="filter_voucher_code" value="<?php echo isset($_GET['filter_voucher_code']) ? $_GET['filter_voucher_code'] : "" ?>"/></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td class="left" ><input style="width:180px;" title="filter_coupon_name" type="text" id="filter_coupon_name" name="filter_coupon_name" value="<?php echo isset($_GET['filter_coupon_name']) ? $_GET['filter_coupon_name'] : "" ?>"/></td>
+                                <td class="left" ><input style="width:180px;" title="filter_voucher_code" type="text" id="filter_voucher_code" name="filter_voucher_code" value="<?php echo isset($_GET['filter_voucher_code']) ? $_GET['filter_voucher_code'] : "" ?>"/></td>
+                                <td class="left" ><input style="width:120px;" type="text" class="date" id="filter_date_start" name="filter_date_start" value="<?php echo isset($_GET['filter_date_start']) ? $_GET['filter_date_start'] : "" ?>" /></td>
+                                <td class="left" ><input style="width:120px;" type="text" class="date" id="filter_date_end" name="filter_date_end" value="<?php echo isset($_GET['filter_date_end']) ? $_GET['filter_date_end'] : "" ?>"  /></td>
+                                <td class="left" ><input style="width:120px;" type="text" class="date" id="filter_date_expire" name="filter_date_expire" value="<?php echo isset($_GET['filter_date_expire']) ? $_GET['filter_date_expire'] : "" ?>"  /></td>
                                 <td style="width:80px;">
                                     <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
                                     <a onclick="update_table();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
@@ -389,13 +390,13 @@
                                 $count = 0;
                                 foreach ($members as $index => $member) { ?>
                                     <tr class="<?php echo (++$count%2 ? "odd" : "even") ?>">
-                                        <td><?php echo $member['goods_id']->{'$id'}; ?></td>
-                                        <td><?php echo isset($member['batch_name']) ? $member['batch_name'] : 'default'; ?></td>
-                                        <td><?php echo $member['name']; ?></td>
-                                        <td><?php echo isset($member['code']) ? $member['code'] : ''; ?></td>
-                                        <td align="center"><?php echo isset($member['date_start']) ? $member['date_start'] : ""; ?></td>
-                                        <td align="center"><?php echo isset($member['date_expire']) ? $member['date_expire'] : ""; ?></td>
-                                        <td align="center"><?php echo isset($member['date_expired_coupon']) ? $member['date_expired_coupon'] : ''; ?></td>
+                                        <td style="width:120px;"><?php echo $member['goods_id']->{'$id'}; ?></td>
+                                        <td style="width:80px;"><?php echo isset($member['batch_name']) ? $member['batch_name'] : 'default'; ?></td>
+                                        <td style="width:200px;"><?php echo $member['name']; ?></td>
+                                        <td style="width:200px;"><?php echo isset($member['code']) ? $member['code'] : ''; ?></td>
+                                        <td style="width:80px;" align="center"><?php echo isset($member['date_start']) ? $member['date_start'] : ""; ?></td>
+                                        <td style="width:80px;" align="center"><?php echo isset($member['date_expire']) ? $member['date_expire'] : ""; ?></td>
+                                        <td style="width:80px;" align="center"><?php echo isset($member['date_expired_coupon']) ? $member['date_expired_coupon'] : ''; ?></td>
                                         <td align="center">
                                             <a onclick="showCouponModalForm('<?php echo $member['goods_id']->{'$id'}?>',
                                                 '<?php echo isset($member['batch_name']) ? $member['batch_name'] : 'default'; ?>',
@@ -487,36 +488,51 @@
         <table class="form">
             <tr>
                 <td><?php echo $this->lang->line('entry_goods_id'); ?>:</td>
-                <td><input type="text" id="coupon_id" name="coupon_id" size="100" value="" disabled/></td>
+                <td>
+                    <input type="text" id="coupon_id" name="coupon_id" size="100" value="" disabled/>
+                </td>
+
             </tr>
             <tr>
                 <td><?php echo $this->lang->line('entry_batch_name'); ?>:</td>
-                <td><input type="text" id="coupon_batch_name" name="coupon_batch_name" size="100" value="" /></td>
+                <td>
+                    <input type="text" id="coupon_batch_name" name="coupon_batch_name" size="100" value="" />
+                    <input type="checkbox" id="coupon_check_batch_name" name="coupon_check_batch_name">
+                </td>
             </tr>
             <tr>
                 <td><?php echo $this->lang->line('entry_name'); ?>:</td>
-                <td><input type="text" id="coupon_name" name="coupon_name" size="100" value="" /></td>
+                <td>
+                    <input type="text" id="coupon_name" name="coupon_name" size="100" value="" />
+                    <input type="checkbox" id="coupon_check_name" name="coupon_check_name">
+                </td>
             </tr>
             <tr>
                 <td><?php echo $this->lang->line('entry_code'); ?>:</td>
-                <td><input type="text" id="coupon_code" name="coupon_code" size="100" value="" /></td>
+                <td>
+                    <input type="text" id="coupon_code" name="coupon_code" size="100" value="" />
+                    <input type="checkbox" id="coupon_check_code" name="coupon_check_code">
+                </td>
             </tr>
             <tr>
                 <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
                 <td>
                     <input type="text" class="date" id="coupon_date_start" name="coupon_date_start" placeholder="date start reward coupon"value="" size="50" />
+                    <input type="checkbox" id="coupon_check_date_start" name="coupon_check_date_start">
                 </td>
             </tr>
             <tr>
                 <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
                 <td>
                     <input type="text" class="date" id="coupon_date_expire" name="coupon_date_expire" placeholder="date end to reward coupon" value="" size="50" />
+                    <input type="checkbox" id="coupon_check_date_expire" name="coupon_check_date_expire">
                 </td>
             </tr>
             <tr>
                 <td><?php echo $this->lang->line('entry_date_expire'); ?>:</td>
                 <td>
                     <input type="text" class="date"  id="coupon_date_expired_coupon" name="coupon_date_expired_coupon" placeholder="date to expire coupon" value="" size="50" />
+                    <input type="checkbox" id="coupon_check_date_expired_coupon" name="coupon_check_date_expired_coupon">
                 </td>
             </tr>
         </table>
@@ -524,9 +540,12 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button class="btn btn-primary" onclick="edit_coupon()" id="coupon-modal-submit"><i class="fa fa-plus">&nbsp;</i>Edit</button>
-    <button class="btn btn-primary hide" onclick="edit_filtered_coupon()" id="coupon-modal-filter-submit"><i class="fa fa-plus">&nbsp;</i>Edit All Coupon Matching Filtered</button>
+    <div>
+        <p align="center" style="color:red"><?php echo $this->lang->line('warning_check'); ?></p>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" onclick="edit_coupon()" id="coupon-modal-submit"><i class="fa fa-plus">&nbsp;</i>Edit</button>
+        <button class="btn btn-primary hide" onclick="edit_filtered_coupon()" id="coupon-modal-filter-submit"><i class="fa fa-plus">&nbsp;</i>Edit All Coupon Matching Filtered</button>
+    </div>
 </div>
 </div>
 
@@ -612,6 +631,13 @@ $('#tabs a').tabs();
         document.getElementById('coupon_date_start').value =  coupon_date_start;
         document.getElementById('coupon_date_expire').value =  coupon_date_expire;
         document.getElementById('coupon_date_expired_coupon').value =  coupon_date_expire_coupon;
+
+        document.getElementById('coupon_check_batch_name').checked =  false;
+        document.getElementById('coupon_check_name').checked =  false;
+        document.getElementById('coupon_check_code').checked =  false;
+        document.getElementById('coupon_check_date_start').checked =  false;
+        document.getElementById('coupon_check_date_expire').checked =  false;
+        document.getElementById('coupon_check_date_expired_coupon').checked =  false;
         $('#formCouponModal').modal('show');
     }
 
@@ -755,10 +781,6 @@ $('#tabs a').tabs();
     }
 
     function filter() {
-        $("#clear_filter").show();
-        $("#coupon-modal-filter-submit").show();
-        $("#delete_filtered").show();
-
         var url = baseUrlPath+"goods/getGoodsGroupAjax/<?php echo $goods_id; ?>?";
 
         filter_goods = $('input[name=\'filter_goods\']').attr('value');
@@ -792,6 +814,15 @@ $('#tabs a').tabs();
             $('.member_wrapper').html(data);
 
             pagination_click();
+            if(filter_goods || filter_batch || filter_coupon_name || filter_voucher_code){
+                $("#clear_filter").show();
+                $("#coupon-modal-filter-submit").show();
+                $("#delete_filtered").show();
+            } else {
+                $("#clear_filter").hide();
+                $("#coupon-modal-filter-submit").hide();
+                $("#delete_filtered").hide();
+            }
         });
 
     }
@@ -1030,6 +1061,20 @@ $(document).ready(function(){
 
     function pagination_click(){
         $('.paginate_button').click(function(){
+            var url = baseUrlPath+"goods/getGoodsGroupAjax/<?php echo $goods_id; ?>?";
+
+            if (filter_goods) {
+                url += '&filter_goods=' + encodeURIComponent(filter_goods);
+            }
+            if (filter_batch) {
+                url += '&filter_batch=' + encodeURIComponent(filter_batch);
+            }
+            if (filter_coupon_name) {
+                url += '&filter_coupon_name=' + encodeURIComponent(filter_coupon_name);
+            }
+            if (filter_voucher_code) {
+                url += '&filter_voucher_code=' + encodeURIComponent(filter_voucher_code);
+            }
             var page = $(this).attr("data-page");
 
             $('.member_wrapper').append('<div class="backgrund-load"><div class="loading-img"><img src="<?php echo base_url();?>image/white_loading.gif" /></div></div>');
@@ -1039,13 +1084,22 @@ $(document).ready(function(){
 
             $.ajax({
                 type: "GET",
-                url: baseUrlPath+"goods/getGoodsGroupAjax/<?php echo $goods_id; ?>",
+                url: url,
                 data: { page: page },
                 dataType: "html"
             }).done(function( data ) {
                 $('.member_wrapper').html(data);
 
                 pagination_click();
+                if(filter_goods || filter_batch || filter_coupon_name || filter_voucher_code){
+                    $("#clear_filter").show();
+                    $("#coupon-modal-filter-submit").show();
+                    $("#delete_filtered").show();
+                } else {
+                    $("#clear_filter").hide();
+                    $("#coupon-modal-filter-submit").hide();
+                    $("#delete_filtered").hide();
+                }
             });
 
         });

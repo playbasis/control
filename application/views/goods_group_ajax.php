@@ -2,19 +2,20 @@
     <table id="members" class="display form no-footer" cellspacing="0" border="1" width="100%">
         <thead>
         <tr>
-            <th style="width:120px;"><?php echo $this->lang->line('entry_goods_id'); ?></th>
+            <th style="width:100px;"><?php echo $this->lang->line('entry_goods_id'); ?></th>
             <th style="width:80px;"><?php echo $this->lang->line('entry_batch_name'); ?></th>
             <th style="width:200px;"><?php echo $this->lang->line('entry_name'); ?></th>
             <th style="width:200px;"><?php echo $this->lang->line('entry_code'); ?></th>
-            <th style="width:80px;"><?php echo $this->lang->line('entry_start_date'); ?></th>
-            <th style="width:80px;"><?php echo $this->lang->line('entry_expire_date'); ?></th>
-            <th style="width:80px;"><?php echo $this->lang->line('entry_expire_date_coupon'); ?></th>
+            <th style="width:120px;"><?php echo $this->lang->line('entry_start_date'); ?></th>
+            <th style="width:120px;"><?php echo $this->lang->line('entry_expire_date'); ?></th>
+            <th style="width:120px;"><?php echo $this->lang->line('entry_expire_date_coupon'); ?></th>
             <th style="width:30px;"><?php echo $this->lang->line('entry_action'); ?></th>
         </tr>
         <tr class="filter">
             <td class="left" ><input style="width:150px;" title="filter_goods" type="text" name="filter_goods" value="<?php echo isset($_GET['filter_goods']) ? $_GET['filter_goods'] : "" ?>"/></td>
             <td class="left" >
                 <select name="filter_batch" style="width:80px;">
+                        <option value=""></option>
                     <?php foreach ($members_batch as $batch) {?>
                         <option value="<?php echo $batch;?>" <?php echo isset($_GET['filter_batch']) && $_GET['filter_batch'] == $batch? 'selected' : "" ?>><?php echo $batch;?></option>
                     <?php } ?>
@@ -22,9 +23,9 @@
             </td>
             <td class="left" ><input style="width:180px;" title="filter_coupon_name" type="text" name="filter_coupon_name" value="<?php echo isset($_GET['filter_coupon_name']) ? $_GET['filter_coupon_name'] : "" ?>"/></td>
             <td class="left" ><input style="width:180px;" title="filter_voucher_code" type="text" name="filter_voucher_code" value="<?php echo isset($_GET['filter_voucher_code']) ? $_GET['filter_voucher_code'] : "" ?>"/></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td class="left" ><input style="width:120px;" type="text" class="date" id="filter_date_start" name="filter_date_start" value="<?php echo isset($_GET['filter_date_start']) ? $_GET['filter_date_start'] : "" ?>" /></td>
+            <td class="left" ><input style="width:120px;" type="text" class="date" id="filter_date_end" name="filter_date_end" value="<?php echo isset($_GET['filter_date_end']) ? $_GET['filter_date_end'] : "" ?>"  /></td>
+            <td class="left" ><input style="width:120px;" type="text" class="date" id="filter_date_expire" name="filter_date_expire" value="<?php echo isset($_GET['filter_date_expire']) ? $_GET['filter_date_expire'] : "" ?>"  /></td>
             <td style="width:80px;">
                 <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
                 <a onclick="update_table();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
@@ -54,8 +55,8 @@
                             '<?php echo isset($member['date_start']) ? $member['date_start'] : ""; ?>',
                             '<?php echo isset($member['date_expire']) ? $member['date_expire'] : ""; ?>',
                             '<?php echo isset($member['date_expired_coupon']) ? $member['date_expired_coupon'] : ""; ?>'
-                            );" class="button"><i class='fa fa-edit fa-lg''></i></a>
-                        <a onclick="delete_coupon('<?php echo $member['goods_id']->{'$id'}?>',);" class="button" title="Delete"><i class='fa fa-times fa-lg' title=""></i></a>
+                            );" class="button" title="Edit"><i class='fa fa-edit fa-lg' title="Edit"></i></a>
+                        <a onclick="delete_coupon('<?php echo $member['goods_id']->{'$id'}?>',);" class="button" title="Delete"><i class='fa fa-times fa-lg' title="Delete"></i></a>
                     </td>
                 </tr>
             <?php
