@@ -106,7 +106,8 @@ $lang['entry_client']                   = 'Type Client Name:';
 $lang['text_no_client']                 = 'No client assign to this goods';
 $lang['text_uploaded']                  = 'Uploaded Success';
 
-// Error 
+// Error
+$lang['warning_check']                  = '** Please check the box for updating the field! **';
 $lang['error_warning']                  = 'Warning: Please check the form carefully for errors!';
 $lang['error_permission']               = 'Warning: You do not have permission to modify goods!';
 $lang['error_access']                   = 'Warning: You do not have permission to access this page!';

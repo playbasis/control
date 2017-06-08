@@ -540,9 +540,12 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button class="btn btn-primary" onclick="edit_coupon()" id="coupon-modal-submit"><i class="fa fa-plus">&nbsp;</i>Edit</button>
-    <button class="btn btn-primary hide" onclick="edit_filtered_coupon()" id="coupon-modal-filter-submit"><i class="fa fa-plus">&nbsp;</i>Edit All Coupon Matching Filtered</button>
+    <div>
+        <p align="center" style="color:red"><?php echo $this->lang->line('warning_check'); ?></p>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" onclick="edit_coupon()" id="coupon-modal-submit"><i class="fa fa-plus">&nbsp;</i>Edit</button>
+        <button class="btn btn-primary hide" onclick="edit_filtered_coupon()" id="coupon-modal-filter-submit"><i class="fa fa-plus">&nbsp;</i>Edit All Coupon Matching Filtered</button>
+    </div>
 </div>
 </div>
 
