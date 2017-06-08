@@ -649,15 +649,30 @@ class Goods_model extends MY_Model
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
+
         if(isset($data['filter_goods'])){
             $this->mongo_db->where('goods_id', new MongoId($data['filter_goods']));
         }
+
         if(isset($data['filter_batch'])){
             $this->mongo_db->where('batch_name', $data['filter_batch']);
         }
+
         if(isset($data['filter_voucher_code'])){
             $regex_code = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_voucher_code'])) . "/i");
             $this->mongo_db->where('code', $regex_code);
+        }
+
+        if (isset($data['filter_date_start']) && !is_null($data['filter_date_start'])) {
+            $this->mongo_db->where('date_start', new MongoDate(strtotime($data['filter_date_start'])));
+        }
+
+        if(isset($data['filter_date_end']) && !is_null($data['filter_date_end'])){
+            $this->mongo_db->where('date_expire', new MongoDate(strtotime($data['filter_date_end'])));
+        }
+
+        if(isset($data['filter_date_expire']) && !is_null($data['filter_date_expire'])){
+            $this->mongo_db->where('date_expired_coupon', new MongoDate(strtotime($data['filter_date_expire'])));
         }
 
         $sort_data = array(
@@ -725,6 +740,18 @@ class Goods_model extends MY_Model
         if(isset($data['filter_voucher_code'])){
             $regex_code = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_voucher_code'])) . "/i");
             $this->mongo_db->where('code', $regex_code);
+        }
+
+        if (isset($data['filter_date_start']) && !is_null($data['filter_date_start'])) {
+            $this->mongo_db->where('date_start', new MongoDate(strtotime($data['filter_date_start'])));
+        }
+
+        if(isset($data['filter_date_end']) && !is_null($data['filter_date_end'])){
+            $this->mongo_db->where('date_expire', new MongoDate(strtotime($data['filter_date_end'])));
+        }
+
+        if(isset($data['filter_date_expire']) && !is_null($data['filter_date_expire'])){
+            $this->mongo_db->where('date_expired_coupon', new MongoDate(strtotime($data['filter_date_expire'])));
         }
 
         $this->mongo_db->where('deleted', false);
@@ -1251,7 +1278,7 @@ class Goods_model extends MY_Model
 
     public function editGoodsGroupCoupon($group, $goods_id, $data, $filter)
     {
-        if(isset($filter['filter_batch'])){
+        if(isset($filter['filter_batch']) && $filter['filter_batch']){
             $this->mongo_db->where('batch_name', $filter['filter_batch']);
             if(isset($filter['filter_goods'])){
                 $this->mongo_db->where('goods_id', new MongoID($filter['filter_goods']));
@@ -1265,10 +1292,23 @@ class Goods_model extends MY_Model
             $this->mongo_db->where('name', $regex);
         }
 
-        if(isset($filter['filter_voucher_code'])){
+        if(isset($filter['filter_voucher_code']) && !is_null($filter['filter_voucher_code'])){
             $regex_code = new MongoRegex("/" . preg_quote(utf8_strtolower($filter['filter_voucher_code'])) . "/i");
             $this->mongo_db->where('code', $regex_code);
         }
+
+        if (isset($filter['filter_date_start']) && !is_null($filter['filter_date_start'])) {
+            $this->mongo_db->where('date_start', new MongoDate(strtotime($filter['filter_date_start'])));
+        }
+
+        if(isset($filter['filter_date_end']) && !is_null($filter['filter_date_end'])){
+            $this->mongo_db->where('date_expire', new MongoDate(strtotime($filter['filter_date_end'])));
+        }
+
+        if(isset($filter['filter_date_expire']) && !is_null($filter['filter_date_expire'])){
+            $this->mongo_db->where('date_expired_coupon', new MongoDate(strtotime($filter['filter_date_expire'])));
+        }
+
         $this->mongo_db->where('group', $group);
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
@@ -1304,13 +1344,14 @@ class Goods_model extends MY_Model
                 $this->mongo_db->unset_field('date_expired_coupon');
             }
         }
+
         $this->mongo_db->set('date_modified', new MongoDate());
 
         $this->mongo_db->update_all('playbasis_goods_to_client');
     }
     public function deleteGoodsGroupCoupon($group, $goods_id, $data, $filter)
     {
-        if(isset($filter['filter_batch'])){
+        if(isset($filter['filter_batch']) && $filter['filter_batch']){
             $this->mongo_db->where('batch_name', $filter['filter_batch']);
             if(isset($filter['filter_goods'])){
                 $this->mongo_db->where('goods_id', new MongoID($filter['filter_goods']));
@@ -1324,10 +1365,23 @@ class Goods_model extends MY_Model
             $this->mongo_db->where('name', $regex);
         }
 
-        if(isset($filter['filter_voucher_code'])){
+        if(isset($filter['filter_voucher_code']) && !is_null($filter['filter_voucher_code'])){
             $regex_code = new MongoRegex("/" . preg_quote(utf8_strtolower($filter['filter_voucher_code'])) . "/i");
             $this->mongo_db->where('code', $regex_code);
         }
+
+        if (isset($filter['filter_date_start']) && !is_null($filter['filter_date_start'])) {
+            $this->mongo_db->where('date_start', new MongoDate(strtotime($filter['filter_date_start'])));
+        }
+
+        if(isset($filter['filter_date_end']) && !is_null($filter['filter_date_end'])){
+            $this->mongo_db->where('date_expire', new MongoDate(strtotime($filter['filter_date_end'])));
+        }
+
+        if(isset($filter['filter_date_expire']) && !is_null($filter['filter_date_expire'])){
+            $this->mongo_db->where('date_expired_coupon', new MongoDate(strtotime($filter['filter_date_expire'])));
+        }
+
         $this->mongo_db->where('group', $group);
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));

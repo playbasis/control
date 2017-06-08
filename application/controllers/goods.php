@@ -1670,6 +1670,19 @@ class Goods extends MY_Controller
                 $data['filter_voucher_code'] = $_GET['filter_voucher_code'];
             }
 
+            if (isset($_GET['filter_date_start'])) {
+                $this->data['filter']['filter_date_start'] = $_GET['filter_date_start'];
+                $data['filter_date_start'] = $_GET['filter_date_start'];
+            }
+            if (isset($_GET['filter_date_end'])) {
+                $this->data['filter']['filter_date_end'] =  $_GET['filter_date_end'];
+                $data['filter_date_end'] = $_GET['filter_date_end'];
+            }
+            if (isset($_GET['filter_date_expire'])) {
+                $this->data['filter']['filter_date_expire'] =  $_GET['filter_date_expire'];
+                $data['filter_date_expire'] = $_GET['filter_date_expire'];
+            }
+
             $this->data['members'] = $this->Goods_model->getAvailableGoodsByGroup($data);
             $this->data['members_batch'] = $this->Goods_model->getGoodBatchByDistinctID($this->User_model->getClientId(), $this->User_model->getSiteId(),$goods_info['distinct_id']);
             $this->data['members_total'] = $this->Goods_model->getTotalAvailableGoodsByGroup($data);

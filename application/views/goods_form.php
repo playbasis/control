@@ -622,6 +622,9 @@ $('#tabs a').tabs();
     var filter_batch = "";
     var filter_coupon_name = "";
     var filter_voucher_code = "";
+    var filter_date_start = "";
+    var filter_date_end = "";
+    var filter_date_expire = "";
 
     function showCouponModalForm(coupon_id,batch,coupon_name,coupon_code,coupon_date_start,coupon_date_expire,coupon_date_expire_coupon) {
         document.getElementById('coupon_id').value =  coupon_id;
@@ -684,6 +687,15 @@ $('#tabs a').tabs();
         }
         if (filter_voucher_code) {
             url += '&filter_voucher_code=' + encodeURIComponent(filter_voucher_code);
+        }
+        if (filter_date_start) {
+            url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+        }
+        if (filter_date_end) {
+            url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+        }
+        if (filter_date_expire) {
+            url += '&filter_date_expire=' + encodeURIComponent(filter_date_expire);
         }
         $.ajax({
             type: "POST",
@@ -751,6 +763,15 @@ $('#tabs a').tabs();
         if (filter_voucher_code) {
             url += '&filter_voucher_code=' + encodeURIComponent(filter_voucher_code);
         }
+        if (filter_date_start) {
+            url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+        }
+        if (filter_date_end) {
+            url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+        }
+        if (filter_date_expire) {
+            url += '&filter_date_expire=' + encodeURIComponent(filter_date_expire);
+        }
         $.ajax({
             type: "POST",
             url: url,
@@ -787,6 +808,9 @@ $('#tabs a').tabs();
         filter_batch = $('select[name=\'filter_batch\']').attr('value');
         filter_coupon_name = $('input[name=\'filter_coupon_name\']').attr('value');
         filter_voucher_code = $('input[name=\'filter_voucher_code\']').attr('value');
+        filter_date_start = $('select[name=\'filter_date_start\']').attr('value');
+        filter_date_end = $('input[name=\'filter_date_end\']').attr('value');
+        filter_date_expire = $('input[name=\'filter_date_expire\']').attr('value');
 
 
         if (filter_goods) {
@@ -801,6 +825,16 @@ $('#tabs a').tabs();
         if (filter_voucher_code) {
             url += '&filter_voucher_code=' + encodeURIComponent(filter_voucher_code);
         }
+        if (filter_date_start) {
+            url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+        }
+        if (filter_date_end) {
+            url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+        }
+        if (filter_date_expire) {
+            url += '&filter_date_expire=' + encodeURIComponent(filter_date_expire);
+        }
+
         $('.member_wrapper').append('<div class="backgrund-load"><div class="loading-img"><img src="<?php echo base_url();?>image/white_loading.gif" /></div></div>');
         $(".backgrund-load").css({"width": $("#members").width(), "height": $("#members").height(), "top": $("#members").height()*(-1)});
         $(".loading-img").css({"top": ($("#members").height()/3)});
@@ -814,7 +848,7 @@ $('#tabs a').tabs();
             $('.member_wrapper').html(data);
 
             pagination_click();
-            if(filter_goods || filter_batch || filter_coupon_name || filter_voucher_code){
+            if(filter_goods || filter_batch || filter_coupon_name || filter_voucher_code || filter_date_start || filter_date_end || filter_date_expire){
                 $("#clear_filter").show();
                 $("#coupon-modal-filter-submit").show();
                 $("#delete_filtered").show();
@@ -1075,6 +1109,15 @@ $(document).ready(function(){
             if (filter_voucher_code) {
                 url += '&filter_voucher_code=' + encodeURIComponent(filter_voucher_code);
             }
+            if (filter_date_start) {
+                url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+            }
+            if (filter_date_end) {
+                url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+            }
+            if (filter_date_expire) {
+                url += '&filter_date_expire=' + encodeURIComponent(filter_date_expire);
+            }
             var page = $(this).attr("data-page");
 
             $('.member_wrapper').append('<div class="backgrund-load"><div class="loading-img"><img src="<?php echo base_url();?>image/white_loading.gif" /></div></div>');
@@ -1091,7 +1134,7 @@ $(document).ready(function(){
                 $('.member_wrapper').html(data);
 
                 pagination_click();
-                if(filter_goods || filter_batch || filter_coupon_name || filter_voucher_code){
+                if(filter_goods || filter_batch || filter_coupon_name || filter_voucher_code || filter_date_start || filter_date_end || filter_date_expire){
                     $("#clear_filter").show();
                     $("#coupon-modal-filter-submit").show();
                     $("#delete_filtered").show();
@@ -1124,6 +1167,9 @@ $(document).ready(function(){
             filter_batch = "";
             filter_coupon_name = "";
             filter_voucher_code = "";
+            filter_date_start = "";
+            filter_date_end = "";
+            filter_date_expire = "";
             $("#clear_filter").hide();
             $("#coupon-modal-filter-submit").hide();
             $("#delete_filtered").hide();
