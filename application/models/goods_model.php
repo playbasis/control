@@ -406,6 +406,10 @@ class Goods_model extends MY_Model
 
     public function addGoodsDistinct($data, $is_group)
     {
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
