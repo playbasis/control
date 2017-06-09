@@ -721,7 +721,7 @@ class Goods extends MY_Controller
                             $goods_data['distinct_id'] = $goods_info['distinct_id'];
 
                             $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
-                            $this->Goods_model->editGoodsDistinct($site_id,$goods_info['name'],$goods_data);
+                            $this->Goods_model->editGoodsDistinct($site_id, array_key_exists('group', $goods_info) ? $goods_info['group'] : $goods_info['name'],$goods_data);
                             if ($goods_info && array_key_exists('group', $goods_info)) {
                                 $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
                                 if ($goods_info['group'] != $goods_data['name']){
