@@ -269,14 +269,22 @@ function find_template($data, $type, $template_id) {
                                                                         Option
                                                                     </td>
                                                                     <td>
-                                                                        Is Range Options?
+
                                                                         <input type="checkbox" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][is_range_option]"
                                                                                id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_is_range_option"
                                                                                onchange="checkRangeOptionBox(this);"
-                                                                               <?php echo isset($option["is_range_option"])&& $option["is_range_option"] == true ? "checked":null; ?>><br>
+                                                                               <?php echo isset($option["is_range_option"])&& $option["is_range_option"] == true ? "checked":null; ?>>
+                                                                        Is Range Options?
+                                                                        <input type="checkbox" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][is_text_option]"
+                                                                               id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_is_text_option"
+                                                                               onchange="checkTextOptionBox(this);"
+                                                                            <?php echo isset($option["is_text_option"])&& $option["is_text_option"] == true ? "checked":null; ?>>
+                                                                        Is Text Options?
+                                                                        <br>
                                                                         <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option]"
                                                                                id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_option"
                                                                                value = "<?php echo isset($option["option"]) && $option["option"] ? $option["option"]:null; ?>"
+                                                                               <?php echo isset($option["is_text_option"])&& $option["is_text_option"] == true ? "disabled":null; ?>
                                                                                style="display : <?php echo isset($option["is_range_option"]) && $option["is_range_option"] == true ? "none": "inline"; ?>" >
                                                                         <p id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_option_range"
                                                                                style="display : <?php echo isset($option["is_range_option"]) && $option["is_range_option"] == true ? "inline": "none"; ?>">
@@ -290,6 +298,11 @@ function find_template($data, $type, $template_id) {
                                                                                value = "<?php echo isset($option["range_max"]) && $option["range_max"] ? $option["range_max"]:null; ?>" >
                                                                         </p>
                                                                     </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Description</td>
+                                                                    <td>
+                                                                        <textarea name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][description]"><?php echo isset($option["description"]) ? $option["description"] : ""; ?></textarea></td>
                                                                 </tr>
                                                                 <tr>
                                                                    <td>Score</td>
@@ -783,12 +796,35 @@ function find_template($data, $type, $template_id) {
         if (check.checked) {
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').value = "";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').style.display = "none";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_is_text_option').checked = false;
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option_range').style.display = "inline";
         } else {
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_min').value = "";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_max').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_is_text_option').checked = false;
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').style.display = "inline";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option_range').style.display = "none";
+        }
+    }
+
+    function checkTextOptionBox(check){
+        var check_id = check.id.split('_');
+        if (check.checked) {
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').disabled = true;
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').style.display = "inline";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_min').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_max').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option_range').style.display = "none";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_is_range_option').checked = false;
+        } else {
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').disabled = false;
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').style.display = "inline";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_min').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_max').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option_range').style.display = "none";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_is_range_option').checked = false;
         }
     }
 
@@ -1080,9 +1116,12 @@ function find_template($data, $type, $template_id) {
                         <tr>\
                             <td>Option</td>\
                             <td>\
-                            Is Range Options?\
                             <input type="checkbox" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][is_range_option]"\
                                 id="quiz_'+currentQuestion+'_'+countOptions+'_is_range_option" onchange="checkRangeOptionBox(this);">\
+                            Is Range Options?\
+                            <input type="checkbox" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][is_text_option]"\
+                                id="quiz_'+currentQuestion+'_'+countOptions+'_is_text_option" onchange="checkTextOptionBox(this);">\
+                            Is Text Options?\
                             <br><input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][option]"\
                                 id="quiz_'+currentQuestion+'_'+countOptions+'_option" value = "">\
                             <p id="quiz_'+currentQuestion+'_'+countOptions+'_option_range" style="display:none">\
@@ -1093,6 +1132,12 @@ function find_template($data, $type, $template_id) {
                                 id="quiz_'+currentQuestion+'_'+countOptions+'_range_max" visible="false" placeholder="max" value = "" >\
                             </p>\
                             </td>\
+                            </tr>\
+                            <tr>\
+                                <td>Description</td>\
+                                <td>\
+                                    <textarea name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][description]"></textarea>\
+                                </td>\
                             </tr>\
                             <tr>\
                                <td>Score</td>\

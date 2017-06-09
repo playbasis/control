@@ -274,6 +274,12 @@ class Quiz extends MY_Controller
                                                     $option['is_range_option'] = false;
                                                 }
 
+                                                if(isset($ovalue['is_text_option']) && $ovalue['is_text_option'] == "on"){
+                                                    $option['is_text_option'] = true;
+                                                } else {
+                                                    $option['is_text_option'] = false;
+                                                }
+
                                                 if(!(isset($ovalue['option']) && $ovalue['option'])){
                                                     $option['option'] = "";
                                                 }
