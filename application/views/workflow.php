@@ -125,14 +125,17 @@
                     <?php } ?>
                 <?php } else { ?>
                     <tr>
+                        <?php $column = 7; ?>
+                        <?php if($org_status){$column = $column+3;}?>
+
                         <?php if ($tab_status == "approved") { ?>
-                            <td class="center" colspan="10"><?php echo $this->lang->line('text_no_approved_results'); ?></td>
+                            <td class="center" colspan="<?php echo $column?>"><?php echo $this->lang->line('text_no_approved_results'); ?></td>
                         <?php }elseif($tab_status == "rejected"){?>
-                            <td class="center" colspan="10"><?php echo $this->lang->line('text_no_rejected_results'); ?></td>
+                            <td class="center" colspan="<?php echo $column?>"><?php echo $this->lang->line('text_no_rejected_results'); ?></td>
                         <?php }elseif($tab_status == "pending"){?>
-                            <td class="center" colspan="10"><?php echo $this->lang->line('text_no_pending_request'); ?></td>
+                            <td class="center" colspan="<?php echo $column?>"><?php echo $this->lang->line('text_no_pending_request'); ?></td>
                         <?php }else{?>
-                            <td class="center" colspan="10"><?php echo $this->lang->line('text_no_locked_results'); ?></td>
+                            <td class="center" colspan="<?php echo $column?>"><?php echo $this->lang->line('text_no_locked_results'); ?></td>
                         <?php }?>
                     </tr>
                 <?php } ?>
@@ -143,7 +146,8 @@
             ?>
             <div class="pagination">
                 <ul class='ul_rule_pagination_container'>
-                    <li class="page_index_number active"><a>Total Records:</a></li> <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
+                    <li class="page_index_number active"><a>Total Records:</a></li>
+                    <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
                     <li class="page_index_number active"><a>(<?php echo number_format($pagination_total_pages); ?> Pages)</a></li>
                     <?php echo $pagination_links; ?>
                 </ul>

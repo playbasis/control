@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title'] = 'Content';
+$lang['title'] = 'Content';
 
 // Column
 $lang['column_id'] = "ID";
