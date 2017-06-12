@@ -837,9 +837,19 @@ class Goods extends MY_Controller
                         echo json_encode(array('status' => 'success'));
                     }
                 } else {
-                    echo json_encode(array("status" => 'error'));
+                    $this->output->set_status_header('404');
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_goods_id')));
+                    die();
                 }
+            } else {
+                $this->output->set_status_header('404');
+                echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_group')));
+                die();
             }
+        } else {
+            $this->output->set_status_header('404');
+            echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_user')));
+            die();
         }
     }
 
