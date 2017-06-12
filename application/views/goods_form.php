@@ -667,7 +667,7 @@ $('#tabs a').tabs();
             update_table();
         }).fail(function (xhr, textStatus, errorThrown) {
             $waitDialog.modal('hide');
-            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            alert('Edit error: ' + errorThrown + '. Please contact Playbasis!');
         }).always(function () {
             $waitDialog.modal('hide');
         });
@@ -713,7 +713,7 @@ $('#tabs a').tabs();
             update_table();
         }).fail(function (xhr, textStatus, errorThrown) {
             $waitDialog.modal('hide');
-            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            alert('Edit error: ' + errorThrown + '. Please contact Playbasis!');
         }).always(function () {
             $waitDialog.modal('hide');
         });
@@ -723,7 +723,7 @@ $('#tabs a').tabs();
         $.ajax({
             type: "POST",
             url: baseUrlPath + "goods/deleteGoodsFromAjax/"+goods_id,
-            data: null,
+            data:  {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'}
             timeout: 3000,
             beforeSend: function (xhr) {
                 $waitDialog.modal('show');
@@ -738,7 +738,7 @@ $('#tabs a').tabs();
             }
         }).fail(function (xhr, textStatus, errorThrown) {
             $waitDialog.modal('hide');
-            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            alert('Delete error: ' + errorThrown + '. Please contact Playbasis!');
         }).always(function () {
             $waitDialog.modal('hide');
         });
@@ -771,7 +771,7 @@ $('#tabs a').tabs();
         $.ajax({
             type: "POST",
             url: url,
-            data: null,
+            data:  {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'},
             timeout: 3000,
             beforeSend: function (xhr) {
                 $waitDialog.modal('show');
@@ -787,7 +787,7 @@ $('#tabs a').tabs();
 
         }).fail(function (xhr, textStatus, errorThrown) {
             $waitDialog.modal('hide');
-            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+            alert('Delete error: ' + errorThrown + '. Please contact Playbasis!');
         }).always(function () {
             $waitDialog.modal('hide');
         });
