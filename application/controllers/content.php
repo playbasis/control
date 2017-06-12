@@ -393,24 +393,24 @@ class Content extends MY_Controller
 
         if (isset($_GET['title']) && !empty($_GET['title'])) {
             $filter['title'] = $_GET['title'];
-            $parameter_url += "&title=" . $_GET['title'];
+            $parameter_url .= "&title=" . $_GET['title'];
         }
 
         if (isset($_GET['category']) && !empty($_GET['category'])) {
             $category_data = $this->Content_model->retrieveContentCategoryByName($client_id, $site_id, $_GET['category']);
             $filter['category'] = $category_data['_id'];
-            $parameter_url += "&category=" . $_GET['category'];
+            $parameter_url .= "&category=" . $_GET['category'];
         }
 
         if (isset($_GET['author']) && !empty($_GET['author'])) {
             $pb_player_id = $this->Player_model->getPlaybasisId(array('client_id' => $client_id, 'site_id' => $site_id, 'cl_player_id' => $_GET['author']));
             $filter['author'] = $pb_player_id ? $pb_player_id : "";
-            $parameter_url += "&author=" . $_GET['author'];
+            $parameter_url .= "&author=" . $_GET['author'];
         }
 
         if (isset($_GET['status']) && !empty($_GET['status'])) {
             $filter['status'] = $_GET['status'];
-            $parameter_url += "&staus=" . $_GET['status'];
+            $parameter_url .= "&status=" . $_GET['status'];
         }
 
         $config['base_url'] = site_url('content/page');
