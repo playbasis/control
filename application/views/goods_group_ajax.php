@@ -50,13 +50,13 @@
                     <td align="center">
                         <a onclick="showCouponModalForm('<?php echo $member['goods_id']->{'$id'}?>',
                             '<?php echo isset($member['batch_name']) ? $member['batch_name'] : 'default'; ?>',
-                            '<?php echo $member['name']; ?>',
+                            '<?php echo strpos($member['name'], "'" ) ? implode('xposss', explode("'", $member['name'])) : $member['name']; ?>',
                             '<?php echo isset($member['code']) ? $member['code'] : ''; ?>',
                             '<?php echo isset($member['date_start']) ? $member['date_start'] : ""; ?>',
                             '<?php echo isset($member['date_expire']) ? $member['date_expire'] : ""; ?>',
                             '<?php echo isset($member['date_expired_coupon']) ? $member['date_expired_coupon'] : ""; ?>'
                             );" class="button" title="Edit"><i class='fa fa-edit fa-lg' title="Edit"></i></a>
-                        <a onclick="delete_coupon('<?php echo $member['goods_id']->{'$id'}?>',);" class="button" title="Delete"><i class='fa fa-times fa-lg' title="Delete"></i></a>
+                        <a onclick="delete_coupon('<?php echo $member['goods_id']->{'$id'}?>');" class="button" title="Delete"><i class='fa fa-times fa-lg' title="Delete"></i></a>
                     </td>
                 </tr>
             <?php

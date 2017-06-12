@@ -400,13 +400,14 @@
                                         <td align="center">
                                             <a onclick="showCouponModalForm('<?php echo $member['goods_id']->{'$id'}?>',
                                                 '<?php echo isset($member['batch_name']) ? $member['batch_name'] : 'default'; ?>',
-                                                '<?php echo $member['name']; ?>',
+                                                '<?php echo strpos($member['name'], "'" ) ? implode('xposss', explode("'", $member['name'])) : $member['name']; ?>',
                                                 '<?php echo isset($member['code']) ? $member['code'] : ''; ?>',
                                                 '<?php echo isset($member['date_start']) ? $member['date_start'] : ""; ?>',
                                                 '<?php echo isset($member['date_expire']) ? $member['date_expire'] : ""; ?>',
                                                 '<?php echo isset($member['date_expired_coupon']) ? $member['date_expired_coupon'] : ""; ?>'
                                                 );" class="button" title="Edit"><i class='fa fa-edit fa-lg' title="Edit"></i></a>
-                                            <a onclick="delete_coupon('<?php echo $member['goods_id']->{'$id'}?>',);" class="button" title="Delete"><i class='fa fa-times fa-lg' title="Delete"></i></a>
+                                            <a onclick="delete_coupon('<?php echo $member['goods_id']->{'$id'}?>');" class="button" title="Delete"><i class='fa fa-times fa-lg' title="Delete"></i></a>
+                                        </td>
                                     </tr>
                                     <?php
                                 }
@@ -627,6 +628,10 @@ $('#tabs a').tabs();
     var filter_date_expire = "";
 
     function showCouponModalForm(coupon_id,batch,coupon_name,coupon_code,coupon_date_start,coupon_date_expire,coupon_date_expire_coupon) {
+        var substring = "xposss";
+        if (coupon_name.indexOf(substring) !== -1){
+            coupon_name = coupon_name.replace("xposss", "'");
+        }
         document.getElementById('coupon_id').value =  coupon_id;
         document.getElementById('coupon_batch_name').value =  batch;
         document.getElementById('coupon_name').value =  coupon_name;
@@ -661,11 +666,8 @@ $('#tabs a').tabs();
             $waitDialog.modal('hide');
             update_table();
         }).fail(function (xhr, textStatus, errorThrown) {
-            if(JSON.parse(xhr.responseText).status == "error") {
-                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
-            }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
-                $waitDialog.modal('hide');
-            }
+            $waitDialog.modal('hide');
+            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
         }).always(function () {
             $waitDialog.modal('hide');
         });
@@ -710,11 +712,8 @@ $('#tabs a').tabs();
             $waitDialog.modal('hide');
             update_table();
         }).fail(function (xhr, textStatus, errorThrown) {
-            if(JSON.parse(xhr.responseText).status == "error") {
-                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
-            }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
-                $waitDialog.modal('hide');
-            }
+            $waitDialog.modal('hide');
+            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
         }).always(function () {
             $waitDialog.modal('hide');
         });
@@ -738,11 +737,8 @@ $('#tabs a').tabs();
                 update_table();
             }
         }).fail(function (xhr, textStatus, errorThrown) {
-            if(JSON.parse(xhr.responseText).status == "error") {
-                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
-            }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
-                $waitDialog.modal('hide');
-            }
+            $waitDialog.modal('hide');
+            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
         }).always(function () {
             $waitDialog.modal('hide');
         });
@@ -790,11 +786,8 @@ $('#tabs a').tabs();
             }
 
         }).fail(function (xhr, textStatus, errorThrown) {
-            if(JSON.parse(xhr.responseText).status == "error") {
-                alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
-            }else if(JSON.parse(xhr.responseText).status == "name duplicate"){
-                $waitDialog.modal('hide');
-            }
+            $waitDialog.modal('hide');
+            alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
         }).always(function () {
             $waitDialog.modal('hide');
         });
@@ -889,6 +882,7 @@ $('#tabs a').tabs();
                 })
                 .fail(function (xhr, textStatus, errorThrown) {
                     alert('Save error: ' + errorThrown + '. Please contact Playbasis!');
+                    $waitDialog.modal('hide');
                 })
             } else {
                 //Prevent default and display error
