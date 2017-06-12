@@ -723,7 +723,7 @@ $('#tabs a').tabs();
         $.ajax({
             type: "POST",
             url: baseUrlPath + "goods/deleteGoodsFromAjax/"+goods_id,
-            data:  {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'}
+            data:  {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'},
             timeout: 3000,
             beforeSend: function (xhr) {
                 $waitDialog.modal('show');
