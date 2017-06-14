@@ -1284,11 +1284,10 @@ class Goods_model extends MY_Model
     {
         if(isset($filter['filter_batch']) && $filter['filter_batch']){
             $this->mongo_db->where('batch_name', $filter['filter_batch']);
-            if(isset($filter['filter_goods'])){
-                $this->mongo_db->where('goods_id', new MongoID($filter['filter_goods']));
-            }
-        } else {
-            $this->mongo_db->where('goods_id', new MongoID($goods_id));
+        }
+
+        if(isset($filter['filter_goods'])){
+            $this->mongo_db->where('goods_id', new MongoID($filter['filter_goods']));
         }
 
         if (isset($filter['filter_coupon_name']) && !is_null($filter['filter_coupon_name'])) {
@@ -1311,6 +1310,10 @@ class Goods_model extends MY_Model
 
         if(isset($filter['filter_date_expire']) && !is_null($filter['filter_date_expire'])){
             $this->mongo_db->where('date_expired_coupon', new MongoDate(strtotime($filter['filter_date_expire'])));
+        }
+
+        if (!$filter){
+            $this->mongo_db->where('goods_id', new MongoID($goods_id));
         }
 
         $this->mongo_db->where('group', $group);
