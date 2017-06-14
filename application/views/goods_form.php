@@ -378,7 +378,7 @@
                                 <td style="width:80px;">
                                     <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
                                     <a onclick="update_table();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
-                                    <?php if (is_array($members)){ ?>
+                                    <?php if (is_array($members) && isset($members[0]['goods_id'])){ ?>
                                         <a onclick="delete_filtered_coupon('<?php echo $members[0]['goods_id']->{'$id'}?>',);" class="button" id="delete_filtered" title="Delete All Match Filtered"><i class='fa fa-trash fa-lg' title="Delete All Match Filtered"></i></a>
                                     <?php } ?>
                                 </td>
