@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Report_reward_model extends MY_Model
+class Report_custompoint_model extends MY_Model
 {
 
     function index_id($obj)
@@ -9,7 +9,7 @@ class Report_reward_model extends MY_Model
         return $obj['_id'];
     }
 
-    public function getTotalReportReward($data)
+    public function getTotalReportPoint($data)
     {
 
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -31,13 +31,12 @@ class Report_reward_model extends MY_Model
         }
 
         if (isset($data['action_id']) && $data['action_id'] != '') {
-            $this->mongo_db->where('item_id', new MongoID($data['action_id']));
-        } else {
-            $this->mongo_db->where('item_id', array('$ne' => null));
+            $this->mongo_db->where('reward_id', new MongoID($data['action_id']));
         }
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('item_id', null);
         $this->mongo_db->where('event_type', "REWARD");
         $this->mongo_db->where_gt('value', 0);
 
@@ -46,6 +45,14 @@ class Report_reward_model extends MY_Model
                 '$gt' => new MongoDate(strtotime($data['date_start'])),
                 '$lte' => new MongoDate(strtotime($data['date_expire']))
             ));
+        }
+
+        if (isset($data['ex_id']) && $data['ex_id']){
+            $this->mongo_db->where('transaction_id', array('$exists' => true , '$nin' => $data['ex_id'], '$ne' => null));
+        }
+
+        if (isset($data['in_id']) && $data['in_id']){
+            $this->mongo_db->where_in('transaction_id', $data['in_id']);
         }
 
         $results = $this->mongo_db->count("playbasis_event_log");
@@ -53,7 +60,7 @@ class Report_reward_model extends MY_Model
         return $results;
     }
 
-    public function getReportReward($data)
+    public function getReportPoint($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -74,13 +81,12 @@ class Report_reward_model extends MY_Model
         }
 
         if (isset($data['action_id']) && $data['action_id'] != '') {
-            $this->mongo_db->where('item_id', new MongoID($data['action_id']));
-        } else {
-            $this->mongo_db->where('item_id', array('$ne' => null));
+            $this->mongo_db->where('reward_id', new MongoID($data['action_id']));
         }
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('item_id', null);
         $this->mongo_db->where('event_type', "REWARD");
         $this->mongo_db->where_gt('value', 0);
 
@@ -89,6 +95,14 @@ class Report_reward_model extends MY_Model
                 '$gt' => new MongoDate(strtotime($data['date_start'])),
                 '$lte' => new MongoDate(strtotime($data['date_expire']))
             ));
+        }
+
+        if (isset($data['ex_id']) && $data['ex_id']){
+            $this->mongo_db->where('transaction_id', array('$exists' => true , '$nin' => $data['ex_id'], '$ne' => null));
+        }
+
+        if (isset($data['in_id']) && $data['in_id']){
+            $this->mongo_db->where_in('transaction_id', $data['in_id']);
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
@@ -109,7 +123,7 @@ class Report_reward_model extends MY_Model
         return $results;
     }
 
-    public function getRewardName($reward_id)
+    public function getPointName($reward_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -118,20 +132,32 @@ class Report_reward_model extends MY_Model
         return isset($var[0]) ? $var[0] : null;
     }
 
-    public function getRewardsBadgesSite($data)
+    public function getPointBySite($data)
     {
-
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where_ne('name', 'badge');
 
-        return $this->mongo_db->get('playbasis_badge_to_client');
-
+        return $this->mongo_db->get('playbasis_reward_to_client');
     }
 
+    public function getListRewardStatusToPlayer($data, $status)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('date_added', array('$gte' => new MongoDate(strtotime($data['date_start'])), '$lte' => new MongoDate(strtotime($data['date_expire']))));
+        if ($status == 'approve'){
+            $this->mongo_db->where_ne('status', 'approve');
+        } else {
+            $this->mongo_db->where('status', $status);
+        }
+        return $this->mongo_db->get('playbasis_reward_status_to_player');
+    }
 }
 
 ?>
