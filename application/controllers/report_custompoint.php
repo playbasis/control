@@ -197,7 +197,6 @@ class Report_custompoint extends MY_Controller
                 $data['in_id'] = is_array($in_id) ? array_column($in_id, '_id') : array();
             }
 
-
             $report_total = $this->Report_custompoint_model->getTotalReportPoint($data);
 
             $results = $this->Report_custompoint_model->getReportPoint($data);
@@ -401,6 +400,14 @@ class Report_custompoint extends MY_Controller
             $filter_action_id = '';
         }
 
+        if ($this->input->get('status')) {
+            $filter_point_status = $this->input->get('status');
+            $parameter_url .= "&status=" . $filter_point_status;
+            if ($filter_point_status === "all" ) $filter_point_status = null;
+        } else {
+            $filter_point_status = null;
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
@@ -415,6 +422,17 @@ class Report_custompoint extends MY_Controller
 
         $results = array();
         if ($client_id) {
+            if($filter_point_status == "pending"){
+                $in_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
+                $data['in_id'] = is_array($in_id) ? array_column($in_id, '_id') : array();
+            } elseif ($filter_point_status == "approve"){
+                $ex_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
+                $data['ex_id'] = is_array($ex_id) ? array_column($ex_id, '_id') : array();
+            } elseif ($filter_point_status == "reject"){
+                $in_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
+                $data['in_id'] = is_array($in_id) ? array_column($in_id, '_id') : array();
+            }
+            
             $results = $this->Report_custompoint_model->getReportPoint($data);
         }
 
