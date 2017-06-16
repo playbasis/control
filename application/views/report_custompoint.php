@@ -7,11 +7,11 @@
             <div id="tabs" class="htabs">
                 <a href="<?php echo site_url('report/action');?>" style="display:inline;">Actions</a>
                 <a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Badges</a>
-                <a href="<?php echo site_url('report/rewards_custompoint');?>" style="display:inline;">Custompoints</a>
+                <a href="<?php echo site_url('report/rewards_custompoint');?>" class="selected" style="display:inline;">Custompoints</a>
                 <a href="<?php echo site_url('report/goods');?>" style="display:inline;">Goods</a>
                 <a href="<?php echo site_url('report/registration');?>" style="display:inline;">Registration</a>
                 <a href="<?php echo site_url('report/quest');?>" style="display:inline;">Quest</a>
-                <a href="<?php echo site_url('report/quiz');?>" style="display:inline;" class="selected">Quiz</a>
+                <a href="<?php echo site_url('report/quiz');?>" style="display:inline;">Quiz</a>
             </div>
             <div class="report-filter">
                 <span>
@@ -24,7 +24,7 @@
                 </span>
                 <span>
                     <?php echo $this->lang->line('filter_time_zone'); ?>
-                    <select name="filter_timezone" style="height: 30px">
+                    <select name="filter_timezone" style="height: 30px; width: 150px">
                         <option value="0">Select timezone</option>
                         <?php foreach($time_zone as $t) {
                             if ($filter_time_zone == $t) { ?>
@@ -40,16 +40,25 @@
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>
-                        <?php echo $this->lang->line('filter_quiz_id'); ?>
-                    <select name="filter_action_id" style="height: 30px">
+                        <?php echo $this->lang->line('filter_reward_id'); ?>
+                    <select name="filter_action_id" style="height: 30px; width: 180px">
                         <option value="0"><?php echo "All"; ?></option>
-                        <?php if(is_array($quiz_list))foreach ($quiz_list as $quiz){?>
-                            <?php if ($quiz['_id'] == $filter_action_id) { ?>
-                                <option selected="selected" value="<?php echo $quiz['_id']?>"><?php echo $quiz['name'];?></option>
+                        <?php foreach ($point_rewards as $br){?>
+                            <?php if ($br['reward_id'] == $filter_action_id) { ?>
+                                <option selected="selected" value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
                             <?php }else{?>
-                                <option value="<?php echo $quiz['_id']?>"><?php echo $quiz['name'];?></option>
+                                <option value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
                             <?php }?>
                         <?php }?>
+                    </select>
+                </span>
+                <span>
+                    <?php echo $this->lang->line('filter_status'); ?>
+                    <select name="filter_point_status" style="height: 30px; width:80px">
+                        <option <?php if($filter_status == "all") echo "selected"; ?> value="all"><?php echo "All";    ?></option>
+                        <option <?php if($filter_status == "pending") echo "selected"; ?> value="pending"><?php echo "Pending"; ?></option>
+                        <option <?php if($filter_status == "approve") echo "selected"; ?> value="approve"><?php echo "Approve";   ?></option>
+                        <option <?php if($filter_status == "reject") echo "selected"; ?> value="reject"><?php echo "Reject";?></option>
                     </select>
                 </span>
                 <span>
@@ -67,11 +76,11 @@
                     <td class="left"><?php echo $this->lang->line('column_player_id'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_username'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_quiz_name'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_question_name'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_option'); ?></td>
-                    <td width="80" class="right"><?php echo $this->lang->line('column_score'); ?></td>
-                    <td width="80" class="right"><?php echo $this->lang->line('column_max_score'); ?></td>
+                    <!-- <td class="left"><?php //echo $this->lang->line('column_level'); ?></td>
+                    <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
+                    <td width="120" class="right"><?php echo $this->lang->line('column_reward_name'); ?></td>
+                    <td width="120" class="right"><?php echo $this->lang->line('column_reward_value'); ?></td>
+                    <td width="80" class="right"><?php echo $this->lang->line('column_reward_status'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
                 </tr>
                 </thead>
@@ -83,47 +92,23 @@
                             <td style="word-wrap:break-word;" class="left"><?php echo $report['cl_player_id']; ?></td>
                             <td style="word-wrap:break-word;" class="left"><?php echo $report['username']; ?></td>
                             <td style="word-wrap:break-word;" class="left"><?php echo $report['email']; ?></td>
-
+                            <!-- <td class="left"><?php //echo $report['level']; ?></td>
+                        <td class="left"><?php //echo $report['exp']; ?></td> -->
                             <td style="word-wrap:break-word;" class="right">
                                 <?php
-                                if(isset($report['quiz_name'])&&$report['quiz_name']!=null){
-                                    echo $report['quiz_name'];
+                                if(isset($report['reward_name'])&&$report['reward_name']!=null){
+                                    echo $report['reward_name']['name'];
                                 }
                                 ?>
                             </td>
-                            <td style="word-wrap:break-word;" class="right"><?php
-                                if(isset($report['question_name'])&&$report['question_name']!=null){
-                                    echo $report['question_name'];
-                                }
-                                ?>
-                            </td>
-                            <td style="word-wrap:break-word;" class="right">
-                                <?php
-                                if(isset($report['option'])&&$report['option']!=null){
-                                    echo $report['option'];
-                                }
-                                ?>
-                            </td>
-                            <td style="word-wrap:break-word;" class="right">
-                                <?php
-                                if(isset($report['score'])&&$report['score']!=null){
-                                    echo $report['score'];
-                                }
-                                ?>
-                            </td>
-                            <td style="word-wrap:break-word;" class="right">
-                                <?php
-                                if(isset($report['max_score'])&&$report['max_score']!=null){
-                                    echo $report['max_score'];
-                                }
-                                ?>
-                            </td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo $report['value']; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['status']) && $report['status'] ? $report['status'] : "N/A"; ?></td>
                             <td style="word-wrap:break-word;" class="right"><?php echo $report['date_added']; ?></td>
                         </tr>
                     <?php } ?>
                 <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="10"><?php echo $text_no_results; ?></td>
+                        <td class="center" colspan="8"><?php echo $text_no_results; ?></td>
                     </tr>
                 <?php } ?>
                 </tbody>
@@ -141,7 +126,7 @@
 <script type="text/javascript"><!--
     function filter() {
         var d = new Date().getTime();
-        url = baseUrlPath+'report_quiz/quiz?t='+d;
+        url = baseUrlPath+'report_custompoint/reward_custompoint?t='+d;
 
         var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 
@@ -173,12 +158,17 @@
             url += '&action_id=' + encodeURIComponent(filter_action_id);
         }
 
+        var filter_point_status = $('select[name=\'filter_point_status\']').attr('value');
+
+        if (filter_point_status != 0) {
+            url += '&status=' + encodeURIComponent(filter_point_status);
+        }
         location = url;
     }
 
     function downloadFile() {
         var d = new Date().getTime();
-        url = baseUrlPath+'report_quiz/actionDownload?t='+d;
+        url = baseUrlPath+'report_custompoint/actionDownload?t='+d;
 
         var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 
@@ -210,6 +200,11 @@
             url += '&action_id=' + encodeURIComponent(filter_action_id);
         }
 
+        var filter_point_status = $('select[name=\'filter_point_status\']').attr('value');
+
+        if (filter_point_status != 0) {
+            url += '&status=' + encodeURIComponent(filter_point_status);
+        }
         location = url;
     }
     //--></script>
@@ -220,5 +215,5 @@
 
         $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
     });
-//--></script>
+    //--></script>
 

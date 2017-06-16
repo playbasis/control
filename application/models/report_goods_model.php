@@ -148,7 +148,7 @@ class Report_goods_model extends MY_Model
 
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
-
+        $this->mongo_db->where('deleted', false);
         return $this->mongo_db->get('playbasis_goods_to_client');
 
     }
@@ -159,6 +159,7 @@ class Report_goods_model extends MY_Model
         $this->mongo_db->select(array('goods_id'));
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('group', $group);
+
         return $this->mongo_db->get('playbasis_goods_to_client');
     }
 }

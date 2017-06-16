@@ -55,6 +55,7 @@ $route['forgot_password'] = '/user/forgot_password';
 $route['reset_password'] = '/user/reset_password';
 $route['block'] = "user/block";
 $route['report/rewards_badges'] = 'report_reward';
+$route['report/rewards_custompoint'] = 'report_custompoint';
 $route['report/goods'] = 'report_goods';
 $route['report/registration'] = 'report_registration';
 $route['report/quest'] = 'report_quest';

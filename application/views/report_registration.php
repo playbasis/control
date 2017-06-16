@@ -4,14 +4,15 @@
             <h1><img src="image/report.png" alt="" /> <?php echo $heading_title; ?></h1>
         </div>
         <div class="content">
-        <div id="tabs" class="htabs">
-            <a href="<?php echo site_url('report/action');?>" style="display:inline;">Actions</a>
-            <a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Rewards</a>
-            <a href="<?php echo site_url('report/goods');?>" style="display:inline;">Goods</a>
-            <a href="<?php echo site_url('report/registration');?>" class="selected" style="display:inline;">Registration</a>
-            <a href="<?php echo site_url('report/quest');?>" style="display:inline;">Quest</a>
-            <a href="<?php echo site_url('report/quiz');?>" style="display:inline;">Quiz</a>
-        </div>
+            <div id="tabs" class="htabs">
+                <a href="<?php echo site_url('report/action');?>" style="display:inline;">Actions</a>
+                <a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Badges</a>
+                <a href="<?php echo site_url('report/rewards_custompoint');?>" style="display:inline;">Custompoints</a>
+                <a href="<?php echo site_url('report/goods');?>" style="display:inline;">Goods</a>
+                <a href="<?php echo site_url('report/registration');?>" class="selected" style="display:inline;">Registration</a>
+                <a href="<?php echo site_url('report/quest');?>" style="display:inline;">Quest</a>
+                <a href="<?php echo site_url('report/quiz');?>" style="display:inline;">Quiz</a>
+            </div>
             <div class="report-filter">
                 <span>
                         <?php echo $this->lang->line('filter_date_start'); ?>
@@ -159,10 +160,11 @@ function downloadFile() {
     location = url;
 }
 //--></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript"><!--
-$(document).ready(function() {
-    $('#date-start').datepicker({dateFormat: 'yy-mm-dd'});
+    $(document).ready(function() {
+        $('#date-start').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
 
-    $('#date-end').datepicker({dateFormat: 'yy-mm-dd'});
-});
+        $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
+    });
 //--></script>
