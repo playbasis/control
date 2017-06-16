@@ -84,22 +84,23 @@ class Report_goods extends MY_Controller
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $filter_date_start = date("Y-m-d", strtotime("-30 days"));;
+            $date = date("Y-m-d", strtotime("-30 days"));
+            $previousDate = strtotime($date);
+            $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
             $parameter_url .= "&date_expire=" . $filter_date_end;
 
-            //--> This will enable to search on the day until the time 23:59:59
-            $date = $this->input->get('date_expire');
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            //--> end
+            if(strpos($filter_date_end, '00:00:00')){
+                //--> This will enable to search on the day until the time 23:59:59
+                $currentDate = strtotime($filter_date_end);
+                $futureDate = $currentDate + ("86399");
+                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+                //--> end*/
+            }
         } else {
-            $filter_date_end = date("Y-m-d");
-
             //--> This will enable to search on the current day until the time 23:59:59
             $date = date("Y-m-d");
             $currentDate = strtotime($date);
@@ -107,6 +108,7 @@ class Report_goods extends MY_Controller
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
             //--> end
         }
+
         $UTC_7 = new DateTimeZone("Asia/Bangkok");
 
         if ($this->input->get('time_zone')){
@@ -311,9 +313,7 @@ class Report_goods extends MY_Controller
 
         $this->data['filter_time_zone'] = $filter_time_zone;
         $this->data['filter_date_start'] = $filter_date_start;
-        // --> This will show only the date, not including the time
-        $filter_date_end_exploded = explode(" ", $filter_date_end);
-        $this->data['filter_date_end'] = $filter_date_end_exploded[0];
+        $this->data['filter_date_end'] = $filter_date_end;
         // --> end
         $this->data['filter_username'] = $filter_username;
         $this->data['filter_goods_id'] = $filter_goods_id;
@@ -370,28 +370,25 @@ class Report_goods extends MY_Controller
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $filter_date_start = date("Y-m-d", strtotime("-30 days"));;
+            $date = date("Y-m-d", strtotime("-30 days"));
+            $previousDate = strtotime($date);
+            $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=" . $filter_date_end;
-
-            //--> This will enable to search on the day until the time 23:59:59
-            $date = $this->input->get('date_expire');
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            //--> end
+            if(strpos($filter_date_end, '00:00:00')){
+                //--> This will enable to search on the day until the time 23:59:59
+                $currentDate = strtotime($filter_date_end);
+                $futureDate = $currentDate + ("86399");
+                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+                //--> end*/
+            }
         } else {
-            $filter_date_end = date("Y-m-d");
-
-            //--> This will enable to search on the current day until the time 23:59:59
             $date = date("Y-m-d");
             $currentDate = strtotime($date);
             $futureDate = $currentDate + ("86399");
             $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            //--> end
         }
 
         $UTC_7 = new DateTimeZone("Asia/Bangkok");
@@ -447,8 +444,6 @@ class Report_goods extends MY_Controller
             'is_group' => $is_group
         );
         $report_total = 0;
-
-        $results = array();
 
         if ($client_id) {
             if ($filter_goods_status == "expired") {

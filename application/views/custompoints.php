@@ -36,9 +36,26 @@
                             <td class="center" style="width:60px;"><?php echo $this->lang->line('column_type'); ?></td>
                             <td class="center" style="width:60px;"><?php echo $this->lang->line('column_quantity'); ?></td>
                             <td class="center" style="width:60px;"><?php echo $this->lang->line('column_peruser'); ?></td>
+                            <td class="center" style="width:60px;"><?php echo $this->lang->line('column_perday'); ?></td>
+                            <td class="center" style="width:60px;"><?php echo $this->lang->line('column_perday_start'); ?></td>
                             <td class="center" style="width:100px;"><?php echo $this->lang->line('column_pending'); ?></td>
                             <td class="center" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
-                            <td class="center" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
+                            <td class="center" style="width:60px;"><?php echo $this->lang->line('column_action'); ?></td>
+                        </tr>
+                        <tr class="filter">
+                            <td></td>
+                            <td><input title="name" style="width: 95%;" placeholder="Filter Name" type="text" name="filter_name" value="<?php echo isset($_GET['filter_name']) ? $_GET['filter_name'] : "" ?>"/></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="right">
+                                <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
+                                <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                            </td>
                         </tr>
                         </thead>
                         <tbody>
@@ -54,6 +71,8 @@
                                 <td class="left"><?php echo isset($cs['type']) ? $cs['type'] : ""; ?></td>
                                 <td class="left"><?php echo isset($cs['quantity']) ? $cs['quantity'] : "Unlimited"; ?></td>
                                 <td class="left"><?php echo isset($cs['per_user']) ? $cs['per_user'] : "Unlimited"; ?></td>
+                                <td class="left"><?php echo isset($cs['limit_per_day']) ? $cs['limit_per_day'] : "Unlimited"; ?></td>
+                                <td class="left"><?php echo isset($cs['limit_start_time']) && isset($cs['limit_per_day']) ? $cs['limit_start_time'] : ""; ?></td>
                                 <td class="left"><?php echo isset($cs['pending']) && $cs['pending'] === 'on' ? "true" : "false"; ?></td>
                                 <td class="right" style="word-wrap:break-word;"><?php echo (isset($cs['tags']) && $cs['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $cs['tags']).'</span>' : null); ?></td>
                                 <td class="center">
@@ -179,6 +198,21 @@
         window.location.replace(baseUrlPath+'custompoints');
     });
 
+    function clear_filter() {
+        window.location.replace(baseUrlPath + 'custompoints');
+    }
+
+    function filter() {
+        url = baseUrlPath + 'custompoints';
+
+        var filter_name = $('input[name=\'filter_name\']').attr('value');
+
+        if (filter_name) {
+            url += '?filter_name=' + encodeURIComponent(filter_name);
+        }
+
+        location = url;
+    }
     function custompoint_import() {
         var myfile = document.getElementById("file-import");
 

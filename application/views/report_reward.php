@@ -6,7 +6,8 @@
         <div class="content">
         <div id="tabs" class="htabs">
             <a href="<?php echo site_url('report/action');?>" style="display:inline;">Actions</a>
-            <a href="<?php echo site_url('report/rewards_badges');?>" class="selected" style="display:inline;">Rewards</a>
+            <a href="<?php echo site_url('report/rewards_badges');?>" class="selected" style="display:inline;">Badges</a>
+            <a href="<?php echo site_url('report/rewards_custompoint');?>" style="display:inline;">Custompoints</a>
             <a href="<?php echo site_url('report/goods');?>" style="display:inline;">Goods</a>
             <a href="<?php echo site_url('report/registration');?>" style="display:inline;">Registration</a>
             <a href="<?php echo site_url('report/quest');?>" style="display:inline;">Quest</a>
@@ -39,14 +40,14 @@
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>
-                        <?php echo $this->lang->line('filter_reward_id'); ?>
+                        <?php echo $this->lang->line('filter_badge_id'); ?>
                     <select name="filter_action_id" style="height: 30px">
                         <option value="0"><?php echo "All"; ?></option>
                         <?php foreach ($badge_rewards as $br){?>
-                            <?php if ($br['reward_id'] == $filter_action_id) { ?>
-                            <option selected="selected" value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
+                            <?php if ($br['badge_id'] == $filter_action_id) { ?>
+                            <option selected="selected" value="<?php echo $br['badge_id']?>"><?php echo $br['name'];?></option>
                             <?php }else{?>
-                            <option value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
+                            <option value="<?php echo $br['badge_id']?>"><?php echo $br['name'];?></option>
                             <?php }?>
                         <?php }?>
                     </select>
@@ -70,7 +71,6 @@
                     <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
                     <td width="120" class="right"><?php echo $this->lang->line('column_reward_name'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_reward_value'); ?></td>
-                    <td width="80" class="right"><?php echo $this->lang->line('column_reward_status'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
                 </tr>
                 </thead>
@@ -95,7 +95,6 @@
                             ?>
                         </td>
                         <td style="word-wrap:break-word;" class="right"><?php echo $report['value']; ?></td>
-                        <td style="word-wrap:break-word;" class="right"><?php echo isset($report['status']) && $report['status'] ? $report['status'] : "N/A"; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo $report['date_added']; ?></td>
                     </tr>
                         <?php } ?>
@@ -191,11 +190,12 @@ function downloadFile() {
     location = url;
 }
 //--></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript"><!--
-$(document).ready(function() {
-    $('#date-start').datepicker({dateFormat: 'yy-mm-dd'});
+    $(document).ready(function() {
+        $('#date-start').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
 
-    $('#date-end').datepicker({dateFormat: 'yy-mm-dd'});
-});
+        $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
+    });
 //--></script>
 

@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
-class Report_reward extends MY_Controller
+class Report_custompoint extends MY_Controller
 {
 
     public function __construct()
@@ -30,7 +30,7 @@ class Report_reward extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getRewardsList(0, site_url('report_reward/page'));
+        $this->getRewardsList(0, site_url('report_custompoint/page'));
     }
 
     public function page($offset = 0)
@@ -45,10 +45,10 @@ class Report_reward extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getRewardsList($offset, site_url('report_reward/page'));
+        $this->getRewardsList($offset, site_url('report_custompoint/page'));
     }
 
-    public function reward_badge()
+    public function reward_custompoint()
     {
 
         if (!$this->validateAccess()) {
@@ -61,7 +61,7 @@ class Report_reward extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getRewardsList(0, site_url('report_reward/page'));
+        $this->getRewardsList(0, site_url('report_custompoint/page'));
     }
 
     public function reward_badge_page($offset = 0)
@@ -77,7 +77,7 @@ class Report_reward extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getRewardsList($offset, site_url('report_reward/page'));
+        $this->getRewardsList($offset, site_url('report_custompoint/page'));
     }
 
     public function getRewardsList($offset, $url)
@@ -89,7 +89,7 @@ class Report_reward extends MY_Controller
 
         $this->load->library('pagination');
 
-        $this->load->model('Report_reward_model');
+        $this->load->model('Report_custompoint_model');
         $this->load->model('Image_model');
         $this->load->model('Player_model');
         $this->load->model('Badge_model');
@@ -157,6 +157,14 @@ class Report_reward extends MY_Controller
             $filter_action_id = '';
         }
 
+        if ($this->input->get('status')) {
+            $filter_point_status = $this->input->get('status');
+            $parameter_url .= "&status=" . $filter_point_status;
+            if ($filter_point_status === "all" ) $filter_point_status = null;
+        } else {
+            $filter_point_status = null;
+        }
+
         $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
 
 
@@ -178,9 +186,21 @@ class Report_reward extends MY_Controller
 
         $results = array();
         if ($client_id) {
-            $report_total = $this->Report_reward_model->getTotalReportReward($data);
+            if($filter_point_status == "pending"){
+                $in_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
+                $data['in_id'] = is_array($in_id) ? array_column($in_id, '_id') : array();
+            } elseif ($filter_point_status == "approve"){
+                $ex_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
+                $data['ex_id'] = is_array($ex_id) ? array_column($ex_id, '_id') : array();
+            } elseif ($filter_point_status == "reject"){
+                $in_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
+                $data['in_id'] = is_array($in_id) ? array_column($in_id, '_id') : array();
+            }
 
-            $results = $this->Report_reward_model->getReportReward($data);
+
+            $report_total = $this->Report_custompoint_model->getTotalReportPoint($data);
+
+            $results = $this->Report_custompoint_model->getReportPoint($data);
         }
 
         $this->data['time_zone'] = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
@@ -188,7 +208,7 @@ class Report_reward extends MY_Controller
 
         foreach ($results as $result) {
             $status = null;
-            $badge_name = null;
+            $reward_name = null;
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
@@ -198,7 +218,9 @@ class Report_reward extends MY_Controller
                 $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
 
-            $badge_name = $this->Badge_model->getNameOfBadgeID($client_id, $site_id, $result['item_id']);
+
+            $reward_name = $this->Report_custompoint_model->getPointName($result['reward_id']);
+            
 
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
@@ -208,30 +230,33 @@ class Report_reward extends MY_Controller
 
             if(isset($result['transaction_id']) && $result['transaction_id']){
                 $status = $this->Custompoints_model->getRewardStatus($result['transaction_id']);
+
             }
 
-            $this->data['reports'][] = array(
-                'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
-                'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
-                'badge_name' => isset($badge_name) ? $badge_name : null,
-                'value' => $result['value'],
-                'status' => isset($status) ? $status : null
-            );
+            if (is_null($filter_point_status) || $filter_point_status === $status) {
+                $this->data['reports'][] = array(
+                    'cl_player_id' => $player['cl_player_id'],
+                    'username' => $player['username'],
+                    'image' => $thumb,
+                    'email' => $player['email'],
+                    'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
+                    'reward_name' => isset($reward_name) ? $reward_name : null,
+                    'value' => $result['value'],
+                    'status' => isset($status) ? $status : null
+                );
+            }
         }
 
-        $this->data['badge_rewards'] = array();
+        $this->data['point_rewards'] = array();
 
         if ($client_id) {
             $data_filter['client_id'] = $client_id;
             $data_filter['site_id'] = $site_id;
             // $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
 
-            $all_badges_reward = $this->Report_reward_model->getRewardsBadgesSite($data_filter);
+            $all_point_reward = $this->Report_custompoint_model->getPointBySite($data_filter);
 
-            $this->data['badge_rewards'] = $all_badges_reward;
+            $this->data['point_rewards'] = $all_point_reward;
         }
 
         $config['base_url'] = $url . $parameter_url;
@@ -277,8 +302,9 @@ class Report_reward extends MY_Controller
         // --> end
         $this->data['filter_username'] = $filter_username;
         $this->data['filter_action_id'] = $filter_action_id;
+        $this->data['filter_status'] = $filter_point_status;
 
-        $this->data['main'] = 'report_reward';
+        $this->data['main'] = 'report_custompoint';
         $this->load->vars($this->data);
         $this->render_page('template');
 
@@ -308,7 +334,7 @@ class Report_reward extends MY_Controller
 
         $this->load->library('pagination');
 
-        $this->load->model('Report_reward_model');
+        $this->load->model('Report_custompoint_model');
         $this->load->model('Image_model');
         $this->load->model('Player_model');
         $this->load->model('Badge_model');
@@ -389,7 +415,7 @@ class Report_reward extends MY_Controller
 
         $results = array();
         if ($client_id) {
-            $results = $this->Report_reward_model->getReportReward($data);
+            $results = $this->Report_custompoint_model->getReportPoint($data);
         }
 
         $this->data['reports'] = array();
@@ -414,6 +440,7 @@ class Report_reward extends MY_Controller
         foreach ($results as $result) {
             $status = null;
             $badge_name = null;
+            $reward_name = null;
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
             if (!empty($player['image'])) {
@@ -422,7 +449,7 @@ class Report_reward extends MY_Controller
                 $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
 
-            $badge_name = $this->Badge_model->getNameOfBadgeID($client_id, $site_id, $result['item_id']);
+            $reward_name = $this->Report_custompoint_model->getPointName($result['reward_id']);
 
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
@@ -440,6 +467,7 @@ class Report_reward extends MY_Controller
                 'image' => $thumb,
                 'email' => $player['email'],
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
+                'reward_name' => isset($reward_name) ? $reward_name : null,
                 'badge_name' => isset($badge_name) ? $badge_name : null,
                 'value' => $result['value'],
                 'status' => isset($status) ? $status : null
@@ -449,7 +477,7 @@ class Report_reward extends MY_Controller
                     $player['cl_player_id'],
                     $player['username'],
                     $player['email'],
-                    $badge_name,
+                    $reward_name['name'],
                     $result['value'],
                     isset($status) ? $status : null,
                     $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added'])
