@@ -124,12 +124,18 @@ class Custompoints_model extends MY_Model
         return $this->mongo_db->get("playbasis_reward_to_client");
     }
 
-    public function countCustompoints($client_id, $site_id)
+    public function countCustompoints($client_id, $site_id, $filter=array())
     {
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('is_custom', true);
         $this->mongo_db->where('status', true);
+        if($filter){
+            if (isset($filter['filter_name']) && !is_null($filter['filter_name'])) {
+                $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($filter['filter_name'])) . "/i");
+                $this->mongo_db->where('name', $regex);
+            }
+        }
         $countCustompoints = $this->mongo_db->count('playbasis_reward_to_client');
 
         return $countCustompoints;

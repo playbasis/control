@@ -192,7 +192,7 @@ class Custompoints extends MY_Controller
             $custompoints = $this->Custompoints_model->getCustompoints($filter);
 
             $this->data['custompoints'] = $custompoints;
-            $config['total_rows'] = $this->Custompoints_model->countCustompoints($client_id, $site_id);
+            $config['total_rows'] = $this->Custompoints_model->countCustompoints($client_id, $site_id, $filter);
         }
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
