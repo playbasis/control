@@ -280,6 +280,12 @@ class Quiz extends MY_Controller
                                                     $option['is_text_option'] = false;
                                                 }
 
+                                                if(isset($ovalue['terminate']) && $ovalue['terminate'] == "on"){
+                                                    $option['terminate'] = true;
+                                                } else {
+                                                    $option['terminate'] = false;
+                                                }
+
                                                 if(!(isset($ovalue['option']) && $ovalue['option'])){
                                                     $option['option'] = "";
                                                 }

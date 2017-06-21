@@ -234,10 +234,10 @@ function find_template($data, $type, $template_id) {
                                     </tr>
                                     <tr>
                                         <td>
-                                            Sort Order :
+                                            Question Number :
                                         </td>
                                         <td>
-                                            <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][question_number]" value="<?php echo isset($questions['question_number'])?$questions['question_number']:""; ?>" >
+                                            <input type="number" name="quiz[questions][<?php echo $questions['question_id']; ?>][question_number]" value="<?php echo isset($questions['question_number'])?$questions['question_number']:""; ?>" >
                                         </td>
                                     </tr>
                                     </tbody>
@@ -269,7 +269,6 @@ function find_template($data, $type, $template_id) {
                                                                         Option
                                                                     </td>
                                                                     <td>
-
                                                                         <input type="checkbox" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][is_range_option]"
                                                                                id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_is_range_option"
                                                                                onchange="checkRangeOptionBox(this);"
@@ -312,6 +311,20 @@ function find_template($data, $type, $template_id) {
                                                                    <td>Explanation</td>
                                                                    <td>
                                                                         <textarea name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][explanation]"><?php echo $option["explanation"]; ?></textarea></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Go To Question</td>
+                                                                    <td>
+                                                                        <input type="number" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][goto]" placeholder="By Question Number" value = "<?php echo isset($option["goto"]) ? $option["goto"] : null ; ?>">
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Terminate Quiz</td>
+                                                                    <td>
+                                                                        <input type="checkbox" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][terminate]"
+                                                                               id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_terminate" <?php echo isset($option["terminate"])&& $option["terminate"] == true ? "checked":null; ?>>
+                                                                        Set quiz as finish if the player select this choice ?
+                                                                    </td>
                                                                 </tr>
                                                                 </tbody>
                                                             </table>
@@ -1151,6 +1164,19 @@ function find_template($data, $type, $template_id) {
                                     <textarea name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][explanation]"></textarea>\
                                 </td>\
                             </tr>\
+                            <tr>\
+                                <td>Go To Question</td>\
+                                <td>\
+                                    <input type="number" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][goto]" placeholder="By Question Number">\
+                                </td>\
+                            </tr>\
+                            <tr>\
+                                <td>Terminate Quiz</td>\
+                                <td>\
+                                    <input type="checkbox" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][terminate]" >\
+                                    Set quiz as finish if the player select this choice ?\
+                                </td>\
+                            </tr>\
                             </tbody>\
                         </table>\
                         </div>\
@@ -1223,10 +1249,10 @@ function find_template($data, $type, $template_id) {
             </tr>\
         <tr>\
             <td>\
-            Sort Order :\
+            Question Number :\
             </td>\
         <td>\
-        <input type="text" name="quiz[questions]['+countQuestions+'][question_number]" value="" >\
+        <input type="number" name="quiz[questions]['+countQuestions+'][question_number]" value="" >\
             </td>\
             </tr>\
         </tbody>\

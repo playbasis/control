@@ -7,6 +7,7 @@
         <div id="tabs" class="htabs">
             <a href="<?php echo site_url('report/action');?>" style="display:inline;">Actions</a>
             <a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Rewards</a>
+            <a href="<?php echo site_url('report/rewards_custompoint');?>" style="display:inline;">Custompoints</a>
             <a href="<?php echo site_url('report/goods');?>" class="selected" style="display:inline;">Goods</a>
             <a href="<?php echo site_url('report/registration');?>" style="display:inline;">Registration</a>
             <a href="<?php echo site_url('report/quest');?>" style="display:inline;">Quest</a>
