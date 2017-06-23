@@ -135,6 +135,29 @@ class Goods_model extends MY_Model
         return $results ? $results[0]['goods_id']."" : null;
     }
 
+    public function getGoodsByName($client_id, $site_id, $good_name, $good_group=null, $check_status=true)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+
+        $this->mongo_db->where('deleted', false);
+        if($check_status){
+            $this->mongo_db->where('status', true);
+        }
+
+        if($good_group){
+            $this->mongo_db->where('group', $good_group);
+        }else{
+            $this->mongo_db->where('name', $good_name);
+            $this->mongo_db->where('group', array('$exists' => false));
+        }
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_goods_to_client");
+
+        return $results ? $results[0] : null;
+    }
+
     public function getGoodsList($data = array())
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
