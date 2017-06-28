@@ -287,14 +287,18 @@ function find_template($data, $type, $template_id) {
                                                                                style="display : <?php echo isset($option["is_range_option"]) && $option["is_range_option"] == true ? "none": "inline"; ?>" >
                                                                         <p id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_option_range"
                                                                                style="display : <?php echo isset($option["is_range_option"]) && $option["is_range_option"] == true ? "inline": "none"; ?>">
-                                                                        <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][range_min]"
+                                                                        <input type="number" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][range_min]"
                                                                                id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_range_min"
                                                                                placeholder="min"
                                                                                value = "<?php echo isset($option["range_min"]) && !is_null($option["range_min"]) ? $option["range_min"]:"0"; ?>" > -
-                                                                        <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][range_max]"
+                                                                        <input type="number" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][range_max]"
                                                                                id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_range_max"
                                                                                placeholder="max"
                                                                                value = "<?php echo isset($option["range_max"]) && $option["range_max"] ? $option["range_max"]:null; ?>" >
+                                                                        <input type="number" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][range_interval]"
+                                                                               id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_range_interval"
+                                                                               placeholder="interval"
+                                                                               value = "<?php echo isset($option["range_interval"]) && $option["range_interval"] ? $option["range_interval"]:null; ?>" >
                                                                         </p>
                                                                     </td>
                                                                 </tr>
@@ -814,6 +818,7 @@ function find_template($data, $type, $template_id) {
         } else {
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_min').value = "";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_max').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_interval').value = "";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_is_text_option').checked = false;
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').style.display = "inline";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option_range').style.display = "none";
@@ -828,6 +833,7 @@ function find_template($data, $type, $template_id) {
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').style.display = "inline";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_min').value = "";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_max').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_interval').value = "";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option_range').style.display = "none";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_is_range_option').checked = false;
         } else {
@@ -836,6 +842,7 @@ function find_template($data, $type, $template_id) {
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option').style.display = "inline";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_min').value = "";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_max').value = "";
+            document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_range_interval').value = "";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_option_range').style.display = "none";
             document.getElementById('quiz_'+check_id[1]+'_'+check_id[2]+'_is_range_option').checked = false;
         }
@@ -1143,6 +1150,8 @@ function find_template($data, $type, $template_id) {
                             -\
                             <input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][range_max]"\
                                 id="quiz_'+currentQuestion+'_'+countOptions+'_range_max" visible="false" placeholder="max" value = "" >\
+                            <input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][range_interval]"\
+                                id="quiz_'+currentQuestion+'_'+countOptions+'_range_interval" placeholder="interval" value ="" >\
                             </p>\
                             </td>\
                             </tr>\
