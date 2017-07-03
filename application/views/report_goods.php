@@ -211,10 +211,11 @@ function downloadFile() {
     location = url;
 }
 //--></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript"><!--
-$(document).ready(function() {
-    $('#date-start').datepicker({dateFormat: 'yy-mm-dd'});
+    $(document).ready(function() {
+        $('#date-start').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
 
-    $('#date-end').datepicker({dateFormat: 'yy-mm-dd'});
-});
+        $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
+    });
 //--></script>
