@@ -234,6 +234,14 @@ function find_template($data, $type, $template_id) {
                                     </tr>
                                     <tr>
                                         <td>
+                                            Default Answer :
+                                        </td>
+                                        <td>
+                                            <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][default_answer]" value="<?php echo isset($questions['default_answer'])?$questions['default_answer']:""; ?>" >
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
                                             Question Number :
                                         </td>
                                         <td>
@@ -1255,15 +1263,23 @@ function find_template($data, $type, $template_id) {
             <td>\
                 <input type="text" class="timelimit" name="quiz[questions]['+countQuestions+'][timelimit]"  data-format="HH:mm:ss" data-template="HH : mm : ss" value="">\
             </td>\
-            </tr>\
+        </tr>\
         <tr>\
             <td>\
-            Question Number :\
+                Default Answer :\
             </td>\
-        <td>\
-        <input type="number" name="quiz[questions]['+countQuestions+'][question_number]" value="" >\
+            <td>\
+                <input type="text" name="quiz[questions]['+countQuestions+'][default_answer]" value="" >\
+            </td> \
+        </tr>\
+        <tr>\
+            <td>\
+                Question Number :\
             </td>\
-            </tr>\
+            <td>\
+                <input type="number" name="quiz[questions]['+countQuestions+'][question_number]" value="" >\
+            </td>\
+        </tr>\
         </tbody>\
         </table>\
         </div>\
