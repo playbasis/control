@@ -302,11 +302,11 @@ function find_template($data, $type, $template_id) {
                                                                         <input type="number" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][range_max]"
                                                                                id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_range_max"
                                                                                placeholder="max"
-                                                                               value = "<?php echo isset($option["range_max"]) && $option["range_max"] ? $option["range_max"]:null; ?>" >
+                                                                               value = "<?php echo isset($option["range_max"]) && !is_null($option["range_max"]) ? $option["range_max"]:null; ?>" >
                                                                         <input type="number" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][range_interval]"
                                                                                id="quiz_<?php echo $questions['question_id']; ?>_<?php echo $option['option_id']; ?>_range_interval"
                                                                                placeholder="interval"
-                                                                               value = "<?php echo isset($option["range_interval"]) && $option["range_interval"] ? $option["range_interval"]:null; ?>" >
+                                                                               value = "<?php echo isset($option["range_interval"]) && !is_null($option["range_interval"]) ? $option["range_interval"]:null; ?>" >
                                                                         </p>
                                                                     </td>
                                                                 </tr>
