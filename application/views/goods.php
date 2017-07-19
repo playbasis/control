@@ -58,10 +58,10 @@
                                 <?php if ($client_id) { ?>
                                     <td class="left" style="width:40px;"><?php echo $this->lang->line('column_is_group'); ?></td>
                                 <?php } ?>
-                                <td class="left" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
                                 <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
                                 <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
-                                <td class="left" style="width:60px;"><?php echo $this->lang->line('column_white_list'); ?></td>
+                                <td class="left" style="width:65px;"><?php echo $this->lang->line('column_date_start'); ?></td>
+                                <td class="left" style="width:65px;"><?php echo $this->lang->line('column_date_end'); ?></td>
                                 <td class="right" style="width:60px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
                                 <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
                                 <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_custom_param'); ?></td>
@@ -96,7 +96,6 @@
                                 </td>
                                 <?php } ?>
                                 <td></td>
-                                <td></td>
                                 <td>
                                     <select name="filter_status" style="width:95%">
                                         <?php if (isset($_GET['filter_status']) && $_GET['filter_status'] == 'enable') { ?>
@@ -114,6 +113,7 @@
                                         <?php } ?>
                                     </select>
                                 </td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td class="right" ><input style="width:95%;" title="filter_tags" type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : "" ?>"/></td>
@@ -158,10 +158,10 @@
                                         <?php if ($client_id) { ?>
                                             <td class="left"><?php echo ($goods['is_group']) ? "Yes" : ""; ?></td>
                                         <?php } ?>
-                                        <td class="right"><?php echo (isset($goods['per_user']) && !is_null($goods['per_user'])) ? $goods['per_user'] : 'Unlimited'; ?></td>
                                         <td class="right"><?php echo (isset($goods['quantity']) && !is_null($goods['quantity'])) ? $goods['quantity'] : 'Unlimited'; ?></td>
                                         <td class="left"><?php echo ($goods['status']) ? "Enabled" : "Disabled"; ?></td>
-                                        <td class="left"><?php echo (isset($goods['white_list']) && $goods['white_list']) ? "Enabled" : "Disabled"; ?></td>
+                                        <td class="left"><?php if (isset($goods['date_start']) && $goods['date_start'] && strtotime(datetimeMongotoReadable($goods['date_start']))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($goods['date_start'])));} else { echo ""; }?></td>
+                                        <td class="left"><?php if (isset($goods['date_end']) && $goods['date_end'] && strtotime(datetimeMongotoReadable($goods['date_end']))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($goods['date_end'])));} else { echo ""; }?></td>
                                         <td class="right"><?php echo $goods['sort_order']; ?></td>
                                         <td class="right" style="word-wrap:break-word;"><?php echo (isset($goods['tags']) && $goods['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $goods['tags']).'</span>' : null); ?></td>
                                         <td class="right" style="word-wrap:break-word;"><?php echo (isset($goods['custom_param']) && $goods['custom_param'] ? '<span class="label">'.implode('</span> <span class="label">', $goods['custom_param']).'</span>' : null); ?></td>
