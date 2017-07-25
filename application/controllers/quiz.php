@@ -296,7 +296,10 @@ class Quiz extends MY_Controller
                                             if ($options) {
                                                 $questions["options"] = $options;
                                             }
-                                        } else {
+                                        } elseif($qqqkey == "is_multiple_choices"){
+                                            $questions[$qqqkey] = $qqqvalue == "true" ? true:false;
+                                        }
+                                        else {
                                             $questions[$qqqkey] = $qqqvalue;
                                         }
                                     }

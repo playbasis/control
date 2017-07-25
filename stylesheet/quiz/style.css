@@ -39,7 +39,7 @@
     -o-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
 }
-.enabled .squiz-status-toggle {
+.enabled .quiz-status-toggle {
     right: 3px;
     color: #fff;
     background: #d1d2d4;
@@ -60,13 +60,83 @@
     -o-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
 }
-.enabled .quiz-status-toggle span {
+.enabled quiz-status-toggle span {
     margin: 0 0 0 -50px;
 }
 .disabled .quiz-status-toggle span {
     margin: 0 0 0 30px;
 }
 
+
+/* Multiple choices */
+/* Toggle Background */
+.multiple-choices {
+    display: block;
+    width: 90px;
+    height: 30px;
+    position: relative;
+    cursor: pointer;
+    background-color: #27ae60;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+.multiple-choices.true {
+    background-color: #27ae60;
+}
+.multiple-choices.false {
+    background-color: #d1d2d4;
+}
+
+/* Toggle Button */
+.multiple-choices-toggle {
+    display: block;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    right: 3px;
+    margin: 3px 0;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 24px;
+    background: #d1d2d4;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    border-radius: 12px;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.true .multiple-choices-toggle {
+    right: 3px;
+    color: #fff;
+    background: #d1d2d4;
+}
+.false .multiple-choices-toggle {
+    right: 62px;
+    color: #7f8c8d;
+    background: #7f8c8d;
+}
+
+/* Toggle Text */
+.multiple-choices-toggle span {
+    margin: 0 0 0 -50px;
+    text-transform: capitalize;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.true .multiple-choices-toggle span {
+    margin: 0 0 0 -50px;
+}
+.false .multiple-choices-toggle span {
+    margin: 0 0 0 30px;
+}
 
 
 

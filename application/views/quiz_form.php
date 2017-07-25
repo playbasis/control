@@ -11,6 +11,10 @@ function find_template($data, $type, $template_id) {
 <link rel="stylesheet" href="<?php echo base_url();?>stylesheet/quiz/style.css">
 <script type="text/javascript" src="<?php echo base_url();?>javascript/md5.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/mongoid.js"></script>
+<link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
+<script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
+        src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
+<div class="cover"></div>
 
 <div id="content" class="span10">
     <div class="box">
@@ -246,6 +250,20 @@ function find_template($data, $type, $template_id) {
                                         </td>
                                         <td>
                                             <input type="number" name="quiz[questions][<?php echo $questions['question_id']; ?>][question_number]" value="<?php echo isset($questions['question_number'])?$questions['question_number']:""; ?>" >
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Is multiple choices selection :
+                                        </td>
+
+                                        <td>
+                                            <div class="multiple-choices <?php echo isset($questions['is_multiple_choices'])&&$questions['is_multiple_choices']==true?'true':'false'; ?>">
+                                                <div class="multiple-choices-toggle">
+                                                    <span><?php echo isset($questions['is_multiple_choices'])&&$questions['is_multiple_choices']==true?'true':'false'; ?></span>
+                                                </div>
+                                                <input type="hidden" name="quiz[questions][<?php echo $questions['question_id']; ?>][is_multiple_choices]" value="<?php echo (isset($questions['is_multiple_choices']) && ($questions['is_multiple_choices']==true))?"true":"false"; ?>" >
+                                                </div>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -1280,6 +1298,14 @@ function find_template($data, $type, $template_id) {
                 <input type="number" name="quiz[questions]['+countQuestions+'][question_number]" value="" >\
             </td>\
         </tr>\
+        <tr>\
+            <td>\
+                Is multiple choices selection :\
+            </td>\
+            <td>\
+                <input type="hidden" name="quiz[questions]['+countQuestions+'][is_multiple_choices]" value="" >\
+            </td>\
+        </tr>\
         </tbody>\
         </table>\
         </div>\
@@ -1384,6 +1410,10 @@ function find_template($data, $type, $template_id) {
             width: 'resolve',
             tags: true,
             tokenSeparators: [',', ' ']
+        });
+
+        Pace.on("done", function () {
+            $(".cover").fadeOut(1000);
         });
     });
 

@@ -201,9 +201,19 @@ class Report_quiz extends MY_Controller
                 $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
 
+            $is_multiple_choice = isset($result['is_multiple_choice']) ? $result['is_multiple_choice'] : false;
             $quiz_name = $result['quiz_name'];
             $question_name = isset($result['question']['question']) ? $result['question']['question'] : null;
-            $option = isset($result['option']['option']) ? $result['option']['option'] : null;
+            if($is_multiple_choice){
+                $option_list = array();
+                foreach ($result['option'] as $value){
+                    array_push($option_list, empty($value['explanation']) ? $value['option'] : $value['explanation']." : ".$value['option']);
+                }
+                $option = implode(', ', $option_list);
+            } else {
+                $option = isset($result['option']['option']) ? $result['option']['option'] : null;
+            }
+
 
             if (isset($result['grade'])) {
                 if (isset($result['quiz_completed']) && $result['quiz_completed']) {
@@ -405,9 +415,18 @@ class Report_quiz extends MY_Controller
                 $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
             }
 
+            $is_multiple_choice = isset($result['is_multiple_choice']) ? $result['is_multiple_choice'] : false;
             $quiz_name = $result['quiz_name'];
             $question_name = isset($result['question']['question']) ? $result['question']['question'] : null;
-            $option = isset($result['option']['option']) ? $result['option']['option'] : null;
+            if($is_multiple_choice){
+                $option_list = array();
+                foreach ($result['option'] as $value){
+                    array_push($option_list, empty($value['explanation']) ? $value['option'] : $value['explanation']." : ".$value['option']);
+                }
+                $option = implode(', ', $option_list);
+            } else {
+                $option = isset($result['option']['option']) ? $result['option']['option'] : null;
+            }
 
             if (isset($result['grade'])) {
                 if (isset($result['quiz_completed']) && $result['quiz_completed']) {

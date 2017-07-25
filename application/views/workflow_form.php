@@ -157,6 +157,7 @@
     }
 
     $(document).ready(function() {
+        <?php if($org_status){?>
         <?php for($i = 0;$i<count($organize_node);$i++){?>
 
         $nodeOrganizeSearch[<?php echo $i ?>] = "";
@@ -261,6 +262,7 @@
                 .select2('enable', false);
         }
         <?php }?>
+        <?php }?>
 
         $(".tags").select2({
             width: 'resolve',
@@ -268,8 +270,13 @@
             tokenSeparators: [',', ' ']
         });
 
+        Pace.on("done", function () {
+            $(".cover").fadeOut(1000);
+        });
+
     });
 
+    <?php if($org_status){?>
     <?php for($i = 0;$i<count($organize_node);$i++){?>
     $("#<?php echo "organize_type".$i ?>")
         .on("change", function (e) {
@@ -300,10 +307,7 @@
         });
 
     <?php }?>
-
-    Pace.on("done", function () {
-        $(".cover").fadeOut(1000);
-    });
+    <?php }?>
 
 </script>
 
