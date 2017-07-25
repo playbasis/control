@@ -207,9 +207,9 @@ class Report_quiz extends MY_Controller
             if($is_multiple_choice){
                 $option_list = array();
                 foreach ($result['option'] as $value){
-                    array_push($option_list, $value['option']);
+                    array_push($option_list, empty($value['explanation']) ? $value['option'] : $value['explanation']." : ".$value['option']);
                 }
-                $option = implode(',', $option_list);
+                $option = implode(', ', $option_list);
             } else {
                 $option = isset($result['option']['option']) ? $result['option']['option'] : null;
             }
@@ -421,9 +421,9 @@ class Report_quiz extends MY_Controller
             if($is_multiple_choice){
                 $option_list = array();
                 foreach ($result['option'] as $value){
-                    array_push($option_list, $value['option']);
+                    array_push($option_list, empty($value['explanation']) ? $value['option'] : $value['explanation']." : ".$value['option']);
                 }
-                $option = implode(',', $option_list);
+                $option = implode(', ', $option_list);
             } else {
                 $option = isset($result['option']['option']) ? $result['option']['option'] : null;
             }
