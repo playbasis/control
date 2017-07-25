@@ -102,7 +102,7 @@ class Content extends MY_Controller
         $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('summary', $this->lang->line('entry_summary'),
-            'trim|required|min_length[3]|max_length[255]|xss_clean');
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[4096000]|xss_clean');
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'), 'trim|xss_clean');
@@ -220,7 +220,7 @@ class Content extends MY_Controller
         $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('summary', $this->lang->line('entry_summary'),
-            'trim|required|min_length[3]|max_length[255]|xss_clean');
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('detail', $this->lang->line('entry_detail'),
             'trim|max_length[4096000]|xss_clean');
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'), 'trim|xss_clean');
