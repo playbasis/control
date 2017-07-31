@@ -14,17 +14,18 @@
             <a href="<?php echo site_url('report/quiz');?>" style="display:inline;">Quiz</a>
         </div>
             <div class="report-filter">
+                <div>
                 <span>
                         <?php echo $this->lang->line('filter_date_start'); ?>
-                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:100px;"/>
+                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:150px;"/>
                 </span>
                 <span>
                         <?php echo $this->lang->line('filter_date_end'); ?>
-                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:100px;"/>
+                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:150px;"/>
                 </span>
                 <span>
                     <?php echo $this->lang->line('filter_time_zone'); ?>
-                    <select name="filter_timezone" style="height: 30px">
+                    <select id="filter_timezone" name="filter_timezone" style="height: 30px">
                         <option value="0">Select timezone</option>
                         <?php foreach($time_zone as $t) {
                             if ($filter_time_zone == $t) { ?>
@@ -40,24 +41,28 @@
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>
-                        <?php echo $this->lang->line('filter_badge_id'); ?>
-                    <select name="filter_action_id" style="height: 30px">
-                        <option value="0"><?php echo "All"; ?></option>
-                        <?php foreach ($badge_rewards as $br){?>
-                            <?php if ($br['badge_id'] == $filter_action_id) { ?>
-                            <option selected="selected" value="<?php echo $br['badge_id']?>"><?php echo $br['name'];?></option>
-                            <?php }else{?>
-                            <option value="<?php echo $br['badge_id']?>"><?php echo $br['name'];?></option>
-                            <?php }?>
-                        <?php }?>
-                    </select>
-                </span>
-                <span>
                     <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
                 </span>
                 <span>
                     <a onclick="downloadFile();return true;" class="button"><?php echo $this->lang->line('button_download'); ?></a>
                 </span>
+                </div>
+                <span>
+                    <?php echo $this->lang->line('filter_badge_id'); ?>
+                    <select id="filter_badge_id" multiple name="filter_badge_id" style="width:90%">
+                    <?php foreach ($badge_rewards as $br){
+                        $match =  array_search($br['badge_id'], $filter_badge_id);
+                        if (!is_null($match) && $match !== false) { ?>
+                            <option selected="selected" value="<?php echo $br['badge_id']?>"><?php echo $br['name'];?></option>
+                        <?php }else{?>
+                            <option value="<?php echo $br['badge_id']?>"><?php echo $br['name'];?></option>
+                        <?php }?>
+                    <?php }?>
+                    </select>
+                </span>
+                <div>
+
+                </div>
             </div>
 
             <table class="list">
@@ -144,10 +149,20 @@ function filter() {
         url += '&username=' + encodeURIComponent(filter_username);
     }
 
-    var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
+    var filter_badge_id = $('select[name=\'filter_badge_id\']').val();
 
-    if (filter_action_id != 0) {
-        url += '&action_id=' + encodeURIComponent(filter_action_id);
+    if (filter_badge_id != null) {
+        var badges = ""
+        filter_badge_id.forEach(function(element) {
+            if(badges == ""){
+                badges = encodeURIComponent(element);
+            } else {
+                badges += encodeURIComponent(',' + element);
+            }
+        });
+        if(badges != ""){
+            url += '&badge_id=' + badges;
+        }
     }
 
     location = url;
@@ -181,15 +196,27 @@ function downloadFile() {
         url += '&username=' + encodeURIComponent(filter_username);
     }
 
-    var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
+    var filter_badge_id = $('select[name=\'filter_badge_id\']').val();
 
-    if (filter_action_id != 0) {
-        url += '&action_id=' + encodeURIComponent(filter_action_id);
+    if (filter_badge_id != null) {
+        var badges = ""
+        filter_badge_id.forEach(function(element) {
+            if(badges == ""){
+                badges = encodeURIComponent(element);
+            } else {
+                badges += encodeURIComponent(',' + element);
+            }
+        });
+        if(badges != ""){
+            url += '&badge_id=' + badges;
+        }
     }
 
     location = url;
 }
 //--></script>
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript"><!--
     $(document).ready(function() {
@@ -197,5 +224,8 @@ function downloadFile() {
 
         $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
     });
+
+    $("#filter_timezone").chosen({max_selected_options: 1});
+    $("#filter_badge_id").chosen({max_selected_options: 5});
 //--></script>
 
