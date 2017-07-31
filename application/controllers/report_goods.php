@@ -134,13 +134,20 @@ class Report_goods extends MY_Controller
             $filter_username = '';
         }
 
-        $goods = null;
-        $is_group = false;
+        $goods = array();
+        $group = array();
         if ($this->input->get('goods_id')) {
             $filter_goods_id = $this->input->get('goods_id');
-            $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
-            $is_group = array_key_exists('group', $goods);
             $parameter_url .= "&goods_id=" . $filter_goods_id;
+            $filter_goods_id = explode(',', $filter_goods_id);
+            foreach ($filter_goods_id as $value){
+                $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($value);
+                if(array_key_exists('group', $goods_detail)){
+                    array_push($group, $goods_detail['group']);
+                } else {
+                    array_push($goods, $goods_detail['goods_id']);
+                }
+            }
         } else {
             $filter_goods_id = '';
         }
@@ -161,8 +168,8 @@ class Report_goods extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'goods_id' => ($is_group ? $goods['group'] : $filter_goods_id),
-            'is_group' => $is_group,
+            'goods_id' => $goods,
+            'group' => $group,
             'start' => $offset,
             'limit' => $limit
         );
@@ -417,13 +424,20 @@ class Report_goods extends MY_Controller
             $filter_username = '';
         }
 
-        $goods = null;
-        $is_group = false;
+        $goods = array();
+        $group = array();
         if ($this->input->get('goods_id')) {
             $filter_goods_id = $this->input->get('goods_id');
-            $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
-            $is_group = array_key_exists('group', $goods);
             $parameter_url .= "&goods_id=" . $filter_goods_id;
+            $filter_goods_id = explode(',', $filter_goods_id);
+            foreach ($filter_goods_id as $value){
+                $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($value);
+                if(array_key_exists('group', $goods_detail)){
+                    array_push($group, $goods_detail['group']);
+                } else {
+                    array_push($goods, $goods_detail['goods_id']);
+                }
+            }
         } else {
             $filter_goods_id = '';
         }
@@ -442,8 +456,8 @@ class Report_goods extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'goods_id' => ($is_group ? $goods['group'] : $filter_goods_id),
-            'is_group' => $is_group
+            'goods_id' => $goods,
+            'group' => $group,
         );
         $report_total = 0;
 

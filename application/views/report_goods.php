@@ -14,17 +14,18 @@
             <a href="<?php echo site_url('report/quiz');?>" style="display:inline;">Quiz</a>
         </div>
             <div class="report-filter">
+                <div>
                 <span>
-                        <?php echo $this->lang->line('filter_date_start'); ?>
-                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:100px;"/>
+                    <?php echo $this->lang->line('filter_date_start'); ?>
+                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:150px;"/>
                 </span>
                 <span>
-                        <?php echo $this->lang->line('filter_date_end'); ?>
-                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:100px;"/>
+                    <?php echo $this->lang->line('filter_date_end'); ?>
+                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:150px;"/>
                 </span>
                 <span>
                     <?php echo $this->lang->line('filter_time_zone'); ?>
-                    <select name="filter_timezone" style="height: 30px; width: 150px">
+                    <select id="filter_timezone" name="filter_timezone" style="height: 30px;">
                         <option value="0">Select timezone</option>
                         <?php foreach($time_zone as $t) {
                             if ($filter_time_zone == $t) { ?>
@@ -35,38 +36,41 @@
                         }?>
                     </select>
                 </span>
-                <span>
-                        <?php echo $this->lang->line('filter_email_username'); ?>
-                    <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
-                </span>
-                <span>
-                        <?php echo $this->lang->line('filter_reward_id'); ?>
-                    <select name="filter_goods_id" style="height: 30px; width: 180px">
-                        <option value="0"><?php echo "All"; ?></option>
-                        <?php foreach ($goods_available as $good){?>
-                            <?php if ($good['_id'] == $filter_goods_id) { ?>
-                            <option selected="selected" value="<?php echo $good['_id']?>"><?php echo $good['name'];?></option>
-                            <?php }else{?>
-                            <option value="<?php echo $good['_id']?>"><?php echo $good['name'];?></option>
-                            <?php }?>
-                        <?php }?>
-                    </select>
+                    <span>
+                    <?php echo $this->lang->line('filter_email_username'); ?>
+                        <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>
                     <?php echo $this->lang->line('filter_status'); ?>
-                    <select name="filter_goods_status" style="height: 30px; width:80px">
+                    <select class="chosen-select" id="filter_goods_status" name="filter_goods_status" style="height: 30px; width:80px">
                         <option <?php if($filter_status == "all") echo "selected"; ?> value="all"><?php echo "All";    ?></option>
                         <option <?php if($filter_status == "active") echo "selected"; ?> value="active"><?php echo "Active"; ?></option>
                         <option <?php if($filter_status == "used") echo "selected"; ?> value="used"><?php echo "Used";   ?></option>
                         <option <?php if($filter_status == "expired") echo "selected"; ?> value="expired"><?php echo "Expired";?></option>
                     </select>
                 </span>
-                <span>
+                    <span>
                     <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
                 </span>
                 <span>
                     <a onclick="downloadFile();return true;" class="button"><?php echo $this->lang->line('button_download'); ?></a>
                 </span>
+                </div>
+                <div>
+                <span>
+                    <?php echo $this->lang->line('filter_goods_id'); ?>
+                    <select class="chosen-select" multiple id="filter_goods_id" name="filter_goods_id" style="width:90%">
+                        <?php foreach ($goods_available as $good){
+                            $match =  array_search($good['_id'], $filter_goods_id);
+                            if (!is_null($match) && $match !== false) { ?>
+                                <option selected="selected" value="<?php echo $good['_id'] ?>"><?php echo $good['name']; ?></option>
+                            <?php } else { ?>
+                                <option value="<?php echo $good['_id'] ?>"><?php echo $good['name']; ?></option>
+                            <?php }
+                        }?>
+                    </select>
+                </span>
+                </div>
             </div>
 
             <table class="list">
@@ -130,7 +134,7 @@
         </div>
     </div>
 </div>
-<script type="text/javascript"><!--
+<script type="text/javascript">
 function filter() {
     var d = new Date().getTime();
     // url = baseUrlPath+'report_reward/reward_badge?t='+d;
@@ -160,10 +164,20 @@ function filter() {
         url += '&username=' + encodeURIComponent(filter_username);
     }
 
-    var filter_goods_id = $('select[name=\'filter_goods_id\']').attr('value');
+    var filter_goods_id = $('select[name=\'filter_goods_id\']').val();
 
-    if (filter_goods_id != 0) {
-        url += '&goods_id=' + encodeURIComponent(filter_goods_id);
+    if (filter_goods_id != null) {
+        var goods = ""
+        filter_goods_id.forEach(function(element) {
+            if(goods == ""){
+                goods = encodeURIComponent(element);
+            } else {
+                goods += encodeURIComponent(',' + element);
+            }
+        });
+        if(goods != ""){
+            url += '&goods_id=' + goods;
+        }
     }
 
     var filter_goods_status = $('select[name=\'filter_goods_status\']').attr('value');
@@ -202,20 +216,35 @@ function downloadFile() {
         url += '&username=' + encodeURIComponent(filter_username);
     }
 
-    var filter_goods_id = $('select[name=\'filter_goods_id\']').attr('value');
+    var filter_goods_id = $('select[name=\'filter_goods_id\']').val();
 
-    if (filter_goods_id != 0) {
-        url += '&goods_id=' + encodeURIComponent(filter_goods_id);
+    if (filter_goods_id != null) {
+        var goods = ""
+        filter_goods_id.forEach(function(element) {
+            if(goods == ""){
+                goods = encodeURIComponent(element);
+            } else {
+                goods += encodeURIComponent(',' + element);
+            }
+        });
+        url += '&goods_id=' + goods;
     }
 
     location = url;
 }
-//--></script>
+</script>
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
-<script type="text/javascript"><!--
+<script type="text/javascript">
     $(document).ready(function() {
         $('#date-start').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
 
         $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
     });
-//--></script>
+
+    $("#filter_timezone").chosen({max_selected_options: 1});
+    $("#filter_goods_id").chosen({max_selected_options: 5});
+    $("#filter_goods_status").chosen({disable_search_threshold: 10});
+</script>
+

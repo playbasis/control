@@ -52,6 +52,7 @@ $lang['filter_username']                        = 'Username';
 $lang['filter_email_username']                  = 'Email / Username';
 $lang['filter_action_id']                       = 'Action';
 $lang['filter_reward_id']                       = 'Reward';
+$lang['filter_goods_id']                        = 'Goods';
 $lang['filter_badge_id']                        = 'Badges';
 $lang['filter_custompoint_id']                  = 'Custompoint';
 $lang['filter_status']                          = 'Status';

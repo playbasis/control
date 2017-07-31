@@ -30,8 +30,8 @@ class Report_custompoint_model extends MY_Model
                 array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
         }
 
-        if (isset($data['action_id']) && $data['action_id'] != '') {
-            $this->mongo_db->where('reward_id', new MongoID($data['action_id']));
+        if (isset($data['reward_id']) && !empty($data['reward_id'])) {
+            $this->mongo_db->where_in('reward_id', $data['reward_id']);
         }
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -80,8 +80,8 @@ class Report_custompoint_model extends MY_Model
                 array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
         }
 
-        if (isset($data['action_id']) && $data['action_id'] != '') {
-            $this->mongo_db->where('reward_id', new MongoID($data['action_id']));
+        if (isset($data['reward_id']) && !empty($data['reward_id'])) {
+            $this->mongo_db->where_in('reward_id', $data['reward_id']);
         }
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));

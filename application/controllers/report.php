@@ -152,6 +152,10 @@ class Report extends MY_Controller
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
             $parameter_url .= "&action_id=" . $filter_action_id;
+            $filter_action_id = explode(',', $filter_action_id);
+            foreach ($filter_action_id as &$action_id){
+                $action_id = new MongoId($action_id);
+            }
         } else {
             $filter_action_id = '';
         }
@@ -183,12 +187,16 @@ class Report extends MY_Controller
 
             $results = $this->Action_model->getActionReport($data);
 
-            if ($filter_action_id != 0){
-                $action = $this->Action_model->getAction($filter_action_id);
-                $init_dataset = isset($action['init_dataset']) ? $action['init_dataset']:null;
-                $this->data['init_dataset'] = $init_dataset;
+            if (!empty($filter_action_id) && is_array($filter_action_id)){
+                $init_dataset = array();
+                foreach ($filter_action_id as $actions){
+                    $action = $this->Action_model->getAction($actions);
+                    $init_dataset = isset($action['init_dataset']) ? array_merge($init_dataset, $action['init_dataset']):$init_dataset;
+                }
+                if(!empty($init_dataset)){
+                    $this->data['init_dataset'] = $init_dataset;
+                }
             }
-
         }
 
         foreach ($results as $result) {
@@ -338,6 +346,10 @@ class Report extends MY_Controller
 
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
+            $filter_action_id = explode(',', $filter_action_id);
+            foreach ($filter_action_id as &$action_id){
+                $action_id = new MongoId($action_id);
+            }
         } else {
             $filter_action_id = 0;
         }

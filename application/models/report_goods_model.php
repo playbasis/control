@@ -42,12 +42,13 @@ class Report_goods_model extends MY_Model
             ));
         }
 
-        if (isset($data['goods_id']) && $data['goods_id'] != '') {
-            if (isset($data['is_group']) && $data['is_group']) {
-                $this->mongo_db->where('group', $data['goods_id']);
-            } else {
-                $this->mongo_db->where('goods_id', new MongoID($data['goods_id']));
-            }
+        if (!empty($data['goods_id']) && !empty($data['group'])) {
+            $this->mongo_db->where('$or', array(array('group' => array('$in' => $data['group'])),
+                array('goods_id' => array('$in' => $data['goods_id']))));
+        } elseif (!empty($data['group'])){
+            $this->mongo_db->where_in('group', $data['group']);
+        } elseif (!empty($data['goods_id'])){
+            $this->mongo_db->where_in('goods_id', $data['goods_id']);
         }
 
         if (isset($data['ex_id']) && $data['ex_id']){
@@ -95,12 +96,13 @@ class Report_goods_model extends MY_Model
             ));
         }
 
-        if (isset($data['goods_id']) && $data['goods_id'] != '') {
-            if (isset($data['is_group']) && $data['is_group']) {
-                $this->mongo_db->where('group', $data['goods_id']);
-            } else {
-                $this->mongo_db->where('goods_id', new MongoID($data['goods_id']));
-            }
+        if (!empty($data['goods_id']) && !empty($data['group'])) {
+            $this->mongo_db->where('$or', array(array('group' => array('$in' => $data['group'])),
+                array('goods_id' => array('$in' => $data['goods_id']))));
+        } elseif (!empty($data['group'])){
+            $this->mongo_db->where_in('group', $data['group']);
+        } elseif (!empty($data['goods_id'])){
+            $this->mongo_db->where_in('goods_id', $data['goods_id']);
         }
 
         if (isset($data['ex_id']) && $data['ex_id']){

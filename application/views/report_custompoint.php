@@ -14,17 +14,18 @@
                 <a href="<?php echo site_url('report/quiz');?>" style="display:inline;">Quiz</a>
             </div>
             <div class="report-filter">
+                <div>
                 <span>
                         <?php echo $this->lang->line('filter_date_start'); ?>
-                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:100px;"/>
+                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:150px;"/>
                 </span>
                 <span>
                         <?php echo $this->lang->line('filter_date_end'); ?>
-                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:100px;"/>
+                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:150px;"/>
                 </span>
                 <span>
                     <?php echo $this->lang->line('filter_time_zone'); ?>
-                    <select name="filter_timezone" style="height: 30px; width: 150px">
+                    <select id="filter_timezone" name="filter_timezone" style="height: 30px;">
                         <option value="0">Select timezone</option>
                         <?php foreach($time_zone as $t) {
                             if ($filter_time_zone == $t) { ?>
@@ -40,21 +41,8 @@
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>
-                        <?php echo $this->lang->line('filter_reward_id'); ?>
-                    <select name="filter_action_id" style="height: 30px; width: 180px">
-                        <option value="0"><?php echo "All"; ?></option>
-                        <?php foreach ($point_rewards as $br){?>
-                            <?php if ($br['reward_id'] == $filter_action_id) { ?>
-                                <option selected="selected" value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
-                            <?php }else{?>
-                                <option value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
-                            <?php }?>
-                        <?php }?>
-                    </select>
-                </span>
-                <span>
                     <?php echo $this->lang->line('filter_status'); ?>
-                    <select name="filter_point_status" style="height: 30px; width:80px">
+                    <select id="filter_point_status" name="filter_point_status" style="height: 30px; width:120px">
                         <option <?php if($filter_status == "all") echo "selected"; ?> value="all"><?php echo "All";    ?></option>
                         <option <?php if($filter_status == "pending") echo "selected"; ?> value="pending"><?php echo "Pending"; ?></option>
                         <option <?php if($filter_status == "approve") echo "selected"; ?> value="approve"><?php echo "Approve";   ?></option>
@@ -67,6 +55,22 @@
                 <span>
                     <a onclick="downloadFile();return true;" class="button"><?php echo $this->lang->line('button_download'); ?></a>
                 </span>
+                </div>
+                <div>
+                    <span>
+                        <?php echo $this->lang->line('filter_reward_id'); ?>
+                        <select id="filter_reward_id" multiple name="filter_reward_id" style="width:90%">
+                        <?php foreach ($point_rewards as $br){
+                            $match =  array_search($br['reward_id'], $filter_reward_id);
+                            if (!is_null($match) && $match !== false) { ?>
+                                <option selected="selected" value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
+                            <?php }else{?>
+                                <option value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
+                            <?php }?>
+                        <?php }?>
+                    </select>
+                </span>
+                </div>
             </div>
 
             <table class="list">
@@ -152,10 +156,20 @@
             url += '&username=' + encodeURIComponent(filter_username);
         }
 
-        var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
+        var filter_reward_id = $('select[name=\'filter_reward_id\']').val();
 
-        if (filter_action_id != 0) {
-            url += '&action_id=' + encodeURIComponent(filter_action_id);
+        if (filter_reward_id != null) {
+            var rewards = ""
+            filter_reward_id.forEach(function(element) {
+                if(rewards == ""){
+                    rewards = encodeURIComponent(element);
+                } else {
+                    rewards += encodeURIComponent(',' + element);
+                }
+            });
+            if(rewards != ""){
+                url += '&reward_id=' + rewards;
+            }
         }
 
         var filter_point_status = $('select[name=\'filter_point_status\']').attr('value');
@@ -194,10 +208,20 @@
             url += '&username=' + encodeURIComponent(filter_username);
         }
 
-        var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
+        var filter_reward_id = $('select[name=\'filter_reward_id\']').val();
 
-        if (filter_action_id != 0) {
-            url += '&action_id=' + encodeURIComponent(filter_action_id);
+        if (filter_reward_id != null) {
+            var rewards = ""
+            filter_reward_id.forEach(function(element) {
+                if(rewards == ""){
+                    rewards = encodeURIComponent(element);
+                } else {
+                    rewards += encodeURIComponent(',' + element);
+                }
+            });
+            if(rewards != ""){
+                url += '&reward_id=' + rewards;
+            }
         }
 
         var filter_point_status = $('select[name=\'filter_point_status\']').attr('value');
@@ -208,6 +232,8 @@
         location = url;
     }
     //--></script>
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript"><!--
     $(document).ready(function() {
@@ -215,5 +241,9 @@
 
         $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
     });
+
+    $("#filter_timezone").chosen({max_selected_options: 1});
+    $("#filter_reward_id").chosen({max_selected_options: 5});
+    $("#filter_point_status").chosen({max_selected_options: 1});
     //--></script>
 

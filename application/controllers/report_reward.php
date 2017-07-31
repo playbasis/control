@@ -150,11 +150,15 @@ class Report_reward extends MY_Controller
             $filter_username = '';
         }
 
-        if ($this->input->get('action_id')) {
-            $filter_action_id = $this->input->get('action_id');
-            $parameter_url .= "&action_id=" . $filter_action_id;
+        if ($this->input->get('badge_id')) {
+            $filter_badge_id = $this->input->get('badge_id');
+            $parameter_url .= "&badge_id=" . $filter_badge_id;
+            $filter_badge_id = explode(',', $filter_badge_id);
+            foreach ($filter_badge_id as &$badge_id){
+                $badge_id = new MongoId($badge_id);
+            }
         } else {
-            $filter_action_id = '';
+            $filter_badge_id = '';
         }
 
         $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
@@ -169,7 +173,7 @@ class Report_reward extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'action_id' => $filter_action_id,
+            'badge_id' => $filter_badge_id,
             'start' => $offset,
             'limit' => $limit
         );
@@ -276,7 +280,7 @@ class Report_reward extends MY_Controller
         $this->data['filter_date_end'] = $filter_date_end;
         // --> end
         $this->data['filter_username'] = $filter_username;
-        $this->data['filter_action_id'] = $filter_action_id;
+        $this->data['filter_badge_id'] = $filter_badge_id;
 
         $this->data['main'] = 'report_reward';
         $this->load->vars($this->data);
@@ -368,11 +372,15 @@ class Report_reward extends MY_Controller
             $filter_username = '';
         }
 
-        if ($this->input->get('action_id')) {
-            $filter_action_id = $this->input->get('action_id');
-            $parameter_url .= "&action_id=" . $filter_action_id;
+        if ($this->input->get('badge_id')) {
+            $filter_badge_id = $this->input->get('badge_id');
+            $parameter_url .= "&badge_id=" . $filter_badge_id;
+            $filter_badge_id = explode(',', $filter_badge_id);
+            foreach ($filter_badge_id as &$badge_id){
+                $badge_id = new MongoId($badge_id);
+            }
         } else {
-            $filter_action_id = '';
+            $filter_badge_id = '';
         }
 
         $client_id = $this->User_model->getClientId();
@@ -384,7 +392,7 @@ class Report_reward extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'action_id' => $filter_action_id
+            'badge_id' => $filter_badge_id
         );
 
         $results = array();
