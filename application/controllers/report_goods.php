@@ -133,14 +133,53 @@ class Report_goods extends MY_Controller
         } else {
             $filter_username = '';
         }
+        $goodsList = array();
+        if ($this->input->get('tags')) {
+            $filter_tags = $this->input->get('tags');
+            $parameter_url .= "&tags=" . $filter_tags;
+            $opts = array('client_id' => $client_id, 'site_id' => $site_id);
+            $opts['tags'] = explode(',', $filter_tags);
+            $group_list = $this->Goods_model->getGroupsList($site_id, array('filter_group' => true));;
+            $in_goods = array();
+            foreach ($group_list as $group_name){
+                $goods_group_id =  $this->Goods_model->getGoodsIDByName($client_id, $site_id, "", $group_name['name'], false);
+                array_push($in_goods, new MongoId($goods_group_id));
+            }
+            $opts['specific'] = array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ));
+            $goodsList = $this->Goods_model->getAllGoods($opts);
+            foreach ($goodsList as &$val){
+                $val = $val['goods_id'];
+            }
+        } else {
+            $filter_tags = '';
+        }
 
-        $goods = null;
-        $is_group = false;
+        $goods = array();
+        $group = array();
         if ($this->input->get('goods_id')) {
             $filter_goods_id = $this->input->get('goods_id');
-            $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
-            $is_group = array_key_exists('group', $goods);
             $parameter_url .= "&goods_id=" . $filter_goods_id;
+            $filter_goods_id = explode(',', $filter_goods_id);
+            foreach ($filter_goods_id as $value){
+                if($this->input->get('tags') && $goodsList){
+                    $match =  array_search($value, $goodsList);
+                    if(!is_null($match) && $match !== false){
+                        $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($value);
+                        if(array_key_exists('group', $goods_detail)){
+                            array_push($group, $goods_detail['group']);
+                        } else {
+                            array_push($goods, $goods_detail['goods_id']);
+                        }
+                    }
+                } else {
+                    $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($value);
+                    if(array_key_exists('group', $goods_detail)){
+                        array_push($group, $goods_detail['group']);
+                    } else {
+                        array_push($goods, $goods_detail['goods_id']);
+                    }
+                }
+            }
         } else {
             $filter_goods_id = '';
         }
@@ -161,8 +200,8 @@ class Report_goods extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'goods_id' => ($is_group ? $goods['group'] : $filter_goods_id),
-            'is_group' => $is_group,
+            'goods_id' => $goods,
+            'group' => $group,
             'start' => $offset,
             'limit' => $limit
         );
@@ -316,6 +355,7 @@ class Report_goods extends MY_Controller
         $this->data['filter_date_end'] = $filter_date_end;
         // --> end
         $this->data['filter_username'] = $filter_username;
+        $this->data['filter_tags'] = $filter_tags;
         $this->data['filter_goods_id'] = $filter_goods_id;
         $this->data['filter_status'] = $filter_goods_status;
         $this->data['main'] = 'report_goods';
@@ -417,13 +457,53 @@ class Report_goods extends MY_Controller
             $filter_username = '';
         }
 
-        $goods = null;
-        $is_group = false;
+        $goodsList = array();
+        if ($this->input->get('tags')) {
+            $filter_tags = $this->input->get('tags');
+            $parameter_url .= "&tags=" . $filter_tags;
+            $opts = array('client_id' => $client_id, 'site_id' => $site_id);
+            $opts['tags'] = explode(',', $filter_tags);
+            $group_list = $this->Goods_model->getGroupsList($site_id, array('filter_group' => true));;
+            $in_goods = array();
+            foreach ($group_list as $group_name){
+                $goods_group_id =  $this->Goods_model->getGoodsIDByName($client_id, $site_id, "", $group_name['name'], false);
+                array_push($in_goods, new MongoId($goods_group_id));
+            }
+            $opts['specific'] = array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ));
+            $goodsList = $this->Goods_model->getAllGoods($opts);
+            foreach ($goodsList as &$val){
+                $val = $val['goods_id'];
+            }
+        } else {
+            $filter_tags = '';
+        }
+
+        $goods = array();
+        $group = array();
         if ($this->input->get('goods_id')) {
             $filter_goods_id = $this->input->get('goods_id');
-            $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
-            $is_group = array_key_exists('group', $goods);
             $parameter_url .= "&goods_id=" . $filter_goods_id;
+            $filter_goods_id = explode(',', $filter_goods_id);
+            foreach ($filter_goods_id as $value){
+                if($this->input->get('tags') && $goodsList){
+                    $match =  array_search($value, $goodsList);
+                    if(!is_null($match) && $match !== false){
+                        $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($value);
+                        if(array_key_exists('group', $goods_detail)){
+                            array_push($group, $goods_detail['group']);
+                        } else {
+                            array_push($goods, $goods_detail['goods_id']);
+                        }
+                    }
+                } else {
+                    $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($value);
+                    if(array_key_exists('group', $goods_detail)){
+                        array_push($group, $goods_detail['group']);
+                    } else {
+                        array_push($goods, $goods_detail['goods_id']);
+                    }
+                }
+            }
         } else {
             $filter_goods_id = '';
         }
@@ -442,8 +522,8 @@ class Report_goods extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'goods_id' => ($is_group ? $goods['group'] : $filter_goods_id),
-            'is_group' => $is_group
+            'goods_id' => $goods,
+            'group' => $group,
         );
         $report_total = 0;
 

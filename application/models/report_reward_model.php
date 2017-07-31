@@ -30,8 +30,8 @@ class Report_reward_model extends MY_Model
                 array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
         }
 
-        if (isset($data['action_id']) && $data['action_id'] != '') {
-            $this->mongo_db->where('item_id', new MongoID($data['action_id']));
+        if (isset($data['badge_id']) && !empty($data['badge_id'])) {
+            $this->mongo_db->where_in('item_id', $data['badge_id']);
         } else {
             $this->mongo_db->where('item_id', array('$ne' => null));
         }
@@ -73,8 +73,8 @@ class Report_reward_model extends MY_Model
                 array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
         }
 
-        if (isset($data['action_id']) && $data['action_id'] != '') {
-            $this->mongo_db->where('item_id', new MongoID($data['action_id']));
+        if (isset($data['badge_id']) && !empty($data['badge_id'])) {
+            $this->mongo_db->where_in('item_id', $data['badge_id']);
         } else {
             $this->mongo_db->where('item_id', array('$ne' => null));
         }

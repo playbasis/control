@@ -14,17 +14,18 @@
             <a href="<?php echo site_url('report/quiz');?>" style="display:inline;">Quiz</a>
         </div>
             <div class="report-filter">
+                <div>
                 <span>
                         <?php echo $this->lang->line('filter_date_start'); ?>
-                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:100px;"/>
+                    <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:150px;"/>
                 </span>
                 <span>
                         <?php echo $this->lang->line('filter_date_end'); ?>
-                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:100px;"/>
+                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:150px;"/>
                 </span>
                 <span>
                     <?php echo $this->lang->line('filter_time_zone'); ?>
-                    <select name="filter_timezone" style="height: 30px">
+                    <select id="filter_timezone" name="filter_timezone" style="height: 30px">
                         <option value="0">Select timezone</option>
                         <?php foreach($time_zone as $t) {
                             if ($filter_time_zone == $t) { ?>
@@ -40,24 +41,27 @@
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>
-                        <?php echo $this->lang->line('filter_action_id'); ?>
-                    <select name="filter_action_id" style="height:30px;">
-                        <option value="0"><?php echo "All"; ?></option>
-                        <?php foreach ($actions as $action) { ?>
-                        <?php if ($action['action_id'] == $filter_action_id) { ?>
-                            <option value="<?php echo $action['action_id']; ?>" selected="selected"><?php echo $action['name']; ?></option>
-                            <?php } else { ?>
-                            <option value="<?php echo $action['action_id']; ?>"><?php echo $action['name']; ?></option>
-                            <?php } ?>
-                        <?php } ?>
-                    </select>
-                </span>
-                <span>
                     <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
                 </span>
                 <span>
                     <a onclick="downloadFile();return true;" class="button"><?php echo $this->lang->line('button_download'); ?></a>
                 </span>
+                </div>
+                <div>
+                    <span>
+                        <?php echo $this->lang->line('filter_action_id'); ?>
+                        <select id="filter_action_id" multiple name="filter_action_id" style="width:90%">
+                        <?php foreach ($actions as $action) { 
+                            $match =  array_search($action['action_id'], $filter_action_id);
+                            if (!is_null($match) && $match !== false) { ?>
+                            <option selected="selected" value="<?php echo $action['action_id'] ?>"><?php echo $action['name']; ?></option>
+                        <?php } else { ?>
+                            <option value="<?php echo $action['action_id'] ?>"><?php echo $action['name']; ?></option>
+                        <?php } ?>
+                        <?php } ?>
+                    </select>
+                </span>
+                </div>
             </div>
 
             <table class="list">
@@ -140,10 +144,20 @@ function filter() {
         url += '&username=' + encodeURIComponent(filter_username);
     }
 
-    var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
+    var filter_action_id = $('select[name=\'filter_action_id\']').val();
 
-    if (filter_action_id != 0) {
-        url += '&action_id=' + encodeURIComponent(filter_action_id);
+    if (filter_action_id != null) {
+        var actions = ""
+        filter_action_id.forEach(function(element) {
+            if(actions == ""){
+                actions = encodeURIComponent(element);
+            } else {
+                actions += encodeURIComponent(',' + element);
+            }
+        });
+        if(actions != ""){
+            url += '&action_id=' + actions;
+        }
     }
 
     location = url;
@@ -177,20 +191,35 @@ function downloadFile() {
         url += '&username=' + encodeURIComponent(filter_username);
     }
 
-    var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
+    var filter_action_id = $('select[name=\'filter_action_id\']').val();
 
-    if (filter_action_id != 0) {
-        url += '&action_id=' + encodeURIComponent(filter_action_id);
+    if (filter_action_id != null) {
+        var actions = ""
+        filter_action_id.forEach(function(element) {
+            if(actions == ""){
+                actions = encodeURIComponent(element);
+            } else {
+                actions += encodeURIComponent(',' + element);
+            }
+        });
+        if(actions != ""){
+            url += '&action_id=' + actions;
+        }
     }
 
     location = url;
 }
 //--></script>
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript"><!--
 $(document).ready(function() {
     $('#date-start').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
 
     $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
+
+    $("#filter_timezone").chosen({max_selected_options: 1});
+    $("#filter_action_id").chosen({max_selected_options: 5});
 });
 //--></script>

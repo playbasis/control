@@ -150,11 +150,15 @@ class Report_custompoint extends MY_Controller
             $filter_username = '';
         }
 
-        if ($this->input->get('action_id')) {
-            $filter_action_id = $this->input->get('action_id');
-            $parameter_url .= "&action_id=" . $filter_action_id;
+        if ($this->input->get('reward_id')) {
+            $filter_reward_id = $this->input->get('reward_id');
+            $parameter_url .= "&reward_id=" . $filter_reward_id;
+            $filter_reward_id = explode(',', $filter_reward_id);
+            foreach ($filter_reward_id as &$reward_id){
+                $reward_id = new MongoId($reward_id);
+            }
         } else {
-            $filter_action_id = '';
+            $filter_reward_id = '';
         }
 
         if ($this->input->get('status')) {
@@ -177,7 +181,7 @@ class Report_custompoint extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'action_id' => $filter_action_id,
+            'reward_id' => $filter_reward_id,
             'start' => $offset,
             'limit' => $limit
         );
@@ -300,7 +304,7 @@ class Report_custompoint extends MY_Controller
         $this->data['filter_date_end'] = $filter_date_end;
         // --> end
         $this->data['filter_username'] = $filter_username;
-        $this->data['filter_action_id'] = $filter_action_id;
+        $this->data['filter_reward_id'] = $filter_reward_id;
         $this->data['filter_status'] = $filter_point_status;
 
         $this->data['main'] = 'report_custompoint';
@@ -393,11 +397,15 @@ class Report_custompoint extends MY_Controller
             $filter_username = '';
         }
 
-        if ($this->input->get('action_id')) {
-            $filter_action_id = $this->input->get('action_id');
-            $parameter_url .= "&action_id=" . $filter_action_id;
+        if ($this->input->get('reward_id')) {
+            $filter_reward_id = $this->input->get('reward_id');
+            $parameter_url .= "&reward_id=" . $filter_reward_id;
+            $filter_reward_id = explode(',', $filter_reward_id);
+            foreach ($filter_reward_id as &$reward_id){
+                $reward_id = new MongoId($reward_id);
+            }
         } else {
-            $filter_action_id = '';
+            $filter_reward_id = '';
         }
 
         if ($this->input->get('status')) {
@@ -417,7 +425,7 @@ class Report_custompoint extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'action_id' => $filter_action_id
+            'reward_id' => $filter_reward_id
         );
 
         $results = array();
