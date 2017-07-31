@@ -58,8 +58,12 @@
                 </div>
                 <div>
                 <span>
+                    <?php echo $this->lang->line('filter_tags'); ?>
+                    <input type="text" name="filter_tags" value="<?php echo $filter_tags; ?>" id="filter_tags" size="12" />
+                </span>
+                <span>
                     <?php echo $this->lang->line('filter_goods_id'); ?>
-                    <select class="chosen-select" multiple id="filter_goods_id" name="filter_goods_id" style="width:90%">
+                    <select class="chosen-select" multiple id="filter_goods_id" name="filter_goods_id" style="width:70%">
                         <?php foreach ($goods_available as $good){
                             $match =  array_search($good['_id'], $filter_goods_id);
                             if (!is_null($match) && $match !== false) { ?>
@@ -164,6 +168,12 @@ function filter() {
         url += '&username=' + encodeURIComponent(filter_username);
     }
 
+    var filter_tags = $('input[name=\'filter_tags\']').attr('value');
+
+    if (filter_tags) {
+        url += '&tags=' + encodeURIComponent(filter_tags);
+    }
+
     var filter_goods_id = $('select[name=\'filter_goods_id\']').val();
 
     if (filter_goods_id != null) {
@@ -216,6 +226,11 @@ function downloadFile() {
         url += '&username=' + encodeURIComponent(filter_username);
     }
 
+    var filter_tags = $('input[name=\'filter_tags\']').attr('value');
+
+    if (filter_tags) {
+        url += '&tags=' + encodeURIComponent(filter_tags);
+    }
     var filter_goods_id = $('select[name=\'filter_goods_id\']').val();
 
     if (filter_goods_id != null) {

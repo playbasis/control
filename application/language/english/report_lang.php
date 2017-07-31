@@ -50,6 +50,7 @@ $lang['filter_date_start']                      = 'Date Start';
 $lang['filter_date_end']                        = 'Date End';
 $lang['filter_username']                        = 'Username';
 $lang['filter_email_username']                  = 'Email / Username';
+$lang['filter_tags']                            = 'Tags';
 $lang['filter_action_id']                       = 'Action';
 $lang['filter_reward_id']                       = 'Reward';
 $lang['filter_goods_id']                        = 'Goods';
