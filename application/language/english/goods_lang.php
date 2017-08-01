@@ -23,6 +23,7 @@ $lang['button_insert_goods']            = 'Insert Goods';
 $lang['button_insert_goods_group']      = 'Insert Goods Group';
 
 $lang['button_filter']                  = 'Filter';
+$lang['button_download']                = 'Download';
 $lang['button_clear_filter']            = 'Clear';
 $lang['button_upload']                  = 'Upload';
 
@@ -50,6 +51,13 @@ $lang['column_owner']                   = 'Owner';
 $lang['column_is_group']                = 'Group';
 $lang['column_tags']                    = 'Tag(s)';
 $lang['column_custom_param']            = 'Custom Param';
+
+$lang['coupon_goods_name']              = 'coupon_name';
+$lang['coupon_goods_code']              = 'coupon_code';
+$lang['coupon_date_start']              = 'date_start';
+$lang['coupon_date_end']                = 'date_end';
+$lang['coupon_date_expire']             = 'date_expire';
+$lang['coupon_goods_batch']             = 'batch_name';
 
 // Entry
 $lang['entry_goods_id']                 = 'Goods ID';

@@ -375,11 +375,12 @@
                                 <td class="left" ><input style="width:120px;" type="text" class="date" id="filter_date_start" name="filter_date_start" value="<?php echo isset($_GET['filter_date_start']) ? $_GET['filter_date_start'] : "" ?>" /></td>
                                 <td class="left" ><input style="width:120px;" type="text" class="date" id="filter_date_end" name="filter_date_end" value="<?php echo isset($_GET['filter_date_end']) ? $_GET['filter_date_end'] : "" ?>"  /></td>
                                 <td class="left" ><input style="width:120px;" type="text" class="date" id="filter_date_expire" name="filter_date_expire" value="<?php echo isset($_GET['filter_date_expire']) ? $_GET['filter_date_expire'] : "" ?>"  /></td>
-                                <td style="width:80px;">
-                                    <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
-                                    <a onclick="update_table();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
+                                <td style="width:90px;">
+                                    <a onclick="filter();" class="button"><i class='fa fa-filter fa-lg' title="Filter"></i></a>
+                                    <a onclick="update_table();" class="button" id="clear_filter"><i class='fa fa-refresh fa-lg' title="Clear Filter"></i></a>
                                     <?php if (is_array($members) && isset($members[0]['goods_id'])){ ?>
                                         <a onclick="delete_filtered_coupon('<?php echo $members[0]['goods_id']->{'$id'}?>',);" class="button" id="delete_filtered" title="Delete All Match Filtered"><i class='fa fa-trash fa-lg' title="Delete All Match Filtered"></i></a>
+                                        <a onclick="downloadCoupon();" class="button"><i class='fa fa-download fa-lg' title="Download Coupon"></i></a>
                                     <?php } ?>
                                 </td>
                                 </td>
@@ -1212,6 +1213,34 @@ $(document).ready(function(){
         link.setAttribute('href', data);
         link.setAttribute('download', filename);
         link.click();
+    }
+
+    function downloadCoupon() {
+        var url = baseUrlPath+"goods/downloadGoodsGroup/<?php echo $goods_id; ?>?";
+
+        if (filter_goods) {
+            url += '&filter_goods=' + encodeURIComponent(filter_goods);
+        }
+        if (filter_batch) {
+            url += '&filter_batch=' + encodeURIComponent(filter_batch);
+        }
+        if (filter_coupon_name) {
+            url += '&filter_coupon_name=' + encodeURIComponent(filter_coupon_name);
+        }
+        if (filter_voucher_code) {
+            url += '&filter_voucher_code=' + encodeURIComponent(filter_voucher_code);
+        }
+        if (filter_date_start) {
+            url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+        }
+        if (filter_date_end) {
+            url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+        }
+        if (filter_date_expire) {
+            url += '&filter_date_expire=' + encodeURIComponent(filter_date_expire);
+        }
+        location = url;
+
     }
 </script>
 <?php } ?>
