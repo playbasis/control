@@ -1714,6 +1714,92 @@ class Goods extends MY_Controller
         $this->load->view('goods_group_ajax');
     }
 
+    public function downloadGoodsGroup($goods_id = null)
+    {
+        if (isset($goods_id) && ($goods_id != 0)) {
+            if ($this->User_model->getClientId()) {
+                $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+            } else {
+                $goods_info = $this->Goods_model->getGoods($goods_id);
+            }
+        }
+        if (!empty($goods_info) && array_key_exists('group', $goods_info)) {
+            $data = array(
+                'site_id' => $this->User_model->getSiteId(),
+                'group' => $goods_info['group'],
+                'order' => 'asc',
+                'sort' => 'date_start'
+            );
+
+            $this->data['filter'] = array();
+            if (isset($_GET['filter_goods'])) {
+                $this->data['filter']['filter_goods'] = $_GET['filter_goods'];
+                $data['filter_goods'] = $_GET['filter_goods'];
+            }
+            if (isset($_GET['filter_batch'])) {
+                $this->data['filter']['filter_batch'] = $_GET['filter_batch'];
+                $data['filter_batch'] = $_GET['filter_batch'];
+            }
+            if (isset($_GET['filter_coupon_name'])) {
+                $this->data['filter']['filter_coupon_name'] =  $_GET['filter_coupon_name'];
+                $data['filter_name'] = $_GET['filter_coupon_name'];
+            }
+            if (isset($_GET['filter_voucher_code'])) {
+                $this->data['filter']['filter_voucher_code'] =  $_GET['filter_voucher_code'];
+                $data['filter_voucher_code'] = $_GET['filter_voucher_code'];
+            }
+
+            if (isset($_GET['filter_date_start'])) {
+                $this->data['filter']['filter_date_start'] = $_GET['filter_date_start'];
+                $data['filter_date_start'] = $_GET['filter_date_start'];
+            }
+            if (isset($_GET['filter_date_end'])) {
+                $this->data['filter']['filter_date_end'] =  $_GET['filter_date_end'];
+                $data['filter_date_end'] = $_GET['filter_date_end'];
+            }
+            if (isset($_GET['filter_date_expire'])) {
+                $this->data['filter']['filter_date_expire'] =  $_GET['filter_date_expire'];
+                $data['filter_date_expire'] = $_GET['filter_date_expire'];
+            }
+
+            $report_total = $this->Goods_model->getTotalAvailableGoodsByGroup($data);
+
+            $this->load->helper('export_data');
+
+            $exporter = new ExportDataExcel('browser', $goods_info['group'] . "_" . date("YmdHis") . ".xls");
+
+            $exporter->initialize(); // starts streaming data to web browser
+
+            $exporter->addRow(array(
+                    $this->lang->line('coupon_goods_name'),
+                    $this->lang->line('coupon_goods_code'),
+                    $this->lang->line('coupon_date_start'),
+                    $this->lang->line('coupon_date_end'),
+                    $this->lang->line('coupon_date_expire'),
+                    $this->lang->line('coupon_goods_batch')
+                )
+            );
+
+            $data['limit'] = 10000;
+            for ($i = 0; $i < $report_total/10000; $i++){
+                $data['start'] = ($i * 10000);
+                $results = $this->Goods_model->getAvailableGoodsByGroup($data);
+                foreach ($results as $result) {
+                    $exporter->addRow(array(
+                            $result['name'],
+                            $result['code'],
+                            isset($result['date_start']) && datetimeMongotoReadable($result['date_start']) ? datetimeMongotoReadable($result['date_start']) : "",
+                            isset($result['date_expire']) && datetimeMongotoReadable($result['date_expire']) ? datetimeMongotoReadable($result['date_expire']) : "",
+                            isset($result['date_expired_coupon']) && datetimeMongotoReadable($result['date_expired_coupon']) ? datetimeMongotoReadable($result['date_expired_coupon']) : "",
+                            isset($result['batch_name']) ? $result['batch_name'] : null
+                        )
+                    );
+                }
+            }
+            $exporter->finalize();
+        }
+    }
+
     public function getBadgeForGoods()
     {
         if ($this->input->get('client_id')) {
