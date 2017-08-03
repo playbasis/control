@@ -181,6 +181,16 @@ class Report_goods extends MY_Controller
                 }
             }
         } else {
+            if($goodsList){
+                foreach ($goodsList as $v){
+                    $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($v);
+                    if(array_key_exists('group', $goods_detail)){
+                        array_push($group, $goods_detail['group']);
+                    } else {
+                        array_push($goods, $goods_detail['goods_id']);
+                    }
+                }
+            }
             $filter_goods_id = '';
         }
 
@@ -505,6 +515,16 @@ class Report_goods extends MY_Controller
                 }
             }
         } else {
+            if($goodsList){
+                foreach ($goodsList as $v){
+                    $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($v);
+                    if(array_key_exists('group', $goods_detail)){
+                        array_push($group, $goods_detail['group']);
+                    } else {
+                        array_push($goods, $goods_detail['goods_id']);
+                    }
+                }
+            }
             $filter_goods_id = '';
         }
 
