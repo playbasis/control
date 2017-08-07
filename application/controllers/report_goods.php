@@ -252,6 +252,9 @@ class Report_goods extends MY_Controller
             if(!is_null($goods_player)){
                 if( $goods_player['value'] > 0 ){
                     $status = "active";
+                    if($filter_goods_status == "gifted"){
+                        $report_total--;
+                    }
                 }else{
                     $status = isset($goods_player['gifted']) && $goods_player['gifted'] ? "gifted": "used";
                     $date_used = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
@@ -604,6 +607,9 @@ class Report_goods extends MY_Controller
                 if(!is_null($goods_player)){
                     if( $goods_player['value'] > 0 ){
                         $status = "active";
+                        if($filter_goods_status == "gifted"){
+                            $report_total--;
+                        }
                     }else{
                         $status = isset($goods_player['gifted']) && $goods_player['gifted'] ? "gifted": "used";
                         $date_used = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
