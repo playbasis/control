@@ -35,7 +35,7 @@ class Goods_model extends MY_Model
 
     public function getPlayerGoodsById($site_id, $goodsId, $pb_player_id)
     {
-        $this->mongo_db->select(array('value'));
+        $this->mongo_db->select(array('value','gifted'));
         $this->mongo_db->where(array(
             'site_id' => $site_id,
             'goods_id' => $goodsId,
@@ -43,7 +43,7 @@ class Goods_model extends MY_Model
         ));
         $this->mongo_db->limit(1);
         $goods = $this->mongo_db->get('playbasis_goods_to_player');
-        return isset($goods[0]) ? $goods[0]['value'] : null;
+        return isset($goods[0]) ? $goods[0] : null;
     }
 
     public function getPlayerGoodsModifiedDateById($site_id, $goodsId, $pb_player_id)
@@ -60,32 +60,76 @@ class Goods_model extends MY_Model
     }
 
 
-    public function getPlayerGoods($site_id, $date_start, $date_end)
+    public function getPlayerGoods($site_id, $date_start, $date_end, $data=array())
     {
         $this->mongo_db->select(array('goods_id'));
         $this->mongo_db->where('site_id',$site_id);
+        if (!empty($data['goods_id']) && !empty($data['group'])) {
+            $this->mongo_db->where('$or', array(array('group' => array('$in' => $data['group'])),
+                array('goods_id' => array('$in' => $data['goods_id']))));
+        } elseif (!empty($data['group'])){
+            $this->mongo_db->where_in('group', $data['group']);
+        } elseif (!empty($data['goods_id'])){
+            $this->mongo_db->where_in('goods_id', $data['goods_id']);
+        }
         $this->mongo_db->where_gte('date_modified',new MongoDate(strtotime($date_start)));
         $this->mongo_db->where_lte('date_modified',new MongoDate(strtotime($date_end)));
         $goods = $this->mongo_db->get('playbasis_goods_to_player');
         return $goods;
     }
 
-    public function getPlayerGoodsUsed($site_id, $date_start, $date_end)
+    public function getPlayerGoodsUsed($site_id, $date_start, $date_end, $data=array())
     {
         $this->mongo_db->select(array('goods_id'));
         $this->mongo_db->where('site_id',$site_id);
         $this->mongo_db->where('value',0);
+        if (!empty($data['goods_id']) && !empty($data['group'])) {
+            $this->mongo_db->where('$or', array(array('group' => array('$in' => $data['group'])),
+                array('goods_id' => array('$in' => $data['goods_id']))));
+        } elseif (!empty($data['group'])){
+            $this->mongo_db->where_in('group', $data['group']);
+        } elseif (!empty($data['goods_id'])){
+            $this->mongo_db->where_in('goods_id', $data['goods_id']);
+        }
         $this->mongo_db->where_gte('date_modified',new MongoDate(strtotime($date_start)));
         $this->mongo_db->where_lte('date_modified',new MongoDate(strtotime($date_end)));
         $goods = $this->mongo_db->get('playbasis_goods_to_player');
         return $goods;
     }
 
-    public function getPlayerGoodsActive($site_id, $date_start, $date_end)
+    public function getPlayerGoodsGifted($site_id, $date_start, $date_end, $data=array())
+    {
+        $this->mongo_db->select(array('goods_id'));
+        $this->mongo_db->where('site_id',$site_id);
+        $this->mongo_db->where('gifted',true);
+        $this->mongo_db->where('value',0);
+        if (!empty($data['goods_id']) && !empty($data['group'])) {
+            $this->mongo_db->where('$or', array(array('group' => array('$in' => $data['group'])),
+                array('goods_id' => array('$in' => $data['goods_id']))));
+        } elseif (!empty($data['group'])){
+            $this->mongo_db->where_in('group', $data['group']);
+        } elseif (!empty($data['goods_id'])){
+            $this->mongo_db->where_in('goods_id', $data['goods_id']);
+        }
+        $this->mongo_db->where_gte('date_modified',new MongoDate(strtotime($date_start)));
+        $this->mongo_db->where_lte('date_modified',new MongoDate(strtotime($date_end)));
+        $goods = $this->mongo_db->get('playbasis_goods_to_player');
+        return $goods;
+    }
+
+    public function getPlayerGoodsActive($site_id, $date_start, $date_end, $data=array())
     {
         $this->mongo_db->select(array('goods_id'));
         $this->mongo_db->where('site_id',$site_id);
         $this->mongo_db->where_gt('value',0);
+        if (!empty($data['goods_id']) && !empty($data['group'])) {
+            $this->mongo_db->where('$or', array(array('group' => array('$in' => $data['group'])),
+                array('goods_id' => array('$in' => $data['goods_id']))));
+        } elseif (!empty($data['group'])){
+            $this->mongo_db->where_in('group', $data['group']);
+        } elseif (!empty($data['goods_id'])){
+            $this->mongo_db->where_in('goods_id', $data['goods_id']);
+        }
         $this->mongo_db->where_gte('date_modified',new MongoDate(strtotime($date_start)));
         $this->mongo_db->where_lte('date_modified',new MongoDate(strtotime($date_end)));
         $goods = $this->mongo_db->get('playbasis_goods_to_player');

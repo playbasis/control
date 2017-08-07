@@ -222,13 +222,16 @@ class Report_goods extends MY_Controller
 
         if ($client_id) {
             if($filter_goods_status == "expired"){
-                $ex_id = $this->Goods_model->getPlayerGoods($data['site_id'], $filter_date_start, $filter_date_end);
+                $ex_id = $this->Goods_model->getPlayerGoods($data['site_id'], $filter_date_start, $filter_date_end, $data);
                 $data['ex_id'] = is_array($ex_id) ? array_column($ex_id, 'goods_id') : array();
             } elseif ($filter_goods_status == "active"){
-                $in_id = $this->Goods_model->getPlayerGoodsActive($data['site_id'], $filter_date_start, $filter_date_end);
+                $in_id = $this->Goods_model->getPlayerGoodsActive($data['site_id'], $filter_date_start, $filter_date_end, $data);
                 $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
             } elseif ($filter_goods_status == "used"){
-                $in_id = $this->Goods_model->getPlayerGoodsUsed($data['site_id'], $filter_date_start, $filter_date_end);
+                $in_id = $this->Goods_model->getPlayerGoodsUsed($data['site_id'], $filter_date_start, $filter_date_end, $data);
+                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
+            } elseif ($filter_goods_status == "gifted"){
+                $in_id = $this->Goods_model->getPlayerGoodsGifted($data['site_id'], $filter_date_start, $filter_date_end, $data);
                 $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
             }
             $report_total = $this->Report_goods_model->getTotalReportGoods($data);
@@ -247,10 +250,10 @@ class Report_goods extends MY_Controller
             $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
             $date_used = null;
             if(!is_null($goods_player)){
-                if( $goods_player > 0 ){
+                if( $goods_player['value'] > 0 ){
                     $status = "active";
                 }else{
-                    $status = "used";
+                    $status = isset($goods_player['gifted']) && $goods_player['gifted'] ? "gifted": "used";
                     $date_used = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
                     $date_used = new DateTime(datetimeMongotoReadable($date_used), $UTC_7);
                     $date_used->setTimezone($newTZ);
@@ -557,6 +560,9 @@ class Report_goods extends MY_Controller
             } elseif ($filter_goods_status == "used") {
                 $in_id = $this->Goods_model->getPlayerGoodsUsed($data['site_id'], $filter_date_start, $filter_date_end);
                 $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
+            } elseif ($filter_goods_status == "gifted"){
+                $in_id = $this->Goods_model->getPlayerGoodsGifted($data['site_id'], $filter_date_start, $filter_date_end, $data);
+                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
             }
             $report_total = $this->Report_goods_model->getTotalReportGoods($data);
         }
@@ -596,10 +602,10 @@ class Report_goods extends MY_Controller
 
                 $date_used = null;
                 if(!is_null($goods_player)){
-                    if( $goods_player > 0 ){
+                    if( $goods_player['value'] > 0 ){
                         $status = "active";
                     }else{
-                        $status = "used";
+                        $status = isset($goods_player['gifted']) && $goods_player['gifted'] ? "gifted": "used";
                         $date_used = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
                         $date_used = new DateTime(datetimeMongotoReadable($date_used), $UTC_7);
                         $date_used->setTimezone($newTZ);
@@ -628,19 +634,21 @@ class Report_goods extends MY_Controller
                     }
                 }
 
-                $exporter->addRow(array(
-                        $player['cl_player_id'],
-                        $player['username'],
-                        $player['email'],
-                        isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
-                        $goods_data['code'],
-                        $result['amount'],
-                        $status,
-                        $date_added,
-                        $date_used,
-                        $date_expire
-                    )
-                );
+                if (is_null($filter_goods_status) || $filter_goods_status === $status) {
+                    $exporter->addRow(array(
+                            $player['cl_player_id'],
+                            $player['username'],
+                            $player['email'],
+                            isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
+                            $goods_data['code'],
+                            $result['amount'],
+                            $status,
+                            $date_added,
+                            $date_used,
+                            $date_expire
+                        )
+                    );
+                }
             }
         }
         $exporter->finalize();
