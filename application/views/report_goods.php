@@ -46,6 +46,7 @@
                         <option <?php if($filter_status == "all") echo "selected"; ?> value="all"><?php echo "All";    ?></option>
                         <option <?php if($filter_status == "active") echo "selected"; ?> value="active"><?php echo "Active"; ?></option>
                         <option <?php if($filter_status == "used") echo "selected"; ?> value="used"><?php echo "Used";   ?></option>
+                        <option <?php if($filter_status == "gifted") echo "selected"; ?> value="gifted"><?php echo "Gifted";    ?></option>
                         <option <?php if($filter_status == "expired") echo "selected"; ?> value="expired"><?php echo "Expired";?></option>
                     </select>
                 </span>
@@ -243,6 +244,12 @@ function downloadFile() {
             }
         });
         url += '&goods_id=' + goods;
+    }
+
+    var filter_goods_status = $('select[name=\'filter_goods_status\']').attr('value');
+
+    if (filter_goods_status != 0) {
+        url += '&status=' + encodeURIComponent(filter_goods_status);
     }
 
     location = url;
