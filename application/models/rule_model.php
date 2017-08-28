@@ -481,6 +481,44 @@ class Rule_model extends MY_Model
                 'category' => 'FEEDBACK',
             );
         }
+        $type = 'data';
+        $output[] = array(
+            '_id' => $type,
+            'name' => $type,
+            'description' => 'Response data ',
+            'sort_order' => 10,
+            'status' => 1,
+            'specific_id' => $type,
+            'dataSet' => array(
+                array(
+                    'field_type' => 'hidden',
+                    'label' => 'feedback_name',
+                    'param_name' => 'feedback_name',
+                    'placeholder' => 'feedback_name',
+                    'sortOrder' => 0,
+                    'tooltips' => 'feedback_name',
+                    'value' => $type,
+                ),
+                array(
+                    'field_type' => 'text',
+                    'label' => 'Key',
+                    'param_name' => 'key',
+                    'placeholder' => 'Key',
+                    'sortOrder' => 1,
+                    'value' => '',
+                ),
+                array(
+                    'field_type' => 'text',
+                    'label' => 'Value',
+                    'param_name' => 'param_value',
+                    'placeholder' => 'Value',
+                    'sortOrder' => 2,
+                    'value' => '',
+                ),
+            ),
+            'id' => $type,
+            'category' => 'FEEDBACK',
+        );
         return $output;
     }
 
