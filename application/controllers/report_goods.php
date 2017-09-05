@@ -594,6 +594,7 @@ class Report_goods extends MY_Controller
                 $this->lang->line('column_status'),
                 $this->lang->line('column_date_added'),
                 $this->lang->line('column_date_used'),
+                $this->lang->line('column_date_gifted'),
                 $this->lang->line('column_date_expire')
             )
         );
