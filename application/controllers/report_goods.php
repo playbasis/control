@@ -249,6 +249,7 @@ class Report_goods extends MY_Controller
             $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
             $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
             $date_used = null;
+            $date_gifted = null;
             if(!is_null($goods_player)){
                 if( $goods_player['value'] > 0 ){
                     $status = "active";
@@ -261,6 +262,10 @@ class Report_goods extends MY_Controller
                     $date_used = new DateTime(datetimeMongotoReadable($date_used), $UTC_7);
                     $date_used->setTimezone($newTZ);
                     $date_used = $date_used->format("Y-m-d H:i:s");
+                    if($status == "gifted"){
+                        $date_gifted = $date_used;
+                        $date_used = null;
+                    }
                 }
 
             } else {
@@ -304,6 +309,7 @@ class Report_goods extends MY_Controller
                     'date_added' => $date_added ,
                     'date_expire' => $date_expire,
                     'date_used' => $date_used,
+                    'date_gifted' => $date_gifted,
                     'goods_name' => isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
                     // 'value'             => $result['value']
                     'code' => $goods_data['code'],
@@ -604,6 +610,7 @@ class Report_goods extends MY_Controller
                 $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
 
                 $date_used = null;
+                $date_gifted = null;
                 if(!is_null($goods_player)){
                     if( $goods_player['value'] > 0 ){
                         $status = "active";
@@ -616,6 +623,10 @@ class Report_goods extends MY_Controller
                         $date_used = new DateTime(datetimeMongotoReadable($date_used), $UTC_7);
                         $date_used->setTimezone($newTZ);
                         $date_used = $date_used->format("Y-m-d H:i:s");
+                        if($status == "gifted"){
+                            $date_gifted = $date_used;
+                            $date_used = null;
+                        }
                     }
 
                 } else {
@@ -651,6 +662,7 @@ class Report_goods extends MY_Controller
                             $status,
                             $date_added,
                             $date_used,
+                            $date_gifted,
                             $date_expire
                         )
                     );

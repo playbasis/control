@@ -93,6 +93,7 @@
                     <td width="50" class="right"><?php echo $this->lang->line('column_goods_status'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_date_used'); ?></td>
+                    <td width="120" class="right"><?php echo $this->lang->line('column_date_gifted'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_date_expire'); ?></td>
                 </tr>
                 </thead>
@@ -119,12 +120,13 @@
                         <td style="word-wrap:break-word;" class="right"><?php echo isset($report['status']) ? $report['status']: ""; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo $report['date_added']; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_used']) ? $report['date_used'] : ""; ?></td>
+                        <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_gifted']) ? $report['date_gifted'] : ""; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_expire']) ? $report['date_expire'] : ""; ?></td>
                     </tr>
                         <?php } ?>
                     <?php } else { ?>
                 <tr>
-                    <td class="center" colspan="11"><?php echo $text_no_results; ?></td>
+                    <td class="center" colspan="12"><?php echo $text_no_results; ?></td>
                 </tr>
                     <?php } ?>
                 </tbody>
