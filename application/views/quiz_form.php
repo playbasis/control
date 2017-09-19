@@ -218,6 +218,14 @@ function find_template($data, $type, $template_id) {
                                     </tr>
                                     <tr>
                                         <td>
+                                            Question type :
+                                        </td>
+                                        <td>
+                                            <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][question_type]" value="<?php echo isset($questions['question_type'])?$questions['question_type']:""; ?>" >
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
                                             Question image :
                                         </td>
                                         <td>
@@ -1261,6 +1269,14 @@ function find_template($data, $type, $template_id) {
                                         <td>\
                                             <input type="text" class="question-input" name="quiz[questions]['+countQuestions+'][question]" value="" ></input>\
                                         </td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td>\
+                                            Question type :\
+                                        </td>\
+                                        <td>\
+                                            <input type="text" name="quiz[questions]['+countQuestions+'][question_type]" value="" >\
+                                        </td> \
                                     </tr>\
                                     <tr>\
                                         <td>\
