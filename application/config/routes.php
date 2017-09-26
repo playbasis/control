@@ -57,6 +57,7 @@ $route['block'] = "user/block";
 $route['report/rewards_badges'] = 'report_reward';
 $route['report/rewards_custompoint'] = 'report_custompoint';
 $route['report/goods'] = 'report_goods';
+$route['report/gift'] = 'report_gift';
 $route['report/registration'] = 'report_registration';
 $route['report/quest'] = 'report_quest';
 $route['report/quiz'] = 'report_quiz';
