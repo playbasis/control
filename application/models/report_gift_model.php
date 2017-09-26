@@ -85,6 +85,18 @@ class Report_gift_model extends MY_Model
             ));
         }
 
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
         $results = $this->mongo_db->get("playbasis_gift_log");
 
         return $results;
