@@ -1,149 +1,230 @@
 # Change Log
 
+## [2.33.0](https://github.com/playbasis/control/tree/2.33.0) (2017-09-28)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.0...2.33.0)
+
+## [2.32.24/fix_per_page_gift_log](https://github.com/playbasis/control/tree/2.32.24/fix_per_page_gift_log) (2017-09-26)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.23/gift_report...2.32.24/fix_per_page_gift_log)
+
+**Fixed bugs:**
+
+- Hotfix/2.32.24/fix per page gift log [\#447](https://github.com/playbasis/control/pull/447) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.23/gift_report](https://github.com/playbasis/control/tree/2.32.23/gift_report) (2017-09-26)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.18/support_gift_status_in_goods_report...2.32.23/gift_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.22/quiz question type [\#445](https://github.com/playbasis/control/pull/445) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.32.20/goods report gifted date [\#443](https://github.com/playbasis/control/pull/443) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.32.19/engine rule feedback text [\#442](https://github.com/playbasis/control/pull/442) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+
+**Fixed bugs:**
+
+- Hotfix/2.32.21/update goods report file column [\#444](https://github.com/playbasis/control/pull/444) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+
+**Merged pull requests:**
+
+- Hotfix/2.32.23/gift report [\#446](https://github.com/playbasis/control/pull/446) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.18/support_gift_status_in_goods_report](https://github.com/playbasis/control/tree/2.32.18/support_gift_status_in_goods_report) (2017-08-08)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.17/fix_bug_filter_tags_without_goods_in_report...2.32.18/support_gift_status_in_goods_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.18/support gift status in goods report [\#441](https://github.com/playbasis/control/pull/441) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.17/fix_bug_filter_tags_without_goods_in_report](https://github.com/playbasis/control/tree/2.32.17/fix_bug_filter_tags_without_goods_in_report) (2017-08-03)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.16/download_coupon_in_goods_group...2.32.17/fix_bug_filter_tags_without_goods_in_report)
+
+**Fixed bugs:**
+
+- Hotfix/2.32.17/fix bug filter tags without goods in report [\#440](https://github.com/playbasis/control/pull/440) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.16/download_coupon_in_goods_group](https://github.com/playbasis/control/tree/2.32.16/download_coupon_in_goods_group) (2017-08-01)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.15/enhancement_report...2.32.16/download_coupon_in_goods_group)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.16/download coupon in goods group [\#439](https://github.com/playbasis/control/pull/439) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.15/enhancement_report](https://github.com/playbasis/control/tree/2.32.15/enhancement_report) (2017-07-31)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.13/enhance_goods_expand_tags_and_show_date_start_end...2.32.15/enhancement_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.15/enhancement report [\#438](https://github.com/playbasis/control/pull/438) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.32.14/content set min length of summary to 2 [\#437](https://github.com/playbasis/control/pull/437) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.32.12/quiz multiple choice question [\#436](https://github.com/playbasis/control/pull/436) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+
+## [2.32.13/enhance_goods_expand_tags_and_show_date_start_end](https://github.com/playbasis/control/tree/2.32.13/enhance_goods_expand_tags_and_show_date_start_end) (2017-07-19)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.10/support_default_answer_in_quiz...2.32.13/enhance_goods_expand_tags_and_show_date_start_end)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.13/enhance goods expand tags and show date start end [\#435](https://github.com/playbasis/control/pull/435) ([piya-playbasis](https://github.com/piya-playbasis))
+
+**Fixed bugs:**
+
+- Hotfix/2.32.11/fix bug range option set to be zero [\#434](https://github.com/playbasis/control/pull/434) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+
+## [2.32.10/support_default_answer_in_quiz](https://github.com/playbasis/control/tree/2.32.10/support_default_answer_in_quiz) (2017-07-11)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.9/fix_goods_report...2.32.10/support_default_answer_in_quiz)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.10/support default answer in quiz [\#433](https://github.com/playbasis/control/pull/433) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.9/fix_goods_report](https://github.com/playbasis/control/tree/2.32.9/fix_goods_report) (2017-07-03)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.8/range_interval_in_quiz...2.32.9/fix_goods_report)
+
+**Fixed bugs:**
+
+- Hotfix/2.32.9/fix goods report [\#432](https://github.com/playbasis/control/pull/432) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.8/range_interval_in_quiz](https://github.com/playbasis/control/tree/2.32.8/range_interval_in_quiz) (2017-06-28)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.7/fix_goods_report_error...2.32.8/range_interval_in_quiz)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.8/range interval in quiz [\#431](https://github.com/playbasis/control/pull/431) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.7/fix_goods_report_error](https://github.com/playbasis/control/tree/2.32.7/fix_goods_report_error) (2017-06-23)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.6/teminate_and_goto_question_in_quiz...2.32.7/fix_goods_report_error)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.7/fix goods report error [\#430](https://github.com/playbasis/control/pull/430) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.6/teminate_and_goto_question_in_quiz](https://github.com/playbasis/control/tree/2.32.6/teminate_and_goto_question_in_quiz) (2017-06-22)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.5/bug_total_number_filter_in_custompoint...2.32.6/teminate_and_goto_question_in_quiz)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.6/teminate and goto question in quiz [\#429](https://github.com/playbasis/control/pull/429) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.5/bug_total_number_filter_in_custompoint](https://github.com/playbasis/control/tree/2.32.5/bug_total_number_filter_in_custompoint) (2017-06-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.4/missing_filter_status_download_custompoint_report...2.32.5/bug_total_number_filter_in_custompoint)
+
+**Fixed bugs:**
+
+- Hotfix/2.32.5/bug total number filter in custompoint [\#428](https://github.com/playbasis/control/pull/428) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.4/missing_filter_status_download_custompoint_report](https://github.com/playbasis/control/tree/2.32.4/missing_filter_status_download_custompoint_report) (2017-06-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.3/enhancement_report_and_filter_custompoint...2.32.4/missing_filter_status_download_custompoint_report)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.4/missing filter status download custompoint report [\#427](https://github.com/playbasis/control/pull/427) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.3/enhancement_report_and_filter_custompoint](https://github.com/playbasis/control/tree/2.32.3/enhancement_report_and_filter_custompoint) (2017-06-16)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.2/fix_empty_coupon_error...2.32.3/enhancement_report_and_filter_custompoint)
+
+**Implemented enhancements:**
+
+- Hotfix/2.32.3/enhancement report and filter custompoint [\#426](https://github.com/playbasis/control/pull/426) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.2/fix_empty_coupon_error](https://github.com/playbasis/control/tree/2.32.2/fix_empty_coupon_error) (2017-06-14)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.1/fix_edit_coupon_with_filter_in_goods...2.32.2/fix_empty_coupon_error)
+
+**Fixed bugs:**
+
+- Hotfix/2.32.2/fix empty coupon error [\#425](https://github.com/playbasis/control/pull/425) ([piya-playbasis](https://github.com/piya-playbasis))
+
+## [2.32.1/fix_edit_coupon_with_filter_in_goods](https://github.com/playbasis/control/tree/2.32.1/fix_edit_coupon_with_filter_in_goods) (2017-06-14)
+[Full Changelog](https://github.com/playbasis/control/compare/2.32.0...2.32.1/fix_edit_coupon_with_filter_in_goods)
+
+**Fixed bugs:**
+
+- Hotfix/2.32.1/fix edit coupon with filter in goods [\#424](https://github.com/playbasis/control/pull/424) ([piya-playbasis](https://github.com/piya-playbasis))
+
 ## [2.32.0](https://github.com/playbasis/control/tree/2.32.0) (2017-06-14)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.0...2.32.0)
-
-**Fixed bugs:**
-
-- Hotfix/2.31.27/content pagination with filtering [\#423](https://github.com/playbasis/control/pull/423) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
-
-## [2.31.26/fix_unable_to_delete_coupon_in_goods](https://github.com/playbasis/control/tree/2.31.26/fix_unable_to_delete_coupon_in_goods) (2017-06-12)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.25/fix_edit_name_with_symbol...2.31.26/fix_unable_to_delete_coupon_in_goods)
-
-**Fixed bugs:**
-
-- Hotfix/2.31.26/fix unable to delete coupon in goods [\#422](https://github.com/playbasis/control/pull/422) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.31.25/fix_edit_name_with_symbol](https://github.com/playbasis/control/tree/2.31.25/fix_edit_name_with_symbol) (2017-06-12)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.24/fix_tag_in_add_distinct...2.31.25/fix_edit_name_with_symbol)
-
-**Fixed bugs:**
-
-- Hotfix/2.31.25/fix edit name with symbol [\#421](https://github.com/playbasis/control/pull/421) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.31.24/fix_tag_in_add_distinct](https://github.com/playbasis/control/tree/2.31.24/fix_tag_in_add_distinct) (2017-06-09)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.22/fix_edit_goods_group_distinct...2.31.24/fix_tag_in_add_distinct)
-
-**Fixed bugs:**
-
-- Hotfix/2.31.24/fix tag in add distinct [\#420](https://github.com/playbasis/control/pull/420) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.31.22/fix_edit_goods_group_distinct](https://github.com/playbasis/control/tree/2.31.22/fix_edit_goods_group_distinct) (2017-06-09)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.23/add_option_type_text_in_quiz...2.31.22/fix_edit_goods_group_distinct)
-
-**Fixed bugs:**
-
-- Hotfix/2.31.22/fix edit goods group distinct [\#419](https://github.com/playbasis/control/pull/419) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.31.23/add_option_type_text_in_quiz](https://github.com/playbasis/control/tree/2.31.23/add_option_type_text_in_quiz) (2017-06-09)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.21/filter_date_time_coupon_in_goods_group...2.31.23/add_option_type_text_in_quiz)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.26/fix_unable_to_delete_coupon_in_goods...2.32.0)
 
 **Implemented enhancements:**
 
 - Hotfix/2.31.23/add option type text in quiz [\#418](https://github.com/playbasis/control/pull/418) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.31.21/filter_date_time_coupon_in_goods_group](https://github.com/playbasis/control/tree/2.31.21/filter_date_time_coupon_in_goods_group) (2017-06-08)
-[Full Changelog](https://github.com/playbasis/control/compare/3.31.20/fix_bug_coupon_page_in_goods...2.31.21/filter_date_time_coupon_in_goods_group)
-
-**Implemented enhancements:**
-
 - Hotfix/2.31.21/filter date time coupon in goods group [\#417](https://github.com/playbasis/control/pull/417) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [3.31.20/fix_bug_coupon_page_in_goods](https://github.com/playbasis/control/tree/3.31.20/fix_bug_coupon_page_in_goods) (2017-06-08)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.18/edit_goods_group_batch...3.31.20/fix_bug_coupon_page_in_goods)
-
-**Implemented enhancements:**
-
 - custompoint per user with deducted amount [\#415](https://github.com/playbasis/control/pull/415) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
-
-**Fixed bugs:**
-
-- Hotfix/3.31.20/fix bug coupon page in goods [\#416](https://github.com/playbasis/control/pull/416) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.31.18/edit_goods_group_batch](https://github.com/playbasis/control/tree/2.31.18/edit_goods_group_batch) (2017-06-07)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.17/check_date_start_expire_in_goods...2.31.18/edit_goods_group_batch)
-
-**Implemented enhancements:**
-
 - Hotfix/2.31.18/edit goods group batch [\#414](https://github.com/playbasis/control/pull/414) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.31.17/check_date_start_expire_in_goods](https://github.com/playbasis/control/tree/2.31.17/check_date_start_expire_in_goods) (2017-05-26)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.14/support_custom_param_numeric_in_goods...2.31.17/check_date_start_expire_in_goods)
-
-**Implemented enhancements:**
-
 - Hotfix/2.31.15/goods redemption report [\#411](https://github.com/playbasis/control/pull/411) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
-
-**Fixed bugs:**
-
-- Hotfix/2.31.17/check date start expire in goods [\#413](https://github.com/playbasis/control/pull/413) ([piya-playbasis](https://github.com/piya-playbasis))
-- Hotfix/2.31.16/goods report missing column [\#412](https://github.com/playbasis/control/pull/412) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
-
-## [2.31.14/support_custom_param_numeric_in_goods](https://github.com/playbasis/control/tree/2.31.14/support_custom_param_numeric_in_goods) (2017-05-25)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.13/fix_goods_exceed_ram_limit_in_quest...2.31.14/support_custom_param_numeric_in_goods)
-
-**Fixed bugs:**
-
-- Hotfix/2.31.14/support custom param numeric in goods [\#410](https://github.com/playbasis/control/pull/410) ([piya-playbasis](https://github.com/piya-playbasis))
-
-## [2.31.13/fix_goods_exceed_ram_limit_in_quest](https://github.com/playbasis/control/tree/2.31.13/fix_goods_exceed_ram_limit_in_quest) (2017-05-23)
-[Full Changelog](https://github.com/playbasis/control/compare/2.31.8/fix_bug_name_exist...2.31.13/fix_goods_exceed_ram_limit_in_quest)
-
-**Implemented enhancements:**
-
 - Hotfix/2.31.13/fix goods exceed ram limit in quest [\#409](https://github.com/playbasis/control/pull/409) ([piya-playbasis](https://github.com/piya-playbasis))
 - Hotfix/2.31.12/badge with visibility setting [\#408](https://github.com/playbasis/control/pull/408) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 - Hotfix/2.31.11/per user include inactive goods [\#407](https://github.com/playbasis/control/pull/407) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 - Hotfix/2.31.8/support no choice in quiz [\#404](https://github.com/playbasis/control/pull/404) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.31.8/fix bug name exist [\#402](https://github.com/playbasis/control/pull/402) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.31.7/filter goods [\#401](https://github.com/playbasis/control/pull/401) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.31.5/goods with user white list [\#400](https://github.com/playbasis/control/pull/400) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.31.4/support custom param in goods2 [\#399](https://github.com/playbasis/control/pull/399) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.31.3/support custom param in goods [\#398](https://github.com/playbasis/control/pull/398) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.31.2/filter goods name and redirect previous page [\#397](https://github.com/playbasis/control/pull/397) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.31.1/import export custom point [\#396](https://github.com/playbasis/control/pull/396) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 
 **Fixed bugs:**
 
+- Hotfix/2.31.27/content pagination with filtering [\#423](https://github.com/playbasis/control/pull/423) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.31.26/fix unable to delete coupon in goods [\#422](https://github.com/playbasis/control/pull/422) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.31.25/fix edit name with symbol [\#421](https://github.com/playbasis/control/pull/421) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.31.24/fix tag in add distinct [\#420](https://github.com/playbasis/control/pull/420) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.31.22/fix edit goods group distinct [\#419](https://github.com/playbasis/control/pull/419) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/3.31.20/fix bug coupon page in goods [\#416](https://github.com/playbasis/control/pull/416) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.31.17/check date start expire in goods [\#413](https://github.com/playbasis/control/pull/413) ([piya-playbasis](https://github.com/piya-playbasis))
+- Hotfix/2.31.16/goods report missing column [\#412](https://github.com/playbasis/control/pull/412) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
+- Hotfix/2.31.14/support custom param numeric in goods [\#410](https://github.com/playbasis/control/pull/410) ([piya-playbasis](https://github.com/piya-playbasis))
 - Hotfix/2.31.10/fix update expire goods [\#406](https://github.com/playbasis/control/pull/406) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 - Hotfix/2.31.9/fix bug answer [\#405](https://github.com/playbasis/control/pull/405) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 - Hotfix/2.31.8/fix upload goods with distinct [\#403](https://github.com/playbasis/control/pull/403) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 
+## [2.31.26/fix_unable_to_delete_coupon_in_goods](https://github.com/playbasis/control/tree/2.31.26/fix_unable_to_delete_coupon_in_goods) (2017-06-12)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.25/fix_edit_name_with_symbol...2.31.26/fix_unable_to_delete_coupon_in_goods)
+
+## [2.31.25/fix_edit_name_with_symbol](https://github.com/playbasis/control/tree/2.31.25/fix_edit_name_with_symbol) (2017-06-12)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.24/fix_tag_in_add_distinct...2.31.25/fix_edit_name_with_symbol)
+
+## [2.31.24/fix_tag_in_add_distinct](https://github.com/playbasis/control/tree/2.31.24/fix_tag_in_add_distinct) (2017-06-09)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.22/fix_edit_goods_group_distinct...2.31.24/fix_tag_in_add_distinct)
+
+## [2.31.22/fix_edit_goods_group_distinct](https://github.com/playbasis/control/tree/2.31.22/fix_edit_goods_group_distinct) (2017-06-09)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.23/add_option_type_text_in_quiz...2.31.22/fix_edit_goods_group_distinct)
+
+## [2.31.23/add_option_type_text_in_quiz](https://github.com/playbasis/control/tree/2.31.23/add_option_type_text_in_quiz) (2017-06-09)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.21/filter_date_time_coupon_in_goods_group...2.31.23/add_option_type_text_in_quiz)
+
+## [2.31.21/filter_date_time_coupon_in_goods_group](https://github.com/playbasis/control/tree/2.31.21/filter_date_time_coupon_in_goods_group) (2017-06-08)
+[Full Changelog](https://github.com/playbasis/control/compare/3.31.20/fix_bug_coupon_page_in_goods...2.31.21/filter_date_time_coupon_in_goods_group)
+
+## [3.31.20/fix_bug_coupon_page_in_goods](https://github.com/playbasis/control/tree/3.31.20/fix_bug_coupon_page_in_goods) (2017-06-08)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.18/edit_goods_group_batch...3.31.20/fix_bug_coupon_page_in_goods)
+
+## [2.31.18/edit_goods_group_batch](https://github.com/playbasis/control/tree/2.31.18/edit_goods_group_batch) (2017-06-07)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.17/check_date_start_expire_in_goods...2.31.18/edit_goods_group_batch)
+
+## [2.31.17/check_date_start_expire_in_goods](https://github.com/playbasis/control/tree/2.31.17/check_date_start_expire_in_goods) (2017-05-26)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.14/support_custom_param_numeric_in_goods...2.31.17/check_date_start_expire_in_goods)
+
+## [2.31.14/support_custom_param_numeric_in_goods](https://github.com/playbasis/control/tree/2.31.14/support_custom_param_numeric_in_goods) (2017-05-25)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.13/fix_goods_exceed_ram_limit_in_quest...2.31.14/support_custom_param_numeric_in_goods)
+
+## [2.31.13/fix_goods_exceed_ram_limit_in_quest](https://github.com/playbasis/control/tree/2.31.13/fix_goods_exceed_ram_limit_in_quest) (2017-05-23)
+[Full Changelog](https://github.com/playbasis/control/compare/2.31.8/fix_bug_name_exist...2.31.13/fix_goods_exceed_ram_limit_in_quest)
+
 ## [2.31.8/fix_bug_name_exist](https://github.com/playbasis/control/tree/2.31.8/fix_bug_name_exist) (2017-05-01)
 [Full Changelog](https://github.com/playbasis/control/compare/2.31.7/filter_goods...2.31.8/fix_bug_name_exist)
-
-**Implemented enhancements:**
-
-- Hotfix/2.31.8/fix bug name exist [\#402](https://github.com/playbasis/control/pull/402) ([piya-playbasis](https://github.com/piya-playbasis))
 
 ## [2.31.7/filter_goods](https://github.com/playbasis/control/tree/2.31.7/filter_goods) (2017-04-28)
 [Full Changelog](https://github.com/playbasis/control/compare/2.31.6/fix_referred_page...2.31.7/filter_goods)
 
-**Implemented enhancements:**
-
-- Hotfix/2.31.7/filter goods [\#401](https://github.com/playbasis/control/pull/401) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.31.6/fix_referred_page](https://github.com/playbasis/control/tree/2.31.6/fix_referred_page) (2017-04-27)
 [Full Changelog](https://github.com/playbasis/control/compare/2.31.4/support_custom_param_in_goods2...2.31.6/fix_referred_page)
-
-**Implemented enhancements:**
-
-- Hotfix/2.31.5/goods with user white list [\#400](https://github.com/playbasis/control/pull/400) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 
 ## [2.31.4/support_custom_param_in_goods2](https://github.com/playbasis/control/tree/2.31.4/support_custom_param_in_goods2) (2017-04-25)
 [Full Changelog](https://github.com/playbasis/control/compare/2.31.3/support_custom_param_in_goods...2.31.4/support_custom_param_in_goods2)
 
-**Implemented enhancements:**
-
-- Hotfix/2.31.4/support custom param in goods2 [\#399](https://github.com/playbasis/control/pull/399) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.31.3/support_custom_param_in_goods](https://github.com/playbasis/control/tree/2.31.3/support_custom_param_in_goods) (2017-04-20)
 [Full Changelog](https://github.com/playbasis/control/compare/2.31.2/filter_goods_name_and_redirect_previous_page...2.31.3/support_custom_param_in_goods)
 
-**Implemented enhancements:**
-
-- Hotfix/2.31.3/support custom param in goods [\#398](https://github.com/playbasis/control/pull/398) ([piya-playbasis](https://github.com/piya-playbasis))
-
 ## [2.31.2/filter_goods_name_and_redirect_previous_page](https://github.com/playbasis/control/tree/2.31.2/filter_goods_name_and_redirect_previous_page) (2017-04-19)
 [Full Changelog](https://github.com/playbasis/control/compare/2.31.0...2.31.2/filter_goods_name_and_redirect_previous_page)
-
-**Implemented enhancements:**
-
-- Hotfix/2.31.2/filter goods name and redirect previous page [\#397](https://github.com/playbasis/control/pull/397) ([piya-playbasis](https://github.com/piya-playbasis))
-- Hotfix/2.31.1/import export custom point [\#396](https://github.com/playbasis/control/pull/396) ([pongsakorn-ruadsong](https://github.com/pongsakorn-ruadsong))
 
 ## [2.31.0](https://github.com/playbasis/control/tree/2.31.0) (2017-04-18)
 [Full Changelog](https://github.com/playbasis/control/compare/2.30.2/fix_report_issue_due_to_change_group_name...2.31.0)
