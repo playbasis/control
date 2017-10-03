@@ -73,7 +73,7 @@
                                             <td></td>
                                             <td></td>
                                             <td class="center"><input title="title" type="text" name="filter_title" value="<?php echo isset($_GET['title']) ? $_GET['title'] : "" ?>" style="width:90%;"></td>
-                                            <td class="center"><input title="category" type="text" name="filter_category" value="<?php echo isset($_GET['category']) ? $_GET['category'] : "" ?>" style="width:90%;"></td>
+                                            <td class="center"><input title="category" type='text' name="filter_category" id="inputCategory" value="<?php echo isset($_GET['category']) ? $_GET['category'] : "" ?>" style="width:90%;" /></td>
                                             <td class="center"><input title="author" type="text" name="filter_author" value="<?php echo isset($_GET['author']) ? $_GET['author'] : "" ?>" style="width:90%;"></td>
                                             <td></td>
                                             <td></td>
@@ -677,4 +677,51 @@
     Pace.on("done", function(){
         $(".cover").fadeOut(1000);
     });
+</script>
+
+<script type="text/javascript">
+    $inputCategory = $('#inputCategory');
+    $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html();
+
+    $inputCategory.select2({
+        allowClear: true,
+        placeholder: "Category",
+        minimumInputLength: 0,
+        id: function (data) {
+            return data._id;
+        },
+        ajax: {
+            url: baseUrlPath + "content/category",
+            dataType: 'json',
+            quietMillis: 250,
+            data: function (term, page) {
+                return {
+                    search: term, // search term
+                };
+            },
+            results: function (data, page) {
+                return {results: data.rows};
+            },
+            cache: true
+        },
+        initSelection: function (element, callback) {
+            var id = $(element).val();
+            if (id !== "") {
+                $.ajax(baseUrlPath + "content/category/" + id, {
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        $inputCategory.parent().parent().parent().find('.control-label').append($pleaseWaitSpanHTML);
+                    }
+                }).done(function (data) {
+                    if (typeof data != "undefined")
+                        callback(data);
+                }).always(function () {
+                    $inputCategory.parent().parent().parent().find("#pleaseWaitSpan").remove();
+                });
+            }
+        },
+        formatResult: categoryFormatResult,
+        formatSelection: categoryFormatSelection,
+    });
+
 </script>
