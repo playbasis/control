@@ -397,8 +397,7 @@ class Content extends MY_Controller
         }
 
         if (isset($_GET['category']) && !empty($_GET['category'])) {
-            $category_data = $this->Content_model->retrieveContentCategoryByName($client_id, $site_id, $_GET['category']);
-            $filter['category'] = $category_data['_id'];
+            $filter['category'] = $_GET['category'];
             $parameter_url .= "&category=" . $_GET['category'];
         }
 
