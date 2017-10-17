@@ -9,7 +9,7 @@
             <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info"  onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
-                <button class="btn btn-info" onclick="location = baseUrlPath+'sequence'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+                <button class="btn btn-info" onclick="location = baseUrlPath+'reward_control/custom_reward'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div>
         </div>
         <div class="content">
@@ -83,7 +83,7 @@
         file_name = "<?php echo $file_name?>";
         file_id = "<?php echo $file_id?>";
 
-        location = baseUrlPath+'sequence/getSequenceFile?file_name='+file_name+'&file_id='+file_id;
+        location = baseUrlPath+'reward_control/getCustomRewardFile?file_name='+file_name+'&file_id='+file_id;
 
     }
 
