@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
-class Sequence extends MY_Controller
+class Reward_control extends MY_Controller
 {
     public function __construct()
     {
@@ -14,11 +14,11 @@ class Sequence extends MY_Controller
         }
 
         $this->load->model('Sequence_model');
-        $this->load->model('Location_model');
+        $this->load->model('Custom_reward_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
-        $this->lang->load("sequence", $lang['folder']);
+        $this->lang->load("reward_control", $lang['folder']);
     }
 
     public function index()
@@ -33,7 +33,9 @@ class Sequence extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'sequence/';
+        $this->data['tab_status'] = "sequence_reward";
+        $this->data['main'] = 'reward_control';
+        $this->data['form'] = 'reward_control/';
 
         if (isset($this->error['warning'])) {
             $this->data['error_warning'] = $this->error['warning'];
@@ -57,19 +59,77 @@ class Sequence extends MY_Controller
                 $client_id = $this->User_model->getClientId();
                 $site_id = $this->User_model->getSiteId();
                 $selectedSequences = $this->input->post('selected');
-
+                if($selectedSequences && is_array($selectedSequences)) {
                     foreach ($selectedSequences as $selectedSequence) {
                         $result = $this->Sequence_model->deleteSequence($client_id,$site_id,$selectedSequence);
                     }
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-                    redirect('/sequence', 'refresh');
+                    redirect('/reward_control', 'refresh');
+                } else {
+                    $this->session->set_flashdata('warning', $this->lang->line('text_fail_delete'));
+                    redirect('/reward_control', 'refresh');
+                }
             }
         }
 
         $this->getList(0);
     }
 
+    public function custom_reward()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['tab_status'] = "custom_reward";
+        $this->data['main'] = 'reward_control';
+        $this->data['form'] = 'reward_control/custom_reward';
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
+
+        if (isset($this->session->data['success'])) {
+            $this->data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $this->data['success'] = '';
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if (!$this->validateModify()) {
+                $this->error['warning'] = $this->lang->line('error_permission');
+            }else{
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+                $selectedCustomRewards = $this->input->post('selected');
+
+                if($selectedCustomRewards && is_array($selectedCustomRewards)) {
+                    foreach ($selectedCustomRewards as $selectedCustomReward) {
+                        $result = $this->Custom_reward_model->deleteCustomReward($client_id, $site_id, $selectedCustomReward);
+                    }
+
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                    redirect('/reward_control/custom_reward', 'refresh');
+                } else {
+                    $this->session->set_flashdata('warning', $this->lang->line('text_fail_delete'));
+                    redirect('/reward_control/custom_reward', 'refresh');
+                }
+            }
+        }
+
+        $this->getList(0);
+    }
     public function page($offset = 0)
     {
 
@@ -82,18 +142,23 @@ class Sequence extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'sequence/';
+        $this->data['form'] = 'reward_controlr/';
 
         $this->getList($offset);
     }
 
-    public function insert()
+    public function insert($type)
     {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'sequence/insert';
+        $this->data['form'] = 'reward_control/insert/'.$type;
+        if($type == 'sequence_reward'){
+            $this->data['main'] = 'reward_control_sequence_form';
+        } elseif($type == 'custom_reward') {
+            $this->data['main'] = 'reward_control_custom_reward_form';
+        }
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -105,9 +170,8 @@ class Sequence extends MY_Controller
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
             }
-
-            $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
-                'trim|required|min_length[2]|max_length[255]|xss_clean');
+            
+            $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
             if (empty($_FILES) || !isset($_FILES['file']['tmp_name']) || $_FILES['file']['tmp_name'] == '') {
                 $this->data['message'] = $this->lang->line('error_file');
@@ -148,32 +212,52 @@ class Sequence extends MY_Controller
                     $data['site_id'] = $site_id;
                     $data['file_name'] = $_FILES['file']['name'];
 
-                    // prepare data of sequence number
-                    if($this->generateSequenceData($handle,$data)) {
+                    if($type == 'sequence_reward'){
+                        // prepare data of sequence number
+                        if($this->generateSequenceData($handle,$data)) {
 
-                        $insert_file = $this->Sequence_model->insertSequence($data);
-                        if ($insert_file) {
-                            $this->session->set_flashdata('success', $this->lang->line('text_success_insert'));
-                            redirect('/sequence', 'refresh');
-                        } else {
-                            $this->data['message'] = $this->lang->line('text_fail_insert');
+                            $insert_file = $this->Sequence_model->insertSequence($data);
+                            if ($insert_file) {
+                                $this->session->set_flashdata('success', $this->lang->line('text_success_insert'));
+                                redirect('/reward_control', 'refresh');
+                            } else {
+                                $this->data['message'] = $this->lang->line('text_fail_insert');
+                            }
+                        }else{
+                            $this->data['message'] = $this->lang->line('error_non_numeric');
                         }
-                    }else{
-                        $this->data['message'] = $this->lang->line('error_non_numeric');
+                    } elseif($type == 'custom_reward') {
+                        if($this->generateCustomRewardData($handle,$data)) {
+
+                            $insert_file = $this->Custom_reward_model->insertCustomReward($data);
+                            if ($insert_file) {
+                                $this->session->set_flashdata('success', $this->lang->line('text_success_insert'));
+                                redirect('/reward_control', 'refresh');
+                            } else {
+                                $this->data['message'] = $this->lang->line('text_fail_insert');
+                            }
+                        }else{
+                            $this->data['message'] = $this->lang->line('error_reward_type');
+                        }
                     }
                 }
             }
         }
-        $this->getForm();
+        $this->getForm($type);
     }
 
-    public function update($sequence_id)
+    public function update($type, $item_id)
     {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'sequence/update/' . $sequence_id;
+        if($type == 'sequence_reward') {
+            $this->data['main'] = 'reward_control_sequence_form';
+        } elseif ($type == 'custom_reward'){
+            $this->data['main'] = 'reward_control_custom_reward_form';
+        }
+        $this->data['form'] = 'reward_control/update/'.$type .'/'. $item_id;
 
         $this->data['message'] = null;
 
@@ -183,9 +267,8 @@ class Sequence extends MY_Controller
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
             }
-
-            $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
-                'trim|required|min_length[2]|max_length[255]|xss_clean');
+            
+            $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
             if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
 
@@ -220,9 +303,17 @@ class Sequence extends MY_Controller
 
                 if ( $this->data['message'] == null) {
                     // prepare data of sequence number
-                    if(!$this->generateSequenceData($handle, $data))
-                    {
-                        $this->data['message'] = $this->lang->line('error_non_numeric');
+                    if($type == 'sequence_reward') {
+                        if(!$this->generateSequenceData($handle, $data))
+                        {
+                            $this->data['message'] = $this->lang->line('error_non_numeric');
+                        }
+                    } elseif ($type == 'custom_reward') {
+                        //graph
+                        if(!$this->generateCustomRewardData($handle,$data))
+                        {
+                            $this->data['message'] = $this->lang->line('error_reward_type');
+                        }
                     }
                 }
             }
@@ -230,18 +321,25 @@ class Sequence extends MY_Controller
             if ( $this->data['message'] == null && $this->form_validation->run() ) {
                 $client_id = $this->User_model->getClientId();
                 $site_id = $this->User_model->getSiteId();
-
-                $insert = $this->Sequence_model->updateSequence($client_id, $site_id, $sequence_id, $data);
+                if($type == 'sequence_reward') {
+                    $insert = $this->Sequence_model->updateSequence($client_id, $site_id, $item_id, $data);
+                } elseif ($type == 'custom_reward') {
+                    $insert = $this->Custom_reward_model->updateCustomReward($client_id, $site_id, $item_id, $data);
+                }
                 if ($insert) {
                     $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                    redirect('/sequence', 'refresh');
+                    if($type == 'sequence_reward') {
+                        redirect('/reward_control', 'refresh');
+                    } elseif ($type == 'custom_reward') {
+                        redirect('/reward_control/custom_reward', 'refresh');
+                    }
                 }else{
                     $this->data['message'] = $this->lang->line('text_fail_update');
                 }
             }
         }
 
-        $this->getForm($sequence_id);
+        $this->getForm($type, $item_id);
     }
 
     private function generateSequenceData($handle,&$data){
@@ -272,6 +370,37 @@ class Sequence extends MY_Controller
         return $result;
     }
 
+    private function generateCustomRewardData($handle,&$data){
+        $result = true;
+        $custom_reward_data = array();
+        $file_content = array();
+        $parameter_set = null;
+        while ((($line = fgets($handle)) !== false) && $result ) {
+            $file_content[]= $line;
+            $line = str_replace(' ', '', trim($line));
+            if (empty($line) || $line == ',' || (!$parameter_set && strpos($line,'reward_type'))) {
+                $line = trim($line);
+                $parameter_set = $line;
+                continue;
+            } // skip empty line
+            $obj = explode(',', $line);
+            $custom_param = trim($obj[0]);
+            $reward_type = strtolower(trim($obj[1]));
+            $reward_name = trim($obj[2]);
+            if(!in_array($reward_type, array('goods','goods_group','badge','custom_point'))){
+                $result = false;
+                break;
+            }
+            if(!isset($custom_reward_data[$custom_param])) {
+                $custom_reward_data[$custom_param] = array();
+            }
+            array_push($custom_reward_data[$custom_param] , array('reward_type' => $reward_type, 'reward_name' => $reward_name));
+        }
+        $data['file_content'] = $file_content;
+        $data['custom_reward_data'] = $custom_reward_data;
+        return $result;
+    }
+
     private function getList($offset)
     {
 
@@ -293,11 +422,15 @@ class Sequence extends MY_Controller
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
-        $config['base_url'] = site_url('sequence/page');
+        $config['base_url'] = site_url('reward_control/page');
 
-        $this->data['sequences'] = $this->Sequence_model->retrieveSequence($filter);
-
-        $config['total_rows'] = $this->Sequence_model->getTotalSequence($filter);
+        if($this->data['tab_status'] == 'sequence_reward'){
+            $this->data['data_list'] = $this->Sequence_model->retrieveSequence($filter);
+            $config['total_rows'] = $this->Sequence_model->getTotalSequence($filter);
+        } elseif ($this->data['tab_status'] == 'custom_reward') {
+            $this->data['data_list'] = $this->Custom_reward_model->retrieveCustomReward($filter);
+            $config['total_rows'] = $this->Custom_reward_model->getTotalCustomReward($filter);
+        }
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
 
@@ -343,46 +476,49 @@ class Sequence extends MY_Controller
             $this->data['success'] = '';
         }
 
-        $this->data['main'] = 'sequence';
+        $this->data['main'] = 'reward_control';
 
         $this->load->vars($this->data);
         $this->render_page('template');
     }
 
-    public function getForm($sequence_id = null)
+    public function getForm($type,$item_id = null)
     {
-        $this->data['main'] = 'sequence_form';
-
-        if (!is_null($sequence_id)) {
+        if (!is_null($item_id)) {
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
-            $sequence_info = $this->Sequence_model->retrieveSequenceByID($client_id, $site_id, $sequence_id);
+            if($type == 'sequence_reward'){
+                $data_info = $this->Sequence_model->retrieveSequenceByID($client_id, $site_id, $item_id);
+            } elseif ($type == 'custom_reward'){
+                $data_info = $this->Custom_reward_model->retrieveCustomRewardByID($client_id, $site_id, $item_id);
+            }
+            
         }
 
         if ($this->input->post('name')) {
             $this->data['name'] = $this->input->post('name');
-        } elseif (isset($sequence_info['name'])) {
-            $this->data['name'] = $sequence_info['name'];
+        } elseif (isset($data_info['name'])) {
+            $this->data['name'] = $data_info['name'];
         } else {
             $this->data['name'] = '';
         }
 
-        if (isset($sequence_info['file_name'])) {
-            $this->data['file_name'] = $sequence_info['file_name'];
+        if (isset($data_info['file_name'])) {
+            $this->data['file_name'] = $data_info['file_name'];
         } else {
             $this->data['file_name'] = '';
         }
 
-        if (isset($sequence_info['file_id'])) {
-            $this->data['file_id'] = $sequence_info['file_id'].'';
+        if (isset($data_info['file_id'])) {
+            $this->data['file_id'] = $data_info['file_id'].'';
         } else {
             $this->data['file_id'] = '';
         }
 
         if ($this->input->post('tags')) {
             $this->data['tags'] = explode(',', $this->input->post('tags'));
-        } elseif (isset($sequence_info['tags'])) {
-            $this->data['tags'] = $sequence_info['tags'];
+        } elseif (isset($data_info['tags'])) {
+            $this->data['tags'] = $data_info['tags'];
         } else {
             $this->data['tags'] = '';
         }
@@ -420,9 +556,38 @@ class Sequence extends MY_Controller
 
     }
 
+    public function getCustomRewardFile()
+    {
+        $json = array();
+
+        if ($this->input->get('file_id')) {
+            $sequence_file = $this->Custom_reward_model->retrieveCustomRewardFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_id'));
+        }
+
+        if ($this->input->get('file_name')) {
+            $file_name = $this->input->get('file_name');
+        }else{
+            $file_name = "sequence.csv";
+        }
+
+        if(isset($sequence_file['file_content'])){
+            $this->load->helper('export_data');
+
+            $exporter = new ExportDataCSVSequence('browser', $file_name);
+
+            $exporter->initialize(); // starts streaming data to web browser
+
+            foreach ($sequence_file['file_content'] as $row) {
+                $exporter->addRow(array($row) );
+            }
+            $exporter->finalize();
+        }
+
+    }
+
     private function validateModify()
     {
-        if ($this->User_model->hasPermission('modify', 'sequence')) {
+        if ($this->User_model->hasPermission('modify', 'reward_control')) {
             return true;
         } else {
             return false;
@@ -437,7 +602,7 @@ class Sequence extends MY_Controller
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'sequence') && $this->Feature_model->getFeatureExistByClientId($client_id, 'sequence')
+        if ($this->User_model->hasPermission('access', 'reward_control') && $this->Feature_model->getFeatureExistByClientId($client_id, 'reward_control')
         ) {
             return true;
         } else {
