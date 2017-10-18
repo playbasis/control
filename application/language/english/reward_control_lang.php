@@ -22,8 +22,8 @@ $lang = array(
     'entry_tags'                        => 'Tags',
     'text_browse'                       => 'Browse Files',
     'text_clear'                        => 'Clear Image',
-    'tab_sequence_reward'               => 'Sequence Reward',
-    'tab_custom_reward'                 => 'Custom Reward'
+    'tab_sequence_reward'               => 'Sequence',
+    'tab_custom_reward'                 => 'Custom Parameter'
 );
 $lang['error_access']                   = 'Warning: You do not have permission to access this page!';
 $lang['error_permission']               = 'Warning: You do not have permission to modify Sequence!';
