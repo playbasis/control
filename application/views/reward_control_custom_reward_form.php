@@ -130,6 +130,23 @@
         $('#formDemoModal').modal('show');
     }
 
+    function downloadCSV() {
+        var data, link;
+
+        var csv = csvData;
+        if (csv == null) return;
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = 'data:text/csv;charset=utf-8,' + csv;
+        }
+        data = encodeURI(csv);
+
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+    }
+
     function downloadFile(){
         file_name = "<?php echo $file_name?>";
         file_id = "<?php echo $file_id?>";
