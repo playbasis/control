@@ -53,6 +53,9 @@
                     <td>
                         <?php echo isset($file_name) && $file_name ? $file_name."&nbsp;&nbsp;<a onclick=\"downloadFile()\" title=\"Download files\" class=\"tooltips\" data-placement=\"top\"><i class=\"fa fa-file-text-o fa-lg\"></i></a>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" : ''; ?><input type="file" id="file" name="file" size="20" />
+                        <?php if (!(isset($file_name) && $file_name)) { ?>
+                            <a onclick="showDemo()" title="Show file example" class="tooltips" data-placement="top"><i class="fa fa-file-text-o fa-lg"></i></a>
+                        <?php } ?>
                     </td>
                 </tr>
 
@@ -72,12 +75,60 @@
     </div>
 </div>
 
+<div id="formDemoModal" class="modal hide fade"   tabindex="-1" role="dialog" aria-labelledby="formDemoModalLabel"  aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="formDemoModalLabel">File demo</h3>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row-fluid">
+
+                <table  id="example-table" border="2"></table>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary"  onclick='downloadCSV();'><i class="">&nbsp;</i>Download</button>
+
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+
+    </div>
+</div>
+
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/import/d3.v3.min.js"></script>
 
 <script type="text/javascript">
+
+    function showDemo(){
+        $('#formDemoModalLabel').html("File demo for custom parameter importing");
+        filename = "custom_reward_example.csv";
+
+        $("#example-table").empty();
+
+        d3.text("<?php echo base_url();?>image/import/"+filename, function(data) {
+            var parsedCSV = d3.csv.parseRows(data);
+            csvData = data;
+
+            var container = d3.select('#example-table')
+
+                .selectAll("tr")
+                .data(parsedCSV).enter()
+                .append("tr")
+
+                .selectAll("td")
+                .data(function(d) { return d; }).enter()
+                .append("td")
+                .text(function(d) { return d; });
+        });
+
+
+        $('#formDemoModal').modal('show');
+    }
 
     function downloadFile(){
         file_name = "<?php echo $file_name?>";
