@@ -3,11 +3,12 @@
 $lang = array(
 
     
-    'meta_description'                  => 'Reward Control',
-    'title'                             => 'Reward Control',
+    'meta_description'                  => 'Engine File Control',
+    'title'                             => 'Engine File Control',
     'text_no_sequence_results'          => 'No sequence found',
     'text_no_custom_reward_results'     => 'No custom reward found',
-    'heading_title'                     => 'Reward Control',
+    'text_no_custom_param_condition_results'     => 'No custom parameter condition found',
+    'heading_title'                     => 'Engine File Control',
     'column_name'                       => 'Name',
     'column_file'                       => 'File',
     'column_status'                     => 'Status',
