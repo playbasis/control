@@ -3,11 +3,12 @@
 $lang = array(
 
     
-    'meta_description'                  => 'Reward Control',
-    'title'                             => 'Reward Control',
+    'meta_description'                  => 'Engine File Control',
+    'title'                             => 'Engine File Control',
     'text_no_sequence_results'          => 'No sequence found',
     'text_no_custom_reward_results'     => 'No custom reward found',
-    'heading_title'                     => 'Reward Control',
+    'text_no_custom_param_condition_results'     => 'No custom parameter condition found',
+    'heading_title'                     => 'Engine File Control',
     'column_name'                       => 'Name',
     'column_file'                       => 'File',
     'column_status'                     => 'Status',
@@ -22,8 +23,9 @@ $lang = array(
     'entry_tags'                        => 'Tags',
     'text_browse'                       => 'Browse Files',
     'text_clear'                        => 'Clear Image',
-    'tab_sequence_reward'               => 'Sequence',
-    'tab_custom_reward'                 => 'Custom Parameter'
+    'tab_sequence_reward'               => 'Sequence Reward',
+    'tab_custom_reward'                 => 'Custom Parameter Reward',
+    'tab_custom_param_condtion'         => 'Custom Parameter Condition'
 );
 $lang['error_access']                   = 'Warning: You do not have permission to access this page!';
 $lang['error_permission']               = 'Warning: You do not have permission to modify Sequence!';
