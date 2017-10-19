@@ -15,6 +15,7 @@ class Reward_control extends MY_Controller
 
         $this->load->model('Sequence_model');
         $this->load->model('Custom_reward_model');
+        $this->load->model('Custom_param_condition_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -130,6 +131,62 @@ class Reward_control extends MY_Controller
 
         $this->getList(0);
     }
+
+    public function custom_param_condition()
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['tab_status'] = "custom_param_condition";
+        $this->data['main'] = 'reward_control';
+        $this->data['form'] = 'reward_control/custom_param_condition';
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
+
+        if (isset($this->session->data['success'])) {
+            $this->data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $this->data['success'] = '';
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if (!$this->validateModify()) {
+                $this->error['warning'] = $this->lang->line('error_permission');
+            }else{
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+                $selectedCustomParamConditions = $this->input->post('selected');
+
+                if($selectedCustomParamConditions && is_array($selectedCustomParamConditions)) {
+                    foreach ($selectedCustomParamConditions as $selectedCustomParamCondition) {
+                            $result = $this->Custom_param_condition_model->deleteCustomParamCondition($client_id, $site_id, $selectedCustomParamCondition);
+                    }
+
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                    redirect('/reward_control/custom_param_condition', 'refresh');
+                } else {
+                    $this->session->set_flashdata('warning', $this->lang->line('text_fail_delete'));
+                    redirect('/reward_control/custom_param_condition', 'refresh');
+                }
+            }
+        }
+
+        $this->getList(0);
+    }
+
     public function page($offset = 0)
     {
 
@@ -142,7 +199,7 @@ class Reward_control extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'reward_controlr/';
+        $this->data['form'] = 'reward_control/';
 
         $this->getList($offset);
     }
@@ -158,6 +215,8 @@ class Reward_control extends MY_Controller
             $this->data['main'] = 'reward_control_sequence_form';
         } elseif($type == 'custom_reward') {
             $this->data['main'] = 'reward_control_custom_reward_form';
+        }  elseif($type == 'custom_param_condition') {
+            $this->data['main'] = 'reward_control_custom_param_condition_form';
         }
 
         $client_id = $this->User_model->getClientId();
@@ -239,6 +298,19 @@ class Reward_control extends MY_Controller
                         }else{
                             $this->data['message'] = $this->lang->line('error_reward_type');
                         }
+                    } elseif($type == 'custom_param_condition') {
+                        if($this->generateCustomParamConditionData($handle,$data)) {
+
+                            $insert_file = $this->Custom_param_condition_model->insertCustomParamCondition($data);
+                            if ($insert_file) {
+                                $this->session->set_flashdata('success', $this->lang->line('text_success_insert'));
+                                redirect('/reward_control', 'refresh');
+                            } else {
+                                $this->data['message'] = $this->lang->line('text_fail_insert');
+                            }
+                        }else{
+                            $this->data['message'] = $this->lang->line('error_reward_type');
+                        }
                     }
                 }
             }
@@ -256,7 +328,10 @@ class Reward_control extends MY_Controller
             $this->data['main'] = 'reward_control_sequence_form';
         } elseif ($type == 'custom_reward'){
             $this->data['main'] = 'reward_control_custom_reward_form';
+        } elseif ($type == 'custom_param_condition'){
+            $this->data['main'] = 'reward_control_custom_param_condition_form';
         }
+
         $this->data['form'] = 'reward_control/update/'.$type .'/'. $item_id;
 
         $this->data['message'] = null;
@@ -309,8 +384,12 @@ class Reward_control extends MY_Controller
                             $this->data['message'] = $this->lang->line('error_non_numeric');
                         }
                     } elseif ($type == 'custom_reward') {
-                        //graph
                         if(!$this->generateCustomRewardData($handle,$data))
+                        {
+                            $this->data['message'] = $this->lang->line('error_reward_type');
+                        }
+                    } elseif ($type == 'custom_param_condition') {
+                        if(!$this->generateCustomParamConditionData($handle,$data))
                         {
                             $this->data['message'] = $this->lang->line('error_reward_type');
                         }
@@ -325,7 +404,10 @@ class Reward_control extends MY_Controller
                     $insert = $this->Sequence_model->updateSequence($client_id, $site_id, $item_id, $data);
                 } elseif ($type == 'custom_reward') {
                     $insert = $this->Custom_reward_model->updateCustomReward($client_id, $site_id, $item_id, $data);
+                }  elseif ($type == 'custom_param_condition') {
+                    $insert = $this->Custom_param_condition_model->updateCustomParamCondition($client_id, $site_id, $item_id, $data);
                 }
+
                 if ($insert) {
                     $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                     if($type == 'sequence_reward') {
@@ -401,6 +483,29 @@ class Reward_control extends MY_Controller
         return $result;
     }
 
+    private function generateCustomParamConditionData($handle,&$data){
+        $result = true;
+        $custom_param_condition_data = array();
+        $file_content = array();
+        $parameter_set = null;
+        while ((($line = fgets($handle)) !== false) && $result ) {
+            $file_content[]= $line;
+            $line = str_replace(' ', '', trim($line));
+            if (empty($line) || $line == ',' || (!$parameter_set && strpos($line,'reward_type'))) {
+                $line = trim($line);
+                $parameter_set = $line;
+                continue;
+            } // skip empty line
+            $obj = explode(',', $line);
+            foreach($obj as $value){
+                $custom_param_condition_data[] = $value;
+            }
+        }
+        $data['file_content'] = $file_content;
+        $data['custom_param_condition_data'] = $custom_param_condition_data;
+        return $result;
+    }
+
     private function getList($offset)
     {
 
@@ -430,6 +535,9 @@ class Reward_control extends MY_Controller
         } elseif ($this->data['tab_status'] == 'custom_reward') {
             $this->data['data_list'] = $this->Custom_reward_model->retrieveCustomReward($filter);
             $config['total_rows'] = $this->Custom_reward_model->getTotalCustomReward($filter);
+        } elseif ($this->data['tab_status'] == 'custom_param_condition') {
+            $this->data['data_list'] = $this->Custom_param_condition_model->retrieveCustomParamCondition($filter);
+            $config['total_rows'] = $this->Custom_param_condition_model->getTotalCustomParamCondition($filter);
         }
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
@@ -491,6 +599,8 @@ class Reward_control extends MY_Controller
                 $data_info = $this->Sequence_model->retrieveSequenceByID($client_id, $site_id, $item_id);
             } elseif ($type == 'custom_reward'){
                 $data_info = $this->Custom_reward_model->retrieveCustomRewardByID($client_id, $site_id, $item_id);
+            } elseif ($type == 'custom_param_condition'){
+                $data_info = $this->Custom_param_condition_model->retrieveCustomParamConditionByID($client_id, $site_id, $item_id);
             }
             
         }
@@ -558,8 +668,6 @@ class Reward_control extends MY_Controller
 
     public function getCustomRewardFile()
     {
-        $json = array();
-
         if ($this->input->get('file_id')) {
             $sequence_file = $this->Custom_reward_model->retrieveCustomRewardFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_id'));
         }
@@ -567,7 +675,7 @@ class Reward_control extends MY_Controller
         if ($this->input->get('file_name')) {
             $file_name = $this->input->get('file_name');
         }else{
-            $file_name = "sequence.csv";
+            $file_name = "custom_reward.csv";
         }
 
         if(isset($sequence_file['file_content'])){
@@ -582,7 +690,32 @@ class Reward_control extends MY_Controller
             }
             $exporter->finalize();
         }
+    }
 
+    public function getCustomParamConditionFile()
+    {
+        if ($this->input->get('file_id')) {
+            $sequence_file = $this->Custom_param_condition_model->retrieveCustomParamConditionFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_id'));
+        }
+
+        if ($this->input->get('file_name')) {
+            $file_name = $this->input->get('file_name');
+        }else{
+            $file_name = "custom_param_condition.csv";
+        }
+
+        if(isset($sequence_file['file_content'])){
+            $this->load->helper('export_data');
+
+            $exporter = new ExportDataCSVSequence('browser', $file_name);
+
+            $exporter->initialize(); // starts streaming data to web browser
+
+            foreach ($sequence_file['file_content'] as $row) {
+                $exporter->addRow(array($row) );
+            }
+            $exporter->finalize();
+        }
     }
 
     private function validateModify()
