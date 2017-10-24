@@ -170,6 +170,18 @@ class Custom_reward_model extends MY_Model
                 $this->mongo_db->set('date_modified', new MongoDate());
 
                 $result = $this->mongo_db->update('playbasis_custom_reward_to_client');
+
+                // update rule engine //
+                $this->mongo_db->where('client_id', new MongoID($client_id));
+                $this->mongo_db->where('site_id', new MongoID($site_id));
+                $this->mongo_db->where('jigsaw_set.specific_id' , $item_id);
+                $this->mongo_db->where('jigsaw_set.category' , "REWARD_CUSTOM");
+                $this->mongo_db->set(array('jigsaw_set.$.name' => $data['name']));
+                if(isset($data['file_name']) && $data['file_name']) {
+                    $this->mongo_db->set(array('jigsaw_set.$.description' => "file : " . $data['file_name']));
+                }
+                $this->mongo_db->update_all('playbasis_rule');
+                // end update rule engine //
             }
         }
 

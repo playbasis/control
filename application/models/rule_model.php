@@ -1277,6 +1277,10 @@ class Rule_model extends MY_Model
                             }
                         }
                         break;
+                    case 'REWARD_CUSTOM':
+                        $is_condition = false;
+                        $check_reward = true;
+                        break;
                     case 'FEEDBACK':
                         $is_condition = false;
                         $check_reward = true;
