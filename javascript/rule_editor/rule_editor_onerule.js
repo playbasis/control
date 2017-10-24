@@ -199,7 +199,7 @@ oneRuleMan = {
 
     validateAtLeastOneReward:function() {
         for(var index in oneRuleMan.nodeList){
-            if (['REWARD', 'REWARD_SEQUENCE', 'FEEDBACK'].indexOf(oneRuleMan.nodeList[index].category) > -1) return true;
+            if (['REWARD', 'REWARD_SEQUENCE', 'REWARD_CUSTOM', 'FEEDBACK'].indexOf(oneRuleMan.nodeList[index].category) > -1) return true;
             if( oneRuleMan.nodeList[index].category == 'GROUP'){
                 var groupContainer = groupMan.findGroupContainerInNodeList(oneRuleMan.nodeList[index].uid);
                 if( typeof groupContainer.value != 'undefined' && groupContainer.value.length > 0){
@@ -935,6 +935,18 @@ $('#new_reward_sequence_btn').live('click',function(event){
     //oneRuleMan.openNodeSelectionDialogType = 'FEEDBACK';
 })
 
+//Event : Insert new Reward custom control
+$('#new_reward_custom_btn').live('click',function(event){
+    event.preventDefault();
+    var theModal = $('#newrule_reward_custom_modal');
+
+    //oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Reward,'reward');
+    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_CustomReward,'reward');
+    theModal.modal('show');
+    //oneRuleMan.openNodeSelectionDialogType = 'REWARD';
+    oneRuleMan.openNodeSelectionDialogType = 'REWARD_CUSTOM';
+})
+
 //Event : Insert new Group
 $('#new_group_btn').live('click',function(event){
     event.preventDefault();
@@ -986,6 +998,8 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
             jsonItemSet = jsonString_Reward;
         else if(type === 'REWARD_SEQUENCE')
             jsonItemSet = jsonString_RewardSequence;
+        else if(type === 'REWARD_CUSTOM')
+            jsonItemSet = jsonString_CustomReward;
         else if(type === 'FEEDBACK')
             jsonItemSet = jsonString_Feedback;
         else if(type === 'GROUP')

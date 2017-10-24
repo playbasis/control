@@ -473,6 +473,7 @@
     var jsonString_RewardSequence = <?php echo json_encode($rewardSequenceList); ?>;
     var jsonString_Feedback  = <?php echo json_encode($feedbackList); ?>;
     var jsonString_Group     = <?php echo json_encode($groupList); ?>;
+    var jsonString_CustomReward    = <?php echo json_encode($customRewardFileList); ?>;
     var jsonString_Email     = <?php echo json_encode($emailList); ?>;
     var jsonString_Sms       = <?php echo json_encode($smsList); ?>;
     var jsonString_Push      = <?php echo json_encode($pushList); ?>;
@@ -481,6 +482,7 @@
     var jsonString_Game   = <?php echo json_encode($gameList); ?>;
     var jsonString_Location   = <?php echo json_encode($locationList); ?>;
     var jsonString_SequenceFile   = <?php echo json_encode($sequenceFile); ?>;
+    var jsonString_CustomParamFile   = <?php echo json_encode($customParamFile); ?>;
     var jsonString_Point   = <?php echo json_encode($pointList); ?>;
 
     //var jsonString_RulesList= '<?php //print_r($ruleList);?>';
@@ -600,7 +602,7 @@
 <div class="modal hide fade rule_modal_condition pbd_rule_editor_modal" id="newrule_condition_modal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
-        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select an codition to add this rule." data-original-title="Condition" >Choose Condition</h3>
+        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select a condition to add this rule." data-original-title="Condition" >Choose Condition</h3>
     </div>
     <div class="modal-body">
         <div class="selection_wrapper" style="margin-left:4px"></div>
@@ -615,7 +617,7 @@
 <div class="modal hide fade rule_modal_condition pbd_rule_editor_modal" id="newrule_condition_group_modal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
-        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select an condition group to add this rule." data-original-title="Condition" >Choose Condition Group</h3>
+        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select a condition group to add this rule." data-original-title="Condition" >Choose Condition Group</h3>
     </div>
     <div class="modal-body">
         <div class="selection_wrapper" style="margin-left:4px"></div>
@@ -630,7 +632,7 @@
 <div class="modal hide fade rule_modal_condition pbd_rule_editor_modal" id="newrule_reward_modal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
-        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select an reward to give this rule." data-original-title="Reward" >Choose Reward</h3>
+        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select a reward to give this rule." data-original-title="Reward" >Choose Reward</h3>
     </div>
 
     <div class="modal-body ">
@@ -644,11 +646,29 @@
 </div>
 <!-- end : choose reward modal -->
 
+<!-- start : choose reward by custom param modal -->
+<div class="modal hide fade rule_modal_condition pbd_rule_editor_modal" id="newrule_reward_custom_modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select a reward to give this rule." data-original-title="Reward" >Choose a Custom Control file</h3>
+    </div>
+
+    <div class="modal-body ">
+        <div class="selection_wrapper" style="margin-left:4px">
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <a href="javaScript:void()" class="btn btn-primary pbd_modal_confirm_btn">OK</a>
+    </div>
+</div>
+<!-- end : choose reward by custom param modal -->
+
 <!-- start : choose reward group modal -->
 <div class="modal hide fade rule_modal_condition pbd_rule_editor_modal" id="newrule_group_modal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
-        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select an reward group type" data-original-title="Reward" >Choose Reward Group Type</h3>
+        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select a reward group type" data-original-title="Reward" >Choose Reward Group Type</h3>
     </div>
 
     <div class="modal-body ">

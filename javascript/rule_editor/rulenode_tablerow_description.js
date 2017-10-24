@@ -261,16 +261,18 @@ toolstip = {
 			description:'Reward a user with the specified amount of points',
 			field_desc:{
 				reward_name:'reward name',
-				quantity:'amount of point to award',
-				custom_log:'custom parameter to log'
+                sequence_id:'quantity check by the sequence file',
+				loop:   '       repeat sequence index?',
+				global: '       the index run globally by all users?'
 			}
 		},
 		exp:{ 
 			description:'Reward a user with the specified amount of exp',
 			field_desc:{
 				reward_name:'reward name',
-				quantity:'amount of exp to award',
-				custom_log:'custom parameter to log'
+                sequence_id:'quantity check by the sequence file',
+                loop:'repeat sequence index?',
+                global: 'the index run globally by all users?'
 			}
 		},
 		badge:{ 
@@ -278,32 +280,48 @@ toolstip = {
 			field_desc:{
 				reward_name:'item to award',
 				item_id:'which item to give to user',
-				quantity:'amount to award (this is usually one, however, the same item can be acquired more than once)'
+                sequence_id:'quantity check by the sequence file',
+                loop:'repeat sequence index?',
+                global: 'the index run globally by all users?'
 			}
 		},
 		level:{ 
 			description:'Reward a user with the specified amount of level',
 			field_desc:{
 				reward_name:'reward name',
-				quantity:'amount of level to award'
+                sequence_id:'quantity check by the sequence file',
+                loop:'repeat sequence index?',
+                global: 'the index run globally by all users?'
 			}
 		},
 		customPointReward:{ 
 			description:'Reward a user with the specified type and amount of point, where the type and/or amount of point to award can be dynamically calculated and passed in via POST parameters in the request to the /Engine/rule method.',
 			field_desc:{
 				reward_name:'name of point to award',
-				quantity:'amount of point to award'
+                sequence_id:'quantity check by the sequence file',
+                loop:'repeat sequence index?',
+                global: 'the index run globally by all users?'
 			}
 		},
 		etc:{
 			description:'Reward a user with the specified type and amount of point',
 			field_desc:{
 				reward_name:'name of custom point to award',
-				quantity:'amount of custom point to award',
-				custom_log:'custom parameter to log'
+                sequence_id:'quantity check by the sequence file',
+                loop:'repeat sequence index?',
+                global: 'the index run globally by all users?'
 			}
 		}
 	},
+
+    reward_custom: {
+        etc: {
+            description: 'Reward a user by checking rewards that corresponds with a specific custom parameter',
+            field_desc: {
+                parameter_name: 'specific custom parameter to check with reward in the file'
+            }
+        },
+    },
 
 	reward:{
 		point:{
