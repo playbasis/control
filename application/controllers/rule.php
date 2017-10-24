@@ -24,6 +24,8 @@ class Rule extends MY_Controller
         $this->load->model('Game_model');
         $this->load->model('Location_model');
         $this->load->model('Sequence_model');
+        $this->load->model('Custom_reward_model');
+        $this->load->model('Custom_param_condition_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -91,6 +93,8 @@ class Rule extends MY_Controller
         $gameList = $this->Game_model->getGameList($client_id, $site_id);
         $locationList = $this->Location_model->getLocationList($client_id, $site_id);
         $sequenceFile = $this->Sequence_model->retrieveSequence(array('client_id'=>$client_id, 'site_id'=>$site_id));
+        $customParamFile = $this->Custom_param_condition_model->retrieveCustomParamCondition(array('client_id'=>$client_id, 'site_id'=>$site_id));
+        $customRewardFile = $this->Custom_reward_model->retrieveCustomReward(array('client_id'=>$client_id, 'site_id'=>$site_id));
         $pointList = $this->Reward_model->getPointsBySiteId($site_id);
         if($gameList){
             foreach ($gameList as &$game) {
@@ -157,6 +161,35 @@ class Rule extends MY_Controller
             }
         }
 
+        if (is_array($customRewardFile)) {
+            foreach ($customRewardFile as $index => &$customReward ) {
+                if($customReward["name"]== "customPointReward") {
+                    unset($customRewardFile[$index]);
+                }else{
+                    $customReward['id'] = $this->Rule_model->findJigsawId('reward', 'REWARD');
+                    $customReward['specific_id'] = $customReward['_id']."";
+                    unset($customReward['_id']);
+                    $customReward['description'] = "file : ".$customReward['file_name'];
+                    $customReward['category'] = "REWARD_CUSTOM";
+
+                    $customReward['dataSet'][]=array( "param_name" => "file_id",
+                        "label" => "file_id",
+                        "placeholder" => "file_id",
+                        "sortOrder" => "0",
+                        "field_type" => "hidden",
+                        "value" => $customReward['specific_id']);
+                    $customReward['dataSet'][]=array( "param_name" => "parameter_name",
+                        "label" => "parameter name",
+                        "placeholder" => "parameter name",
+                        "sortOrder" => "0",
+                        "field_type" => "text",
+                        "value" => "");
+
+                }
+
+            }
+        }
+
         // Add deeplink generator in feedback
         $feedbackList[] = array(
             "_id" => "deeplink_feedback",
@@ -185,7 +218,9 @@ class Rule extends MY_Controller
         $this->data['gameList'] = $gameList;
         $this->data['locationList'] = $locationList;
         $this->data['sequenceFile'] = $sequenceFile;
+        $this->data['customParamFile'] = $customParamFile;
         $this->data['pointList'] = $pointList;
+        $this->data['customRewardFileList'] = $customRewardFile;
 
         //}
 

@@ -36,6 +36,8 @@ Node = function(json){
             var target_element = (toolstip[this.category.toLowerCase()]);
         }else if(this.category.toLowerCase() == "reward" && !(toolstip[this.category.toLowerCase()].hasOwnProperty(this.jigsawName))){
             var target_element = ((toolstip[this.category.toLowerCase()])['etc']);
+        }else if(this.category.toLowerCase() == "reward_custom" ){
+            var target_element = ((toolstip[this.category.toLowerCase()])['etc']);
         }else{
             var target_element = ((toolstip[this.category.toLowerCase()])[this.jigsawName]);
         }
@@ -81,6 +83,7 @@ Node.prototype.getHTML = function(){
         case 'CONDITION':boxStyle = 'pbd_boxstyle_condition';boxIcon= 'fa-icon-time';break;
         case 'REWARD':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
         case 'REWARD_SEQUENCE':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
+        case 'REWARD_CUSTOM':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
         case 'FEEDBACK':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
         case 'GROUP':boxStyle = 'pbd_boxstyle_group';boxIcon= 'fa-icon-tasks';break;
         case 'CONDITION_GROUP':boxStyle = 'pbd_boxstyle_group';boxIcon= 'fa-icon-tasks';break;
@@ -164,7 +167,7 @@ Node.prototype.getHTML = function(){
 
     if( !this.isGroupItem ){
         //Add connection link
-        this.mRuleHTML += '<div class="row connection"><div class="line_connect line_top offset6"></div><div class="offset6 new_node_connect"><div class="new_node_connect_btn circle" style="margin-top: -20px;"><div class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" id="1"><i class="icon-plus icon-white"></i> Add : condition & reward</a><ul class="dropdown-menu pbd_dropdown-menu" role="menu" aria-labelledby="dLabel"><li><a tabindex="-1" id="new_condition_btn" href="#"><i class="fa-icon-cogs"></i> Condition</a></li><li><a tabindex="-1" id="new_condition_group_btn" href="#"><i class="fa-icon-cogs"></i> Condition Group</a></li><li><a tabindex="-1" id="new_reward_btn" href="#"><i class="fa-icon-trophy"></i> Reward</a></li><li><a tabindex="-1" id="new_reward_sequence_btn" href="#"><i class="fa-icon-trophy"></i> Reward Sequence</a></li><li><a tabindex="-1" id="new_group_btn" href="#"><i class="fa-icon-trophy"></i> Reward Group</a></li></ul></div></div></div></div></div>';
+        this.mRuleHTML += '<div class="row connection"><div class="line_connect line_top offset6"></div><div class="offset6 new_node_connect"><div class="new_node_connect_btn circle" style="margin-top: -20px;"><div class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" id="1"><i class="icon-plus icon-white"></i> Add : condition & reward</a><ul class="dropdown-menu pbd_dropdown-menu" role="menu" aria-labelledby="dLabel"><li><a tabindex="-1" id="new_condition_btn" href="#"><i class="fa-icon-cogs"></i> Condition</a></li><li><a tabindex="-1" id="new_condition_group_btn" href="#"><i class="fa-icon-cogs"></i> Condition Group</a></li><li><a tabindex="-1" id="new_reward_btn" href="#"><i class="fa-icon-trophy"></i> Reward</a></li><li><a tabindex="-1" id="new_reward_sequence_btn" href="#"><i class="fa-icon-trophy"></i> Reward Sequence</a></li><li><a tabindex="-1" id="new_reward_custom_btn" href="#"><i class="fa-icon-trophy"></i> Reward Custom Param</a></li><li><a tabindex="-1" id="new_group_btn" href="#"><i class="fa-icon-trophy"></i> Reward Group</a></li></ul></div></div></div></div></div>';
     }
 
     //End node enclosure

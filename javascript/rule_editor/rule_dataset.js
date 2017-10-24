@@ -65,6 +65,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         case 'gameLevel' : template = jsonString_Game;break;
                         case 'locationArea' : template = jsonString_Location;break;
                         case 'reward_sequence' : template = jsonString_SequenceFile;break;
+                        case 'customParameterFile' : template = jsonString_CustomParamFile;break;
                         case 'point' : template = jsonString_Point;break;
                     }
                     return {
@@ -217,6 +218,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         case 'gameLevel' : template = jsonString_Game;break;
                         case 'locationArea' : template = jsonString_Location;break;
                         case 'reward_sequence' : template = jsonString_SequenceFile;break;
+                        case 'customParameterFile' : template = jsonString_CustomParamFile;break;
                         case 'point' : template = jsonString_Point;break;
                     }
                     ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type + '">' + get_selected_option_text(template, v.value) + '</span>');
@@ -531,6 +533,26 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                             rowField.append(monthoption);
                             $('#monthday').val(rowText.html());
                             //console.log('MONTHLY');
+                        }
+                        else if(anotherType.match('CUSTOMPARAMETERFILE')) {
+                            if($thisrow.find('.dropdown').length > 0) {
+                                console.log('CUSTOMPARAMETERFILE in if');
+                                var operation = {
+                                    'in': 'in',
+                                    'notIn': 'notIn'
+                                }
+                                var operation_option = $('<select id="operator">');
+                                $.each(operation, function (key, value) {
+                                    operation_option.append($('<option>', {value: key})
+                                        .text(value));
+                                });
+                                rowField.children().hide();
+                                rowField.append(operation_option);
+                                $('#operator').val(rowText.html());
+                            }else{
+                                if(DEBUG)console.log('edit > text');
+                                rowField.find('input').val(rowText.html());
+                            }
                         }
                         else if(anotherType.match('CUSTOMPARAMETER')) {
                             if($thisrow.find('.dropdown').length > 0) {
