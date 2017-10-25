@@ -459,7 +459,7 @@ class Reward_control extends MY_Controller
         $parameter_set = null;
         while ((($line = fgets($handle)) !== false) && $result ) {
             $file_content[]= $line;
-            $line = str_replace(' ', '', trim($line));
+            $line = trim($line);
             if (empty($line) || $line == ',' || (!$parameter_set && strpos($line,'reward_type'))) {
                 $line = trim($line);
                 $parameter_set = $line;
@@ -490,7 +490,7 @@ class Reward_control extends MY_Controller
         $parameter_set = null;
         while ((($line = fgets($handle)) !== false) && $result ) {
             $file_content[]= $line;
-            $line = str_replace(' ', '', trim($line));
+            $line = trim($line);
             if (empty($line) || $line == ',' || (!$parameter_set && strpos($line,'reward_type'))) {
                 $line = trim($line);
                 $parameter_set = $line;
