@@ -1994,7 +1994,7 @@ class Goods extends MY_Controller
             'status' => (bool)$data['status'],
             'deleted' => false,
             'sponsor' => isset($data['sponsor']) ? $data['sponsor'] : false,
-            'sort_order' => (int)$data['sort_order'] | 1,
+            'sort_order' => isset($data['sort_order']) ? (int)$data['sort_order'] : 1,
             'language_id' => 1,
             'redeem' => $redeem,
             'custom_param' => isset($data['custom_param']) ? $data['custom_param'] : array(),
@@ -2019,12 +2019,12 @@ class Goods extends MY_Controller
         $parameter_set = null;
         while (($line = fgets($handle)) !== false) {
             $line = trim($line);
-            if (empty($line) || $line == ',' || (!$parameter_set && strpos($line,'date_start'))) {
+            $obj = explode(',', $line);
+            if (empty($line) || $line == ',' || empty($obj[0]) || (!$parameter_set && strpos($line,'date_start'))) {
                 $line = trim($line);
                 $parameter_set = $line;
                 continue;
             } // skip empty line
-            $obj = explode(',', $line);
             $name = trim($obj[0]);
             $code = trim(isset($obj[1]) ? $obj[1] : $name);
             $date_start = trim(isset($obj[2]) && !empty($obj[2]) ? $obj[2] : null);
