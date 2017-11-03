@@ -863,7 +863,7 @@ $('#tabs a').tabs();
         }
 
         if(file){
-            if(file.size < 2097152) { // 2MB (this size is in bytes)
+            if(file.size < 4194304) { // 4MB (this size is in bytes)
                 var formData = new FormData($('#form_coupon')[0]);
                 $.ajax({
                     type: "POST",
@@ -1070,7 +1070,7 @@ $(document).ready(function(){
         var file = document.getElementById('file').files[0];
 
         if(file){
-            if(file.size < 2097152) { // 2MB (this size is in bytes)
+            if(file.size < 4194304) { // 4MB (this size is in bytes)
                 //Submit form
                 $('#form').submit();
             } else {
