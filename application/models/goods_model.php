@@ -1822,6 +1822,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('goods_id', new MongoId($goods_id));
+        $this->mongo_db->where('date_expire', array('$exists' => true));
         if(!is_null($date_expire)) {
             $this->mongo_db->set('date_expire', new MongoDate($date_expire));
         }else{
