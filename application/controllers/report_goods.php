@@ -252,14 +252,12 @@ class Report_goods extends MY_Controller
             $date_gifted = null;
             if( isset($result['status']) && $result['status'] == "used"){
                 $status = "used";
-                $date_used = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
-                $date_used = new DateTime(datetimeMongotoReadable($date_used), $UTC_7);
+                $date_used = new DateTime(datetimeMongotoReadable($result['date_modified']), $UTC_7);
                 $date_used->setTimezone($newTZ);
                 $date_used = $date_used->format("Y-m-d H:i:s");
             } elseif( isset($result['status']) && $result['status'] == "sender"){
                 $status = "gifted";
-                $date_gifted = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
-                $date_gifted = new DateTime(datetimeMongotoReadable($date_gifted), $UTC_7);
+                $date_gifted = new DateTime(datetimeMongotoReadable($result['date_modified']), $UTC_7);
                 $date_gifted->setTimezone($newTZ);
                 $date_gifted = $date_gifted->format("Y-m-d H:i:s");
             } else {
@@ -628,14 +626,12 @@ class Report_goods extends MY_Controller
                 $date_gifted = null;
                 if( isset($result['status']) && $result['status'] == "used"){
                     $status = "used";
-                    $date_used = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
-                    $date_used = new DateTime(datetimeMongotoReadable($date_used), $UTC_7);
+                    $date_used = new DateTime(datetimeMongotoReadable($result['date_modified']), $UTC_7);
                     $date_used->setTimezone($newTZ);
                     $date_used = $date_used->format("Y-m-d H:i:s");
                 } elseif( isset($result['status']) && $result['status'] == "sender"){
                     $status = "gifted";
-                    $date_gifted = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
-                    $date_gifted = new DateTime(datetimeMongotoReadable($date_gifted), $UTC_7);
+                    $date_gifted = new DateTime(datetimeMongotoReadable($result['date_modified']), $UTC_7);
                     $date_gifted->setTimezone($newTZ);
                     $date_gifted = $date_gifted->format("Y-m-d H:i:s");
                 } else {
