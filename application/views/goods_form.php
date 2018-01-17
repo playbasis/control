@@ -298,27 +298,21 @@
                                         <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>
                                         <div class="rewards">
                                             <div class="goods-panel">
-                                                <?php
-                                                foreach($point_list as $point){
+                                            <?php
+                                            foreach($point_list as $point){
+                                                if(array_key_exists($point['reward_id']."",$reward_reward)) {
                                                     ?>
                                                     <?php echo $point['name']; ?>
-                                                    <input type="text" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_reward['.$point['reward_id'].']')){
-                                                        echo set_value('reward_reward['.$point['reward_id'].']');
-                                                    }else{
-                                                        if($reward_reward){
-                                                            foreach($reward_reward as $rbk => $rb){
-                                                                if($rbk == $point['reward_id']){
-                                                                    echo $rb;
-                                                                    continue;
-                                                                }
-                                                            }
-                                                        }
-                                                    } ?>" /><br/>
-                                                <?php
+                                                    <?php echo ':'; ?>
+                                                    <input type="text" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green', 'yellow', 'blue'); ?>" size="100" value="<?php echo $reward_reward[$point['reward_id'].""] ?>"/><br/>
+                                                    <?php
                                                 }
-                                                ?>
+                                            }
+                                            ?>
                                             </div>
                                         </div>
+                                        <br>
+                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward">Edit</button>
                                     <?php
                                     }
                                     ?>
@@ -551,7 +545,58 @@
 </div>
 </div>
 
+<div class="modal hide" id="pleaseWaitRewardDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <h1>Please Wait</h1>
+    </div>
+    <div class="modal-body">
+        <div class="offset5 ">
+            <i class="fa fa-spinner fa-spin fa-5x"></i>
+        </div>
+    </div>
+</div>
 
+<div id="formEditRedeem" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formEditRedeemLabel" aria-hidden="true"">
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="formEditRedeemLabel">Add&Edit currency</h3>
+</div>
+<div class="modal-body" style="max-height: 100%;">
+    <div class="container-fluid">
+        <div class="goods-panel">
+
+            <?php
+            foreach($point_list as $point){
+                ?>
+                <?php echo $point['name']; ?>
+                <?php echo ':'; ?>
+                <input type="text" id="reward_reward [<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_reward['.$point['reward_id'].']')){
+                    echo set_value('reward_reward['.$point['reward_id'].']');
+                }else{
+                    if($reward_reward){
+                        foreach($reward_reward as $rbk => $rb){
+                            if($rbk == $point['reward_id']){
+                                echo $rb;
+                                continue;
+                            }
+                        }
+                    }
+                } ?>" /><br/>
+                <?php
+            }
+
+            ?>
+
+        <?php echo form_close(); ?>
+    </div>
+</div>
+<div class="modal-footer">
+    <div>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" onclick="edit_Reward()" id="listRewardButton">Save</button>
+    </div>
+</div>
+</div>
 
 <script type="text/javascript" src="<?php echo base_url();?>javascript/ckeditor/ckeditor.js"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
@@ -560,6 +605,18 @@
 <link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css" />
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script src="<?php echo base_url(); ?>javascript/import/d3.v3.min.js"></script>
+
+<script class="text/javascript">
+
+    function edit_Reward() {
+
+
+
+        var data = $('#reward_reward [<?php echo $point['reward_id']; ?>]').val();
+
+    }
+
+</script>
 
 <script type="text/javascript"><!--
     Pace.on("done", function () {

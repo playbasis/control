@@ -1628,6 +1628,7 @@ class Goods extends MY_Controller
 
         $this->data['point_list'] = array();
         if ($this->User_model->getUserGroupId() != $setting_group_id) {
+
             $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($site_id);
         }
         if (!empty($goods_info)) {

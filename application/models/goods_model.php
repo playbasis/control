@@ -2132,4 +2132,18 @@ class Goods_model extends MY_Model
         return $result;
     }
 
+    public function getListCurrency($client_id, $site_id, $group)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('goods_id'));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'group' => $group,
+            'deleted' => false,
+            'status' => true
+        ));
+        return $this->mongo_db->get('playbasis_goods_to_client');
+    }
+
 }
