@@ -312,7 +312,7 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward">Edit</button>
+                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward">Add</button>
                                     <?php
                                     }
                                     ?>
@@ -559,41 +559,34 @@
 <div id="formEditRedeem" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formEditRedeemLabel" aria-hidden="true"">
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="formEditRedeemLabel">Add&Edit currency</h3>
+    <h3 id="formEditRedeemLabel">Add currency</h3>
 </div>
 <div class="modal-body" style="max-height: 100%;">
     <div class="container-fluid">
-        <div class="goods-panel">
+        <div class="goods-panel col-sm-6">
+            <div class="form-group">
 
-            <?php
-            foreach($point_list as $point){
-                ?>
-                <?php echo $point['name']; ?>
-                <?php echo ':'; ?>
-                <input type="text" id="reward_reward [<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_reward['.$point['reward_id'].']')){
-                    echo set_value('reward_reward['.$point['reward_id'].']');
-                }else{
-                    if($reward_reward){
-                        foreach($reward_reward as $rbk => $rb){
-                            if($rbk == $point['reward_id']){
-                                echo $rb;
-                                continue;
-                            }
-                        }
-                    }
-                } ?>" /><br/>
-                <?php
-            }
+                    <div class="col-md-2">
+                        <div class="input-group">
+                            <div class="input-group-btn">
+                                <button type="button" id="addCurrency" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select currency <span class="caret"></span></button>
+                                <ul class="dropdown-menu addCurrency">
+                                    <li value="" id=""><a href="#"></a></li>
+                                </ul>
+                            </div>
+                            <button type="button" class="btn" id="" onclick="" ><span class="glyphicon glyphicon-plus"></span></button>
+                        </div>
+                    </div>
 
-            ?>
-
+            </div>
+        </div>
         <?php echo form_close(); ?>
     </div>
 </div>
 <div class="modal-footer">
     <div>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" onclick="edit_Reward()" id="listRewardButton">Save</button>
+        <button class="btn btn-primary" onclick="edit_Currency();" id="listRewardButton">Save</button>
     </div>
 </div>
 </div>
@@ -608,13 +601,18 @@
 
 <script class="text/javascript">
 
-    function edit_Reward() {
 
+    $(".addCurrency>li").click(function(){
+        $('#addCurrency').text($(this).attr("value"));
+        $('#addCurrency').append(' <span class="caret"></span>');
 
+    });
 
-        var data = $('#reward_reward [<?php echo $point['reward_id']; ?>]').val();
+</script>
 
-    }
+<script class="text/javascript">
+
+//    parent.window.location.reload();
 
 </script>
 
