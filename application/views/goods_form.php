@@ -310,9 +310,8 @@
                                             }
                                             ?>
                                             </div>
+                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward">Add</button>
                                         </div>
-                                        <br>
-                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward">Add</button>
                                     <?php
                                     }
                                     ?>
@@ -565,19 +564,31 @@
     <div class="container-fluid">
         <div class="goods-panel col-sm-6">
             <div class="form-group">
-
+                    <button type="button" class="btn btn-warning" id="buttonSearch" onclick="" ><span class="icon-search"></span></button>
+                <div class="">
+                <ul class="">
+                <li class="search-field">
+                    <input type="text" class="chosen-search-input default" name="cerruncy" placeholder="Find your currency..." style="width:80%;" autocomplete="off">
+                </li>
+                </ul>
+                </div>
+                <div class="col-sm-5">
+                    <div id="display"></div>
+                    <input type="text" class="">
+                    <button type="button" class="btn btn-success" id="buttonAdd" onclick="" ><span class="icon-ok"></span></button>
+                    <button type="button" class="btn btn-danger" id="buttonDelete" onclick="" ><span class="icon-remove"></span></button>
+                </div>
                     <div class="col-md-2">
                         <div class="input-group">
                             <div class="input-group-btn">
-                                <button type="button" id="addCurrency" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select currency <span class="caret"></span></button>
+                                <button type="button" id="addCurrency" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="width:30%;" aria-haspopup="true" aria-expanded="false">Select currency <span class="caret"></span></button>
                                 <ul class="dropdown-menu addCurrency">
-                                    <li value="" id=""><a href="#"></a></li>
+                                    <div class="curencyList"></div>
                                 </ul>
                             </div>
-                            <button type="button" class="btn" id="" onclick="" ><span class="glyphicon glyphicon-plus"></span></button>
+
                         </div>
                     </div>
-
             </div>
         </div>
         <?php echo form_close(); ?>
@@ -585,7 +596,7 @@
 </div>
 <div class="modal-footer">
     <div>
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn" id="close" onclick="clear();" data-dismiss="modal" aria-hidden="true">Close</button>
         <button class="btn btn-primary" onclick="edit_Currency();" id="listRewardButton">Save</button>
     </div>
 </div>
@@ -601,19 +612,86 @@
 
 <script class="text/javascript">
 
+    function loadCurrency($currency_name) {
+        var store = new obj();
+        store.method = "getCurency";
+        store.param = $('#inputSearch');
+        $.ajax({
+            type: "POST",
+            url: baseUrlPath+'controllers/goods',
+            dataType: "json",
+            data: store,
+            success: function(d) {
+                if (d.success == true){
+                    alert('dasdawd');
+                    getCurrencyAjax();
 
+                }
+            },
+            error: function (xhr, textStatus, errorThrown){
+//			window.location.reload(true)
+                console.log(errorThrown);
+            }
+        });
+    }
+
+    function clear() {
+
+
+
+    }
+
+    function buildCurrency() {
+
+//        if (Vehicle.storage.length > 0) {
+//            $("#display>div").remove();
+//            var result = '<div class="row">';
+//            var dataVeh = Vehicle.storage;
+//            for (var i = 0; i < dataVeh.length; i++) {
+//                var textActive = 'textActive';
+////			var color = '#FF0000';//red
+//                var disVehId = dataVeh[i].vehId;
+//                var disVehPlate = dataVeh[i].vehPlate;
+//                var disVehType = dataVeh[i].vehType;
+//                var disVehColor = dataVeh[i].vehColor;
+//                var disVehStatus = dataVeh[i].vehStatus;
+//
+//                if ((dataVeh[i].vehStatus == 'Active')) {
+//                    textActive = 'textActive';
+//                } else {
+//                    (dataVeh[i].vehStatus == 'Inactive')
+//                    textActive = 'textInactive';
+
+                }
+                result +=
+                    '						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">' +
+                    '		            		<div class="well">' +
+                    '		            			<form>' +
+                    '		            				<div class="row">' +
+                    '										<div class="col-md-12">' +
+                    '                                           <div id="display"></div>' +
+                    '                                         <input type="text" class="">' +
+                    '                                         <button type="button" class="btn btn-success" id="buttonAdd" onclick="" ><span class="icon-ok"></span></button>' +
+                    '                                         <button type="button" class="btn btn-danger" id="buttonDelete" onclick="" ><span class="icon-remove"></span></button>' +
+                    '											</div>' +
+                    '										</div>' +
+                    '									</div>' +
+                    '								</form>' +
+                    '		        			</div>' +
+                    '		        	</div>'
+            }
+        }
+        result = result + '</div>';
+        $("#display").append(result);
+    }
+</script>
+
+<script class="text/javascript">
     $(".addCurrency>li").click(function(){
         $('#addCurrency').text($(this).attr("value"));
         $('#addCurrency').append(' <span class="caret"></span>');
 
     });
-
-</script>
-
-<script class="text/javascript">
-
-//    parent.window.location.reload();
-
 </script>
 
 <script type="text/javascript"><!--

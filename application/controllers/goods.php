@@ -1644,6 +1644,18 @@ class Goods extends MY_Controller
         $this->render_page('template');
     }
 
+    public function getCurrencyAjax($reward_id)
+    {
+        if (isset($reward_id) && ($reward_id != 0)) {
+            if ($this->User_model->getClientId()) {
+                $currency_info = $this->goods_model->getCurrency($reward_id);
+            } else {
+                $currency_info = $this->goods_model->getCurency($reward_id);
+            }
+        }
+
+    }
+
     public function getGoodsGroupAjax($goods_id = null)
     {
 
