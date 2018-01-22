@@ -85,6 +85,7 @@ class Campaign extends MY_Controller
                 $data['date_start'] = null;
                 $data['date_end'] = null;
                 $data['weight'] = isset($campaign_data['weight']) && $campaign_data['weight'] ? intval($campaign_data['weight']) : 0;
+                $data['tags'] = $campaign_data['tags'];
 
                 if (isset($campaign_data['date_start']) && !empty($campaign_data['date_start']) && isset($campaign_data['date_end']) && !empty($campaign_data['date_end'])) {
                     $date_start_another = strtotime($campaign_data['date_start']);
@@ -144,6 +145,7 @@ class Campaign extends MY_Controller
                 $data['date_start'] = null;
                 $data['date_end'] = null;
                 $data['weight'] = isset($campaign_data['weight']) && $campaign_data['weight'] ? intval($campaign_data['weight']) : 0;
+                $data['tags'] = $campaign_data['tags'];
 
                 if (isset($campaign_data['date_start']) && $campaign_data['date_start'] && isset($campaign_data['date_end']) && $campaign_data['date_end']) {
                     $date_start_another = strtotime($campaign_data['date_start']);
@@ -368,6 +370,14 @@ class Campaign extends MY_Controller
             $this->data['weight'] = $campaign_info['weight'];
         } else {
             $this->data['weight'] = 0;
+        }
+
+        if ($this->input->post('tags')) {
+            $this->data['tags'] = explode(',', $this->input->post('tags'));
+        } elseif (isset($campaign_info['tags'])) {
+            $this->data['tags'] = $campaign_info['tags'];
+        } else {
+            $this->data['tags'] = '';
         }
 
         $this->load->vars($this->data);

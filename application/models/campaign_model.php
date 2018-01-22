@@ -8,6 +8,10 @@ class Campaign_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $d = new MongoDate();
 
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $insert_Data = array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
@@ -16,6 +20,7 @@ class Campaign_model extends MY_Model
             'date_start' => $data['date_start'],
             'date_end' => $data['date_end'],
             'weight' => $data['weight'],
+            'tags' => isset($tags) ? $tags : null,
             'date_modified' => $d,
             'date_added' => $d,
             'deleted' => false,
@@ -29,6 +34,10 @@ class Campaign_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $d = new MongoDate();
 
+        if (!empty($data['tags'])){
+            $tags = explode(',', $data['tags']);
+        }
+
         $this->mongo_db->where('client_id', new MongoId($data['client_id']));
         $this->mongo_db->where('site_id', new MongoId($data['site_id']));
         $this->mongo_db->where('_id', new MongoId($data['_id']));
@@ -37,6 +46,8 @@ class Campaign_model extends MY_Model
         $this->mongo_db->set('date_start', $data['date_start']);
         $this->mongo_db->set('date_end', $data['date_end']);
         $this->mongo_db->set('weight', $data['weight']);
+        $this->mongo_db->set('tags', isset($tags) ? $tags : null);
+        $this->mongo_db->set('date_modified', $d);
 
         return $this->mongo_db->update('playbasis_campaign_to_client');
     }
