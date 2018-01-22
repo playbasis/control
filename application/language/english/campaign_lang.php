@@ -3,7 +3,7 @@
 $lang = array(
     'meta_description'                  => 'Campaign',
     'title'                             => 'Campaign',
-    'text_no_results'                   => 'Text no results',
+    'text_no_results'                   => 'No Campaign added',
     'heading_title'                     => 'Campaign',
     'column_name'                       => 'Campaign Name',
     'column_image'                      => 'Image',
@@ -11,6 +11,7 @@ $lang = array(
     'column_date_end'                   => 'Date End',
     'column_weight'                     => 'Weight',
     'column_status'                     => 'Status',
+    'column_tags'                       => 'Tags',
     'column_action'                     => 'Action',
     'button_clear_filter'               => 'Clear Filter',
     'button_filter'                     => 'Filter',
@@ -24,6 +25,7 @@ $lang = array(
     'entry_date_start'                  => 'Date Start',
     'entry_date_end'                    => 'Date End',
     'entry_weight'                      => 'Weight',
+    'entry_tags'                        => 'Tags',
     'entry_status'                      => 'Status'
 );
 

@@ -1,3 +1,8 @@
+<link rel="stylesheet" media="screen" type="text/css" href="<?php echo base_url();?>stylesheet/goods/style.css" />
+<link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
+<script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
+        src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
+<div class="cover"></div>
 <div id="content" class="span10">
 
     <div class="box">
@@ -87,6 +92,13 @@
                                    value="<?php echo isset($weight) ? $weight : ""; ?>">
                         </td>
                     </tr>
+                    <tr>
+                        <td><?php echo $this->lang->line('entry_tags'); ?>:</td>
+                        <td>
+                            <input type="text" class="tags" name="tags" value="<?php echo !empty($tags) ? implode(',',$tags) : set_value('tags'); ?>"
+                                   size="5" class="tooltips" data-placement="right" title="Tag(s) input"/>
+                        </td>
+                    </tr>
                 </table>
             </div>
             <?php
@@ -99,6 +111,8 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/custom/bootstrap-switch.min.js" type="text/javascript" ></script>
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
     $(function(){
@@ -144,4 +158,17 @@
             }
         });
     }
+
+    $(document).ready(function(){
+
+        $(".tags").select2({
+            width: 'resolve',
+            tags: true,
+            tokenSeparators: [',', ' ']
+        });
+    });
+
+    Pace.on("done", function () {
+        $(".cover").fadeOut(1000);
+    });
 </script>

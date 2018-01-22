@@ -35,6 +35,7 @@
                         <td class="center"><?php echo $this->lang->line('column_date_start'); ?></td>
                         <td class="center"><?php echo $this->lang->line('column_date_end'); ?></td>
                         <td class="center"><?php echo $this->lang->line('column_weight'); ?></td>
+                        <td class="center" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
                         <td class="center" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
@@ -57,6 +58,8 @@
                                 <td class="left"><?php echo isset($campaign['date_start']) && !empty($campaign['date_start'])  ? datetimeMongotoReadable($campaign['date_start']) : "N/A"; ?></td>
                                 <td class="left"><?php echo isset($campaign['date_end']) && !empty($campaign['date_end'])  ? datetimeMongotoReadable($campaign['date_end']) : "N/A"; ?></td>
                                 <td class="left"><?php echo isset($campaign['weight']) && !empty($campaign['weight']) ? $campaign['weight'] : "0"; ?></td>
+                                <td class="right" style="word-wrap:break-word;"><?php echo (isset($campaign['tags']) && $campaign['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $campaign['tags']).'</span>' : null); ?></td>
+
                                 <td class="center">
                                     <?php
                                     echo anchor('campaign/update/'.$campaign['_id'], "<i class='fa fa-edit fa-lg''></i>",
@@ -70,7 +73,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="7"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>
