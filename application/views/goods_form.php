@@ -311,6 +311,7 @@
                                             ?>
                                             </div>
                                             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward">Add</button>
+
                                         </div>
                                     <?php
                                     }
@@ -555,40 +556,38 @@
     </div>
 </div>
 
-<div id="formEditRedeem" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formEditRedeemLabel" aria-hidden="true"">
+<div id="formEditRedeem" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formEditRedeemLabel" aria-hidden="true" style="width: 600px; height: 600px " >
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h3 id="formEditRedeemLabel">Add currency</h3>
 </div>
-<div class="modal-body" style="max-height: 100%;">
+<div class="modal-body" style="width: auto; height: 600px  ">
     <div class="container-fluid">
-        <div class="goods-panel col-sm-6">
-            <div class="form-group">
-                    <button type="button" class="btn btn-warning" id="buttonSearch" onclick="" ><span class="icon-search"></span></button>
-                <div class="">
-                <ul class="">
-                <li class="search-field">
-                    <input type="text" class="chosen-search-input default" name="cerruncy" placeholder="Find your currency..." style="width:80%;" autocomplete="off">
-                </li>
-                </ul>
-                </div>
-                <div class="col-sm-5">
-                    <div id="display"></div>
-                    <input type="text" class="">
-                    <button type="button" class="btn btn-success" id="buttonAdd" onclick="" ><span class="icon-ok"></span></button>
-                    <button type="button" class="btn btn-danger" id="buttonDelete" onclick="" ><span class="icon-remove"></span></button>
-                </div>
-                    <div class="col-md-2">
-                        <div class="input-group">
-                            <div class="input-group-btn">
-                                <button type="button" id="addCurrency" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="width:30%;" aria-haspopup="true" aria-expanded="false">Select currency <span class="caret"></span></button>
-                                <ul class="dropdown-menu addCurrency">
-                                    <div class="curencyList"></div>
-                                </ul>
-                            </div>
+        <div class="span10">
+            <div class="box">
+                <div class="report-filter">
 
-                        </div>
-                    </div>
+                     Currency :
+                    <span>
+                        <?php echo $this->lang->line('filter_reward_id'); ?>
+                        <select id="filter_reward_id" multiple name="filter_reward_id">
+                        <?php foreach ($point_list as $br){
+                            $match =  array_search($br['reward_id'], $filter_reward_id);
+                            if (!is_null($match) && $match !== false) {
+                                ?>
+                                <option selected="selected" value="<?php echo $br['reward_id']?>">
+                                    <?php echo $br['name'];?></option>
+                            <?php }
+                            else{?>
+                                <option value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
+                            <?php }?>
+                        <?php }?>
+                        </select>
+                    </span>
+<!--                        <button type="button" class="button" id="buttonAdd" onclick="" ><span class="icon-ok"></span></button> -->
+<!--                        <button type="button" class="button" id="buttonDelete" onclick="" ><span class="icon-remove"></span></button>-->
+
+                </div>
             </div>
         </div>
         <?php echo form_close(); ?>
@@ -610,81 +609,45 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script src="<?php echo base_url(); ?>javascript/import/d3.v3.min.js"></script>
 
-<script class="text/javascript">
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript"><!--
 
-    function loadCurrency($currency_name) {
-        var store = new obj();
-        store.method = "getCurency";
-        store.param = $('#inputSearch');
-        $.ajax({
-            type: "POST",
-            url: baseUrlPath+'controllers/goods',
-            dataType: "json",
-            data: store,
-            success: function(d) {
-                if (d.success == true){
-                    alert('dasdawd');
-                    getCurrencyAjax();
+    $("#filter_reward_id").chosen({max_selected_options: 5});
+    //--></script>
 
-                }
-            },
-            error: function (xhr, textStatus, errorThrown){
-//			window.location.reload(true)
-                console.log(errorThrown);
-            }
-        });
-    }
-
-    function clear() {
-
-
-
-    }
-
-    function buildCurrency() {
-
-//        if (Vehicle.storage.length > 0) {
-//            $("#display>div").remove();
-//            var result = '<div class="row">';
-//            var dataVeh = Vehicle.storage;
-//            for (var i = 0; i < dataVeh.length; i++) {
-//                var textActive = 'textActive';
-////			var color = '#FF0000';//red
-//                var disVehId = dataVeh[i].vehId;
-//                var disVehPlate = dataVeh[i].vehPlate;
-//                var disVehType = dataVeh[i].vehType;
-//                var disVehColor = dataVeh[i].vehColor;
-//                var disVehStatus = dataVeh[i].vehStatus;
-//
-//                if ((dataVeh[i].vehStatus == 'Active')) {
-//                    textActive = 'textActive';
-//                } else {
-//                    (dataVeh[i].vehStatus == 'Inactive')
-//                    textActive = 'textInactive';
-
-                }
-                result +=
-                    '						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">' +
-                    '		            		<div class="well">' +
-                    '		            			<form>' +
-                    '		            				<div class="row">' +
-                    '										<div class="col-md-12">' +
-                    '                                           <div id="display"></div>' +
-                    '                                         <input type="text" class="">' +
-                    '                                         <button type="button" class="btn btn-success" id="buttonAdd" onclick="" ><span class="icon-ok"></span></button>' +
-                    '                                         <button type="button" class="btn btn-danger" id="buttonDelete" onclick="" ><span class="icon-remove"></span></button>' +
-                    '											</div>' +
-                    '										</div>' +
-                    '									</div>' +
-                    '								</form>' +
-                    '		        			</div>' +
-                    '		        	</div>'
-            }
-        }
-        result = result + '</div>';
-        $("#display").append(result);
-    }
-</script>
+<!--<script class="text/javascript">-->
+<!---->
+<!--    function clear() {-->
+<!---->
+<!---->
+<!---->
+<!--    }-->
+<!---->
+<!--                }-->
+<!--                result +=-->
+<!--                    '						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">' +-->
+<!--                    '		            		<div class="well">' +-->
+<!--                    '		            			<form>' +-->
+<!--                    '		            				<div class="row">' +-->
+<!--                    '										<div class="col-md-12">' +-->
+<!--                    '                                           <div id="display"></div>' +-->
+<!--                    '                                         <input type="text" class="">' +-->
+<!--                    '                                         <button type="button" class="btn btn-success" id="buttonAdd" onclick="" ><span class="icon-ok"></span></button>' +-->
+<!--                    '                                         <button type="button" class="btn btn-danger" id="buttonDelete" onclick="" ><span class="icon-remove"></span></button>' +-->
+<!--                    '											</div>' +-->
+<!--                    '										</div>' +-->
+<!--                    '									</div>' +-->
+<!--                    '								</form>' +-->
+<!--                    '		        			</div>' +-->
+<!--                    '		        	</div>'-->
+<!--            }-->
+<!--        }-->
+<!--        result = result + '</div>';-->
+<!--        $("#display").append(result);-->
+<!--    }-->
+<!--</script>-->
 
 <script class="text/javascript">
     $(".addCurrency>li").click(function(){

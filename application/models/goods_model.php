@@ -13,15 +13,6 @@ class Goods_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function getCurency($reward_id, $name)
-    {
-        $this->mongo_db->where('_id', $reward_id);
-        $this->mongo_db->where('currency_name',$name);
-        $reward_id = $this->mongo_db->get("playbasis_reward_to_client");
-
-        return $reward_id ? $reward_id[0] : null;
-    }
-
     public function getGoodsToClient($goods_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
