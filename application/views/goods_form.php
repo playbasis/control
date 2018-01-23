@@ -310,7 +310,7 @@
                                             }
                                             ?>
                                             </div>
-                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward">Add</button>
+                                            <button type="button" class="btn btn-info col-sm-12 offset8" data-toggle="modal" data-target="#formEditRedeem" id="editReward" >Add currency</button>
 
                                         </div>
                                     <?php
@@ -556,26 +556,27 @@
     </div>
 </div>
 
-<div id="formEditRedeem" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formEditRedeemLabel" aria-hidden="true" style="width: 600px; height: 600px " >
+<div id="formEditRedeem" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formEditRedeemLabel" aria-hidden="true" style="width: 500px;" >
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h3 id="formEditRedeemLabel">Add currency</h3>
 </div>
-<div class="modal-body" style="width: auto; height: 600px  ">
+<div class="modal-body col-sm-12" style="height: 450px;">
     <div class="container-fluid">
-        <div class="span10">
+        <div class="span10 col-sm-10">
             <div class="box">
-                <div class="report-filter">
-
-                     Currency :
+                <div class="report-filter col-sm-12 offset2">
                     <span>
+                        <label class="text-info" type="text" style="text-align: center"><h2>Currency  <span class="icon-search"></span></h2></label>
                         <?php echo $this->lang->line('filter_reward_id'); ?>
                         <select id="filter_reward_id" multiple name="filter_reward_id">
+
                         <?php foreach ($point_list as $br){
+
                             $match =  array_search($br['reward_id'], $filter_reward_id);
                             if (!is_null($match) && $match !== false) {
                                 ?>
-                                <option selected="selected" value="<?php echo $br['reward_id']?>">
+                                <option disabled value="<?php echo $br['reward_id']?>">
                                     <?php echo $br['name'];?></option>
                             <?php }
                             else{?>
@@ -584,19 +585,17 @@
                         <?php }?>
                         </select>
                     </span>
-<!--                        <button type="button" class="button" id="buttonAdd" onclick="" ><span class="icon-ok"></span></button> -->
-<!--                        <button type="button" class="button" id="buttonDelete" onclick="" ><span class="icon-remove"></span></button>-->
+                    </div><br>
 
                 </div>
-            </div>
         </div>
-        <?php echo form_close(); ?>
     </div>
+        <?php echo form_close(); ?>
 </div>
 <div class="modal-footer">
     <div>
-        <button class="btn" id="close" onclick="clear();" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" onclick="edit_Currency();" id="listRewardButton">Save</button>
+        <button class="btn btn-default" onclick="location = baseUrlPath+'goods/update/'" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" id="submit_button" onclick=" $('#form').submit(); " id="listRewardButton">Save</button>
     </div>
 </div>
 </div>
@@ -609,53 +608,15 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script src="<?php echo base_url(); ?>javascript/import/d3.v3.min.js"></script>
 
-<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<!--<link id="bootstrap-style2" href="--><?php //echo base_url();?><!--javascript/bootstrap/chosen.min.css" rel="stylesheet">-->
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.css" rel="stylesheet">
 <script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
+<!--<script type="text/javascript" scr="--><?php //echo base_url();?><!--javascript/bootstrap/chosen.jquery.js"></script>-->
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript"><!--
 
     $("#filter_reward_id").chosen({max_selected_options: 5});
     //--></script>
-
-<!--<script class="text/javascript">-->
-<!---->
-<!--    function clear() {-->
-<!---->
-<!---->
-<!---->
-<!--    }-->
-<!---->
-<!--                }-->
-<!--                result +=-->
-<!--                    '						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">' +-->
-<!--                    '		            		<div class="well">' +-->
-<!--                    '		            			<form>' +-->
-<!--                    '		            				<div class="row">' +-->
-<!--                    '										<div class="col-md-12">' +-->
-<!--                    '                                           <div id="display"></div>' +-->
-<!--                    '                                         <input type="text" class="">' +-->
-<!--                    '                                         <button type="button" class="btn btn-success" id="buttonAdd" onclick="" ><span class="icon-ok"></span></button>' +-->
-<!--                    '                                         <button type="button" class="btn btn-danger" id="buttonDelete" onclick="" ><span class="icon-remove"></span></button>' +-->
-<!--                    '											</div>' +-->
-<!--                    '										</div>' +-->
-<!--                    '									</div>' +-->
-<!--                    '								</form>' +-->
-<!--                    '		        			</div>' +-->
-<!--                    '		        	</div>'-->
-<!--            }-->
-<!--        }-->
-<!--        result = result + '</div>';-->
-<!--        $("#display").append(result);-->
-<!--    }-->
-<!--</script>-->
-
-<script class="text/javascript">
-    $(".addCurrency>li").click(function(){
-        $('#addCurrency').text($(this).attr("value"));
-        $('#addCurrency').append(' <span class="caret"></span>');
-
-    });
-</script>
 
 <script type="text/javascript"><!--
     Pace.on("done", function () {
@@ -704,7 +665,6 @@
             }
         });
     }
-
 //--></script>
 <script type="text/javascript"><!--
 $('#tabs a').tabs();
