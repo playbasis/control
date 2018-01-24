@@ -304,7 +304,7 @@
                                                     ?>
                                                     <?php echo $point['name']; ?>
                                                     <?php echo ':'; ?>
-                                                    <input type="text" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green', 'yellow', 'blue'); ?>" size="100" value="<?php echo $reward_reward[$point['reward_id'].""] ?>"/><br/>
+                                                    <input type="text" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green', 'yellow', 'blue', 'red'); ?>" size="100" value="<?php echo $reward_reward[$point['reward_id'].""] ?>"/><br/>
                                                     <?php
                                                 }
                                             }
@@ -561,7 +561,7 @@
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h3 id="formEditRedeemLabel">Add currency</h3>
 </div>
-<div class="modal-body col-sm-12" style="height: 450px;">
+<div class="modal-body col-sm-12" style="height: 300px;">
     <div class="container-fluid">
         <div class="span10 col-sm-10">
             <div class="box">
@@ -569,7 +569,7 @@
                     <span>
                         <label class="text-info" type="text" style="text-align: center"><h2>Currency  <span class="icon-search"></span></h2></label>
                         <?php echo $this->lang->line('filter_reward_id'); ?>
-                        <select id="filter_reward_id" multiple name="filter_reward_id">
+                        <select id="filter_reward_id" multiple name="filter_reward_id" name="filter_reward_id">
 
                         <?php foreach ($point_list as $br){
 
@@ -594,8 +594,8 @@
 </div>
 <div class="modal-footer">
     <div>
-        <button class="btn btn-default" onclick="location = baseUrlPath+'goods/update/'" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" id="submit_button" onclick=" $('#form').submit(); " id="listRewardButton">Save</button>
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" onclick="testfilterGoods()" id="listRewardButton">Save</button>
     </div>
 </div>
 </div>
@@ -613,10 +613,50 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
 <!--<script type="text/javascript" scr="--><?php //echo base_url();?><!--javascript/bootstrap/chosen.jquery.js"></script>-->
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
-<script type="text/javascript"><!--
 
-    $("#filter_reward_id").chosen({max_selected_options: 5});
+    <script type="text/javascript"><!--
+            $("#filter_reward_id").chosen({max_selected_options: 9});
     //--></script>
+
+
+<script type="text/javascript">
+    function filterGoods() {
+//        a = '<?php //echo $goods_id; ?>//';
+//        url = baseUrlPath+'goods/update/'+a;
+//
+//    var filter_reward_id = $('select[name=\'filter_reward_id\']').val();
+//
+//    if (filter_reward_id != null) {
+//        var goods = ""
+//        filter_reward_id.forEach(function(element) {
+//            if(goods == ""){
+//                goods = encodeURIComponent(element);
+//            } else {
+//                goods += encodeURIComponent(',' + element);
+//            }
+//        });
+//        if(goods != "") {
+//            url += '&reward_id=' + goods;
+//            }
+//        location = url;
+//        }
+//    }
+</script>
+
+<script type="text/javascript">
+    function testfilterGoods() {
+        a = '<?php echo $goods_id; ?>';
+        url = baseUrlPath+'goods/update/'+a;
+
+        var filter_reward_id = $('select[name=\'filter_reward_id\']').val();
+
+
+
+
+            location = url;
+        }
+    }
+</script>
 
 <script type="text/javascript"><!--
     Pace.on("done", function () {
