@@ -1741,6 +1741,8 @@ class Goods extends MY_Controller
         $this->load->view('goods_group_ajax');
     }
 
+
+
     public function downloadGoodsGroup($goods_id = null)
     {
         if (isset($goods_id) && ($goods_id != 0)) {
