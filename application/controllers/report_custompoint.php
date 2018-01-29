@@ -94,14 +94,11 @@ class Report_custompoint extends MY_Controller
         $this->load->model('Player_model');
         $this->load->model('Badge_model');
 
-        $lang = get_lang($this->session, $this->config);
-        $this->lang->load("action", $lang['folder']);
-
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-30 days"));
+            $date = date("Y-m-d", strtotime("-7 days"));
             $previousDate = strtotime($date);
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
@@ -182,6 +179,7 @@ class Report_custompoint extends MY_Controller
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
             'reward_id' => $filter_reward_id,
+            'status' => $filter_point_status,
             'start' => $offset,
             'limit' => $limit
         );
@@ -190,64 +188,43 @@ class Report_custompoint extends MY_Controller
 
         $results = array();
         if ($client_id) {
-            if($filter_point_status == "pending"){
-                $in_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
-                $data['in_id'] = is_array($in_id) ? array_column($in_id, '_id') : array();
-            } elseif ($filter_point_status == "approve"){
-                $ex_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
-                $data['ex_id'] = is_array($ex_id) ? array_column($ex_id, '_id') : array();
-            } elseif ($filter_point_status == "reject"){
-                $in_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
-                $data['in_id'] = is_array($in_id) ? array_column($in_id, '_id') : array();
+            if(isset($filter_point_status) && !is_null($filter_point_status)){
+                $report_total = $this->Report_custompoint_model->getTotalReportPointWithStatus($data);
+                $results = $this->Report_custompoint_model->getReportPointWithStatus($data);
+            } else {
+                $report_total = $this->Report_custompoint_model->getTotalReportPoint($data);
+                $results = $this->Report_custompoint_model->getReportPoint($data);
             }
-
-            $report_total = $this->Report_custompoint_model->getTotalReportPoint($data);
-
-            $results = $this->Report_custompoint_model->getReportPoint($data);
         }
 
         $this->data['time_zone'] = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
         $this->data['reports'] = array();
 
         foreach ($results as $result) {
-            $status = null;
-            $reward_name = null;
-
-            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-
-
-            $reward_name = $this->Report_custompoint_model->getPointName($result['reward_id']);
-            
-
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
                 $date_added->setTimezone($newTZ);
                 $date_added = $date_added->format("Y-m-d H:i:s");;
             }
 
-            if(isset($result['transaction_id']) && $result['transaction_id']){
-                $status = $this->Custompoints_model->getRewardStatus($result['transaction_id']);
+             $data_row = array(
+                'cl_player_id' => isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
+                'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
+                'reward_name' => isset($result['reward_name']) ? $result['reward_name'] : null,
+                'value' => $result['value'],
+            );
 
+            if(isset($filter_point_status) && !is_null($filter_point_status)) {
+                $data_row['status'] = isset($result['status']) ? $result['status'] : null;
+            } else {
+                if(isset($result['transaction_id']) && !is_null($result['transaction_id'])){
+                    $data_row['status'] = isset($result['transaction_status']) ? $result['transaction_status'] : 'pending';
+                } else {
+                    $data_row['status'] = isset($result['transaction_status']) ? $result['transaction_status'] : null;
+                }
             }
 
-            if (is_null($filter_point_status) || $filter_point_status === $status) {
-                $this->data['reports'][] = array(
-                    'cl_player_id' => $player['cl_player_id'],
-                    'username' => $player['username'],
-                    'image' => $thumb,
-                    'email' => $player['email'],
-                    'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
-                    'reward_name' => isset($reward_name) ? $reward_name : null,
-                    'value' => $result['value'],
-                    'status' => isset($status) ? $status : null
-                );
-            }
+            $this->data['reports'][] = $data_row;
         }
 
         $this->data['point_rewards'] = array();
@@ -342,14 +319,11 @@ class Report_custompoint extends MY_Controller
         $this->load->model('Player_model');
         $this->load->model('Badge_model');
 
-        $lang = get_lang($this->session, $this->config);
-        $this->lang->load("action", $lang['folder']);
-
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-30 days"));
+            $date = date("Y-m-d", strtotime("-7 days"));
             $previousDate = strtotime($date);
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
@@ -425,23 +399,17 @@ class Report_custompoint extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'reward_id' => $filter_reward_id
+            'reward_id' => $filter_reward_id,
+            'status' => $filter_point_status
         );
 
         $results = array();
         if ($client_id) {
-            if($filter_point_status == "pending"){
-                $in_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
-                $data['in_id'] = is_array($in_id) ? array_column($in_id, '_id') : array();
-            } elseif ($filter_point_status == "approve"){
-                $ex_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
-                $data['ex_id'] = is_array($ex_id) ? array_column($ex_id, '_id') : array();
-            } elseif ($filter_point_status == "reject"){
-                $in_id = $this->Report_custompoint_model->getListRewardStatusToPlayer($data,$filter_point_status);
-                $data['in_id'] = is_array($in_id) ? array_column($in_id, '_id') : array();
+            if(isset($filter_point_status) && !is_null($filter_point_status)){
+                $results = $this->Report_custompoint_model->getReportPointWithStatus($data);
+            } else {
+                $results = $this->Report_custompoint_model->getReportPoint($data);
             }
-            
-            $results = $this->Report_custompoint_model->getReportPoint($data);
         }
 
         $this->data['reports'] = array();
@@ -454,61 +422,38 @@ class Report_custompoint extends MY_Controller
 
         $exporter->addRow(array(
                 $this->lang->line('column_player_id'),
-                $this->lang->line('column_username'),
-                $this->lang->line('column_email'),
                 $this->lang->line('column_reward_name'),
                 $this->lang->line('column_reward_value'),
-                $this->lang->line('column_reward_status'),
-                $this->lang->line('column_date_added')
+                $this->lang->line('column_date_added'),
+                $this->lang->line('column_reward_status')
             )
         );
 
         foreach ($results as $result) {
-            $status = null;
-            $badge_name = null;
-            $reward_name = null;
-
-            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-
-            $reward_name = $this->Report_custompoint_model->getPointName($result['reward_id']);
-
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
                 $date_added->setTimezone($newTZ);
                 $date_added = $date_added->format("Y-m-d H:i:s");;
             }
 
-            if(isset($result['transaction_id']) && $result['transaction_id']){
-                $status = $this->Custompoints_model->getRewardStatus($result['transaction_id']);
+            $data_row = array(
+                $result['cl_player_id'],
+                $result['reward_name'],
+                $result['value'],
+                $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added'])
+            );
+
+            if(isset($filter_point_status) && !is_null($filter_point_status)) {
+                $data_row['status'] = isset($result['status']) ? $result['status'] : null;
+            } else {
+                if(isset($result['transaction_id']) && !is_null($result['transaction_id'])){
+                    $data_row['status'] = isset($result['transaction_status']) ? $result['transaction_status'] : 'pending';
+                } else {
+                    $data_row['status'] = isset($result['transaction_status']) ? $result['transaction_status'] : null;
+                }
             }
 
-            $this->data['reports'][] = array(
-                'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
-                'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
-                'reward_name' => isset($reward_name) ? $reward_name : null,
-                'badge_name' => isset($badge_name) ? $badge_name : null,
-                'value' => $result['value'],
-                'status' => isset($status) ? $status : null
-            );
-
-            $exporter->addRow(array(
-                    $player['cl_player_id'],
-                    $player['username'],
-                    $player['email'],
-                    $reward_name['name'],
-                    $result['value'],
-                    isset($status) ? $status : null,
-                    $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added'])
-                )
-            );
+            $exporter->addRow($data_row);
         }
 
         $exporter->finalize();

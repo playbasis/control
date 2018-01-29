@@ -82,12 +82,7 @@
             <table class="list">
                 <thead>
                 <tr>
-                    <td width="40" class="left"><?php echo $this->lang->line('column_avatar'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_player_id'); ?></td>
-                    <td class="left"><?php echo $this->lang->line('column_username'); ?></td>
-                    <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
-                    <!-- <td class="left"><?php //echo $this->lang->line('column_level'); ?></td>
-                    <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
                     <td class="right"><?php echo $this->lang->line('column_goods_name'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_goods_code'); ?></td>
                     <td width="50" class="right"><?php echo $this->lang->line('column_goods_amount'); ?></td>
@@ -102,20 +97,8 @@
                 <?php if ($reports) { ?>
                     <?php foreach ($reports as $report) { ?>
                     <tr>
-                        <td style="word-wrap:break-word;" class="left"><img width="40" height="40" src="<?php echo $report['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></td>
                         <td style="word-wrap:break-word;" class="left"><?php echo $report['cl_player_id']; ?></td>
-                        <td style="word-wrap:break-word;" class="left"><?php echo $report['username']; ?></td>
-                        <td style="word-wrap:break-word;" class="left"><?php echo $report['email']; ?></td>
-                        <!-- <td class="left"><?php //echo $report['level']; ?></td>
-                        <td class="left"><?php //echo $report['exp']; ?></td> -->
-                        <td style="word-wrap:break-word;" class="right">
-                            <?php 
-                            if(isset($report['goods_name'])&&$report['goods_name']!=null){
-                                // echo $report['goods_name'];
-                                echo $report['goods_name'];
-                            }                            
-                            ?>
-                        </td>
+                        <td style="word-wrap:break-word;" class="right"><?php echo isset($report['goods_name'])&&$report['goods_name']!=null ? $report['goods_name']: ""; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo $report['code']; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo $report['value']; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo isset($report['status']) ? $report['status']: ""; ?></td>
@@ -127,7 +110,7 @@
                         <?php } ?>
                     <?php } else { ?>
                 <tr>
-                    <td class="center" colspan="12"><?php echo $text_no_results; ?></td>
+                    <td class="center" colspan="9"><?php echo $text_no_results; ?></td>
                 </tr>
                     <?php } ?>
                 </tbody>

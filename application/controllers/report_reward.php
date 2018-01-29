@@ -94,14 +94,11 @@ class Report_reward extends MY_Controller
         $this->load->model('Player_model');
         $this->load->model('Badge_model');
 
-        $lang = get_lang($this->session, $this->config);
-        $this->lang->load("action", $lang['folder']);
-
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-30 days"));
+            $date = date("Y-m-d", strtotime("-7 days"));
             $previousDate = strtotime($date);
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
@@ -183,7 +180,6 @@ class Report_reward extends MY_Controller
         $results = array();
         if ($client_id) {
             $report_total = $this->Report_reward_model->getTotalReportReward($data);
-
             $results = $this->Report_reward_model->getReportReward($data);
         }
 
@@ -194,15 +190,9 @@ class Report_reward extends MY_Controller
             $status = null;
             $badge_name = null;
 
-            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-
-            $badge_name = $this->Badge_model->getNameOfBadgeID($client_id, $site_id, $result['item_id']);
+            $badge_name = explode('earned ',  $result['message']);
+            $badge_name = explode(' badge',  $badge_name[1]);
+            $badge_name = $badge_name[0];
 
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
@@ -210,15 +200,8 @@ class Report_reward extends MY_Controller
                 $date_added = $date_added->format("Y-m-d H:i:s");;
             }
 
-            if(isset($result['transaction_id']) && $result['transaction_id']){
-                $status = $this->Custompoints_model->getRewardStatus($result['transaction_id']);
-            }
-
             $this->data['reports'][] = array(
-                'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
+                'cl_player_id' => $result['cl_player_id'],
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
                 'badge_name' => isset($badge_name) ? $badge_name : null,
                 'value' => $result['value'],
@@ -317,9 +300,6 @@ class Report_reward extends MY_Controller
         $this->load->model('Player_model');
         $this->load->model('Badge_model');
 
-        $lang = get_lang($this->session, $this->config);
-        $this->lang->load("action", $lang['folder']);
-
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=" . $filter_date_start;
@@ -410,8 +390,6 @@ class Report_reward extends MY_Controller
 
         $exporter->addRow(array(
                 $this->lang->line('column_player_id'),
-                $this->lang->line('column_username'),
-                $this->lang->line('column_email'),
                 $this->lang->line('column_reward_name'),
                 $this->lang->line('column_reward_value'),
                 $this->lang->line('column_reward_status'),
@@ -423,14 +401,9 @@ class Report_reward extends MY_Controller
             $status = null;
             $badge_name = null;
 
-            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-
-            $badge_name = $this->Badge_model->getNameOfBadgeID($client_id, $site_id, $result['item_id']);
+            $badge_name = explode('earned ',  $result['message']);
+            $badge_name = explode(' badge',  $badge_name[1]);
+            $badge_name = $badge_name[0];
 
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
@@ -438,26 +411,9 @@ class Report_reward extends MY_Controller
                 $date_added = $date_added->format("Y-m-d H:i:s");;
             }
 
-            if(isset($result['transaction_id']) && $result['transaction_id']){
-                $status = $this->Custompoints_model->getRewardStatus($result['transaction_id']);
-            }
-
-            $this->data['reports'][] = array(
-                'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
-                'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
-                'badge_name' => isset($badge_name) ? $badge_name : null,
-                'value' => $result['value'],
-                'status' => isset($status) ? $status : null
-            );
-
             $exporter->addRow(array(
-                    $player['cl_player_id'],
-                    $player['username'],
-                    $player['email'],
-                    $badge_name,
+                    $result['cl_player_id'],
+                    isset($badge_name) ? $badge_name : null,
                     $result['value'],
                     isset($status) ? $status : null,
                     $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added'])

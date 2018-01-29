@@ -175,16 +175,6 @@ class Report_registration extends MY_Controller
         $this->data['reports'] = array();
 
         foreach ($results as $result) {
-
-            $goods_name = null;
-
-
-            if (!empty($result['image'])) {
-                $thumb = $result['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime( datetimeMongotoReadable($result['date_added']), $UTC_7);
                 $date_added->setTimezone($newTZ);
@@ -193,9 +183,7 @@ class Report_registration extends MY_Controller
 
             $this->data['reports'][] = array(
                 'cl_player_id' => $result['cl_player_id'],
-                'username' => $result['username'],
-                'image' => $thumb,
-                'email' => $result['email'],
+                'cl_player_id-2' => isset($result['cl_player_id-2']) ? $result['cl_player_id-2'] : null,
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
             );
         }
@@ -359,8 +347,7 @@ class Report_registration extends MY_Controller
 
             $this->data['reports'][] = array(
                 'cl_player_id' => $result['cl_player_id'],
-                'username' => $result['username'],
-                'email' => $result['email'],
+                'cl_player_id-2' => isset($result['cl_player_id-2']) ? $result['cl_player_id-2'] : null,
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
             );
         }
@@ -374,8 +361,7 @@ class Report_registration extends MY_Controller
 
         $exporter->addRow(array(
                 $this->lang->line('column_player_id'),
-                $this->lang->line('column_username'),
-                $this->lang->line('column_email'),
+                $this->lang->line('column_referrer'),
                 $this->lang->line('column_date_registered')
             )
         );
@@ -383,8 +369,7 @@ class Report_registration extends MY_Controller
         foreach ($results as $row) {
             $exporter->addRow(array(
                     $row['cl_player_id'],
-                    $row['username'],
-                    $row['email'],
+                    isset($row['cl_player_id-2']) ? $row['cl_player_id-2'] : null,
                     $row['date_added']
                 )
             );

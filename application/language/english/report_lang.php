@@ -13,7 +13,7 @@ $lang['text_confirm']                           = 'Remove cannot be undone! Are 
 
 // Column
 $lang['column_avatar']                          = 'Avatar';
-$lang['column_player_id']                       = 'ID';
+$lang['column_player_id']                       = 'Player ID';
 $lang['column_username']                        = 'Username';
 $lang['column_email']                           = 'Email';
 $lang['column_level']                           = 'Level';
@@ -35,6 +35,7 @@ $lang['column_goods_name']                      = 'Goods';
 $lang['column_goods_code']                      = 'Coupon Code';
 $lang['column_sender']                          = 'Sender';
 $lang['column_receiver']                        = 'Receiver';
+$lang['column_referrer']                        = 'Referrer';
 $lang['column_gift_type']                       = 'Type';
 $lang['column_gift_name']                       = 'Gift Name';
 $lang['column_gift_code']                       = 'Code';
@@ -56,7 +57,7 @@ $lang['filter_time_zone']                       = 'Time Zone';
 $lang['filter_date_start']                      = 'Date Start';
 $lang['filter_date_end']                        = 'Date End';
 $lang['filter_username']                        = 'Username';
-$lang['filter_email_username']                  = 'Email / Username';
+$lang['filter_email_username']                  = 'Player ID';
 $lang['filter_tags']                            = 'Tags';
 $lang['filter_action_id']                       = 'Action';
 $lang['filter_reward_id']                       = 'Reward';

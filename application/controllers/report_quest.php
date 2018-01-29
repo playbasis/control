@@ -193,12 +193,6 @@ class Report_quest extends MY_Controller
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-
             $quest = $this->Report_quest_model->getQuestName($result['quest_id']);
             $quest_name = $quest['quest_name'];
             $missions = $quest['missions'];
@@ -219,9 +213,6 @@ class Report_quest extends MY_Controller
 
             $this->data['reports'][] = array(
                 'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
                 'quest_name' => isset($quest_name) ? $quest_name : null,
                 'mission_name' => isset($mission_name) ? $mission_name : null,
@@ -401,12 +392,6 @@ class Report_quest extends MY_Controller
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id']);
 
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-
             $quest = $this->Report_quest_model->getQuestName($result['quest_id']);
             $quest_name = $quest['quest_name'];
             $missions = $quest['missions'];
@@ -427,9 +412,6 @@ class Report_quest extends MY_Controller
 
             $this->data['reports'][] = array(
                 'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
                 'quest_name' => isset($quest_name) ? $quest_name : null,
                 'mission_name' => isset($mission_name) ? $mission_name : null,
@@ -447,8 +429,6 @@ class Report_quest extends MY_Controller
 
         $exporter->addRow(array(
                 $this->lang->line('column_player_id'),
-                $this->lang->line('column_username'),
-                $this->lang->line('column_email'),
                 $this->lang->line('column_quest_name'),
                 $this->lang->line('column_mission_name'),
                 $this->lang->line('column_mission_number'),
@@ -459,8 +439,6 @@ class Report_quest extends MY_Controller
         foreach ($results as $row) {
             $exporter->addRow(array(
                     $row['cl_player_id'],
-                    $row['username'],
-                    $row['email'],
                     $row['quest_name'],
                     $row['mission_name'],
                     $row['mission_number'],

@@ -93,14 +93,11 @@ class Report extends MY_Controller
         $this->load->model('Image_model');
         $this->load->model('Player_model');
 
-        $lang = get_lang($this->session, $this->config);
-        $this->lang->load("action", $lang['folder']);
-
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-30 days"));
+            $date = date("Y-m-d", strtotime("-7 days"));
             $previousDate = strtotime($date);
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
@@ -200,20 +197,6 @@ class Report extends MY_Controller
         }
 
         foreach ($results as $result) {
-
-            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-            /*if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
-            }*/
-
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime( $this->datetimeMongotoReadable($result['date_added']), $UTC_7 );
                 $date_added->setTimezone( $newTZ );
@@ -221,12 +204,7 @@ class Report extends MY_Controller
             }
 
             $this->data['reports'][] = array(
-                'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
-                // 'exp'               => $player['exp'],
-                // 'level'             => $player['level'],
+                'cl_player_id' => $result['cl_player_id'],
                 'action_name' => $result['action_name'],
                 'url' => $result['url'],
                 'parameters' => ($filter_action_id != '') ? $result['parameters'] : null,
@@ -242,7 +220,6 @@ class Report extends MY_Controller
             $data_filter['site_id'] = $site_id;
             $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
         }
-
         $config['base_url'] = $url . $parameter_url;
 
         $config['total_rows'] = $report_total;
@@ -301,7 +278,7 @@ class Report extends MY_Controller
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
         } else {
-            $date = date("Y-m-d", strtotime("-30 days"));
+            $date = date("Y-m-d", strtotime("-7 days"));
             $previousDate = strtotime($date);
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
@@ -376,10 +353,6 @@ class Report extends MY_Controller
 
         $row_to_add = array(
             $this->lang->line('column_player_id'),
-            $this->lang->line('column_username'),
-            $this->lang->line('column_email'),
-            $this->lang->line('column_level'),
-            $this->lang->line('column_exp'),
             $this->lang->line('column_action_name'),
         );
 
@@ -397,13 +370,8 @@ class Report extends MY_Controller
         $exporter->addRow($row_to_add);
 
         foreach ($results as $row) {
-            $player = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
             $row_to_add = array(
-                $player['cl_player_id'],
-                $player['username'],
-                $player['email'],
-                $player['level'],
-                $player['exp'],
+                $row['cl_player_id'],
                 $row['action_name']
             );
             if ($filter_action_id != 0 && is_array($init_dataset)) {
