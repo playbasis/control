@@ -73,46 +73,6 @@ class Action_model extends MY_Model
         return $results;
     }
 
-    public function getTotalActionReport($data)
-    {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        if (isset($data['username']) && $data['username'] != '') {
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['username'])) . "/i");
-            $this->mongo_db->where('username', $regex);
-            $users1 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('email', $data['username']);
-            $users2 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where_in('pb_player_id',
-                array_merge(array_map('action_model_index_id', $users1), array_map('action_model_index_id', $users2)));
-        }
-
-        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-
-        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
-            $this->mongo_db->where('date_added', array(
-                '$gt' => new MongoDate(strtotime($data['date_start'])),
-                '$lte' => new MongoDate(strtotime($data['date_expire']))
-            ));
-        }
-
-        if (isset($data['action_id']) && !empty($data['action_id'])) {
-            $this->mongo_db->where_in('action_id', $data['action_id']);
-        }
-
-        $results = $this->mongo_db->count("playbasis_validated_action_log");
-
-        return $results;
-
-    }
-
     public function getActionSiteInfo($action_id, $site_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -311,34 +271,44 @@ class Action_model extends MY_Model
         return $this->mongo_db->count("playbasis_action_to_client");
     }
 
-    public function getActionReport($data)
+    public function getTotalActionReport($data)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        if (isset($data['username']) && $data['username'] != '') {
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['username'])) . "/i");
-            $this->mongo_db->where('username', $regex);
-            $users1 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('email', $data['username']);
-            $users2 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where_in('pb_player_id',
-                array_merge(array_map('action_model_index_id', $users1), array_map('action_model_index_id', $users2)));
-        }
-
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+
+        if (isset($data['username']) && $data['username'] != '') {
+            $this->mongo_db->where('cl_player_id', $data['username']);
+        }
 
         if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
             $this->mongo_db->where('date_added', array(
                 '$gt' => new MongoDate(strtotime($data['date_start'])),
                 '$lte' => new MongoDate(strtotime($data['date_expire']))
             ));
+        }
+
+        if (isset($data['action_id']) && !empty($data['action_id'])) {
+            $this->mongo_db->where_in('action_id', $data['action_id']);
+        }
+
+        $results = $this->mongo_db->count("playbasis_validated_action_log");
+
+        return $results;
+
+    }
+
+    public function getActionReport($data)
+    {
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+
+        if (isset($data['username']) && $data['username'] != '') {
+            $this->mongo_db->where('cl_player_id', $data['username']);
+        }
+
+        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
+            $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])),
+                                                       '$lte' => new MongoDate(strtotime($data['date_expire']))));
         }
 
         if (isset($data['action_id']) && !empty($data['action_id'])) {
@@ -357,7 +327,6 @@ class Action_model extends MY_Model
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
-        $this->mongo_db->order_by(array('date_added' => 'ASC'));
         $results = $this->mongo_db->get("playbasis_validated_action_log");
 
         return $results;

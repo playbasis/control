@@ -84,7 +84,7 @@ class Report_goods extends MY_Controller
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-30 days"));
+            $date = date("Y-m-d", strtotime("-7 days"));
             $previousDate = strtotime($date);
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
@@ -211,6 +211,7 @@ class Report_goods extends MY_Controller
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
             'goods_id' => $goods,
+            'status' => $filter_goods_status,
             'group' => $group,
             'start' => $offset,
             'limit' => $limit
@@ -221,19 +222,6 @@ class Report_goods extends MY_Controller
         $results = array();
 
         if ($client_id) {
-            if($filter_goods_status == "expired"){
-                $ex_id = $this->Goods_model->getPlayerGoods($data['site_id'], $filter_date_start, $filter_date_end, $data);
-                $data['ex_id'] = is_array($ex_id) ? array_column($ex_id, 'goods_id') : array();
-            } elseif ($filter_goods_status == "active"){
-                $in_id = $this->Goods_model->getPlayerGoodsActive($data['site_id'], $filter_date_start, $filter_date_end, $data);
-                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
-            } elseif ($filter_goods_status == "used"){
-                $in_id = $this->Goods_model->getPlayerGoodsUsed($data['site_id'], $filter_date_start, $filter_date_end, $data);
-                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
-            } elseif ($filter_goods_status == "gifted"){
-                $in_id = $this->Goods_model->getPlayerGoodsGifted($data['site_id'], $filter_date_start, $filter_date_end, $data);
-                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
-            }
             $report_total = $this->Report_goods_model->getTotalReportGoods($data);
             $results = $this->Report_goods_model->getReportGoods($data);
         }
@@ -242,63 +230,15 @@ class Report_goods extends MY_Controller
         $this->data['reports'] = array();
 
         foreach ($results as $result) {
-
-            $goods_name = null;
-
-            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-            $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
-            $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
-            $date_used = null;
-            $date_gifted = null;
-            if( isset($result['status']) && $result['status'] == "used"){
-                $status = "used";
-                $date_used = new DateTime(datetimeMongotoReadable($result['date_modified']), $UTC_7);
-                $date_used->setTimezone($newTZ);
-                $date_used = $date_used->format("Y-m-d H:i:s");
-            } elseif( isset($result['status']) && $result['status'] == "sender"){
-                $status = "gifted";
-                $date_gifted = new DateTime(datetimeMongotoReadable($result['date_modified']), $UTC_7);
-                $date_gifted->setTimezone($newTZ);
-                $date_gifted = $date_gifted->format("Y-m-d H:i:s");
-            } else {
-                if (!is_null($goods_player)) {
-                    if ($goods_player['value'] > 0) {
-                        $status = "active";
-                        if ($filter_goods_status == "gifted") {
-                            $report_total--;
-                        }
-                    } else {
-                        $status = isset($goods_player['gifted']) && $goods_player['gifted'] ? "gifted" : "used";
-                        $date_used = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
-                        $date_used = new DateTime(datetimeMongotoReadable($date_used), $UTC_7);
-                        $date_used->setTimezone($newTZ);
-                        $date_used = $date_used->format("Y-m-d H:i:s");
-                        if ($status == "gifted") {
-                            $date_gifted = $date_used;
-                            $date_used = null;
-                        }
-                    }
-
-                } else {
-                    $status = "expired";
-                }
-            }
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-            /*if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
-            }*/
-
             $date_expire = null;
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
                 $date_added->setTimezone($newTZ);
                 $date_added = $date_added->format("Y-m-d H:i:s");
+
+                $date_modified = new DateTime(datetimeMongotoReadable($result['date_modified']), $UTC_7);
+                $date_modified->setTimezone($newTZ);
+                $date_modified = $date_modified->format("Y-m-d H:i:s");
 
                 if(isset($result['date_expire']) && $result['date_expire']){
                     $date_expire = new DateTime(datetimeMongotoReadable($result['date_expire']), $UTC_7);
@@ -307,29 +247,23 @@ class Report_goods extends MY_Controller
                 }
             }else{
                 $date_added = datetimeMongotoReadable($result['date_added']);
+                $date_modified = datetimeMongotoReadable($result['date_modified']);
                 if(isset($result['date_expire']) && $result['date_expire']){
                     $date_expire = datetimeMongotoReadable($result['date_expire']);
                 }
             }
 
-            if (is_null($filter_goods_status) || $filter_goods_status === $status){
-                $this->data['reports'][] = array(
-                    'cl_player_id' => $player['cl_player_id'],
-                    'username' => $player['username'],
-                    'image' => $thumb,
-                    'email' => $player['email'],
-                    'date_added' => $date_added ,
-                    'date_expire' => $date_expire,
-                    'date_used' => $date_used,
-                    'date_gifted' => $date_gifted,
-                    'goods_name' => isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
-                    // 'value'             => $result['value']
-                    'code' => $goods_data['code'],
-                    'value' => $result['amount'],
-                    'status' => $status
-                    // 'redeem'            => $result['redeem']
-                );
-            }
+            $this->data['reports'][] = array(
+                'cl_player_id' => isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
+                'date_added' => $date_added ,
+                'date_expire' => $date_expire,
+                'date_used' => isset($result['status']) && $result['status'] == 'used' ? $date_modified : null,
+                'date_gifted' => isset($result['status']) && $result['status'] == 'sender' ? $date_modified : null,
+                'goods_name' => isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'],
+                'code' => isset($result['code']) ? $result['code'] : null,
+                'value' => $result['amount'],
+                'status' => isset($result['status']) ? $result['status'] : 'active'
+            );
         }
 
         $this->data['goods_available'] = array();
@@ -446,7 +380,7 @@ class Report_goods extends MY_Controller
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-30 days"));
+            $date = date("Y-m-d", strtotime("-7 days"));
             $previousDate = strtotime($date);
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
@@ -567,24 +501,12 @@ class Report_goods extends MY_Controller
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
             'goods_id' => $goods,
+            'status' => $filter_goods_status,
             'group' => $group,
         );
         $report_total = 0;
 
         if ($client_id) {
-            if ($filter_goods_status == "expired") {
-                $ex_id = $this->Goods_model->getPlayerGoods($data['site_id'], $filter_date_start, $filter_date_end);
-                $data['ex_id'] = is_array($ex_id) ? array_column($ex_id, 'goods_id') : array();
-            } elseif ($filter_goods_status == "active") {
-                $in_id = $this->Goods_model->getPlayerGoodsActive($data['site_id'], $filter_date_start, $filter_date_end);
-                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
-            } elseif ($filter_goods_status == "used") {
-                $in_id = $this->Goods_model->getPlayerGoodsUsed($data['site_id'], $filter_date_start, $filter_date_end);
-                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
-            } elseif ($filter_goods_status == "gifted"){
-                $in_id = $this->Goods_model->getPlayerGoodsGifted($data['site_id'], $filter_date_start, $filter_date_end, $data);
-                $data['in_id'] = is_array($in_id) ? array_column($in_id, 'goods_id') : array();
-            }
             $report_total = $this->Report_goods_model->getTotalReportGoods($data);
         }
 
@@ -598,8 +520,6 @@ class Report_goods extends MY_Controller
 
         $exporter->addRow(array(
                 $this->lang->line('column_player_id'),
-                $this->lang->line('column_username'),
-                $this->lang->line('column_email'),
                 $this->lang->line('column_goods_name'),
                 $this->lang->line('column_goods_code'),
                 $this->lang->line('column_goods_amount'),
@@ -616,53 +536,15 @@ class Report_goods extends MY_Controller
             $results = $this->Report_goods_model->getReportGoods($data);
             foreach ($results as $result) {
 
-                $goods_name = null;
-
-                $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-                $goods_player = $this->Goods_model->getPlayerGoodsById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
-                $goods_data = $this->Goods_model->getGoodsOfClientPrivate($result['goods_id']);
-
-                $date_used = null;
-                $date_gifted = null;
-                if( isset($result['status']) && $result['status'] == "used"){
-                    $status = "used";
-                    $date_used = new DateTime(datetimeMongotoReadable($result['date_modified']), $UTC_7);
-                    $date_used->setTimezone($newTZ);
-                    $date_used = $date_used->format("Y-m-d H:i:s");
-                } elseif( isset($result['status']) && $result['status'] == "sender"){
-                    $status = "gifted";
-                    $date_gifted = new DateTime(datetimeMongotoReadable($result['date_modified']), $UTC_7);
-                    $date_gifted->setTimezone($newTZ);
-                    $date_gifted = $date_gifted->format("Y-m-d H:i:s");
-                } else {
-                    if (!is_null($goods_player)) {
-                        if ($goods_player['value'] > 0) {
-                            $status = "active";
-                            if ($filter_goods_status == "gifted") {
-                                $report_total--;
-                            }
-                        } else {
-                            $status = isset($goods_player['gifted']) && $goods_player['gifted'] ? "gifted" : "used";
-                            $date_used = $this->Goods_model->getPlayerGoodsModifiedDateById($data['site_id'], $result['goods_id'], $result['pb_player_id']);
-                            $date_used = new DateTime(datetimeMongotoReadable($date_used), $UTC_7);
-                            $date_used->setTimezone($newTZ);
-                            $date_used = $date_used->format("Y-m-d H:i:s");
-                            if ($status == "gifted") {
-                                $date_gifted = $date_used;
-                                $date_used = null;
-                            }
-                        }
-
-                    } else {
-                        $status = "expired";
-                    }
-                }
-
                 $date_expire = null;
                 if ($this->input->get('time_zone')){
                     $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
                     $date_added->setTimezone($newTZ);
                     $date_added = $date_added->format("Y-m-d H:i:s");
+
+                    $date_modified = new DateTime(datetimeMongotoReadable($result['date_modified']), $UTC_7);
+                    $date_modified->setTimezone($newTZ);
+                    $date_modified = $date_modified->format("Y-m-d H:i:s");
 
                     if(isset($result['date_expire']) && $result['date_expire']){
                         $date_expire = new DateTime(datetimeMongotoReadable($result['date_expire']), $UTC_7);
@@ -671,27 +553,24 @@ class Report_goods extends MY_Controller
                     }
                 }else{
                     $date_added = datetimeMongotoReadable($result['date_added']);
+                    $date_modified = datetimeMongotoReadable($result['date_modified']);
                     if(isset($result['date_expire']) && $result['date_expire']){
                         $date_expire = datetimeMongotoReadable($result['date_expire']);
                     }
                 }
 
-                if (is_null($filter_goods_status) || $filter_goods_status === $status) {
-                    $exporter->addRow(array(
-                            $player['cl_player_id'],
-                            $player['username'],
-                            $player['email'],
-                            isset($goods_data['group']) && $goods_data['group'] ? $goods_data['group'] : $result['goods_name'],
-                            $goods_data['code'],
-                            $result['amount'],
-                            $status,
-                            $date_added,
-                            $date_used,
-                            $date_gifted,
-                            $date_expire
-                        )
-                    );
-                }
+                $exporter->addRow(array(
+                        isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
+                        isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'],
+                        isset($result['code']) ? $result['code'] : null,
+                        $result['amount'],
+                        isset($result['status']) ? $result['status'] : 'active',
+                        $date_added,
+                        isset($result['status']) && $result['status'] == 'used' ? $date_modified : null,
+                        isset($result['status']) && $result['status'] == 'sender' ? $date_modified : null,
+                        $date_expire
+                    )
+                );
             }
         }
         $exporter->finalize();

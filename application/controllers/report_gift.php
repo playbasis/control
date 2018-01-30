@@ -167,9 +167,6 @@ class Report_gift extends MY_Controller
         $this->data['reports'] = array();
 
         foreach ($results as $result) {
-            $sender = $this->Player_model->getPlayerById($result['sender'], $data['site_id']);
-            $receiver = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
                 $date_added->setTimezone($newTZ);
@@ -177,17 +174,13 @@ class Report_gift extends MY_Controller
             }else{
                 $date_added = datetimeMongotoReadable($result['date_added']);
             }
-            
-            if(strtolower($result['gift_type']) == 'goods'){
-                $goods = $this->Goods_model->getGoodsOfClientPrivate($result['gift_id']);
-            }
 
             $this->data['reports'][] = array(
-                'sender' => $sender['username'],
-                'receiver' => $receiver['username'],
+                'sender' => $result['sender_player_id'],
+                'receiver' => $result['cl_player_id'],
                 'type' => $result['gift_type'],
                 'name' => $result['gift_name'] ,
-                'code' => strtolower($result['gift_type']) == 'goods' && isset($goods['code']) ? $goods['code'] : null,
+                'code' => strtolower($result['gift_type']) == 'goods' && isset($result['code']) ? $result['code'] : null,
                 'value' => $result['gift_value'],
                 'date_gifted' => $date_added,
             );
@@ -357,10 +350,6 @@ class Report_gift extends MY_Controller
             $data['start'] = ($i * 10000);
             $results = $this->Report_gift_model->getReportGift($data);
             foreach ($results as $result) {
-
-                $sender = $this->Player_model->getPlayerById($result['sender'], $data['site_id']);
-                $receiver = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
-
                 if ($this->input->get('time_zone')){
                     $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
                     $date_added->setTimezone($newTZ);
@@ -369,16 +358,12 @@ class Report_gift extends MY_Controller
                     $date_added = datetimeMongotoReadable($result['date_added']);
                 }
 
-                if(strtolower($result['gift_type']) == 'goods'){
-                    $goods = $this->Goods_model->getGoodsOfClientPrivate($result['gift_id']);
-                }
-
                 $exporter->addRow(array(
-                        $sender['username'],
-                        $receiver['username'],
+                        $result['sender_player_id'],
+                        $result['cl_player_id'],
                         $result['gift_type'],
                         $result['gift_name'],
-                        strtolower($result['gift_type']) == 'goods' && isset($goods['code']) ? $goods['code'] : null,
+                        strtolower($result['gift_type']) == 'goods' && isset($result['code']) ? $result['code'] : null,
                         $result['gift_value'],
                         $date_added,
                     )
