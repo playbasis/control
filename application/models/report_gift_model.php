@@ -11,31 +11,16 @@ class Report_gift_model extends MY_Model
 
     public function getTotalReportGift($data)
     {
-
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-
-        if (isset($data['username']) && $data['username'] != '') {
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['username'])) . "/i");
-            $this->mongo_db->where('username', $regex);
-            $users1 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('email', $data['username']);
-            $users2 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where('$or', array(array('sender' => array('$in' => array_merge(array_map('index_id', $users1), array_map('index_id', $users2)))),
-                                                array('pb_player_id' => array('$in' => array_merge(array_map('index_id', $users1), array_map('index_id', $users2))))));
-        }
-
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
         if (isset($data['status']) && !is_null($data['status'])) {
             $this->mongo_db->where('gift_type', $data['status']);
+        }
+
+        if (isset($data['username']) && $data['username'] != '') {
+            $this->mongo_db->where('$or', array(array('sender_player_id' => $data['username']),
+                                                array('cl_player_id' => $data['username'])));
         }
 
         if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
@@ -52,30 +37,16 @@ class Report_gift_model extends MY_Model
 
     public function getReportGift($data)
     {
-
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        if (isset($data['username']) && $data['username'] != '') {
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['username'])) . "/i");
-            $this->mongo_db->where('username', $regex);
-            $users1 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('email', $data['username']);
-            $users2 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where('$or', array(array('sender' => array('$in' => array_merge(array_map('index_id', $users1), array_map('index_id', $users2)))),
-                array('pb_player_id' => array('$in' => array_merge(array_map('index_id', $users1), array_map('index_id', $users2))))));
-        }
-
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
         if (isset($data['status']) && !is_null($data['status'])) {
             $this->mongo_db->where('gift_type', $data['status']);
+        }
+
+        if (isset($data['username']) && $data['username'] != '') {
+            $this->mongo_db->where('$or', array(array('sender_player_id' => $data['username']),
+                                                array('cl_player_id' => $data['username'])));
         }
 
         if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {

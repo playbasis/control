@@ -195,12 +195,6 @@ class Report_quiz extends MY_Controller
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-
             $is_multiple_choice = isset($result['is_multiple_choice']) ? $result['is_multiple_choice'] : false;
             $quiz_name = $result['quiz_name'];
             $question_name = isset($result['question']['question']) ? $result['question']['question'] : null;
@@ -232,9 +226,6 @@ class Report_quiz extends MY_Controller
 
             $this->data['reports'][] = array(
                 'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
                 'quiz_name' => isset($quiz_name) ? $quiz_name : null,
                 'question_name' => $question_name,
@@ -409,12 +400,6 @@ class Report_quiz extends MY_Controller
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id']);
 
-            if (!empty($player['image'])) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = S3_IMAGE . "cache/no_image-40x40.jpg";
-            }
-
             $is_multiple_choice = isset($result['is_multiple_choice']) ? $result['is_multiple_choice'] : false;
             $quiz_name = $result['quiz_name'];
             $question_name = isset($result['question']['question']) ? $result['question']['question'] : null;
@@ -444,9 +429,6 @@ class Report_quiz extends MY_Controller
             }
             $this->data['reports'][] = array(
                 'cl_player_id' => $player['cl_player_id'],
-                'username' => $player['username'],
-                'image' => $thumb,
-                'email' => $player['email'],
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
                 'quiz_name' => isset($quiz_name) ? $quiz_name : null,
                 'question_name' => $question_name,
@@ -467,8 +449,6 @@ class Report_quiz extends MY_Controller
 
         $exporter->addRow(array(
                 $this->lang->line('column_player_id'),
-                $this->lang->line('column_username'),
-                $this->lang->line('column_email'),
                 $this->lang->line('column_quiz_name'),
                 $this->lang->line('column_question_name'),
                 $this->lang->line('column_option'),
@@ -481,8 +461,6 @@ class Report_quiz extends MY_Controller
         foreach ($results as $row) {
             $exporter->addRow(array(
                     $row['cl_player_id'],
-                    $row['username'],
-                    $row['email'],
                     $row['quiz_name'],
                     $row['question_name'],
                     $row['option'],

@@ -9,36 +9,11 @@ class Report_custompoint_model extends MY_Model
         return $obj['_id'];
     }
 
-    public function getTotalReportPoint($data)
+    public function getTotalReportPointWithStatus($data)
     {
-
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        if (isset($data['username']) && $data['username'] != '') {
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['username'])) . "/i");
-            $this->mongo_db->where('username', $regex);
-            $users1 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('email', $data['username']);
-            $users2 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where_in('pb_player_id',
-                array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
-        }
-
-        if (isset($data['reward_id']) && !empty($data['reward_id'])) {
-            $this->mongo_db->where_in('reward_id', $data['reward_id']);
-        }
-
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->where('item_id', null);
-        $this->mongo_db->where('event_type', "REWARD");
-        $this->mongo_db->where_gt('value', 0);
+        $this->mongo_db->where('status', $data['status']);
 
         if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
             $this->mongo_db->where('date_modified', array(
@@ -47,48 +22,24 @@ class Report_custompoint_model extends MY_Model
             ));
         }
 
-        if (isset($data['ex_id']) && $data['ex_id']){
-            $this->mongo_db->where('transaction_id', array('$exists' => true , '$nin' => $data['ex_id'], '$ne' => null));
+        if (isset($data['username']) && $data['username'] != '') {
+            $this->mongo_db->where('cl_player_id', $data['username']);
         }
 
-        if (isset($data['in_id']) && $data['in_id']){
-            $this->mongo_db->where_in('transaction_id', $data['in_id']);
+        if (isset($data['reward_id']) && !empty($data['reward_id'])) {
+            $this->mongo_db->where_in('reward_id', $data['reward_id']);
         }
 
-        $results = $this->mongo_db->count("playbasis_event_log");
+        $results = $this->mongo_db->count("playbasis_reward_status_to_player");
 
         return $results;
     }
 
-    public function getReportPoint($data)
+    public function getReportPointWithStatus($data)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        if (isset($data['username']) && $data['username'] != '') {
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['username'])) . "/i");
-            $this->mongo_db->where('username', $regex);
-            $users1 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('email', $data['username']);
-            $users2 = $this->mongo_db->get("playbasis_player");
-
-            $this->mongo_db->where_in('pb_player_id',
-                array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
-        }
-
-        if (isset($data['reward_id']) && !empty($data['reward_id'])) {
-            $this->mongo_db->where_in('reward_id', $data['reward_id']);
-        }
-
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->where('item_id', null);
-        $this->mongo_db->where('event_type', "REWARD");
-        $this->mongo_db->where_gt('value', 0);
+        $this->mongo_db->where('status', $data['status']);
 
         if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
             $this->mongo_db->where('date_modified', array(
@@ -97,12 +48,12 @@ class Report_custompoint_model extends MY_Model
             ));
         }
 
-        if (isset($data['ex_id']) && $data['ex_id']){
-            $this->mongo_db->where('transaction_id', array('$exists' => true , '$nin' => $data['ex_id'], '$ne' => null));
+        if (isset($data['username']) && $data['username'] != '') {
+            $this->mongo_db->where('cl_player_id', $data['username']);
         }
 
-        if (isset($data['in_id']) && $data['in_id']){
-            $this->mongo_db->where_in('transaction_id', $data['in_id']);
+        if (isset($data['reward_id']) && !empty($data['reward_id'])) {
+            $this->mongo_db->where_in('reward_id', $data['reward_id']);
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
@@ -117,7 +68,74 @@ class Report_custompoint_model extends MY_Model
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
-        $this->mongo_db->order_by(array('date_added' => 'ASC'));
+
+        $results = $this->mongo_db->get("playbasis_reward_status_to_player");
+
+        return $results;
+    }
+
+    public function getTotalReportPoint($data)
+    {
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('event_type', "REWARD");
+        $this->mongo_db->where('reward_type', "POINT");
+
+        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
+            $this->mongo_db->where('date_modified', array(
+                '$gt' => new MongoDate(strtotime($data['date_start'])),
+                '$lte' => new MongoDate(strtotime($data['date_expire']))
+            ));
+        }
+
+        if (isset($data['username']) && $data['username'] != '') {
+            $this->mongo_db->where('cl_player_id', $data['username']);
+        }
+
+        if (isset($data['reward_id']) && !empty($data['reward_id'])) {
+            $this->mongo_db->where_in('reward_id', $data['reward_id']);
+        }
+
+        $results = $this->mongo_db->count("playbasis_event_log");
+
+        return $results;
+    }
+
+    public function getReportPoint($data)
+    {
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('event_type', "REWARD");
+        $this->mongo_db->where('reward_type', "POINT");
+
+        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
+            $this->mongo_db->where('date_modified', array(
+                '$gt' => new MongoDate(strtotime($data['date_start'])),
+                '$lte' => new MongoDate(strtotime($data['date_expire']))
+            ));
+        }
+
+        if (isset($data['username']) && $data['username'] != '') {
+            $this->mongo_db->where('cl_player_id', $data['username']);
+        }
+
+        if (isset($data['reward_id']) && !empty($data['reward_id'])) {
+            $this->mongo_db->where_in('reward_id', $data['reward_id']);
+        }
+
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
+
         $results = $this->mongo_db->get("playbasis_event_log");
 
         return $results;

@@ -77,13 +77,8 @@
             <table class="list">
                 <thead>
                 <tr>
-                    <td width="40" class="left"><?php echo $this->lang->line('column_avatar'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_player_id'); ?></td>
-                    <td class="left"><?php echo $this->lang->line('column_username'); ?></td>
-                    <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
-                    <!-- <td class="left"><?php //echo $this->lang->line('column_level'); ?></td>
-                    <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
-                    <td width="120" class="right"><?php echo $this->lang->line('column_reward_name'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_reward_name'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_reward_value'); ?></td>
                     <td width="80" class="right"><?php echo $this->lang->line('column_reward_status'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
@@ -93,16 +88,11 @@
                 <?php if ($reports) { ?>
                     <?php foreach ($reports as $report) { ?>
                         <tr>
-                            <td style="word-wrap:break-word;" class="left"><img width="40" height="40" src="<?php echo $report['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></td>
                             <td style="word-wrap:break-word;" class="left"><?php echo $report['cl_player_id']; ?></td>
-                            <td style="word-wrap:break-word;" class="left"><?php echo $report['username']; ?></td>
-                            <td style="word-wrap:break-word;" class="left"><?php echo $report['email']; ?></td>
-                            <!-- <td class="left"><?php //echo $report['level']; ?></td>
-                        <td class="left"><?php //echo $report['exp']; ?></td> -->
                             <td style="word-wrap:break-word;" class="right">
                                 <?php
                                 if(isset($report['reward_name'])&&$report['reward_name']!=null){
-                                    echo $report['reward_name']['name'];
+                                    echo $report['reward_name'];
                                 }
                                 ?>
                             </td>
@@ -113,7 +103,7 @@
                     <?php } ?>
                 <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="8"><?php echo $text_no_results; ?></td>
+                        <td class="center" colspan="5"><?php echo $text_no_results; ?></td>
                     </tr>
                 <?php } ?>
                 </tbody>
