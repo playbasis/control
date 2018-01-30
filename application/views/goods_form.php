@@ -295,23 +295,28 @@
                                     if($point_list){
                                     ?>
                                         <br>
-                                        <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>
+                                        <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button><br>
                                         <div class="rewards">
                                             <div id="redeem_custom_reward_table" class="goods-panel">
                                             <?php
                                             foreach($point_list as $point){
                                                 if(array_key_exists($point['reward_id']."",$reward_reward)) {
                                                     ?>
-                                                    <?php echo $point['name']; ?>
-                                                    <?php echo ':'; ?>
-                                                    <input type="number" id="valueCurrency" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green', 'yellow', 'blue'); ?>" size="100" value="<?php echo $reward_reward[$point['reward_id'].""] ?>"/>
-                                                    <button type="button" id="buttonCurrency" onclick="$('#form').submit().deleteCurrencyInput();" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>
+                                                        <div id="<?php echo $point['reward_id']; ?>">
+                                                            <?php echo $point['name']; ?>
+                                                            <?php echo ':'; ?>
+                                                            <input id="valueCurrency_<?php echo $point['reward_id']; ?>" type="number" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green', 'yellow', 'blue'); ?>" min="1" size="100" value="<?php echo $reward_reward[$point['reward_id'].""] ?>"/>
+                                                            <button type="button" onclick="deleteCurrency('<?php echo $point['reward_id']; ?>');" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>
+                                                        </div>
                                                     <?php
                                                 }
                                             }
                                             ?>
                                             </div>
-                                            <button type="button" class="btn btn-info col-sm-12 offset9" data-toggle="modal" data-target="#formEditRedeem" id="editReward" ><i class="fa fa-plus"></i> Add</button>
+                                            <div class="col-sm-12 offset8">
+                                                <button type="button" onclick="document.location.reload(true);" style="background: transparent; border: none; outline: none;"><span class="icon-refresh" style="color: limegreen"></span></button>
+                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward" ><i class="fa fa-plus"></i> Add</button>
+                                            </div>
                                         </div>
                                     <?php
                                     }
@@ -628,58 +633,34 @@
     function listCurrency() {
         var filter_reward_id = $('select[name=\'filter_reward_id\']').val();
         var e = document.getElementById("filter_reward_id");
+        var txtPrintout
+        var q = "'";
+        var color = "'green', 'yellow', 'blue'";
         for (idx = 0; idx < filter_reward_id.length; idx++) {
-                if(filter_reward_id.length==null){
-                    alert('Please Select Some Options');
-                }else if(getById("reward_reward[" + filter_reward_id[idx] + "]")){
-                    $('#redeem_custom_reward_table').append(e.selectedOptions[idx].text + " : ");
-                    $('#redeem_custom_reward_table').append("<input type='number' class='<?php echo alternator("green", "yellow", "blue"); ?>' name='reward_reward[" + filter_reward_id[idx] + "]' size='100' value=''><br>");
-
+                if(getById("reward_reward[" + filter_reward_id[idx] + "]")){
+                    var txt = '<div id="'+filter_reward_id[idx]+'">\
+                                '+e.selectedOptions[idx].text + ' : \
+                                <input id="valueCurrency_'+filter_reward_id [idx]+'" type="number" name="reward_reward['+filter_reward_id[idx]+']" class="alternator('+color+');" min="1" size="100" value="" placeholder="Please input your currency...">\
+                                <button type="button" onclick="deleteCurrency('+q+filter_reward_id[idx]+q+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
+                              </div>';
+                    $('#redeem_custom_reward_table').append(txt);
+                } else if(!getById("reward_reward[" + filter_reward_id[idx] + "]")){
+                    document.getElementById(filter_reward_id[idx]).style.display = 'inline';
                 }
             }
             $("#formEditRedeem").modal("hide");
     }
-    function clearFormCurrency() {
-        $("#valueCurrency").remove("");
-    }
-//    function deleteCurrencyInput() {
-//        alert('Alert for me');
-//        var input = document.querySelector('input[id="valueCurrency"]'), values = [];
-//        a = <?php //echo $goods_id;?>
-//        document.getElementById("valueCurrency").value = " ";
-//        document.getElementById(buttonCurrency).style.display = "none";
-//        $('#form').submit();
-//            location.href=baseUrlPath+'goods/update/'+a;
-//    }
-//    function updateCurrencyTable() {
-//       var a = '<?php //echo $goods_id; ?>//';
-//        $.ajax({
-//            type: "POST",
-//            url: baseUrlPath+"goods/getGoodsGroupAjax/"+a,
-//            data: { page: 1 },
-//            dataType: "html"
-//        }).done(function( data ) {
-//            pagination_click();
-//            filter_reward_id = "";
-//            filter_name = "";
-//
-//
-//        });
-//        function confirmDeleteCurrencyType(reward_id){
-//
-//            var decision = confirm('Are you sure to delete this currency?');
-//            if (decision){
-//                //console.log("yes");
-//                $("#action").val("delete");
-//                $("#user_id").val(reward_id);
-//                //alert($("#action").val());
-//                $("#form").submit();
-//            }
+    function deleteCurrency(rewardId) {
+//        var op = document.getElementById("filter_reward_id").getElementsByTagName("option");
+        var a = $('input[id=\'valueCurrency_'+rewardId+'\']').val();
+                    document.getElementById(rewardId).style.display = 'none';
+                document.getElementById("valueCurrency_" + rewardId).value = null;
+//        for (var i = 0; i < op.length; i++) {
+//            // lowercase comparison for case-insensitivity
+//            (op[i].value == "disable")
+//                ? op[i].disabled = false;
 //        }
-//        Pace.on("done", function () {
-//            $(".cover").fadeOut(1000);
-//        });
-//    }
+    }
 </script>
 
 <script type="text/javascript"><!--
