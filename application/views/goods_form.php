@@ -305,7 +305,7 @@
                                                         <div id="<?php echo $point['reward_id']; ?>">
                                                             <?php echo $point['name']; ?>
                                                             <?php echo ':'; ?>
-                                                            <input id="valueCurrency_<?php echo $point['reward_id']; ?>" type="number" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green', 'yellow', 'blue'); ?>" min="1" size="100" value="<?php echo $reward_reward[$point['reward_id'].""] ?>"/>
+                                                            <input id="valueCurrency_<?php echo $point['reward_id']; ?>" type="number" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green', 'yellow', 'blue'); ?>" size="100" value="<?php echo $reward_reward[$point['reward_id'].""] ?>"/>
                                                             <button type="button" onclick="deleteCurrency('<?php echo $point['reward_id']; ?>');" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>
                                                         </div>
                                                     <?php
@@ -635,12 +635,12 @@
         var e = document.getElementById("filter_reward_id");
         var txtPrintout
         var q = "'";
-        var color = "'green', 'yellow', 'blue'";
+        var color = "'green', 'yellow', 'blue'" ;
         for (idx = 0; idx < filter_reward_id.length; idx++) {
                 if(getById("reward_reward[" + filter_reward_id[idx] + "]")){
                     var txt = '<div id="'+filter_reward_id[idx]+'">\
                                 '+e.selectedOptions[idx].text + ' : \
-                                <input id="valueCurrency_'+filter_reward_id [idx]+'" type="number" name="reward_reward['+filter_reward_id[idx]+']" class="alternator('+color+');" min="1" size="100" value="" placeholder="Please input your currency...">\
+                                <input id="valueCurrency_'+filter_reward_id [idx]+'" type="number" name="reward_reward['+filter_reward_id[idx]+']" class="alternator('+color+');" size="100" value="" placeholder="Please input your currency...">\
                                 <button type="button" onclick="deleteCurrency('+q+filter_reward_id[idx]+q+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
                               </div>';
                     $('#redeem_custom_reward_table').append(txt);
