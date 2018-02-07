@@ -314,7 +314,6 @@
                                             ?>
                                             </div>
                                             <div class="col-sm-12 offset8">
-                                                <button type="button" onclick="document.location.reload(true);" style="background: transparent; border: none; outline: none;"><span class="icon-refresh" style="color: limegreen"></span></button>
                                             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward" ><i class="fa fa-plus"></i> Add</button>
                                             </div>
                                         </div>
