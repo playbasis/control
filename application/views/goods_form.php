@@ -573,10 +573,10 @@
                 <div class="report-filter col-sm-12 offset2">
                     <span>
                         <label class="text-info" type="text" style="text-align: center"><h2>Currency  <span class="icon-search"></span></h2></label>
-                        <?php echo $this->lang->line('filter_currency_id'); ?>
-                        <select id="filter_currency_id" multiple name="filter_currency_id" name="filter_currency_id">
+                        <?php echo $this->lang->line('redeem_add_currency'); ?>
+                        <select id="redeem_add_currency" multiple name="redeem_add_currency" name="redeem_add_currency">
                         <?php foreach ($point_list as $br){
-                            $match =  array_search($br['reward_id'], $filter_currency_id);
+                            $match =  array_search($br['reward_id'], $redeem_add_currency);
                             if (!is_null($match) && $match !== false) {
                                 ?>
                                 <option selected="selected" value="<?php echo $br['reward_id']?>" data="<?php echo $br['name']?>"><?php echo $br['name'];?></option>
@@ -612,8 +612,8 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
 
 <script type="text/javascript"><!--
-        $("#filter_currency_id").chosen({max_selected_options: 9});
-        var filter_id = document.getElementById("filter_currency_id_chosen")
+        $("#redeem_add_currency").chosen({max_selected_options: 9});
+        var filter_id = document.getElementById("redeem_add_currency_chosen")
         filter_id.style.width = "300px";
 //--></script>
 
@@ -626,27 +626,27 @@
         }
     }
     function listCurrency() {
-        var filter_reward_id = $('select[name=\'filter_currency_id\']').val();
-        var e = document.getElementById("filter_currency_id");
+        var reward_id = $('select[name=\'redeem_add_currency\']').val();
+        var e = document.getElementById("redeem_add_currency");
         var txtPrintout
         var q = "'";
         var color = "'green', 'yellow', 'blue'" ;
-        for (idx = 0; idx < filter_reward_id.length; idx++) {
-                if(getById("reward_reward[" + filter_reward_id[idx] + "]")){
-                    var txt = '<div id="'+filter_reward_id[idx]+'">\
+        for (idx = 0; idx < reward_id.length; idx++) {
+                if(getById("reward_reward[" + reward_id[idx] + "]")){
+                    var txt = '<div id="'+reward_id[idx]+'">\
                                 '+e.selectedOptions[idx].text + ' : \
-                                <input id="valueCurrency_'+filter_reward_id [idx]+'" type="number" name="reward_reward['+filter_reward_id[idx]+']" class="alternator('+color+');" size="100" value="" placeholder="Please input your currency...">\
-                                <button type="button" onclick="deleteCurrency('+q+filter_reward_id[idx]+q+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
+                                <input id="valueCurrency_'+reward_id [idx]+'" type="number" name="reward_reward['+reward_id[idx]+']" class="alternator('+color+');" size="100" value="" placeholder="Please input your currency...">\
+                                <button type="button" onclick="deleteCurrency('+q+reward_id[idx]+q+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
                               </div>';
                     $('#redeem_custom_reward_table').append(txt);
-                } else if(!getById("reward_reward[" + filter_reward_id[idx] + "]")){
-                    document.getElementById(filter_reward_id[idx]).style.display = 'inline';
+                } else if(!getById("reward_reward[" + reward_id[idx] + "]")){
+                    document.getElementById(reward_id[idx]).style.display = 'inline';
                 }
             }
             $("#formEditRedeem").modal("hide");
     }
     function deleteCurrency(rewardId) {
-//        var op = document.getElementById("filter_reward_id").getElementsByTagName("option");
+//        var op = document.getElementById("reward_id").getElementsByTagName("option");
         var a = $('input[id=\'valueCurrency_'+rewardId+'\']').val();
                     document.getElementById(rewardId).style.display = 'none';
                 document.getElementById("valueCurrency_" + rewardId).value = null;

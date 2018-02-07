@@ -1554,17 +1554,17 @@ class Goods extends MY_Controller
             $this->data['reward_reward'] = array();
         }
 
-        if ($this->input->post('filter_currency_id')) {
-            $this->data['filter_currency_id'] = $this->input->post('filter_currency_id');
+        if ($this->input->post('redeem_add_currency')) {
+            $this->data['redeem_add_currency'] = $this->input->post('redeem_add_currency');
         } elseif (isset($goods_info['redeem']['custom']) && !empty($goods_info['redeem']['custom'])) {
             $selected_rewards = isset($goods_info['redeem']['custom']) ? $goods_info['redeem']['custom'] : array();
             $selected_rewards_result = array();
             foreach($selected_rewards as $key => $value){
-                $this->data['filter_currency_id'][] = $key;
+                $this->data['redeem_add_currency'][] = $key;
             }
 
         } else {
-            $this->data['filter_currency_id'] = array();
+            $this->data['redeem_add_currency'] = array();
         }
 
         if ($this->input->post('sponsor')) {
