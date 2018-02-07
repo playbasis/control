@@ -646,15 +646,9 @@
             $("#formEditRedeem").modal("hide");
     }
     function deleteCurrency(rewardId) {
-//        var op = document.getElementById("reward_id").getElementsByTagName("option");
         var a = $('input[id=\'valueCurrency_'+rewardId+'\']').val();
                     document.getElementById(rewardId).style.display = 'none';
                 document.getElementById("valueCurrency_" + rewardId).value = null;
-//        for (var i = 0; i < op.length; i++) {
-//            // lowercase comparison for case-insensitivity
-//            (op[i].value == "disable")
-//                ? op[i].disabled = false;
-//        }
     }
 </script>
 
