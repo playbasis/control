@@ -1554,18 +1554,17 @@ class Goods extends MY_Controller
             $this->data['reward_reward'] = array();
         }
 
-        if ($this->input->post('filter_reward_id')) {
-            $this->data['filter_reward_id'] = $this->input->post('filter_reward_id');
+        if ($this->input->post('filter_currency_id')) {
+            $this->data['filter_currency_id'] = $this->input->post('filter_currency_id');
         } elseif (isset($goods_info['redeem']['custom']) && !empty($goods_info['redeem']['custom'])) {
             $selected_rewards = isset($goods_info['redeem']['custom']) ? $goods_info['redeem']['custom'] : array();
             $selected_rewards_result = array();
             foreach($selected_rewards as $key => $value){
-                $this->data['filter_reward_id'][] = $key;
+                $this->data['filter_currency_id'][] = $key;
             }
 
-
         } else {
-            $this->data['filter_reward_id'] = array();
+            $this->data['filter_currency_id'] = array();
         }
 
         if ($this->input->post('sponsor')) {
@@ -1642,7 +1641,6 @@ class Goods extends MY_Controller
 
         $this->data['point_list'] = array();
         if ($this->User_model->getUserGroupId() != $setting_group_id) {
-
             $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($site_id);
         }
         if (!empty($goods_info)) {
@@ -1656,18 +1654,6 @@ class Goods extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
-    }
-
-    public function getCurrencyAjax($reward_id)
-    {
-        if (isset($reward_id) && ($reward_id != 0)) {
-            if ($this->User_model->getClientId()) {
-                $currency_info = $this->goods_model->getCurrency($reward_id);
-            } else {
-                $currency_info = $this->goods_model->getCurency($reward_id);
-            }
-        }
-
     }
 
     public function getGoodsGroupAjax($goods_id = null)
@@ -1740,8 +1726,6 @@ class Goods extends MY_Controller
         $this->load->vars($this->data);
         $this->load->view('goods_group_ajax');
     }
-
-
 
     public function downloadGoodsGroup($goods_id = null)
     {

@@ -485,13 +485,4 @@
     Pace.on("done", function () {
         $(".cover").fadeOut(1000);
     });
-
-    function clear_optionGoods() {
-        $('#clear_inputCurrency').val('');
-        }
-
-    function clear_filter(){
-        window.location.replace(baseUrlPath+'goods/update');
-    }
-
 </script>

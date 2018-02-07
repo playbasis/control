@@ -573,15 +573,13 @@
                 <div class="report-filter col-sm-12 offset2">
                     <span>
                         <label class="text-info" type="text" style="text-align: center"><h2>Currency  <span class="icon-search"></span></h2></label>
-                        <?php echo $this->lang->line('filter_reward_id'); ?>
-                        <select id="filter_reward_id" multiple name="filter_reward_id" name="filter_reward_id">
-
+                        <?php echo $this->lang->line('filter_currency_id'); ?>
+                        <select id="filter_currency_id" multiple name="filter_currency_id" name="filter_currency_id">
                         <?php foreach ($point_list as $br){
-
-                            $match =  array_search($br['reward_id'], $filter_reward_id);
+                            $match =  array_search($br['reward_id'], $filter_currency_id);
                             if (!is_null($match) && $match !== false) {
                                 ?>
-                                <option disabled value="<?php echo $br['reward_id']?>" data="<?php echo $br['name']?>"><?php echo $br['name'];?></option>
+                                <option selected="selected" value="<?php echo $br['reward_id']?>" data="<?php echo $br['name']?>"><?php echo $br['name'];?></option>
                             <?php }
                             else{?>
                                 <option value="<?php echo $br['reward_id']?>" data="<?php echo $br['name']?>"><?php echo $br['name'];?></option>
@@ -589,9 +587,8 @@
                         <?php }?>
                         </select>
                     </span>
-                    </div><br>
-
-                </div>
+                </div><br>
+            </div>
         </div>
     </div>
         <?php echo form_close(); ?>
@@ -611,16 +608,14 @@
 <link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css" />
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script src="<?php echo base_url(); ?>javascript/import/d3.v3.min.js"></script>
-
-<!--<link id="bootstrap-style2" href="--><?php //echo base_url();?><!--javascript/bootstrap/chosen.min.css" rel="stylesheet">-->
-<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.css" rel="stylesheet">
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
 <script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
-<!--<script type="text/javascript" scr="--><?php //echo base_url();?><!--javascript/bootstrap/chosen.jquery.js"></script>-->
-<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 
-    <script type="text/javascript"><!--
-            $("#filter_reward_id").chosen({max_selected_options: 9});
-    //--></script>
+<script type="text/javascript"><!--
+        $("#filter_currency_id").chosen({max_selected_options: 9});
+        var filter_id = document.getElementById("filter_currency_id_chosen")
+        filter_id.style.width = "300px";
+//--></script>
 
 <script type="text/javascript">
     function getById(id) {if(document.getElementsByName(id).length){
@@ -631,8 +626,8 @@
         }
     }
     function listCurrency() {
-        var filter_reward_id = $('select[name=\'filter_reward_id\']').val();
-        var e = document.getElementById("filter_reward_id");
+        var filter_reward_id = $('select[name=\'filter_currency_id\']').val();
+        var e = document.getElementById("filter_currency_id");
         var txtPrintout
         var q = "'";
         var color = "'green', 'yellow', 'blue'" ;
