@@ -231,6 +231,9 @@ class Report_goods extends MY_Controller
 
         foreach ($results as $result) {
             $date_expire = null;
+            $status =  isset($result['status']) ? $result['status'] : 'active';
+            $currentYMD = date("Y-m-d");
+            $currentTime = strtotime($currentYMD." " . date('H:i:s', time()) );
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
                 $date_added->setTimezone($newTZ);
@@ -244,12 +247,16 @@ class Report_goods extends MY_Controller
                     $date_expire = new DateTime(datetimeMongotoReadable($result['date_expire']), $UTC_7);
                     $date_expire->setTimezone($newTZ);
                     $date_expire = $date_expire->format("Y-m-d H:i:s");
+                    $expireTime = strtotime($date_expire);
+                    $status = $currentTime > $expireTime ? 'expire' : $status;
                 }
             }else{
                 $date_added = datetimeMongotoReadable($result['date_added']);
                 $date_modified = datetimeMongotoReadable($result['date_modified']);
                 if(isset($result['date_expire']) && $result['date_expire']){
                     $date_expire = datetimeMongotoReadable($result['date_expire']);
+                    $expireTime = strtotime($date_expire);
+                    $status = $currentTime > $expireTime ? 'expire' : $status;
                 }
             }
 
@@ -262,7 +269,7 @@ class Report_goods extends MY_Controller
                 'goods_name' => isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'],
                 'code' => isset($result['code']) ? $result['code'] : null,
                 'value' => $result['amount'],
-                'status' => isset($result['status']) ? $result['status'] : 'active'
+                'status' => $status
             );
         }
 
@@ -535,8 +542,10 @@ class Report_goods extends MY_Controller
             $data['start'] = ($i * 10000);
             $results = $this->Report_goods_model->getReportGoods($data);
             foreach ($results as $result) {
-
                 $date_expire = null;
+                $status =  isset($result['status']) ? $result['status'] : 'active';
+                $currentYMD = date("Y-m-d");
+                $currentTime = strtotime($currentYMD." " . date('H:i:s', time()) );
                 if ($this->input->get('time_zone')){
                     $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
                     $date_added->setTimezone($newTZ);
@@ -550,12 +559,16 @@ class Report_goods extends MY_Controller
                         $date_expire = new DateTime(datetimeMongotoReadable($result['date_expire']), $UTC_7);
                         $date_expire->setTimezone($newTZ);
                         $date_expire = $date_expire->format("Y-m-d H:i:s");
+                        $expireTime = strtotime($date_expire);
+                        $status = $currentTime > $expireTime ? 'expire' : $status;
                     }
                 }else{
                     $date_added = datetimeMongotoReadable($result['date_added']);
                     $date_modified = datetimeMongotoReadable($result['date_modified']);
                     if(isset($result['date_expire']) && $result['date_expire']){
                         $date_expire = datetimeMongotoReadable($result['date_expire']);
+                        $expireTime = strtotime($date_expire);
+                        $status = $currentTime > $expireTime ? 'expire' : $status;
                     }
                 }
 
@@ -564,7 +577,7 @@ class Report_goods extends MY_Controller
                         isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'],
                         isset($result['code']) ? $result['code'] : null,
                         $result['amount'],
-                        isset($result['status']) ? $result['status'] : 'active',
+                        $status,
                         $date_added,
                         isset($result['status']) && $result['status'] == 'used' ? $date_modified : null,
                         isset($result['status']) && $result['status'] == 'sender' ? $date_modified : null,
