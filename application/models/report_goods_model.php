@@ -79,7 +79,8 @@ class Report_goods_model extends MY_Model
 
         if(isset($data['status']) && !is_null($data['status'])){
             if($data['status'] == 'active') {
-                $this->mongo_db->where('status', array('$exists' => false));
+                $this->mongo_db->where(array('$or' => array(array('status' => array('$exists' => false)) , array('status' => 'receiver'))));
+                $this->mongo_db->where('date_expire', array('$gt' => new MongoDate()));
             } elseif($data['status'] == 'expired') {
                 $this->mongo_db->where('date_expire', array('$lt' => new MongoDate()));
             } elseif($data['status'] == 'gifted'){
