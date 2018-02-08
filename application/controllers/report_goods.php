@@ -248,7 +248,7 @@ class Report_goods extends MY_Controller
                     $date_expire->setTimezone($newTZ);
                     $date_expire = $date_expire->format("Y-m-d H:i:s");
                     $expireTime = strtotime($date_expire);
-                    $status = $currentTime > $expireTime ? 'expire' : $status;
+                    $status = $currentTime > $expireTime && $status != 'used' ? 'expire' : $status;
                 }
             }else{
                 $date_added = datetimeMongotoReadable($result['date_added']);
@@ -256,7 +256,7 @@ class Report_goods extends MY_Controller
                 if(isset($result['date_expire']) && $result['date_expire']){
                     $date_expire = datetimeMongotoReadable($result['date_expire']);
                     $expireTime = strtotime($date_expire);
-                    $status = $currentTime > $expireTime ? 'expire' : $status;
+                    $status = $currentTime > $expireTime && $status != 'used' ? 'expire' : $status;
                 }
             }
 
@@ -560,7 +560,7 @@ class Report_goods extends MY_Controller
                         $date_expire->setTimezone($newTZ);
                         $date_expire = $date_expire->format("Y-m-d H:i:s");
                         $expireTime = strtotime($date_expire);
-                        $status = $currentTime > $expireTime ? 'expire' : $status;
+                        $status = $currentTime > $expireTime && $status != 'used'? 'expire' : $status;
                     }
                 }else{
                     $date_added = datetimeMongotoReadable($result['date_added']);
@@ -568,7 +568,7 @@ class Report_goods extends MY_Controller
                     if(isset($result['date_expire']) && $result['date_expire']){
                         $date_expire = datetimeMongotoReadable($result['date_expire']);
                         $expireTime = strtotime($date_expire);
-                        $status = $currentTime > $expireTime ? 'expire' : $status;
+                        $status = $currentTime > $expireTime && $status != 'used'? 'expire' : $status;
                     }
                 }
 
