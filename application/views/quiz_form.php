@@ -103,13 +103,13 @@ function find_template($data, $type, $template_id) {
                         <tr>
                             <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
                             <td>
-                                <input type="text" class="date" name="date_start" value="<?php echo isset($quiz)&&isset($quiz['date_start'])&&$quiz['date_start']?date('Y-m-d', strtotime(datetimeMongotoReadable($quiz['date_start']))):''; ?>" size="50" />
+                                <input type="text" class="date" name="date_start" value="<?php echo isset($quiz)&&isset($quiz['date_start'])&&$quiz['date_start']?date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($quiz['date_start']))):''; ?>" size="50" />
                             </td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
                             <td>
-                                <input type="text" class="date" name="date_expire" value="<?php echo isset($quiz)&&isset($quiz['date_expire'])&&$quiz['date_expire']?date('Y-m-d', strtotime(datetimeMongotoReadable($quiz['date_expire']))):''; ?>" size="50" />
+                                <input type="text" class="date" name="date_expire" value="<?php echo isset($quiz)&&isset($quiz['date_expire'])&&$quiz['date_expire']?date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($quiz['date_expire']))):''; ?>" size="50" />
                             </td>
                         </tr>
                         <tr>
@@ -1409,10 +1409,11 @@ function find_template($data, $type, $template_id) {
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/bootstrap/combodate.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>javascript/bootstrap/moment.js" type="text/javascript"></script>
+<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css" />
+<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript">
-    $(function(){
-
-        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
+    $(function(){   
+        $('.date').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
 
         $('.timelimit').combodate({
             firstItem: 'name', //show 'hour' and 'minute' string at first item of dropdown
