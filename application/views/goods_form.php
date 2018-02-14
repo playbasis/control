@@ -249,10 +249,10 @@
                         <tr>
                             <td><?php echo $this->lang->line('entry_redeem_with'); ?>:</td>
                             <td>
-                                <div class="well" style="max-width: 400px;">
-                                    <button id="point-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_point'); ?></button>
+                                <div class="well">
+                                    <button id="point-entry" type="button" style="max-width: 400px;" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_point'); ?></button>
                                     <div class="point">
-                                        <div class="goods-panel">
+                                        <div class="well">
                                             <span class="label label-primary"><?php echo $this->lang->line('entry_point'); ?></span>
                                             <input type="text" name="reward_point" size="100" class="orange tooltips" value="<?php echo isset($reward_point) ? $reward_point :  set_value('reward_point'); ?>" data-placement="right" title="The number of Points needed to redeem the Goods"/>
                                         </div>
@@ -262,9 +262,9 @@
                                     if($badge_list){
                                     ?>
                                         <br>
-                                        <button id="badge-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
+                                        <button id="badge-entry" type="button" style="max-width: 400px;" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
                                         <div class="badges">
-                                            <div class="goods-panel">
+                                            <div class="well">
                                                 <?php
                                                 foreach($badge_list as $badge){
                                                     ?>
@@ -295,28 +295,24 @@
                                     if($point_list){
                                     ?>
                                         <br>
-                                        <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>
+                                        <button id="reward-entry" type="button" style="max-width: 400px;" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>
                                         <div class="rewards">
-                                            <div class="goods-panel">
-                                                <?php
-                                                foreach($point_list as $point){
+                                            <div id="redeem_custom_reward_table" class="well ">
+                                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward" ><i class="fa fa-plus"></i> Add</button>
+                                                <br>
+                                            <?php
+                                            foreach($point_list as $point){
+                                                if(array_key_exists($point['reward_id']."",$reward_reward)) {
                                                     ?>
-                                                    <?php echo $point['name']; ?>
-                                                    <input type="text" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_reward['.$point['reward_id'].']')){
-                                                        echo set_value('reward_reward['.$point['reward_id'].']');
-                                                    }else{
-                                                        if($reward_reward){
-                                                            foreach($reward_reward as $rbk => $rb){
-                                                                if($rbk == $point['reward_id']){
-                                                                    echo $rb;
-                                                                    continue;
-                                                                }
-                                                            }
-                                                        }
-                                                    } ?>" /><br/>
-                                                <?php
+                                                        <div id="<?php echo $point['reward_id']; ?>">
+                                                            <span class="label label-primary"><?php echo $point['name']; ?></span>
+                                                            <input id="valueCurrency_<?php echo $point['reward_id']; ?>" type="number" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green', 'yellow', 'blue'); ?>" size="100" value="<?php echo $reward_reward[$point['reward_id'].""] ?>"/>
+                                                            <button type="button" onclick="deleteCurrency('<?php echo $point['reward_id']; ?>');" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>
+                                                        </div>
+                                                    <?php
                                                 }
-                                                ?>
+                                            }
+                                            ?>
                                             </div>
                                         </div>
                                     <?php
@@ -551,7 +547,49 @@
 </div>
 </div>
 
+<div class="modal hide" id="pleaseWaitRewardDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <h1>Please Wait</h1>
+    </div>
+    <div class="modal-body">
+        <div class="offset5 ">
+            <i class="fa fa-spinner fa-spin fa-5x"></i>
+        </div>
+    </div>
+</div>
 
+<div id="formEditRedeem" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formEditRedeemLabel" aria-hidden="true" style="width: 500px;" >
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="formEditRedeemLabel">Add currency</h3>
+</div>
+<div class="modal-body col-sm-12" style="height: 300px;">
+    <div class="container-fluid">
+        <div class="span10 col-sm-10">
+            <div class="box">
+                <div class="report-filter col-sm-12 offset2">
+                    <span>
+                        <label class="text-info" type="text" style="text-align: center"><h2>Currency  <span class="icon-search"></span></h2></label>
+                        <?php echo $this->lang->line('redeem_add_currency'); ?>
+                        <select id="redeem_add_currency" multiple name="redeem_add_currency" name="redeem_add_currency">
+                        <?php foreach ($point_list as $br){?>
+                                <option value="<?php echo $br['reward_id']?>" data="<?php echo $br['name']?>"><?php echo $br['name'];?></option>
+                        <?php }?>
+                        </select>
+                    </span>
+                </div><br>
+            </div>
+        </div>
+    </div>
+    <?php echo form_close(); ?>
+</div>
+<div class="modal-footer">
+    <div>
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" id="test">Close</button>
+        <button class="btn btn-primary" onclick="listCurrency()" id="listRewardButton">Add</button>
+    </div>
+</div>
+</div>
 
 <script type="text/javascript" src="<?php echo base_url();?>javascript/ckeditor/ckeditor.js"></script>
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
@@ -560,6 +598,48 @@
 <link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css" />
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script src="<?php echo base_url(); ?>javascript/import/d3.v3.min.js"></script>
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
+
+<script type="text/javascript">
+    $("#redeem_add_currency").chosen({max_selected_options: 9});
+    var filter_id = document.getElementById("redeem_add_currency_chosen")
+    filter_id.style.width = "300px";
+</script>
+
+<script type="text/javascript">
+    function getById(id) {if(document.getElementsByName(id).length){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    function listCurrency() {
+        var reward_id = $('select[name=\'redeem_add_currency\']').val();
+        var e = document.getElementById("redeem_add_currency");
+        var color = "'green', 'yellow', 'blue'" ;
+        for (idx = 0; idx < reward_id.length; idx++) {
+            if(getById("reward_reward[" + reward_id[idx] + "]")){
+                var txt = '<div id="'+reward_id[idx]+'">\
+                             <span class="label label-primary">'+e.selectedOptions[idx].text+'</span>\
+                             <input id="valueCurrency_'+reward_id [idx]+'" type="number" name="reward_reward['+reward_id[idx]+']" class="alternator('+color+');" size="100" value="" placeholder="Please input your currency...">\
+                            <button type="button" onclick="deleteCurrency('+"'"+reward_id[idx]+"'"+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
+                           </div>';
+                $('#redeem_custom_reward_table').append(txt);
+            } else if(!getById("reward_reward[" + reward_id[idx] + "]")){
+                document.getElementById(reward_id[idx]).style.display = 'inline';
+            }
+        }
+
+        $("#formEditRedeem").modal("hide");
+    }
+    function deleteCurrency(rewardId) {
+        var a = $('input[id=\'valueCurrency_'+rewardId+'\']').val();
+                    document.getElementById(rewardId).style.display = 'none';
+                document.getElementById("valueCurrency_" + rewardId).value = null;
+    }
+</script>
 
 <script type="text/javascript"><!--
     Pace.on("done", function () {
@@ -608,7 +688,6 @@
             }
         });
     }
-
 //--></script>
 <script type="text/javascript"><!--
 $('#tabs a').tabs();
