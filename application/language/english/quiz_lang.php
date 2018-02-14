@@ -39,6 +39,8 @@ $lang['entry_tags']                 = 'Tag(s)';
 $lang['entry_file']	                = 'JSON File To Import';
 
 $lang['column_date_added']          = 'Date Added';
+$lang['column_date_start']          = 'Date Start';
+$lang['column_date_end']            = 'Date End';
 $lang['column_action']              = 'Action';
 $lang['column_name']                = 'Quiz Name';
 $lang['column_status']              = 'Status';

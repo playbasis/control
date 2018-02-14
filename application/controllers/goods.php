@@ -247,7 +247,7 @@ class Goods extends MY_Controller
                     if(is_array($data['custom_param'])){
                         $custom_param = array();
                         foreach ($data['custom_param'] as $param){
-                            if(!is_null($param['key']) && !is_null($param['value'])){
+                            if(!is_null($param['key']) && ($param['key'] != "") && !is_null($param['value'])){
                                 array_push($custom_param, $param);
                                 if(is_numeric($param['value'])){
                                     array_push($custom_param, array('key' => $param['key'].'_numeric', 'value' => floatval($param['value'])));
@@ -467,7 +467,7 @@ class Goods extends MY_Controller
                     if(is_array($goods_data['custom_param'])){
                         $custom_param = array();
                         foreach ($goods_data['custom_param'] as $param){
-                            if(!is_null($param['key']) && !is_null($param['value'])){
+                            if(!is_null($param['key']) && ($param['key'] != "") && !is_null($param['value'])){
                                 array_push($custom_param, $param);
                                 if(is_numeric($param['value'])){
                                     array_push($custom_param, array('key' => $param['key'].'_numeric', 'value' => floatval($param['value'])));
@@ -700,7 +700,7 @@ class Goods extends MY_Controller
                         if(is_array($goods_data['custom_param'])){
                             $custom_param = array();
                             foreach ($goods_data['custom_param'] as $param){
-                                if(!is_null($param['key']) && !is_null($param['value'])){
+                                if(!is_null($param['key']) && ($param['key'] != "") && !is_null($param['value'])){
                                     array_push($custom_param, $param);
                                     if(is_numeric($param['value'])){
                                         array_push($custom_param, array('key' => $param['key'].'_numeric', 'value' => floatval($param['value'])));
