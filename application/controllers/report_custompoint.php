@@ -155,7 +155,7 @@ class Report_custompoint extends MY_Controller
                 $reward_id = new MongoId($reward_id);
             }
         } else {
-            $filter_reward_id = '';
+            $filter_reward_id = array();
         }
 
         if ($this->input->get('status')) {

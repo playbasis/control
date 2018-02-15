@@ -154,7 +154,7 @@ class Report extends MY_Controller
                 $action_id = new MongoId($action_id);
             }
         } else {
-            $filter_action_id = '';
+            $filter_action_id = array();
         }
 
         $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
