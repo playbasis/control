@@ -191,7 +191,7 @@ class Report_goods extends MY_Controller
                     }
                 }
             }
-            $filter_goods_id = '';
+            $filter_goods_id = array();
         }
 
         if ($this->input->get('status')) {

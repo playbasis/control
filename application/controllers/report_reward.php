@@ -155,7 +155,7 @@ class Report_reward extends MY_Controller
                 $badge_id = new MongoId($badge_id);
             }
         } else {
-            $filter_badge_id = '';
+            $filter_badge_id = array();
         }
 
         $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
