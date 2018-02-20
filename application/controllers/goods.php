@@ -1508,7 +1508,7 @@ class Goods extends MY_Controller
 
         if ($this->input->post('quantity')) {
             $this->data['quantity'] = $this->input->post('quantity');
-        } elseif (isset($goods_info['quantity']) && !empty($goods_info['quantity'])) {
+        } elseif (isset($goods_info['quantity']) && !is_null($goods_info['quantity'])) {
             $this->data['quantity'] = $goods_info['quantity'];
         } else {
             $this->data['quantity'] = null;
