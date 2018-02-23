@@ -96,16 +96,23 @@ class Badge extends MY_Controller
                     }
 
                     if ($this->User_model->getClientId()) {
-                        $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);
-                        $badge_data['client_id'] = $this->User_model->getClientId();
-                        $badge_data['site_id'] = $this->User_model->getSiteId();
+                        $client_id = $this->User_model->getClientId();
+                        $site_id = $this->User_model->getSiteId();
+                        $chk_name = $this->Badge_model->getBadgeByName($client_id ,$site_id, $badge_data['name']);
+                        if($chk_name){
+                            $this->data['message'] = $this->lang->line('text_error_duplicate_item');
+                        }else {
+                            $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);
+                            $badge_data['client_id'] = $client_id;
+                            $badge_data['site_id'] = $site_id;
 
-                        $badge_id = $this->Badge_model->addBadgeToClient($badge_data);
-                        $this->Badge_model->auditAfterBadge('insert', $badge_id, $this->User_model->getId());
+                            $badge_id = $this->Badge_model->addBadgeToClient($badge_data);
+                            $this->Badge_model->auditAfterBadge('insert', $badge_id, $this->User_model->getId());
 
-                        $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                            $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                        redirect('/badge', 'refresh');
+                            redirect('/badge', 'refresh');
+                        }
                     } else {
 
                         $this->load->model('Client_model');
@@ -188,25 +195,34 @@ class Badge extends MY_Controller
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 if ($this->User_model->getClientId()) {
-                    if (!$this->Badge_model->checkBadgeIsSponsor($badge_id)) {
-                        $badge_data['client_id'] = $this->User_model->getClientId();
-                        $badge_data['site_id'] = $this->User_model->getSiteId();
-                        $audit_id = $this->Badge_model->auditBeforeBadge('update', $badge_id, $this->User_model->getId());
-                        $this->Badge_model->editBadgeToClient($badge_id, $badge_data);
-                        $this->Badge_model->auditAfterBadge('update', $badge_id, $this->User_model->getId(), $audit_id);
-                    } else {
-                        redirect('/badge', 'refresh');
+                    $client_id = $this->User_model->getClientId();
+                    $site_id = $this->User_model->getSiteId();
+                    $chk_name = $this->Badge_model->getBadgeByNameButNotID( $client_id, $site_id, $badge_data['name'], $badge_id);
+                    if($chk_name){
+                        $this->data['message'] = $this->lang->line('text_error_duplicate_item');
+                    }else {
+                        if (!$this->Badge_model->checkBadgeIsSponsor($badge_id)) {
+                            $badge_data['client_id'] = $this->User_model->getClientId();
+                            $badge_data['site_id'] = $this->User_model->getSiteId();
+                            $audit_id = $this->Badge_model->auditBeforeBadge('update', $badge_id, $this->User_model->getId());
+                            $this->Badge_model->editBadgeToClient($badge_id, $badge_data);
+                            $this->Badge_model->auditAfterBadge('update', $badge_id, $this->User_model->getId(), $audit_id);
+
+                            $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                            redirect('/badge', 'refresh');
+                        } else {
+                            redirect('/badge', 'refresh');
+                        }
                     }
                 } else {
                     $this->Badge_model->editBadge($badge_id, $badge_data);
                     $audit_id = $this->Badge_model->auditBeforeBadge('update', $badge_id, $this->User_model->getId());
                     $this->Badge_model->editBadgeToClientFromAdmin($badge_id, $badge_data);
                     $this->Badge_model->auditAfterBadge('update', $badge_id, $this->User_model->getId(), $audit_id);
+
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                    redirect('/badge', 'refresh');
                 }
-
-                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-
-                redirect('/badge', 'refresh');
             }
         }
 
