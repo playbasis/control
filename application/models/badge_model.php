@@ -36,7 +36,21 @@ class Badge_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('deleted', false);
-        //$this->mongo_db->where('status', true);
+        $this->mongo_db->where('name', $badge_name);
+        $results = $this->mongo_db->get("playbasis_badge_to_client");
+
+        return $results ? $results[0] : null;
+    }
+
+    public function getBadgeByNameButNotID($client_id, $site_id, $badge_name, $badge_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor','claim','redeem'));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where_ne('_id', new MongoId($badge_id));
+        $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('name', $badge_name);
         $results = $this->mongo_db->get("playbasis_badge_to_client");
 
