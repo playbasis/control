@@ -52,7 +52,7 @@ function find_template($data, $type, $template_id) {
 
             $qndata = array('name' => 'name', 'id' => 'quiz_name','value' => isset($quiz)?$quiz['name']:'', "placeholder" => $this->lang->line('quiz_name'), "class"=>"form-control");
             $qddata = array('name' => 'description', 'id' => 'quiz_desc','value' => isset($quiz)?$quiz['description']:'', "placeholder" => $this->lang->line('quiz_description'), "class"=>"form-control", "rows" => 3);
-            $qwdata = array('name' => 'weight', 'id' => 'quiz_weight','value' => isset($quiz)?$quiz['weight']:'', "placeholder" => $this->lang->line('weight'), "class"=>"form-control");
+            $qwdata = array('name' => 'weight', 'id' => 'quiz_weight','value' => isset($quiz)?$quiz['weight']:'1', "placeholder" => $this->lang->line('weight'), "class"=>"form-control");
 
             $attributes = array('id' => 'form_quiz');
             if(isset($quiz['_id'])){
@@ -128,7 +128,7 @@ function find_template($data, $type, $template_id) {
                         <tr>
                             <td><?php echo $this->lang->line('entry_type'); ?>:</td>
                             <td>
-                                <input type="radio" name="type" value="quiz" <?php echo isset($quiz['type']) && $quiz['type'] == 'quiz' ? 'checked' : ''; ?> /> Quiz
+                                <input type="radio" name="type" value="quiz" <?php echo (isset($quiz['type']) && $quiz['type'] == 'quiz') || (!isset($quiz['type'])) ? 'checked' : ''; ?> /> Quiz
                                 <input type="radio" name="type" value="poll" <?php echo isset($quiz['type']) && $quiz['type'] == 'poll' ? 'checked' : ''; ?> /> Poll
                             </td>
                         </tr>
@@ -343,7 +343,7 @@ function find_template($data, $type, $template_id) {
                                                                 </tr>
                                                                 <tr>
                                                                    <td>Score</td>
-                                                                   <td><input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][score]" value = "<?php echo $option["score"]; ?>"></td>
+                                                                   <td><input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][score]" value = "<?php echo isset($option["score"]) ? $option["score"]: ""; ?>"></td>
                                                                 </tr>
                                                                 <tr>
                                                                    <td>Explanation</td>
@@ -551,7 +551,7 @@ function find_template($data, $type, $template_id) {
                                             <td>
                                                 Rank title : 
                                             </td>
-                                            <td><input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rank]" value = "<?php echo $grade['rank']; ?>"> <small>* ex. Super good, normal</small></td>
+                                            <td><input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rank]" value = "<?php echo isset($grade['rank']) ? $grade['rank'] : ""; ?>"> <small>* ex. Super good, normal</small></td>
                                         </tr>
                                         <tr>
                                             <td>
