@@ -189,6 +189,7 @@ class Quiz extends MY_Controller
             $data = $this->input->post();
 
             $quiz = array();
+            $quiz["grades"] = array();
 
             foreach ($data as $key => $value) {
                 if ($key == "quiz") {

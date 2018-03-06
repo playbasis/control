@@ -44,6 +44,7 @@ $lang['column_date_end']            = 'Date End';
 $lang['column_action']              = 'Action';
 $lang['column_name']                = 'Quiz Name';
 $lang['column_status']              = 'Status';
+$lang['column_weight']              = 'Weight';
 $lang['column_order']               = 'Order';
 $lang['column_tags']                = 'Tag(s)';
 

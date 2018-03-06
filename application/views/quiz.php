@@ -24,6 +24,7 @@
                         <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="right" style="min-width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
                         <td class="right" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
+                        <td class="right" style="width:50px;"><?php echo $this->lang->line('column_weight'); ?></td>
                         <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
                         <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_date_start'); ?></td>
                         <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_date_end'); ?></td>
@@ -35,6 +36,7 @@
                     <tr class="filter">
                         <td></td>
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -56,6 +58,7 @@
                                     <?php } ?></td>
                                 <td class="right"><?php echo $quiz['name']; ?> <?php if (!empty($quiz['error'])) { ?><span class="red"><a herf="javascript:void(0)" class="error-icon" title="<?php echo $quiz['error']; ?>" data-toggle="tooltip"><i class="icon-warning-sign" ></i></a></span><?php } ?></td>
                                 <td class="right"><?php echo ($quiz['status'])? "Enabled" : "Disabled"; ?></td>
+                                <td class="right"><?php echo ($quiz['weight'])? $quiz['weight'] : "1"; ?></td>
                                 <td class="right" style="word-wrap:break-word;"><?php echo (isset($quiz['tags']) && $quiz['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $quiz['tags']).'</span>' : null); ?></td>
                                 <td class="right"><?php echo datetimeMongotoReadable($quiz['date_start']) ? datetimeMongotoReadable($quiz['date_start']) : ""; ?></td>
                                 <td class="right"><?php echo datetimeMongotoReadable($quiz['date_expire']) ? datetimeMongotoReadable($quiz['date_expire']) : ""; ?></td>
@@ -75,7 +78,7 @@
                             }else{
                         ?>
                     <tr>
-                        <td class="center" colspan="8">
+                        <td class="center" colspan="9">
                         No quiz
                         </td>
                     </tr>
