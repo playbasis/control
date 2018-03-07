@@ -1026,14 +1026,6 @@ class Rule_model extends MY_Model
 
         try {
             if (count($results) > 0) {
-                /* init */
-                $rules = array();
-                $usage = $this->countUsage($siteId);
-                if ($usage) {
-                    foreach ($usage as $each) {
-                        $rules[$each['_id']['rule_id']->{'$id'}] = $each['n'];
-                    }
-                }
                 /* main process */
                 $output = $results;
                 foreach ($output as &$value) {
@@ -1043,7 +1035,7 @@ class Rule_model extends MY_Model
                     $value['action_id'] = strval($value["action_id"]);
                     $value['action_name'] = array_key_exists(strval($value["action_id"]),
                         $params['actionNameDict']) ? $params['actionNameDict'][strval($value["action_id"])] : $this->getActionName($value['jigsaw_set']) . '<span style="color: red">*</span>';
-                    $value['usage'] = array_key_exists($value['rule_id'], $rules) ? $rules[$value['rule_id']] : 0;
+                    $value['usage'] = $this->countRuleUsage($clientId, $siteId, $value["_id"]);
                     $value['error'] = implode(', ', $this->checkRuleError($value['jigsaw_set'], $params, $siteId ,$clientId));
                     unset($value['jigsaw_set']);
                     foreach ($value as $k2 => &$v2) {
@@ -1074,29 +1066,16 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function countUsage($site_id, $from = null, $to = null)
-    {
+    public function countRuleUsage($client_id, $site_id, $rule_id){
         $this->set_site_mongodb($site_id);
-        $date_added = array();
-        if ($from) {
-            $date_added['$gt'] = $from;
-        }
-        if ($to) {
-            $date_added['$lt'] = $to;
-        }
-        $default = array('site_id' => $site_id);
-        $match = array_merge($date_added ? array('date_added' => $date_added) : array(), $default);
-        $results = $this->mongo_db->aggregate('playbasis_rule_log',
-            array(
-                array(
-                    '$match' => $match
-                ),
-                array(
-                    '$group' => array('_id' => array('rule_id' => '$rule_id'), 'n' => array('$sum' => '$value'))
-                ),
-            )
-        );
-        return $results ? $results['result'] : array();
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('rule_id', $rule_id);
+
+        $result = $this->mongo_db->count("playbasis_rule_log");
+
+        return $result;
     }
 
     public function calculateFrequency($site_id, $from = null, $to = null)
