@@ -1181,7 +1181,7 @@ class Goods extends MY_Controller
         } else {
             $filter_array = array();
             if (isset($_GET['filter_goods'])) {
-                $parameter_url .= "&filter_goods=" . $_GET['filter_goods'];
+                $parameter_url .= "&filter_goods=" . urlencode($_GET['filter_goods']);
                 $filter_array['filter_goods'] = $_GET['filter_goods'];
             }
             if (isset($_GET['filter_group'])) {
@@ -1193,7 +1193,7 @@ class Goods extends MY_Controller
                 $filter_array['filter_status'] = $_GET['filter_status'] == "enable" ? true : false;
             }
             if (isset($_GET['filter_tags'])) {
-                $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
+                $parameter_url .= "&filter_tags=" . urlencode($_GET['filter_tags']);
                 $filter_array['filter_tags'] = $_GET['filter_tags'];
             }
 
