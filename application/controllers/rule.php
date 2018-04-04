@@ -103,7 +103,7 @@ class Rule extends MY_Controller
         }
 
         if (is_array($rewardList)) {
-            $reward_list = array("badge","customPointReward","goods");
+            $reward_list = array("badge","customPointReward","goods","exp");
             foreach ($rewardList as &$reward) {
                 if (is_array($reward['dataSet'])) {
                     foreach ($reward['dataSet'] as &$dataset) {
@@ -121,6 +121,16 @@ class Rule extends MY_Controller
                             'value' => "",
 
                         );
+
+                        if(defined('ENGINE_RULE_POINT_EXPIRE') && ENGINE_RULE_POINT_EXPIRE == true){
+                            $reward['dataSet'][] = array(
+                                'field_type' => "date_time",
+                                'label' => "Expire date (optional)",
+                                'param_name' => "point_expire_date",
+                                'sortOrder' => "0",
+                                'value' => "",
+                            );
+                        }
                     }
                 }
             }
