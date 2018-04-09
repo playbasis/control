@@ -95,7 +95,7 @@
                         <tr>
                             <td><?php echo $this->lang->line('entry_code'); ?>:</td>
                             <td>
-                                <input type="text" name="code" value="<?php echo isset($code) ? $code : set_value('code'); ?>" size="5" class="tooltips" data-placement="right" title="Code for reddem or do something"/>
+                                <input type="text" name="code" value="<?php echo isset($code) ? $code : set_value('code'); ?>" size="5" class="tooltips" data-placement="right" title="Code for redeem or do something"/>
                             </td>
                         </tr>
                         <?php } ?>
