@@ -471,6 +471,7 @@
     var jsonString_ConditionGroup = <?php echo json_encode($conditionGroupList); ?>;
     var jsonString_Reward    = <?php echo json_encode($rewardList); ?>;
     var jsonString_RewardSequence = <?php echo json_encode($rewardSequenceList); ?>;
+    var jsonString_RewardRedeem = <?php echo json_encode($rewardRedeemList); ?>;
     var jsonString_Feedback  = <?php echo json_encode($feedbackList); ?>;
     var jsonString_Group     = <?php echo json_encode($groupList); ?>;
     var jsonString_CustomReward    = <?php echo json_encode($customRewardFileList); ?>;
