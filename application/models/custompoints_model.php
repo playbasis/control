@@ -31,7 +31,7 @@ class Custompoints_model extends MY_Model
 
         $field3 = array(
             "field_type" => "number",
-            "label" => strtolower($data['name']),
+            "label" => "quantity",
             "param_name" => "quantity",
             "placeholder" => "How many ...",
             "sortOrder" => "0",
@@ -243,6 +243,9 @@ class Custompoints_model extends MY_Model
         } else {
             $this->mongo_db->unset_field('energy_props');
         }
+
+        $this->mongo_db->set('init_dataset.0.value', $data['name']);
+        $this->mongo_db->set('init_dataset.2.label', "quantity");
 
         $this->mongo_db->set('tags', isset($tags) ? $tags : null);
 

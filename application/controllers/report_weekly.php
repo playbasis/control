@@ -78,8 +78,6 @@ class Report_weekly extends CI_Controller
         
         $to_pbteam_email = array(
             'devteam@playbasis.com',
-            'notjiam@gmail.com',
-            'pascal@playbasis.com',
             'piya.p@playbasis.com',
             'pongsakorn.r@playbasis.com'
         );
