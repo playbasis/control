@@ -1005,7 +1005,12 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
         else if(type === 'GROUP')
             jsonItemSet = jsonString_Group;
         else if(type === 'GROUP_ITEM')
-            jsonItemSet = jsonString_Feedback;
+            if(targetType === "redeem"){
+                jsonItemSet = jsonString_RewardRedeem;
+            }else{
+                jsonItemSet = jsonString_Feedback;
+            }
+
         else if(type === 'CONDITION_GROUP_ITEM')
             jsonItemSet = jsonString_Condition;
 

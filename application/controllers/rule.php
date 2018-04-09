@@ -81,7 +81,7 @@ class Rule extends MY_Controller
         //if($s_clientId){
         $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
         $conditionList = $this->Rule_model->getConditionJigsawList($site_id, $client_id);
-        $rewardList = $rewardSequenceList = $this->Rule_model->getRewardJigsawList($site_id, $client_id);
+        $rewardList = $rewardSequenceList = $rewardRedeemList = $this->Rule_model->getRewardJigsawList($site_id, $client_id);
         $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
         $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
         $pushList = $this->Push_model->listTemplatesBySiteId($site_id);
@@ -218,6 +218,7 @@ class Rule extends MY_Controller
         $this->data['levelConditionList'] = $levelConditionList;
         $this->data['rewardList'] = $rewardList;
         $this->data['rewardSequenceList'] = $rewardSequenceList;
+        $this->data['rewardRedeemList'] = $rewardRedeemList;
         $this->data['feedbackList'] = array_merge($rewardList, $feedbackList);
         $this->data['groupList'] = $groupList;
         $this->data['conditionGroupList'] = $conditionGroupList;
