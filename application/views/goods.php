@@ -117,7 +117,11 @@
                                 <td></td>
                                 <td></td>
                                 <td class="right" ><input style="width:95%;" title="filter_tags" type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : "" ?>"/></td>
-                                <td></td>
+                                <td style="display: flex;">
+                                    <input style="width: 50%;" title="filter_custom_key" type="text" name="filter_custom_key" placeholder="Key" value="<?php echo isset($_GET['filter_custom_key']) ? $_GET['filter_custom_key'] : "" ?>"/>
+                                    <span style="align-self: center;margin-bottom: 10px;">:</span>
+                                    <input style="width: 50%;" title="filter_custom_val" type="text" name="filter_custom_val" placeholder="Value" value="<?php echo isset($_GET['filter_custom_val']) ? $_GET['filter_custom_val'] : "" ?>"/>
+                                </td>
                                 <td class="right">
                                     <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
                                     <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
@@ -393,6 +397,8 @@
         var filter_group = $('select[name=\'filter_group\']').attr('value');
         var filter_status = $('select[name=\'filter_status\']').attr('value');
         var filter_tags = $('input[name=\'filter_tags\']').attr('value');
+        var filter_custom_key = $('input[name=\'filter_custom_key\']').attr('value');
+        var filter_custom_val = $('input[name=\'filter_custom_val\']').attr('value');
 
 
         if (filter_goods) {
@@ -406,6 +412,12 @@
         }
         if (filter_tags) {
             url += '&filter_tags=' + encodeURIComponent(filter_tags);
+        }
+        if (filter_custom_key) {
+            url += '&filter_custom_key=' + encodeURIComponent(filter_custom_key);
+        }
+        if (filter_custom_val) {
+            url += '&filter_custom_val=' + encodeURIComponent(filter_custom_val);
         }
         
 

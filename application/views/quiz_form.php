@@ -281,9 +281,6 @@ function find_template($data, $type, $template_id) {
                                 <div class="box box-add-item option-box-wrapper">
                                     <div class="box-header overflow-visible">
                                         <h2><i class="icon-question-sign"></i><span class="break"></span>Choice</h2>
-                                        <div class="box-icon box-icon-action"> 
-                                            <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="<?php echo $questions['question_id']; ?>"> Add option</a>
-                                        </div>
                                     </div>
                                     <div class="option-wrapper">
 
@@ -294,7 +291,7 @@ function find_template($data, $type, $template_id) {
 
                                                     $option['option_id'] = $option['option_id']."";
                                             ?>
-                                                    <div class="option-container well clearfix">
+                                                    <div class="option-container well clearfix" style="position:relative;">
                                                     <div class="span7">
                                                             <table class="form">
                                                                 <tbody>
@@ -381,7 +378,7 @@ function find_template($data, $type, $template_id) {
                                                             <br>
                                                             <br>
 
-                                                            <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete Option</a>
+                                                            <a href="javascript:void(0)" style="top: 10px;position: absolute;right: 10px;" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">X</a>
                                                         </div>
                                                 </div>
                                             <?php
@@ -398,8 +395,14 @@ function find_template($data, $type, $template_id) {
                                         </div>
 
                                     </div>
+                                    <div class="box-header overflow-visible">
+                                        <div class="box-icon box-icon-action">
+                                            <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="<?php echo $questions['question_id']; ?>"> Add option</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
                             </div>
                         </div>
                     <?php
@@ -639,8 +642,9 @@ function find_template($data, $type, $template_id) {
                                                                 <div class="reward-panel">
                                                                     <?php
                                                                     foreach($point_list as $point){
+                                                                        if($custom_user_set["custom_value"] == ""){
                                                                         ?>
-                                                                        <?php echo $point['name']; ?>
+                                                                        <span class="label label-primary"><?php echo $point['name']; ?></span>
                                                                         <?php
                                                                         $user_c = "";
                                                                         foreach($custom_user_set as $c){
@@ -651,7 +655,9 @@ function find_template($data, $type, $template_id) {
                                                                         }
                                                                         ?>
                                                                         <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][custom][<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php echo $user_c; ?>" /><br/>
+                                                                        <button type="button" onclick="deleteCurrency(<?php echo $point['reward_id']; ?>);" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>
                                                                     <?php
+                                                                    }
                                                                     }
                                                                     ?>
                                                                 </div>
@@ -799,6 +805,30 @@ function find_template($data, $type, $template_id) {
         </div>
     </div>
 </div>
+<div id="formEditRedeem" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formEditRedeemLabel" aria-hidden="true" style="max-width: 800px;" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="formEditRedeemLabel">Add currency</h3>
+    </div>
+    <div class="modal-body" style="height: 300px;">
+
+        <div align="center">
+            <label class="text-info" type="text" style="text-align: center"><h2>Currency  <span class="icon-search"></span></h2></label><br>
+            <select class="chosen-select" multiple id="redeem_add_currency" name="redeem_add_currency" >
+                <?php foreach ($point_list as $br){?>
+                    <option value="<?php echo $br['reward_id']?>" data="<?php echo $br['name']?>"><?php echo $br['name'];?></option>
+                <?php }?>
+            </select>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <div>
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" id="test">Close</button>
+            <button class="btn btn-primary" onclick="listCurrency()" id="listRewardButton">Add</button>
+        </div>
+    </div>
+</div>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/quiz/quiz.js"></script>
 <script type="text/javascript">
 
@@ -922,12 +952,12 @@ function find_template($data, $type, $template_id) {
         $(obj_click).unbind().bind('click',function(data){
 
             var $target = $(this);
-
             for ( var i = 0; i < num_of_parent; i++ ) {
                 $target = $target.parent();
             }
 
             var r = confirm("Are you sure to remove!");
+//            console.log($target)
             if (r == true) {
                 $target.remove();
             }
@@ -1043,18 +1073,25 @@ function find_template($data, $type, $template_id) {
             ?>
             <br>\
             <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>\
-        <div class="rewards hide">\
-            <div class="reward-panel">\
-            <?php
-            foreach($point_list as $point){
-            ?>
-            <?php echo $point['name']; ?>\
-            <input type="text" name="quiz[grades]['+countGrades+'][rewards][custom][<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="" /><br/>\
-            <?php
-            }
-            ?>
+            <div class="rewards hide">\
+                <br>\
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward" ><i class="fa fa-plus"></i> Add</button>\
+                <div class="reward-panel">\
+                <?php
+                foreach($point_list as $point){
+                    if(array_key_exists($point['reward_id']."",$grade_reward)){
+                ?>
+                    <div id="<?php echo $point['reward_id']; ?>">\
+                        <span class="label label-primary"><?php echo $point['name']; ?></span>\
+                        <input type="text" name="quiz[grades]['+countGrades+'][rewards][custom][<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="" /><br/>\
+                        <button type="button" onclick="deleteCurrency(<?php echo $point['reward_id']; ?>);" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
+                    </div>\
+                <?php
+                    }
+                }
+                ?>
+                </div>\
             </div>\
-        </div>\
         <?php
         }
         ?>
@@ -1074,8 +1111,8 @@ function find_template($data, $type, $template_id) {
                             <label>\
                             <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>][checked]" > <?php echo $email['name']; ?></h3>\
                             </label>\
-                             <span class="label label-primary"><?php echo $this->lang->line('entry_subject'); ?></span>\
-                              <input type="text" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="" /><br/>\
+                                <span class="label label-primary"><?php echo $this->lang->line('entry_subject'); ?></span>\
+                                <input type="text" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="" /><br/>\
                             </div>\
                         <?php
                         }
@@ -1163,7 +1200,7 @@ function find_template($data, $type, $template_id) {
             var currentQuestion = $(this).attr("data-question-id");
             countOptions = mongoIDjs();
             
-            var optionHtml = '<div class="option-container well clearfix">\
+            var optionHtml = '<div class="option-container well clearfix" style="position:relative;">\
             <div class="span7">\
                     <table class="form">\
                         <tbody>\
@@ -1232,7 +1269,7 @@ function find_template($data, $type, $template_id) {
                                     <br />\
                                     <a onclick="image_upload(\'quiz_questions_'+currentQuestion+'_options_'+countOptions+'_image\', \'quiz_questions_'+currentQuestion+'_options_'+countOptions+'_thumb\');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;\
                                     <a onclick="$(\'#quiz_questions_'+currentQuestion+'_options_'+countOptions+'_thumb\').attr(\'src\', \'<?php echo $this->lang->line('no_image'); ?>\'); $(\'#quiz_questions_'+currentQuestion+'_options_'+countOptions+'_image\').attr(\'value\', \'\');"><?php echo $this->lang->line('text_clear'); ?></a><br><br>\
-                                    <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete Option</a>\
+                                    <a href="javascript:void(0)" style="top: 10px;position: absolute;right: 10px;" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">X</a>\
                                 </div>\
                         </div>';
 
@@ -1327,16 +1364,18 @@ function find_template($data, $type, $template_id) {
         </div>\
         <div class="span11">\
             <div class="box box-add-item option-box-wrapper">\
-            <div class="box-header overflow-visible">\
-                <h2><i class="icon-question-sign"></i><span class="break"></span>Choice</h2>\
-                <div class="box-icon box-icon-action"> \
-                    <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="'+countQuestions+'"> Add option</a>\
+                <div class="box-header overflow-visible">\
+                    <h2><i class="icon-question-sign"></i><span class="break"></span>Choice</h2>\
+                </div>\
+            <div class="option-wrapper">\
+                <div class="box-content clearfix">\
                 </div>\
             </div>\
-        <div class="option-wrapper">\
-            <div class="box-content clearfix">\
+            <div class="box-header overflow-visible">\
+                <div class="box-icon box-icon-action"> \
+                            <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="'+countQuestions+'"> Add option</a>\
+                        </div>\
             </div>\
-        </div>\
         </div>\
         </div>\
         </div>\
@@ -1409,6 +1448,8 @@ function find_template($data, $type, $template_id) {
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/bootstrap/combodate.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>javascript/bootstrap/moment.js" type="text/javascript"></script>
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
 <link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css" />
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript">
@@ -1434,4 +1475,46 @@ function find_template($data, $type, $template_id) {
         });
     });
 
+</script>
+
+<script type="text/javascript">
+    function getById(id) {if(document.getElementsByName(id).length){
+        return false;
+    }else {
+        return true;
+    }
+    }
+
+    function listCurrency() {
+        var reward_id = $('select[name=\'redeem_add_currency\']').val();
+        var e = document.getElementById("redeem_add_currency");
+        var color = "'green', 'yellow', 'blue'" ;
+        alert('Enter listCurrency function');
+        for (idx = 0; idx < reward_id.length; idx++) {
+            if(getById("reward_reward[" + reward_id[idx] + "]")){
+                var txt = '<div id="'+reward_id[idx]+'">\
+                             <span class="label label-primary">'+e.selectedOptions[idx].text+'</span>\
+                             <input id="valueCurrency_'+reward_id [idx]+'" type="number" name="reward_reward['+reward_id[idx]+']" class="alternator('+color+');" size="100" value="" placeholder="Please input your currency...">\
+                            <button type="button" onclick="deleteCurrency('+"'"+reward_id[idx]+"'"+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
+                           </div>';
+                $('#redeem_custom_reward_table').append(txt);
+            } else if(!getById("reward_reward[" + reward_id[idx] + "]")){
+                document.getElementById(reward_id[idx]).style.display = 'inline';
+            }
+        }
+
+        $("#formEditRedeem").modal("hide");
+    }
+    function deleteCurrency(rewardId) {
+        var a = $('input[id=\'valueCurrency_'+rewardId+'\']').val();
+        document.getElementById(rewardId).style.display = 'none';
+        document.getElementById("valueCurrency_" + rewardId).value = null;
+    }
+</script>
+
+<script type="text/javascript">
+    $("#redeem_add_currency").chosen({max_selected_options: 9});
+    var filter_id = document.getElementById("redeem_add_currency_chosen")
+    filter_id.style.width = "400px";
+    filter_id.children[0].children[0].children[0].style.width = "200px";
 </script>

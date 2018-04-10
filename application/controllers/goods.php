@@ -1196,6 +1196,14 @@ class Goods extends MY_Controller
                 $parameter_url .= "&filter_tags=" . urlencode($_GET['filter_tags']);
                 $filter_array['filter_tags'] = $_GET['filter_tags'];
             }
+            if (isset($_GET['filter_custom_key'])) {
+                $parameter_url .= "&filter_custom_key=" . urlencode($_GET['filter_custom_key']);
+                $filter_array['filter_custom_key'] = $_GET['filter_custom_key'];
+            }
+            if (isset($_GET['filter_custom_val'])) {
+                $parameter_url .= "&filter_custom_val=" . urlencode($_GET['filter_custom_val']);
+                $filter_array['filter_custom_val'] = $_GET['filter_custom_val'];
+            }
 
             $good_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'), $filter_array);
             $in_goods = array();
