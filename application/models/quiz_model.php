@@ -47,41 +47,24 @@ class Quiz_model extends MY_Model
         if(isset($data['filter_status']) && !is_null($data['filter_status'])){
             $this->mongo_db->where('status', $data['filter_status']);
         }
-        $sort_data = array(
-            'weight',
-            'name',
-            'status',
-        );
-
         if (isset($data['sort_order']) && (utf8_strtolower($data['sort_order']) == 'desc')) {
-            $order = -1;
-        } else {
-            $order = 1;
-        }
-
-        if (isset($data['sort_order'])) {
-            $this->mongo_db->order_by(array('weight' => $order));
+            $this->mongo_db->order_by(array('weight' => -1));
 
         } else {
             $this->mongo_db->order_by(array('weight' => 1));
 
         }
-
         if (isset($data['start']) || isset($data['limit'])) {
             if ($data['start'] < 0) {
                 $data['start'] = 0;
             }
-
             if ($data['limit'] < 1) {
                 $data['limit'] = 20;
             }
-
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
-
         $results = $this->mongo_db->get("playbasis_quiz_to_client");
-
         return $results;
     }
 

@@ -422,7 +422,6 @@ class Goods_model extends MY_Model
             $this->mongo_db->where_in('tags', $tags);
         }
         if(isset($data['filter_custom_key']) && $data['filter_custom_key']){
-            $key = explode(',', $data['filter_custom_key']);
             if(isset($data['filter_custom_val']) && isset($data['filter_custom_key'])){
                 $this->mongo_db->where('custom_param', array('$elemMatch' => array('key' => $data['filter_custom_key'] , 'value' => $data['filter_custom_val'])));
             } else {
