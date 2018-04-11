@@ -40,23 +40,31 @@ class Quiz_model extends MY_Model
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
-
+        if(isset($data['filter_tags']) && $data['filter_tags']) {
+            $tags = explode(',', $data['filter_tags']);
+            $this->mongo_db->where_in('tags', $tags);
+        }
+        if(isset($data['filter_status']) && !is_null($data['filter_status'])){
+            $this->mongo_db->where('status', $data['filter_status']);
+        }
         $sort_data = array(
-            '_id',
+            'weight',
             'name',
             'status',
         );
 
-        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+        if (isset($data['sort_order']) && (utf8_strtolower($data['sort_order']) == 'desc')) {
             $order = -1;
         } else {
             $order = 1;
         }
 
-        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-            $this->mongo_db->order_by(array($data['sort'] => $order));
+        if (isset($data['sort_order'])) {
+            $this->mongo_db->order_by(array('weight' => $order));
+
         } else {
-            $this->mongo_db->order_by(array('name' => $order));
+            $this->mongo_db->order_by(array('weight' => 1));
+
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
