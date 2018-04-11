@@ -64,7 +64,7 @@ class Quiz extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         $this->load->library('pagination');
-
+        $parameter_url = "?";
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
         $filter = array(
@@ -78,7 +78,17 @@ class Quiz extends MY_Controller
         if (isset($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
-
+        if (isset($_GET['filter_tags'])) {
+            $filter['filter_tags'] = $_GET['filter_tags'];
+        }
+        if (isset($_GET['filter_status'])) {
+            $parameter_url .= "&filter_status=" . $_GET['filter_status'];
+            $filter['filter_status'] = $_GET['filter_status'] == "enable" ? true : false;
+        }
+        if (isset($_GET['sort_order'])) {
+            $parameter_url .= "&sort_order=" . $_GET['sort_order'];
+            $filter['sort_order'] = $_GET['sort_order'] == "asc" ? "asc" : "desc";
+        }
         $config['base_url'] = site_url('quiz/page');
         $config["uri_segment"] = 3;
         $config['total_rows'] = 0;
@@ -345,7 +355,7 @@ class Quiz extends MY_Controller
                 } else {
                     $this->Quiz_model->addQuizToClient($quiz);
                 }
-                redirect('/quiz', 'refresh');
+//                redirect('/quiz', 'refresh');
             }
 
             $quiz_info = array_merge($quiz_info, $quiz);
@@ -361,6 +371,14 @@ class Quiz extends MY_Controller
 
         $this->data['point_list'] = array();
         $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($data['site_id']);
+
+        if ($this->input->post('grade_reward')) {
+            $this->data['grade_reward'] = $this->input->post('grade_reward');
+        } elseif (isset($goods_info['grades']['custom']) && !empty($goods_info['grades']['custom'])) {
+            $this->data['grade_reward'] = isset($goods_info['grades']['custom']) ? $goods_info['grades']['custom'] : array();
+        } else {
+            $this->data['grade_reward'] = array();
+        }
 
         $this->load->model('Feature_model');
         $this->load->model('Email_model');
