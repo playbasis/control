@@ -12,6 +12,8 @@ $lang['weight']                     = 'Weight';
 $lang['status']                     = 'Status';
 $lang['rank_image']                 = 'Rank Image';
 $lang['save']                       = 'Save';
+$lang['asc']                        = 'Ascending';
+$lang['desc']                       = 'Descending';
 
 $lang['text_default']               = 'Default';
 $lang['text_image_manager']         = 'Image Manager';

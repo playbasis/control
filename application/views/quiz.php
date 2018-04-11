@@ -35,10 +35,42 @@
                     <tbody>
                     <tr class="filter">
                         <td></td>
-                        <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><input type="text" name="filter_name" value="<?php echo isset($_GET['filter_name']) ? $_GET['filter_name'] : '' ?>" style="width:80%;margin-bottom: 0px;" /></td>
+                        <td>
+                            <select name="filter_status" style="width:95%;margin-bottom: 0px;">
+                                <?php if (isset($_GET['filter_status']) && $_GET['filter_status'] == 'enable') { ?>
+                                    <option value="">All</option>
+                                    <option value="enable" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                    <option value="disable" ><?php echo $this->lang->line('text_disabled'); ?></option>
+                                <?php } elseif (isset($_GET['filter_status']) && $_GET['filter_status'] == 'disable') { ?>
+                                    <option value="">All</option>
+                                    <option value="enable"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                    <option value="disable" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                <?php } else { ?>
+                                    <option value="" selected="selected">All</option>
+                                    <option value="enable"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                    <option value="disable"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="sort_order" style="width:95%;margin-bottom: 0px;">
+                                <?php if (isset($_GET['sort_order']) && $_GET['sort_order'] == 'asc') { ?>
+                                    <option value="" disabled>Sort</option>
+                                    <option value="asc" selected="selected"><?php echo $this->lang->line('asc'); ?></option>
+                                    <option value="desc" ><?php echo $this->lang->line('desc'); ?></option>
+                                <?php } elseif (isset($_GET['sort_order']) && $_GET['sort_order'] == 'desc') { ?>
+                                    <option value="" disabled>Sort</option>
+                                    <option value="asc"><?php echo $this->lang->line('asc'); ?></option>
+                                    <option value="desc" selected="selected"><?php echo $this->lang->line('desc'); ?></option>
+                                <?php } else { ?>
+                                    <option value="" disabled selected="selected">Sort</option>
+                                    <option value="asc"><?php echo $this->lang->line('asc'); ?></option>
+                                    <option value="desc"><?php echo $this->lang->line('desc'); ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td><input type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : '' ?>" style="width:80%;margin-bottom: 0px;" /></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -345,12 +377,23 @@
 
 <script type="text/javascript"><!--
     function filter() {
-        url = baseUrlPath+'quiz';
+        url = baseUrlPath+'quiz?';
 
         var filter_name = $('input[name=\'filter_name\']').attr('value');
-
+        var filter_status = $('select[name=\'filter_status\']').attr('value');
+        var filter_tags = $('input[name=\'filter_tags\']').attr('value');
+        var sort_order = $('select[name=\'sort_order\']').attr('value');
         if (filter_name) {
-            url += '?filter_name=' + encodeURIComponent(filter_name);
+            url += '&filter_name=' + encodeURIComponent(filter_name);
+        }
+        if (filter_status) {
+            url += '&filter_status=' + encodeURIComponent(filter_status);
+        }
+        if (sort_order) {
+            url += '&sort_order=' + encodeURIComponent(sort_order);
+        }
+        if (filter_tags) {
+            url += '&filter_tags=' + encodeURIComponent(filter_tags);
         }
 
         location = url;
@@ -359,7 +402,7 @@
 </script>
 
 <script type="text/javascript">
-    <?php if (!isset($_GET['filter_name'])){?>
+    <?php if (!isset($_GET['filter_name']) && !isset($_GET['filter_status']) && !isset($_GET['sort_order']) && !isset($_GET['filter_tags']) ){?>
     $("#clear_filter").hide();
     <?php }else{?>
     $("#clear_filter").show();
