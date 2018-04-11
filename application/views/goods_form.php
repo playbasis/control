@@ -602,7 +602,8 @@
 </script>
 
 <script type="text/javascript">
-    function getById(id) {if(document.getElementsByName(id).length){
+    function getById(id) {
+        if(document.getElementsByName(id).length){
             return false;
         }else {
             return true;
@@ -611,12 +612,12 @@
 
     function listCurrency() {
         var reward_id = $('select[name=\'redeem_add_currency\']').val();
-        var e = document.getElementById("redeem_add_currency");
+        var tagSelect = document.getElementById("redeem_add_currency");
         var color = "'green', 'yellow', 'blue'" ;
         for (idx = 0; idx < reward_id.length; idx++) {
             if(getById("reward_reward[" + reward_id[idx] + "]")){
                 var txt = '<div id="'+reward_id[idx]+'">\
-                             <span class="label label-primary">'+e.selectedOptions[idx].text+'</span>\
+                             <span class="label label-primary">'+tagSelect.selectedOptions[idx].text+'</span>\
                              <input id="valueCurrency_'+reward_id [idx]+'" type="number" name="reward_reward['+reward_id[idx]+']" class="alternator('+color+');" size="100" value="" placeholder="Please input your currency...">\
                             <button type="button" onclick="deleteCurrency('+"'"+reward_id[idx]+"'"+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
                            </div>';
@@ -625,7 +626,6 @@
                 document.getElementById(reward_id[idx]).style.display = 'inline';
             }
         }
-
         $("#formEditRedeem").modal("hide");
     }
     function deleteCurrency(rewardId) {
