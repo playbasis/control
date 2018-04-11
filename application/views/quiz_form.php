@@ -8,7 +8,7 @@ function find_template($data, $type, $template_id) {
     return false;
 }
 ?>
-<link rel="stylesheet" href="<?php echo base_url();?>stylesheet/quiz/style.css">
+<link rel="stylesheet" href="<?php echo base_url();?>stylesheet/quiz/style.css" xmlns="http://www.w3.org/1999/html">
 <script type="text/javascript" src="<?php echo base_url();?>javascript/md5.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/mongoid.js"></script>
 <link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
@@ -605,21 +605,42 @@ function find_template($data, $type, $template_id) {
                                                             <br>
                                                             <button id="badge-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
                                                             <div class="badges">
-                                                                <div class="reward-panel">
+                                                                <button type="button" class="btn btn-info btn_open_modal_badge" data-toggle="modal" data-target="#formAddBadge" id="<?php echo $grade['grade_id']; ?>" ><i class="fa fa-plus"></i> Add</button>
+                                                                <div class="reward-panel" id="badge_<?php echo $grade['grade_id']; ?>">
                                                                     <?php
                                                                     foreach($badge_list as $badge){
                                                                         ?>
-                                                                        <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                                                                         <?php
                                                                         $user_b = "";
                                                                         foreach($badge_user_set as $b){
                                                                             if($b["badge_id"] == $badge['badge_id']){
                                                                                 $user_b = $b["badge_value"];
-                                                                                break;
-                                                                            }
-                                                                        }
-                                                                        ?>
-                                                                        <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][badge][<?php echo $badge['badge_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="<?php echo $user_b; ?>" /><br/>
+                                                                                ?>
+                                                                                <div id="displayBad_<?php echo $badge['badge_id']; ?>_<?php echo $grade['grade_id']; ?>">
+                                                                                    <div class="row">
+                                                                                        <div class="span2" style="margin-left: 30px;">
+                                                                                            <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                                                                        </div>
+                                                                                        <div class="span5" style="position: relative;right: 35px;">
+                                                                                            <div style="text-align: center; font-size: 13px;"><?php echo $badge['name']; ?></div>
+                                                                                            <input type="text" id="valueBad_<?php echo $badge['badge_id']; ?>_<?php echo $grade['grade_id']; ?>" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][badge][<?php echo $badge['badge_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="<?php echo $user_b; ?>" />
+                                                                                        </div></br>
+                                                                                        <div class="span1" style="position: relative;right: 45px;">
+                                                                                            <button type="button" onclick="deleteBadge('<?php echo $grade['grade_id']; ?>', '<?php echo $badge['badge_id']; ?>')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>
+                                                                                        </div>
+                                                                                     </div>
+                                                                                </div>
+                                                                                <script type="text/javascript">
+                                                                                    $(document).on("click", ".btn_open_modal_badge", function () {
+                                                                                        var grandeId = $(this).attr('id');
+                                                                                        $("#listBadgeButton").attr('onclick', "addBadge('"+grandeId+"')" );
+                                                                                    });
+                                                                                </script>
+                                                                    <?php
+                                                                    break;
+                                                                    }
+                                                                    }
+                                                                    ?>
                                                                     <?php
                                                                     }
                                                                     ?>
@@ -636,21 +657,33 @@ function find_template($data, $type, $template_id) {
                                                             <br>
                                                             <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>
                                                             <div class="rewards">
-                                                                <div class="reward-panel">
+                                                                <button type="button" class="btn btn-info btn_open_modal_custom" data-toggle="modal" data-target="#formAddCurrency" id="<?php echo $grade['grade_id']; ?>" ><i class="fa fa-plus"></i> Add</button>
+                                                                <div class="reward-panel" id="currency_<?php echo $grade['grade_id']; ?>" >
                                                                     <?php
                                                                     foreach($point_list as $point){
                                                                         ?>
-                                                                        <?php echo $point['name']; ?>
                                                                         <?php
                                                                         $user_c = "";
-                                                                        foreach($custom_user_set as $c){
-                                                                            if($c["custom_id"] == $point['reward_id']){
+                                                                        foreach($custom_user_set as $c) {
+                                                                            if ($c["custom_id"] == $point['reward_id']) {
                                                                                 $user_c = $c["custom_value"];
+                                                                                ?>
+                                                                                <div id="displayCus_<?php echo $point['reward_id']; ?>_<?php echo $grade['grade_id']; ?>">
+                                                                                    <span class="label label-primary"><?php echo $point['name']; ?></span>
+                                                                                    <input type="text" id="valueCus_<?php echo $point['reward_id']; ?>_<?php echo $grade['grade_id']; ?>" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][custom][<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php echo $user_c; ?>" />
+                                                                                    <button type="button" onclick="deleteCurrency('<?php echo $grade['grade_id']; ?>', '<?php echo $point['reward_id']; ?>')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>
+                                                                                </div>
+                                                                                <script type="text/javascript">
+                                                                                    $(document).on("click", ".btn_open_modal_custom", function () {
+                                                                                        var grandeId = $(this).attr('id');
+                                                                                        $("#listRewardButton").attr('onclick', "listCurrency('"+grandeId+"')" );
+                                                                                    });
+                                                                                </script>
+                                                                                <?php
                                                                                 break;
                                                                             }
                                                                         }
                                                                         ?>
-                                                                        <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][custom][<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php echo $user_c; ?>" /><br/>
                                                                     <?php
                                                                     }
                                                                     ?>
@@ -796,6 +829,62 @@ function find_template($data, $type, $template_id) {
             <?php
             echo form_close();
             ?>
+        </div>
+    </div>
+</div>
+<div id="formAddCurrency" class="modal hide fade" tabindex="-1" role="dialog"  style="max-width: 800px;">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>Add currency</h3>
+        </div>
+        <div class="modal-body" style="height: 300px;">
+
+            <div align="center">
+                <label class="text-info" type="text" style="text-align: center"><h2>Currency  <span class="icon-search"></span></h2></label><br>
+                <select class="chosen-select" multiple id="redeem_add_currency" name="redeem_add_currency" >
+                    <?php
+                    foreach ($point_list as $br)
+                    {
+                    ?>
+                    <option value="<?php echo $br['reward_id']?>" data="<?php echo $br['name']?>"><?php echo $br['name'];?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div>
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" id="test">Close</button>
+                <button class="btn btn-primary" id="listRewardButton">Add</button>
+            </div>
+        </div>
+</div>
+
+<div id="formAddBadge" class="modal hide fade" tabindex="-1" role="dialog"  style="max-width: 800px;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>Add Badge</h3>
+    </div>
+    <div class="modal-body" style="height: 300px;">
+
+        <div align="center">
+            <label class="text-info" type="text" style="text-align: center"><h2>Badge  <span class="icon-search"></span></h2></label><br>
+            <select class="chosen-select" multiple id="add_badge" name="add_badge" >
+                <?php
+                foreach($badge_list as $badge){
+                    ?>
+                    <option value="<?php echo $badge['badge_id']; ?>" data="<?php echo $badge['name']?>"><?php echo $badge['name'];?></option>
+                    <?php
+                }
+                ?>
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div>
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" id="test">Close</button>
+            <button class="btn btn-primary" id="listBadgeButton">Add</button>
         </div>
     </div>
 </div>
@@ -1022,15 +1111,9 @@ function find_template($data, $type, $template_id) {
             <br>\
             <button id="badge-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>\
         <div class="badges hide">\
-            <div class="reward-panel">\
-            <?php
-            foreach($badge_list as $badge){
-            ?>
-            <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />\
-            <input type="text" name="quiz[grades]['+countGrades+'][rewards][badge][<?php echo $badge['badge_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="" /><br/>\
-            <?php
-            }
-            ?>
+            <div class="reward-panel" id="'+countGrades+'">\
+            <button type="button" class="btn btn-info btn_open_modal_badge" data-toggle="modal" data-target="#formAddBadge" id="'+countGrades+'" ><i class="fa fa-plus"></i> Add</button>\
+            <div class="reward-panel" id="badge_'+countGrades+'" >\
             </div>\
         </div>\
         <?php
@@ -1044,15 +1127,10 @@ function find_template($data, $type, $template_id) {
             <br>\
             <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>\
         <div class="rewards hide">\
-            <div class="reward-panel">\
-            <?php
-            foreach($point_list as $point){
-            ?>
-            <?php echo $point['name']; ?>\
-            <input type="text" name="quiz[grades]['+countGrades+'][rewards][custom][<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="" /><br/>\
-            <?php
-            }
-            ?>
+            <div class="reward-panel" id="'+countGrades+'">\
+            <button type="button" class="btn btn-info btn_open_modal_custom" data-toggle="modal" data-target="#formAddCurrency" id="'+countGrades+'" ><i class="fa fa-plus"></i> Add</button>\
+            <div class="reward-panel" id="currency_'+countGrades+'" >\
+            </div>\
             </div>\
         </div>\
         <?php
@@ -1144,6 +1222,16 @@ function find_template($data, $type, $template_id) {
         </div>\
         </div>\
         </div>';
+
+        $(document).on("click", ".btn_open_modal_custom", function () {
+            var grandeId = $(this).attr('id');
+            $("#listRewardButton").attr('onclick', "listCurrency('"+grandeId+"')" );
+        });
+
+        $(document).on("click", ".btn_open_modal_badge", function () {
+            var grandeId = $(this).attr('id');
+            $("#listBadgeButton").attr('onclick', "addBadge('"+grandeId+"')" );
+        });
 
         $('.grade-wrapper').append(gradeHtml);
 
@@ -1409,6 +1497,8 @@ function find_template($data, $type, $template_id) {
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/bootstrap/combodate.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>javascript/bootstrap/moment.js" type="text/javascript"></script>
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
 <link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css" />
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript">
@@ -1434,4 +1524,96 @@ function find_template($data, $type, $template_id) {
         });
     });
 
+</script>
+<script type="text/javascript">
+    function getById(id) {
+        if(document.getElementById(id)==null){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    function listCurrency(Id) {
+        var currencyId = $('select[name=\'redeem_add_currency\']').val();
+        var tagSelect = document.getElementById("redeem_add_currency");
+        var gradeId = Id;
+        var color = "'green', 'yellow', 'blue'" ;
+        for (i = 0; i < currencyId.length; i++) {
+            if(getById("displayCus_"+currencyId[i]+'_'+gradeId)){
+                var txt = '<div id="displayCus_'+currencyId[i]+'_'+gradeId+'">\
+                             <span class="label label-primary">'+tagSelect.selectedOptions[i].text+'</span>\
+                             <input type="text" id="valueCus_'+currencyId [i]+'_'+gradeId+'" name="quiz[grades]['+gradeId+'][rewards][custom]['+currencyId [i]+']" class="alternator('+color+');" size="100" value="" />\
+                             <button type="button" onclick="deleteCurrency('+"'"+gradeId+"'"+","+"'"+currencyId[i]+"'"+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
+                           </div>';
+                $('#currency_'+gradeId).append(txt);
+            } else {
+                document.getElementById("displayCus_"+currencyId[i]+'_'+gradeId).style.display = 'inline';
+            }
+        }
+        $("#formAddCurrency").modal("hide");
+    }
+
+    function deleteCurrency(cusElementId, cusId) {
+        document.getElementById("valueCus_"+cusId+'_'+cusElementId).value = null;
+        document.getElementById("displayCus_"+cusId+'_'+cusElementId).style.display = 'none';
+    }
+
+</script>
+
+<script type="text/javascript">
+    $("#redeem_add_currency").chosen({max_selected_options: 9});
+    var filter_id = document.getElementById("redeem_add_currency_chosen");
+    filter_id.style.width = "400px";
+    filter_id.children[0].children[0].children[0].style.width = "200px";
+</script>
+
+<script type="text/javascript">
+    function getById(id) {
+        if(document.getElementById(id)==null){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    function addBadge(gId) {
+        var badgeId = $('select[name=\'add_badge\']').val();
+        var getInputName = document.getElementById("add_badge");
+        var gradeId = gId;
+        var color = "'green', 'yellow', 'blue'" ;
+        for (i = 0; i < badgeId.length; i++) {
+            if(getById("displayBad_"+badgeId[i]+'_'+gradeId)){
+                var text = '<div id="displayBad_'+badgeId[i]+'_'+gradeId+'">\
+                    <div class="row">\
+                        <div class="span2" style="margin-left: 30px;">\
+                        </div>\
+                        <div class="span5" style="position: relative;right: 35px;">\
+                            <div style="text-align: center; font-size: 13px;">'+getInputName.selectedOptions[i].text+'</div>\
+                            <input type="text" id="valueBad_'+badgeId[i]+'_'+gradeId+'" name="quiz[grades]['+gradeId+'][rewards][badge]['+badgeId[i]+']" class="alternator('+color+');" size="100" value="" />\
+                        </div></br>\
+                        <div class="span1" style="position: relative;right: 45px;">\
+                            <button type="button" onclick="deleteBadge('+"'"+gradeId+"'"+","+"'"+badgeId[i]+"'"+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
+                        </div>\
+                    </div>\
+                  </div>';
+                $('#badge_'+gradeId).append(text);
+            } else {
+                document.getElementById("displayBad_"+badgeId[i]+'_'+gradeId).style.display = 'inline';
+            }
+        }
+        $("#formAddBadge").modal("hide");
+    }
+
+    function deleteBadge(gradeId, badgeId) {
+        document.getElementById("valueBad_"+badgeId+'_'+gradeId).value = null;
+        document.getElementById("displayBad_"+badgeId+'_'+gradeId).style.display = 'none';
+    }
+</script>
+
+<script type="text/javascript">
+    $("#add_badge").chosen({max_selected_options: 9});
+    var filter_id = document.getElementById("add_badge_chosen");
+    filter_id.style.width = "400px";
+    filter_id.children[0].children[0].children[0].style.width = "200px";
 </script>
