@@ -603,7 +603,6 @@
 
 <script type="text/javascript">
     function getById(id) {
-        console.log(document.getElementsByName(id).length)
         if(document.getElementsByName(id).length){
             return false;
         }else {
