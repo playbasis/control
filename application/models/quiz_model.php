@@ -40,40 +40,31 @@ class Quiz_model extends MY_Model
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
-
-        $sort_data = array(
-            '_id',
-            'name',
-            'status',
-        );
-
-        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
-            $order = -1;
-        } else {
-            $order = 1;
+        if(isset($data['filter_tags']) && $data['filter_tags']) {
+            $tags = explode(',', $data['filter_tags']);
+            $this->mongo_db->where_in('tags', $tags);
         }
-
-        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-            $this->mongo_db->order_by(array($data['sort'] => $order));
-        } else {
-            $this->mongo_db->order_by(array('name' => $order));
+        if(isset($data['filter_status']) && !is_null($data['filter_status'])){
+            $this->mongo_db->where('status', $data['filter_status']);
         }
+        if (isset($data['sort_order']) && (utf8_strtolower($data['sort_order']) == 'desc')) {
+            $this->mongo_db->order_by(array('weight' => -1));
 
+        } else {
+            $this->mongo_db->order_by(array('weight' => 1));
+
+        }
         if (isset($data['start']) || isset($data['limit'])) {
             if ($data['start'] < 0) {
                 $data['start'] = 0;
             }
-
             if ($data['limit'] < 1) {
                 $data['limit'] = 20;
             }
-
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
-
         $results = $this->mongo_db->get("playbasis_quiz_to_client");
-
         return $results;
     }
 

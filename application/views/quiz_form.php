@@ -281,9 +281,6 @@ function find_template($data, $type, $template_id) {
                                 <div class="box box-add-item option-box-wrapper">
                                     <div class="box-header overflow-visible">
                                         <h2><i class="icon-question-sign"></i><span class="break"></span>Choice</h2>
-                                        <div class="box-icon box-icon-action"> 
-                                            <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="<?php echo $questions['question_id']; ?>"> Add option</a>
-                                        </div>
                                     </div>
                                     <div class="option-wrapper">
 
@@ -294,7 +291,7 @@ function find_template($data, $type, $template_id) {
 
                                                     $option['option_id'] = $option['option_id']."";
                                             ?>
-                                                    <div class="option-container well clearfix">
+                                                    <div class="option-container well clearfix" style="position:relative;">
                                                     <div class="span7">
                                                             <table class="form">
                                                                 <tbody>
@@ -371,17 +368,12 @@ function find_template($data, $type, $template_id) {
                                                         <div class="span1">
                                                         </div>
                                                         <div class="span4">
-                                                        Image<br><br><img width="100" height="100" src="<?php echo isset($option["option_image"])? S3_IMAGE.$option["option_image"] : S3_IMAGE."cache/no_image-100x100.jpg" ; ?>" alt="" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                                        <input type="hidden" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option_image]" value="<?php echo isset($option["option_image"])? $option["option_image"] : "no_image.jpg" ; ?>" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image" />
-                                                        <br />
-                                                        <a onclick="image_upload('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image', 'quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                                        
-                                                        <a onclick="$('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
-
-                                                            <br>
-                                                            <br>
-
-                                                            <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete Option</a>
+                                                            Image<br><br><img width="100" height="100" src="<?php echo isset($option["option_image"])? S3_IMAGE.$option["option_image"] : S3_IMAGE."cache/no_image-100x100.jpg" ; ?>" alt="" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                                            <input type="hidden" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option_image]" value="<?php echo isset($option["option_image"])? $option["option_image"] : "no_image.jpg" ; ?>" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image" />
+                                                            <br />
+                                                            <a onclick="image_upload('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image', 'quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                                            <a onclick="$('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a><br><br>
+                                                            <a href="javascript:void(0)" style="top: 10px;position: absolute;right: 10px;" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">X</a>
                                                         </div>
                                                 </div>
                                             <?php
@@ -397,6 +389,11 @@ function find_template($data, $type, $template_id) {
                                             ?>
                                         </div>
 
+                                    </div>
+                                    <div class="box-header overflow-visible">
+                                        <div class="box-icon box-icon-action">
+                                            <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="<?php echo $questions['question_id']; ?>"> Add option</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1242,7 +1239,7 @@ function find_template($data, $type, $template_id) {
             var currentQuestion = $(this).attr("data-question-id");
             countOptions = mongoIDjs();
             
-            var optionHtml = '<div class="option-container well clearfix">\
+            var optionHtml = '<div class="option-container well clearfix" style="position:relative;">\
             <div class="span7">\
                     <table class="form">\
                         <tbody>\
@@ -1311,7 +1308,7 @@ function find_template($data, $type, $template_id) {
                                     <br />\
                                     <a onclick="image_upload(\'quiz_questions_'+currentQuestion+'_options_'+countOptions+'_image\', \'quiz_questions_'+currentQuestion+'_options_'+countOptions+'_thumb\');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;\
                                     <a onclick="$(\'#quiz_questions_'+currentQuestion+'_options_'+countOptions+'_thumb\').attr(\'src\', \'<?php echo $this->lang->line('no_image'); ?>\'); $(\'#quiz_questions_'+currentQuestion+'_options_'+countOptions+'_image\').attr(\'value\', \'\');"><?php echo $this->lang->line('text_clear'); ?></a><br><br>\
-                                    <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete Option</a>\
+                                    <a href="javascript:void(0)" style="top: 10px;position: absolute;right: 10px;" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">X</a>\
                                 </div>\
                         </div>';
 

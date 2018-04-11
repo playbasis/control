@@ -354,6 +354,7 @@ a.button, .list a.button, input.button {
 .list tr.filter td {
 	padding: 5px;
 	background: #E7EFEF;
+	text-align: right;
 }
 .pagination-wrapper {
 	padding: 0 6px;
