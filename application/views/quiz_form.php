@@ -8,6 +8,7 @@ function find_template($data, $type, $template_id) {
     return false;
 }
 ?>
+<link rel="stylesheet" href="<?php echo base_url();?>stylesheet/quiz/style.css">
 <script type="text/javascript" src="<?php echo base_url();?>javascript/md5.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/mongoid.js"></script>
 <link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
