@@ -1107,7 +1107,7 @@ function find_template($data, $type, $template_id) {
         <div id="badge-panel">\
             <?php
             if($badge_list){
-            ?>
+            ?>\
             <br>\
             <button id="badge-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>\
         <div class="badges hide">\
@@ -1118,12 +1118,12 @@ function find_template($data, $type, $template_id) {
         </div>\
         <?php
         }
-        ?>
+        ?>\
         </div>\
         <div id="reward-panel">\
             <?php
             if($point_list){
-            ?>
+            ?>\
             <br>\
             <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>\
         <div class="rewards hide">\
@@ -1135,19 +1135,19 @@ function find_template($data, $type, $template_id) {
         </div>\
         <?php
         }
-        ?>
+        ?>\
         </div>\
         <div id="email-panel">\
             <?php
             if($emails){
-                ?>
+                ?>\
                 <br>\
                 <button id="email-entry" type="button" class="btn btn-success btn-large btn-block"><?php echo $this->lang->line('entry_email'); ?></button>\
                 <div class="emails hide">\
                     <div class="reward-panel">\
                         <?php
                         foreach($emails as $email){
-                            ?>
+                            ?>\
                             <div class="each-email-template">\
                             <label>\
                             <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>][checked]" > <?php echo $email['name']; ?></h3>\
@@ -1157,24 +1157,24 @@ function find_template($data, $type, $template_id) {
                             </div>\
                         <?php
                         }
-                        ?>
+                        ?>\
                     </div>\
                 </div>\
             <?php
             }
-            ?>
+            ?>\
         </div>\
         <div id="smses-panel">\
             <?php
             if($smses){
-                ?>
+                ?>\
                 <br>\
                 <button id="sms-entry" type="button" class="btn btn-success btn-large btn-block"><?php echo $this->lang->line('entry_sms'); ?></button>\
                 <div class="smses hide">\
                     <div class="reward-panel">\
                         <?php
                         foreach($smses as $sms){
-                            ?>
+                            ?>\
                             <div class="each-sms-template">\
                             <label>\
                             <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][sms][<?php echo $sms['_id']; ?>][checked]" > <?php echo $sms['name']; ?></h3>\
@@ -1182,24 +1182,24 @@ function find_template($data, $type, $template_id) {
                             </div>\
                         <?php
                         }
-                        ?>
+                        ?>\
                     </div>\
                 </div>\
             <?php
             }
-            ?>
+            ?>\
         </div>\
         <div id="pushes-panel">\
             <?php
             if($pushes){
-                ?>
+                ?>\
                 <br>\
                 <button id="push-entry" type="button" class="btn btn-success btn-large btn-block"><?php echo $this->lang->line('entry_push'); ?></button>\
                 <div class="pushes hide">\
                     <div class="reward-panel">\
                     <?php
                     foreach($pushes as $push){
-                        ?>
+                        ?>\
                         <div class="each-push-template">\
                         <label>\
                         <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][push][<?php echo $push['_id']; ?>][checked]" > <?php echo $push['name']; ?></h3>\
@@ -1207,12 +1207,12 @@ function find_template($data, $type, $template_id) {
                         </div>\
                     <?php
                     }
-                    ?>
+                    ?>\
                     </div>\
                 </div>\
             <?php
             }
-            ?>
+            ?>\
         </div>\
         </div>\
         </td>\
