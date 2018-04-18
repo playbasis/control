@@ -445,24 +445,32 @@ class Badge_model extends MY_Model
             }
             $this->mongo_db->where_in('category', $filter_category);
         }
-
-        $sort_data = array(
-            '_id',
-            'name',
-            'status',
-            'sort_order'
-        );
-
-        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
-            $order = -1;
-        } else {
-            $order = 1;
+        if (isset($data['filter_quantity']) && !is_null($data['filter_quantity'])) {
+            if ($data['filter_quantity']){
+                $this->mongo_db->where('quantity', null);
+            }else{
+                $this->mongo_db->where_gte('quantity', 0);
+            }
+        }
+        if (isset($data['filter_per_user']) && !is_null($data['filter_per_user'])) {
+            if ($data['filter_per_user']){
+                $this->mongo_db->where('per_user', null);
+            }else{
+                $this->mongo_db->where_gte('per_user', 0);
+            }
+        }
+        if (isset($data['filter_visibility']) && !is_null($data['filter_visibility'])) {
+            $this->mongo_db->where('visible', (bool)$data['filter_visibility']);
+        }
+        if(isset($data['filter_tags']) && $data['filter_tags']) {
+            $tags = explode(',', $data['filter_tags']);
+            $this->mongo_db->where_in('tags', $tags);
         }
 
-        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-            $this->mongo_db->order_by(array($data['sort'] => $order));
+        if (isset($data['sort_order']) && (utf8_strtolower($data['sort_order']) == 'desc')) {
+            $this->mongo_db->order_by(array('sort_order' => -1));
         } else {
-            $this->mongo_db->order_by(array('name' => $order));
+            $this->mongo_db->order_by(array('sort_order' => 1));
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
@@ -504,6 +512,20 @@ class Badge_model extends MY_Model
                 $filter_category[]= $catetory_data['_id'];
             }
             $this->mongo_db->where_in('category', $filter_category);
+        }
+        if (isset($data['filter_quantity']) && !is_null($data['filter_quantity'])) {
+            if ($data['filter_quantity']){
+                $this->mongo_db->where('quantity', null);
+            }else{
+                $this->mongo_db->where_gte('quantity', 0);
+            }
+        }
+        if (isset($data['filter_per_user']) && !is_null($data['filter_per_user'])) {
+            if ($data['filter_per_user']){
+                $this->mongo_db->where('per_user', null);
+            }else{
+                $this->mongo_db->where_gte('per_user', 0);
+            }
         }
 
         $sort_data = array(

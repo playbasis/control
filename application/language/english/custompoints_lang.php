@@ -16,7 +16,7 @@ $lang = array(
     'column_quantity'                   => 'Quantity',
     'column_peruser'                    => 'Per User',
     'column_perday'                     => 'Per Day',
-    'column_perday_start'               => 'Per Day Time',
+    'column_perday_start'               => 'Start Time',
     'column_pending'                    => 'Pending Support',
     'column_tags'                       => 'Tag(s)',
     'column_action'                     => 'Action',
@@ -48,7 +48,12 @@ $lang = array(
     'entry_file'                        => 'JSON File To Import',
     'text_error_duplicate_custom_point' => 'The Currency is already exist!',
     'error_permission_import'           => 'Warning: You do not have permission to import Currency!',
-    'error_permission_import'           => 'Warning: You do not have permission to import Currency!'
+    'error_permission_import'           => 'Warning: You do not have permission to import Currency!',
+    'text_normal'                       => 'Normal',
+    'text_gain'                         => 'Gain',
+    'text_loss'                         => 'Loss',
+    'text_limit'                        => 'Limited',
+    'text_unlimit'                      => 'Unlimited'
 
 );
 

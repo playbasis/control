@@ -16,20 +16,55 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="filter">
+                <tr class="filter">
+                    <td></td>
+                    <td></td>
+                    <td><input type="text" name="filter_name" value="<?php echo isset($_GET['filter_name']) ? $_GET['filter_name'] : ''?>" style="width:50%;" /></td>
+                    <td>
+                        <select name="filter_status" style="width:95%;margin-bottom: 0px;">
+                            <?php if (isset($_GET['filter_status']) && $_GET['filter_status'] == 'active') { ?>
+                                <option value="">All</option>
+                                <option value="active" selected="selected"><?php echo $this->lang->line('text_active'); ?></option>
+                                <option value="inactive" ><?php echo $this->lang->line('text_inactive'); ?></option>
+                            <?php } elseif (isset($_GET['filter_status']) && $_GET['filter_status'] == 'inactive') { ?>
+                                <option value="">All</option>
+                                <option value="active"><?php echo $this->lang->line('text_active'); ?></option>
+                                <option value="inactive" selected="selected"><?php echo $this->lang->line('text_inactive'); ?></option>
+                            <?php } else { ?>
+                                <option value="" selected="selected">All</option>
+                                <option value="active"><?php echo $this->lang->line('text_active'); ?></option>
+                                <option value="inactive"><?php echo $this->lang->line('text_inactive'); ?></option>
+                            <?php } ?>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : '' ?>" style="width: 100%;max-width: 150px;margin-bottom: 0px;" />
+                    </td>
+                    <?php if($org_status){?>
                         <td></td>
-                        <td></td>
-                        <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
-                        <td></td>
-                        <td></td>
-                        <?php if($org_status){?>
-                            <td></td>
-                        <?php }?>
-                        <td></td>
-                        <td class="right">
-                            <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
-                        </td>
-                    </tr>
+                    <?php }?>
+                    <td>
+                        <select name="sort_order" style="width:95%;margin-bottom: 0px;">
+                            <?php if (isset($_GET['sort_order']) && $_GET['sort_order'] == 'asc') { ?>
+                                <option value="" disabled>Sort</option>
+                                <option value="asc" selected="selected"><?php echo $this->lang->line('text_asc'); ?></option>
+                                <option value="desc" ><?php echo $this->lang->line('text_desc'); ?></option>
+                            <?php } elseif (isset($_GET['sort_order']) && $_GET['sort_order'] == 'desc') { ?>
+                                <option value="" disabled>Sort</option>
+                                <option value="asc"><?php echo $this->lang->line('text_asc'); ?></option>
+                                <option value="desc" selected="selected"><?php echo $this->lang->line('text_desc'); ?></option>
+                            <?php } else { ?>
+                                <option value="" disabled selected="selected">Sort</option>
+                                <option value="asc"><?php echo $this->lang->line('text_asc'); ?></option>
+                                <option value="desc"><?php echo $this->lang->line('text_desc'); ?></option>
+                            <?php } ?>
+                        </select>
+                    </td>
+                    <td class="right">
+                        <a onclick="clear_filter();" style="margin-bottom: 5px;display: none;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                        <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
+                    </td>
+                </tr>
                     
                         <?php if(isset($quests)){?>
                             <?php foreach($quests as $quest){?>

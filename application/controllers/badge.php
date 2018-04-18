@@ -390,12 +390,40 @@ class Badge extends MY_Controller
                 'sort' => 'sort_order'
             );
 
+            if (isset($_GET['filter_name'])) {
+                $parameter_url .= "&filter_name=" . $_GET['filter_name'];
+                $badge_data['filter_name'] = $_GET['filter_name'];
+            }
             if (isset($_GET['filter_category'])) {
                 $category_data = $this->Badge_model->retrieveItemCategoryByNameFilter($client_id, $site_id, $_GET['filter_category']);
                 $parameter_url .= "&filter_category=" . $_GET['filter_category'];
                 $badge_data['filter_category'] = $category_data;
             }
-            
+            if (isset($_GET['sort_order'])) {
+                $parameter_url .= "&sort_order=" . $_GET['sort_order'];
+                $badge_data['sort_order'] = $_GET['sort_order'] == "asc" ? "asc" : "desc";
+            }
+            if (isset($_GET['filter_status'])) {
+                $parameter_url .= "&filter_status=" . $_GET['filter_status'];
+                $badge_data['filter_status'] = $_GET['filter_status'] == "enable" ? true : false;
+            }
+            if (isset($_GET['filter_quantity'])) {
+                $badge_data['filter_quantity'] = $_GET['filter_quantity'] == "unlimited" ? true : false;
+                $parameter_url .= "&filter_quantity=" . $_GET['filter_quantity'];
+            }
+            if (isset($_GET['filter_per_user'])) {
+                $badge_data['filter_per_user'] = $_GET['filter_per_user'] == "unlimited" ? true : false;
+                $parameter_url .= "&filter_per_user=" . $_GET['filter_per_user'];
+            }
+            if (isset($_GET['filter_visibility'])) {
+                $parameter_url .= "&filter_visibility=" . $_GET['filter_visibility'];
+                $badge_data['filter_visibility'] = $_GET['filter_visibility'] == "enable" ? true : false;
+            }
+            if (isset($_GET['filter_tags'])) {
+                $badge_data['filter_tags'] = $_GET['filter_tags'];
+                $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
+            }
+
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
             $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);

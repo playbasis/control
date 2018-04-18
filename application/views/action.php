@@ -37,12 +37,28 @@
                         <td></td>
                         <?php }?>
                         <td></td>
-                        <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
+                        <td><input type="text" name="filter_name" value="<?php echo isset($_GET['filter_name']) ? $_GET['filter_name'] : "" ?>" style="width:50%;" /></td>
                         <td></td>
-                        <td></td>
+                        <td>
+                            <select name="filter_status" style="width:50%;margin-bottom: 0px;">
+                                <?php if (isset($_GET['filter_status']) && $_GET['filter_status'] == 'enable') { ?>
+                                    <option value="">All</option>
+                                    <option value="enable" selected="selected"><?php echo $this->lang->line('text_enable'); ?></option>
+                                    <option value="disable" ><?php echo $this->lang->line('text_disable'); ?></option>
+                                <?php } elseif (isset($_GET['filter_status']) && $_GET['filter_status'] == 'disable') { ?>
+                                    <option value="">All</option>
+                                    <option value="enable"><?php echo $this->lang->line('text_enable'); ?></option>
+                                    <option value="disable" selected="selected"><?php echo $this->lang->line('text_disable'); ?></option>
+                                <?php } else { ?>
+                                    <option value="" selected="selected">All</option>
+                                    <option value="enable"><?php echo $this->lang->line('text_enable'); ?></option>
+                                    <option value="disable"><?php echo $this->lang->line('text_disable'); ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
                         <td class="right">
-                            <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
-                            <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                            <a onclick="clear_filter();" style="margin-bottom: 5px;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                            <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                         </td>
                     </tr>
                     
@@ -96,12 +112,16 @@
 
 <script type="text/javascript"><!--
 function filter() {
-    url = baseUrlPath+'action';
+    url = baseUrlPath+'action?';
 
     var filter_name = $('input[name=\'filter_name\']').attr('value');
+    var filter_status = $('select[name=\'filter_status\']').attr('value');
 
     if (filter_name) {
-        url += '?filter_name=' + encodeURIComponent(filter_name);
+        url += '&filter_name=' + encodeURIComponent(filter_name);
+    }
+    if (filter_status) {
+        url += '&filter_status=' + encodeURIComponent(filter_status);
     }
 
     location = url;
@@ -189,7 +209,7 @@ $( ".push_up" ).live( "click", function() {
 </script>
 
 <script type="text/javascript">
-    <?php if (!isset($_GET['filter_name'])){?>
+    <?php if (!isset($_GET['filter_name']) && !isset($_GET['filter_status'])){?>
         $("#clear_filter").hide();
     <?php }else{?>
         $("#clear_filter").show();

@@ -267,6 +267,9 @@ class Action extends MY_Controller
         if (isset($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
+        if (isset($_GET['filter_status'])) {
+            $filter['filter_status'] = $_GET['filter_status'] == "enable" ? true : false;
+        }
 
         $config['base_url'] = site_url('action/page');
         $config["uri_segment"] = 3;

@@ -45,16 +45,106 @@
                         <tr class="filter">
                             <td></td>
                             <td><input title="name" style="width: 95%;" placeholder="Filter Name" type="text" name="filter_name" value="<?php echo isset($_GET['filter_name']) ? $_GET['filter_name'] : "" ?>"/></td>
+                            <td>
+                                <select name="filter_type" style="width:95%;margin-bottom: 0px;">
+                                    <?php if (isset($_GET['filter_type']) && $_GET['filter_type'] == 'normal') { ?>
+                                        <option value="">All</option>
+                                        <option value="normal" selected="selected"><?php echo $this->lang->line('text_normal'); ?></option>
+                                        <option value="gain" ><?php echo $this->lang->line('text_gain'); ?></option>
+                                        <option value="loss" ><?php echo $this->lang->line('text_loss'); ?></option>
+                                    <?php } elseif (isset($_GET['filter_type']) && $_GET['filter_type'] == 'gain') { ?>
+                                        <option value="">All</option>
+                                        <option value="normal"><?php echo $this->lang->line('text_normal'); ?></option>
+                                        <option value="gain" selected="selected"><?php echo $this->lang->line('text_gain'); ?></option>
+                                        <option value="loss" ><?php echo $this->lang->line('text_loss'); ?></option>
+                                    <?php } elseif (isset($_GET['filter_type']) && $_GET['filter_type'] == 'loss') { ?>
+                                        <option value="">All</option>
+                                        <option value="normal"><?php echo $this->lang->line('text_normal'); ?></option>
+                                        <option value="gain"><?php echo $this->lang->line('text_gain'); ?></option>
+                                        <option value="loss" selected="selected"><?php echo $this->lang->line('text_loss'); ?></option>
+                                    <?php } else{?>
+                                        <option value="" selected="selected">All</option>
+                                        <option value="normal"><?php echo $this->lang->line('text_normal'); ?></option>
+                                        <option value="gain"><?php echo $this->lang->line('text_gain'); ?></option>
+                                        <option value="loss" ><?php echo $this->lang->line('text_loss'); ?></option>
+                                    <?php }?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="filter_quantity" style="width:95%;margin-bottom: 0px;">
+                                    <?php if (isset($_GET['filter_quantity']) && $_GET['filter_quantity'] == 'limited') { ?>
+                                        <option value="">All</option>
+                                        <option value="limited" selected="selected"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited" ><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php } elseif (isset($_GET['filter_quantity']) && $_GET['filter_quantity'] == 'unlimited') { ?>
+                                        <option value="">All</option>
+                                        <option value="limited"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited" selected="selected"><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php } else{?>
+                                        <option value="" selected="selected">All</option>
+                                        <option value="limited"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited"><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php }?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="filter_per_user" style="width:95%;margin-bottom: 0px;">
+                                    <?php if (isset($_GET['filter_per_user']) && $_GET['filter_per_user'] == 'limited') { ?>
+                                        <option value="">All</option>
+                                        <option value="limited" selected="selected"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited" ><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php } elseif (isset($_GET['filter_per_user']) && $_GET['filter_per_user'] == 'unlimited') { ?>
+                                        <option value="">All</option>
+                                        <option value="limited"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited" selected="selected"><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php } else{?>
+                                        <option value="" selected="selected">All</option>
+                                        <option value="limited"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited"><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php }?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="filter_per_day" style="width:95%;margin-bottom: 0px;">
+                                    <?php if (isset($_GET['filter_per_day']) && $_GET['filter_per_day'] == 'limited') { ?>
+                                        <option value="">All</option>
+                                        <option value="limited" selected="selected"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited" ><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php } elseif (isset($_GET['filter_per_day']) && $_GET['filter_per_day'] == 'unlimited') { ?>
+                                        <option value="">All</option>
+                                        <option value="limited"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited" selected="selected"><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php } else{?>
+                                        <option value="" selected="selected">All</option>
+                                        <option value="limited"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited"><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php }?>
+                                </select>
+                            </td>
                             <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>
+                                <select name="filter_pending_support" style="width:95%;margin-bottom: 0px;">
+                                    <?php if (isset($_GET['filter_pending_support']) && $_GET['filter_pending_support'] == 'true') { ?>
+                                        <option value="">All</option>
+                                        <option value="true" selected="selected">true</option>
+                                        <option value="false" >false</option>
+                                    <?php } elseif (isset($_GET['filter_pending_support']) && $_GET['filter_pending_support'] == 'false') { ?>
+                                        <option value="">All</option>
+                                        <option value="true">true</option>
+                                        <option value="false" selected="selected">false</option>
+                                    <?php } else{?>
+                                        <option value="" selected="selected">All</option>
+                                        <option value="true">true</option>
+                                        <option value="false">false</option>
+                                    <?php }?>
+                                </select>
+                            </td>
+                            <td>
+                                <input title="name" style="width: 95%;" placeholder="Filter tags" type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : "" ?>"/>
+                            </td>
                             <td class="right">
-                                <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
-                                <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                                <a onclick="clear_filter();" style="margin-bottom: 5px;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                                <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                             </td>
                         </tr>
                         </thead>
@@ -198,17 +288,39 @@
         window.location.replace(baseUrlPath+'custompoints');
     });
 
-    function clear_filter() {
-        window.location.replace(baseUrlPath + 'custompoints');
-    }
+
 
     function filter() {
-        url = baseUrlPath + 'custompoints';
+        url = baseUrlPath + 'custompoints?';
 
         var filter_name = $('input[name=\'filter_name\']').attr('value');
+        var filter_type = $('select[name=\'filter_type\']').attr('value');
+        var filter_quantity = $('select[name=\'filter_quantity\']').attr('value');
+        var filter_per_user = $('select[name=\'filter_per_user\']').attr('value');
+        var filter_per_day = $('select[name=\'filter_per_day\']').attr('value');
+        var filter_pending_support = $('select[name=\'filter_pending_support\']').attr('value');
+        var filter_tags = $('input[name=\'filter_tags\']').attr('value');
 
         if (filter_name) {
-            url += '?filter_name=' + encodeURIComponent(filter_name);
+            url += '&filter_name=' + encodeURIComponent(filter_name);
+        }
+        if (filter_type) {
+            url += '&filter_type=' + encodeURIComponent(filter_type);
+        }
+        if (filter_per_user) {
+            url += '&filter_per_user=' + encodeURIComponent(filter_per_user);
+        }
+        if (filter_per_day) {
+            url += '&filter_per_day=' + encodeURIComponent(filter_per_day);
+        }
+        if (filter_pending_support) {
+            url += '&filter_pending_support=' + encodeURIComponent(filter_pending_support);
+        }
+        if (filter_quantity) {
+            url += '&filter_quantity=' + encodeURIComponent(filter_quantity);
+        }
+        if (filter_tags) {
+            url += '&filter_tags=' + encodeURIComponent(filter_tags);
         }
 
         location = url;
@@ -403,6 +515,17 @@ $('.push_down').live("click", function(){
 });
 </script>
 
+<script type="text/javascript">
+    <?php if (!isset($_GET['filter_name']) && !isset($_GET['filter_type']) && !isset($_GET['filter_per_user']) && !isset($_GET['filter_per_day']) && !isset($_GET['filter_pending_support']) && !isset($_GET['filter_tags']) && !isset($_GET['filter_quantity'])){?>
+    $("#clear_filter").hide();
+    <?php }else{?>
+    $("#clear_filter").show();
+    <?php }?>
+
+    function clear_filter() {
+        window.location.replace(baseUrlPath + 'custompoints');
+    }
+</script>
 
 <script type="text/javascript">
 $('.push_up').live("click", function(){

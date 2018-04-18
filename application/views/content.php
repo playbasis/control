@@ -71,12 +71,12 @@
                                         <tbody>
                                         <tr class="filter">
                                             <td></td>
-                                            <td></td>
+                                            <td class="center"><input title="id" type="text" name="filter_id" value="<?php echo isset($_GET['filter_id']) ? $_GET['filter_id'] : "" ?>" style="width:90%;"></td>
                                             <td class="center"><input title="title" type="text" name="filter_title" value="<?php echo isset($_GET['title']) ? $_GET['title'] : "" ?>" style="width:90%;"></td>
                                             <td class="center"><input title="category" type='text' name="filter_category" id="inputCategory" value="<?php echo isset($_GET['category']) ? $_GET['category'] : "" ?>" style="width:90%;" /></td>
                                             <td class="center"><input title="author" type="text" name="filter_author" value="<?php echo isset($_GET['author']) ? $_GET['author'] : "" ?>" style="width:90%;"></td>
                                             <td></td>
-                                            <td></td>
+                                            <td class="center"><input title="tags" type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : "" ?>" style="width:90%;"></td>
                                             <td class="center">
                                                 <select name="filter_status" id="filter_status" title="status" style="width:100%;">
                                                     <option value="" <?php if (isset($_GET['status']) && is_null($_GET['status']))  { ?>selected<?php }?>>    </option>
@@ -90,9 +90,8 @@
                                                 <td></td>
                                             <?php }?>
                                             <td class="right">
-                                                <a onclick="clear_filter();" class="button"
-                                                   id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
-                                                <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                                                <a onclick="clear_filter();" style="margin-bottom: 5px;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                                                <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                                             </td>
                                         </tr>
 
@@ -599,17 +598,33 @@
 <?php } ?>
 <script type="text/javascript"><!--
     function filter() {
-        url = baseUrlPath + 'content';
+        url = baseUrlPath + 'content?';
 
+        var filter_id = $('input[name=\'filter_id\']').attr('value');
+        var filter_tags = $('input[name=\'filter_tags\']').attr('value');
         var filter_title = $('input[name=\'filter_title\']').attr('value');
         var filter_category = $('input[name=\'filter_category\']').attr('value');
         var filter_author = $('input[name=\'filter_author\']').attr('value');
         var filter_status= document.getElementById('filter_status').value;
 
-        url += '?title=' + encodeURIComponent(filter_title)+
-            '&category=' + encodeURIComponent(filter_category)+
-            '&author=' + encodeURIComponent(filter_author)+
-            '&status=' + encodeURIComponent(filter_status);
+        if (filter_title) {
+            url += '&title=' + encodeURIComponent(filter_title);
+        }
+        if (filter_id) {
+            url += '&filter_id=' + encodeURIComponent(filter_id);
+        }
+        if (filter_tags) {
+            url += '&filter_tags=' + encodeURIComponent(filter_tags);
+        }
+        if (filter_category) {
+            url += '&category=' + encodeURIComponent(filter_category);
+        }
+        if (filter_author) {
+            url += '&author=' + encodeURIComponent(filter_author);
+        }
+        if (filter_status) {
+            url += '&status=' + encodeURIComponent(filter_status);
+        }
 
         location = url;
     }
@@ -617,7 +632,7 @@
 </script>
 
 <script type="text/javascript">
-    <?php if (!isset($_GET['title'])){?>
+    <?php if (!isset($_GET['title']) && !isset($_GET['category']) && !isset($_GET['author']) && !isset($_GET['filter_id']) && !isset($_GET['status']) && !isset($_GET['filter_tags'])){?>
     $("#clear_filter").hide();
     <?php }else{?>
     $("#clear_filter").show();

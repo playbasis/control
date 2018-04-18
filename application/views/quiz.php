@@ -75,8 +75,8 @@
                         <td></td>
                         <td></td>
                         <td class="right">
-                            <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
-                            <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                            <a onclick="clear_filter();" style="margin-bottom: 5px;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                            <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                         </td>
                     </tr>
 

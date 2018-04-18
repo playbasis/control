@@ -41,11 +41,11 @@
                         <?php echo $this->lang->line('filter_email_username'); ?>
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
-                <span>
-                    <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                    <span>
+                    <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                 </span>
-                <span>
-                    <a onclick="downloadFile();return true;" class="button"><?php echo $this->lang->line('button_download'); ?></a>
+                    <span>
+                    <a onclick="downloadFile();return true;" class="button"><i class="fa fa-download"></i></a>
                 </span>
                 </div>
                 <div>
