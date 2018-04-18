@@ -40,7 +40,7 @@
                             <td class="center" style="width:60px;"><?php echo $this->lang->line('column_perday_start'); ?></td>
                             <td class="center" style="width:100px;"><?php echo $this->lang->line('column_pending'); ?></td>
                             <td class="center" style="min-width:60px;"><?php echo $this->lang->line('column_tags'); ?></td>
-                            <td class="center" style="width:60px;"><?php echo $this->lang->line('column_action'); ?></td>
+                            <td class="center" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                         </tr>
                         <tr class="filter">
                             <td></td>
@@ -142,8 +142,8 @@
                             <td>
                                 <input title="name" style="width: 95%;" placeholder="Filter tags" type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : "" ?>"/>
                             </td>
-                            <td class="right">
-                                <a onclick="clear_filter();" style="margin-bottom: 5px;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                            <td class="center">
+                                <a onclick="clear_filter();" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
                                 <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                             </td>
                         </tr>

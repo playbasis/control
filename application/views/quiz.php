@@ -29,7 +29,7 @@
                         <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_date_start'); ?></td>
                         <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_date_end'); ?></td>
                         <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_date_added'); ?></td>
-                        <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -74,8 +74,8 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="right">
-                            <a onclick="clear_filter();" style="margin-bottom: 5px;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                        <td class="center">
+                            <a onclick="clear_filter();" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
                             <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                         </td>
                     </tr>
@@ -95,7 +95,7 @@
                                 <td class="right"><?php echo datetimeMongotoReadable($quiz['date_start']) ? datetimeMongotoReadable($quiz['date_start']) : ""; ?></td>
                                 <td class="right"><?php echo datetimeMongotoReadable($quiz['date_expire']) ? datetimeMongotoReadable($quiz['date_expire']) : ""; ?></td>
                                 <td class="right"><?php echo datetimeMongotoReadable($quiz['date_added']); ?></td>
-                                <td class="right">
+                                <td class="center">
                                     <?php
                                         echo anchor('quiz/edit/'.$quiz['_id'], "<i class='fa fa-edit fa-lg''></i>",
                                             array('class'=>'tooltips',

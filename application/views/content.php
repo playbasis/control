@@ -56,7 +56,7 @@
                                             <?php if($org_status){?>
                                                 <td colspan="3" class="center" style="width:150px;"><?php echo $this->lang->line('column_organization'); ?></td>
                                             <?php }?>
-                                            <td rowspan="2" class="center" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
+                                            <td rowspan="2" class="center" style="width:80px;"><?php echo $this->lang->line('column_action'); ?></td>
                                         </tr>
 
                                         <?php if($org_status){?>
@@ -89,8 +89,8 @@
                                                 <td></td>
                                                 <td></td>
                                             <?php }?>
-                                            <td class="right">
-                                                <a onclick="clear_filter();" style="margin-bottom: 5px;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                                            <td class="center">
+                                                <a onclick="clear_filter();" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
                                                 <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                                             </td>
                                         </tr>

@@ -31,7 +31,7 @@
                     <?php }?>
                     <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_quest_tags'); ?></td>
                     <td class="right" style="width:60px;"><?php echo $this->lang->line('column_quest_sort_order'); ?></td>
-                    <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
+                    <td class="center" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                 </thead>
                 <tbody>
@@ -79,8 +79,8 @@
                                 <?php } ?>
                             </select>
                         </td>
-                        <td class="right">
-                            <a onclick="clear_filter();" style="margin-bottom: 5px;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                        <td class="center">
+                            <a onclick="clear_filter();" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
                             <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                         </td>
                     </tr>
@@ -101,7 +101,7 @@
                                 <?php }?>
                                 <td class="right" style="word-wrap:break-word;"><?php echo (isset($quest['tags']) && $quest['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $quest['tags']).'</span>' : null); ?></td>
                                 <td class="right"><?php echo $quest['sort_order'];?></td>
-                                <td class="right">
+                                <td class="center">
 
                                     <a class="quest_play" href="#" title="Play" data-quest_id="<?php echo $quest["_id"]; ?>"><i class='fa fa-play fa-lg'></i></a>
                                     <?php if($client_id){
