@@ -84,6 +84,41 @@ class Custompoints_model extends MY_Model
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
+        if(isset($data['filter_type']) && !is_null($data['filter_type'])){
+            $this->mongo_db->where('type', $data['filter_type']);
+        }
+        if (isset($data['filter_quantity']) && !is_null($data['filter_quantity'])) {
+            if ($data['filter_quantity']){
+                $this->mongo_db->where('quantity', null);
+            }else{
+                $this->mongo_db->where_gte('quantity', 0);
+            }
+        }
+        if (isset($data['filter_per_user']) && !is_null($data['filter_per_user'])) {
+            if ($data['filter_per_user']){
+                $this->mongo_db->where('per_user', null);
+            }else{
+                $this->mongo_db->where_gte('per_user', 0);
+            }
+        }
+        if (isset($data['filter_per_day']) && !is_null($data['filter_per_day'])) {
+            if ($data['filter_per_day']){
+                $this->mongo_db->where('limit_per_day', null);
+            }else{
+                $this->mongo_db->where_gte('limit_per_day', 0);
+            }
+        }
+        if (isset($data['filter_pending_support']) && !is_null($data['filter_pending_support'])) {
+            if ($data['filter_pending_support']){
+                $this->mongo_db->where('pending', 'on');
+            }else{
+                $this->mongo_db->where('pending', false);
+            }
+        }
+        if(isset($data['filter_tags']) && $data['filter_tags']) {
+            $tags = explode(',', $data['filter_tags']);
+            $this->mongo_db->where_in('tags', $tags);
+        }
 
         $sort_data = array(
             '_id',

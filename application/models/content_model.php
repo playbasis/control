@@ -47,6 +47,16 @@ class Content_model extends MY_Model
             $this->mongo_db->where('title', $regex);
         }
 
+        if (isset($optionalParams['filter_id']) && !is_null($optionalParams['filter_id'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['filter_id'])) . "/i");
+            $this->mongo_db->where('node_id', $regex);
+        }
+
+        if(isset($optionalParams['filter_tags']) && $optionalParams['filter_tags']) {
+            $tags = explode(',', $optionalParams['filter_tags']);
+            $this->mongo_db->where_in('tags', $tags);
+        }
+
         if (isset($optionalParams['author'])) {
             if(!empty($optionalParams['author'])){
                 $this->mongo_db->where('pb_player_id', new MongoId($optionalParams['author']));

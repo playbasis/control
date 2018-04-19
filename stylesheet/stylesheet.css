@@ -340,7 +340,7 @@ a.button, .list a.button, input.button {
 	padding: 7px;
 }
 .list .center {
-	text-align: center;
+	text-align: center !important;
 	padding: 7px;
 }
 .list .asc {

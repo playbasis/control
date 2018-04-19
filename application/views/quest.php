@@ -31,23 +31,57 @@
                     <?php }?>
                     <td class="right" style="min-width:60px;"><?php echo $this->lang->line('column_quest_tags'); ?></td>
                     <td class="right" style="width:60px;"><?php echo $this->lang->line('column_quest_sort_order'); ?></td>
-                    <td class="right" style="width:70px;"><?php echo $this->lang->line('column_action'); ?></td>
+                    <td class="center" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="filter">
                         <td></td>
                         <td></td>
-                        <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
-                        <td></td>
-                        <td></td>
+                        <td><input type="text" name="filter_name" value="<?php echo isset($_GET['filter_name']) ? $_GET['filter_name'] : ''?>" style="width:50%;" /></td>
+                        <td>
+                            <select name="filter_status" style="width:95%;margin-bottom: 0px;">
+                                <?php if (isset($_GET['filter_status']) && $_GET['filter_status'] == 'active') { ?>
+                                    <option value="">All</option>
+                                    <option value="active" selected="selected"><?php echo $this->lang->line('text_active'); ?></option>
+                                    <option value="inactive" ><?php echo $this->lang->line('text_inactive'); ?></option>
+                                <?php } elseif (isset($_GET['filter_status']) && $_GET['filter_status'] == 'inactive') { ?>
+                                    <option value="">All</option>
+                                    <option value="active"><?php echo $this->lang->line('text_active'); ?></option>
+                                    <option value="inactive" selected="selected"><?php echo $this->lang->line('text_inactive'); ?></option>
+                                <?php } else { ?>
+                                    <option value="" selected="selected">All</option>
+                                    <option value="active"><?php echo $this->lang->line('text_active'); ?></option>
+                                    <option value="inactive"><?php echo $this->lang->line('text_inactive'); ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : '' ?>" style="width: 100%;max-width: 150px;margin-bottom: 0px;" />
+                        </td>
                         <?php if($org_status){?>
                         <td></td>
                         <?php }?>
-                        <td></td>
-                        <td class="right">
-                            <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
-                            <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                        <td>
+                            <select name="sort_order" style="width:95%;margin-bottom: 0px;">
+                                <?php if (isset($_GET['sort_order']) && $_GET['sort_order'] == 'asc') { ?>
+                                    <option value="" disabled>Sort</option>
+                                    <option value="asc" selected="selected"><?php echo $this->lang->line('text_asc'); ?></option>
+                                    <option value="desc" ><?php echo $this->lang->line('text_desc'); ?></option>
+                                <?php } elseif (isset($_GET['sort_order']) && $_GET['sort_order'] == 'desc') { ?>
+                                    <option value="" disabled>Sort</option>
+                                    <option value="asc"><?php echo $this->lang->line('text_asc'); ?></option>
+                                    <option value="desc" selected="selected"><?php echo $this->lang->line('text_desc'); ?></option>
+                                <?php } else { ?>
+                                    <option value="" disabled selected="selected">Sort</option>
+                                    <option value="asc"><?php echo $this->lang->line('text_asc'); ?></option>
+                                    <option value="desc"><?php echo $this->lang->line('text_desc'); ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td class="center">
+                            <a onclick="clear_filter();" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                            <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                         </td>
                     </tr>
                     
@@ -67,7 +101,7 @@
                                 <?php }?>
                                 <td class="right" style="word-wrap:break-word;"><?php echo (isset($quest['tags']) && $quest['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $quest['tags']).'</span>' : null); ?></td>
                                 <td class="right"><?php echo $quest['sort_order'];?></td>
-                                <td class="right">
+                                <td class="center">
 
                                     <a class="quest_play" href="#" title="Play" data-quest_id="<?php echo $quest["_id"]; ?>"><i class='fa fa-play fa-lg'></i></a>
                                     <?php if($client_id){
@@ -381,12 +415,24 @@ function quest_export() {
 
 <script type="text/javascript"><!--
 function filter() {
-    url = baseUrlPath+'quest';
+    url = baseUrlPath+'quest?';
 
     var filter_name = $('input[name=\'filter_name\']').attr('value');
+    var filter_status = $('select[name=\'filter_status\']').attr('value');
+    var filter_tags = $('input[name=\'filter_tags\']').attr('value');
+    var sort_order = $('select[name=\'sort_order\']').attr('value');
 
     if (filter_name) {
-        url += '?filter_name=' + encodeURIComponent(filter_name);
+        url += '&filter_name=' + encodeURIComponent(filter_name);
+    }
+    if (filter_status) {
+        url += '&filter_status=' + encodeURIComponent(filter_status);
+    }
+    if (filter_tags) {
+        url += '&filter_tags=' + encodeURIComponent(filter_tags);
+    }
+    if (sort_order) {
+        url += '&sort_order=' + encodeURIComponent(sort_order);
     }
 
     location = url;
@@ -493,7 +539,7 @@ $(".quest_play").click(function() {
 </script>
 
 <script type="text/javascript">
-    <?php if (!isset($_GET['filter_name'])){?>
+    <?php if (!isset($_GET['filter_name']) && !isset($_GET['filter_status']) && !isset($_GET['filter_tags']) && !isset($_GET['sort_order'])){?>
         $("#clear_filter").hide();
     <?php }else{?>
         $("#clear_filter").show();

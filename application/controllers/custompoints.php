@@ -183,6 +183,30 @@ class Custompoints extends MY_Controller
             $filter['filter_name'] = $_GET['filter_name'];
             $parameter_url .= "&filter_name=" . $_GET['filter_name'];
         }
+        if (isset($_GET['filter_type'])) {
+            $filter['filter_type'] = $_GET['filter_type'];
+            $parameter_url .= "&filter_type=" . $_GET['filter_type'];
+        }
+        if (isset($_GET['filter_quantity'])) {
+            $filter['filter_quantity'] = $_GET['filter_quantity'] == "unlimited" ? true : false;
+            $parameter_url .= "&filter_quantity=" . $_GET['filter_quantity'];
+        }
+        if (isset($_GET['filter_per_user'])) {
+            $filter['filter_per_user'] = $_GET['filter_per_user'] == "unlimited" ? true : false;
+            $parameter_url .= "&filter_per_user=" . $_GET['filter_per_user'];
+        }
+        if (isset($_GET['filter_per_day'])) {
+            $filter['filter_per_day'] = $_GET['filter_per_day'] == "unlimited" ? true : false;
+            $parameter_url .= "&filter_per_day=" . $_GET['filter_per_day'];
+        }
+        if (isset($_GET['filter_pending_support'])) {
+            $filter['filter_pending_support'] = $_GET['filter_pending_support'] == "true" ? true : false;
+            $parameter_url .= "&filter_pending_support=" . $_GET['filter_pending_support'];
+        }
+        if (isset($_GET['filter_tags'])) {
+            $filter['filter_tags'] = $_GET['filter_tags'];
+            $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
+        }
 
         $config['base_url'] = site_url('custompoints/page');
 

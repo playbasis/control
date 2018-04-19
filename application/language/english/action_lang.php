@@ -30,7 +30,8 @@ $lang['column_name']							= 'Action Name';
 $lang['column_status']							= 'Status';
 $lang['column_order']							= 'Order';
 $lang['column_owner']							= 'Owner';
-
+$lang['text_enable']							= 'Enabled';
+$lang['text_disable']							= 'Disabled';
 // Button
 $lang['button_filter']							= 'Filter';
 $lang['button_clear_filter']					= 'Clear filter';

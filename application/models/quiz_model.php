@@ -49,10 +49,8 @@ class Quiz_model extends MY_Model
         }
         if (isset($data['sort_order']) && (utf8_strtolower($data['sort_order']) == 'desc')) {
             $this->mongo_db->order_by(array('weight' => -1));
-
         } else {
             $this->mongo_db->order_by(array('weight' => 1));
-
         }
         if (isset($data['start']) || isset($data['limit'])) {
             if ($data['start'] < 0) {
