@@ -1422,8 +1422,3 @@ $(document).ready(function(){
     }
     <?php }?>
 </script>
-<script>
-    function kuydew() {
-
-    }
-</script>

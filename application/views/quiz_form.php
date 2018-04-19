@@ -862,7 +862,8 @@ function find_template($data, $type, $template_id) {
                 <?php
                 foreach($badge_list as $badge){
                     ?>
-                    <option value="<?php echo $badge['badge_id'].":".$badge['image']; ?>" test_img="<?php echo $badge['image']?>" data="<?php echo $badge['name']?>"><?php echo $badge['name'];?></option>
+                    <option value="<?php echo $badge['badge_id']; ?>" data-img="<?php echo $badge['image']; ?>" data="<?php echo $badge['name']?>"><?php echo $badge['name'];?></option>
+
                     <?php
                 }
                 ?>
@@ -1569,23 +1570,20 @@ function find_template($data, $type, $template_id) {
     }
 
     function addBadge(gId) {
-        var fullVal = $('select[name=\'add_badge\']').val();
-        var halfVal = fullVal[0].split(":");
-        fullVal[0] = halfVal[0];
-        var badgeId = fullVal;
-        var gradeId = gId;
-        var ImgBadge = 'https://images.pbapp.net/'+halfVal[1];
-        console.log(ImgBadge);
+        var badgeId = $('select[name=\'add_badge\']').val();
         var getInputName = document.getElementById("add_badge");
+        var gradeId = gId;
         var color = "'green', 'yellow', 'blue'" ;
         for (i = 0; i < badgeId.length; i++) {
+            var img = getInputName.selectedOptions[i].dataset.img;
+            var ImgBadge = 'https://images.pbapp.net/'+img;
             if(getById("displayBad_"+badgeId[i]+'_'+gradeId)){
-                var txt = '<div id="displayBad_'+badgeId[i]+'_'+gradeId+'">\
+                var text = '<div id="displayBad_'+badgeId[i]+'_'+gradeId+'">\
                             <img height="50" width="50" data-toggle="tooltip" data-placement="left" title="'+getInputName.selectedOptions[i].text+'" src='+ImgBadge+' onerror="" />\
-                            <input type="text" id="valueBad_'+badgeId[i]+'_'+gradeId+'" name="quiz[grades]['+gradeId+'][rewards][badge]['+badgeId[i]+']" class="alternator('+color+');" size="100" value="" />\
+                            <input type="text" placeholder="'+getInputName.selectedOptions[i].text+'" id="valueBad_'+badgeId[i]+'_'+gradeId+'" name="quiz[grades]['+gradeId+'][rewards][badge]['+badgeId[i]+']" class="alternator('+color+');" size="100" value="" />\
                             <button type="button" onclick="deleteBadge('+"'"+gradeId+"'"+","+"'"+badgeId[i]+"'"+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
                             </div>';
-                $('#badge_'+gradeId).append(txt);
+                $('#badge_'+gradeId).append(text);
                 $('[data-toggle="tooltip"]').tooltip();
             } else {
                 document.getElementById("displayBad_"+badgeId[i]+'_'+gradeId).style.display = 'inline';
