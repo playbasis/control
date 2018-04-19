@@ -1,3 +1,15 @@
+<style type="text/css">
+    /*td.test {*/
+        /*overflow:hidden;*/
+        /*white-space: normal;*/
+
+    /*}*/
+    /*td.test:hover {*/
+        /*overflow: visible;*/
+        /*max-width: 50px;*/
+        /*white-space: inherit;*/
+    /*}*/
+</style>
 <link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
 <script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
         src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
@@ -71,7 +83,7 @@
                             <tr class="filter">
                                 <td></td>
                                 <td></td>
-                                <td class="right" ><input style="width:95%;" title="filter_goods" type="text" name="filter_goods" value="<?php echo isset($_GET['filter_goods']) ? $_GET['filter_goods'] : "" ?>"/></td>
+                                <td class="right" ><input style="width:85%;" title="filter_goods" type="text" name="filter_goods" value="<?php echo isset($_GET['filter_goods']) ? $_GET['filter_goods'] : "" ?>"/></td>
                                 <?php if ($org_status) { ?>
                                 <td></td>
                                 <?php } if (!$client_id) {?>
@@ -116,20 +128,20 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td class="right" ><input style="width:95%;" title="filter_tags" type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : "" ?>"/></td>
-                                <td style="display: flex;">
+                                <td class="right" ><input style="width:85%;" title="filter_tags" type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : "" ?>"/></td>
+                                <td style="display: flex;padding: 18px 5px 18px 5px;">
                                     <input style="width: 50%;" title="filter_custom_key" type="text" name="filter_custom_key" placeholder="Key" value="<?php echo isset($_GET['filter_custom_key']) ? $_GET['filter_custom_key'] : "" ?>"/>
                                     <span style="align-self: center;margin-bottom: 10px;">:</span>
                                     <input style="width: 50%;" title="filter_custom_val" type="text" name="filter_custom_val" placeholder="Value" value="<?php echo isset($_GET['filter_custom_val']) ? $_GET['filter_custom_val'] : "" ?>"/>
                                 </td>
                                 <td class="right">
-                                    <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
-                                    <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                                    <a onclick="clear_filter();" style="margin-bottom: 5px;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                                    <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                                 </td>
                             </tr>
                             <tbody>
                             <?php if (isset($goods_list) && $goods_list) { ?>
-                                <?php foreach ($goods_list as $goods) { ?>
+                                <?php foreach ($goods_list as $goods) {?>
                                     <tr>
                                         <td style="text-align: center;">
                                             <?php if ($client_id) { ?>
@@ -168,7 +180,7 @@
                                         <td class="left"><?php if (isset($goods['date_end']) && $goods['date_end'] && strtotime(datetimeMongotoReadable($goods['date_end']))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($goods['date_end'])));} else { echo ""; }?></td>
                                         <td class="right"><?php echo $goods['sort_order']; ?></td>
                                         <td class="right" style="word-wrap:break-word;"><?php echo (isset($goods['tags']) && $goods['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $goods['tags']).'</span>' : null); ?></td>
-                                        <td class="right" style="word-wrap:break-word;"><?php echo (isset($goods['custom_param']) && $goods['custom_param'] ? '<span class="label">'.implode('</span> <span class="label">', $goods['custom_param']).'</span>' : null); ?></td>
+                                        <td class="right test" style="word-wrap:break-word;"><?php echo (isset($goods['custom_param']) && $goods['custom_param'] ? '<span class="label" style="white-space:normal;">'.implode('</span> <span class="label" style="white-space:normal">', $goods['custom_param']).'</span>' : null); ?></td>
                                         <td class="right">
                                             <?php
                                                 if((!$client_id) || (!(isset($goods['sponsor']) && $goods['sponsor']))) {
