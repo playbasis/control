@@ -33,6 +33,12 @@ $lang['column_visible']                 = 'Visibility';
 $lang['column_action']                  = 'Action';
 $lang['column_owner']                   = 'Owner';
 $lang['column_tags']                    = 'Tag(s)';
+$lang['text_limit']                     = 'Limited';
+$lang['text_unlimit']                   = 'Unlimited';
+$lang['asc']                            = 'Ascending';
+$lang['desc']                           = 'Descending';
+$lang['text_enable']                    = 'Enabled';
+$lang['text_disable']                   = 'Disabled';
 
 // Entry
 $lang['entry_name']                     = 'Name';

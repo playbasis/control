@@ -24,21 +24,102 @@
                         <tr class="filter">
                             <td></td>
                             <td></td>
-                            <td></td>
+                            <td><input title="name" style="width: 95%;" placeholder="Filter Name" type="text" name="filter_name" value="<?php echo isset($_GET['filter_name']) ? $_GET['filter_name'] : "" ?>"/></td>
                             <?php if(!$client_id){?>
                                 <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
                             <?php }?>
                             <td class="right"><input title="category" style="width: 90px;" type="text" name="filter_category" value="<?php echo isset($_GET['filter_category']) ? $_GET['filter_category'] : "" ?>"/></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>
+                                <select name="filter_per_user" style="width:95%;margin-bottom: 0px;">
+                                    <?php if (isset($_GET['filter_per_user']) && $_GET['filter_per_user'] == 'limited') { ?>
+                                        <option value="">All</option>
+                                        <option value="limited" selected="selected"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited" ><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php } elseif (isset($_GET['filter_per_user']) && $_GET['filter_per_user'] == 'unlimited') { ?>
+                                        <option value="">All</option>
+                                        <option value="limited"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited" selected="selected"><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php } else{?>
+                                        <option value="" selected="selected">All</option>
+                                        <option value="limited"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited"><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php }?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="filter_quantity" style="width:95%;margin-bottom: 0px;">
+                                    <?php if (isset($_GET['filter_quantity']) && $_GET['filter_quantity'] == 'limited') { ?>
+                                        <option value="">All</option>
+                                        <option value="limited" selected="selected"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited" ><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php } elseif (isset($_GET['filter_quantity']) && $_GET['filter_quantity'] == 'unlimited') { ?>
+                                        <option value="">All</option>
+                                        <option value="limited"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited" selected="selected"><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php } else{?>
+                                        <option value="" selected="selected">All</option>
+                                        <option value="limited"><?php echo $this->lang->line('text_limit'); ?></option>
+                                        <option value="unlimited"><?php echo $this->lang->line('text_unlimit'); ?></option>
+                                    <?php }?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="filter_status" style="width:95%;margin-bottom: 0px;">
+                                    <?php if (isset($_GET['filter_status']) && $_GET['filter_status'] == 'enable') { ?>
+                                        <option value="">All</option>
+                                        <option value="enable" selected="selected"><?php echo $this->lang->line('text_enable'); ?></option>
+                                        <option value="disable" ><?php echo $this->lang->line('text_disable'); ?></option>
+                                    <?php } elseif (isset($_GET['filter_status']) && $_GET['filter_status'] == 'disable') { ?>
+                                        <option value="">All</option>
+                                        <option value="enable"><?php echo $this->lang->line('text_enable'); ?></option>
+                                        <option value="disable" selected="selected"><?php echo $this->lang->line('text_disable'); ?></option>
+                                    <?php } else{?>
+                                        <option value="" selected="selected">All</option>
+                                        <option value="enable"><?php echo $this->lang->line('text_enable'); ?></option>
+                                        <option value="disable"><?php echo $this->lang->line('text_disable'); ?></option>
+                                    <?php }?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="filter_visibility" style="width:95%;margin-bottom: 0px;">
+                                    <?php if (isset($_GET['filter_visibility']) && $_GET['filter_visibility'] == 'enable') { ?>
+                                        <option value="">All</option>
+                                        <option value="enable" selected="selected"><?php echo $this->lang->line('text_enable'); ?></option>
+                                        <option value="disable" ><?php echo $this->lang->line('text_disable'); ?></option>
+                                    <?php } elseif (isset($_GET['filter_visibility']) && $_GET['filter_visibility'] == 'disable') { ?>
+                                        <option value="">All</option>
+                                        <option value="enable"><?php echo $this->lang->line('text_enable'); ?></option>
+                                        <option value="disable" selected="selected"><?php echo $this->lang->line('text_disable'); ?></option>
+                                    <?php } else{?>
+                                        <option value="" selected="selected">All</option>
+                                        <option value="enable"><?php echo $this->lang->line('text_enable'); ?></option>
+                                        <option value="disable"><?php echo $this->lang->line('text_disable'); ?></option>
+                                    <?php }?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="sort_order" style="width:95%;margin-bottom: 0px;">
+                                    <?php if (isset($_GET['sort_order']) && $_GET['sort_order'] == 'asc') { ?>
+                                        <option value="" disabled>Sort</option>
+                                        <option value="asc" selected="selected"><?php echo $this->lang->line('asc'); ?></option>
+                                        <option value="desc" ><?php echo $this->lang->line('desc'); ?></option>
+                                    <?php } elseif (isset($_GET['sort_order']) && $_GET['sort_order'] == 'desc') { ?>
+                                        <option value="" disabled>Sort</option>
+                                        <option value="asc"><?php echo $this->lang->line('asc'); ?></option>
+                                        <option value="desc" selected="selected"><?php echo $this->lang->line('desc'); ?></option>
+                                    <?php } else { ?>
+                                        <option value="" disabled selected="selected">Sort</option>
+                                        <option value="asc"><?php echo $this->lang->line('asc'); ?></option>
+                                        <option value="desc"><?php echo $this->lang->line('desc'); ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <input title="name" style="width: 95%;" placeholder="Filter tags" type="text" name="filter_tags" value="<?php echo isset($_GET['filter_tags']) ? $_GET['filter_tags'] : "" ?>"/>
+                            </td>
                             <td class="right">
-                                <a onclick="clear_filter();" class="button"
-                                   id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
-                                <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                                <a onclick="clear_filter();" style="margin-bottom: 5px;" class="button" id="clear_filter"><i class="fa fa-refresh"></i></a>
+                                <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                             </td>
                         </tr>
                         <tbody>
@@ -110,7 +191,7 @@
         $pleaseWaitSpanHTML = $("#pleaseWaitSpanDiv").html(),
         $categoryErrorDialog = $('#categoryErrorDialog');
 
-    <?php if (!isset($_GET['filter_category'])){?>
+    <?php if (!isset($_GET['filter_category']) && !isset($_GET['filter_name']) && !isset($_GET['filter_per_user']) && !isset($_GET['filter_quantity']) && !isset($_GET['filter_status']) && !isset($_GET['filter_visibility']) && !isset($_GET['filter_visibility']) && !isset($_GET['sort_order']) && !isset($_GET['filter_tags'])){?>
     $("#clear_filter").hide();
     <?php }else{?>
     $("#clear_filter").show();
@@ -120,12 +201,40 @@
         window.location.replace(baseUrlPath + 'badge');
     }
     function filter() {
-        url = baseUrlPath + 'badge';
+        url = baseUrlPath + 'badge?';
 
         var filter_category = $('input[name=\'filter_category\']').attr('value');
+        var filter_name = $('input[name=\'filter_name\']').attr('value');
+        var filter_per_user = $('select[name=\'filter_per_user\']').attr('value');
+        var filter_quantity = $('select[name=\'filter_quantity\']').attr('value');
+        var filter_status = $('select[name=\'filter_status\']').attr('value');
+        var filter_visibility = $('select[name=\'filter_visibility\']').attr('value');
+        var sort_order = $('select[name=\'sort_order\']').attr('value');
+        var filter_tags = $('input[name=\'filter_tags\']').attr('value');
 
         if (filter_category) {
-            url += '?filter_category=' + encodeURIComponent(filter_category);
+            url += '&filter_category=' + encodeURIComponent(filter_category);
+        }
+        if (filter_name) {
+            url += '&filter_name=' + encodeURIComponent(filter_name);
+        }
+        if (filter_per_user) {
+            url += '&filter_per_user=' + encodeURIComponent(filter_per_user);
+        }
+        if (filter_quantity) {
+            url += '&filter_quantity=' + encodeURIComponent(filter_quantity);
+        }
+        if (filter_status) {
+            url += '&filter_status=' + encodeURIComponent(filter_status);
+        }
+        if (filter_visibility) {
+            url += '&filter_visibility=' + encodeURIComponent(filter_visibility);
+        }
+        if (sort_order) {
+            url += '&sort_order=' + encodeURIComponent(sort_order);
+        }
+        if (filter_tags) {
+            url += '&filter_tags=' + encodeURIComponent(filter_tags);
         }
 
         location = url;

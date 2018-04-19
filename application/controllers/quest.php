@@ -84,7 +84,6 @@ class Quest extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $this->load->model('Image_model');
-
         $this->load->library('pagination');
 
         $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
@@ -99,6 +98,15 @@ class Quest extends MY_Controller
 
         if (isset($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
+        }
+        if (isset($_GET['filter_status'])) {
+            $filter['filter_status'] = $_GET['filter_status'] == "active" ? true : false;
+        }
+        if (isset($_GET['filter_tags'])) {
+            $filter['filter_tags'] = $_GET['filter_tags'];
+        }
+        if (isset($_GET['sort_order'])) {
+            $filter['sort_order'] = $_GET['sort_order'] == "asc" ? "asc" : "desc";
         }
 
         $config['base_url'] = site_url('quest/page');

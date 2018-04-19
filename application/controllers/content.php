@@ -391,6 +391,16 @@ class Content extends MY_Controller
             'sort' => 'sort_order'
         );
 
+        if (isset($_GET['filter_tags']) && !empty($_GET['filter_tags'])) {
+            $filter['filter_tags'] = $_GET['filter_tags'];
+            $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
+        }
+
+        if (isset($_GET['filter_id']) && !empty($_GET['filter_id'])) {
+            $filter['filter_id'] = $_GET['filter_id'];
+            $parameter_url .= "&filter_id=" . $_GET['filter_id'];
+        }
+
         if (isset($_GET['title']) && !empty($_GET['title'])) {
             $filter['title'] = $_GET['title'];
             $parameter_url .= "&title=" . $_GET['title'];

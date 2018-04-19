@@ -50,11 +50,11 @@
                         <option <?php if($filter_status == "CUSTOM_POINT") echo "selected"; ?> value="CUSTOM_POINT"><?php echo "CUSTOM_POINT";    ?></option>
                     </select>
                 </span>
-                <span>
-                    <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                    <span>
+                    <a onclick="filter();" class="button"><i class="fa fa-filter"></i></a>
                 </span>
-                <span>
-                    <a onclick="downloadFile();return true;" class="button"><?php echo $this->lang->line('button_download'); ?></a>
+                    <span>
+                    <a onclick="downloadFile();return true;" class="button"><i class="fa fa-download"></i></a>
                 </span>
                 </div>
             </div>

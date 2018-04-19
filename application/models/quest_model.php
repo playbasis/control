@@ -24,11 +24,22 @@ class Quest_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->where_not_in('deleted', array(true));
-        $this->mongo_db->order_by(array('sort_order' => 1));
 
+        if (isset($data['sort_order']) && (utf8_strtolower($data['sort_order']) == 'desc')) {
+            $this->mongo_db->order_by(array('sort_order' => -1));
+        } else {
+            $this->mongo_db->order_by(array('sort_order' => 1));
+        }
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('quest_name', $regex);
+        }
+        if(isset($data['filter_tags']) && $data['filter_tags']) {
+            $tags = explode(',', $data['filter_tags']);
+            $this->mongo_db->where_in('tags', $tags);
+        }
+        if(isset($data['filter_status']) && !is_null($data['filter_status'])){
+            $this->mongo_db->where('status', $data['filter_status']);
         }
 
         return $this->mongo_db->get('playbasis_quest_to_client');
