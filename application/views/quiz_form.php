@@ -599,7 +599,7 @@ function find_template($data, $type, $template_id) {
                                                         <script type="text/javascript">
                                                             $(document).on("click", ".btn_open_modal_badge", function () {
                                                                 var grandeId = $(this).attr('id');
-                                                                $("#listBadgeButton").attr('onclick', "addBadge('"+grandeId+"')" );
+                                                                $("#listBadgeButton").attr('onclick', "addBadge('"+grandeId+"')");
                                                             });
                                                         </script>
                                                         <?php
@@ -620,8 +620,8 @@ function find_template($data, $type, $template_id) {
                                                                                 $user_b = $b["badge_value"];
                                                                                 ?>
                                                                                 <div id="displayBad_<?php echo $badge['badge_id']; ?>_<?php echo $grade['grade_id']; ?>">
-                                                                                    <span class="label label-primary"><?php echo $badge['name']; ?></span>
-                                                                                    <input type="text" id="valueBad_<?php echo $badge['badge_id']; ?>_<?php echo $grade['grade_id']; ?>" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][badge][<?php echo $badge['badge_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="<?php echo $user_b; ?>" />
+                                                                                    <img height="50" width="50" data-toggle="tooltip" data-placement="left" title="<?php echo $badge['name']; ?>" src="<?php echo S3_IMAGE.$badge['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                                                                    <input type="text" placeholder="<?php echo $badge['name']; ?>" id="valueBad_<?php echo $badge['badge_id']; ?>_<?php echo $grade['grade_id']; ?>" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][badge][<?php echo $badge['badge_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="<?php echo $user_b; ?>" />
                                                                                     <button type="button" onclick="deleteBadge('<?php echo $grade['grade_id']; ?>', '<?php echo $badge['badge_id']; ?>')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>
                                                                                 </div>
                                                                     <?php
@@ -843,7 +843,7 @@ function find_template($data, $type, $template_id) {
         </div>
         <div class="modal-footer">
             <div>
-                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" id="test">Close</button>
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
                 <button class="btn btn-primary" id="listRewardButton">Add</button>
             </div>
         </div>
@@ -862,7 +862,8 @@ function find_template($data, $type, $template_id) {
                 <?php
                 foreach($badge_list as $badge){
                     ?>
-                    <option value="<?php echo $badge['badge_id']; ?>" data="<?php echo $badge['name']?>"><?php echo $badge['name'];?></option>
+                    <option value="<?php echo $badge['badge_id']; ?>" data-img="<?php echo $badge['image']; ?>" data="<?php echo $badge['name']?>"><?php echo $badge['name'];?></option>
+
                     <?php
                 }
                 ?>
@@ -871,7 +872,7 @@ function find_template($data, $type, $template_id) {
     </div>
     <div class="modal-footer">
         <div>
-            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" id="test">Close</button>
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
             <button class="btn btn-primary" id="listBadgeButton">Add</button>
         </div>
     </div>
@@ -1557,6 +1558,9 @@ function find_template($data, $type, $template_id) {
 </script>
 
 <script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
     function getById(id) {
         if(document.getElementById(id)==null){
             return true;
@@ -1571,13 +1575,16 @@ function find_template($data, $type, $template_id) {
         var gradeId = gId;
         var color = "'green', 'yellow', 'blue'" ;
         for (i = 0; i < badgeId.length; i++) {
+            var img = getInputName.selectedOptions[i].dataset.img;
+            var ImgBadge = 'https://images.pbapp.net/'+img;
             if(getById("displayBad_"+badgeId[i]+'_'+gradeId)){
                 var text = '<div id="displayBad_'+badgeId[i]+'_'+gradeId+'">\
-                            <span class="label label-primary">'+getInputName.selectedOptions[i].text+'</span>\
-                            <input type="text" id="valueBad_'+badgeId[i]+'_'+gradeId+'" name="quiz[grades]['+gradeId+'][rewards][badge]['+badgeId[i]+']" class="alternator('+color+');" size="100" value="" />\
+                            <img height="50" width="50" data-toggle="tooltip" data-placement="left" title="'+getInputName.selectedOptions[i].text+'" src='+ImgBadge+' onerror="" />\
+                            <input type="text" placeholder="'+getInputName.selectedOptions[i].text+'" id="valueBad_'+badgeId[i]+'_'+gradeId+'" name="quiz[grades]['+gradeId+'][rewards][badge]['+badgeId[i]+']" class="alternator('+color+');" size="100" value="" />\
                             <button type="button" onclick="deleteBadge('+"'"+gradeId+"'"+","+"'"+badgeId[i]+"'"+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
                             </div>';
                 $('#badge_'+gradeId).append(text);
+                $('[data-toggle="tooltip"]').tooltip();
             } else {
                 document.getElementById("displayBad_"+badgeId[i]+'_'+gradeId).style.display = 'inline';
             }
