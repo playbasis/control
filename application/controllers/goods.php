@@ -544,8 +544,7 @@ class Goods extends MY_Controller
         $this->getForm();
     }
 
-    public function update($goods_id)
-    {
+    public function update($goods_id){
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -699,11 +698,12 @@ class Goods extends MY_Controller
                     if (isset($goods_data['custom_param'])){
                         if(is_array($goods_data['custom_param'])){
                             $custom_param = array();
-                            foreach ($goods_data['custom_param'] as $param){
+                            foreach ($goods_data['custom_param'] as &$param){
                                 if(!is_null($param['key']) && ($param['key'] != "") && !is_null($param['value'])){
+                                    $param['hidden'] = isset($param['hidden']) ? true : false;
                                     array_push($custom_param, $param);
                                     if(is_numeric($param['value'])){
-                                        array_push($custom_param, array('key' => $param['key'].'_numeric', 'value' => floatval($param['value'])));
+                                        array_push($custom_param, array('key' => $param['key'].'_numeric', 'value' => floatval($param['value']),));
                                     }
                                 }
                             }
@@ -741,7 +741,6 @@ class Goods extends MY_Controller
                             }elseif(!isset($goods_data['whitelist_enable']) || ($goods_data['whitelist_enable'] == false)){
                                 $this->Goods_model->deleteGoodsWhiteList($client_id, $site_id, $distinct_id);
                             }
-
                         } else {
                             redirect($_SERVER['HTTP_REFERER'], 'refresh');
                         }
@@ -1258,7 +1257,11 @@ class Goods extends MY_Controller
                     $param_array = array();
                     foreach ($goods['custom_param'] as $param){
                         if(strpos( $param['key'], POSTFIX_NUMERIC_PARAM ) == false){
-                            array_push($param_array, implode(' : ', $param));
+                            if ((isset($param['hidden']) && $param['hidden'])){
+                                array_push($param_array, $param['key'].' : '.$param['value']);
+                            }else{
+                                array_push($param_array, implode(' : ', $param));
+                            }
                         }
                     }
                 }

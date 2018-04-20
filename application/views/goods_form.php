@@ -149,12 +149,17 @@
                                         <?php if(isset($custom_param) && is_array($custom_param) ){?>
                                             <?php foreach($custom_param as $key => $param){
                                                 if(strpos( $param['key'], POSTFIX_NUMERIC_PARAM ) == false){?>
-                                                <tr>
-                                                    <td><input type="text" name="<?php echo "custom_param[".$key."][key]" ?>"
+                                                <tr id="param_<?php echo "custom_param[".$key."][key]" ?>">
+                                                    <td><input type="text" name="<?php echo "custom_param[".$key."][key]" ?>" id="<?php echo "custom_param[".$key."][key]" ?>"
                                                                value="<?php echo isset($param['key']) ? $param['key']: set_value('parameter'); ?>"
                                                     </td>
-                                                    <td><input type="text" name="<?php echo "custom_param[".$key."][value]" ?>"
+                                                    <td><input type="text" name="<?php echo "custom_param[".$key."][value]" ?>" id="<?php echo "custom_param[".$key."][value]" ?>"
                                                                value="<?php echo isset($param['value']) ? $param['value']: set_value('parameter'); ?>"
+                                                          <div>
+                                                            <input class="chk_custom_hid" type="checkbox" name="<?php echo "custom_param[".$key."][hidden]" ?>" value="" <?php echo !isset($param['hidden']) || (isset($param['hidden']) && $param['hidden']) ? 'checked' : ''; ?> id="<?php echo "custom_param[".$key."]['hidden']" ?>" style="margin: 0px 0px 2px 15px;">
+                                                            <span>Show in table</span>
+                                                            <button type="button" onclick="deleteCustomParam('<?php echo "custom_param[".$key."][key]" ?>','<?php echo "custom_param[".$key."][value]" ?>');" style="background:transparent;border:none;outline:none;float:right;font-size:30px;" ><span class="icon-remove" style="color: red;"></span></button>
+                                                          </div>
                                                     </td>
                                                 </tr>
                                             <?php }
@@ -258,37 +263,33 @@
                                         </div>
                                     </div>
                                     <div id="badge-panel">
-                                    <?php
-                                    if($badge_list){
-                                    ?>
-                                        <br>
-                                        <button id="badge-entry" type="button" style="max-width: 400px;" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
-                                        <div class="badges">
-                                            <div class="well">
+                                        <?php
+                                        if($badge_list){
+                                        ?>
+                                            <br>
+                                            <button id="badge-entry" type="button" style="max-width: 400px;" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
+                                            <div class="badges">
+                                                <div id="redeem_badge_table" class="well ">
+                                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formAddBadge" id="editBadge" ><i class="fa fa-plus"></i> Add</button>
+                                                    <br>
                                                 <?php
                                                 foreach($badge_list as $badge){
-                                                    ?>
-                                                    <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                                    <input type="text" name="reward_badge[<?php echo $badge['badge_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="<?php if(set_value('reward_badge['.$badge['badge_id'].']')){
-                                                        echo set_value('reward_badge['.$badge['badge_id'].']');
-                                                    }else{
-                                                        if($reward_badge){
-                                                            foreach($reward_badge as $rbk => $rb){
-                                                                if($rbk == $badge['badge_id']){
-                                                                    echo $rb;
-                                                                    continue;
-                                                                }
-                                                            }
-                                                        }
-                                                    } ?>" data-placement="right" title="The number of Badges needed to redeem the Goods"/><br/>
-                                                <?php
+                                                    if(array_key_exists($badge['badge_id']."",$reward_badge)) {
+                                                            ?>
+                                                            <div id="<?php echo $badge['badge_id']; ?>">
+                                                                <img id="Img_Badge" height="50" width="50" data-toggle="tooltip" data-placement="left" title="<?php echo $badge['name']; ?>" src="<?php echo S3_IMAGE.$badge['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png'); "/>
+                                                                <input id="valueBadge_<?php echo $badge['badge_id']; ?>" placeholder="<?php echo $badge['name']; ?>" type="text" name="reward_badge[<?php echo $badge['badge_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php echo $reward_badge[$badge['badge_id'].""]?>"/>
+                                                                <button type="button" onclick="deleteBadge('<?php echo $badge['badge_id']; ?>');" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>
+                                                            </div>
+                                                        <?php
+                                                    }
                                                 }
                                                 ?>
-                                            </div>
-                                        </div>
-                                    <?php
-                                    }
-                                    ?>
+                                                </div>
+                                             </div>
+                                        <?php
+                                        }
+                                        ?>
                                     </div>
                                     <div id="reward-panel">
                                     <?php
@@ -298,7 +299,7 @@
                                         <button id="reward-entry" type="button" style="max-width: 400px;" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>
                                         <div class="rewards">
                                             <div id="redeem_custom_reward_table" class="well ">
-                                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formEditRedeem" id="editReward" ><i class="fa fa-plus"></i> Add</button>
+                                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#formAddCurrency" id="editReward" ><i class="fa fa-plus"></i> Add</button>
                                                 <br>
                                             <?php
                                             foreach($point_list as $point){
@@ -431,9 +432,13 @@
 
 <div id="newParam_emptyElement" class="hide invisible">
     <table>
-        <tr>
+        <tr id="param_custom_param[{{id}}][key]">
             <td><input type="text" name="custom_param[{{id}}][key]" value=""></td>
-            <td><input type="text" name="custom_param[{{id}}][value]" value=""></td>
+            <td><input type="text" name="custom_param[{{id}}][value]" value="">
+                <input type="checkbox" name="custom_param[{{id}}][hidden]" id="" checked style="margin: 0px 0px 2px 15px;">
+                <span>Show in table</span>
+                <button type="button" onclick="deleteCustomParam('custom_param[{{id}}][key]','custom_param[{{id}}][value]');" style="background:transparent;border:none;outline:none;float:right;font-size:30px;" ><span class="icon-remove" style="color: red;"></span></button>
+            </td>
         </tr>
     </table>
 </div>
@@ -558,10 +563,10 @@
     </div>
 </div>
 
-<div id="formEditRedeem" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formEditRedeemLabel" aria-hidden="true" style="max-width: 800px;" >
+<div id="formAddCurrency" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formAddCurrencyLabel" aria-hidden="true" style="max-width: 800px;" >
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="formEditRedeemLabel">Add currency</h3>
+        <h3 id="formAddCurrencyLabel">Add currency</h3>
     </div>
     <div class="modal-body" style="height: 300px;">
 
@@ -579,6 +584,33 @@
         <div>
             <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" id="test">Close</button>
             <button class="btn btn-primary" onclick="listCurrency()" id="listRewardButton">Add</button>
+        </div>
+    </div>
+</div>
+
+<div id="formAddBadge" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formAddBadgeLabel" aria-hidden="true" style="max-width: 800px;" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="formAddBadgeLabel">Add Badge</h3>
+    </div>
+    <div class="modal-body" style="height: 300px;">
+        <div align="center">
+            <label class="text-info" type="text" style="text-align: center"><h2>Badge  <span class="icon-search"></span></h2></label><br>
+            <select class="chosen-select" multiple id="add_badge" name="add_badge" >
+                <?php
+                foreach($badge_list as $badge){
+                    ?>
+                    <option value="<?php echo $badge['badge_id']; ?>" data="<?php echo $badge['name']?>"><?php echo $badge['name'];?></option>
+                    <?php
+                }
+                ?>
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div>
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" id="test">Close</button>
+            <button class="btn btn-primary" onclick="listBadge('<?php echo $badge['image']; ?>')" id="listRewardButton">Add</button>
         </div>
     </div>
 </div>
@@ -602,6 +634,50 @@
 </script>
 
 <script type="text/javascript">
+    $("#add_badge").chosen({max_selected_options: 9});
+    var filter_id = document.getElementById("add_badge_chosen");
+    filter_id.style.width = "400px";
+    filter_id.children[0].children[0].children[0].style.width = "200px";
+</script>
+
+<script type="text/javascript">
+    function getById(id) {
+        if(document.getElementsByName(id).length){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    function listBadge(Img) {
+        var badgeId = $('select[name=\'add_badge\']').val();
+        var getInputName = document.getElementById("add_badge");
+        var color = "'green', 'yellow', 'blue'" ;
+        var URL = "https://images.pbapp.net/"+Img;
+        var onError = $('#Img_Badge').attr("onerror");
+        for (i = 0; i < badgeId.length; i++) {
+            if(getById("reward_badge[" + badgeId[i] + "]")){
+                var text = '<div id="'+badgeId[i]+'">\
+                              <img height="50" width="50" data-toggle="tooltip" data-placement="left" title="'+getInputName.selectedOptions[i].text+'" src='+URL+' onerror='+onError+' />\
+                              <input type="text" id="valueBad_'+badgeId[i]+'" placeholder="'+getInputName.selectedOptions[i].text+'" name="reward_badge['+badgeId[i]+']" class="alternator('+color+');" size="100" value=""/>\
+                              <button type="button" onclick="deleteBadge('+"'"+badgeId[i]+"'"+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
+                            </div>';
+                $('#redeem_badge_table').append(text);
+                $('[data-toggle="tooltip"]').tooltip();
+            } else if(!getById("reward_badge[" + badgeId[i] + "]")){
+                document.getElementById(badgeId[i]).style.display = 'inline';
+            }
+        }
+        $("#formAddBadge").modal("hide");
+    }
+    function deleteBadge(badgeId) {
+        document.getElementById(badgeId).style.display = 'none';
+        document.getElementById("valueBadge_" + badgeId).value = null;
+    }
+</script>
+
+
+<script type="text/javascript">
     function getById(id) {
         if(document.getElementsByName(id).length){
             return false;
@@ -618,20 +694,32 @@
             if(getById("reward_reward[" + reward_id[idx] + "]")){
                 var txt = '<div id="'+reward_id[idx]+'">\
                              <span class="label label-primary">'+tagSelect.selectedOptions[idx].text+'</span>\
-                             <input id="valueCurrency_'+reward_id [idx]+'" type="number" name="reward_reward['+reward_id[idx]+']" class="alternator('+color+');" size="100" value="" placeholder="Please input your currency...">\
-                            <button type="button" onclick="deleteCurrency('+"'"+reward_id[idx]+"'"+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
+                             <input id="valueCurrency_'+reward_id [idx]+'" type="number" name="reward_reward['+reward_id[idx]+']" class="alternator('+color+');" size="100" value="">\
+                             <button type="button" onclick="deleteCurrency('+"'"+reward_id[idx]+"'"+')" style="background: transparent; border: none; outline: none;" ><span class="icon-remove" style="color: red;"></span></button><br/>\
                            </div>';
                 $('#redeem_custom_reward_table').append(txt);
             } else if(!getById("reward_reward[" + reward_id[idx] + "]")){
                 document.getElementById(reward_id[idx]).style.display = 'inline';
             }
         }
-        $("#formEditRedeem").modal("hide");
+        $("#formAddCurrency").modal("hide");
     }
     function deleteCurrency(rewardId) {
         var a = $('input[id=\'valueCurrency_'+rewardId+'\']').val();
-                    document.getElementById(rewardId).style.display = 'none';
+                document.getElementById(rewardId).style.display = 'none';
                 document.getElementById("valueCurrency_" + rewardId).value = null;
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    function deleteCustomParam(IdKey,IdValue) {
+        document.getElementById("param_"+IdKey).style.display = 'none';
+        document.getElementById(IdKey).value = null;
+        document.getElementById(IdValue).value = null;
     }
 </script>
 
