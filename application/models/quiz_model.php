@@ -77,7 +77,14 @@ class Quiz_model extends MY_Model
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
-
+        if(isset($data['filter_tags']) && $data['filter_tags']) {
+            $tags = explode(',', $data['filter_tags']);
+            $this->mongo_db->where_in('tags', $tags);
+        }
+        if(isset($data['filter_status']) && !is_null($data['filter_status'])){
+            $this->mongo_db->where('status', $data['filter_status']);
+        }
+        
         $results = $this->mongo_db->count("playbasis_quiz_to_client");
 
         return $results;
