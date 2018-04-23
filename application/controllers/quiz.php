@@ -76,9 +76,11 @@ class Quiz extends MY_Controller
         );
 
         if (isset($_GET['filter_name'])) {
+            $parameter_url .= "&filter_name=" . $_GET['filter_name'];
             $filter['filter_name'] = $_GET['filter_name'];
         }
         if (isset($_GET['filter_tags'])) {
+            $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
             $filter['filter_tags'] = $_GET['filter_tags'];
         }
         if (isset($_GET['filter_status'])) {
@@ -106,6 +108,8 @@ class Quiz extends MY_Controller
         }
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
+        $config['suffix'] =  $parameter_url;
+        $config['first_url'] = $config['base_url'].$parameter_url;
 
         $config['next_link'] = 'Next';
         $config['next_tag_open'] = "<li class='page_index_nav next'>";
