@@ -158,6 +158,7 @@ class User_group extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            $this->data['message'] = null;
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
             }
