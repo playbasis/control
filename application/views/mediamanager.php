@@ -246,7 +246,7 @@
         console.log(active_folder)
         var text = '<input type="text" id="editInput_'+editID+'" value="'+temp_folderName+'" style="width: 60%;">';
         var button = '<div style="position: absolute;left: 0px;bottom: 5px;width: 100%;text-align: center;">' +
-                '<button onclick="updateBoxName(\''+editID+'\',\''+active_folder+'\')" style="margin-right: 10px;background-color: aliceblue;outline: none;border-radius: 4px;"><i class="fa fa-check"></i></button>'+
+                '<button onclick="updateBoxName(\''+editID+'\',\''+active_folder+'\',\''+temp_folderName+'\')" style="margin-right: 10px;background-color: aliceblue;outline: none;border-radius: 4px;"><i class="fa fa-check"></i></button>'+
             '<button onclick="closeBoxEdit(\''+editID+'\',\''+temp_folderName+'\')" style="background-color: aliceblue;outline: none;border-radius: 4px;"><i class="fa fa-times"></i></button>'+
             '</div>';
         $('#'+editID).empty();
@@ -261,25 +261,35 @@
         });
     }
 
-    function updateBoxName(editID, active) {
+    function updateBoxName(editID, active, oldVal) {
         var name = $('#editInput_'+editID).val();
-        console.log(editID+' | '+active)
-        $.ajax({
-            url: baseUrlPath + "mediamanager/updateFolderName?elementID="+editID+"&new_name="+name,
-            dataType: "json",
-            success: function(data){
-                if (data){
-                    ajaxGetMediaList(active);
-                    if (editID === active){
-                        console.log('true')
-                        $('#current_folder').text(name);
+        console.log(editID+' | '+active+' | '+oldVal+' | '+name)
+        if (validEmpty('editInput_'+editID)){
+            if(validFoldername_duplicate(name) && name != oldVal) {
+            $.ajax({
+                url: baseUrlPath + "mediamanager/updateFolderName?elementID=" + editID + "&new_name=" + name,
+                dataType: "json",
+                success: function (data) {
+                    if (data) {
+                        ajaxGetMediaList(active);
+                        if (editID === active) {
+                            console.log('true')
+                            $('#current_folder').text(name);
+                        }
                     }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
                 }
-            },
-            error: function (xhr, textStatus, errorThrown){
-                console.log(errorThrown);
+            });
+            }else{
+                $('#'+editID+'> span').remove();
+                $('#'+editID).append('<span style="font-size: 12px;color: red;position: absolute;top: 5px;">Duplicate name detected!</span>')
             }
-        });
+        }else{
+            $('#'+editID+'> span').remove();
+            $('#'+editID).append('<span style="font-size: 12px;color: red;position: absolute;top: 5px;">Please put some text!</span>')
+        }
     }
 
     function closeBoxEdit(editID, oldName) {
@@ -425,32 +435,36 @@
     function createFolder(){
         var folder_name = $('#newFolder_Name').val() == "" ? "Untitled" : $('#newFolder_Name').val();
         console.log($('#newFolder_Name').val())
-        if(validFoldername_duplicate(folder_name) && validEmpty()) {
-            $.ajax({
-                url: baseUrlPath + "mediamanager/insertFolder?name=" + folder_name,
-                dataType: "json",
-                success: function (data) {
-                    $('#newFolder').modal('hide');
-                    $('#newFolder_Name').val("");
-                    $('#newFolder > .modal-body > h5').remove();
-                    ajaxGetMediaList();
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    //                window.location.reload(true)
-                    console.log(errorThrown);
-                }
-            });
-        }
-        else{
+        if (validEmpty('newFolder_Name')){
+            if(validFoldername_duplicate(folder_name)) {
+                $.ajax({
+                    url: baseUrlPath + "mediamanager/insertFolder?name=" + folder_name,
+                    dataType: "json",
+                    success: function (data) {
+                        $('#newFolder').modal('hide');
+                        $('#newFolder_Name').val("");
+                        $('#newFolder > .modal-body > h5').remove();
+                        ajaxGetMediaList();
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        //                window.location.reload(true)
+                        console.log(errorThrown);
+                    }
+                });
+            }else{
+                $('#newFolder > .modal-body > h5').remove();
+                $('#newFolder > .modal-body').append('<h5 style="color: red;">Duplicate name detected!</h5>')
+            }
+        }else{
             $('#newFolder > .modal-body > h5').remove();
-            $('#newFolder > .modal-body').append('<h5 style="color: red;">Invalid input!</h5>')
+            $('#newFolder > .modal-body').append('<h5 style="color: red;">Please put some text!</h5>')
         }
     }
 
     function validFoldername_duplicate(name){
         var result = true;
         $('.folder-box').each(function(){
-            console.log($(this).attr('data-file_name')+' | '+name)
+            console.log($(this).attr('data-file_name').toLowerCase()+' | '+name.toLowerCase()) // Use .toLowerCase() if case sensetive
             if ($(this).attr('data-file_name') === name){
                 result = false;
                 return false;
@@ -459,8 +473,8 @@
         return result;
     }
     
-    function validEmpty() {
-        if($('#newFolder_Name').val() == undefined || $('#newFolder_Name').val() == ""){
+    function validEmpty(input) {
+        if($('#'+input).val() == undefined || $('#'+input).val() == ""){
             return false;
         }else{
             return true;
@@ -560,7 +574,7 @@
     function ajaxGetMediaList(criteria,callback) {
         var text = '<div id="thumbnails_grid_folder" style="position: sticky;background-color: #f6f6f6;top: 0px;" class="thumbnails">\
                     <div><h5 style="float: left">Folders</h5><div style="clear: both;"><hr style="width: 99%;"></div></div><br>\
-                        <div id="inner_grid_folder" style="max-height: 250px;overflow-y: auto;transition: all 0.5s;" class="thumbnails">\
+                        <div id="inner_grid_folder" style="padding-top:4px;max-height: 250px;overflow-y: auto;transition: all 0.5s;" class="thumbnails">\
                             <div class="span" style="display: none;"></div>\
                             <div class="thumbfix span3 folder-box" id="box_root" data-id="root" data-file_name="Default">Default</div>\
                         </div>\
