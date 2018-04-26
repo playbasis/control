@@ -703,7 +703,7 @@ class Goods extends MY_Controller
                                     $param['hidden'] = isset($param['hidden']) ? true : false;
                                     array_push($custom_param, $param);
                                     if(is_numeric($param['value'])){
-                                        array_push($custom_param, array('key' => $param['key'].'_numeric', 'value' => floatval($param['value']),));
+                                        array_push($custom_param, array('key' => $param['key'].'_numeric', 'value' => floatval($param['value'])));
                                     }
                                 }
                             }
@@ -1259,8 +1259,6 @@ class Goods extends MY_Controller
                         if(strpos( $param['key'], POSTFIX_NUMERIC_PARAM ) == false){
                             if ((isset($param['hidden']) && $param['hidden'])){
                                 array_push($param_array, $param['key'].' : '.$param['value']);
-                            }else{
-                                array_push($param_array, implode(' : ', $param));
                             }
                         }
                     }

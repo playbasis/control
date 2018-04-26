@@ -1,7 +1,11 @@
 <style type="text/css">
-    td.tagStyle {
-        overflow:hidden;
+    .tagStyle{
+        overflow: hidden;
+    }
+    .label + .tooltip > .tooltip-inner {
+        max-width: 150px;
         white-space: normal;
+        text-align: left;
     }
 </style>
 <link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
@@ -36,7 +40,7 @@
                 <a href="<?php echo site_url('goods');?>" style="display: inline;"><?php echo $this->lang->line('heading_title_goods_list'); ?></a>
                 <a href="<?php echo site_url('goods/markAsUsed');?>" style="display: inline;" ><?php echo $this->lang->line('heading_title_mark_as_used'); ?></a>
             </div>
-            <div class="tab-content">
+            <div class="tab-content" id="">
                 <?php if($tabs == $this->lang->line('heading_title_goods_list')) { ?>
                 <div class="tab-pane fade active in" id="goodsListTab">
                     <?php if ($this->session->flashdata('success')) { ?>
@@ -173,8 +177,21 @@
                                         <td class="left"><?php if (isset($goods['date_start']) && $goods['date_start'] && strtotime(datetimeMongotoReadable($goods['date_start']))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($goods['date_start'])));} else { echo ""; }?></td>
                                         <td class="left"><?php if (isset($goods['date_end']) && $goods['date_end'] && strtotime(datetimeMongotoReadable($goods['date_end']))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($goods['date_end'])));} else { echo ""; }?></td>
                                         <td class="right"><?php echo $goods['sort_order']; ?></td>
-                                        <td class="right" style="word-wrap:break-word;"><?php echo (isset($goods['tags']) && $goods['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $goods['tags']).'</span>' : null); ?></td>
-                                        <td class="right tagStyle" style="word-wrap:break-word;position: relative;"><?php echo (isset($goods['custom_param']) && $goods['custom_param'] ? '<span class="label tagCustomParam">'.implode('</span></br> <span class="label tagCustomParam">', $goods['custom_param']).'</span></br>' : null); ?></td>
+
+                                        <td class="right tagStyle" style="word-wrap:break-word;">
+                                        <?php if(isset($goods['tags']) && $goods['tags']){
+                                            foreach ($goods['tags'] as $val ){ ?>
+                                                <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
+                                        <?php }
+                                        } ?>
+                                        </td>
+                                        <td class="right tagStyle" style="word-wrap:break-word;">
+                                            <?php if(isset($goods['custom_param']) && $goods['custom_param']){
+                                                foreach ($goods['custom_param'] as $val ){ ?>
+                                                    <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
+                                                <?php }
+                                            } ?>
+                                        </td>
                                         <td class="right">
                                             <?php
                                                 if((!$client_id) || (!(isset($goods['sponsor']) && $goods['sponsor']))) {
@@ -503,15 +520,10 @@
     Pace.on("done", function () {
         $(".cover").fadeOut(1000);
     });
-    $(document).ready(function () {
-        $('td.tagStyle').hover(function() {
-            $(this).css('overflow','visible');
-            $(this).children().css('position','absolute');
-            $(this).children().css('right','7px')
-        }, function() {
-            $(this).css('overflow','hidden');
-            $(this).children().css('position','relative');
-            $(this).children().css('right','0px')
-        });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
     });
 </script>

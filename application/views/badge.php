@@ -1,3 +1,13 @@
+<style type="text/css">
+    .tagStyle{
+        overflow: hidden;
+    }
+    .label + .tooltip > .tooltip-inner {
+        max-width: 150px;
+        white-space: normal;
+        text-align: left;
+    }
+</style>
 <div id="content" class="span10">
     <?php if ($error_warning) { ?>
     <div class="warning"><?php echo $error_warning; ?></div>
@@ -193,7 +203,13 @@
                                                     <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
                                                     <td class="left"><?php echo ($badge['visible'])? "Enabled" : "Disabled"; ?></td>
                                                     <td class="right"><?php echo $badge['sort_order']; ?></td>
-                                                    <td class="right" style="word-wrap:break-word;"><?php echo (isset($badge['tags']) && $badge['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $badge['tags']).'</span>' : null); ?></td>
+                                                    <td class="right tagStyle" style="word-wrap:break-word;">
+                                                        <?php if(isset($badge['tags']) && $badge['tags']){
+                                                            foreach ($badge['tags'] as $val ){ ?>
+                                                                <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
+                                                            <?php }
+                                                        } ?>
+                                                    </td>
                                                     <td class="center">
                                                         <?php
                                                             if((!$client_id) || (!(isset($badge['sponsor']) && $badge['sponsor']))) {
@@ -655,3 +671,8 @@
 
 </script>
 
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

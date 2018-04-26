@@ -1,3 +1,13 @@
+<style type="text/css">
+    .tagStyle{
+        overflow: hidden;
+    }
+    .label + .tooltip > .tooltip-inner {
+        max-width: 150px;
+        white-space: normal;
+        text-align: left;
+    }
+</style>
 <link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
 <script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
         src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
@@ -108,7 +118,13 @@
                         <td class="left"><?php echo $player['cl_player_id']; ?></td>
                         <td class="left"><?php echo $player['first_name']."  ".$player['last_name']; ?></td>
                         <td class="left"><?php echo $player['email']; ?></td>
-                        <td class="left"><?php echo isset($player['tags']) ? implode(',',$player['tags']) : ''; ?></td>
+                        <td class="right tagStyle" style="word-wrap:break-word;">
+                            <?php if(isset($player['tags']) && $player['tags']){
+                                foreach ($player['tags'] as $val ){ ?>
+                                    <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
+                                <?php }
+                            } ?>
+                        </td>
                         <td class="left"><?php echo isset($player['phone_number']) ? $player['phone_number'] : ''; ?></td>
                         <?php if($org_status){?>
                         <td class="left"><?php echo (isset($player['organization_node']) && !is_null($player['organization_node']))?$player['organization_node']:''; ?></td>
@@ -311,4 +327,8 @@
     }
 </script>
 
-
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
