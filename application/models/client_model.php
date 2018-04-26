@@ -391,7 +391,8 @@ class Client_model extends MY_Model
                     'date_modified' => $d,
                     'date_added' => $d,
                     'link' => $feature_data['link'],
-                    'icon' => $feature_data['icon']
+                    'icon' => $feature_data['icon'],
+                    'type' => isset($feature_data['type']) ? $feature_data['type'] : null
                 );
             }
             if ($insert_data) {
@@ -621,7 +622,8 @@ class Client_model extends MY_Model
                         'date_modified' => $d,
                         'date_added' => $d,
                         'link' => $feature_data['link'],
-                        'icon' => $feature_data['icon']
+                        'icon' => $feature_data['icon'],
+                        'type' => isset($feature_data['type']) ? $feature_data['type'] : null
                     );
                 }
             }

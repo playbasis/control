@@ -1,3 +1,13 @@
+<style type="text/css">
+    .tagStyle{
+        overflow: hidden;
+    }
+    .label + .tooltip > .tooltip-inner {
+        max-width: 150px;
+        white-space: normal;
+        text-align: left;
+    }
+</style>
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
@@ -91,7 +101,13 @@
                                 <td class="right"><?php echo $quiz['name']; ?> <?php if (!empty($quiz['error'])) { ?><span class="red"><a herf="javascript:void(0)" class="error-icon" title="<?php echo $quiz['error']; ?>" data-toggle="tooltip"><i class="icon-warning-sign" ></i></a></span><?php } ?></td>
                                 <td class="right"><?php echo ($quiz['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo ($quiz['weight'])? $quiz['weight'] : "1"; ?></td>
-                                <td class="right" style="word-wrap:break-word;"><?php echo (isset($quiz['tags']) && $quiz['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $quiz['tags']).'</span>' : null); ?></td>
+                                <td class="right tagStyle" style="word-wrap:break-word;">
+                                    <?php if(isset($quiz['tags']) && $quiz['tags']){
+                                        foreach ($quiz['tags'] as $val ){ ?>
+                                            <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
+                                        <?php }
+                                    } ?>
+                                </td>
                                 <td class="right"><?php echo datetimeMongotoReadable($quiz['date_start']) ? datetimeMongotoReadable($quiz['date_start']) : ""; ?></td>
                                 <td class="right"><?php echo datetimeMongotoReadable($quiz['date_expire']) ? datetimeMongotoReadable($quiz['date_expire']) : ""; ?></td>
                                 <td class="right"><?php echo datetimeMongotoReadable($quiz['date_added']); ?></td>
@@ -411,6 +427,12 @@
     function clear_filter(){
         window.location.replace(baseUrlPath+'quiz');
     }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
 
 <link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/blackdrop/blackdrop.css" />
