@@ -1,3 +1,13 @@
+<style type="text/css">
+    .tagStyle{
+        overflow: hidden;
+    }
+    .label + .tooltip > .tooltip-inner {
+        max-width: 150px;
+        white-space: normal;
+        text-align: left;
+    }
+</style>
 <div id="content" class="span10">
     <?php if ($error_warning) { ?>
     <div class="warning"><?php echo $error_warning; ?></div>
@@ -164,7 +174,13 @@
                                 <td class="left"><?php echo isset($cs['limit_per_day']) ? $cs['limit_per_day'] : "Unlimited"; ?></td>
                                 <td class="left"><?php echo isset($cs['limit_start_time']) && isset($cs['limit_per_day']) ? $cs['limit_start_time'] : ""; ?></td>
                                 <td class="left"><?php echo isset($cs['pending']) && $cs['pending'] === 'on' ? "true" : "false"; ?></td>
-                                <td class="right" style="word-wrap:break-word;"><?php echo (isset($cs['tags']) && $cs['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $cs['tags']).'</span>' : null); ?></td>
+                                <td class="right tagStyle" style="word-wrap:break-word;">
+                                    <?php if(isset($cs['tags']) && $cs['tags']){
+                                        foreach ($cs['tags'] as $val ){ ?>
+                                            <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
+                                        <?php }
+                                    } ?>
+                                </td>
                                 <td class="center">
                                     <?php
                                         echo anchor('custompoints/update/'.$cs['reward_id'], "<i class='fa fa-edit fa-lg''></i>",
@@ -546,6 +562,12 @@ $('.push_up').live("click", function(){
   return false;
 });
 
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
 
 <link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/blackdrop/blackdrop.css" />

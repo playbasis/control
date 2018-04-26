@@ -1,3 +1,13 @@
+<style type="text/css">
+    .tagStyle{
+        overflow: hidden;
+    }
+    .label + .tooltip > .tooltip-inner {
+        max-width: 150px;
+        white-space: normal;
+        text-align: left;
+    }
+</style>
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
@@ -99,7 +109,13 @@
                                 <?php if($org_status){?>
                                     <td class="right"><?php echo (isset($quest['organize_name']) && !is_null($quest['organize_name']))?$quest['organize_name']:''; ?></td>
                                 <?php }?>
-                                <td class="right" style="word-wrap:break-word;"><?php echo (isset($quest['tags']) && $quest['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $quest['tags']).'</span>' : null); ?></td>
+                                <td class="right tagStyle" style="word-wrap:break-word;">
+                                    <?php if(isset($quest['tags']) && $quest['tags']){
+                                        foreach ($quest['tags'] as $val ){ ?>
+                                            <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
+                                        <?php }
+                                    } ?>
+                                </td>
                                 <td class="right"><?php echo $quest['sort_order'];?></td>
                                 <td class="center">
 
@@ -554,6 +570,12 @@ $(".quest_play").click(function() {
 $(document).ready(function() {
 	$('.error-icon').tooltip();
 });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
 
 <link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/blackdrop/blackdrop.css" />

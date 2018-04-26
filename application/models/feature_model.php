@@ -49,7 +49,6 @@ class Feature_model extends MY_Model
     public function getFeatureBySiteId($client_id, $site_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
         $this->mongo_db->where('status', true);
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where('client_id', new MongoID($client_id));

@@ -1,3 +1,13 @@
+<style type="text/css">
+    .tagStyle{
+        overflow: hidden;
+    }
+    .label + .tooltip > .tooltip-inner {
+        max-width: 150px;
+        white-space: normal;
+        text-align: left;
+    }
+</style>
 <link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
 <script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
         src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
@@ -160,7 +170,13 @@
                                     <td style="text-align: center;"> <input type="checkbox" name="selected[]" value="<?php echo $item['_id']; ?>" /> </td>
                                     <td class="left"><?php echo $item['name']; ?></td>
                                     <td class="left"><?php echo $item['file_name']; ?></td>
-                                    <td class="right" style="word-wrap:break-word;"><?php echo (isset($item['tags']) && $item['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $item['tags']).'</span>' : null); ?></td>
+                                    <td class="right tagStyle" style="word-wrap:break-word;">
+                                        <?php if(isset($item['tags']) && $item['tags']){
+                                            foreach ($item['tags'] as $val ){ ?>
+                                                <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
+                                            <?php }
+                                        } ?>
+                                    </td>
                                     <td class="center" >
                                         <?php
                                         echo anchor('reward_control/update/'.$tab_status.'/'.$item['_id'], "<i class='fa fa-edit fa-lg''></i>",
@@ -197,6 +213,12 @@
 <script type="text/javascript">
     Pace.on("done", function () {
     $(".cover").fadeOut(1000);
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
 

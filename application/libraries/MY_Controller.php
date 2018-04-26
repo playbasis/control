@@ -174,7 +174,8 @@ class  MY_Controller  extends  CI_Controller  {
                             'feature_id' => $value['_id'],
                             'name' => $value['name'],
                             'icon' => $value['icon'],
-                            'link' =>$value['link']
+                            'link' =>$value['link'],
+                            'type' => isset($value['type']) ? $value['type'] : null
                         );
                     }
                 }
@@ -244,7 +245,8 @@ class  MY_Controller  extends  CI_Controller  {
                                 'feature_id' => $value['_id'],
                                 'name' => $value['name'],
                                 'icon' => $value['icon'],
-                                'link' =>$value['link']
+                                'link' =>$value['link'],
+                                'type' => isset($value['type']) ? $value['type'] : null
                             );
                         }
                     }

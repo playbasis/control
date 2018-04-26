@@ -1,3 +1,13 @@
+<style type="text/css">
+    .tagStyle{
+        overflow: hidden;
+    }
+    .label + .tooltip > .tooltip-inner {
+        max-width: 150px;
+        white-space: normal;
+        text-align: left;
+    }
+</style>
 <link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
 <script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
         src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
@@ -118,7 +128,13 @@
                                                     <td class="right"><?php echo isset($content['category']['name']) ? $content['category']['name'] : ""; ?></td>
                                                     <td class="right"><?php echo isset($content['player_id']) ? $content['player_id'] : ""; ?></td>
                                                     <td class="right"><?php echo isset($content['date_start']) ? dateMongotoReadable($content['date_start']) : "N/A"; ?>&nbsp;-&nbsp;<?php echo isset($content['date_end']) ? dateMongotoReadable($content['date_end']) : "N/A"; ?></td>
-                                                    <td class="right" style="word-wrap:break-word;"><?php echo (isset($content['tags']) && $content['tags'] ? '<span class="label">'.implode('</span> <span class="label">', $content['tags']).'</span>' : null); ?></td>
+                                                    <td class="right tagStyle" style="word-wrap:break-word;">
+                                                        <?php if(isset($content['tags']) && $content['tags']){
+                                                            foreach ($content['tags'] as $val ){ ?>
+                                                                <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
+                                                            <?php }
+                                                        } ?>
+                                                    </td>
                                                     <td class="right"><?php echo isset($content['status']) ? ( $content['status'] ? "Enable" : "Disabled") : "N/A"; ?></td>
                                                     <?php if($org_status){?>
                                                         <td class="right"><?php echo (isset($content['organization_node']) && !is_null($content['organization_node']))?$content['organization_node']:''; ?></td>
@@ -739,4 +755,10 @@
         formatSelection: categoryFormatSelection,
     });
 
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
