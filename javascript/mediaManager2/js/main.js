@@ -205,6 +205,8 @@ function ajaxGetMediaList(criteria,callback) {
             }else{
                 $('.folder-box').removeClass('active');
                 $('#'+criteria).addClass('active');
+                var elmnt = document.getElementById(criteria);
+                elmnt.scrollIntoView(false);
             }
             $.each(data.rows, function (index, value) {
                 createImageThumbnailGrid(value);

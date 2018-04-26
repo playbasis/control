@@ -632,8 +632,7 @@
                 }else{
                     $('.folder-box').removeClass('active');
                     $('#'+criteria).addClass('active');
-                    var elmnt = document.getElementById(criteria);;
-                    console.log(elmnt)
+                    var elmnt = document.getElementById(criteria);
                     elmnt.scrollIntoView(false);
                 }
                 if (data.rows.length > 0){
