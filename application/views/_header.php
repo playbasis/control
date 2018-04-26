@@ -13,6 +13,7 @@
     <?php } ?>
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/stylesheet.css" />
 
+    <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/interact.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-ui-1.8.21.custom.min.js"></script>
     <!-- touch events for jquery ui -->
@@ -114,7 +115,7 @@
             });
 
             // Fix click link # cross opencart unautherize
-            $('a[href="#"],a[href^="#"]').live('click',function(event){event.preventDefault();console.log('prevent redirected');});
+//            $('a[href="#"],a[href^="#"]').live('click',function(event){event.preventDefault();console.log('prevent redirected');});
 
             // Add class .active to current link
             $('ul.main-menu li a').each(function(){
