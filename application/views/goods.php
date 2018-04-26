@@ -40,7 +40,7 @@
                 <a href="<?php echo site_url('goods');?>" style="display: inline;"><?php echo $this->lang->line('heading_title_goods_list'); ?></a>
                 <a href="<?php echo site_url('goods/markAsUsed');?>" style="display: inline;" ><?php echo $this->lang->line('heading_title_mark_as_used'); ?></a>
             </div>
-            <div class="tab-content" id="">
+            <div class="tab-content">
                 <?php if($tabs == $this->lang->line('heading_title_goods_list')) { ?>
                 <div class="tab-pane fade active in" id="goodsListTab">
                     <?php if ($this->session->flashdata('success')) { ?>

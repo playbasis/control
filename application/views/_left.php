@@ -28,7 +28,7 @@ if (isset($username)) {
 <!-- start: Main Menu -->
 <div class="main-menu-span span2" style="margin: 5px;">
     <div class="nav-collapse sidebar-nav in collapse" style="height: auto;">
-        <ul class="nav nav-tabs nav-stacked main-menu" id="navigation">
+        <ul class="nav nav-tabs nav-stacked main-menu">
             <?php
             if($this->session->userdata('client_id') && !$this->session->userdata('site_id')){
                 ?>
@@ -44,7 +44,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Controller Configuration</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-content" id="tab_control_confgi">
+                <div class="tab-content" id="tab_control_config">
                     <?php if (isset($features)) { ?>
                         <?php foreach ($features as $feature){
                             if($feature['type'] == 'controller') {
@@ -239,7 +239,7 @@ if (isset($username)) {
     $(function(){
         var current = location.href;
 
-        $('li #tab_control_confgi a > div').each(function(){
+        $('li #tab_control_config a > div').each(function(){
             var $this = $(this);
             if(current.toString().includes($this.attr('data-url'))){
                 $this.addClass('active');

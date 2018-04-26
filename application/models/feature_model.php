@@ -40,7 +40,7 @@ class Feature_model extends MY_Model
                 '_id' => $result['_id'],
                 'name' => $result['name'],
                 'link' => $result['link'],
-                'icon' => $result['icon'],
+                'icon' => $result['icon']
             );
         }
         return $temp;
@@ -49,11 +49,6 @@ class Feature_model extends MY_Model
     public function getFeatureBySiteId($client_id, $site_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-//        $this->mongo_db->select(array(
-//           "_id",
-//            "sort_order",
-//            "type"
-//        ));
         $this->mongo_db->where('status', true);
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where('client_id', new MongoID($client_id));
