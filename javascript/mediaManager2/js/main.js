@@ -110,6 +110,7 @@ function createImageThumbnailGrid(imageDataJSONObject) {
     }
 
     $thumbnail_grid.append(imageThumbnailGrid);
+
 }
 
 function displayThumbnailPreview(id, filename, url, filesize, sm_thumb, lg_thumb) {
@@ -152,31 +153,88 @@ function displaySelectedThumbnail(id, sm_thumb, filename, url) {
         $selected_wrapper.empty().append(hidden_selected_thumbHTML).show();
     }
 }
+function createFolderGrid(folderDataJSONObject) {
+    folderDataJSONObject = typeof folderDataJSONObject !== 'undefined' ? folderDataJSONObject : null;
 
-function ajaxGetMediaList() {
+    var folder = $('#hiddenFolder').html();
+    if (folderDataJSONObject != null) {
+        folder = folder.replace(new RegExp('{{folder_id}}', 'g'), folderDataJSONObject._id);
+        folder = folder.replace(new RegExp('{{folder_name}}', 'g'), folderDataJSONObject.folder_name);
+    }
+    $('#inner_grid_folder').append(folder);
+    $( ".folder-box" ).hover(
+        function() {
+            $(this).children('.box-hover').css('top','0%');
+        }, function() {
+            $(this).children('.box-hover').css('top','-30%');
+        }
+    );
+}
+
+function ajaxGetMediaList(criteria,callback) {
+    var text = '<div id="thumbnails_grid_folder" style="z-index:10;position: sticky;background-color: #ffffff;top: 0px;" class="thumbnails">\
+                    <h5>Folders</h5><br>\
+                        <div id="inner_grid_folder" style="max-height: 250px;overflow-y: auto;padding: 4px;" class="thumbnails">\
+                            <div class="span" style="display: none;"></div>\
+                            <div class="thumbfix span3 folder-box" id="box_root" data-id="root" data-file_name="Default">Default</div>\
+                        </div>\
+                        <br><br><h5>Files</h5><br>\
+                    </div>';
+    if (criteria == undefined || criteria == "root"){
+        criteria = false;
+    }
+    console.log("Criteria: "+criteria);
+
     $.ajax({
-            url: baseUrlPath + "mediamanager/media",
-            dataType: "json",
-            beforeSend: function (xhr) {
-                $waitDialog.modal('show');
-            }
-        })
+        url: baseUrlPath + "mediamanager/media?folder="+criteria,
+        dataType: "json",
+        beforeSend: function (xhr) {
+//                    $waitDialog.modal();
+        }
+    })
         .done(function (data) {
             $thumbnail_grid.empty();
-
+            $thumbnail_grid.prepend(text);
+            if (data.folders.length > 0){
+                $.each(data.folders, function (index, value) {
+                    createFolderGrid(value);
+                });
+            }
+            if (!criteria){
+                $('#box_root').addClass('active');
+            }else{
+                $('.folder-box').removeClass('active');
+                $('#'+criteria).addClass('active');
+            }
             $.each(data.rows, function (index, value) {
                 createImageThumbnailGrid(value);
             });
-
-            //$("#thumbnail-grid").thumbnailSelectable();
-
-            $waitDialog.modal('hide');
+            if (data.rows !== undefined)
+//                    $(".thumbfix")[0].click();
+                $waitDialog.modal('hide');
+            if (callback != undefined){
+                callback(criteria);
+            }
         })
         .always(function () {
             $waitDialog.modal('hide');
         });
 }
 
+interact('.folder-box').on('click', function (event) {
+    console.log($(event.target).hasClass('box-hover'))
+    console.log('Get in: '+$(event.target).text().trim()+' | ID: '+$(event.target).attr('data-id'))
+    var target = $(event.target);
+    if ($(event.target).hasClass('box-hover')){
+        target = $(event.target).parent();
+    }
+    $('#current_folder').html(target.text());
+    $('#current_folder').attr('data-directory',target.attr('data-id'));
+    var data_id = target.attr('data-id') == "root" ? false : target.attr('data-id');
+    ajaxGetMediaList(data_id,function (data) {
+
+    });
+});
 //jQuery.fn.extend({
 //    thumbnailSelectable: function () {
 //        var thumbnailSelectable = this;
@@ -215,6 +273,8 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         ajaxGetMediaList();
     }
 });
+
+
 
 Dropzone.options.dzUpload = {
     maxFilesize: 3, // MB

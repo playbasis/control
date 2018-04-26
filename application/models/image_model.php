@@ -165,6 +165,70 @@ class Image_model extends MY_Model
         return $total;
     }
 
+    public function retrieveFolder($client_id, $site_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $sort_data = array(
+            '_id',
+            'sort_order'
+        );
+
+        $this->mongo_db->order_by(array('folder_name' => 1));
+
+        if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
+            if ($optionalParams['offset'] < 0) {
+                $optionalParams['offset'] = 0;
+            }
+
+            if ($optionalParams['limit'] < 1) {
+                $optionalParams['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$optionalParams['limit']);
+            $this->mongo_db->offset((int)$optionalParams['offset']);
+        }
+
+        $this->mongo_db->select(array(
+            "_id",
+            "date_added",
+            "date_modified",
+            "folder_name",
+            "order"
+        ));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        return $this->mongo_db->get("playbasis_folder");
+
+    }
+
+    public function insertNewFolder($client_id, $site_id, $user_id, $optionalParams = array()){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $data_insert = array(
+            'client_id' => new MongoID($client_id),
+            'site_id' => new MongoID($site_id),
+            'user_id' => new MongoID($user_id),
+            'folder_name' => $optionalParams['name'],
+            'deleted' => false,
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+        );
+        return $this->mongo_db->insert('playbasis_folder', $data_insert);
+    }
+
+    public function unsetAllFile($data){
+        $this->mongo_db->where('folder_id', new MongoId($data['elementID']));
+        $this->mongo_db->unset_field('folder_id');
+        return $this->mongo_db->update_all('playbasis_file');
+    }
+
+    public function deleteFolder_model($data){
+        $this->mongo_db->where('_id', new MongoId($data['elementID']));
+        $this->mongo_db->set('deleted', true);
+        return $this->mongo_db->update('playbasis_folder');
+    }
+
     public function retrieveImages($client_id, $site_id, $optionalParams = array())
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -199,6 +263,12 @@ class Image_model extends MY_Model
             $this->mongo_db->offset((int)$optionalParams['offset']);
         }
 
+        if (isset($optionalParams['folder']) && $optionalParams['folder'] != "false"){
+            $this->mongo_db->where('folder_id', new MongoId($optionalParams['folder']));
+        }else{
+            $this->mongo_db->where('folder_id', array('$exists' => false));
+        }
+
         $this->mongo_db->select(array(
             "_id",
             "date_added",
@@ -206,12 +276,30 @@ class Image_model extends MY_Model
             "directory",
             "file_name",
             "file_size",
-            "url"
+            "url",
+            "folder_id",
+            "folder_name"
         ));
         $this->mongo_db->where_exists('pb_player_id', false);
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         return $this->mongo_db->get("playbasis_file");
+    }
+
+    public function updateImageCategory($optionalParams = array()){
+        $this->mongo_db->where('_id', new MongoId($optionalParams['elementID']));
+            if ($optionalParams['folder_id'] == "root"){
+                $this->mongo_db->unset_field('folder_id');
+            }else{
+                $this->mongo_db->set('folder_id', new MongoId($optionalParams['folder_id']));
+            }
+        return $this->mongo_db->update('playbasis_file');
+    }
+
+    public function updateFolder($data){
+        $this->mongo_db->where('_id', new MongoId($data['elementID']));
+        $this->mongo_db->set('folder_name', $data['new_name']);
+        return $this->mongo_db->update('playbasis_folder');
     }
 
     public function retrieveImage($image_id)
