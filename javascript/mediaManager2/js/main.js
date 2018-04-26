@@ -187,12 +187,8 @@ function ajaxGetMediaList(criteria,callback) {
 
     $.ajax({
         url: baseUrlPath + "mediamanager/media?folder="+criteria,
-        dataType: "json",
-        beforeSend: function (xhr) {
-//                    $waitDialog.modal();
-        }
-    })
-        .done(function (data) {
+        dataType: "json"
+    }).done(function (data) {
             $thumbnail_grid.empty();
             $thumbnail_grid.prepend(text);
             if (data.folders.length > 0){
@@ -211,16 +207,10 @@ function ajaxGetMediaList(criteria,callback) {
             $.each(data.rows, function (index, value) {
                 createImageThumbnailGrid(value);
             });
-            if (data.rows !== undefined)
-//                    $(".thumbfix")[0].click();
-                $waitDialog.modal('hide');
             if (callback != undefined){
                 callback(criteria);
             }
         })
-        .always(function () {
-            $waitDialog.modal('hide');
-        });
 }
 
 interact('.folder-box').on('click', function (event) {
@@ -237,37 +227,37 @@ interact('.folder-box').on('click', function (event) {
 
     });
 });
-//jQuery.fn.extend({
-//    thumbnailSelectable: function () {
-//        var thumbnailSelectable = this;
-//        thumbnailSelectable.getSelection = function () {
-//            var selection = [];
-//            thumbnailSelectable.find(".active").each(function (ix, el) {
-//                selection.push($(el)[0]);
-//            });
-//            return selection;
-//        };
-//        var selectionChanged = function () {
-//            $(this).toggleClass("active");
-//            thumbnailSelectable.trigger("selection-changed", [thumbnailSelectable.getSelection()]);
-//        };
-//        $(thumbnailSelectable).find(".thumbnail").on("click", selectionChanged);
-//        return thumbnailSelectable;
-//    }
-//});
+jQuery.fn.extend({
+   thumbnailSelectable: function () {
+       var thumbnailSelectable = this;
+       thumbnailSelectable.getSelection = function () {
+           var selection = [];
+           thumbnailSelectable.find(".active").each(function (ix, el) {
+               selection.push($(el)[0]);
+           });
+           return selection;
+       };
+       var selectionChanged = function () {
+           $(this).toggleClass("active");
+           thumbnailSelectable.trigger("selection-changed", [thumbnailSelectable.getSelection()]);
+       };
+       $(thumbnailSelectable).find(".thumbnail").on("click", selectionChanged);
+       return thumbnailSelectable;
+   }
+});
 
 $(function () {
     ajaxGetMediaList();
 
     var clipboard = new Clipboard(".btn[data-clipboard-target]");
 
-    //$('#thumbnail-grid')
-    //    .on('mouseenter', 'a.thumbnail', function () {
-    //        $(this).find('.caption').fadeIn(250);
-    //    })
-    //    .on('mouseleave', 'a.thumbnail', function () {
-    //        $(this).find('.caption').fadeOut(250);
-    //    });
+    $('#thumbnail-grid')
+       .on('mouseenter', 'a.thumbnail', function () {
+           $(this).find('.caption').fadeIn(250);
+       })
+       .on('mouseleave', 'a.thumbnail', function () {
+           $(this).find('.caption').fadeOut(250);
+       });
 });
 
 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {

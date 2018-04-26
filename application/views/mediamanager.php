@@ -216,7 +216,6 @@
         }).on('doubletap', function (event) {
             $('#spanto9').addClass('span9');
             $('#imgDetail').css('display','block');
-            console.log($(event.target).parent().parent())
             displayThumbnailPreview($(event.target).parent().parent().attr('data-id'), $(event.target).parent().parent().attr('data-file_name'), $(event.target).parent().parent().attr('data-url'), $(event.target).parent().parent().attr('data-file_size'), $(event.target).parent().parent().attr('data-sm_url'), $(event.target).parent().parent().attr('data-lg_url'));
         });;
     
@@ -243,7 +242,6 @@
     function editBoxModal(editID) {
         var temp_folderName = $('#'+editID).text().trim();
         var active_folder = $('.folder-box.active').attr('data-id');
-        console.log(active_folder)
         var text = '<input type="text" id="editInput_'+editID+'" value="'+temp_folderName+'" style="width: 60%;">';
         var button = '<div style="position: absolute;left: 0px;bottom: 5px;width: 100%;text-align: center;">' +
                 '<button onclick="updateBoxName(\''+editID+'\',\''+active_folder+'\',\''+temp_folderName+'\')" style="margin-right: 10px;background-color: aliceblue;outline: none;border-radius: 4px;"><i class="fa fa-check"></i></button>'+
@@ -263,7 +261,6 @@
 
     function updateBoxName(editID, active, oldVal) {
         var name = $('#editInput_'+editID).val();
-        console.log(editID+' | '+active+' | '+oldVal+' | '+name)
         if (validEmpty('editInput_'+editID)){
             if(validFoldername_duplicate(name) && name != oldVal) {
             $.ajax({
@@ -273,7 +270,6 @@
                     if (data) {
                         ajaxGetMediaList(active);
                         if (editID === active) {
-                            console.log('true')
                             $('#current_folder').text(name);
                         }
                     }
@@ -293,7 +289,6 @@
     }
 
     function closeBoxEdit(editID, oldName) {
-        console.log('close')
         var text = '<div class="box-hover">'+
             '<i class="fa fa-wrench" onclick="editBoxModal(\''+editID+'\')" style="font-size: 20px;margin-right: 5px;color: white;"></i><i onclick="deleteBox_Modal(\''+editID+'\')" style="font-size: 24px;color: white;margin-right: 5px;" class="fa fa-remove"></i>'+
             '</div>'+oldName;
@@ -319,15 +314,12 @@
     
     function deleteBox(deleteID) {
         var active_folder = $('.folder-box.active').attr('data-id');
-        console.log("Active: "+active_folder)
-        console.log("Remove: "+deleteID)
             $.ajax({
                 url: baseUrlPath + "mediamanager/deleteFolder?elementID=" + deleteID,
                 dataType: "json",
                 success: function (data) {
                     if (data) {
                         if (deleteID === active_folder) {
-                            console.log('Removed on actived')
                             ajaxGetMediaList("root");
                             $('#current_folder').text($('#box_root').text());
                         } else {
@@ -348,7 +340,6 @@
             url: baseUrlPath + "mediamanager/unsetAllFile?elementID=" + deleteID,
             dataType: "json",
             success: function (data) {
-                console.log(data)
                     if (optionParam === "delete"){
                         deleteBox(deleteID);
                         $('#deleteOption').modal('hide');
@@ -383,8 +374,6 @@
             event.target.classList.remove('drop-target');
         },
         ondrop: function (event) {
-            console.log($(event.relatedTarget).attr('data-id')+" is Drop on: "+$(event.target).text().trim());
-            console.log("Folder_ID: "+$(event.target).attr('data-id'));
             ajaxUpdateImageCategory($(event.relatedTarget).attr('data-id'), $(event.target).attr('data-id'));
             $(event.relatedTarget).animate({
                 opacity: 0,
@@ -397,8 +386,6 @@
             });
         }
     }).on('click', function (event) {
-        console.log($(event.target).hasClass('box-hover'))
-        console.log('Get in: '+$(event.target).text().trim()+' | ID: '+$(event.target).attr('data-id'))
         var target = $(event.target);
         if ($(event.target).hasClass('box-hover')){
             target = $(event.target).parent();
@@ -434,7 +421,6 @@
 
     function createFolder(){
         var folder_name = $('#newFolder_Name').val() == "" ? "Untitled" : $('#newFolder_Name').val();
-        console.log($('#newFolder_Name').val())
         if (validEmpty('newFolder_Name')){
             if(validFoldername_duplicate(folder_name)) {
                 $.ajax({
@@ -464,7 +450,6 @@
     function validFoldername_duplicate(name){
         var result = true;
         $('.folder-box').each(function(){
-            console.log($(this).attr('data-file_name').toLowerCase()+' | '+name.toLowerCase()) // Use .toLowerCase() if case sensetive
             if ($(this).attr('data-file_name') === name){
                 result = false;
                 return false;
@@ -504,10 +489,9 @@
         $waitDialog = $('#pleaseWaitDialog');
 
     function adddFolder(){
-//        console.log(folder_order)
-//        $('#minMaxDisplay').html('* Min: '+folder_order.min()+' | Max: '+folder_order.max());
         $('#newFolder').modal();
     }
+
     function createImageThumbnailGrid(imageDataJSONObject) {
         imageDataJSONObject = typeof imageDataJSONObject !== 'undefined' ? imageDataJSONObject : null;
 
@@ -566,11 +550,6 @@
         thumbPreview.empty().append(hiddenPreviewHTML).show();
     }
 
-//    var file_gridTop;
-//    var file_gridHeight;
-//    var folder_height;
-//    var main_gridTop;
-//    <i id="btn-file-expand" style="float: right;margin-right: 24px;font-size: 24px;cursor: pointer;" class="fa fa-sort-down"></i>
     function ajaxGetMediaList(criteria,callback) {
         var text = '<div id="thumbnails_grid_folder" style="position: sticky;background-color: #f6f6f6;top: 0px;" class="thumbnails">\
                     <div><h5 style="float: left">Folders</h5><div style="clear: both;"><hr style="width: 99%;"></div></div><br>\
@@ -583,59 +562,12 @@
         if (criteria == undefined || criteria == "root"){
             criteria = false;
         }
-        console.log("Criteria: "+criteria);
         $.ajax({
             url: baseUrlPath + "mediamanager/media?folder="+criteria,
-            dataType: "json",
-                beforeSend: function (xhr) {
-//                    $waitDialog.modal();
-                }
-            })
-            .done(function (data) {
+            dataType: "json"
+            }).done(function (data) {
                 $thumbnails_grids.empty();
                 $thumbnails_grids.prepend(text);
-//                $('#btn-folder-expand').on("click",function () {
-//                    if ($(this).hasClass('fa-sort-down')){
-//                        console.log('Down')
-//                        $(this).removeClass('fa-sort-down').addClass('fa-sort-asc')
-//                        $(this).css('marginTop','8px');
-//                        $('#inner_grid_folder').css('height','0px')
-//                        if ($('#btn-file-expand').hasClass('fa-sort-asc')){
-//                            setTimeout(function () {
-//                                console.log('has'+$('#thumbnails_grid_folder').height())
-//                                $('#thumbnails_grid').css('height',$('#thumbnails_grid_folder').height())
-//                            },500)
-//                        }
-//                    }else{
-//                        console.log('Up')
-//                        $(this).removeClass('fa-sort-asc').addClass('fa-sort-down')
-//                        $(this).css('marginTop','0px');
-//                        $('#inner_grid_folder').css('height',folder_height)
-//                        if ($('#btn-file-expand').hasClass('fa-sort-asc')){
-//
-//                                console.log('has'+main_gridTop)
-//                                $('#thumbnails_grid').css('height',main_gridTop)
-//
-//                        }
-//                    }
-//                });
-//
-//                $('#btn-file-expand').on("click",function () {
-//                    file_gridTop = $('#thumbnails_grid_folder').height();
-//                    console.log(file_gridTop+' | '+file_gridHeight)
-//                    if ($(this).hasClass('fa-sort-down')){
-//                        console.log('Down')
-//                        $(this).removeClass('fa-sort-down').addClass('fa-sort-asc')
-//                        $(this).css('marginTop','8px');
-//                        $('#thumbnails_grid').css('height',file_gridTop).css('overflow','hidden')
-//                    }else{
-//                        console.log('Up')
-//                        $(this).removeClass('fa-sort-asc').addClass('fa-sort-down')
-//                        $(this).css('marginTop','0px');
-//                        $('#thumbnails_grid').css('height',file_gridHeight).css('overflow','auto')
-//                    }
-//                });
-                console.log(data.rows.length)
                 if (data.folders.length > 0){
                     $.each(data.folders, function (index, value) {
                         createFolderGrid(value);
@@ -656,24 +588,10 @@
                 }else{
                     $thumbnails_grids.append('<h2 style="text-align: center;font-weight: normal;color: inherit;">Empty folder</h2>');
                 }
-//                setTimeout(function () {
-//                    main_gridTop = $('#thumbnails_grid_folder').height();
-//                    file_gridHeight = $('#thumbnails_grid').height();
-//                    folder_height = $('#inner_grid_folder').height();
-//                    console.log(file_gridHeight+' |||||| '+folder_height)
-//                    $('#inner_grid_folder').css('height',folder_height)
-//                    $('#thumbnails_grid').css('height',file_gridHeight)
-//                },500)
-                if (data.rows !== undefined)
-//                    $(".thumbfix")[0].click();
-                $waitDialog.modal('hide');
                 if (callback != undefined){
                     callback(criteria);
                 }
             })
-            .always(function () {
-                $waitDialog.modal('hide');
-            });
     }
     
     $(function () {
@@ -681,12 +599,10 @@
     });
 
     $('.navigate_name').on("click",function () {
-        console.log($(this).data('directory'));
         ajaxGetMediaList();
     });
 
     $("#thumb_preview").on("click", "button.delete-media", function (e) {
-//        console.log('Delete!', $(this).closest('.thumbnail').data('id'))
         var _id = $(this).closest('.thumbnail').data('id');
 
         if (confirm("Are you sure to remove this media?")) {
