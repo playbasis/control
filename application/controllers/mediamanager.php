@@ -154,6 +154,18 @@ class MediaManager extends MY_Controller
                         $query_data = $this->input->get(null, true);
 
                         $result = $this->Image_model->retrieveImages($client_id, $site_id, $query_data);
+                        $folder = $this->Image_model->retrieveFolder($client_id, $site_id);
+                        foreach ($folder as &$folder_document) {
+                            if (isset($folder_document['_id'])) {
+                                $folder_document['_id'] = $folder_document['_id'] . "";
+                            }
+                            if (isset($folder_document['date_added'])) {
+                                $folder_document['date_added'] = datetimeMongotoReadable($folder_document['date_added']);
+                            }
+                            if (isset($folder_document['date_modified'])) {
+                                $folder_document['date_modified'] = datetimeMongotoReadable($folder_document['date_modified']);
+                            }
+                        }
                         foreach ($result as &$document) {
                             if (isset($document['_id'])) {
                                 $document['_id'] = $document['_id'] . "";
@@ -193,7 +205,8 @@ class MediaManager extends MY_Controller
 
                         $response = array(
                             'total' => $count_images,
-                            'rows' => $result
+                            'rows' => $result,
+                            'folders' => $folder
                         );
                     }
                     break;
@@ -227,6 +240,39 @@ class MediaManager extends MY_Controller
             }
             $this->output->set_output(json_encode($response));
         }
+    }
+
+    public function insertFolder(){
+        $query_data = $this->input->get(null, true);
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $user_id = $this->User_model->getId();
+
+        $result = $this->Image_model->insertNewFolder($client_id, $site_id, $user_id, $query_data);
+    }
+
+    public function unsetAllFile(){
+        $query_data = $this->input->get(null, true);
+        $result = $this->Image_model->unsetAllFile($query_data);
+        $this->output->set_output(json_encode($result));
+    }
+
+    public function deleteFolder(){
+        $query_data = $this->input->get(null, true);
+        $result = $this->Image_model->deleteFolder_model($query_data);
+        $this->output->set_output(json_encode($result));
+    }
+
+    public function updateImageCategory(){
+        $query_data = $this->input->get(null, true);
+        $result = $this->Image_model->updateImageCategory($query_data);
+        $this->output->set_output(json_encode($result));
+    }
+
+    public function updateFolderName(){
+        $query_data = $this->input->get(null, true);
+        $result = $this->Image_model->updateFolder($query_data);
+        $this->output->set_output(json_encode($result));
     }
 
     public function image()

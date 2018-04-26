@@ -14,6 +14,8 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/interact.min.js"></script>
+    <link href="<?php echo base_url(); ?>stylesheet/custom/media_manager_tanasak.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>javascript/mediaManager2/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>javascript/mediaManager2/css/main.css">
     <script src="<?php echo base_url(); ?>javascript/mediaManager2/js/vendor/modernizr-2.8.3.min.js"></script>
@@ -88,6 +90,12 @@
             <img src="" style="display: block;">
         </a>
     </div>
+</div>
+
+<div id="hiddenFolder" class="hide">
+    <div class="thumbfix span3 folder-box" id="{{folder_id}}" data-id="{{folder_id}}" data-file_name="{{folder_name}}"">
+    {{folder_name}}
+</div>
 </div>
 
 <div id="hiddenSelectedThumbs" class="hidden">

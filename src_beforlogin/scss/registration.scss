@@ -85,7 +85,7 @@
 
   .pbr-header {
     padding: 0 0 $base-unit * 2;
-    background: $purple-secondary;
+    background: linear-gradient(90deg, #409FC2, #6DC7C1);
   }
 
   .pbr-header-logo {
@@ -109,7 +109,7 @@
   // Light inset text on pb colors
   @mixin colored-text($color) {
     color: lighten($color, 40%);
-    text-shadow: 0 -1px darken($color, 10%);
+    text-shadow: 0 -1px #3a778e;
   }
 
   small {
@@ -170,7 +170,7 @@
 
   @include breakpoint(small) {
     .registration-form {
-      background: #556270;
+      background: #6f7f90;
       padding: 10px $base-padding 0;
     }
   }
