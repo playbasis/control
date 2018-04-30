@@ -1,27 +1,3 @@
-<style>
-    .styleSubMenu{
-        border-left: 4px solid;
-        padding: 7px;
-        margin: 7px 0px 5px 0px;
-        background-color: rgba(10, 12, 14, 0.57);
-        color: #ddd;
-    }
-    .styleSubMenu:hover .hidden-tablet{
-        color: rgb(66, 101, 231);
-    }
-    a:link{
-        text-decoration: none;
-    }
-    .iconMenu{
-        float: right;
-    }
-    .tab-content{
-        margin: 0px 15px 0px 35px;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease-out;
-    }
-</style>
 <?php
 if (isset($username)) {
 ?>
@@ -44,7 +20,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Controller Configuration</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-content" id="tab_control_config">
+                <div class="tab-left" id="tab_control_config">
                     <?php if (isset($features)) { ?>
                         <?php foreach ($features as $feature){
                             if($feature['type'] == 'controller') {
@@ -66,7 +42,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Reward</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-content" id="tab_reward">
+                <div class="tab-left" id="tab_reward">
                     <?php if (isset($features)) { ?>
                         <?php foreach ($features as $feature){
                             if($feature['type'] == 'reward'){
@@ -88,7 +64,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Data Content</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-content" id="tab_Data_Content">
+                <div class="tab-left" id="tab_Data_Content">
                                 <?php if (isset($features)) { ?>
                                     <?php foreach ($features as $feature){
                                         if($feature['type'] == 'data_content'){
@@ -112,7 +88,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Comunication</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-content" id="tab_comunication">
+                <div class="tab-left" id="tab_comunication">
                         <?php if (isset($features)) { ?>
                             <?php foreach ($features as $feature){
                                 if($feature['type'] == 'comunication'){
@@ -133,7 +109,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Report</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-content" id="tab_report">
+                <div class="tab-left" id="tab_report">
                     <?php if (isset($features)) { ?>
                         <?php foreach ($features as $feature){
                             if($feature['type'] == 'report'){
@@ -154,7 +130,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Admin</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-content" id="tab_admin">
+                <div class="tab-left" id="tab_admin">
                     <?php if (isset($features)) { ?>
                         <?php foreach ($features as $feature){
                             if($feature['type'] == 'manage'){
@@ -193,6 +169,38 @@ if (isset($username)) {
     </div>
 </div>
 <!-- end: Main Menu -->
+<style>
+    .styleSubMenu{
+        border-left: 4px solid;
+        padding: 7px;
+        margin: 7px 0px 5px 0px;
+        background-color: rgba(10, 12, 14, 0.57);
+        color: #ddd;
+    }
+    .styleSubMenu:hover .hidden-tablet{
+        color: rgb(66, 101, 231);
+    }
+    a:link{
+        text-decoration: none;
+    }
+    .iconMenu{
+        float: right;
+    }
+    .tab-left{
+        margin: 0px 15px 0px 35px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-out;
+    }
+    .tagStyle{
+        overflow: hidden;
+    }
+    .label + .tooltip > .tooltip-inner {
+        max-width: 150px;
+        white-space: normal;
+        text-align: left;
+    }
+</style>
 <script type="text/javascript">
     $(document).ready(function(){
         $('.left-menu').click(function(){

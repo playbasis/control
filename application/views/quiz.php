@@ -1,13 +1,3 @@
-<style type="text/css">
-    .tagStyle{
-        overflow: hidden;
-    }
-    .label + .tooltip > .tooltip-inner {
-        max-width: 150px;
-        white-space: normal;
-        text-align: left;
-    }
-</style>
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
