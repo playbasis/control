@@ -1,13 +1,3 @@
-<style type="text/css">
-    .tagStyle{
-        overflow: hidden;
-    }
-    .label + .tooltip > .tooltip-inner {
-        max-width: 150px;
-        white-space: normal;
-        text-align: left;
-    }
-</style>
 <link href="<?php echo base_url(); ?>javascript/pace/simple.css" rel="stylesheet" type="text/css">
 <script data-pace-options='{ "elements": { "selectors": ["#content"] }, "ajax": false }'
         src="<?php echo base_url(); ?>javascript/pace/pace.min.js" type="text/javascript"></script>
