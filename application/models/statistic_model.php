@@ -367,7 +367,311 @@ class Statistic_model extends MY_Model
         $this->mongo_db->limit($limit);
         return $this->mongo_db->get('playbasis_player');
     }
+    
+    public function getActionData($client_id, $site_id, $action, $from, $to, $type=null)
+    {
+        if($type == 'day'){
+            $id = array(
+                "hour" => array('$hour' => '$date_added')
+            );
+        } elseif($type == 'month'){
+            $id = array(
+                "date" => array('$dayOfMonth' => '$date_added')
+            );
+        } else {
+            $id = array(
+                "day" => array('$dayOfWeek' => '$date_added')
+            );
+        }
+        $data =  $this->mongo_db->aggregate('playbasis_validated_action_log', array(
+            array(
+                '$match' => array(
+                    'action_name' => $action,
+                    'site_id' => $site_id,
+                    'client_id' => $client_id,
+                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
+                ),
+            ),
+            array(
+                '$group' => array(
+                    '_id' => $id,
+                    'value' => array('$sum' => 1)
+                )
+            ),
+            array(
+                '$sort' => array('_id' => -1),
+            )
+        ));
 
+        return $data['result'];
+    }
+
+    public function getTopGoodsData($client_id, $site_id, $from, $to)
+    {
+        $data =  $this->mongo_db->aggregate('playbasis_reward_status_to_player', array(
+            array(
+                '$match' => array(
+                    'site_id' => $site_id,
+                    'client_id' => $client_id,
+                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
+                    'status' => 'approve'
+                ),
+            ),
+            array(
+                '$group' => array(
+                    '_id' => array('reward_id' => '$reward_id', 'reward_name' => '$reward_name'),
+                    'value' => array('$sum' => 1)
+                )
+            ),
+            array(
+                '$sort' => array('value' => -1),
+            )
+        ));
+
+        return $data['result'];
+    }
+
+    public function getGoodsByRewardRedeem($client_id, $site_id, $reward_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('redeem.custom.'.$reward_id, 1);
+        $result = $this->mongo_db->get('playbasis_goods_distinct_to_client');
+        return $result? $result[0]['name'] : null;
+    }
+
+    public function getGoodsSuperData($client_id, $site_id, $action, $from, $to, $type=null)
+    {
+        if($type == 'day'){
+            $id = array(
+                "hour" => array('$hour' => '$date_added')
+            );
+        } elseif($type == 'month'){
+            $id = array(
+                "date" => array('$dayOfMonth' => '$date_added')
+            );
+        } else {
+            $id = array(
+                "day" => array('$dayOfWeek' => '$date_added')
+            );
+        }
+        $data =  $this->mongo_db->aggregate('playbasis_reward_status_to_player', array(
+            array(
+                '$match' => array(
+                    'reward_id' => $action,
+                    'site_id' => $site_id,
+                    'client_id' => $client_id,
+                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
+                    'status' => 'approve'
+                ),
+            ),
+            array(
+                '$group' => array(
+                    '_id' => $id,
+                    'value' => array('$sum' => 1)
+                )
+            ),
+            array(
+                '$sort' => array('_id' => -1),
+            )
+        ));
+
+        return $data['result'];
+    }
+
+    public function getGoodsMonthlyData($client_id, $site_id, $action, $from, $to, $type=null)
+    {
+        if($type == 'day'){
+            $id = array(
+                "hour" => array('$hour' => '$date_added')
+            );
+        } elseif($type == 'month'){
+            $id = array(
+                "date" => array('$dayOfMonth' => '$date_added')
+            );
+        } else {
+            $id = array(
+                "day" => array('$dayOfWeek' => '$date_added')
+            );
+        }
+        $data =  $this->mongo_db->aggregate('playbasis_reward_status_to_player', array(
+            array(
+                '$match' => array(
+                    'reward_id' => $action,
+                    'site_id' => $site_id,
+                    'client_id' => $client_id,
+                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
+                    'status' => 'approve'
+                ),
+            ),
+            array(
+                '$group' => array(
+                    '_id' => $id,
+                    'value' => array('$sum' => 1)
+                )
+            ),
+            array(
+                '$sort' => array('_id' => -1),
+            )
+        ));
+
+        return $data['result'];
+    }
+
+    public function getTopBadgeData($client_id, $site_id, $from, $to)
+    {
+        $data =  $this->mongo_db->aggregate('playbasis_event_log', array(
+            array(
+                '$match' => array(
+                    'site_id' => $site_id,
+                    'client_id' => $client_id,
+                    'event_type' => 'REWARD',
+                    'reward_type' => 'BADGE',
+                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to))
+                ),
+            ),
+            array(
+                '$group' => array(
+                    '_id' => '$item_id',
+                    'value' => array('$sum' => 1)
+                )
+            ),
+            array(
+                '$sort' => array('value' => -1),
+            )
+        ));
+
+        return $data['result'];
+    }
+
+    public function getBadgeNameToClient($client_id, $site_id, $badge_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('badge_id', new MongoID($badge_id));
+        $results = $this->mongo_db->get("playbasis_badge_to_client");
+
+        return $results ? $results[0]['name'] : null;
+    }
+
+    public function getBadgeData($client_id, $site_id, $badge_id, $from, $to, $type=null)
+    {
+        if($type == 'day'){
+            $id = array(
+                "hour" => array('$hour' => '$date_added')
+            );
+        } elseif($type == 'month'){
+            $id = array(
+                "date" => array('$dayOfMonth' => '$date_added')
+            );
+        } else {
+            $id = array(
+                "day" => array('$dayOfWeek' => '$date_added')
+            );
+        }
+        $data =  $this->mongo_db->aggregate('playbasis_event_log', array(
+            array(
+                '$match' => array(
+                    'site_id' => $site_id,
+                    'client_id' => $client_id,
+                    'event_type' => 'REWARD',
+                    'reward_type' => 'BADGE',
+                    'item_id' => $badge_id,
+                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
+                ),
+            ),
+            array(
+                '$group' => array(
+                    '_id' => $id,
+                    'value' => array('$sum' => 1)
+                )
+            ),
+            array(
+                '$sort' => array('_id' => -1),
+            )
+        ));
+
+        return $data['result'];
+    }
+
+    public function getRegisterData($client_id, $site_id, $from, $to, $type=null)
+    {
+        if($type == 'day'){
+            $id = array(
+                "hour" => array('$hour' => '$date_added')
+            );
+        } elseif($type == 'month'){
+            $id = array(
+                "date" => array('$dayOfMonth' => '$date_added')
+            );
+        } else {
+            $id = array(
+                "day" => array('$dayOfWeek' => '$date_added')
+            );
+        }
+        $data =  $this->mongo_db->aggregate('playbasis_player', array(
+            array(
+                '$match' => array(
+                    'site_id' => $site_id,
+                    'client_id' => $client_id,
+                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
+                ),
+            ),
+            array(
+                '$group' => array(
+                    '_id' => $id,
+                    'value' => array('$sum' => 1)
+                )
+            ),
+            array(
+                '$sort' => array('_id' => -1),
+            )
+        ));
+
+        return $data['result'];
+    }
+
+    public function getMGMData($client_id, $site_id, $action, $from, $to, $type=null)
+    {
+        if($type == 'day'){
+            $id = array(
+                "hour" => array('$hour' => '$date_added')
+            );
+        } elseif($type == 'month'){
+            $id = array(
+                "date" => array('$dayOfMonth' => '$date_added')
+            );
+        } else {
+            $id = array(
+                "day" => array('$dayOfWeek' => '$date_added')
+            );
+        }
+        $data =  $this->mongo_db->aggregate('playbasis_validated_action_log', array(
+            array(
+                '$match' => array(
+                    'action_name' => $action,
+                    'site_id' => $site_id,
+                    'client_id' => $client_id,
+                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
+                ),
+            ),
+            array(
+                '$group' => array(
+                    '_id' => $id,
+                    'value' => array('$sum' => 1)
+                )
+            ),
+            array(
+                '$sort' => array('_id' => -1),
+            )
+        ));
+
+        return $data['result'];
+    }
+    
 //    public function getPlayerInfo($pb_player_id){
 ////
 //        $this->mongo_db->select(array('_id','pb_player_id','first_name','last_name','exp','level','image','email','date_added','date_modified'));
