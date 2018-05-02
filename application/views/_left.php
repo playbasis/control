@@ -21,7 +21,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Controller Configuration</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_control_config">
+                <div class="tab-left tab_left_group">
                     <?php
                     foreach ($features['controller'] as $feature){
                         echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
@@ -38,7 +38,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Reward</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_reward">
+                <div class="tab-left tab_left_group">
                     <?php
                     foreach ($features['reward'] as $feature){
                         echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
@@ -55,7 +55,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Data Content</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_data_content">
+                <div class="tab-left tab_left_group">
                     <?php
                     foreach ($features['data_content'] as $feature){
                         echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
@@ -72,7 +72,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Communication</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_communication">
+                <div class="tab-left tab_left_group">
                     <?php
                     foreach ($features['communication'] as $feature){
                         echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
@@ -89,7 +89,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Report</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_report">
+                <div class="tab-left tab_left_group">
                     <?php
                     foreach ($features['report'] as $feature){
                         echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
@@ -106,7 +106,7 @@ if (isset($username)) {
                     <span class="hidden-tablet">Admin</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_admin">
+                <div class="tab-left tab_left_group">
                     <?php
                     foreach ($features['manage'] as $feature){
                         echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
@@ -217,7 +217,7 @@ if (isset($username)) {
         var end_url = current.replace(baseUrlPath, "");
         var check_url = end_url.split("/");
 
-        $('li a > div').each(function(){
+        $('li .tab_left_group a > div').each(function(){
             var $this = $(this);
             if(($this.attr('data-url') == '/' && (current.toString() == $this.parent().attr('href'))) ){
                 $this.addClass('active');
