@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          = 'Webhook Template List';
+$lang['title']                  = 'Webhook Template';
 
 // Text
 $lang['text_success']           = 'You have successfully created a new template!';

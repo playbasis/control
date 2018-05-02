@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title'] = 'Store Organization';
+$lang['title'] = 'Store Organization';
 
 // Column
 $lang['column_name'] = "Name";

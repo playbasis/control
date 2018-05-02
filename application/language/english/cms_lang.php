@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          			= 'Content Management System';
+$lang['title']          			= 'Content Management System';
 
 $lang['cms_site_title']                     = 'CMS -> App';
 $lang['tab_general']          				= 'Content Management System';

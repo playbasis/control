@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          = 'Level';
+$lang['title']                  = 'Level';
 
 // Text
 $lang['text_image_manager']     = 'Image Manager';

@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          		= 'Jive Setup';
+$lang['title']          		        = 'Jive Setup';
 
 // Text
 $lang['text_success_watch_place']           			= 'You have successfully created a new webhook for the selected place(s)!';

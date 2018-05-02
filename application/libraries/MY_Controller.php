@@ -170,13 +170,21 @@ class  MY_Controller  extends  CI_Controller  {
                 
                 foreach ($features as $value) {
                     if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
-                        $this->data['features'][] = array(
-                            'feature_id' => $value['_id'],
-                            'name' => $value['name'],
-                            'icon' => $value['icon'],
-                            'link' =>$value['link'],
-                            'type' => isset($value['type']) ? $value['type'] : null
-                        );
+                        if(isset($value['type'])){
+                            $this->data['features'][$value['type']][] = array(
+                                'feature_id' => $value['_id'],
+                                'name' => $value['name'],
+                                'icon' => $value['icon'],
+                                'link' =>$value['link']
+                            );
+                        }else{
+                            $this->data['features']['others'][] = array(
+                                'feature_id' => $value['_id'],
+                                'name' => $value['name'],
+                                'icon' => $value['icon'],
+                                'link' =>$value['link']
+                            );
+                        }
                     }
                 }
                 $user_plan = $this->User_model->getPlan();
@@ -214,7 +222,7 @@ class  MY_Controller  extends  CI_Controller  {
                         if (array_key_exists('feature_to_plan', $user_plan)) foreach ($user_plan['feature_to_plan'] as $feature_id) {
                             $value = $this->Feature_model->getFeature($feature_id);
                             if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
-                                $this->data['features'][] = array(
+                                $this->data['features']['others'][] = array(
                                     'feature_id' => $value['_id'],
                                     'name' => $value['name'],
                                     'icon' => $value['icon'],
@@ -241,17 +249,16 @@ class  MY_Controller  extends  CI_Controller  {
                     $features = $this->Feature_model->getFeatures();    
                     foreach ($features as $value) {
                         if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
-                            $this->data['features'][] = array(
+                            $this->data['features']['others'][] = array(
                                 'feature_id' => $value['_id'],
                                 'name' => $value['name'],
                                 'icon' => $value['icon'],
-                                'link' =>$value['link'],
-                                'type' => isset($value['type']) ? $value['type'] : null
+                                'link' =>$value['link']
                             );
                         }
                     }
 
-                    $this->data['features'][] = array(
+                    $this->data['features']['others'][] = array(
                         'feature_id' => new MongoId(),
                         'name' => 'Sms',
                         'icon' => 'fa-mail-forward',
