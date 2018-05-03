@@ -419,11 +419,22 @@ class Statistic_model extends MY_Model
 
     public function getActionDataCount($client_id, $site_id, $action_name, $from, $to)
     {
-        $this->mongo_db->where('client_id', $client_id);
-        $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('action_name', $action_name);
-        $this->mongo_db->where('date', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
-        $result = $this->mongo_db->count('playbasis_validated_action_log');
+        $this->mongo_db->select(array('action_id'));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'name' => strtolower($action_name)
+        ));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_action_to_client');
+
+        if($result){
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->where('action_id', $result[0]['action_id']);
+            $this->mongo_db->where('date', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
+            $result = $this->mongo_db->count('playbasis_validated_action_log');
+        }
         return $result;
     }
 
