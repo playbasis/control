@@ -408,6 +408,37 @@ class Statistic_model extends MY_Model
         return $data['result'];
     }
 
+    public function getActionDataCache($client_id, $site_id, $from, $to)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('date', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
+        $result = $this->mongo_db->get('playbasis_statistic_action');
+        return $result;
+    }
+
+    public function getActionDataCount($client_id, $site_id, $action_name, $from, $to)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('action_name', $action_name);
+        $this->mongo_db->where('date', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
+        $result = $this->mongo_db->count('playbasis_validated_action_log');
+        return $result;
+    }
+
+    public function updateActionDataCache($client_id, $site_id, $from, $action)
+    {
+        $insert_data = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'date' => new MongoDate($from),
+        );
+        $insert_data = array_merge($insert_data, $action);
+        $result = $this->mongo_db->insert('playbasis_statistic_action', $insert_data);
+        return $result;
+    }
+
     public function getTopGoodsData($client_id, $site_id, $from, $to)
     {
         $data =  $this->mongo_db->aggregate('playbasis_reward_status_to_player', array(

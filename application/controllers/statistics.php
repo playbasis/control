@@ -91,17 +91,39 @@ class Statistics  extends MY_Controller
                 for($i=$day; $i >= 1 ;$i--){
                     $action_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
-                foreach ($action as $key => $value){
-                    $data = $this->Statistic_model->getActionData($client_id, $site_id, $value, $from, $to, $type);
-                    $action_data[$key] = array_fill(0, $day, 0);
-                    foreach ($data as $v){
-                        $index = array_search($v['_id']['date'], $action_label);
-                        $action_data[$key][$index] = $v['value'];
+                $data = $this->Statistic_model->getActionDataCache($client_id, $site_id, $from, $to);
+                if(sizeof($data) != $day){
+                    for($i=($day-sizeof($data)); $i >= 1 ;$i--){
+                        $date_update = date("Y-m-d", strtotime("-".$i." days"));
+                        $date_zone_update = new DateTime($date_update, $UTC_8);
+                        $date_zone_update->setTimezone($UTC_7);
+                        $date_update = $date_zone_update->format('Y-m-d H:i:s');
+                        $from_update = strtotime($date_update);
+                        $date_update = date("Y-m-d", strtotime("-".($i-1)." days"));
+                        $date_zone_update = new DateTime($date_update, $UTC_8);
+                        $date_zone_update->setTimezone($UTC_7);
+                        $date_update = $date_zone_update->format('Y-m-d H:i:s');
+                        $currentDate_update = strtotime($date_update);
+                        $to_update = $currentDate_update + ("86399");
+                        $action_value_array = array();
+                        foreach ($action as $v){
+                            $action_value = $this->Statistic_model->getActionDataCount($client_id, $site_id, $v, $from_update, $to_update);
+                            $action_value_array[$v] = $action_value;
+                        }
+                        $this->Statistic_model->updateActionDataCache($client_id, $site_id, $from_update, $action_value_array);
                     }
+                    $data = $this->Statistic_model->getActionDataCache($client_id, $site_id, $from, $to);
+                }
+                foreach ($action as $key => $value){
+                    $action_data[$key] = array_fill(0, $day, 0);
+                    foreach ($data as $index => $v){
+                        $action_data[$key][] = $v[$value];
+                    }
+                    
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
-                        'borderColor' => $action_border_color[$key],
-                        'data' => $action_data[$key],
-                        'label' => $value);
+                                                  'borderColor' => $action_border_color[$key],
+                                                  'data' => $action_data[$key],
+                                                  'label' => $value);
                 }
             } else {
                 $date = date("Y-m-d", strtotime("-7 days"));
@@ -109,15 +131,42 @@ class Statistics  extends MY_Controller
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
-                $action_label = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+                for($i=7; $i > 0 ; $i--){
+                    $action_label[] =  date("D", strtotime("-".$i." days"));
+                }
+                $data = $this->Statistic_model->getActionDataCache($client_id, $site_id, $from, $to);
+                if(sizeof($data) != 7){
+                    for($i=(7-sizeof($data)); $i >= 1 ;$i--){
+                        $date_update = date("Y-m-d", strtotime("-".$i." days"));
+                        $date_zone_update = new DateTime($date_update, $UTC_8);
+                        $date_zone_update->setTimezone($UTC_7);
+                        $date_update = $date_zone_update->format('Y-m-d H:i:s');
+                        $from_update = strtotime($date_update);
+                        $date_update = date("Y-m-d", strtotime("-".($i-1)." days"));
+                        $date_zone_update = new DateTime($date_update, $UTC_8);
+                        $date_zone_update->setTimezone($UTC_7);
+                        $date_update = $date_zone_update->format('Y-m-d H:i:s');
+                        $currentDate_update = strtotime($date_update);
+                        $to_update = $currentDate_update + ("86399");
+                        $action_value_array = array();
+                        foreach ($action as $v){
+                            $action_value = $this->Statistic_model->getActionDataCount($client_id, $site_id, $v, $from_update, $to_update);
+                            $action_value_array[$v] = $action_value;
+                        }
+                        $this->Statistic_model->updateActionDataCache($client_id, $site_id, $from_update, $action_value_array);
+                    }
+                    $data = $this->Statistic_model->getActionDataCache($client_id, $site_id, $from, $to);
+                }
                 foreach ($action as $key => $value){
-                    $data = $this->Statistic_model->getActionData($client_id, $site_id, $value, $from, $to, $type);
                     $action_data[$key] = array_fill(0, 7, 0);
-                    foreach ($data as $v){
-                        $action_data[$key][intval($v['_id']['day']) - 1] = $v['value'];
+                    foreach ($data as $index => $v){
+                        $action_data[$key][$index] = $v[$value];
                     }
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
                         'borderColor' => $action_border_color[$key],
@@ -226,10 +275,18 @@ class Statistics  extends MY_Controller
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
-                $action_label = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+                $start_day = date("D", strtotime("-1 days"));
+                $week_day = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+                $adjust_day = array_search($start_day, $week_day);
+                for($i=7; $i > 0 ; $i--){
+                    $action_label[] =  date("D", strtotime("-".$i." days"));
+                }
                 $top_reward = $this->Statistic_model->getTopGoodsData($client_id, $site_id, $from, $to);
                 $monthly_reward = array();
                 foreach ($top_reward as $v){
@@ -244,7 +301,7 @@ class Statistics  extends MY_Controller
                     $data = $this->Statistic_model->getGoodsSuperData($client_id, $site_id, $value['_id']['reward_id'], $from, $to, $type);
                     $action_data[$key] = array_fill(0, 7, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval($v['_id']['day']) - 1] = $v['value'];
+                        $action_data[$key][intval(($v['_id']['day']+$adjust_day-1)%7)] = $v['value'];
                     }
                     $goods_name = $this->Statistic_model->getGoodsByRewardRedeem($client_id, $site_id, $value['_id']['reward_id'].'');
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
@@ -353,10 +410,18 @@ class Statistics  extends MY_Controller
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
-                $action_label = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+                $start_day = date("D", strtotime("-1 days"));
+                $week_day = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+                $adjust_day = array_search($start_day, $week_day);
+                for($i=7; $i > 0 ; $i--){
+                    $action_label[] =  date("D", strtotime("-".$i." days"));
+                }
                 $top_reward = $this->Statistic_model->getTopGoodsData($client_id, $site_id, $from, $to);
                 $monthly_reward = array();
                 foreach ($top_reward as $v){
@@ -371,7 +436,7 @@ class Statistics  extends MY_Controller
                     $data = $this->Statistic_model->getGoodsMonthlyData($client_id, $site_id, $value['_id']['reward_id'], $from, $to, $type);
                     $action_data[$key] = array_fill(0, 7, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval($v['_id']['day']) - 1] = $v['value'];
+                        $action_data[$key][intval(($v['_id']['day']+$adjust_day-1)%7)] = $v['value'];
                     }
                     $goods_name = $this->Statistic_model->getGoodsByRewardRedeem($client_id, $site_id, $value['_id']['reward_id'].'');
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
@@ -462,10 +527,18 @@ class Statistics  extends MY_Controller
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
-                $action_label = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+                $start_day = date("D", strtotime("-1 days"));
+                $week_day = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+                $adjust_day = array_search($start_day, $week_day);
+                for($i=7; $i > 0 ; $i--){
+                    $action_label[] =  date("D", strtotime("-".$i." days"));
+                }
                 $badge_reward = $this->Statistic_model->getTopBadgeData($client_id, $site_id, $from, $to);
                 $size = sizeof($badge_reward) > 5 ? 5 : sizeof($badge_reward);
                 for ($key = 0 ; $key < $size ; $key++){
@@ -473,7 +546,7 @@ class Statistics  extends MY_Controller
                     $badge_name = $this->Statistic_model->getBadgeNameToClient($client_id, $site_id, $badge_reward[$key]['_id']);
                     $action_data[$key] = array_fill(0, 7, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval($v['_id']['day']) - 1] = $v['value'];
+                        $action_data[$key][intval(($v['_id']['day']+$adjust_day-1)%7)] = $v['value'];
                     }
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
                                                   'borderColor' => $action_border_color[$key],
@@ -551,14 +624,22 @@ class Statistics  extends MY_Controller
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
-                $action_label = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+                $start_day = date("D", strtotime("-1 days"));
+                $week_day = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+                $adjust_day = array_search($start_day, $week_day);
+                for($i=7; $i > 0 ; $i--){
+                    $action_label[] =  date("D", strtotime("-".$i." days"));
+                }
                 $data = $this->Statistic_model->getRegisterData($client_id, $site_id, $from, $to, $type);
                 $action_data[0] = array_fill(0, 7, 0);
                 foreach ($data as $v){
-                    $action_data[0][intval($v['_id']['day']) - 1] = $v['value'];
+                    $action_data[0][intval(($v['_id']['day']+$adjust_day-1)%7)] = $v['value'];
                 }
                 $action_dataset[0] = array('backgroundColor' => 'rgba(255, 159, 64, 0.2)',
                                            'borderColor' => 'rgba(255, 159, 64, 1)',
@@ -638,15 +719,23 @@ class Statistics  extends MY_Controller
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
-                $action_label = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+                $start_day = date("D", strtotime("-1 days"));
+                $week_day = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+                $adjust_day = array_search($start_day, $week_day);
+                for($i=7; $i > 0 ; $i--){
+                    $action_label[] =  date("D", strtotime("-".$i." days"));
+                }
                 foreach ($action as $key => $value){
                     $data = $this->Statistic_model->getMGMData($client_id, $site_id, $value, $from, $to, $type);
                     $action_data[$key] = array_fill(0, 7, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval($v['_id']['day']) - 1] = $v['value'];
+                        $action_data[$key][intval(($v['_id']['day']+$adjust_day-1)%7)] = $v['value'];
                     }
                     $action_dataset[$key] = array('backgroundColor' => 'rgba(255, 99, 132, 0.2)',
                                                   'borderColor' => 'rgba(255, 99, 132, 1)',
