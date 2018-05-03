@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          		= 'SMS Template List';
+$lang['title']          		        = 'SMS';
 
 // Text
 $lang['text_success']           		= 'You have successfully created a new template!';

@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          		= 'Email Template List';
+$lang['title']          		        = 'Email';
 
 // Text
 $lang['text_success']           		= 'You have successfully created a new template!';

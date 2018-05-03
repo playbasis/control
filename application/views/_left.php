@@ -14,149 +14,116 @@ if (isset($username)) {
                     ?>
                 </li>
             <?php }else{ ?>
+            <?php if (isset($features['controller'])) { ?>
             <li>
                 <a class="Control_Config animated" style="border-radius: 3px;">
                     <i class="fa fa-cogs"></i>
                     <span class="hidden-tablet">Controller Configuration</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_control_config">
-                    <?php if (isset($features)) { ?>
-                        <?php foreach ($features as $feature){
-                            if($feature['type'] == 'controller') {
-                                ?>
-                                <?php
-                                echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
-                                ?>
-                                <?php
-                            }
-                        }
-                        ?>
-                    <?php } ?>
-                    <div class="test"></div>
+                <div class="tab-left tab_left_group">
+                    <?php
+                    foreach ($features['controller'] as $feature){
+                        echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
+                    }
+                    ?>
                 </div>
             </li>
+            <?php } ?>
+
+            <?php if (isset($features['reward'])) { ?>
             <li>
                 <a class="Reward animated" style="border-radius: 3px;">
                     <i class="fa fa-trophy"></i>
                     <span class="hidden-tablet">Reward</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_reward">
-                    <?php if (isset($features)) { ?>
-                        <?php foreach ($features as $feature){
-                            if($feature['type'] == 'reward'){
-                                ?>
-                                <?php
-                                echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
-                                ?>
-                                <?php
-                            }
-                        }
-                        ?>
-                    <?php } ?>
-
+                <div class="tab-left tab_left_group">
+                    <?php
+                    foreach ($features['reward'] as $feature){
+                        echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
+                    }
+                    ?>
                 </div>
             </li>
+            <?php } ?>
+
+            <?php if (isset($features['data_content'])) { ?>
             <li>
                 <a class="Data_Content animated" style="border-radius: 3px;">
                     <i class="fa fa-database"></i>
                     <span class="hidden-tablet">Data Content</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_Data_Content">
-                                <?php if (isset($features)) { ?>
-                                    <?php foreach ($features as $feature){
-                                        if($feature['type'] == 'data_content'){
-                                            ?>
-                                                <?php
-                                                echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
-                                                ?>
-                                            <?php
-                                        }
-                                    }
-                                    ?>
-                                <?php } ?>
-                                <?php
-                            }
-                            ?>
+                <div class="tab-left tab_left_group">
+                    <?php
+                    foreach ($features['data_content'] as $feature){
+                        echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
+                    }
+                    ?>
                 </div>
             </li>
+            <?php } ?>
+
+            <?php if (isset($features['communication'])) { ?>
             <li>
-                <a class="Comunication animated" style="border-radius: 3px;">
+                <a class="Communication animated" style="border-radius: 3px;">
                     <i class="fa fa-star"></i>
-                    <span class="hidden-tablet">Comunication</span>
+                    <span class="hidden-tablet">Communication</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_comunication">
-                        <?php if (isset($features)) { ?>
-                            <?php foreach ($features as $feature){
-                                if($feature['type'] == 'comunication'){
-                                    ?>
-                                    <?php
-                                    echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
-                                    ?>
-                                    <?php
-                                }
-                            }
-                            ?>
-                        <?php } ?>
+                <div class="tab-left tab_left_group">
+                    <?php
+                    foreach ($features['communication'] as $feature){
+                        echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
+                    }
+                    ?>
                 </div>
             </li>
+            <?php } ?>
+
+            <?php if (isset($features['report'])) { ?>
             <li>
                 <a class="Report animated" style="border-radius: 3px;">
                     <i class="fa fa-pie-chart"></i>
                     <span class="hidden-tablet">Report</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_report">
-                    <?php if (isset($features)) { ?>
-                        <?php foreach ($features as $feature){
-                            if($feature['type'] == 'report'){
-                                ?>
-                                <?php
-                                echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
-                                ?>
-                                <?php
-                            }
-                        }
-                        ?>
-                    <?php } ?>
+                <div class="tab-left tab_left_group">
+                    <?php
+                    foreach ($features['report'] as $feature){
+                        echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
+                    }
+                    ?>
                 </div>
             </li>
+            <?php } ?>
+
+            <?php if (isset($features['manage'])) { ?>
             <li>
                 <a class="Admin animated" style="border-radius: 3px;">
                     <i class="fa fa-user"></i>
                     <span class="hidden-tablet">Admin</span>
                     <i class="iconMenu fa fa-caret-right"></i>
                 </a>
-                <div class="tab-left" id="tab_admin">
-                    <?php if (isset($features)) { ?>
-                        <?php foreach ($features as $feature){
-                            if($feature['type'] == 'manage'){
-                                ?>
-                                <?php
-                                echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
-                                ?>
-                                <?php
-                            }
-                        }
-                        ?>
-                    <?php } ?>
-
+                <div class="tab-left tab_left_group">
+                    <?php
+                    foreach ($features['manage'] as $feature){
+                        echo anchor($feature['link'], '<div class="styleSubMenu" data-url="'.$feature['link'].'"><i class="hidden-tablet fa '.$feature["icon"].'"></i> <span class="hidden-tablet">'.$feature['name'].'</span></br></div>');
+                    }
+                    ?>
                 </div>
             </li>
-            <?php if (isset($features)) { ?>
-                <?php foreach ($features as $feature){
-                    if($feature['type'] == null){
-                        ?>
-                        <li>
-                        <?php
-                        echo anchor($feature['link'], '<i class="fa '.$feature["icon"].'"></i><span class="hidden-tablet">'.$feature['name'].'</span></br>');
-                        ?>
-                        </li>
-                        <?php
-                    }
+            <?php } ?>
+
+            <?php if (isset($features['others'])) { ?>
+                <?php foreach ($features['others'] as $feature){?>
+                    <li>
+                    <?php
+                    echo anchor($feature['link'], '<i class="fa '.$feature["icon"].'"></i><span class="hidden-tablet">'.$feature['name'].'</span></br>');
+                    ?>
+                    </li>
+                    <?php
                 }
                 ?>
             <?php } ?>
@@ -165,6 +132,7 @@ if (isset($username)) {
                 echo anchor('logout', '<i class="icon-off icon-whit"></i><span class="hidden-tablet">'.$text_logout.'</span>');
                 ?>
             </li>
+            <?php } ?>
         </ul>
     </div>
 </div>
@@ -225,7 +193,7 @@ if (isset($username)) {
 
 <script type="text/javascript">
     $('ul.main-menu > li > a').on("click",function () {
-       console.log($(this).siblings().attr('id'))
+
         var tapContent = this.nextElementSibling;
             if (tapContent.style.maxHeight){
                 tapContent.style.maxHeight = null;
@@ -246,61 +214,31 @@ if (isset($username)) {
 
     $(function(){
         var current = location.href;
+        var end_url = current.replace(baseUrlPath, "");
+        var check_url = end_url.split("/");
 
-        $('li #tab_control_config a > div').each(function(){
+        $('li .tab_left_group a > div').each(function(){
             var $this = $(this);
-            if(current.toString().includes($this.attr('data-url'))){
+            if(($this.attr('data-url') == '/' && (current.toString() == $this.parent().attr('href'))) ){
                 $this.addClass('active');
                 this.style.borderLeftColor = '#4265E7';
                 this.style.color = '#4265E7';
                 $(this).parent().parent().siblings().click();
+                return false;
+            }else{
+                var $tab_url = $this.attr('data-url');
+                if(typeof $tab_url == "string"){
+                    $tab_url = $tab_url.split("/");
+                    if(check_url[0] == $tab_url[0]){
+                        $this.addClass('active');
+                        this.style.borderLeftColor = '#4265E7';
+                        this.style.color = '#4265E7';
+                        $(this).parent().parent().siblings().click();
+                        return false;
+                    }
+                }
             }
         })
-        $('li #tab_reward a > div').each(function(){
-            var $this = $(this);
-            if(current.toString().includes($this.attr('data-url'))){
-                $this.addClass('active');
-                this.style.borderLeftColor = '#4265E7';
-                this.style.color = '#4265E7';
-                $(this).parent().parent().siblings().click();
-            }
-        })
-        $('li #tab_Data_Content a > div').each(function(){
-            var $this = $(this);
-            if(current.toString().includes($this.attr('data-url'))){
-                $this.addClass('active');
-                this.style.borderLeftColor = '#4265E7';
-                this.style.color = '#4265E7';
-                $(this).parent().parent().siblings().click();
-            }
-        })
-        $('li #tab_comunication a > div').each(function(){
-            var $this = $(this);
-            if(current.toString().includes($this.attr('data-url'))){
-                $this.addClass('active');
-                this.style.borderLeftColor = '#4265E7';
-                this.style.color = '#4265E7';
-                $(this).parent().parent().siblings().click();
-            }
-        })
-        $('li #tab_report a > div').each(function(){
-            var $this = $(this);
-            if(($this.attr('data-url') == '/' && (current.toString() == $this.parent().attr('href'))) || $this.attr('data-url') != '/' && (current.toString().includes($this.attr('data-url'))) ){
-                    $this.addClass('active');
-                    this.style.background = '#4265E7';
-                    $(this).parent().parent().siblings().click();
-            }
-        })
-        $('li #tab_admin a > div').each(function(){
-            var $this = $(this);
-            if(current.toString().includes($this.attr('data-url'))){
-                $this.addClass('active');
-                this.style.borderLeftColor = '#4265E7';
-                this.style.color = '#4265E7';
-                $(this).parent().parent().siblings().click();
-            }
-        })
+
     });
 </script>
-
-

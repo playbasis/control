@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title'] = 'Leader Board Configuration List';
+$lang['title'] = 'Leader Board';
 
 // Column
 $lang['column_name'] = "Name";

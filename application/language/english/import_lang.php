@@ -6,6 +6,7 @@
  * Time: 10:58 AM
  */
 $lang['heading_title']        = 'Import';
+$lang['title']                = 'Import';
 $lang['entry_name']           = 'Name';
 $lang['entry_url']            = 'URL';
 $lang['entry_hostname']       = 'Host name';

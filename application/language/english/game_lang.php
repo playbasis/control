@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']                  = 'Game';
+$lang['title']                          = 'Game';
 
 // Text
 $lang['text_success']                   = 'You have successfully configured setting!';

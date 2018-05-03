@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          				= 'Domain';
+$lang['title']          				= 'Domain';
 
 // Text
 // $lang['text_success']           				= 'Success: You have modified clients!';
