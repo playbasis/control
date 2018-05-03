@@ -432,7 +432,7 @@ class Statistic_model extends MY_Model
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('action_id', $result[0]['action_id']);
-            $this->mongo_db->where('date', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
+            $this->mongo_db->where('date_added', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
             $result = $this->mongo_db->count('playbasis_validated_action_log');
         }
         return $result;
