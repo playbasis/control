@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          				= 'Plan Setting';
+$lang['title']          				= 'Plan Setting';
 
 // Text
 $lang['text_success']           				= 'You have successfully created a plan!';

@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          		= 'Push Notification Setting';
+$lang['title']          		        = 'Push Notification';
 
 // Text
 $lang['text_success']           		= 'You have successfully created a new template!';

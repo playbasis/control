@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          		= 'Link configuration';
+$lang['title']          		        = 'Link configuration';
 
 // Text
 $lang['text_success']       = 'Successfully updated configuration ';

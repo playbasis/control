@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          				= 'Widget';
+$lang['title']          				        = 'Widget';
 
 // Text
 $lang['text_success']           				= 'You have successfully added an action!';
