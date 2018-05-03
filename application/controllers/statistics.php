@@ -99,7 +99,7 @@ class Statistics  extends MY_Controller
                         $date_zone_update->setTimezone($UTC_7);
                         $date_update = $date_zone_update->format('Y-m-d H:i:s');
                         $from_update = strtotime($date_update);
-                        $date_update = date("Y-m-d", strtotime("-".($i-1)." days"));
+                        $date_update = date("Y-m-d", strtotime("-".$i." days"));
                         $date_zone_update = new DateTime($date_update, $UTC_8);
                         $date_zone_update->setTimezone($UTC_7);
                         $date_update = $date_zone_update->format('Y-m-d H:i:s');
@@ -148,7 +148,7 @@ class Statistics  extends MY_Controller
                         $date_zone_update->setTimezone($UTC_7);
                         $date_update = $date_zone_update->format('Y-m-d H:i:s');
                         $from_update = strtotime($date_update);
-                        $date_update = date("Y-m-d", strtotime("-".($i-1)." days"));
+                        $date_update = date("Y-m-d", strtotime("-".$i." days"));
                         $date_zone_update = new DateTime($date_update, $UTC_8);
                         $date_zone_update->setTimezone($UTC_7);
                         $date_update = $date_zone_update->format('Y-m-d H:i:s');
