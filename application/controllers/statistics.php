@@ -46,13 +46,18 @@ class Statistics  extends MY_Controller
 
             $action_dataset = array();
             $action_data = array();
-            $action = array('paybill', 'topup', 'reload_for_others', 'addon', 'want');
-            $action_color = array('rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)');
-            $action_border_color = array('rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)');
+                    $action = array('invite', 'invited', 'comment', 'click', 'click');
+            $action_color = array('rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)',
+                                  'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)');
+            $action_border_color = array('rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
+                                         'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)');
+            $UTC_7 = new DateTimeZone("Asia/Bangkok");
+            $UTC_8 = new DateTimeZone("Asia/Kuala_Lumpur");
             if($type == 'day'){
                 $date = date("Y-m-d");
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
@@ -60,9 +65,9 @@ class Statistics  extends MY_Controller
                                       '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
                 foreach ($action as $key => $value){
                     $data = $this->Statistic_model->getActionData($client_id, $site_id, $value, $from, $to, $type);
-                    $action_data[$key] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+                    $action_data[$key] = array_fill(0, 24, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval(($v['_id']['hour']+8) % 24)] = $v['value'];
+                        $action_data[$key][intval($v['_id']['hour'])] = $v['value'];
                     }
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
                                                   'borderColor' => $action_border_color[$key],
@@ -70,21 +75,28 @@ class Statistics  extends MY_Controller
                                                   'label' => $value);
                 }
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y')); // 31
-                $date = date("Y-m-d", strtotime("-".$day." days"));
+                $date = date("Y-m-d", strtotime("-30 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array();
-                for($i=1; $i <= $day ;$i++){
-                    $action_label[] = ''.$i;
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                for($i=$day; $i >= 1 ;$i--){
+                    $action_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
                 foreach ($action as $key => $value){
                     $data = $this->Statistic_model->getActionData($client_id, $site_id, $value, $from, $to, $type);
                     $action_data[$key] = array_fill(0, $day, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval($v['_id']['date'])] = $v['value'];
+                        $index = array_search($v['_id']['date'], $action_label);
+                        $action_data[$key][$index] = $v['value'];
                     }
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
                         'borderColor' => $action_border_color[$key],
@@ -93,6 +105,9 @@ class Statistics  extends MY_Controller
                 }
             } else {
                 $date = date("Y-m-d", strtotime("-7 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $date = date("Y-m-d");
                 $currentDate = strtotime($date);
@@ -100,7 +115,7 @@ class Statistics  extends MY_Controller
                 $action_label = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
                 foreach ($action as $key => $value){
                     $data = $this->Statistic_model->getActionData($client_id, $site_id, $value, $from, $to, $type);
-                    $action_data[$key] = array(0,0,0,0,0,0,0);
+                    $action_data[$key] = array_fill(0, 7, 0);
                     foreach ($data as $v){
                         $action_data[$key][intval($v['_id']['day']) - 1] = $v['value'];
                     }
@@ -109,6 +124,7 @@ class Statistics  extends MY_Controller
                         'data' => $action_data[$key],
                         'label' => $value);
                 }
+
             }
             
             echo json_encode(array('label'=> $action_label, 'data' => $action_dataset));
@@ -124,17 +140,22 @@ class Statistics  extends MY_Controller
 
             $action_dataset = array();
             $action_data = array();
-            $action_color = array('rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)');
-            $action_border_color = array('rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)');
+            $action_color = array('rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)',
+                                  'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)');
+            $action_border_color = array('rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
+                                         'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)');
+            $UTC_7 = new DateTimeZone("Asia/Bangkok");
+            $UTC_8 = new DateTimeZone("Asia/Kuala_Lumpur");
             if($type == 'day'){
                 $date = date("Y-m-d");
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array('00:00','01:00','02:00','03:00','04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-                    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
+                                      '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
 
                 $top_reward = $this->Statistic_model->getTopGoodsData($client_id, $site_id, $from, $to);
                 $monthly_reward = array();
@@ -148,9 +169,9 @@ class Statistics  extends MY_Controller
                 }
                 foreach ($monthly_reward as $key => $value){
                     $data = $this->Statistic_model->getGoodsSuperData($client_id, $site_id, $value['_id']['reward_id'], $from, $to, $type);
-                    $action_data[$key] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+                    $action_data[$key] = array_fill(0, 24, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval(($v['_id']['hour']+8) % 24)] = $v['value'];
+                        $action_data[$key][intval($v['_id']['hour'])] = $v['value'];
                     }
                     $goods_name = $this->Statistic_model->getGoodsByRewardRedeem($client_id, $site_id, $value['_id']['reward_id'].'');
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
@@ -160,15 +181,21 @@ class Statistics  extends MY_Controller
                 }
 
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y')); // 31
-                $date = date("Y-m-d", strtotime("-".$day." days"));
+                $date = date("Y-m-d", strtotime("-30 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array();
-                for($i=1; $i <= $day ;$i++){
-                    $action_label[] = ''.$i;
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                for($i=$day; $i >= 1 ;$i--){
+                    $action_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
                 $top_reward = $this->Statistic_model->getTopGoodsData($client_id, $site_id, $from, $to);
                 $monthly_reward = array();
@@ -184,7 +211,8 @@ class Statistics  extends MY_Controller
                     $data = $this->Statistic_model->getGoodsSuperData($client_id, $site_id, $value['_id']['reward_id'], $from, $to, $type);
                     $action_data[$key] = array_fill(0, $day, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval($v['_id']['date'])] = $v['value'];
+                        $index = array_search($v['_id']['date'], $action_label);
+                        $action_data[$key][$index] = $v['value'];
                     }
                     $goods_name = $this->Statistic_model->getGoodsByRewardRedeem($client_id, $site_id, $value['_id']['reward_id'].'');
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
@@ -194,6 +222,9 @@ class Statistics  extends MY_Controller
                 }
             } else {
                 $date = date("Y-m-d", strtotime("-7 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $date = date("Y-m-d");
                 $currentDate = strtotime($date);
@@ -211,7 +242,7 @@ class Statistics  extends MY_Controller
                 }
                 foreach ($monthly_reward as $key => $value){
                     $data = $this->Statistic_model->getGoodsSuperData($client_id, $site_id, $value['_id']['reward_id'], $from, $to, $type);
-                    $action_data[$key] = array(0,0,0,0,0,0,0);
+                    $action_data[$key] = array_fill(0, 7, 0);
                     foreach ($data as $v){
                         $action_data[$key][intval($v['_id']['day']) - 1] = $v['value'];
                     }
@@ -236,17 +267,22 @@ class Statistics  extends MY_Controller
 
             $action_dataset = array();
             $action_data = array();
-            $action_color = array('rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)');
-            $action_border_color = array('rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)');
+            $action_color = array('rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)',
+                                  'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)');
+            $action_border_color = array('rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
+                                         'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)');
+            $UTC_7 = new DateTimeZone("Asia/Bangkok");
+            $UTC_8 = new DateTimeZone("Asia/Kuala_Lumpur");
             if($type == 'day'){
                 $date = date("Y-m-d");
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array('00:00','01:00','02:00','03:00','04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-                    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
+                                      '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
 
                 $top_reward = $this->Statistic_model->getTopGoodsData($client_id, $site_id, $from, $to);
                 $monthly_reward = array();
@@ -260,9 +296,9 @@ class Statistics  extends MY_Controller
                 }
                 foreach ($monthly_reward as $key => $value){
                     $data = $this->Statistic_model->getGoodsMonthlyData($client_id, $site_id, $value['_id']['reward_id'], $from, $to, $type);
-                    $action_data[$key] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-                    foreach ($data as $v){
-                        $action_data[$key][intval(($v['_id']['hour']+8) % 24)] = $v['value'];
+                    $action_data[$key] = array_fill(0, 24, 0);
+                    foreach ($data as $v){  
+                        $action_data[$key][intval($v['_id']['hour'])] = $v['value'];
                     }
                     $goods_name = $this->Statistic_model->getGoodsByRewardRedeem($client_id, $site_id, $value['_id']['reward_id'].'');
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
@@ -272,15 +308,21 @@ class Statistics  extends MY_Controller
                 }
 
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y')); // 31
-                $date = date("Y-m-d", strtotime("-".$day." days"));
+                $date = date("Y-m-d", strtotime("-30 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array();
-                for($i=1; $i <= $day ;$i++){
-                    $action_label[] = ''.$i;
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                for($i=$day; $i >= 1 ;$i--){
+                    $action_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
                 $top_reward = $this->Statistic_model->getTopGoodsData($client_id, $site_id, $from, $to);
                 $monthly_reward = array();
@@ -296,7 +338,8 @@ class Statistics  extends MY_Controller
                     $data = $this->Statistic_model->getGoodsMonthlyData($client_id, $site_id, $value['_id']['reward_id'], $from, $to, $type);
                     $action_data[$key] = array_fill(0, $day, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval($v['_id']['date'])] = $v['value'];
+                        $index = array_search($v['_id']['date'], $action_label);
+                        $action_data[$key][$index] = $v['value'];
                     }
                     $goods_name = $this->Statistic_model->getGoodsByRewardRedeem($client_id, $site_id, $value['_id']['reward_id'].'');
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
@@ -306,6 +349,9 @@ class Statistics  extends MY_Controller
                 }
             } else {
                 $date = date("Y-m-d", strtotime("-7 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $date = date("Y-m-d");
                 $currentDate = strtotime($date);
@@ -323,7 +369,7 @@ class Statistics  extends MY_Controller
                 }
                 foreach ($monthly_reward as $key => $value){
                     $data = $this->Statistic_model->getGoodsMonthlyData($client_id, $site_id, $value['_id']['reward_id'], $from, $to, $type);
-                    $action_data[$key] = array(0,0,0,0,0,0,0);
+                    $action_data[$key] = array_fill(0, 7, 0);
                     foreach ($data as $v){
                         $action_data[$key][intval($v['_id']['day']) - 1] = $v['value'];
                     }
@@ -348,25 +394,30 @@ class Statistics  extends MY_Controller
 
             $action_dataset = array();
             $action_data = array();
-            $action_color = array('rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)');
-            $action_border_color = array('rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)');
+            $action_color = array('rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)',
+                                  'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)');
+            $action_border_color = array('rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
+                                         'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)');
+            $UTC_7 = new DateTimeZone("Asia/Bangkok");
+            $UTC_8 = new DateTimeZone("Asia/Kuala_Lumpur");
             if($type == 'day'){
                 $date = date("Y-m-d");
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array('00:00','01:00','02:00','03:00','04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-                    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
+                                      '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
                 $badge_reward = $this->Statistic_model->getTopBadgeData($client_id, $site_id, $from, $to);
                 $size = sizeof($badge_reward) > 5 ? 5 : sizeof($badge_reward);
                 for ($key = 0 ; $key < $size ; $key++){
                     $data = $this->Statistic_model->getBadgeData($client_id, $site_id, $badge_reward[$key]['_id'], $from, $to, $type);
                     $badge_name = $this->Statistic_model->getBadgeNameToClient($client_id, $site_id, $badge_reward[$key]['_id']);
-                    $action_data[$key] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+                    $action_data[$key] = array_fill(0, 24, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval(($v['_id']['hour']+8) % 24)] = $v['value'];
+                        $action_data[$key][intval($v['_id']['hour'])] = $v['value'];
                     }
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
                                                   'borderColor' => $action_border_color[$key],
@@ -374,15 +425,21 @@ class Statistics  extends MY_Controller
                                                   'label' => $badge_name);
                 }
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y')); // 31
-                $date = date("Y-m-d", strtotime("-".$day." days"));
+                $date = date("Y-m-d", strtotime("-30 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array();
-                for($i=1; $i <= $day ;$i++){
-                    $action_label[] = ''.$i;
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                for($i=$day; $i >= 1 ;$i--){
+                    $action_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
                 $badge_reward = $this->Statistic_model->getTopBadgeData($client_id, $site_id, $from, $to);
                 $size = sizeof($badge_reward) > 5 ? 5 : sizeof($badge_reward);
@@ -391,7 +448,8 @@ class Statistics  extends MY_Controller
                     $badge_name = $this->Statistic_model->getBadgeNameToClient($client_id, $site_id, $badge_reward[$key]['_id']);
                     $action_data[$key] = array_fill(0, $day, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval($v['_id']['date'])] = $v['value'];
+                        $index = array_search($v['_id']['date'], $action_label);
+                        $action_data[$key][$index] = $v['value'];
                     }
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
                                                   'borderColor' => $action_border_color[$key],
@@ -400,6 +458,9 @@ class Statistics  extends MY_Controller
                 }
             } else {
                 $date = date("Y-m-d", strtotime("-7 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $date = date("Y-m-d");
                 $currentDate = strtotime($date);
@@ -410,7 +471,7 @@ class Statistics  extends MY_Controller
                 for ($key = 0 ; $key < $size ; $key++){
                     $data = $this->Statistic_model->getBadgeData($client_id, $site_id, $badge_reward[$key]['_id'], $from, $to, $type);
                     $badge_name = $this->Statistic_model->getBadgeNameToClient($client_id, $site_id, $badge_reward[$key]['_id']);
-                    $action_data[$key] = array(0,0,0,0,0,0,0);
+                    $action_data[$key] = array_fill(0, 7, 0);
                     foreach ($data as $v){
                         $action_data[$key][intval($v['_id']['day']) - 1] = $v['value'];
                     }
@@ -434,37 +495,51 @@ class Statistics  extends MY_Controller
 
             $action_dataset = array();
             $action_data = array();
+            $UTC_7 = new DateTimeZone("Asia/Bangkok");
+            $UTC_8 = new DateTimeZone("Asia/Kuala_Lumpur");
+
             if($type == 'day'){
                 $date = date("Y-m-d");
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array('00:00','01:00','02:00','03:00','04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-                    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
+                                      '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
                 $data = $this->Statistic_model->getRegisterData($client_id, $site_id, $from, $to, $type);
-                $action_data[0] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+                $action_data[0] = array_fill(0, 24, 0);
                 foreach ($data as $v){
-                    $action_data[0][intval(($v['_id']['hour']+8) % 24)] = $v['value'];
+                    $action_data[0][intval($v['_id']['hour'])] = $v['value'];
                 }
                 $action_dataset[0] = array('backgroundColor' => 'rgba(255, 159, 64, 0.2)',
                                            'borderColor' => 'rgba(255, 159, 64, 1)',
                                            'data' => $action_data[0],
                                            'label' => 'Players');
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y')); // 31
-                $date = date("Y-m-d", strtotime("-".$day." days"));
+
+                $date = date("Y-m-d", strtotime("-30 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array();
-                for($i=1; $i <= $day ;$i++){
-                    $action_label[] = ''.$i;
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                for($i=$day; $i >= 1 ;$i--){
+                    $action_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
                 $data = $this->Statistic_model->getRegisterData($client_id, $site_id, $from, $to, $type);
                 $action_data[0] = array_fill(0, $day, 0);
                 foreach ($data as $v){
-                    $action_data[0][intval($v['_id']['date'])] = $v['value'];
+                    $key = array_search($v['_id']['date'], $action_label);
+                    $action_data[0][$key] = $v['value'];
                 }
                 $action_dataset[0] = array('backgroundColor' => 'rgba(255, 159, 64, 0.2)',
                                            'borderColor' => 'rgba(255, 159, 64, 1)',
@@ -472,13 +547,16 @@ class Statistics  extends MY_Controller
                                            'label' => 'Players');
             } else {
                 $date = date("Y-m-d", strtotime("-7 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $date = date("Y-m-d");
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
                 $data = $this->Statistic_model->getRegisterData($client_id, $site_id, $from, $to, $type);
-                $action_data[0] = array(0,0,0,0,0,0,0);
+                $action_data[0] = array_fill(0, 7, 0);
                 foreach ($data as $v){
                     $action_data[0][intval($v['_id']['day']) - 1] = $v['value'];
                 }
@@ -502,18 +580,23 @@ class Statistics  extends MY_Controller
             $action_dataset = array();
             $action_data = array();
             $action = array('invite');
+            $UTC_7 = new DateTimeZone("Asia/Bangkok");
+            $UTC_8 = new DateTimeZone("Asia/Kuala_Lumpur");
             if($type == 'day'){
                 $date = date("Y-m-d");
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array('00:00','01:00','02:00','03:00','04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-                    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
+                                      '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
                 foreach ($action as $key => $value){
                     $data = $this->Statistic_model->getMGMData($client_id, $site_id, $value, $from, $to, $type);
-                    $action_data[$key] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+                    $action_data[$key] = array_fill(0, 24, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval(($v['_id']['hour']+8) % 24)] = $v['value'];
+                        $action_data[$key][intval($v['_id']['hour'])] = $v['value'];
                     }
                     $action_dataset[$key] = array('backgroundColor' => 'rgba(255, 99, 132, 0.2)',
                                                   'borderColor' => 'rgba(255, 99, 132, 1)',
@@ -521,22 +604,28 @@ class Statistics  extends MY_Controller
                                                   'label' => 'MGM');
                 }
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y')); // 31
-                $date = date("Y-m-d", strtotime("-".$day." days"));
+                $date = date("Y-m-d", strtotime("-30 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
-                $date = date("Y-m-d");
+                $date = date("Y-m-d", strtotime("-1 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
-
                 $action_label = array();
-                for($i=1; $i <= $day ;$i++){
-                    $action_label[] = ''.$i;
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                for($i=$day; $i >= 1 ;$i--){
+                    $action_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
                 foreach ($action as $key => $value){
                     $data = $this->Statistic_model->getMGMData($client_id, $site_id, $value, $from, $to, $type);
                     $action_data[$key] = array_fill(0, $day, 0);
                     foreach ($data as $v){
-                        $action_data[$key][intval($v['_id']['date'])] = $v['value'];
+                        $index = array_search($v['_id']['date'], $action_label);
+                        $action_data[$key][$index] = $v['value'];
                     }
                     $action_dataset[$key] = array('backgroundColor' => 'rgba(255, 99, 132, 0.2)',
                                                   'borderColor' => 'rgba(255, 99, 132, 1)',
@@ -545,6 +634,9 @@ class Statistics  extends MY_Controller
                 }
             } else {
                 $date = date("Y-m-d", strtotime("-7 days"));
+                $date_zone = new DateTime($date, $UTC_8);
+                $date_zone->setTimezone($UTC_7);
+                $date = $date_zone->format('Y-m-d H:i:s');
                 $from = strtotime($date);
                 $date = date("Y-m-d");
                 $currentDate = strtotime($date);
@@ -552,7 +644,7 @@ class Statistics  extends MY_Controller
                 $action_label = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
                 foreach ($action as $key => $value){
                     $data = $this->Statistic_model->getMGMData($client_id, $site_id, $value, $from, $to, $type);
-                    $action_data[$key] = array(0,0,0,0,0,0,0);
+                    $action_data[$key] = array_fill(0, 7, 0);
                     foreach ($data as $v){
                         $action_data[$key][intval($v['_id']['day']) - 1] = $v['value'];
                     }

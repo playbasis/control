@@ -372,15 +372,17 @@ class Statistic_model extends MY_Model
     {
         if($type == 'day'){
             $id = array(
-                "hour" => array('$hour' => '$date_added')
+                "hour" => array('$hour' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } elseif($type == 'month'){
             $id = array(
-                "date" => array('$dayOfMonth' => '$date_added')
+                "year" => array('$year' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "month" => array('$month' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "date" => array('$dayOfMonth' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } else {
             $id = array(
-                "day" => array('$dayOfWeek' => '$date_added')
+                "day" => array('$dayOfWeek' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         }
         $data =  $this->mongo_db->aggregate('playbasis_validated_action_log', array(
@@ -445,15 +447,17 @@ class Statistic_model extends MY_Model
     {
         if($type == 'day'){
             $id = array(
-                "hour" => array('$hour' => '$date_added')
+                "hour" => array('$hour' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } elseif($type == 'month'){
             $id = array(
-                "date" => array('$dayOfMonth' => '$date_added')
+                "year" => array('$year' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "month" => array('$month' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "date" => array('$dayOfMonth' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } else {
             $id = array(
-                "day" => array('$dayOfWeek' => '$date_added')
+                "day" => array('$dayOfWeek' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         }
         $data =  $this->mongo_db->aggregate('playbasis_reward_status_to_player', array(
@@ -484,15 +488,17 @@ class Statistic_model extends MY_Model
     {
         if($type == 'day'){
             $id = array(
-                "hour" => array('$hour' => '$date_added')
+                "hour" => array('$hour' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } elseif($type == 'month'){
             $id = array(
-                "date" => array('$dayOfMonth' => '$date_added')
+                "year" => array('$year' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "month" => array('$month' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "date" => array('$dayOfMonth' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } else {
             $id = array(
-                "day" => array('$dayOfWeek' => '$date_added')
+                "day" => array('$dayOfWeek' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         }
         $data =  $this->mongo_db->aggregate('playbasis_reward_status_to_player', array(
@@ -561,15 +567,17 @@ class Statistic_model extends MY_Model
     {
         if($type == 'day'){
             $id = array(
-                "hour" => array('$hour' => '$date_added')
+                "hour" => array('$hour' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } elseif($type == 'month'){
             $id = array(
-                "date" => array('$dayOfMonth' => '$date_added')
+                "year" => array('$year' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "month" => array('$month' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "date" => array('$dayOfMonth' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } else {
             $id = array(
-                "day" => array('$dayOfWeek' => '$date_added')
+                "day" => array('$dayOfWeek' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         }
         $data =  $this->mongo_db->aggregate('playbasis_event_log', array(
@@ -601,15 +609,17 @@ class Statistic_model extends MY_Model
     {
         if($type == 'day'){
             $id = array(
-                "hour" => array('$hour' => '$date_added')
+                "hour" => array('$hour' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } elseif($type == 'month'){
             $id = array(
-                "date" => array('$dayOfMonth' => '$date_added')
+                "year" => array('$year' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "month" => array('$month' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "date" => array('$dayOfMonth' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } else {
             $id = array(
-                "day" => array('$dayOfWeek' => '$date_added')
+                "day" => array('$dayOfWeek' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         }
         $data =  $this->mongo_db->aggregate('playbasis_player', array(
@@ -617,6 +627,7 @@ class Statistic_model extends MY_Model
                 '$match' => array(
                     'site_id' => $site_id,
                     'client_id' => $client_id,
+                    'added_by_script' => array('$ne' => true),
                     'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
                 ),
             ),
@@ -638,15 +649,17 @@ class Statistic_model extends MY_Model
     {
         if($type == 'day'){
             $id = array(
-                "hour" => array('$hour' => '$date_added')
+                "hour" => array('$hour' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } elseif($type == 'month'){
             $id = array(
-                "date" => array('$dayOfMonth' => '$date_added')
+                "year" => array('$year' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "month" => array('$month' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ])),
+                "date" => array('$dayOfMonth' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         } else {
             $id = array(
-                "day" => array('$dayOfWeek' => '$date_added')
+                "day" => array('$dayOfWeek' => array('$add' => [ '$date_added', 8 * 60 * 60 * 1000 ]))
             );
         }
         $data =  $this->mongo_db->aggregate('playbasis_validated_action_log', array(
