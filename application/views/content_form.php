@@ -70,9 +70,9 @@
                            for="inputTitle"><?php echo $this->lang->line('entry_title'); ?><span
                             class="required">&nbsp;*</span></label>
                     <div class="controls">
-                        <input type="text" name="title" size="100" id="inputTitle"
+                        <input type="text" name="content_title" size="100" id="inputTitle"
                                placeholder="<?php echo $this->lang->line('entry_title'); ?>"
-                               value="<?php echo isset($title) ? $title : set_value('$title'); ?>"/>
+                               value="<?php echo isset($content_title) ? $content_title : set_value('$content_title'); ?>"/>
                     </div>
                 </div>
                 <div class="control-group">

@@ -99,7 +99,7 @@ class Content extends MY_Controller
 
         $this->form_validation->set_rules('node_id', $this->lang->line('entry_id'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
+        $this->form_validation->set_rules('content_title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('summary', $this->lang->line('entry_summary'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
@@ -121,7 +121,7 @@ class Content extends MY_Controller
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['node_id'] = (isset($content_data['node_id']) && $content_data['node_id']) ? $content_data['node_id'] : null;
-                $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
+                $data['title'] = (isset($content_data['content_title']) && $content_data['content_title']) ? $content_data['content_title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
                 $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
@@ -138,7 +138,8 @@ class Content extends MY_Controller
                     if ($insert) {
 
                         if ($this->User_model->hasPermission('access', 'language') &&
-                            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'language'))
+                            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'language') &&
+                            isset($content_data['language_list']))
                         {
                             foreach($content_data['language_list'] as $language){
                                 $this->Content_model->createContentToLanguage($client_id, $site_id, $insert , $language['language_id'], $language['content_info']);
@@ -217,7 +218,9 @@ class Content extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'content/update/' . $content_id;
 
-        $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
+        $this->form_validation->set_rules('node_id', $this->lang->line('entry_id'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('content_title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('summary', $this->lang->line('entry_summary'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
@@ -241,7 +244,7 @@ class Content extends MY_Controller
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
                 $data['node_id'] = (isset($content_data['node_id']) && $content_data['node_id']) ? $content_data['node_id'] : null;
-                $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
+                $data['title'] = (isset($content_data['content_title']) && $content_data['content_title']) ? $content_data['content_title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
                 $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
@@ -437,7 +440,7 @@ class Content extends MY_Controller
             foreach ($contents as &$content) {
                 if (array_key_exists('category', $content)) {
                     if($content['category']){
-                        $content['category'] = $this->Content_model->retrieveContentCategoryById($content['category']);
+                        $content['category'] = $this->Content_model->retrieveContentCategoryById($client_id, $site_id, $content['category']);
                     }
                 }
                 if (array_key_exists('pb_player_id', $content)) {
@@ -483,6 +486,11 @@ class Content extends MY_Controller
                 }
             } else {
                 $this->data['org_status'] = false;
+            }
+
+            $this->data['language_status'] = false;
+            if ($this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'language')) {
+                $this->data['language_status'] = true;
             }
 
             $this->data['contents'] = $contents;
@@ -541,7 +549,7 @@ class Content extends MY_Controller
 
         if (isset($content_id) && ($content_id != 0)) {
             if ($this->User_model->getClientId()) {
-                $content_info = $this->Content_model->retrieveContent($content_id);
+                $content_info = $this->Content_model->retrieveContent($client_id, $site_id, $content_id);
             }
 
             if ($this->data['org_status']) {
@@ -576,9 +584,8 @@ class Content extends MY_Controller
         }
 
         $this->data['language_status'] = false;
-        if ($this->User_model->hasPermission('access', 'language') &&
-            $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'language')
-        ) {
+        if ($this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'language')) 
+        {
             $this->data['language_status'] = true;
 
             if ($this->input->post('language_list')) {
@@ -610,12 +617,12 @@ class Content extends MY_Controller
             $this->data['node_id'] = '';
         }
 
-        if ($this->input->post('title')) {
-            $this->data['title'] = $this->input->post('title');
+        if ($this->input->post('content_title')) {
+            $this->data['content_title'] = $this->input->post('content_title');
         } elseif (isset($content_info['title'])) {
-            $this->data['title'] = $content_info['title'];
+            $this->data['content_title'] = $content_info['title'];
         } else {
-            $this->data['title'] = '';
+            $this->data['content_title'] = '';
         }
 
         if ($this->input->post('summary')) {
@@ -783,20 +790,19 @@ class Content extends MY_Controller
                 $this->load->model('Push_model');
                 $this->load->model('Player_model');
                 $check_device = false;
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
                 if (isset($content_id) && (!empty($content_id))) {
                     // confirm login?
                     //if ($this->User_model->getClientId()) {
-                    $content_info = $this->Content_model->retrieveContent($content_id);
+                    $content_info = $this->Content_model->retrieveContent($client_id, $site_id, $content_id);
 
                     if (!empty($content_info)) {
                         if (array_key_exists('category', $content_info)) {
                             if($content_info['category']){
-                                $content_info['category'] = $this->Content_model->retrieveContentCategoryById($content_info['category']);
+                                $content_info['category'] = $this->Content_model->retrieveContentCategoryById($client_id, $site_id, $content_info['category']);
                             }
                         }
-
-                        $client_id = $this->User_model->getClientId();
-                        $site_id = $this->User_model->getSiteId();
 
                         // get all devices_tokens from all players
                         $devices = $this->Player_model->listDevices($client_id, $site_id, null,
@@ -1040,7 +1046,7 @@ class Content extends MY_Controller
 
                 if (isset($categoryId)) {
                     try {
-                        $result = $this->Content_model->retrieveContentCategoryById($categoryId);
+                        $result = $this->Content_model->retrieveContentCategoryById($client_id, $site_id, $categoryId);
                         if (isset($result['_id'])) {
                             $result['_id'] = $result['_id'] . "";
                         }
@@ -1141,7 +1147,7 @@ class Content extends MY_Controller
                 } elseif (!isset($categoryId) && !isset($category_data['action'])) {
                     $this->output->set_status_header('201');
                     // todo: should return newly create object
-                    $category_result = $this->Content_model->retrieveContentCategoryById($result);
+                    $category_result = $this->Content_model->retrieveContentCategoryById($client_id, $site_id, $result);
                     if (isset($category_result['_id'])) {
                         $category_result['_id'] = $category_result['_id'] . "";
                     }
@@ -1196,6 +1202,159 @@ class Content extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    public function importContent()
+    {
+        if (!$this->input->post('array_contents')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission_import'));
+            return;
+        }
+
+        $array_contents = json_decode($this->input->post('array_contents'),true);
+        $array_details = $this->input->post('array_details');
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $validation_result = array();
+        foreach($array_contents as $content){
+            $check_node = $this->Content_model->getContentByNodeID($client_id, $site_id, $content['node_id']);
+            if($check_node){
+                $validation_result[] = $check_node['node_id'];
+            }
+        }
+
+        if(!$validation_result){ // passed data validation
+            foreach($array_contents as $content_index => &$content) {
+                if(isset($content['category']) && $content['category']){
+                    $chk_category = $this->Content_model->retrieveContentCategoryByName($client_id, $site_id, $content['category']);
+                    if(!$chk_category){
+                        $category_id = $this->Content_model->createContentCategory($client_id, $site_id, $content['category']);
+                        $content['category'] = $category_id;
+                    }else{
+                        $content['category'] = $chk_category['_id'];
+                    }
+                }
+                $content['client_id'] = $client_id;
+                $content['site_id'] = $site_id;
+                $content['title'] = $array_details[$content_index]['title'];
+                $content['summary'] = $array_details[$content_index]['summary'];
+                $content['detail'] = $array_details[$content_index]['detail'];
+                $content['date_start'] = !is_null($content['date_start']) ? new MongoDate(strtotime($content['date_start'])) : null;
+                $content['date_end'] = !is_null($content['date_end']) ? new MongoDate(strtotime($content['date_end'])) : null;
+                $content_language = isset($content['language']) ? $content['language'] : null;
+                unset($content['language']);
+                $content_id = $this->Content_model->createContent($content);
+                
+                if($content_id && $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'language') && !is_null($content_language) ){
+                    foreach($content_language as $language_index => $content_to_language){
+                        $language_id = null;
+                        //check if language already existing in this site
+                        $chk_language = $this->Language_model->retrieveLanguageByName($client_id, $site_id, $content_to_language['language']);
+                        if($chk_language ){
+                            $language_id = $chk_language['_id'];
+                        }else{
+                            //check if abbreviation already existing in this site
+                            $chk_abbr = $this->Language_model->retrieveLanguageByAbbr($client_id, $site_id, $content_to_language['abbreviation']);
+                            if($chk_abbr){
+                                $language_id = $chk_abbr['_id'];
+                            }else{
+                                //no language and abbreviation found so create new language
+                                $language_id = $this->Language_model->insertLanguage(array(
+                                    'client_id' => $client_id,
+                                    'site_id' => $site_id,
+                                    'language' =>$content_to_language['language'],
+                                    'abbreviation' =>$content_to_language['abbreviation'],
+                                    'status' => true,
+                                    'tags' => isset($content_to_language['tags']) ? implode($content_to_language['tags']) : null,
+                                ));
+                            }
+                        }
+                        //insert content to language
+                        $content_to_language['content_info'] = $array_details[$content_index]['language'][$language_index]['content_info'];
+                        $this->Content_model->createContentToLanguage($client_id, $site_id, $content_id , $language_id, $content_to_language['content_info']);
+                    }
+                }
+            }
+            $this->output->set_output(json_encode(array('status'=>'success')));
+        }else{ // failed data validation
+            $this->output->set_output(json_encode(array('status'=>'fail','results'=>$validation_result)));
+        }
+    }
+
+    public function exportContent()
+    {
+        if (!$this->input->post('array_contents')) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission_export'));
+            return;
+        }
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $array_contents = array();
+        foreach($this->input->post('array_contents') as $content_id){
+            if($content_id == "on")continue;
+            $content_info = $this->Content_model->retrieveContent($client_id, $site_id, $content_id);
+            $content_category_name = null;
+            if(isset($content_info['category']) && $content_info['category']){
+                $content_category_info = $this->Content_model->retrieveContentCategoryById($client_id, $site_id, $content_info['category']);
+                $content_category_name = isset($content_category_info['name']) ? $content_category_info['name'] : null;
+            }
+
+            unset($content_info['_id']);
+
+            $content_info['client_id'] = null;
+            $content_info['site_id'] = null;
+            $content_info['category'] = $content_category_name;
+            $content_info['date_start'] = $this->datetimeMongotoReadable($content_info['date_start']);
+            $content_info['date_end'] = $this->datetimeMongotoReadable($content_info['date_end']);
+            $content_info['date_added'] = $this->datetimeMongotoReadable($content_info['date_added']);
+            $content_info['date_modified'] = $this->datetimeMongotoReadable($content_info['date_modified']);
+
+            //get content of each active language
+            $content_info['language'] = array();
+            $language_list = $this->Language_model->getLanguageList($client_id, $site_id, true);
+            foreach($language_list as $language){
+                $content = $this->Content_model->getContentToLanguage($client_id, $site_id, $content_id, $language['_id']);
+                if ($content) {
+                    $language_info = array();
+                    $language_info['language'] = $language['language'];
+                    $language_info['abbreviation'] = $language['abbreviation'];
+                    $language_info['tags'] = $language['tags'];
+                    $language_info['content_info']['title'] = (isset($content['title']) && $content['title']) ? $content['title'] : "";
+                    $language_info['content_info']['summary'] = (isset($content['summary']) && $content['summary']) ? $content['summary'] : "";
+                    $language_info['content_info']['detail'] = (isset($content['detail']) && $content['detail']) ? $content['detail'] : "";
+                    $content_info['language'][] = $language_info;
+                }
+            }
+
+            $array_contents[] = $content_info;
+        }
+
+        $this->output->set_output(json_encode($array_contents));
+    }
+
+    private function datetimeMongotoReadable($dateTimeMongo)
+    {
+        if ($dateTimeMongo) {
+            if (isset($dateTimeMongo->sec)) {
+                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
+            } else {
+                $dateTimeMongo = $dateTimeMongo;
+            }
+        } else {
+            $dateTimeMongo = null;
+        }
+        return $dateTimeMongo;
     }
 
 }

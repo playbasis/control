@@ -12,6 +12,16 @@ class Content_model extends MY_Model
             $this->mongo_db->where('title', $regex);
         }
 
+        if (isset($optionalParams['filter_id']) && !is_null($optionalParams['filter_id'])) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['filter_id'])) . "/i");
+            $this->mongo_db->where('node_id', $regex);
+        }
+
+        if(isset($optionalParams['filter_tags']) && $optionalParams['filter_tags']) {
+            $tags = explode(',', $optionalParams['filter_tags']);
+            $this->mongo_db->where_in('tags', $tags);
+        }
+
         if (isset($optionalParams['author'])) {
             if(!empty($optionalParams['author'])){
                 $this->mongo_db->where('pb_player_id', new MongoId($optionalParams['author']));
@@ -113,22 +123,14 @@ class Content_model extends MY_Model
         return $this->mongo_db->get("playbasis_content_to_client");
     }
 
-    public function retrieveContent($content_id)
+    public function retrieveContent($client_id, $site_id, $content_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        try {
-            $this->mongo_db->where('_id', new MongoId($content_id));
-        } catch (Exception $e) {
-            return null;
-        }
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('_id', new MongoId($content_id));
         $c = $this->mongo_db->get('playbasis_content_to_client');
-
-        if ($c) {
-            return $c[0];
-        } else {
-            return null;
-        }
+        return $c ? $c[0] : null;
     }
 
     public function createContent($data)
@@ -157,6 +159,18 @@ class Content_model extends MY_Model
         }
         $c = $this->mongo_db->count('playbasis_content_to_client');
         return $c > 0;
+    }
+
+    public function getContentByNodeID($client_id, $site_id, $node_id)
+    {
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('node_id', $node_id);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->limit(1);
+
+        $result =  $this->mongo_db->get('playbasis_content_to_client');
+        return $result ? $result[0] : null;
     }
 
     public function updateContent($data)
@@ -283,10 +297,12 @@ class Content_model extends MY_Model
         return $result ? $result[0] : null;
     }
 
-    public function retrieveContentCategoryById($id)
+    public function retrieveContentCategoryById($client_id, $site_id, $id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('_id', new MongoId($id));
         $this->mongo_db->where('deleted', false);
         $c = $this->mongo_db->get("playbasis_content_category_to_client");

@@ -64,7 +64,7 @@ class Language_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->select(array('language', 'abbreviation'));
+        $this->mongo_db->select(array('language', 'abbreviation', 'tags'));
 
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
@@ -208,6 +208,16 @@ class Language_model extends MY_Model
         $this->mongo_db->set('status', false);
 
         $result = $this->mongo_db->update('playbasis_language_to_client');
+
+        if($result){
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
+            $this->mongo_db->where('language_id', new MongoID($language_id));
+            $this->mongo_db->set('date_modified', new MongoDate());
+            $this->mongo_db->set('deleted', true);
+
+            $result = $this->mongo_db->update_all('playbasis_content_to_language');
+        }
 
         return $result;
     }
