@@ -8,10 +8,10 @@
             <h1><img src="<?php echo base_url(); ?>image/category.png" alt=""/> <?php echo $heading_title; ?></h1>
 
             <div class="buttons">
-                <button class="btn btn-info" id="insert_button" onclick="location =  baseUrlPath+'content/insert'"
-                        type="button"><?php echo $this->lang->line('button_insert'); ?></button>
-                <button class="btn btn-info" id="delete_button" onclick="$('#form').submit();"
-                        type="button"><?php echo $this->lang->line('button_delete'); ?></button>
+                <button class="btn btn-info" id="insert_button" onclick="location =  baseUrlPath+'content/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
+                <button class="btn btn-info" onclick="$('#contentImportModal').modal({'backdrop': true});$('#file-import').val('');" type="button"><?php echo $this->lang->line('button_import'); ?></button>
+                <button class="btn btn-info" onclick="content_export();" type="button"><?php echo $this->lang->line('button_export'); ?></button>
+                <button class="btn btn-info" id="delete_button" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
             </div>
         </div>
         <div class="content">
@@ -212,6 +212,64 @@
     </div>
 </div>
 
+
+<!-- Error Modal -->
+<div id="errorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Warning !</h3>
+    </div>
+    <div class="modal-body red">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:100000">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Warning !</h3>
+    </div>
+    <div class="modal-body">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<!-- Import Modal -->
+<div id="contentImportModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="customPointImportLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="customPointImportLabel">Import Content</h3>
+    </div>
+    <div class="modal-body">
+        <br>
+        &emsp;<span class="required">*</span><?php echo $this->lang->line('entry_file'); ?>&emsp;:&emsp;
+        <input id="file-import" type="file" size="100" value=""/>
+        <br>
+        <?php if(isset($language_status) && $language_status){?>
+        <br>
+        <div style="color:red"><b><?php echo $this->lang->line('entry_remark'); ?></b></div>
+        <?php }?>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" onclick="content_import();" type="button"><?php echo $this->lang->line('button_import'); ?></button>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
+<style type="text/css">
+    .modal {
+        width: 40%;
+        margin-left:-20%;
+    }
+</style>
+
 <div id="formCategoryModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="formCategoryModalLabel"
      aria-hidden="true">
     <div class="modal-header">
@@ -289,8 +347,8 @@
     </div>
 </div>
 
-<link id="base-style" rel="stylesheet" type="text/css"
-      href="<?php echo base_url(); ?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css"/>
+<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>stylesheet/rule_editor/jquery-ui-timepicker-addon.css"/>
+<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/blackdrop/blackdrop.css" />
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
@@ -301,6 +359,195 @@
 <script type="text/javascript" src="<?php echo base_url(); ?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>javascript/content/ckeditor/ckeditor.js"></script>
 <script type="text/javascript">
+    preventUnusual ={
+        message:function(msg,title){
+            if(msg=='' || msg== undefined)return;
+
+            if(title!='' && title!= undefined) {
+                $('#errorModal').find('#myModalLabel').html(title);
+            }else{
+                $('#errorModal').find('#myModalLabel').html("Warning !");
+            }
+            $('#errorModal').modal({'backdrop': true});
+            $('#errorModal .modal-body').html(msg);
+        }
+    }
+
+    var progressDialog = (function($){
+        var obj = {};
+        obj.show = function(text){
+
+            $('body').prepend('<div class="custom_blackdrop"><img src="./image/white_loading.gif" /><br><span>'+text+'</span></div>');
+        }
+
+        obj.hide = function(){
+
+            setTimeout(function(){
+                $('.custom_blackdrop').remove();
+            },1000)
+        }
+
+        return obj;
+    }(jQuery))
+
+    $("#successModal").on("hidden.bs.modal", function () {
+        window.location.replace(baseUrlPath+'content');
+    });
+
+    function content_import() {
+        var myfile = document.getElementById("file-import");
+
+        if(myfile.files[0] != undefined){
+            //
+            //var textType = 'text/csv';
+
+            if (myfile.value.match(/\.json/gi)==".json") {
+                var file = myfile.files[0];
+                var reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                        try {
+                            json = JSON.parse(e.target.result);
+                            var array_contents = JSON.stringify(json);
+                            var array_details = json;
+                            var import_status = false;
+
+                            $.ajax({
+                                url: baseUrlPath+'content/importContent',
+                                data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
+                                    'array_contents': array_contents, 'array_details': array_details},
+                                type:'POST',
+                                dataType: "json",
+                                beforeSend:function(){
+                                    $('#customPointImportModal').modal('hide');
+                                    progressDialog.show('Importing Content ...');
+                                },
+                                success:function(data){
+
+                                    if(data.status=='success'){
+
+                                        $('#successModal .modal-body').html('Import Content(s) successfully');
+                                        $('#successModal').find('#myModalLabel').html("Success !".fontcolor( '12984C' ));
+
+
+                                        import_status = true;
+
+
+                                    }
+                                    else if(data.status=='fail') {
+                                        var msg = "";
+                                        for (var k in data.results){
+                                            if (data.results.hasOwnProperty(k)) {
+                                                msg += data.results[k] +"<br>";
+                                            }
+                                        }
+
+                                        preventUnusual.message(msg,'Error to import!!! The following Content(s) are already exist in this site');
+
+                                    }else{
+                                        preventUnusual.message(data.msg);
+
+                                    }
+
+                                },
+                                error:function(){
+                                    //console.log('on error')
+                                    dialogMsg = 'Unable to import Content to server,\n Please try again later';
+                                    preventUnusual.message('Unable to import Content to server,\n Please try again later<br><br><br>', "Error !!!");
+
+                                },
+                                complete:function(){
+                                    //console.log('on complete')
+                                    progressDialog.hide();
+
+                                    if(import_status){
+
+                                        $('#successModal').modal({'backdrop': true});
+
+                                    }
+                                }
+                            });
+                        } catch (ex) {
+
+                            preventUnusual.message('Error when trying to parse json : ' + ex+'<br><br><br>', "Error !!!");
+                        }
+                    }
+                })(file);
+                reader.onerror = function() {
+                    preventUnusual.message('Unable to read ' + file.fileName+'<br><br><br>', "Error !!!");
+                };
+
+
+            } else {
+                preventUnusual.message('File type is invalid! ( only JSON file is supported)<br><br><br>');
+            }
+
+        }else{
+            preventUnusual.message('Please choose a file to import!<br><br><br>');
+        }
+    }
+
+    function content_export() {
+        var array_contents = new Array();
+        $("input:checkbox[name=selected[]]:checked").each(function(){
+            array_contents.push($(this).val());
+        });
+        if(array_contents.length == 0){
+            preventUnusual.message('Please select at least 1 Content to export!');
+        }
+        else{
+            var export_status = false;
+
+            $.ajax({
+                url: baseUrlPath+'content/exportContent',
+                data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>','array_contents': array_contents},
+                type:'POST',
+                // dataType:'json',
+                beforeSend:function(){
+                    progressDialog.show('Exporting Content(s) ...');
+                },
+                success:function(data){
+
+                    if(($.parseJSON(data)).success==false) {
+                        dialogMsg = ($.parseJSON(data)).msg;
+                    }else {
+                        if (($.parseJSON(data))) {
+                            var output_data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($.parseJSON(data),null, 2));
+                            link = document.createElement('a');
+                            link.setAttribute('href', 'data:' + output_data);
+                            link.setAttribute('download', 'content.json');
+                            link.click();
+                            export_status = true;
+                            dialogMsg = 'Export Content(s) successfully';
+                        }
+                        else {
+                            dialogMsg = 'Unable to export Content(s) from server ';
+                        }
+                    }
+
+                },
+                error:function(){
+                    //console.log('on error')
+                    dialogMsg = 'Unable to export Content(s) from server,\n Please try again later';
+
+                },
+                complete:function(){
+                    //console.log('on complete')
+                    progressDialog.hide();
+
+                    if(export_status){
+                        preventUnusual.message(dialogMsg.fontcolor( '010040' ), "Success !".fontcolor( '12984C' ));
+
+                    }else{
+                        preventUnusual.message(dialogMsg, "Error !!!");
+                    }
+                }
+            });
+        }
+        return true;
+    }
+
     function image_upload(field, thumb) {
         var $mm_Modal = $('#mmModal');
 

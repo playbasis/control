@@ -21,6 +21,8 @@ $lang['column_role'] = 'Role';
 $lang['button_filter'] = 'Filter';
 $lang['button_clear_filter'] = 'Clear filter';
 $lang['button_back_to_list'] = 'Back to list';
+$lang['button_import'] = 'Import';
+$lang['button_export'] = 'Export';
 
 // Tab
 $lang['tab_content'] = 'Content';
@@ -44,6 +46,8 @@ $lang['entry_add_category'] = 'Add new category?';
 $lang['entry_pin'] = 'PIN';
 $lang['entry_tags'] = 'Tag(s)';
 $lang['entry_organization'] = 'Organization';
+$lang['entry_file'] = 'JSON File To Import';
+$lang['entry_remark'] = 'Remark : Category and Language will be automatically created if it is set with the content(s) in exported file';
 
 // Text
 $lang['text_success'] = 'You have successfully created!';
