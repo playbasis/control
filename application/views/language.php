@@ -47,7 +47,7 @@
                                 <td class="left">English (default)</td>
                                 <td class="left"">en</td>
                                 <td class="left">enable</td>
-                                <td class="left"">english</td>
+                                <td class="right" style="word-wrap:break-word;"><span class="label">English</span> </td>
                                 <td class="center"></td>
                             </tr>
 
@@ -69,11 +69,7 @@
                                     ?>
                                 </td>
                             </tr>
-                                <?php } ?>
-                            <?php } else { ?>
-                        <tr>
-                            <td class="center" colspan="6"><?php echo $this->lang->line('text_no_results'); ?></td>
-                        </tr>
+                            <?php } ?>
                             <?php } ?>
                         </tbody>
                     </table>

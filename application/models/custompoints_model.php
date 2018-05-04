@@ -262,7 +262,8 @@ class Custompoints_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
-        $this->mongo_db->set('name', $data['name']);
+        $custompoint_name = strtolower($data['name']);
+        $this->mongo_db->set('name', $custompoint_name);
         $this->mongo_db->set('quantity', $data['quantity']);
         $this->mongo_db->set('per_user', $data['per_user']);
         $this->mongo_db->set('per_user_include_deducted', $data['per_user_include_deducted']);
@@ -279,7 +280,7 @@ class Custompoints_model extends MY_Model
             $this->mongo_db->unset_field('energy_props');
         }
 
-        $this->mongo_db->set('init_dataset.0.value', $data['name']);
+        $this->mongo_db->set('init_dataset.0.value', $custompoint_name);
         $this->mongo_db->set('init_dataset.2.label', "quantity");
 
         $this->mongo_db->set('tags', isset($tags) ? $tags : null);
@@ -290,9 +291,9 @@ class Custompoints_model extends MY_Model
 
         // update rule engine //
         $this->mongo_db->where(array('jigsaw_set.specific_id' => $data['reward_id']));
-        $this->mongo_db->set(array('jigsaw_set.$.name' => $data['name']));
-        $this->mongo_db->set(array('jigsaw_set.$.dataSet.0.value' => $data['name']));
-        $this->mongo_db->set(array('jigsaw_set.$.config.reward_name' => $data['name']));
+        $this->mongo_db->set(array('jigsaw_set.$.name' => $custompoint_name));
+        $this->mongo_db->set(array('jigsaw_set.$.dataSet.0.value' => $custompoint_name));
+        $this->mongo_db->set(array('jigsaw_set.$.config.reward_name' => $custompoint_name));
         $this->mongo_db->update_all('playbasis_rule');
         // end update rule engine //
 
