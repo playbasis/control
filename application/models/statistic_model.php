@@ -435,7 +435,7 @@ class Statistic_model extends MY_Model
             $this->mongo_db->where('date_added', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
             $result = $this->mongo_db->count('playbasis_validated_action_log');
         }
-        return $result;
+        return $result ? $result : 0;
     }
 
     public function updateActionDataCache($client_id, $site_id, $from, $action)
@@ -593,16 +593,47 @@ class Statistic_model extends MY_Model
         return $data['result'];
     }
 
-    public function getBadgeNameToClient($client_id, $site_id, $badge_id)
+    public function getBadgeDataCache($client_id, $site_id, $from, $to)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('badge_id', new MongoID($badge_id));
-        $results = $this->mongo_db->get("playbasis_badge_to_client");
+        $this->mongo_db->where('date', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
+        $result = $this->mongo_db->get('playbasis_statistic_badge');
+        return $result;
+    }
 
-        return $results ? $results[0]['name'] : null;
+    public function getLastBadgeDataCache($client_id, $site_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->order_by(array('date' => -1));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_statistic_badge');
+        return $result ? $result[0]['date'] : null;
+    }
+
+    public function getBadgeDataCount($client_id, $site_id, $action_id, $from, $to)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('event_type', 'REWARD');
+        $this->mongo_db->where('reward_type', 'BADGE');
+        $this->mongo_db->where('item_id', new MongoId($action_id));
+        $this->mongo_db->where('date_added', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
+        $result = $this->mongo_db->count('playbasis_event_log');
+        return $result;
+    }
+
+    public function updateBadgeDataCache($client_id, $site_id, $from, $action)
+    {
+        $insert_data = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'date' => new MongoDate($from),
+        );
+        $insert_data = array_merge($insert_data, $action);
+        $result = $this->mongo_db->insert('playbasis_statistic_badge', $insert_data);
+        return $result;
     }
 
     public function getBadgeData($client_id, $site_id, $badge_id, $from, $to, $type=null)

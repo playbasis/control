@@ -93,7 +93,11 @@ class Statistics  extends MY_Controller
                 }
                 $data = $this->Statistic_model->getActionDataCache($client_id, $site_id, $from, $to);
                 if(sizeof($data) != $day){
-                    for($i=($day-sizeof($data)); $i >= 1 ;$i--){
+                    $last_date = $this->Statistic_model->getLastBadgeDataCache($client_id, $site_id);
+                    $diff_date = date_diff($last_date && dateMongotoReadable($last_date) ? date_create(dateMongotoReadable($last_date)) : date_create(date("Y-m-d", strtotime("-33 days"))),date_create(date("Y-m-d", strtotime("-1 days"))));
+                    $diff_day = intval($diff_date->format("%a"))-1;
+                    $diff_day = $diff_day > 31 ? 31 : $diff_day;
+                    for($i=$diff_day; $i >= 1 ;$i--){
                         $date_update = date("Y-m-d", strtotime("-".$i." days"));
                         $date_zone_update = new DateTime($date_update, $UTC_8);
                         $date_zone_update->setTimezone($UTC_7);
@@ -117,7 +121,7 @@ class Statistics  extends MY_Controller
                 foreach ($action as $key => $value){
                     $action_data[$key] = array_fill(0, $day, 0);
                     foreach ($data as $index => $v){
-                        $action_data[$key][] = $v[$value];
+                        $action_data[$key][$index] = $v[$value];
                     }
                     
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
@@ -142,7 +146,11 @@ class Statistics  extends MY_Controller
                 }
                 $data = $this->Statistic_model->getActionDataCache($client_id, $site_id, $from, $to);
                 if(sizeof($data) != 7){
-                    for($i=(7-sizeof($data)); $i >= 1 ;$i--){
+                    $last_date = $this->Statistic_model->getLastBadgeDataCache($client_id, $site_id);
+                    $diff_date = date_diff($last_date && dateMongotoReadable($last_date) ? date_create(dateMongotoReadable($last_date)) : date_create(date("Y-m-d", strtotime("-33 days"))),date_create(date("Y-m-d", strtotime("-1 days"))));
+                    $diff_day = intval($diff_date->format("%a"))-1;
+                    $diff_day = $diff_day > 31 ? 31 : $diff_day;
+                    for($i=$diff_day; $i >= 1 ;$i--){
                         $date_update = date("Y-m-d", strtotime("-".$i." days"));
                         $date_zone_update = new DateTime($date_update, $UTC_8);
                         $date_zone_update->setTimezone($UTC_7);
@@ -459,6 +467,8 @@ class Statistics  extends MY_Controller
 
             $action_dataset = array();
             $action_data = array();
+            $action = array('MyAdd-on Badges', 'MyAdd-On Badges', 'MyReload Badges', 'GIFTBOX-RELOAD', 'GIFTBOX-ADDON');
+            $action_id = array('56406ff5be120b1e2d8b45a9', '585753ab9f73d2af3f8b4567', '56406fc4be120b1f2d8b4579', '587c408828fe0998658b4567', '587c414028fe0999658b4567');
             $action_color = array('rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)',
                                   'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)');
             $action_border_color = array('rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
@@ -475,11 +485,8 @@ class Statistics  extends MY_Controller
                 $to = $currentDate + ("86399");
                 $action_label = array('00:00','01:00','02:00','03:00','04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
                                       '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
-                $badge_reward = $this->Statistic_model->getTopBadgeData($client_id, $site_id, $from, $to);
-                $size = sizeof($badge_reward) > 5 ? 5 : sizeof($badge_reward);
-                for ($key = 0 ; $key < $size ; $key++){
-                    $data = $this->Statistic_model->getBadgeData($client_id, $site_id, $badge_reward[$key]['_id'], $from, $to, $type);
-                    $badge_name = $this->Statistic_model->getBadgeNameToClient($client_id, $site_id, $badge_reward[$key]['_id']);
+                foreach($action_id as $key => $value){
+                    $data = $this->Statistic_model->getBadgeData($client_id,  $site_id, $value, $from, $to, $type);
                     $action_data[$key] = array_fill(0, 24, 0);
                     foreach ($data as $v){
                         $action_data[$key][intval($v['_id']['hour'])] = $v['value'];
@@ -487,7 +494,7 @@ class Statistics  extends MY_Controller
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
                                                   'borderColor' => $action_border_color[$key],
                                                   'data' => $action_data[$key],
-                                                  'label' => $badge_name);
+                                                  'label' => $action[$key]);
                 }
             } elseif($type == 'month'){
                 $date = date("Y-m-d", strtotime("-30 days"));
@@ -506,20 +513,42 @@ class Statistics  extends MY_Controller
                 for($i=$day; $i >= 1 ;$i--){
                     $action_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
-                $badge_reward = $this->Statistic_model->getTopBadgeData($client_id, $site_id, $from, $to);
-                $size = sizeof($badge_reward) > 5 ? 5 : sizeof($badge_reward);
-                for ($key = 0 ; $key < $size ; $key++){
-                    $data = $this->Statistic_model->getBadgeData($client_id, $site_id, $badge_reward[$key]['_id'], $from, $to, $type);
-                    $badge_name = $this->Statistic_model->getBadgeNameToClient($client_id, $site_id, $badge_reward[$key]['_id']);
+                $data = $this->Statistic_model->getBadgeDataCache($client_id, $site_id, $from, $to);
+                if(sizeof($data) != $day){
+                    $last_date = $this->Statistic_model->getLastBadgeDataCache($client_id, $site_id);
+                    $diff_date = date_diff($last_date && dateMongotoReadable($last_date) ? date_create(dateMongotoReadable($last_date)) : date_create(date("Y-m-d", strtotime("-33 days"))),date_create(date("Y-m-d", strtotime("-1 days"))));
+                    $diff_day = intval($diff_date->format("%a"))-1;
+                    $diff_day = $diff_day > 31 ? 31 : $diff_day;
+                    for($i=$diff_day; $i >= 1 ;$i--){
+                        $date_update = date("Y-m-d", strtotime("-".$i." days"));
+                        $date_zone_update = new DateTime($date_update, $UTC_8);
+                        $date_zone_update->setTimezone($UTC_7);
+                        $date_update = $date_zone_update->format('Y-m-d H:i:s');
+                        $from_update = strtotime($date_update);
+                        $date_update = date("Y-m-d", strtotime("-".$i." days"));
+                        $date_zone_update = new DateTime($date_update, $UTC_8);
+                        $date_zone_update->setTimezone($UTC_7);
+                        $date_update = $date_zone_update->format('Y-m-d H:i:s');
+                        $currentDate_update = strtotime($date_update);
+                        $to_update = $currentDate_update + ("86399");
+                        $action_value_array = array();
+                        foreach ($action as $k => $v){
+                            $action_value = $this->Statistic_model->getBadgeDataCount($client_id, $site_id, $action_id[$k], $from_update, $to_update);
+                            $action_value_array[$v] = $action_value;
+                        }
+                        $this->Statistic_model->updateBadgeDataCache($client_id, $site_id, $from_update, $action_value_array);
+                    }
+                    $data = $this->Statistic_model->getBadgeDataCache($client_id, $site_id, $from, $to);
+                }
+                foreach ($action as $key => $value){
                     $action_data[$key] = array_fill(0, $day, 0);
-                    foreach ($data as $v){
-                        $index = array_search($v['_id']['date'], $action_label);
-                        $action_data[$key][$index] = $v['value'];
+                    foreach ($data as $index => $v){
+                        $action_data[$key][$index] = $v[$value];
                     }
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
                                                   'borderColor' => $action_border_color[$key],
                                                   'data' => $action_data[$key],
-                                                  'label' => $badge_name);
+                                                  'label' => $value);
                 }
             } else {
                 $date = date("Y-m-d", strtotime("-7 days"));
@@ -533,25 +562,45 @@ class Statistics  extends MY_Controller
                 $date = $date_zone->format('Y-m-d H:i:s');
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
-                $start_day = date("D", strtotime("-1 days"));
-                $week_day = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
-                $adjust_day = array_search($start_day, $week_day);
                 for($i=7; $i > 0 ; $i--){
                     $action_label[] =  date("D", strtotime("-".$i." days"));
                 }
-                $badge_reward = $this->Statistic_model->getTopBadgeData($client_id, $site_id, $from, $to);
-                $size = sizeof($badge_reward) > 5 ? 5 : sizeof($badge_reward);
-                for ($key = 0 ; $key < $size ; $key++){
-                    $data = $this->Statistic_model->getBadgeData($client_id, $site_id, $badge_reward[$key]['_id'], $from, $to, $type);
-                    $badge_name = $this->Statistic_model->getBadgeNameToClient($client_id, $site_id, $badge_reward[$key]['_id']);
+                $data = $this->Statistic_model->getBadgeDataCache($client_id, $site_id, $from, $to);
+                if(sizeof($data) != 7){
+                    $last_date = $this->Statistic_model->getLastBadgeDataCache($client_id, $site_id);
+                    $diff_date = date_diff($last_date && dateMongotoReadable($last_date) ? date_create(dateMongotoReadable($last_date)) : date_create(date("Y-m-d", strtotime("-33 days"))),date_create(date("Y-m-d", strtotime("-1 days"))));
+                    $diff_day = intval($diff_date->format("%a"))-1;
+                    $diff_day = $diff_day > 31 ? 31 : $diff_day;
+                    for($i=$diff_day; $i >= 1 ;$i--){
+                        $date_update = date("Y-m-d", strtotime("-".$i." days"));
+                        $date_zone_update = new DateTime($date_update, $UTC_8);
+                        $date_zone_update->setTimezone($UTC_7);
+                        $date_update = $date_zone_update->format('Y-m-d H:i:s');
+                        $from_update = strtotime($date_update);
+                        $date_update = date("Y-m-d", strtotime("-".$i." days"));
+                        $date_zone_update = new DateTime($date_update, $UTC_8);
+                        $date_zone_update->setTimezone($UTC_7);
+                        $date_update = $date_zone_update->format('Y-m-d H:i:s');
+                        $currentDate_update = strtotime($date_update);
+                        $to_update = $currentDate_update + ("86399");
+                        $action_value_array = array();
+                        foreach ($action as $k => $v){
+                            $action_value = $this->Statistic_model->getBadgeDataCount($client_id, $site_id, $action_id[$k], $from_update, $to_update);
+                            $action_value_array[$v] = $action_value;
+                        }
+                        $this->Statistic_model->updateBadgeDataCache($client_id, $site_id, $from_update, $action_value_array);
+                    }
+                    $data = $this->Statistic_model->getBadgeDataCache($client_id, $site_id, $from, $to);
+                }
+                foreach ($action as $key => $value){
                     $action_data[$key] = array_fill(0, 7, 0);
-                    foreach ($data as $v){
-                        $action_data[$key][intval(($v['_id']['day']+$adjust_day-1)%7)] = $v['value'];
+                    foreach ($data as $index => $v){
+                        $action_data[$key][$index] = $v[$value];
                     }
                     $action_dataset[$key] = array('backgroundColor' => $action_color[$key],
                                                   'borderColor' => $action_border_color[$key],
                                                   'data' => $action_data[$key],
-                                                  'label' => $badge_name);
+                                                  'label' => $value);
                 }
             }
 
