@@ -417,6 +417,16 @@ class Statistic_model extends MY_Model
         return $result;
     }
 
+    public function getLastActionDataCache($client_id, $site_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->order_by(array('date' => -1));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_statistic_action');
+        return $result ? $result[0]['date'] : null;
+    }
+
     public function getActionDataCount($client_id, $site_id, $action_name, $from, $to)
     {
         $this->mongo_db->select(array('action_id'));
@@ -485,7 +495,7 @@ class Statistic_model extends MY_Model
         return $result? $result[0]['name'] : null;
     }
 
-    public function getGoodsSuperData($client_id, $site_id, $action, $from, $to, $type=null)
+    public function getGoodsSuperData($client_id, $site_id, $goods, $from, $to, $type=null)
     {
         if($type == 'day'){
             $id = array(
@@ -505,7 +515,7 @@ class Statistic_model extends MY_Model
         $data =  $this->mongo_db->aggregate('playbasis_reward_status_to_player', array(
             array(
                 '$match' => array(
-                    'reward_id' => $action,
+                    'reward_id' => $goods,
                     'site_id' => $site_id,
                     'client_id' => $client_id,
                     'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
@@ -526,7 +536,7 @@ class Statistic_model extends MY_Model
         return $data['result'];
     }
 
-    public function getGoodsMonthlyData($client_id, $site_id, $action, $from, $to, $type=null)
+    public function getGoodsMonthlyData($client_id, $site_id, $goods, $from, $to, $type=null)
     {
         if($type == 'day'){
             $id = array(
@@ -546,7 +556,7 @@ class Statistic_model extends MY_Model
         $data =  $this->mongo_db->aggregate('playbasis_reward_status_to_player', array(
             array(
                 '$match' => array(
-                    'reward_id' => $action,
+                    'reward_id' => $goods,
                     'site_id' => $site_id,
                     'client_id' => $client_id,
                     'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
@@ -561,32 +571,6 @@ class Statistic_model extends MY_Model
             ),
             array(
                 '$sort' => array('_id' => -1),
-            )
-        ));
-
-        return $data['result'];
-    }
-
-    public function getTopBadgeData($client_id, $site_id, $from, $to)
-    {
-        $data =  $this->mongo_db->aggregate('playbasis_event_log', array(
-            array(
-                '$match' => array(
-                    'site_id' => $site_id,
-                    'client_id' => $client_id,
-                    'event_type' => 'REWARD',
-                    'reward_type' => 'BADGE',
-                    'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to))
-                ),
-            ),
-            array(
-                '$group' => array(
-                    '_id' => '$item_id',
-                    'value' => array('$sum' => 1)
-                )
-            ),
-            array(
-                '$sort' => array('value' => -1),
             )
         ));
 
@@ -624,14 +608,14 @@ class Statistic_model extends MY_Model
         return $result;
     }
 
-    public function updateBadgeDataCache($client_id, $site_id, $from, $action)
+    public function updateBadgeDataCache($client_id, $site_id, $from, $data)
     {
         $insert_data = array(
             'client_id' => new MongoId($client_id),
             'site_id' => new MongoId($site_id),
             'date' => new MongoDate($from),
         );
-        $insert_data = array_merge($insert_data, $action);
+        $insert_data = array_merge($insert_data, $data);
         $result = $this->mongo_db->insert('playbasis_statistic_badge', $insert_data);
         return $result;
     }
@@ -718,7 +702,48 @@ class Statistic_model extends MY_Model
         return $data['result'];
     }
 
-    public function getMGMData($client_id, $site_id, $action, $from, $to, $type=null)
+    public function getRegisterDataCache($client_id, $site_id, $from, $to)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('date', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
+        $result = $this->mongo_db->get('playbasis_statistic_player');
+        return $result;
+    }
+
+    public function getLastRegisterDataCache($client_id, $site_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->order_by(array('date' => -1));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_statistic_player');
+        return $result ? $result[0]['date'] : null;
+    }
+
+    public function getRegisterDataCount($client_id, $site_id, $from, $to)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('added_by_script', array('$ne' => true));
+        $this->mongo_db->where('date_added', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
+        $result = $this->mongo_db->count('playbasis_player');
+        return $result;
+    }
+
+    public function updateRegisterDataCache($client_id, $site_id, $from, $value)
+    {
+        $insert_data = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'date' => new MongoDate($from),
+            'value' => $value
+        );
+        $result = $this->mongo_db->insert('playbasis_statistic_player', $insert_data);
+        return $result;
+    }
+
+    public function getMGMData($client_id, $site_id, $from, $to, $type=null)
     {
         if($type == 'day'){
             $id = array(
@@ -738,7 +763,7 @@ class Statistic_model extends MY_Model
         $data =  $this->mongo_db->aggregate('playbasis_validated_action_log', array(
             array(
                 '$match' => array(
-                    'action_name' => $action,
+                    'action_name' => 'invited',
                     'site_id' => $site_id,
                     'client_id' => $client_id,
                     'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
@@ -757,6 +782,48 @@ class Statistic_model extends MY_Model
 
         return $data['result'];
     }
+
+    public function getMGMDataCache($client_id, $site_id, $from, $to)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('date', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
+        $result = $this->mongo_db->get('playbasis_statistic_mgm');
+        return $result;
+    }
+
+    public function getLastMGMDataCache($client_id, $site_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->order_by(array('date' => -1));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_statistic_mgm');
+        return $result ? $result[0]['date'] : null;
+    }
+
+    public function getMGMDataCount($client_id, $site_id, $from, $to)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('action_name', 'invited');
+        $this->mongo_db->where('date_added', array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)));
+        $result = $this->mongo_db->count('playbasis_validated_action_log');
+        return $result;
+    }
+
+    public function updateMGMDataCache($client_id, $site_id, $from, $value)
+    {
+        $insert_data = array(
+            'client_id' => new MongoId($client_id),
+            'site_id' => new MongoId($site_id),
+            'date' => new MongoDate($from),
+            'value' => $value
+        );
+        $result = $this->mongo_db->insert('playbasis_statistic_mgm', $insert_data);
+        return $result;
+    }
+
     
 //    public function getPlayerInfo($pb_player_id){
 ////
