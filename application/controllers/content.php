@@ -99,7 +99,7 @@ class Content extends MY_Controller
 
         $this->form_validation->set_rules('node_id', $this->lang->line('entry_id'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
+        $this->form_validation->set_rules('content_title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('summary', $this->lang->line('entry_summary'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
@@ -121,7 +121,7 @@ class Content extends MY_Controller
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['node_id'] = (isset($content_data['node_id']) && $content_data['node_id']) ? $content_data['node_id'] : null;
-                $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
+                $data['title'] = (isset($content_data['content_title']) && $content_data['content_title']) ? $content_data['content_title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
                 $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
@@ -218,7 +218,9 @@ class Content extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'content/update/' . $content_id;
 
-        $this->form_validation->set_rules('title', $this->lang->line('entry_title'),
+        $this->form_validation->set_rules('node_id', $this->lang->line('entry_id'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('content_title', $this->lang->line('entry_title'),
             'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('summary', $this->lang->line('entry_summary'),
             'trim|required|min_length[2]|max_length[255]|xss_clean');
@@ -242,7 +244,7 @@ class Content extends MY_Controller
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
                 $data['node_id'] = (isset($content_data['node_id']) && $content_data['node_id']) ? $content_data['node_id'] : null;
-                $data['title'] = (isset($content_data['title']) && $content_data['title']) ? $content_data['title'] : null;
+                $data['title'] = (isset($content_data['content_title']) && $content_data['content_title']) ? $content_data['content_title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
                 $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
@@ -615,12 +617,12 @@ class Content extends MY_Controller
             $this->data['node_id'] = '';
         }
 
-        if ($this->input->post('title')) {
-            $this->data['title'] = $this->input->post('title');
+        if ($this->input->post('content_title')) {
+            $this->data['content_title'] = $this->input->post('content_title');
         } elseif (isset($content_info['title'])) {
-            $this->data['title'] = $content_info['title'];
+            $this->data['content_title'] = $content_info['title'];
         } else {
-            $this->data['title'] = '';
+            $this->data['content_title'] = '';
         }
 
         if ($this->input->post('summary')) {

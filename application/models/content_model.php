@@ -164,7 +164,7 @@ class Content_model extends MY_Model
     public function getContentByNodeID($client_id, $site_id, $node_id)
     {
         $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('node_id', $node_id);
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->limit(1);
