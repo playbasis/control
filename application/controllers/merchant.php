@@ -93,7 +93,7 @@ class Merchant extends MY_Controller
                 if (!empty($branch['branchName'])) {
                     $this->form_validation->set_rules('newBranches[' . $i++ . '][branchName]',
                         $this->lang->line('entry_branch_name'),
-                        'trim|xss_clean|min_length[3]|callback_alpha_dash_space');
+                        'trim|xss_clean|min_length[3]');
                 }
             }
         }
