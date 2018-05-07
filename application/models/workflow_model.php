@@ -9,17 +9,7 @@ class Workflow_model extends MY_Model
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
 
-        if($approval_status == "pending") {
-
-            $or_where = array(
-                array('approve_status' => 'pending'),
-                array('approve_status' => null),
-                array('approve_status' => ""),
-            );
-            $this->mongo_db->where(array('$or' => $or_where));
-        }else{
-            $this->mongo_db->where('approve_status', $approval_status);
-        }
+        $this->mongo_db->where('approve_status', $approval_status);
 
         if (isset($data['filter_name']) && $data['filter_name']) {
             $filter = array();
@@ -58,17 +48,7 @@ class Workflow_model extends MY_Model
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
 
-        if($approval_status == "pending") {
-
-            $or_where = array(
-                array('approve_status' => 'pending'),
-                array('approve_status' => null),
-                array('approve_status' => ""),
-            );
-            $this->mongo_db->where(array('$or' => $or_where));
-        }else{
-            $this->mongo_db->where('approve_status', $approval_status);
-        }
+        $this->mongo_db->where('approve_status', $approval_status);
 
         if (isset($data['filter_name']) && $data['filter_name']) {
             $filter = array();
@@ -117,13 +97,7 @@ class Workflow_model extends MY_Model
         //$this->mongo_db->select(array('email','first_name','last_name','username','image','exp','level','date_added','date_modified'));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
-
-        $or_where = array(
-            array('approve_status' => 'pending'),
-            array('approve_status' => null),
-            array('approve_status' => ""),
-        );
-        $this->mongo_db->where(array('$or' => $or_where));
+        $this->mongo_db->where('approve_status', 'pending');
 
         $results = $this->mongo_db->count("playbasis_player");
         return $results;
