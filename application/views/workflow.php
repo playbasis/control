@@ -22,7 +22,7 @@
                 <a href="<?php echo site_url('workflow');?>"          <?php if ($tab_status == "approved") { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_approved'); ?></a>
                 <a href="<?php echo site_url('workflow/rejected');?>" <?php if ($tab_status == "rejected") { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_rejected'); ?></a>
                 <a href="<?php echo site_url('workflow/pending');?>"  <?php if ($tab_status == "pending")  { ?>class="selected"<?php }?> style="display: inline;"><?php echo $this->lang->line('tab_pending'); ?>
-                    <?php if ($pending_count) { ?>
+                    <?php if (isset($pending_count) && $pending_count) { ?>
                     <span class="badge badge-important"><?php echo $pending_count; ?></span>
                     <?php } ?>
                 </a>
