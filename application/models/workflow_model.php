@@ -101,24 +101,6 @@ class Workflow_model extends MY_Model
             $this->mongo_db->where_in('tags', $data['filter_tag']);
         }
 
-        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
-            $order = -1;
-        } else {
-            $order = 1;
-        }
-
-        $sort_data = array(
-            'cl_player_id',
-            'first_name',
-            'email'
-        );
-
-        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-            $this->mongo_db->order_by(array($data['sort'] => $order));
-        } else {
-            $this->mongo_db->order_by(array('name' => $order));
-        }
-
         if (isset($data['start']) || isset($data['limit'])) {
             if ($data['start'] < 0) {
                 $data['start'] = 0;
@@ -443,25 +425,7 @@ class Workflow_model extends MY_Model
         if (isset($data['filter_tag']) && $data['filter_tag']) {
             $this->mongo_db->where_in('tags', $data['filter_tag']);
         }
-
-        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
-            $order = -1;
-        } else {
-            $order = 1;
-        }
-
-        $sort_data = array(
-            'cl_player_id',
-            'first_name',
-            'email'
-        );
-
-        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-            $this->mongo_db->order_by(array($data['sort'] => $order));
-        } else {
-            $this->mongo_db->order_by(array('name' => $order));
-        }
-
+        
         if (isset($data['start']) || isset($data['limit'])) {
             if ($data['start'] < 0) {
                 $data['start'] = 0;
