@@ -410,8 +410,8 @@ class Workflow extends MY_Controller
         } else {
             $this->data['org_status'] = false;
         }
-        $this->data['pending_count'] = $this->Workflow_model->getTotalPendingPlayer($client_id, $site_id);
-        $this->data['locked_count'] = $this->Workflow_model->getTotalLockedPlayer($client_id, $site_id);
+        //$this->data['pending_count'] = $this->Workflow_model->getTotalPendingPlayer($client_id, $site_id);
+        //$this->data['locked_count'] = $this->Workflow_model->getTotalLockedPlayer($client_id, $site_id);
 
 
         if (isset($this->error['warning'])) {

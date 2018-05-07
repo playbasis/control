@@ -21,17 +21,14 @@ class Workflow_model extends MY_Model
             $this->mongo_db->where('approve_status', $approval_status);
         }
 
-        $filter = array();
-
         if (isset($data['filter_name']) && $data['filter_name']) {
+            $filter = array();
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             //$this->mongo_db->where('name', $regex);
             $filter[]=array('first_name' => $regex);
             $filter[]=array('last_name' => $regex);
-        }
-
-        if($filter)
             $this->mongo_db->where(array('$or' => $filter));
+        }
 
         if (isset($data['filter_id']) && $data['filter_id']) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_id'])) . "/i");
@@ -73,17 +70,14 @@ class Workflow_model extends MY_Model
             $this->mongo_db->where('approve_status', $approval_status);
         }
 
-        $filter = array();
-
         if (isset($data['filter_name']) && $data['filter_name']) {
+            $filter = array();
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             //$this->mongo_db->where('name', $regex);
             $filter[]=array('first_name' => $regex);
             $filter[]=array('last_name' => $regex);
-        }
-
-        if($filter)
             $this->mongo_db->where(array('$or' => $filter));
+        }
 
         if (isset($data['filter_id']) && $data['filter_id']) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_id'])) . "/i");
