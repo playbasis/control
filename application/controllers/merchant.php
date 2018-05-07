@@ -198,7 +198,7 @@ class Merchant extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         $this->form_validation->set_rules('merchant-name', $this->lang->line('entry_name'),
-            'trim|required|min_length[3]|max_length[255]|xss_clean|callback_alpha_dash_space');
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('merchant-desc', $this->lang->line('entry_description'),
             'trim|max_length[255]|xss_clean');
         $this->form_validation->set_rules('merchant-status', $this->lang->line('entry_status'), 'trim|xss_clean');
