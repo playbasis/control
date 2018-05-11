@@ -75,20 +75,19 @@ class Goods extends MY_Controller
 
     public function import()
     {
-
-        // Get Usage
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
-        $usage = $this->Goods_model->getTotalGoodsBySiteId(
-            array('site_id' => $site_id));
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-
         // Get Limit
         $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
-
-        if ($limit && $usage >= $limit) {
-            $this->data['message'] = $this->lang->line('error_limit');
+        if ($limit){
+            // Get Usage
+            $usage = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id));
+            if ($usage >= $limit) {
+                $this->data['message'] = $this->lang->line('error_limit');
+            }
         }
+
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -329,18 +328,17 @@ class Goods extends MY_Controller
 
     public function insert()
     {
-        // Get Usage
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
-        $usage = $this->Goods_model->getTotalGoodsBySiteId(
-            array('site_id' => $site_id));
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-
         // Get Limit
         $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
-
-        if ($limit && $usage >= $limit) {
-            $this->data['message'] = $this->lang->line('error_limit');
+        if ($limit){
+            // Get Usage
+            $usage = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id));
+            if ($usage >= $limit) {
+                $this->data['message'] = $this->lang->line('error_limit');
+            }
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -1214,11 +1212,7 @@ class Goods extends MY_Controller
                 }
                 array_push($in_goods, new MongoId($goods_id));
             }
-            $goods_total = $this->Goods_model->getTotalGoodsBySiteId(array(
-                'site_id' => $site_id,
-                'sort' => 'sort_order',
-                'specific' => array("goods_id" => array('$in' => $in_goods )),
-            ));
+            $goods_total = sizeof($good_list);
             $goods_list = $this->Goods_model->getGoodsBySiteId(array(
                 'site_id' => $site_id,
                 'limit' => $per_page,
@@ -1903,12 +1897,10 @@ class Goods extends MY_Controller
     {
         $error = null;
         if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
-            $c = $this->Goods_model->getTotalGoodsBySiteId(array(
-                'site_id' => $this->User_model->getSiteId(),
-                '$in' => array(new MongoId($goodsId)),
-            ));
-            $has = ($c > 0);
-            if (!$has) {
+
+            $goods_info = $this->Goods_model->getGoodsToClient($goodsId);
+            
+            if ($goods_info['site_id'] != $this->User_model->getSiteId()) {
                 $error = $this->lang->line('error_permission');
             }
         }
@@ -2093,11 +2085,14 @@ class Goods extends MY_Controller
 
         /* check limit for goods group */
         $site_id = $this->User_model->getSiteId();
-        $usage = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id));
+
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
         $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
-        if ($limit !== null && $usage + count($list) > $limit) {
-            throw new Exception('Cannot process your request because of uploaded goods will go over the limit');
+        if ($limit) {
+            $usage = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id));
+            if ($usage + count($list) > $limit) {
+                throw new Exception('Cannot process your request because of uploaded goods will go over the limit');
+            }
         }
         $this->Goods_model->addGoodsToClient_bulk($list);
         $goods_data = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
