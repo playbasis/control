@@ -421,6 +421,11 @@ class Goods_model extends MY_Model
             $tags = explode(',', $data['filter_tags']);
             $this->mongo_db->where_in('tags', $tags);
         }
+
+        if(isset($data['distinct_id']) && is_array($data['distinct_id']) && $data['distinct_id']){
+            $this->mongo_db->where_in('_id', $data['distinct_id']);
+        }
+
         if(isset($data['filter_custom_key']) && $data['filter_custom_key']){
             if(isset($data['filter_custom_val']) && isset($data['filter_custom_key'])){
                 $this->mongo_db->where('custom_param', array('$elemMatch' => array('key' => $data['filter_custom_key'] , 'value' => $data['filter_custom_val'])));
@@ -454,19 +459,19 @@ class Goods_model extends MY_Model
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('_id', new MongoId($distinct_id));
-
+        $this->mongo_db->limit(1);
         $result =  $this->mongo_db->get('playbasis_goods_distinct_to_client');
         return isset($result[0]) ? $result[0] : null;
     }
 
-    public function getGoodsDistinctID($site_id, $goods_id)
+    public function getGoodsByDistinctID($client_id, $site_id, $distinct_id)
     {
-        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
-        $this->mongo_db->where('_id', new MongoId($goods_id));
-
+        $this->mongo_db->where('distinct_id', new MongoId($distinct_id));
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_goods_to_client');
-        return isset($result[0]['distinct_id']) ? $result[0]['distinct_id'] : null;
+        return $result[0] ? $result[0] : null;
     }
 
     public function checkGoodsWhiteList($site_id, $distinct_id)
@@ -474,7 +479,7 @@ class Goods_model extends MY_Model
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('_id', new MongoId($distinct_id));
-        
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_goods_distinct_to_client');
         return isset($result[0]['whitelist_enable']) ? $result[0]['whitelist_enable'] : false;
     }

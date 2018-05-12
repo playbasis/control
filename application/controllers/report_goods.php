@@ -131,67 +131,54 @@ class Report_goods extends MY_Controller
             $filter_username = $this->input->get('username');
             $parameter_url .= "&username=" . $filter_username;
         } else {
-            $filter_username = '';
+            $filter_username = null;
         }
-        $goodsList = array();
+
+        $filter_tags = null;
+        $filter_goods_distinct = array();
+        $filter_goods_data = array();
         if ($this->input->get('tags')) {
             $filter_tags = $this->input->get('tags');
             $parameter_url .= "&tags=" . $filter_tags;
-            $opts = array('client_id' => $client_id, 'site_id' => $site_id);
-            $opts['tags'] = explode(',', $filter_tags);
-            $group_list = $this->Goods_model->getGroupsList($site_id, array('filter_group' => true));;
-            $in_goods = array();
-            foreach ($group_list as $group_name){
-                $goods_group_id =  $this->Goods_model->getGoodsIDByName($client_id, $site_id, "", $group_name['name'], false);
-                array_push($in_goods, new MongoId($goods_group_id));
-            }
-            $opts['specific'] = array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ));
-            $goodsList = $this->Goods_model->getAllGoods($opts);
-            foreach ($goodsList as &$val){
-                $val = $val['goods_id'];
-            }
-        } else {
-            $filter_tags = '';
         }
-
-        $goods = array();
-        $group = array();
-        if ($this->input->get('goods_id')) {
+        if ($this->input->get('goods_id')){
             $filter_goods_id = $this->input->get('goods_id');
             $parameter_url .= "&goods_id=" . $filter_goods_id;
             $filter_goods_id = explode(',', $filter_goods_id);
             foreach ($filter_goods_id as $value){
-                if($this->input->get('tags') && $goodsList){
-                    $match =  array_search($value, $goodsList);
-                    if(!is_null($match) && $match !== false){
-                        $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($value);
-                        if(array_key_exists('group', $goods_detail)){
-                            array_push($group, $goods_detail['group']);
-                        } else {
-                            array_push($goods, $goods_detail['goods_id']);
-                        }
-                    }
-                } else {
-                    $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($value);
-                    if(array_key_exists('group', $goods_detail)){
-                        array_push($group, $goods_detail['group']);
-                    } else {
-                        array_push($goods, $goods_detail['goods_id']);
-                    }
+                $goods_data = $this->Goods_model->getGoodsOfClientPrivate($value);
+                $filter_goods_data[] = $goods_data;
+                if(isset($goods_data['distinct_id'])){
+                    $filter_goods_distinct[] = $goods_data['distinct_id'];
                 }
+
             }
         } else {
-            if($goodsList){
-                foreach ($goodsList as $v){
-                    $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($v);
-                    if(array_key_exists('group', $goods_detail)){
-                        array_push($group, $goods_detail['group']);
-                    } else {
-                        array_push($goods, $goods_detail['goods_id']);
-                    }
+            $filter_goods_id = array();
+        }
+        $goods_list = array();
+        $group = array();
+        $goods = array();
+
+        if($filter_goods_distinct || $filter_tags){
+            $goods_list = $this->Goods_model->getGroupsList($site_id,  $filter_array = array(
+                'distinct_id' => $filter_goods_distinct,
+                'filter_tags' => $filter_tags
+            ));
+        }
+
+        foreach ($goods_list as $list){
+            if($list['is_group']){
+                $group[] = $list['name'];
+            } else {
+                $index = array_search($list['_id'], array_column($filter_goods_data, 'distinct_id'));
+                if($index){
+                    $goods[] = $filter_goods_data[$index]['goods_id'];
+                } else {
+                    $goods_detail = $this->Goods_model->getGoodsByDistinctID($client_id, $site_id, $list['_id']);
+                    $goods[] = $goods_detail['goods_id'];
                 }
             }
-            $filter_goods_id = array();
         }
 
         if ($this->input->get('status')) {
@@ -203,6 +190,8 @@ class Report_goods extends MY_Controller
         }
 
         $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
+
+
 
         $data = array(
             'client_id' => $client_id,
