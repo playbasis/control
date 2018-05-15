@@ -96,12 +96,7 @@
           cssHeader: "headerSortable",
           // debug: true,
           headers: { 
-            // we start counting zero) 
-            2: {
-                // disable it by setting the property sorter to false 
-                sorter: false 
-            }, 
-            
+            // we start counting zero)
             3: {
                 // disable it by setting the property sorter to false 
                 sorter: false 
