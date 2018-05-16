@@ -22,12 +22,29 @@ class Report_goods_model extends MY_Model
         }
 
         if (!empty($data['goods_id']) && !empty($data['group'])) {
-            $this->mongo_db->where('$or', array(array('group' => array('$in' => $data['group'])),
-                array('goods_id' => array('$in' => $data['goods_id']))));
+            if(sizeof($data['group']) == 1){
+                $group = array('group' => $data['group'][0]);
+            } else{
+                $group = array('group' => array('$in' => $data['group']));
+            }
+            if(sizeof($data['group']) == 1){
+                $goods = array('goods_id' => $data['goods_id'][0]);
+            } else{
+                $goods = array('goods_id' => array('$in' => $data['goods_id']));
+            }
+            $this->mongo_db->where('$or', array($group, $goods));
         } elseif (!empty($data['group'])){
-            $this->mongo_db->where_in('group', $data['group']);
+            if(sizeof($data['group']) == 1){
+                $this->mongo_db->where('group', $data['group'][0]);
+            } else{
+                $this->mongo_db->where_in('group', $data['group']);
+            }
         } elseif (!empty($data['goods_id'])){
-            $this->mongo_db->where_in('goods_id', $data['goods_id']);
+            if(sizeof($data['goods_id']) == 1){
+                $this->mongo_db->where('goods_id', $data['goods_id'][0]);
+            } else {
+                $this->mongo_db->where_in('goods_id', $data['goods_id']);
+            }
         }
 
         if (isset($data['username']) && $data['username'] != '') {
@@ -66,12 +83,29 @@ class Report_goods_model extends MY_Model
         }
 
         if (!empty($data['goods_id']) && !empty($data['group'])) {
-            $this->mongo_db->where('$or', array(array('group' => array('$in' => $data['group'])),
-                array('goods_id' => array('$in' => $data['goods_id']))));
+            if(sizeof($data['group']) == 1){
+                $group = array('group' => $data['group'][0]);
+            } else{
+                $group = array('group' => array('$in' => $data['group']));
+            }
+            if(sizeof($data['group']) == 1){
+                $goods = array('goods_id' => $data['goods_id'][0]);
+            } else{
+                $goods = array('goods_id' => array('$in' => $data['goods_id']));
+            }
+            $this->mongo_db->where('$or', array($group, $goods));
         } elseif (!empty($data['group'])){
-            $this->mongo_db->where_in('group', $data['group']);
+            if(sizeof($data['group']) == 1){
+                $this->mongo_db->where('group', $data['group'][0]);
+            } else{
+                $this->mongo_db->where_in('group', $data['group']);
+            }
         } elseif (!empty($data['goods_id'])){
-            $this->mongo_db->where_in('goods_id', $data['goods_id']);
+            if(sizeof($data['goods_id']) == 1){
+                $this->mongo_db->where('goods_id', $data['goods_id'][0]);
+            } else {
+                $this->mongo_db->where_in('goods_id', $data['goods_id']);
+            }
         }
 
         if (isset($data['username']) && $data['username'] != '') {
@@ -103,7 +137,6 @@ class Report_goods_model extends MY_Model
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
-        $this->mongo_db->order_by(array('date_added' => 'ASC'));
         $results = $this->mongo_db->get("playbasis_goods_log");
 
         return $results;
