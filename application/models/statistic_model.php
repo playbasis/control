@@ -644,7 +644,7 @@ class Statistic_model extends MY_Model
                     'client_id' => $client_id,
                     'event_type' => 'REWARD',
                     'reward_type' => 'BADGE',
-                    'item_id' => $badge_id,
+                    'item_id' => new MongoId($badge_id),
                     'date_added' => array('$gte' => new MongoDate($from), '$lte' => new MongoDate($to)),
                 ),
             ),
