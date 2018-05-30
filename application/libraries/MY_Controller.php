@@ -170,7 +170,7 @@ class  MY_Controller  extends  CI_Controller  {
                 
                 foreach ($features as $value) {
                     if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
-                        if(isset($value['type'])){
+                        if(defined('MENU_CATEGORY_ENABLED') && (MENU_CATEGORY_ENABLED == true) && isset($value['type'])){
                             $this->data['features'][$value['type']][] = array(
                                 'feature_id' => $value['_id'],
                                 'name' => $value['name'],
