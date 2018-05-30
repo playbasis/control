@@ -407,7 +407,7 @@ class Goods_model extends MY_Model
 
     public function getGroupsList($site_id, $data=array())
     {
-        $this->mongo_db->select(array('name','is_group'));
+        $this->mongo_db->select(array('name','is_group','tags'));
         $this->mongo_db->where('site_id', new MongoId($site_id));
         
         if(isset($data['filter_goods']) && $data['filter_goods']){
@@ -471,7 +471,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('distinct_id', new MongoId($distinct_id));
         $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_goods_to_client');
-        return $result[0] ? $result[0] : null;
+        return isset($result[0]) ? $result[0] : null;
     }
 
     public function checkGoodsWhiteList($site_id, $distinct_id)
