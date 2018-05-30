@@ -165,6 +165,9 @@ class Report_goods extends MY_Controller
                 'distinct_id' => $filter_goods_distinct,
                 'filter_tags' => $filter_tags
             ));
+            $goods_distinct = $goods_list;
+        } else {
+            $goods_distinct = $this->Goods_model->getGroupsList($site_id);
         }
 
         foreach ($goods_list as $list){
@@ -249,14 +252,18 @@ class Report_goods extends MY_Controller
                 }
             }
 
+            $goods_name = isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'];
+            $index = array_search($goods_name,array_column($goods_distinct, 'name'));
+            $tags = isset($goods_distinct[$index]['tags']) ? $goods_distinct[$index]['tags'] : null;
             $this->data['reports'][] = array(
                 'cl_player_id' => isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
                 'date_added' => $date_added ,
                 'date_expire' => $date_expire,
                 'date_used' => isset($result['status']) && $result['status'] == 'used' ? $date_modified : null,
                 'date_gifted' => isset($result['status']) && $result['status'] == 'sender' ? $date_modified : null,
-                'goods_name' => isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'],
+                'goods_name' => $goods_name,
                 'code' => isset($result['code']) ? $result['code'] : null,
+                'tags' => $tags,
                 'value' => $result['amount'],
                 'status' => $status
             );
@@ -446,6 +453,9 @@ class Report_goods extends MY_Controller
                 'distinct_id' => $filter_goods_distinct,
                 'filter_tags' => $filter_tags
             ));
+            $goods_distinct = $goods_list;
+        } else {
+            $goods_distinct = $this->Goods_model->getGroupsList($site_id);
         }
 
         foreach ($goods_list as $list){
@@ -497,6 +507,7 @@ class Report_goods extends MY_Controller
                 $this->lang->line('column_player_id'),
                 $this->lang->line('column_goods_name'),
                 $this->lang->line('column_goods_code'),
+                $this->lang->line('column_tags'),
                 $this->lang->line('column_goods_amount'),
                 $this->lang->line('column_status'),
                 $this->lang->line('column_date_added'),
@@ -505,6 +516,7 @@ class Report_goods extends MY_Controller
                 $this->lang->line('column_date_expire')
             )
         );
+
         $data['limit'] = 10000;
         for ($i = 0; $i < $report_total/10000; $i++){
             $data['start'] = ($i * 10000);
@@ -539,11 +551,14 @@ class Report_goods extends MY_Controller
                         $status = $currentTime > $expireTime && $status != 'used'? 'expire' : $status;
                     }
                 }
-
+                $goods_name = isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'];
+                $index = array_search($goods_name,array_column($goods_distinct, 'name'));
+                $tags = isset($goods_distinct[$index]['tags']) ? implode(',', $goods_distinct[$index]['tags']) : null;
                 $exporter->addRow(array(
                         isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
-                        isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'],
+                        $goods_name,
                         isset($result['code']) ? $result['code'] : null,
+                        $tags,
                         $result['amount'],
                         $status,
                         $date_added,

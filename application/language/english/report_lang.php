@@ -21,6 +21,7 @@ $lang['column_exp']                             = 'Exp';
 $lang['column_action_name']                     = 'Action';
 $lang['column_url']                             = 'URL OR FILTER STRING';
 $lang['column_status']                          = 'Status';
+$lang['column_tags']                            = 'Tag(s)';
 $lang['column_date_added']                      = 'Received Date';
 $lang['column_date_used']                       = 'Used Date';
 $lang['column_date_gifted']                     = 'Gifted Date';

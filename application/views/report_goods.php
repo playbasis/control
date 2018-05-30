@@ -85,6 +85,7 @@
                     <td class="left"><?php echo $this->lang->line('column_player_id'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_goods_name'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_goods_code'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_tags'); ?></td>
                     <td width="50" class="right"><?php echo $this->lang->line('column_goods_amount'); ?></td>
                     <td width="50" class="right"><?php echo $this->lang->line('column_goods_status'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
@@ -100,6 +101,13 @@
                         <td style="word-wrap:break-word;" class="left"><?php echo $report['cl_player_id']; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo isset($report['goods_name'])&&$report['goods_name']!=null ? $report['goods_name']: ""; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo $report['code']; ?></td>
+                        <td style="word-wrap:break-word;" class="right">
+                        <?php if(isset($report['tags']) && $report['tags']){
+                            foreach ($report['tags'] as $val ){ ?>
+                                <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
+                            <?php }
+                        } ?>
+                        </td>
                         <td style="word-wrap:break-word;" class="right"><?php echo $report['value']; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo isset($report['status']) ? $report['status']: ""; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo $report['date_added']; ?></td>

@@ -486,7 +486,7 @@ class Statistics  extends MY_Controller
                 $badge_label = array('00:00','01:00','02:00','03:00','04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
                                      '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00');
                 foreach($badge_id as $key => $value){
-                    $data = $this->Statistic_model->getBadgeData($client_id,  $site_id, $value, $from, $to, $type);
+                    $data = $this->Statistic_model->getBadgeData($client_id, $site_id, $value, $from, $to, $type);
                     $badge_data[$key] = array_fill(0, 24, 0);
                     foreach ($data as $v){
                         $badge_data[$key][intval($v['_id']['hour'])] = $v['value'];
