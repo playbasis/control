@@ -27,7 +27,11 @@ class Report_custompoint_model extends MY_Model
         }
 
         if (isset($data['reward_id']) && !empty($data['reward_id'])) {
-            $this->mongo_db->where_in('reward_id', $data['reward_id']);
+            if(sizeof($data['reward_id']) > 1){
+                $this->mongo_db->where_in('reward_id', $data['reward_id']);
+            } else {
+                $this->mongo_db->where('reward_id', $data['reward_id'][0]);
+            }
         }
 
         $results = $this->mongo_db->count("playbasis_reward_status_to_player");
@@ -53,7 +57,11 @@ class Report_custompoint_model extends MY_Model
         }
 
         if (isset($data['reward_id']) && !empty($data['reward_id'])) {
-            $this->mongo_db->where_in('reward_id', $data['reward_id']);
+            if(sizeof($data['reward_id']) > 1){
+                $this->mongo_db->where_in('reward_id', $data['reward_id']);
+            } else {
+                $this->mongo_db->where('reward_id', $data['reward_id'][0]);
+            }
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
@@ -93,7 +101,11 @@ class Report_custompoint_model extends MY_Model
         }
 
         if (isset($data['reward_id']) && !empty($data['reward_id'])) {
-            $this->mongo_db->where_in('reward_id', $data['reward_id']);
+            if(sizeof($data['reward_id']) > 1){
+                $this->mongo_db->where_in('reward_id', $data['reward_id']);
+            } else {
+                $this->mongo_db->where('reward_id', $data['reward_id'][0]);
+            }
         }
 
         $results = $this->mongo_db->count("playbasis_event_log");
@@ -120,7 +132,11 @@ class Report_custompoint_model extends MY_Model
         }
 
         if (isset($data['reward_id']) && !empty($data['reward_id'])) {
-            $this->mongo_db->where_in('reward_id', $data['reward_id']);
+            if(sizeof($data['reward_id']) > 1){
+                $this->mongo_db->where_in('reward_id', $data['reward_id']);
+            } else {
+                $this->mongo_db->where('reward_id', $data['reward_id'][0]);
+            }
         }
 
         if (isset($data['start']) || isset($data['limit'])) {

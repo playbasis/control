@@ -188,11 +188,31 @@ class Report_reward extends MY_Controller
 
         foreach ($results as $result) {
             $status = null;
-            $badge_name = null;
+            if ($client_id) {
+                $data_filter['client_id'] = $client_id;
+                $data_filter['site_id'] = $site_id;
+                // $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
+
+                $all_badges_reward = $this->Report_reward_model->getRewardsBadgesSite($data_filter);
+
+                $this->data['badge_rewards'] = $all_badges_reward;
+            } else {
+                $this->data['badge_rewards'] = array();
+            }
 
             $badge_name = explode('earned ',  $result['message']);
-            $badge_name = explode(' badge',  $badge_name[1]);
-            $badge_name = $badge_name[0];
+            if(isset($badge_name[1])){
+                $badge_name = explode('badge',  $badge_name[1]);
+                $badge_name = $badge_name[0];
+            } else {
+                $index = array_search($result['item_id'], array_column($this->data['badge_rewards'], 'badge_id'));
+                if($index) {
+                    $badge_name = $this->data['badge_rewards'][$index]['name'];
+                } else {
+                    $badge_name = "";
+                }
+            }
+
 
             if ($this->input->get('time_zone')){
                 $date_added = new DateTime(datetimeMongotoReadable($result['date_added']), $UTC_7);
@@ -207,18 +227,6 @@ class Report_reward extends MY_Controller
                 'value' => $result['value'],
                 'status' => isset($status) ? $status : null
             );
-        }
-
-        $this->data['badge_rewards'] = array();
-
-        if ($client_id) {
-            $data_filter['client_id'] = $client_id;
-            $data_filter['site_id'] = $site_id;
-            // $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
-
-            $all_badges_reward = $this->Report_reward_model->getRewardsBadgesSite($data_filter);
-
-            $this->data['badge_rewards'] = $all_badges_reward;
         }
 
         $config['base_url'] = $url . $parameter_url;

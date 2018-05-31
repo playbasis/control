@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
-class Report_registration extends MY_Controller
+class Report_referral extends MY_Controller
 {
 
     public function __construct()
@@ -29,7 +29,7 @@ class Report_registration extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getRegisteredPlayers(0, site_url('report_registration/page'));
+        $this->getReferralPlayers(0, site_url('report_referral/page'));
 
     }
 
@@ -45,10 +45,10 @@ class Report_registration extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getRegisteredPlayers($offset, site_url('report_registration/page'));
+        $this->getReferralPlayers($offset, site_url('report_referral/page'));
     }
 
-    public function registration_filter()
+    public function referral_filter()
     {
         if (!$this->validateAccess()) {
             echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
@@ -60,10 +60,10 @@ class Report_registration extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getRegisteredPlayers(0, site_url('report_registration/page'));
+        $this->getReferralPlayers(0, site_url('report_referral/page'));
     }
 
-    public function getRegisteredPlayers($offset, $url)
+    public function getReferralPlayers($offset, $url)
     {
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
@@ -165,9 +165,9 @@ class Report_registration extends MY_Controller
 
             $this->load->model('Report_player_model');
 
-            $report_total = $this->Report_player_model->getTotalPlayers($data);
+            $report_total = $this->Report_player_model->getTotalPlayersReferral($data);
 
-            $results = $this->Report_player_model->getReportPlayers($data);
+            $results = $this->Report_player_model->getReportPlayersReferral($data);
 
         }
 
@@ -183,6 +183,7 @@ class Report_registration extends MY_Controller
 
             $this->data['reports'][] = array(
                 'cl_player_id' => $result['cl_player_id'],
+                'cl_player_id-2' => isset($result['cl_player_id-2']) ? $result['cl_player_id-2'] : null,
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
             );
         }
@@ -234,7 +235,7 @@ class Report_registration extends MY_Controller
         $this->data['filter_username'] = $filter_username;
         $this->data['filter_site_id'] = $filter_site_id;
 
-        $this->data['main'] = 'report_registration';
+        $this->data['main'] = 'report_referral';
         $this->load->vars($this->data);
         $this->render_page('template');
 
@@ -331,7 +332,7 @@ class Report_registration extends MY_Controller
 
             $this->load->model('Report_player_model');
 
-            $results = $this->Report_player_model->getReportPlayers($data);
+            $results = $this->Report_player_model->getReportPlayersReferral($data);
         }
 
         $this->data['reports'] = array();
@@ -346,6 +347,7 @@ class Report_registration extends MY_Controller
 
             $this->data['reports'][] = array(
                 'cl_player_id' => $result['cl_player_id'],
+                'cl_player_id-2' => isset($result['cl_player_id-2']) ? $result['cl_player_id-2'] : null,
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
             );
         }
@@ -353,12 +355,13 @@ class Report_registration extends MY_Controller
 
         $this->load->helper('export_data');
 
-        $exporter = new ExportDataExcel('browser', "RegisterReport_" . date("YmdHis") . ".xls");
+        $exporter = new ExportDataExcel('browser', "ReferralReport_" . date("YmdHis") . ".xls");
 
         $exporter->initialize(); // starts streaming data to web browser
 
         $exporter->addRow(array(
                 $this->lang->line('column_player_id'),
+                $this->lang->line('column_referrer'),
                 $this->lang->line('column_date_registered')
             )
         );
@@ -366,6 +369,7 @@ class Report_registration extends MY_Controller
         foreach ($results as $row) {
             $exporter->addRow(array(
                     $row['cl_player_id'],
+                    isset($row['cl_player_id-2']) ? $row['cl_player_id-2'] : null,
                     $row['date_added']
                 )
             );
