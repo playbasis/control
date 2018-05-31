@@ -9,8 +9,10 @@
             <a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Rewards</a>
             <a href="<?php echo site_url('report/rewards_custompoint');?>" style="display:inline;">Custompoints</a>
             <a href="<?php echo site_url('report/goods');?>" class="selected" style="display:inline;">Goods</a>
+            <!-- <a href="<?php echo site_url('report/goods_store');?>" style="display:inline;">Goods Store</a>-->
             <a href="<?php echo site_url('report/gift');?>" style="display:inline;">Gift</a>
             <a href="<?php echo site_url('report/registration');?>" style="display:inline;">Registration</a>
+            <a href="<?php echo site_url('report/referral');?>" style="display:inline;">Referral</a>
             <a href="<?php echo site_url('report/quest');?>" style="display:inline;">Quest</a>
             <a href="<?php echo site_url('report/quiz');?>" style="display:inline;">Quiz</a>
         </div>
@@ -118,7 +120,7 @@
                         <?php } ?>
                     <?php } else { ?>
                 <tr>
-                    <td class="center" colspan="9"><?php echo $text_no_results; ?></td>
+                    <td class="center" colspan="10"><?php echo $text_no_results; ?></td>
                 </tr>
                     <?php } ?>
                 </tbody>

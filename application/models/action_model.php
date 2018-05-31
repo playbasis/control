@@ -290,8 +290,12 @@ class Action_model extends MY_Model
             ));
         }
 
-        if (isset($data['action_id']) && !empty($data['action_id'])) {
-            $this->mongo_db->where_in('action_id', $data['action_id']);
+        if (isset($data['action']) && !empty($data['action']) && is_array($data['action'])) {
+            if(sizeof($data['action']) > 1){
+                $this->mongo_db->where_in('action_name', $data['action']);
+            } else {
+                $this->mongo_db->where('action_name', $data['action'][0]);
+            }
         }
 
         $results = $this->mongo_db->count("playbasis_validated_action_log");
@@ -314,8 +318,12 @@ class Action_model extends MY_Model
                                                        '$lte' => new MongoDate(strtotime($data['date_expire']))));
         }
 
-        if (isset($data['action_id']) && !empty($data['action_id'])) {
-            $this->mongo_db->where_in('action_id', $data['action_id']);
+        if (isset($data['action']) && !empty($data['action']) && is_array($data['action'])) {
+            if(sizeof($data['action']) > 1){
+                $this->mongo_db->where_in('action_name', $data['action']);
+            } else {
+                $this->mongo_db->where('action_name', $data['action'][0]);
+            }
         }
 
         if (isset($data['start']) || isset($data['limit'])) {

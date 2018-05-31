@@ -93,6 +93,9 @@ class Report extends MY_Controller
         $this->load->model('Image_model');
         $this->load->model('Player_model');
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=" . $filter_date_start;
@@ -146,31 +149,42 @@ class Report extends MY_Controller
             $filter_username = '';
         }
 
+        if ($client_id) {
+            $data_filter['client_id'] = $client_id;
+            $data_filter['site_id'] = $site_id;
+            $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
+        } else {
+            $this->data['actions'] = array();
+        }
+
+
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
             $parameter_url .= "&action_id=" . $filter_action_id;
             $filter_action_id = explode(',', $filter_action_id);
-            foreach ($filter_action_id as &$action_id){
-                $action_id = new MongoId($action_id);
+            $filter_action = array();
+            foreach ($filter_action_id as $action){
+                $match =  array_search(new MongoId($action), array_column($this->data['actions'],'action_id'));
+                if($match !== false){
+                    array_push($filter_action, $this->data['actions'][$match]['name']);
+                }
             }
         } else {
             $filter_action_id = array();
+            $filter_action = array();
         }
 
         $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
 
         $this->data['reports'] = array();
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-
+        
         $data = array(
             'client_id' => $client_id,
             'site_id' => $site_id,
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'action_id' => $filter_action_id,
+            'action' => $filter_action,
             'start' => $offset,
             'limit' => $limit
         );
@@ -213,13 +227,7 @@ class Report extends MY_Controller
         }
 
         $this->data['time_zone'] = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
-        $this->data['actions'] = array();
-
-        if ($client_id) {
-            $data_filter['client_id'] = $client_id;
-            $data_filter['site_id'] = $site_id;
-            $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
-        }
+        
         $config['base_url'] = $url . $parameter_url;
 
         $config['total_rows'] = $report_total;
