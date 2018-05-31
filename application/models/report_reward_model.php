@@ -27,6 +27,14 @@ class Report_reward_model extends MY_Model
             $this->mongo_db->where('cl_player_id', $data['username']);
         }
 
+        if (isset($data['badge_id']) && !empty($data['badge_id'])) {
+            if(sizeof($data['badge_id']) > 1){
+                $this->mongo_db->where_in('item_id', $data['badge_id']);
+            } else {
+                $this->mongo_db->where('item_id', $data['badge_id'][0]);
+            }
+        }
+
         $results = $this->mongo_db->count("playbasis_event_log");
 
         return $results;
@@ -48,6 +56,14 @@ class Report_reward_model extends MY_Model
 
         if (isset($data['username']) && $data['username'] != '') {
             $this->mongo_db->where('cl_player_id', $data['username']);
+        }
+
+        if (isset($data['badge_id']) && !empty($data['badge_id'])) {
+            if(sizeof($data['badge_id']) > 1){
+                $this->mongo_db->where_in('item_id', $data['badge_id']);
+            } else {
+                $this->mongo_db->where('item_id', $data['badge_id'][0]);
+            }
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
@@ -76,6 +92,7 @@ class Report_reward_model extends MY_Model
         $var = $this->mongo_db->get('playbasis_reward_to_client');
         return isset($var[0]) ? $var[0] : null;
     }
+    
 
     public function getRewardsBadgesSite($data)
     {

@@ -11,8 +11,8 @@
                 <a href="<?php echo site_url('report/goods');?>" style="display:inline;">Goods</a>
                 <!--<a href="<?php echo site_url('report/goods_store');?>" style="display:inline;">Goods Store</a>-->
                 <a href="<?php echo site_url('report/gift');?>" style="display:inline;">Gift</a>
-                <a href="<?php echo site_url('report/registration');?>" class="selected" style="display:inline;">Registration</a>
-                <a href="<?php echo site_url('report/referral');?>"  style="display:inline;">Referral</a>
+                <a href="<?php echo site_url('report/registration');?>" style="display:inline;">Registration</a>
+                <a href="<?php echo site_url('report/referral');?>"  class="selected" style="display:inline;">Referral</a>
                 <a href="<?php echo site_url('report/quest');?>" style="display:inline;">Quest</a>
                 <a href="<?php echo site_url('report/quiz');?>" style="display:inline;">Quiz</a>
             </div>
@@ -55,22 +55,24 @@
                 <thead>
                 <tr>
                     <td class="left"><?php echo $this->lang->line('column_player_id'); ?></td>
+                    <td class="left"><?php echo $this->lang->line('column_referrer'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_date_registered'); ?></td>
                 </tr>
                 </thead>
                 <tbody>
                 <?php if ($reports) { ?>
                     <?php foreach ($reports as $report) { ?>
-                    <tr>
-                        <td style="word-wrap:break-word;" class="left"><?php echo $report['cl_player_id']; ?></td>
-                        <td style="word-wrap:break-word;" class="right"><?php echo $report['date_added']; ?></td>
-                    </tr>
-                        <?php } ?>
-                    <?php } else { ?>
-                <tr>
-                    <td class="center" colspan="3"><?php echo $text_no_results; ?></td>
-                </tr>
+                        <tr>
+                            <td style="word-wrap:break-word;" class="left"><?php echo $report['cl_player_id']; ?></td>
+                            <td style="word-wrap:break-word;" class="left"><?php echo isset($report['cl_player_id-2']) ? $report['cl_player_id-2'] : '' ; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo $report['date_added']; ?></td>
+                        </tr>
                     <?php } ?>
+                <?php } else { ?>
+                    <tr>
+                        <td class="center" colspan="3"><?php echo $text_no_results; ?></td>
+                    </tr>
+                <?php } ?>
                 </tbody>
             </table>
             <div class="pagination">
@@ -84,75 +86,75 @@
     </div>
 </div>
 <script type="text/javascript"><!--
-function filter() {
-    var d = new Date().getTime();
-    // url = baseUrlPath+'report_reward/reward_badge?t='+d;
-    url = baseUrlPath+'report_registration/registration_filter?t='+d;
+    function filter() {
+        var d = new Date().getTime();
+        // url = baseUrlPath+'report_reward/reward_badge?t='+d;
+        url = baseUrlPath+'report_referral/referral_filter?t='+d;
 
-    var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
+        var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 
-    if (filter_date_start) {
-        url += '&date_start=' + encodeURIComponent(filter_date_start);
+        if (filter_date_start) {
+            url += '&date_start=' + encodeURIComponent(filter_date_start);
+        }
+
+        var filter_date_end = $('input[name=\'filter_date_end\']').attr('value');
+
+        if (filter_date_end) {
+            url += '&date_expire=' + encodeURIComponent(filter_date_end);
+        }
+
+        var filter_time_zone = $('select[name=\'filter_timezone\']').attr('value');
+
+        if (filter_time_zone) {
+            url += '&time_zone=' + encodeURIComponent(filter_time_zone);
+        }
+
+        var filter_username = $('input[name=\'filter_username\']').attr('value');
+
+        if (filter_username) {
+            url += '&username=' + encodeURIComponent(filter_username);
+        }
+
+        var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
+
+        // if (filter_action_id != 0) {
+        //     url += '&goods_id=' + encodeURIComponent(filter_action_id);
+        // }
+
+        location = url;
     }
 
-    var filter_date_end = $('input[name=\'filter_date_end\']').attr('value');
+    function downloadFile() {
+        var d = new Date().getTime();
+        url = baseUrlPath+'report_referral/actionDownload?t='+d;
 
-    if (filter_date_end) {
-        url += '&date_expire=' + encodeURIComponent(filter_date_end);
+        var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
+
+        if (filter_date_start) {
+            url += '&date_start=' + encodeURIComponent(filter_date_start);
+        }
+
+        var filter_date_end = $('input[name=\'filter_date_end\']').attr('value');
+
+        if (filter_date_end) {
+            url += '&date_expire=' + encodeURIComponent(filter_date_end);
+        }
+
+        var filter_time_zone = $('select[name=\'filter_timezone\']').attr('value');
+
+        if (filter_time_zone) {
+            url += '&time_zone=' + encodeURIComponent(filter_time_zone);
+        }
+
+        var filter_username = $('input[name=\'filter_username\']').attr('value');
+
+        if (filter_username) {
+            url += '&username=' + encodeURIComponent(filter_username);
+        }
+
+        location = url;
     }
-
-    var filter_time_zone = $('select[name=\'filter_timezone\']').attr('value');
-
-    if (filter_time_zone) {
-        url += '&time_zone=' + encodeURIComponent(filter_time_zone);
-    }
-
-    var filter_username = $('input[name=\'filter_username\']').attr('value');
-
-    if (filter_username) {
-        url += '&username=' + encodeURIComponent(filter_username);
-    }
-
-    var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
-
-    // if (filter_action_id != 0) {
-    //     url += '&goods_id=' + encodeURIComponent(filter_action_id);
-    // }
-
-    location = url;
-}
-
-function downloadFile() {
-    var d = new Date().getTime();
-    url = baseUrlPath+'report_registration/actionDownload?t='+d;
-
-    var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
-
-    if (filter_date_start) {
-        url += '&date_start=' + encodeURIComponent(filter_date_start);
-    }
-
-    var filter_date_end = $('input[name=\'filter_date_end\']').attr('value');
-
-    if (filter_date_end) {
-        url += '&date_expire=' + encodeURIComponent(filter_date_end);
-    }
-
-    var filter_time_zone = $('select[name=\'filter_timezone\']').attr('value');
-
-    if (filter_time_zone) {
-        url += '&time_zone=' + encodeURIComponent(filter_time_zone);
-    }
-
-    var filter_username = $('input[name=\'filter_username\']').attr('value');
-
-    if (filter_username) {
-        url += '&username=' + encodeURIComponent(filter_username);
-    }
-
-    location = url;
-}
-//--></script>
+    //--></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript"><!--
     $(document).ready(function() {
@@ -160,4 +162,4 @@ function downloadFile() {
 
         $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
     });
-//--></script>
+    //--></script>
