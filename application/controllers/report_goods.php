@@ -255,7 +255,7 @@ class Report_goods extends MY_Controller
             $goods_name = isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'];
             $index = array_search($goods_name,array_column($goods_distinct, 'name'));
             $tags = isset($goods_distinct[$index]['tags']) ? $goods_distinct[$index]['tags'] : null;
-            $this->data['reports'][] = array(
+            $data_row = array(
                 'cl_player_id' => isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
                 'date_added' => $date_added ,
                 'date_expire' => $date_expire,
@@ -267,6 +267,19 @@ class Report_goods extends MY_Controller
                 'value' => $result['amount'],
                 'status' => $status
             );
+            if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true)) {
+                $searchword = 'CAT';
+                $category = explode("=", implode("", array_filter($goods_distinct[$index]['tags'], function ($var) use ($searchword) {
+                    return preg_match("/\b$searchword\b/i", $var);
+                })));
+                $data_row['category'] = isset($category[1]) ? $category[1] : "";
+                $searchword = 'PRICE';
+                $price = explode("=", implode("", array_filter($goods_distinct[$index]['tags'], function ($var) use ($searchword) {
+                    return preg_match("/\b$searchword\b/i", $var);
+                })));
+                $data_row['price'] = isset($price[1]) ? $price[1] : "";
+            }
+            $this->data['reports'][] = $data_row;
         }
 
         $this->data['goods_available'] = array();
@@ -503,19 +516,37 @@ class Report_goods extends MY_Controller
 
         $exporter->initialize(); // starts streaming data to web browser
 
-        $exporter->addRow(array(
-                $this->lang->line('column_player_id'),
-                $this->lang->line('column_goods_name'),
-                $this->lang->line('column_goods_code'),
-                $this->lang->line('column_tags'),
-                $this->lang->line('column_goods_amount'),
-                $this->lang->line('column_status'),
-                $this->lang->line('column_date_added'),
-                $this->lang->line('column_date_used'),
-                $this->lang->line('column_date_gifted'),
-                $this->lang->line('column_date_expire')
-            )
-        );
+        if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true)) {
+            $exporter->addRow(array(
+                    $this->lang->line('column_player_id'),
+                    $this->lang->line('column_goods_name'),
+                    $this->lang->line('column_goods_code'),
+                    $this->lang->line('column_tags'),
+                    $this->lang->line('column_category'),
+                    $this->lang->line('column_price'),
+                    $this->lang->line('column_goods_amount'),
+                    $this->lang->line('column_status'),
+                    $this->lang->line('column_date_added'),
+                    $this->lang->line('column_date_used'),
+                    $this->lang->line('column_date_gifted'),
+                    $this->lang->line('column_date_expire')
+                )
+            );
+        } else {
+            $exporter->addRow(array(
+                    $this->lang->line('column_player_id'),
+                    $this->lang->line('column_goods_name'),
+                    $this->lang->line('column_goods_code'),
+                    $this->lang->line('column_tags'),
+                    $this->lang->line('column_goods_amount'),
+                    $this->lang->line('column_status'),
+                    $this->lang->line('column_date_added'),
+                    $this->lang->line('column_date_used'),
+                    $this->lang->line('column_date_gifted'),
+                    $this->lang->line('column_date_expire')
+                )
+            );
+        }
 
         $data['limit'] = 10000;
         for ($i = 0; $i < $report_total/10000; $i++){
@@ -554,7 +585,29 @@ class Report_goods extends MY_Controller
                 $goods_name = isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'];
                 $index = array_search($goods_name,array_column($goods_distinct, 'name'));
                 $tags = isset($goods_distinct[$index]['tags']) ? implode(',', $goods_distinct[$index]['tags']) : null;
-                $exporter->addRow(array(
+                if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true)) {
+                    $searchword = 'CAT';
+                    $category = explode("=", implode("", array_filter($goods_distinct[$index]['tags'], function($var) use ($searchword) { return preg_match("/\b$searchword\b/i", $var); })));
+                    $category = isset($category[1]) ? $category[1] : "";
+                    $searchword = 'PRICE';
+                    $price = explode("=", implode("", array_filter($goods_distinct[$index]['tags'], function($var) use ($searchword) { return preg_match("/\b$searchword\b/i", $var); })));
+                    $price = isset($price[1]) ? $price[1] : "";
+                    $exporter->addRow($data_row = array(
+                        isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
+                        $goods_name,
+                        isset($result['code']) ? $result['code'] : null,
+                        $tags,
+                        $category,
+                        $price,
+                        $result['amount'],
+                        $status,
+                        $date_added,
+                        isset($result['status']) && $result['status'] == 'used' ? $date_modified : null,
+                        isset($result['status']) && $result['status'] == 'sender' ? $date_modified : null,
+                        $date_expire
+                    ));
+                } else {
+                    $exporter->addRow($data_row = array(
                         isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
                         $goods_name,
                         isset($result['code']) ? $result['code'] : null,
@@ -565,8 +618,9 @@ class Report_goods extends MY_Controller
                         isset($result['status']) && $result['status'] == 'used' ? $date_modified : null,
                         isset($result['status']) && $result['status'] == 'sender' ? $date_modified : null,
                         $date_expire
-                    )
-                );
+                    ));
+                }
+
             }
         }
         $exporter->finalize();
