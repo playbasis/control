@@ -88,6 +88,10 @@
                     <td class="right"><?php echo $this->lang->line('column_goods_name'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_goods_code'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_tags'); ?></td>
+                    <?php if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true)){ ?>
+                    <td class="right"><?php echo $this->lang->line('column_category'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_price'); ?></td>
+                    <?php } ?>
                     <td width="50" class="right"><?php echo $this->lang->line('column_goods_amount'); ?></td>
                     <td width="50" class="right"><?php echo $this->lang->line('column_goods_status'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
@@ -110,6 +114,10 @@
                             <?php }
                         } ?>
                         </td>
+                        <?php if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true)){ ?>
+                        <td style="word-wrap:break-word;" class="right"><?php echo isset($report['category'])&&$report['category']!=null ? $report['category']: ""; ?></td>
+                        <td style="word-wrap:break-word;" class="right"><?php echo isset($report['price'])&&$report['price']!=null ? $report['price']: ""; ?></td>
+                        <?php } ?>
                         <td style="word-wrap:break-word;" class="right"><?php echo $report['value']; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo isset($report['status']) ? $report['status']: ""; ?></td>
                         <td style="word-wrap:break-word;" class="right"><?php echo $report['date_added']; ?></td>
