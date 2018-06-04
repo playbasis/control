@@ -332,11 +332,16 @@ class Report extends MY_Controller
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
             $filter_action_id = explode(',', $filter_action_id);
-            foreach ($filter_action_id as &$action_id){
-                $action_id = new MongoId($action_id);
+            $filter_action = array();
+            foreach ($filter_action_id as $action){
+                $match =  array_search(new MongoId($action), array_column($this->data['actions'],'action_id'));
+                if($match !== false){
+                    array_push($filter_action, $this->data['actions'][$match]['name']);
+                }
             }
         } else {
-            $filter_action_id = 0;
+            $filter_action_id = array();
+            $filter_action = array();
         }
 
         $client_id = $this->User_model->getClientId();
@@ -348,7 +353,7 @@ class Report extends MY_Controller
             'date_start' => $this->input->get('time_zone') ? $filter_date_start2 : $filter_date_start,
             'date_expire' => $this->input->get('time_zone')? $filter_date_end2 : $filter_date_end,
             'username' => $filter_username,
-            'action_id' => $filter_action_id
+            'action' => $filter_action
         );
 
         $this->load->helper('export_data');
