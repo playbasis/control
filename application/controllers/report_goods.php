@@ -267,7 +267,7 @@ class Report_goods extends MY_Controller
                 'value' => $result['amount'],
                 'status' => $status
             );
-            if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true)) {
+            if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && isset($goods_distinct[$index]['tags'])) {
                 $searchword = 'CAT';
                 $category = explode("=", implode("", array_filter($goods_distinct[$index]['tags'], function ($var) use ($searchword) {
                     return preg_match("/\b$searchword\b/i", $var);
