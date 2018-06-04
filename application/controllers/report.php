@@ -329,6 +329,16 @@ class Report extends MY_Controller
             $filter_username = '';
         }
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        if ($client_id) {
+            $data_filter['client_id'] = $client_id;
+            $data_filter['site_id'] = $site_id;
+            $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
+        } else {
+            $this->data['actions'] = array();
+
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
             $filter_action_id = explode(',', $filter_action_id);
@@ -343,9 +353,6 @@ class Report extends MY_Controller
             $filter_action_id = array();
             $filter_action = array();
         }
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
 
         $data = array(
             'client_id' => $client_id,
