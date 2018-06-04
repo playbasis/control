@@ -338,6 +338,7 @@ class Report extends MY_Controller
             $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
         } else {
             $this->data['actions'] = array();
+        }
 
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
