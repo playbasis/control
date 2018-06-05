@@ -1947,10 +1947,8 @@ class User extends MY_Controller
             $message = "Your OTP is " . $OTP_code . " to activate phone number " . $phone_number . "";
 
             $response = $this->twiliomini->sms($from, $to, $message);
-            //$response = false;
             $this->Sms_model->log($client_id, $site_id, "admin", $from, $to, $message, $response);
             if ($response->IsError) {
-            //if ($response) {
                 echo json_encode(array('status' => 'fail', 'msg' => 'Error sending SMS, ' . $response->error_message));
             } else {
                 $this->User_model->setupUserPhoneNumber($user_id, $phone_number, $OTP_code);
@@ -1963,8 +1961,6 @@ class User extends MY_Controller
 
     public function verifyOTP()
     {
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
         $user_id = $this->session->userdata('user_id');
         $OTP_code = $this->input->post('otp_number');
         $user_info = $this->User_model->getUserInfo($user_id);
