@@ -70,7 +70,10 @@ class User_model extends MY_Model
         $check_update = false;
         $this->mongo_db->where('_id', new MongoID($user_id));
 
-        if ($data['user_group']) {
+        if(!isset($data['user_group'])){
+            //do not thing
+        }
+        elseif ($data['user_group']) {
             $this->mongo_db->set('user_group_id', new MongoID($data['user_group']));
             $check_update = true;
         } else {
@@ -251,6 +254,33 @@ class User_model extends MY_Model
         $this->mongo_db->set('status', true);
         $this->mongo_db->set('random_key', null);
         $this->mongo_db->update('user');
+    }
+
+    public function setupUserPhoneNumber($user_id, $phone_number, $OTP_code)
+    {
+        $this->set_site_mongodb(0); // use default in case of pending users
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('phone_number', $phone_number);
+        $this->mongo_db->set('phone_status', false);
+        $this->mongo_db->set('otp_code', $OTP_code);
+        $this->mongo_db->set('otp_generated_date', new MongoDate());
+        return $this->mongo_db->update('user');
+    }
+
+    public function activateUserPhoneNumber($user_id)
+    {
+        $this->set_site_mongodb(0); // use default in case of pending users
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('phone_status', true);
+        return $this->mongo_db->update('user');
+    }
+
+    public function checkPhoneNumber($phone_number)
+    {
+        $this->set_site_mongodb(0); // use default in case of pending users
+        $this->mongo_db->where('phone_number', $phone_number);
+        $result = $this->mongo_db->get('user');
+        return $result ? $result[0] : null;
     }
 
     public function getById($user_id)

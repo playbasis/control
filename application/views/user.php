@@ -35,15 +35,17 @@
                     <tr>
                         <td width="7" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="left" style="width:72px;"><?php echo $this->lang->line('column_username'); ?></td>
+                        <td class="right" style="width:50px;"><?php echo $this->lang->line('column_user_group'); ?></td>
                         <td class="right" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_added'); ?></td>
-                        <td class="right" style="width:50px;"><?php echo $this->lang->line('column_action'); ?></td>
+                        <td class="right" style="width:15px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
                     <tr class="filter">
                         <td></td>
-                        <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
+                        <td><input type="text" name="filter_name" value="" style="width:80%;" /></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td class="right">
@@ -61,7 +63,8 @@
                                 <input type="checkbox" name="selected[]" value="<?php echo $user['_id']; ?>" />
                                 <?php } ?></td>
                             <td class="left"><?php echo $user['username']; ?></td>
-                            <td class="left"><?php echo ($user['status'])? "Enabled" : "Disabled"; ?></td>
+                            <td class="right"><?php echo ($user['user_group'])? $user['user_group'] : $this->lang->line('text_default_admin'); ?></td>
+                            <td class="right"><?php echo ($user['status'])? "Enabled" : "Disabled"; ?></td>
                             <td class="right"><?php echo datetimeMongotoReadable($user['date_added']); ?></td>
                             <td class="right">
                                 <?php echo anchor('user/update/'.$user['_id'], "<i class='fa fa-edit fa-lg''></i>",
@@ -75,7 +78,7 @@
                             <?php } ?>
                     <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="9"><?php echo $text_no_results; ?></td>
+                        <td class="center" colspan="6"><?php echo $text_no_results; ?></td>
                     </tr>
                     <?php } ?>
                     </tbody>

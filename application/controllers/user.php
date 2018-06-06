@@ -24,6 +24,7 @@ class User extends MY_Controller
         $this->load->model('User_group_model');
         $this->load->model('User_group_to_client_model');
         $this->load->model('Setting_model');
+        $this->load->model('Sms_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -136,8 +137,20 @@ class User extends MY_Controller
             $user_ids = $this->User_model->getUserByClientId($filter);
 
             $UsersInfoForClientId = array();
+
+            $userGroups = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
             foreach ($user_ids as $user_id) {
-                $UsersInfoForClientId[] = $this->User_model->getUserInfo($user_id['user_id']);
+                $UsersInfo = $this->User_model->getUserInfo($user_id['user_id']);
+                $UsersInfo['user_group'] = '';
+                if(isset($UsersInfo['user_group_id']) && $UsersInfo['user_group_id']){
+                    foreach ($userGroups as $userGroup){
+                        if($userGroup['_id'] == $UsersInfo['user_group_id']){
+                            $UsersInfo['user_group'] = $userGroup['name'];
+                            break;
+                        }
+                    }
+                }
+                $UsersInfoForClientId[]= $UsersInfo;
             }
 
             $this->data['users'] = $UsersInfoForClientId;
@@ -1590,7 +1603,21 @@ class User extends MY_Controller
             $this->data['title'] = $this->lang->line('text_edit_account');
             $this->data['form'] = 'user/edit_account';
 
-            $this->data['user_info'] = $this->User_model->getUserInfo($user_id);
+            $client_id = $this->User_model->getClientId();
+            $userGroups = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
+            $UsersInfo = $this->User_model->getUserInfo($user_id);
+            $UsersInfo['user_group'] = '';
+            if(isset($UsersInfo['user_group_id']) && $UsersInfo['user_group_id']){
+                foreach ($userGroups as $userGroup){
+                    if($userGroup['_id'] == $UsersInfo['user_group_id']){
+                        $UsersInfo['user_group'] = $userGroup['name'];
+                        break;
+                    }
+                }
+            }
+            $UsersInfo['phone_number'] = isset($UsersInfo['phone_number']) && $UsersInfo['phone_number'] ? $UsersInfo['phone_number'] : null;
+            $UsersInfo['phone_status'] = isset($UsersInfo['phone_status']) && $UsersInfo['phone_status'] ? true : false;
+            $this->data['user_info'] = $UsersInfo;
 
             if ($this->input->post('image')) {
                 $this->data['image'] = $this->input->post('image');
@@ -1613,8 +1640,6 @@ class User extends MY_Controller
             } else {
                 $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
             }
-
-            $this->data['usergroup_name'] = $this->User_model->getUserGroupNameForUser($user_id);
 
             $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'),
                 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
@@ -1887,6 +1912,66 @@ class User extends MY_Controller
             return false;
         }
         return true;
+    }
+
+    private function generateOTP($length){
+        $selection = "1234567890";
+        $OTP = "";
+        for ($i = 0; $i < $length; $i++) {
+            $OTP .= $selection[(rand() % strlen($selection))];
+        }
+
+        return $OTP;
+    }
+    
+    public function requestOTP()
+    {
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $user_id = $this->session->userdata('user_id');
+        $phone_number = $this->input->post('phone_number');
+
+        $check_phone_number = $this->User_model->checkPhoneNumber($phone_number);
+
+        if(is_null($check_phone_number)) {
+            $OTP_code = $this->generateOTP(6);
+
+            // send SMS
+            $this->config->load("twilio", true);
+            $config = $this->Sms_model->getSMSClient($client_id, $site_id);
+            $twilio = $this->config->item('twilio');
+            $config['api_version'] = $twilio['api_version'];
+            $this->load->library('twilio/twiliomini', $config);
+            $from = "Playbasis";
+            $to = $phone_number;
+            $message = "Your OTP is " . $OTP_code . " to activate phone number " . $phone_number . "";
+
+            $response = $this->twiliomini->sms($from, $to, $message);
+            $this->Sms_model->log($client_id, $site_id, "admin", $from, $to, $message, $response);
+            if ($response->IsError) {
+                echo json_encode(array('status' => 'fail', 'msg' => 'Error sending SMS, ' . $response->error_message));
+            } else {
+                $this->User_model->setupUserPhoneNumber($user_id, $phone_number, $OTP_code);
+                echo json_encode(array('status' => 'success'));
+            }
+        }else{
+            echo json_encode(array('status' => 'fail', 'msg' => 'This phone number is already used by other user'));
+        }
+    }
+
+    public function verifyOTP()
+    {
+        $user_id = $this->session->userdata('user_id');
+        $OTP_code = $this->input->post('otp_number');
+        $user_info = $this->User_model->getUserInfo($user_id);
+
+        if(isset($user_info['otp_code']) && ($OTP_code == $user_info['otp_code'])){
+            $this->User_model->activateUserPhoneNumber($user_id);
+            echo json_encode(array('status' => 'success'));
+        }else{
+            echo json_encode(array('status' => 'fail', 'msg' => 'The OTP is invalid'));
+        }
+        
     }
 }
 
