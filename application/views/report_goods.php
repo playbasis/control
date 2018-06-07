@@ -9,7 +9,7 @@
             <a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Rewards</a>
             <a href="<?php echo site_url('report/rewards_custompoint');?>" style="display:inline;">Custompoints</a>
             <a href="<?php echo site_url('report/goods');?>" class="selected" style="display:inline;">Goods</a>
-            <!-- <a href="<?php echo site_url('report/goods_store');?>" style="display:inline;">Goods Store</a>-->
+            <a href="<?php echo site_url('report/goods_store');?>" style="display:inline;">Goods Store</a>
             <a href="<?php echo site_url('report/gift');?>" style="display:inline;">Gift</a>
             <a href="<?php echo site_url('report/registration');?>" style="display:inline;">Registration</a>
             <a href="<?php echo site_url('report/referral');?>" style="display:inline;">Referral</a>
