@@ -157,6 +157,7 @@ class Report_goods_model extends MY_Model
             $this->mongo_db->where_in('_id', $data['distinct_id']);
         }
 
+        $this->mongo_db->where('status', true);
         $this->mongo_db->where('deleted', false);
         return $this->mongo_db->count('playbasis_goods_distinct_to_client');
 
@@ -191,6 +192,7 @@ class Report_goods_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
 
+        $this->mongo_db->where('status', true);
         $this->mongo_db->where('deleted', false);
         return $this->mongo_db->get('playbasis_goods_distinct_to_client');
 
