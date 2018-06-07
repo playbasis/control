@@ -415,9 +415,9 @@ class Report_goods_store extends MY_Controller
                     $goods_data = $this->Goods_model->getAllGoodsByDistinctID($client_id, $site_id, $result['_id']);
                     if (is_array($result['batch_name']))foreach ($result['batch_name'] as $key => $batch) {
                         $goods_batch = $this->Goods_model->checkBatchNameExistInClient($result['name'], array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $batch));
-                        array_push($date_start, isset($goods_batch['date_start']) && $goods_batch['date_start'] ? datetimeMongotoReadable($goods_batch['date_start']) : "N/A" );
-                        array_push($date_end, isset($goods_batch['date_expire']) && $goods_batch['date_expire'] ? datetimeMongotoReadable($goods_batch['date_expire']) : "N/A");
-                        array_push($date_expire, isset($goods_batch['date_expired_coupon']) && $goods_batch['date_expired_coupon'] ? datetimeMongotoReadable($goods_batch['date_expired_coupon']) : "N/A");
+                        array_push($date_start, isset($goods_batch['date_start']) && $goods_batch['date_start'] ? datetimeMongotoReadable($goods_batch['date_start']) : "" );
+                        array_push($date_end, isset($goods_batch['date_expire']) && $goods_batch['date_expire'] ? datetimeMongotoReadable($goods_batch['date_expire']) : "");
+                        array_push($date_expire, isset($goods_batch['date_expired_coupon']) && $goods_batch['date_expired_coupon'] ? datetimeMongotoReadable($goods_batch['date_expired_coupon']) : "");
                     }
                     $remaining_goods = $goods_data ? array_filter(array_column($goods_data, 'quantity')) : 0;
                     $quantity = $goods_data ? sizeof($goods_data) : 0;
@@ -432,9 +432,9 @@ class Report_goods_store extends MY_Controller
                         $key == 0 ? $result['name'] : "",
                         $result['is_group'] ? "yes" : "no",
                         $batch,
-                        isset($result['date_start']) ? datetimeMongotoReadable($result['date_start']) : "",
-                        isset($result['date_expire']) ? datetimeMongotoReadable($result['date_expire']) : "",
-                        isset($result['date_expired_coupon']) ? datetimeMongotoReadable($result['date_expired_coupon']) : "",
+                        isset($date_start) ? implode("\n", $date_start) : "",
+                        isset($date_end) ? implode("\n", $date_end) : "",
+                        isset($date_expire) ? implode("\n", $date_expire) : "",
                         isset($price[1]) ? $price[1] : 0,
                         $quantity,
                         isset($price[1]) ? floatval($price[1]) * floatval($quantity) : 0,
