@@ -331,39 +331,11 @@ class Report_goods_store extends MY_Controller
 
             }
         }
-        $goods_list = array();
-        $group = array();
-        $goods = array();
-
-        if($filter_goods_distinct || $filter_tags){
-            $goods_list = $this->Goods_model->getGroupsList($site_id,  $filter_array = array(
-                'distinct_id' => $filter_goods_distinct,
-                'filter_tags' => $filter_tags
-            ));
-            $goods_distinct = $goods_list;
-        } else {
-            $goods_distinct = $this->Goods_model->getGroupsList($site_id);
-        }
-
-        foreach ($goods_list as $list){
-            if($list['is_group']){
-                $group[] = $list['name'];
-            } else {
-                $index = array_search($list['_id'], array_column($filter_goods_data, 'distinct_id'));
-                if($index){
-                    $goods[] = $filter_goods_data[$index]['goods_id'];
-                } else {
-                    $goods_detail = $this->Goods_model->getGoodsByDistinctID($client_id, $site_id, $list['_id']);
-                    $goods[] = $goods_detail['goods_id'];
-                }
-            }
-        }
-
         $data = array(
             'client_id' => $client_id,
             'site_id' => $site_id,
-            'goods_id' => $goods,
-            'group' => $group,
+            'distinct_id' => $filter_goods_distinct,
+            'filter_tags' => $filter_tags
         );
         $report_total = 0;
 
@@ -375,7 +347,7 @@ class Report_goods_store extends MY_Controller
 
         $this->load->helper('export_data');
 
-        $exporter = new ExportDataExcel('browser', "GoodsStoreReport_" . date("YmdHis") . ".xls");
+        $exporter = new ExportDataCSV('browser', "GoodsStoreReport_" . date("YmdHis") . ".csv");
 
         $exporter->initialize(); // starts streaming data to web browser
 
@@ -390,8 +362,9 @@ class Report_goods_store extends MY_Controller
                 $this->lang->line('column_goods_quantity'),
                 $this->lang->line('column_goods_total_price'),
                 $this->lang->line('column_goods_remaining'),
-                $this->lang->line('column_goods_pending'),
                 $this->lang->line('column_goods_granted'),
+                $this->lang->line('column_goods_expired'),
+                $this->lang->line('column_goods_unused'),
                 $this->lang->line('column_goods_used'),
                 $this->lang->line('column_goods_balance')
             )
@@ -413,7 +386,7 @@ class Report_goods_store extends MY_Controller
                     $date_end = array();
                     $date_expire = array();
                     $goods_data = $this->Goods_model->getAllGoodsByDistinctID($client_id, $site_id, $result['_id']);
-                    if (is_array($result['batch_name']))foreach ($result['batch_name'] as $key => $batch) {
+                    if (is_array($result['batch_name'])) foreach ($result['batch_name'] as $key => $batch) {
                         $goods_batch = $this->Goods_model->checkBatchNameExistInClient($result['name'], array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $batch));
                         array_push($date_start, isset($goods_batch['date_start']) && $goods_batch['date_start'] ? datetimeMongotoReadable($goods_batch['date_start']) : "" );
                         array_push($date_end, isset($goods_batch['date_expire']) && $goods_batch['date_expire'] ? datetimeMongotoReadable($goods_batch['date_expire']) : "");
@@ -429,9 +402,9 @@ class Report_goods_store extends MY_Controller
                     $used_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'used'));
                     $used = $used_data ? sizeof($used_data) : 0;
                     $exporter->addRow(array(
-                        $key == 0 ? $result['name'] : "",
+                        $result['name'],
                         $result['is_group'] ? "yes" : "no",
-                        $batch,
+                        isset($result['batch_name']) ? implode("\n", $result['batch_name']) : "",
                         isset($date_start) ? implode("\n", $date_start) : "",
                         isset($date_end) ? implode("\n", $date_end) : "",
                         isset($date_expire) ? implode("\n", $date_expire) : "",
