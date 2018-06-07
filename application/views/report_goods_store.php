@@ -51,42 +51,54 @@
                 <thead>
                 <tr>
                     <td class="center"><?php echo $this->lang->line('column_goods_name'); ?></td>
-                    <td class="center"><?php echo $this->lang->line('column_goods_batch'); ?></td>
-                    <td width="50" class="center"><?php echo $this->lang->line('column_goods_group'); ?></td>
+                    <td width="40" class="center"><?php echo $this->lang->line('column_goods_group'); ?></td>
+                    <td width="120" class="center"><?php echo $this->lang->line('column_goods_batch'); ?></td>
+                    <td width="115"  class="center"><?php echo $this->lang->line('column_goods_date_start'); ?></td>
+                    <td width="115"  class="center"><?php echo $this->lang->line('column_goods_date_end'); ?></td>
+                    <td width="115"  class="center"><?php echo $this->lang->line('column_goods_date_expire'); ?></td>
+                    <td width="50"  class="center"><?php echo $this->lang->line('column_goods_unit_price'); ?></td>
                     <td width="50" class="center"><?php echo $this->lang->line('column_goods_quantity'); ?></td>
+                    <td width="69"  class="center"><?php echo $this->lang->line('column_goods_total_price'); ?></td>
                     <td width="60" class="center"><?php echo $this->lang->line('column_goods_remaining'); ?></td>
-                    <td width="50"  class="center"><?php echo $this->lang->line('column_goods_pending'); ?></td>
                     <td width="50"  class="center"><?php echo $this->lang->line('column_goods_granted'); ?></td>
-                    <td width="120"  class="center"><?php echo $this->lang->line('column_goods_date_start'); ?></td>
-                    <td width="120"  class="center"><?php echo $this->lang->line('column_goods_date_end'); ?></td>
-                    <td width="120"  class="center"><?php echo $this->lang->line('column_goods_date_expire'); ?></td>
+                    <td width="50"  class="center"><?php echo $this->lang->line('column_goods_expired'); ?></td>
+                    <td width="50"  class="center"><?php echo $this->lang->line('column_goods_unused'); ?></td>
+                    <td width="50"  class="center"><?php echo $this->lang->line('column_goods_used'); ?></td>
+                    <td width="50"  class="center"><?php echo $this->lang->line('column_goods_balance'); ?></td>
+
                 </tr>
                 </thead>
                 <tbody>
                 <?php if ($reports) { ?>
                     <?php foreach ($reports as $report) { ?>
                         <tr>
-                            <td style="word-wrap:break-word;" class="left"><?php echo $report['cl_player_id']; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['goods_name'])&&$report['goods_name']!=null ? $report['goods_name']: ""; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo $report['code']; ?></td>
-                            <td style="word-wrap:break-word;" class="right">
-                                <?php if(isset($report['tags']) && $report['tags']){
-                                    foreach ($report['tags'] as $val ){ ?>
-                                        <span class="label" data-toggle="tooltip" data-placement="right" title="<?php echo $val ?>" style="float:left; max-width: 95%; overflow: hidden; margin-right: 1px;margin-bottom: 1px;"><?php echo $val ?></span>
-                                    <?php }
-                                } ?>
-                            </td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo $report['value']; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['status']) ? $report['status']: ""; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo $report['date_added']; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_used']) ? $report['date_used'] : ""; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_gifted']) ? $report['date_gifted'] : ""; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_expire']) ? $report['date_expire'] : ""; ?></td>
+                            <?php if(isset($report['total_batch']) && $report['total_batch'] > 1 && (!is_null($report['goods_name'])) ){ ?>
+                                <td rowspan="<?php echo $report['total_batch'] ?>" style="word-wrap:break-word;" class="right"><?php echo isset($report['goods_name'])&&$report['goods_name']!=null ? $report['goods_name']: ""; ?></td>
+                                <td rowspan="<?php echo $report['total_batch'] ?>" style="word-wrap:break-word;" class="right"><?php echo isset($report['group'])&&$report['group']? "true": "false"; ?></td>
+                            <?php } elseif(isset($report['total_batch']) && $report['total_batch'] > 1 && is_null($report['goods_name'])) { ?>
+                            <?php } else { ?>
+                                <td style="word-wrap:break-word;" class="right"><?php echo isset($report['goods_name'])&&$report['goods_name']!=null ? $report['goods_name']: ""; ?></td>
+                                <td style="word-wrap:break-word;" class="right"><?php echo isset($report['group'])&&$report['group']? "true": "false"; ?></td>
+                            <?php }  ?>
+
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['batch'])&&$report['batch']!=null ? implode("<br>", $report['batch']): ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_start']) ? implode("<br>", $report['date_start']) : ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_end']) ? implode("<br>", $report['date_end']) : ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_expire']) ? implode("<br>", $report['date_expire']) : ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['price'])&&!is_null($report['price']) ? $report['price']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['quantity'])&&!is_null($report['quantity']) ? $report['quantity']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['total_value'])&&!is_null($report['total_value']) ? $report['total_value']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['remaining'])&&!is_null($report['remaining']) ? $report['remaining']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['granted'])&&!is_null($report['granted']) ? $report['granted']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['expired'])&&!is_null($report['expired']) ? $report['expired']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['unused'])&&!is_null($report['unused']) ? $report['unused']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['used'])&&!is_null($report['used']) ? $report['used']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['used_balance'])&&!is_null($report['granted']) ? $report['used_balance']: ""; ?></td>
                         </tr>
                     <?php } ?>
                 <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="10"><?php echo $text_no_results; ?></td>
+                        <td class="center" colspan="14"><?php echo $text_no_results; ?></td>
                     </tr>
                 <?php } ?>
                 </tbody>

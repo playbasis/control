@@ -784,6 +784,14 @@ class Goods extends MY_Controller
                     $goods_data['coupon_batch_name'] = isset($goods_data['coupon_batch_name']) && $goods_data['coupon_batch_name'] ? $goods_data['coupon_batch_name'] : 'default';
                     $audit_id = $this->Goods_model->auditBeforeCoupon('update_coupon', $goods_id, $this->User_model->getId());
                     $this->Goods_model->editGoodsGroupCoupon($group, $goods_id, $goods_data, $filter_data);
+                    $goods_new_info = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
+                    $goods_new_info['name'] = array_key_exists('group', $goods_new_info) ? $goods_new_info['group'] : $goods_new_info['name'];
+                    $goods_new_info['date_start'] = datetimeMongotoReadable($goods_new_info['date_start']);
+                    $goods_new_info['date_expire'] = datetimeMongotoReadable($goods_new_info['date_expire']);
+                    if (isset($goods_new_info['date_expired_coupon'])){
+                        $goods_new_info['date_expired_coupon'] =datetimeMongotoReadable($goods_new_info['date_expired_coupon']);
+                    }
+                    $this->Goods_model->editGoodsDistinct($site_id, array_key_exists('group', $goods_info) ? $goods_info['group'] : $goods_info['name'],$goods_new_info);
                     $this->Goods_model->auditAfterCoupon('update_coupon', $goods_id, $this->User_model->getId(), $audit_id);
                     $n = $this->Goods_model->checkBatchNameExistInDistinct($group,array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $goods_data['coupon_batch_name']));
                     if(!$n) {
