@@ -408,26 +408,55 @@ class Report_goods_store extends MY_Controller
                         return preg_match("/\b$searchword\b/i", $var);
                     })));
                 }
-                if(isset($result['batch_name'][1])){
-                    foreach ($result['batch_name'] as $key => $batch){
-                        $exporter->addRow(array(
-                            $key == 0 ? $result['name'] : "",
-                            $result['is_group'] ? "yes" : "no",
-                            $batch,
-                            isset($result['date_start']) ? datetimeMongotoReadable($result['date_start']) : "",
-                            isset($result['date_expire']) ? datetimeMongotoReadable($result['date_expire']) : "",
-                            isset($result['date_expired_coupon']) ? datetimeMongotoReadable($result['date_expired_coupon']) : "",
-                            isset($price[1]) ? $price[1] : 0,
-                            isset($price[1]) ? floatval($price[1]) * floatval(1) : 0,
-                            isset($result['amount']) ? $result['date_expired_coupon'] : 0,
-                            isset($result['amount']) ? $result['date_expired_coupon'] : 0,
-                            isset($result['amount']) ? $result['date_expired_coupon'] : 0,
-                            isset($result['amount']) ? $result['date_expired_coupon'] : 0,
-                            isset($result['amount']) ? $result['date_expired_coupon'] : 0,
-                            isset($price[1]) ? floatval($price[1]) * floatval(1) : 0)
-                        );
+                if($result['is_group']){
+                    $date_start = array();
+                    $date_end = array();
+                    $date_expire = array();
+                    $goods_data = $this->Goods_model->getAllGoodsByDistinctID($client_id, $site_id, $result['_id']);
+                    if (is_array($result['batch_name']))foreach ($result['batch_name'] as $key => $batch) {
+                        $goods_batch = $this->Goods_model->checkBatchNameExistInClient($result['name'], array('client_id' => $client_id, 'site_id' => $site_id, 'batch_name' => $batch));
+                        array_push($date_start, isset($goods_batch['date_start']) && $goods_batch['date_start'] ? datetimeMongotoReadable($goods_batch['date_start']) : "N/A" );
+                        array_push($date_end, isset($goods_batch['date_expire']) && $goods_batch['date_expire'] ? datetimeMongotoReadable($goods_batch['date_expire']) : "N/A");
+                        array_push($date_expire, isset($goods_batch['date_expired_coupon']) && $goods_batch['date_expired_coupon'] ? datetimeMongotoReadable($goods_batch['date_expired_coupon']) : "N/A");
                     }
+                    $remaining_goods = $goods_data ? array_filter(array_column($goods_data, 'quantity')) : 0;
+                    $quantity = $goods_data ? sizeof($goods_data) : 0;
+                    $remaining = $remaining_goods ? sizeof($remaining_goods) : 0;
+                    $unused_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'active'));
+                    $unused = $unused_data ? sizeof($unused_data) : 0;
+                    $expired_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'expired'));
+                    $expired = $expired_data ? sizeof($expired_data) : 0;
+                    $used_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'used'));
+                    $used = $used_data ? sizeof($used_data) : 0;
+                    $exporter->addRow(array(
+                        $key == 0 ? $result['name'] : "",
+                        $result['is_group'] ? "yes" : "no",
+                        $batch,
+                        isset($result['date_start']) ? datetimeMongotoReadable($result['date_start']) : "",
+                        isset($result['date_expire']) ? datetimeMongotoReadable($result['date_expire']) : "",
+                        isset($result['date_expired_coupon']) ? datetimeMongotoReadable($result['date_expired_coupon']) : "",
+                        isset($price[1]) ? $price[1] : 0,
+                        $quantity,
+                        isset($price[1]) ? floatval($price[1]) * floatval($quantity) : 0,
+                        $remaining,
+                        $quantity - $remaining,
+                        $expired,
+                        $unused,
+                        $used,
+                        isset($price[1]) ? floatval($price[1]) * floatval($used) : 0)
+                    );
+
                 } else {
+                    $goods_data = $this->Goods_model->getAllGoodsByDistinctID($client_id, $site_id, $result['_id']);
+                    $granted_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'granted')) : array();
+                    $granted = $granted_data ? sizeof($granted_data) : 0 ;
+                    $remaining = $granted_data ? $goods_data[0]['quantity'] : 0;
+                    $unused_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'active')) : array();
+                    $unused = $unused_data ? sizeof($unused_data) : 0;
+                    $expired_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'expired')) : array();
+                    $expired = $expired_data ? sizeof($expired_data) : 0;
+                    $used_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'used')) : array();
+                    $used = $used_data ? sizeof($used_data) : 0;
                     $exporter->addRow(array(
                         $result['name'],
                         $result['is_group'] ? "yes" : "no",
@@ -436,13 +465,14 @@ class Report_goods_store extends MY_Controller
                         isset($result['date_expire']) ? datetimeMongotoReadable($result['date_expire']) : "",
                         isset($result['date_expired_coupon']) ? datetimeMongotoReadable($result['date_expired_coupon']) : "",
                         isset($price[1]) ? $price[1] : 0,
-                        isset($price[1]) ? floatval($price[1]) * floatval(1) : 0,
-                        isset($result['amount']) ? $result['date_expired_coupon'] : 0,
-                        isset($result['amount']) ? $result['date_expired_coupon'] : 0,
-                        isset($result['amount']) ? $result['date_expired_coupon'] : 0,
-                        isset($result['amount']) ? $result['date_expired_coupon'] : 0,
-                        isset($result['amount']) ? $result['date_expired_coupon'] : 0,
-                        isset($price[1]) ? floatval($price[1]) * floatval(1) : 0)
+                        $granted + $remaining,
+                        isset($price[1]) ? floatval($price[1]) * floatval($quantity) : 0,
+                        $remaining,
+                        $granted,
+                        $expired,
+                        $unused,
+                        $used,
+                        isset($price[1]) ? floatval($price[1]) * floatval($used) : 0)
                     );
                 }
             }
