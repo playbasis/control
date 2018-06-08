@@ -207,10 +207,13 @@ class  MY_Controller  extends  CI_Controller  {
                     "others",
                     "player"
                 );
-                $usersCount = $this->Player_model->getTotalPlayers($this->data['site_id'], $this->data['client_id']);
+                if($player_limit) {
+                    $usersCount = $this->Player_model->getTotalPlayers($this->data['site_id'], $this->data['client_id']);
+                }
+
                 $this->data['check_limit'] = array(
                     'limit_user' => $player_limit,
-                    'total' => $usersCount
+                    'total' => $player_limit ? $usersCount : 0
                 );
             }else{
                 if($this->data['client_id']){
