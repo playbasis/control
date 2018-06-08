@@ -54,6 +54,21 @@ class Player_model extends MY_Model
         return ($id) ? $id[0]['_id'] : null;
     }
 
+    public function getPlayerbyClId($clientData)
+    {
+        if (!$clientData) {
+            return null;
+        }
+        $this->mongo_db->where(array(
+            'client_id' => $clientData['client_id'],
+            'site_id' => $clientData['site_id'],
+            'cl_player_id' => $clientData['cl_player_id']
+        ));
+        $this->mongo_db->limit(1);
+        $id = $this->mongo_db->get('playbasis_player');
+        return ($id) ? $id[0] : null;
+    }
+
     public function getPlayers($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));

@@ -56,6 +56,7 @@
                 <tr>
                     <td class="left"><?php echo $this->lang->line('column_player_id'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_referrer'); ?></td>
+                    <td class="left"><?php echo $this->lang->line('column_referral_code'); ?></td>
                     <td width="120" class="right"><?php echo $this->lang->line('column_date_registered'); ?></td>
                 </tr>
                 </thead>
@@ -65,6 +66,7 @@
                         <tr>
                             <td style="word-wrap:break-word;" class="left"><?php echo $report['cl_player_id']; ?></td>
                             <td style="word-wrap:break-word;" class="left"><?php echo isset($report['cl_player_id-2']) ? $report['cl_player_id-2'] : '' ; ?></td>
+                            <td style="word-wrap:break-word;" class="left"><?php echo isset($report['code']) ? $report['code'] : '' ; ?></td>
                             <td style="word-wrap:break-word;" class="right"><?php echo $report['date_added']; ?></td>
                         </tr>
                     <?php } ?>
