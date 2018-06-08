@@ -53,6 +53,7 @@ $lang['column_goods_code']                      = 'Coupon Code';
 $lang['column_sender']                          = 'Sender';
 $lang['column_receiver']                        = 'Receiver';
 $lang['column_referrer']                        = 'Referrer';
+$lang['column_referral_code']                   = 'Referral Code';
 $lang['column_gift_type']                       = 'Type';
 $lang['column_gift_name']                       = 'Gift Name';
 $lang['column_gift_code']                       = 'Code';
