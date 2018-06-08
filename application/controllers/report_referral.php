@@ -181,9 +181,23 @@ class Report_referral extends MY_Controller
                 $date_added = $date_added->format("Y-m-d H:i:s");;
             }
 
+            if(isset($result['parameters']['referral_code'])){
+                $code = isset($result['parameters']['referral_code']) ? $result['parameters']['referral_code'] : "";
+            } else {
+                if(isset($result['cl_player_id-2'])){
+                    $pb_player_id = $this->Player_model->getPlayerbyClId(array(
+                        'client_id' => $this->User_model->getClientId(),
+                        'site_id' => $this->User_model->getSiteId(),
+                        'cl_player_id' => $result['cl_player_id-2']
+                    ));
+                    $code = isset($pb_player_id['code']) ? $pb_player_id['code'] : "";
+                }
+            }
+
             $this->data['reports'][] = array(
                 'cl_player_id' => $result['cl_player_id'],
                 'cl_player_id-2' => isset($result['cl_player_id-2']) ? $result['cl_player_id-2'] : null,
+                'code' => $code,
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
             );
         }
@@ -345,9 +359,23 @@ class Report_referral extends MY_Controller
                 $date_added = $date_added->format("Y-m-d H:i:s");;
             }
 
+            if(isset($result['parameters']['referral_code'])){
+                $code = isset($result['parameters']['referral_code']) ? $result['parameters']['referral_code'] : "";
+            } else {
+                if(isset($result['cl_player_id-2'])){
+                    $pb_player_id = $this->Player_model->getPlayerbyClId(array(
+                        'client_id' => $this->User_model->getClientId(),
+                        'site_id' => $this->User_model->getSiteId(),
+                        'cl_player_id' => $result['cl_player_id-2']
+                    ));
+                    $code = isset($pb_player_id['code']) ? $pb_player_id['code'] : "";
+                }
+            }
+
             $this->data['reports'][] = array(
                 'cl_player_id' => $result['cl_player_id'],
                 'cl_player_id-2' => isset($result['cl_player_id-2']) ? $result['cl_player_id-2'] : null,
+                'code' => isset($code) ? $code : null,
                 'date_added' => $this->input->get('time_zone') ? $date_added : datetimeMongotoReadable($result['date_added']),
             );
         }
@@ -362,6 +390,7 @@ class Report_referral extends MY_Controller
         $exporter->addRow(array(
                 $this->lang->line('column_player_id'),
                 $this->lang->line('column_referrer'),
+                $this->lang->line('column_referral_code'),
                 $this->lang->line('column_date_registered')
             )
         );
@@ -370,6 +399,7 @@ class Report_referral extends MY_Controller
             $exporter->addRow(array(
                     $row['cl_player_id'],
                     isset($row['cl_player_id-2']) ? $row['cl_player_id-2'] : null,
+                    isset($row['code']) ? $row['code'] : null,
                     $row['date_added']
                 )
             );
