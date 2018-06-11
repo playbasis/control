@@ -585,6 +585,8 @@ class Goods_model extends MY_Model
             'custom_param' => isset($data['custom_param']) ? $data['custom_param'] : array(),
             'batch_name' => array(),
             'whitelist_enable' => isset($data['whitelist_enable']) ? $data['whitelist_enable'] : false,
+            'alert_enable' => isset($data['alert_enable']) ? (bool)$data['alert_enable'] : false,
+            'alert_ratio' => isset($data['alert_ratio']) ? (int)$data['alert_ratio'] : 0,
         );
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);
@@ -641,6 +643,8 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
         $this->mongo_db->set('custom_param', isset($data['custom_param']) ? $data['custom_param'] : array());
         $this->mongo_db->set('whitelist_enable', isset($data['whitelist_enable']) ? $data['whitelist_enable'] : false);
+        $this->mongo_db->set('alert_enable', isset($data['alert_enable']) ? (bool)$data['alert_enable'] : false);
+        $this->mongo_db->set('alert_ratio', isset($data['alert_ratio']) ? (int)$data['alert_ratio'] : 0);
 
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);

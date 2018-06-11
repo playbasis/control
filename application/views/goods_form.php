@@ -194,20 +194,30 @@
                         <?php if (!$is_group) { ?>
                         <tr>
                             <td><?php echo $this->lang->line('entry_quantity'); ?>:</td>
-                            <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" class="tooltips" data-placement="right" title="Number of Goods to be redeemed, if left blank it is unlimited"/></td>
+                            <td>
+                                <input type="text" name="quantity" placeholder="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" class="tooltips" data-placement="right" title="Number of Goods to be redeemed, if left blank it is unlimited"/><br>
+                            </td>
                         </tr>
                         <?php } ?>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_alert_enable'); ?>:</td>
+                            <td>
+                                <input type="checkbox" name="alert_enable" id="alert_enable" value=true <?php echo $alert_enable ? "checked":""?> /> Enable?<br>
+                                <input type="text" name="alert_ratio" id="alert_ratio" placeholder="Alert ratio" value="<?php echo isset($alert_ratio) ? $alert_ratio : set_value('alert_ratio'); ?>" size="5" class="tooltips" data-placement="right" title="To send SMS alert if the quantity is lesser than this number"/>
+
+                            </td>
+                        </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_per_user'); ?>:</td>
                             <td>
                                 <input type="checkbox" name="per_user_include_inactive" id="per_user_include_inactive" value=true <?php echo $per_user_include_inactive ? "checked":""?> /> <?php echo $this->lang->line('entry_per_user_include_inactive'); ?>
 
-                                <br><input type="text" name="per_user" value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>" size="5" class="tooltips" data-placement="right" title="Number of Goods that a user can redeem, if left blank it is unlimited"/>
-                                                  </td>
+                                <br><input type="text" name="per_user" placeholder="per_user" value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>" size="5" class="tooltips" data-placement="right" title="Number of Goods that a user can redeem, if left blank it is unlimited"/>
+                            </td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
-                            <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
+                            <td><input type="text" name="sort_order" placeholder="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?>:</td>
@@ -571,12 +581,12 @@
     <div class="modal-body" style="height: 300px;">
 
         <div align="center">
-                            <label class="text-info" type="text" style="text-align: center"><h2>Currency  <span class="icon-search"></span></h2></label><br>
-                            <select class="chosen-select" multiple id="redeem_add_currency" name="redeem_add_currency" >
-                                <?php foreach ($point_list as $br){?>
-                                <option value="<?php echo $br['reward_id']?>" data="<?php echo $br['name']?>"><?php echo $br['name'];?></option>
-                                <?php }?>
-                            </select>
+            <label class="text-info" type="text" style="text-align: center"><h2>Currency  <span class="icon-search"></span></h2></label><br>
+            <select class="chosen-select" multiple id="redeem_add_currency" name="redeem_add_currency" >
+                <?php foreach ($point_list as $br){?>
+                <option value="<?php echo $br['reward_id']?>" data="<?php echo $br['name']?>"><?php echo $br['name'];?></option>
+                <?php }?>
+            </select>
         </div>
 
     </div>
@@ -1139,6 +1149,22 @@ $(document).ready(function(){
         formatSelection: organizeFormatSelection,
 
     });
+
+    $("#alert_enable").change(function(e){
+        e.preventDefault();
+        if (document.getElementById('alert_enable').checked) {
+            document.getElementById("alert_ratio").disabled = false;
+        } else {
+            document.getElementById("alert_ratio").value = null;
+            document.getElementById("alert_ratio").disabled = true;
+        }
+    });
+
+    if (document.getElementById('alert_enable').checked) {
+        document.getElementById("alert_ratio").disabled = false;
+    } else {
+        document.getElementById("alert_ratio").disabled = true;
+    }
 
     $("#whitelist_enable").change(function(e){
         e.preventDefault();

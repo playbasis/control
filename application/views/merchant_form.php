@@ -222,7 +222,7 @@
                                     if (isset($goodsgroups)) {
                                         foreach ($goodsgroups as $goodsgroup) { ?>
                                             <option
-                                                value="mc_gg_<?php echo $goodsgroup ?>"><?php echo $goodsgroup ?></option>
+                                                value="mc_gg_<?php echo $goodsgroup['name'] ?>"><?php echo $goodsgroup['name'] ?></option>
                                         <?php }
                                     }
                                     ?>

@@ -1959,6 +1959,36 @@ class User extends MY_Controller
         }
     }
 
+    public function resendOTP()
+    {
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $user_id = $this->session->userdata('user_id');
+        $user_info = $this->User_model->getUserInfo($user_id);
+
+        $phone_number = $user_info['phone_number'];
+        $OTP_code = $this->generateOTP(6);
+
+        // send SMS
+        $this->config->load("twilio", true);
+        $config = $this->Sms_model->getSMSClient($client_id, $site_id);
+        $twilio = $this->config->item('twilio');
+        $config['api_version'] = $twilio['api_version'];
+        $this->load->library('twilio/twiliomini', $config);
+        $from = "Playbasis";
+        $to = $phone_number;
+        $message = "Your OTP is " . $OTP_code . " to activate phone number " . $phone_number . "";
+
+        $response = $this->twiliomini->sms($from, $to, $message);
+        $this->Sms_model->log($client_id, $site_id, "admin", $from, $to, $message, $response);
+        if ($response->IsError) {
+            echo json_encode(array('status' => 'fail', 'msg' => 'Error sending SMS, ' . $response->error_message));
+        } else {
+            $this->User_model->setupUserPhoneNumber($user_id, $phone_number, $OTP_code);
+            echo json_encode(array('status' => 'success'));
+        }
+    }
+
     public function verifyOTP()
     {
         $user_id = $this->session->userdata('user_id');
@@ -1966,8 +1996,16 @@ class User extends MY_Controller
         $user_info = $this->User_model->getUserInfo($user_id);
 
         if(isset($user_info['otp_code']) && ($OTP_code == $user_info['otp_code'])){
-            $this->User_model->activateUserPhoneNumber($user_id);
-            echo json_encode(array('status' => 'success'));
+            $now = new Datetime(datetimeMongotoReadable(new MongoDate()));
+            $OTP_gen_date = new Datetime(datetimeMongotoReadable($user_info['otp_generated_date']));
+
+            $interval = $now->diff($OTP_gen_date);
+            if($interval->i >= 10){
+                echo json_encode(array('status' => 'fail', 'msg' => 'The OTP is expired'));
+            }else{
+                $this->User_model->activateUserPhoneNumber($user_id);
+                echo json_encode(array('status' => 'success'));
+            }
         }else{
             echo json_encode(array('status' => 'fail', 'msg' => 'The OTP is invalid'));
         }

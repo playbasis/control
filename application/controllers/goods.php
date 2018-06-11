@@ -241,6 +241,8 @@ class Goods extends MY_Controller
 
                 $data = array_merge($this->input->post(), array('quantity' => 1));
                 $data['per_user_include_inactive'] = $this->input->post('per_user_include_inactive') ? true : false;
+                $data['alert_enable'] = $this->input->post('alert_enable') ? true : false;
+                $data['alert_ratio'] = is_numeric($this->input->post('alert_ratio')) ? (int)$this->input->post('alert_ratio') : 0;
 
                 if (isset($data['custom_param'])){
                     if(is_array($data['custom_param'])){
@@ -458,6 +460,8 @@ class Goods extends MY_Controller
             $goods_data['redeem'] = $redeem;
             $goods_data['whitelist_enable'] = $whitelist_enable;
             $goods_data['per_user_include_inactive'] = $this->input->post('per_user_include_inactive') ? true : false;
+            $goods_data['alert_enable'] = $this->input->post('alert_enable') ? true : false;
+            $goods_data['alert_ratio'] = is_numeric($this->input->post('alert_ratio')) ? (int)$this->input->post('alert_ratio') : 0;
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
@@ -683,6 +687,8 @@ class Goods extends MY_Controller
                     $goods_data['redeem'] = $redeem;
                     $goods_data['whitelist_enable'] = $whitelist_enable;
                     $goods_data['per_user_include_inactive'] = $this->input->post('per_user_include_inactive') ? true : false;
+                    $goods_data['alert_enable'] = $this->input->post('alert_enable') ? true : false;
+                    $goods_data['alert_ratio'] = is_numeric($this->input->post('alert_ratio')) ? (int)$this->input->post('alert_ratio') : 0;
 
                     if ($this->User_model->hasPermission('access', 'store_org') &&
                         $this->Feature_model->getFeatureExistByClientId($client_id, 'store_org')
@@ -1523,6 +1529,21 @@ class Goods extends MY_Controller
             $this->data['quantity'] = $goods_info['quantity'];
         } else {
             $this->data['quantity'] = null;
+        }
+
+        if ($this->input->post('alert_enable')) {
+            $this->data['alert_enable'] = $this->input->post('alert_enable');
+            $this->data['alert_ratio'] = $this->input->post('alert_ratio');
+        } elseif (isset($goods_info['distinct_id'])) {
+            $this->data['distinct_id']  = $goods_info['distinct_id'];
+            $distinct_id = $goods_info['distinct_id'];
+            $distinct_info = $this->Goods_model->getGoodsDistinctByID($site_id,$distinct_id);
+            $this->data['alert_enable'] = isset($distinct_info['alert_enable']) ? $distinct_info['alert_enable'] : false;
+            if($this->data['alert_enable'] == true) {
+                $this->data['alert_ratio'] = isset($distinct_info['alert_ratio']) ? $distinct_info['alert_ratio'] : "";
+            }
+        } else {
+            $this->data['alert_enable'] = false;
         }
 
         if ($this->input->post('per_user')) {

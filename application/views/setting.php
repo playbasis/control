@@ -15,7 +15,7 @@
 
         <div class="content">
             <div id="tabs" class="htabs">
-                <a href="<?php echo site_url('setting');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_security'); ?></a>
+                <a href="<?php echo site_url('setting');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_general'); ?></a>
             </div>
             <?php if($this->session->flashdata('success')){ ?>
                 <div class="content messages half-width">
@@ -125,6 +125,28 @@
                         <td><input type="checkbox" id="player_authentication_enable" name="player_authentication_enable" <?php echo (isset($player_authentication_enable) && $player_authentication_enable) ? "checked" : ''; ?>></td>
                     </tr>
 
+                    <tr>
+                        <td><?php echo $this->lang->line('entry_goods_alert_sms'); ?>:</td>
+                        <td>
+                            <div class="btn-group" data-toggle="buttons-radio">
+                                <button type="button" class="btn btn-primary <?php echo ($goods_alert_enabled)?"active":"" ?>" onclick="goods_alert_change(this)" value="true" ><?php echo $this->lang->line('entry_enable') ?></button>
+                                <button type="button" class="btn btn-primary <?php echo ($goods_alert_enabled)?"":"active" ?>" onclick="goods_alert_change(this)" value="false"><?php echo $this->lang->line('entry_disable') ?></button>
+                                <input type="hidden" id="goods_alert_id" name="goods_alert_enabled" value="<?php echo ($goods_alert_enabled)?"true":"false" ?>">
+                            </div>
+
+                        </td>
+                    </tr>
+                    <tr id="select_user_to_alert" style="display: none;">
+                        <td><?php echo $this->lang->line('entry_goods_alert_users'); ?>:</td>
+                        <td>
+                            <select class="chosen-select" multiple id="goods_alert_users" name="goods_alert_users[]" >
+                            <?php foreach($user_list as $user){?>
+                                <option <?php echo $user['alert_active']? 'selected' :''; ?> value="<?php echo $user['_id']; ?>" data="<?php echo $user['_id']?>"><?php echo $user['firstname']." ".$user['lastname'];?></option>
+                            <?php } ?>
+                            </select>
+                        </td>
+                    </tr>
+
                 </table>
                 <?php
                 echo form_close();?>
@@ -136,6 +158,27 @@
 
 <script src="<?php echo base_url(); ?>javascript/bootstrap/combodate.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
+
+<style type="text/css">
+
+    .chosen-container .chosen-drop {
+        border-bottom: 0;
+        border-top: 1px solid #aaa;
+        top: auto;
+        bottom: 30px;
+    }
+
+</style>
+
+<script type="text/javascript">
+    $("#goods_alert_users").chosen({max_selected_options: 40});
+    var filter_id = document.getElementById("goods_alert_users_chosen")
+    filter_id.style.width = "400px";
+    filter_id.children[0].children[0].children[0].style.width = "200px";
+</script>
+
 <script type="text/javascript">
     $(function(){
 
@@ -205,6 +248,17 @@
             app_date_start_id.disabled = true;
             app_date_end_id.disabled = true;
         }
+
+        var goods_alert_id = document.getElementById('goods_alert_id');
+        var select_user_to_alert = document.getElementById('select_user_to_alert');
+
+        if (goods_alert_id.value == "true")
+        {
+            select_user_to_alert.style.display = "table-row";
+        }
+        else{
+            select_user_to_alert.style.display = "none";
+        }
     })
 
     $(function(){
@@ -268,6 +322,22 @@
             app_status_id.value = false;
             app_date_start_id.disabled = true;
             app_date_end_id.disabled = true;
+        }
+    }
+
+    function goods_alert_change(elem){
+        //hidden input
+        var goods_alert_id = document.getElementById('goods_alert_id');
+        var select_user_to_alert = document.getElementById('select_user_to_alert');
+
+        if (elem.value == "true")
+        {
+            goods_alert_id.value = true;
+            select_user_to_alert.style.display = "table-row";
+        }
+        else{
+            goods_alert_id.value = false;
+            select_user_to_alert.style.display = "none";
         }
     }
 
