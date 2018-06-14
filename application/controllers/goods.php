@@ -241,6 +241,8 @@ class Goods extends MY_Controller
 
                 $data = array_merge($this->input->post(), array('quantity' => 1));
                 $data['per_user_include_inactive'] = $this->input->post('per_user_include_inactive') ? true : false;
+                $data['alert_enable'] = $this->input->post('alert_enable') ? true : false;
+                $data['alert_threshold'] = is_numeric($this->input->post('alert_threshold')) ? (int)$this->input->post('alert_threshold') : 0;
 
                 if (isset($data['custom_param'])){
                     if(is_array($data['custom_param'])){
@@ -458,6 +460,8 @@ class Goods extends MY_Controller
             $goods_data['redeem'] = $redeem;
             $goods_data['whitelist_enable'] = $whitelist_enable;
             $goods_data['per_user_include_inactive'] = $this->input->post('per_user_include_inactive') ? true : false;
+            $goods_data['alert_enable'] = $this->input->post('alert_enable') ? true : false;
+            $goods_data['alert_threshold'] = is_numeric($this->input->post('alert_threshold')) ? (int)$this->input->post('alert_threshold') : 0;
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
@@ -683,6 +687,8 @@ class Goods extends MY_Controller
                     $goods_data['redeem'] = $redeem;
                     $goods_data['whitelist_enable'] = $whitelist_enable;
                     $goods_data['per_user_include_inactive'] = $this->input->post('per_user_include_inactive') ? true : false;
+                    $goods_data['alert_enable'] = $this->input->post('alert_enable') ? true : false;
+                    $goods_data['alert_threshold'] = is_numeric($this->input->post('alert_threshold')) ? (int)$this->input->post('alert_threshold') : 0;
 
                     if ($this->User_model->hasPermission('access', 'store_org') &&
                         $this->Feature_model->getFeatureExistByClientId($client_id, 'store_org')
@@ -717,10 +723,13 @@ class Goods extends MY_Controller
                             $goods_data['site_id'] = $site_id;
                             $goods_data['goods_id'] = $goods_info['goods_id'];
                             $goods_data['distinct_id'] = $goods_info['distinct_id'];
-
+                            $goods_data['is_group'] = array_key_exists('group', $goods_info) ? true : false;
+                            if($goods_data['is_group']){
+                                $goods_data['active_quantity'] = $this->Goods_model->countActiveGoodsByGroup($client_id, $site_id, $goods_info['group']);
+                            }
                             $audit_id = $this->Goods_model->auditBeforeGoods('update', $goods_id, $this->User_model->getId());
-                            $this->Goods_model->editGoodsDistinct($site_id, array_key_exists('group', $goods_info) ? $goods_info['group'] : $goods_info['name'],$goods_data);
-                            if ($goods_info && array_key_exists('group', $goods_info)) {
+                            $this->Goods_model->editGoodsDistinct($site_id, $goods_data['is_group'] ? $goods_info['group'] : $goods_info['name'],$goods_data);
+                            if ($goods_info && $goods_data['is_group']) {
                                 $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
                                 if ($goods_info['group'] != $goods_data['name']){
                                     $this->Goods_model->editGoodsGroupLog($goods_info['group'], $goods_data);
@@ -893,6 +902,19 @@ class Goods extends MY_Controller
                     $handle = fopen($_FILES['file']['tmp_name'], "r");
                     $audit_id = $this->Goods_model->auditBeforeGoods('upload', $goods_id, $this->User_model->getId());
                     $this->addGoods($handle, $goods_data, $goods_info['redeem'], array($client_id), array($site_id));
+
+                    // reset SMS alert if amount of uploaded coupon is more than the ratio
+                    $distinct_info = $this->Goods_model->getGoodsDistinctByID($site_id,$goods_info['distinct_id']);
+                    if (isset($distinct_info['alert_enable']) && $distinct_info['alert_enable'] &&
+                        isset($distinct_info['alert_threshold']) && $distinct_info['alert_threshold'] &&
+                        isset($distinct_info['alert_sent']) && $distinct_info['alert_sent']
+                    ){
+                        $current_amount = $this->Goods_model->checkGoodsGroupQuantity($site_id, $goods_info['group']);
+                        if($current_amount > $distinct_info['alert_threshold']){
+                            $this->Goods_model->resetSmsAlertInDistinct($client_id, $site_id, $distinct_info['_id']);
+                        }
+                    }
+
                     $this->Goods_model->auditAfterGoods('upload', $goods_id, $this->User_model->getId(), $audit_id);
                     fclose($handle);
                     echo json_encode(array('status' => 'success'));
@@ -1117,6 +1139,7 @@ class Goods extends MY_Controller
         $parameter_url = "?";
         $this->load->model('Image_model');
 
+        $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
@@ -1210,13 +1233,13 @@ class Goods extends MY_Controller
                 $filter_array['filter_custom_val'] = $_GET['filter_custom_val'];
             }
 
-            $good_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'), $filter_array);
+            $good_list = $this->Goods_model->getGroupsList($site_id, $filter_array);
             $in_goods = array();
             foreach ($good_list as $good_name){
                 if($good_name['is_group']){
-                    $goods_id =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $good_name['name'],false);
+                    $goods_id =  $this->Goods_model->getGoodsIDByName($client_id, $site_id, "", $good_name['name'],false);
                 } else {
-                    $goods_id =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), $good_name['name'],"",false);
+                    $goods_id =  $this->Goods_model->getGoodsIDByName($client_id, $site_id, $good_name['name'],"",false);
                 }
                 array_push($in_goods, new MongoId($goods_id));
             }
@@ -1269,7 +1292,8 @@ class Goods extends MY_Controller
                 $this->data['goods_list'][] = array(
                     'goods_id' => $goods['_id'],
                     'name' => $is_group ? $goods['group'] : $goods['name'],
-                    'quantity' => $is_group ? $this->Goods_model->checkGoodsGroupQuantity($this->session->userdata('site_id'), $goods['group']) : $goods['quantity'],
+                    'quantity' => $is_group ? $this->Goods_model->checkGoodsGroupQuantity($site_id, $goods['group']) : $goods['quantity'],
+                    'active_amount' => $is_group ? $this->Goods_model->countActiveGoodsByGroup($client_id, $site_id, $goods['group']) : null,
                     'per_user' => $goods['per_user'],
                     'status' => $goods['status'],
                     'image' => $image,
@@ -1523,6 +1547,21 @@ class Goods extends MY_Controller
             $this->data['quantity'] = $goods_info['quantity'];
         } else {
             $this->data['quantity'] = null;
+        }
+
+        if ($this->input->post('alert_enable')) {
+            $this->data['alert_enable'] = $this->input->post('alert_enable');
+            $this->data['alert_threshold'] = $this->input->post('alert_threshold');
+        } elseif (isset($goods_info['distinct_id'])) {
+            $this->data['distinct_id']  = $goods_info['distinct_id'];
+            $distinct_id = $goods_info['distinct_id'];
+            $distinct_info = $this->Goods_model->getGoodsDistinctByID($site_id,$distinct_id);
+            $this->data['alert_enable'] = isset($distinct_info['alert_enable']) ? $distinct_info['alert_enable'] : false;
+            if($this->data['alert_enable'] == true) {
+                $this->data['alert_threshold'] = isset($distinct_info['alert_threshold']) ? $distinct_info['alert_threshold'] : "";
+            }
+        } else {
+            $this->data['alert_enable'] = false;
         }
 
         if ($this->input->post('per_user')) {
