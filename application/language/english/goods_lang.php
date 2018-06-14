@@ -102,6 +102,7 @@ $lang['entry_operate']                  = 'Operate';
 $lang['entry_tags']                     = 'Tags';
 $lang['entry_whitelist_enable']         = 'Enable?';
 $lang['entry_whitelist']                = 'Users White List';
+$lang['entry_alert_enable']             = 'Enable quantity alert?';
 
 $lang['column_client_image']            = 'Logo';
 $lang['column_client_name']             = 'Name';

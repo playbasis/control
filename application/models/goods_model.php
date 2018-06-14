@@ -585,6 +585,8 @@ class Goods_model extends MY_Model
             'custom_param' => isset($data['custom_param']) ? $data['custom_param'] : array(),
             'batch_name' => array(),
             'whitelist_enable' => isset($data['whitelist_enable']) ? $data['whitelist_enable'] : false,
+            'alert_enable' => isset($data['alert_enable']) ? (bool)$data['alert_enable'] : false,
+            'alert_threshold' => isset($data['alert_threshold']) ? (int)$data['alert_threshold'] : 0,
         );
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);
@@ -673,6 +675,26 @@ class Goods_model extends MY_Model
 
         if (isset($data['image'])) {
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+        }
+
+        if (isset($data['alert_enable']) && $data['alert_enable']){
+            $this->mongo_db->set('alert_enable', (bool)$data['alert_enable']);
+        }
+
+        if (isset($data['alert_threshold']) && $data['alert_threshold']){
+            $this->mongo_db->set('alert_threshold', (int)$data['alert_threshold']);
+        }
+
+        if (isset($data['alert_enable']) && $data['alert_enable'] && isset($data['alert_threshold']) && $data['alert_threshold'] ) {
+            if(isset($data['is_group']) && $data['is_group']){
+                if(isset($data['active_quantity']) && $data['active_quantity'] && ($data['active_quantity'] > $data['alert_threshold'])){
+                    $this->mongo_db->set('alert_sent', false);
+                }
+            }else{
+                if(isset($data['quantity']) && $data['quantity'] && ($data['quantity'] > $data['alert_threshold'])){
+                    $this->mongo_db->set('alert_sent', false);
+                }
+            }
         }
 
         $this->mongo_db->set('organize_id', isset($data['organize_id']) ? new MongoID($data['organize_id']) : null);
@@ -1597,6 +1619,16 @@ class Goods_model extends MY_Model
         $this->mongo_db->update('playbasis_goods_distinct_to_client');
     }
 
+    public function resetSmsAlertInDistinct($client_id, $site_id, $distinct_id)
+    {
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('_id', new MongoId($distinct_id));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->set('alert_sent', false);
+        $this->mongo_db->update('playbasis_goods_distinct_to_client');
+    }
+
     public function editGoodsGroupPLayer($group, $data)
     {
         $this->mongo_db->where('group', $group);
@@ -2156,6 +2188,37 @@ class Goods_model extends MY_Model
             'status' => true
         ));
         return $this->mongo_db->get('playbasis_goods_to_client');
+    }
+
+    public function countActiveGoodsByGroup($client_id, $site_id, $group)
+    {
+        $this->set_site_mongodb($site_id);
+        $d = new MongoDate();
+        $this->mongo_db->select(array('goods_id', 'date_start', 'date_expire', 'quantity', 'per_user', 'redeem'));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'group' => $group,
+            'deleted' => false,
+            'status' => true,
+            '$and' => array(
+                array(
+                    '$or' => array(
+                        array('date_start' => array('$lte' => $d)),
+                        array('date_start' => null)
+                    )
+                ),
+                array(
+                    '$or' => array(
+                        array('date_expire' => array('$gte' => $d)),
+                        array('date_expire' => null)
+                    )
+                )
+            ),
+        ));
+        $this->mongo_db->where_gt('quantity', 0);
+        $this->mongo_db->where('$or',  array(array('date_expired_coupon' => array('$exists' => false)), array('date_expired_coupon' => array('$gt' => new MongoDate()))));
+        return $this->mongo_db->count('playbasis_goods_to_client');
     }
 
     public function redeemLogCount($data, $goods_id, $group=false, $from = null, $to = null)

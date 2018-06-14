@@ -65,7 +65,7 @@ class setting extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if ($this->form_validation->run()) {
+            if ($this->form_validation->run() && $this->data['message'] == null) {
                 $data = $this->input->post();
 
                 $data['client_id'] = $this->User_model->getClientId();
@@ -94,8 +94,13 @@ class setting extends MY_Controller
                 $data['max_retries'] = isset($data['max_retries']) ? intval($data['max_retries']) : 0;
                 $data['email_verification_enable'] = (isset($data['email_verification_enable']) && $data['email_verification_enable'] == "on") ? true : false;
                 $data['player_authentication_enable'] = (isset($data['player_authentication_enable']) && $data['player_authentication_enable'] == "on") ? true : false;
-
+                $data['goods_alert_enabled'] = (isset($data['goods_alert_enabled']) && $data['goods_alert_enabled'] == "true") ? true : false;
                 $data['timeout'] = $this->wordToTime($data['timeout']);
+                if(is_null($this->data['message'])) {
+                    if($data['goods_alert_enabled'] == true && !isset($data['goods_alert_users'])){
+                        $this->data['message'] = $this->lang->line('error_alert_set_users');
+                    }
+                }
 
                 if(is_null($this->data['message'])) {
                     $insert = $this->Setting_model->updateSetting($data);
@@ -116,8 +121,11 @@ class setting extends MY_Controller
         if (!isset($this->data['success'])) {
             $this->data['success'] = '';
         }
-        $this->data['client_id'] = $this->User_model->getClientId();
-        $this->data['site_id'] = $this->User_model->getSiteId();
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $this->data['client_id'] = $client_id;
+        $this->data['site_id'] = $site_id;
         $setting = $this->Setting_model->retrieveSetting($this->data);
         if (is_array($setting)) {
             $this->data = array_merge($this->data, $setting);
@@ -133,6 +141,17 @@ class setting extends MY_Controller
         $this->data['timeout_list'] = array();
         foreach ($timeout_list as $key => $time) {
             $this->data['timeout_list'][$key] = $this->timeToWord($time);
+        }
+
+        $this->data['goods_alert_enabled'] = isset($setting['goods_alert_enabled']) ? $setting['goods_alert_enabled'] : false;
+        $this->data['goods_alert_users'] = array();
+        if(isset($setting['goods_alert_users']) && $setting['goods_alert_users']){
+            $user_ids = $this->User_model->getUserByClientId(array('client_id' => $client_id));
+            foreach ($user_ids as $user_id){
+                $user_info = $this->User_model->getById($user_id['user_id']);
+                $user_info['alert_active'] = (in_array($user_info['_id']."", $setting['goods_alert_users'])) ? true : false;
+                $this->data['goods_alert_users'][] = $user_info;
+            }
         }
 
         $this->load->vars($this->data);

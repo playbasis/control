@@ -53,19 +53,22 @@
 	                <tr>
 	                    <td><?php echo $this->lang->line('form_phone_number'); ?></td>
                         <td>
-                            <div id="phone_number" style="display: inline-block;">+<?php echo $user_info['phone_number'] ? $user_info['phone_number'] : "";?> </div>
+                            <div id="phone_number" style="display: inline-block;"><?php echo $user_info['phone_number'] ? "+".$user_info['phone_number'] : "";?> </div>
                         <?php if ($user_info['phone_number'] && $user_info['phone_status']) {?>
+                            <span id="phone_status_label" class="label label-success">activated</span>
                             <button id="edit_phone_button" type="button" class="btn btn-info" data-toggle="modal" data-target="#setupPhoneModal" ><?php echo $this->lang->line('button_edit_phone'); ?></button>
-                            <button id="verify_otp_button" style="display: none;" type="button" class="btn btn-info" data-toggle="modal" data-target="#verifyOTPModal" ><?php echo $this->lang->line('button_verify_phone'); ?></button>
+                            <button id="verify_otp_button" style="display: none;" type="button" class="btn btn-info" data-toggle="modal" data-target="#verifyOTPModal" ><?php echo $this->lang->line('button_activate_phone'); ?></button>
                             <button id="setup_phone_button" style="display: none;" type="button" class="btn btn-info" data-toggle="modal" data-target="#setupPhoneModal" ><?php echo $this->lang->line('button_setup_phone'); ?></button>
                         <?php }elseif($user_info['phone_number'] && !$user_info['phone_status']){?>
-                            <button id="verify_otp_button" type="button" class="btn btn-info" onclick="show_verify_otp_modal();" ><?php echo $this->lang->line('button_verify_phone'); ?></button>
+                            <span id="phone_status_label" class="label label-important">not activated</span>
+                            <button id="verify_otp_button" type="button" class="btn btn-info" onclick="show_verify_otp_modal();" ><?php echo $this->lang->line('button_activate_phone'); ?></button>
                             <button id="setup_phone_button" style="display: none;" type="button" class="btn btn-info" data-toggle="modal" data-target="#setupPhoneModal" ><?php echo $this->lang->line('button_setup_phone'); ?></button>
                             <button id="edit_phone_button" style="display: none;" type="button" class="btn btn-info" data-toggle="modal" data-target="#setupPhoneModal" ><?php echo $this->lang->line('button_edit_phone'); ?></button>
                         <?php }else{?>
+                            <span id="phone_status_label" class="label label-success hide">activated</span>
                             <button id="setup_phone_button" type="button" class="btn btn-info" data-toggle="modal" data-target="#setupPhoneModal" ><?php echo $this->lang->line('button_setup_phone'); ?></button>
                             <button id="edit_phone_button" style="display: none;" type="button" class="btn btn-info" data-toggle="modal" data-target="#setupPhoneModal" ><?php echo $this->lang->line('button_edit_phone'); ?></button>
-                            <button id="verify_otp_button" style="display: none;" type="button" class="btn btn-info" data-toggle="modal" data-target="#verifyOTPModal" ><?php echo $this->lang->line('button_verify_phone'); ?></button>
+                            <button id="verify_otp_button" style="display: none;" type="button" class="btn btn-info" data-toggle="modal" data-target="#verifyOTPModal" ><?php echo $this->lang->line('button_activate_phone'); ?></button>
                         <?php }?>
                         </td>
 	                </tr>
@@ -236,11 +239,13 @@
                 success:function(data){
 
                     if(data.status=='success'){
-                        document.getElementById("phone_number").innerHTML = phone_number;
+                        document.getElementById("phone_number").innerHTML = "+"+phone_number;
                         $('#setup_phone_button').hide();
                         $('#edit_phone_button').hide();
                         $('#verify_otp_button').show();
                         document.getElementById("verify_phone_label").innerHTML = "<h2>Enter OTP sent to your phone number : <br><br>+"+phone_number+"</h2>";
+                        document.getElementById("phone_status_label").innerHTML = "not activated"
+                        $('#phone_status_label').removeClass("hide label-success").addClass("label-important");
                         $('#verifyOTPModal').modal({'backdrop': true});
                     }
                     else if(data.status=='fail') {
@@ -294,6 +299,8 @@
                         $('#verify_otp_button').hide();
                         $('#edit_phone_button').show();
                         $('#verifyOTPModal').modal('hide');
+                        document.getElementById("phone_status_label").innerHTML = "activated"
+                        $('#phone_status_label').removeClass("hide label-important").addClass("label-success");
                         $('#successModal').modal({'backdrop': true});
                     }
                     else if (data.status == 'fail') {
@@ -323,12 +330,9 @@
     }
 
     function resend_otp(){
-
-        var phone_number= document.getElementById("phone_number").innerHTML;
         $.ajax({
-            url: baseUrlPath+'user/requestOTP',
-            data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>',
-                'phone_number': phone_number},
+            url: baseUrlPath+'user/resendOTP',
+            data: {'<?php echo $this->security->get_csrf_token_name(); ?>':'<?php echo $this->security->get_csrf_hash(); ?>'},
             type:'POST',
             dataType: "json",
             beforeSend:function(){
@@ -367,7 +371,7 @@
 
     function show_verify_otp_modal(){
         var phone_number = document.getElementById("phone_number").innerHTML;
-        document.getElementById("verify_phone_label").innerHTML = "<h2>Enter OTP sent to your phone number : <br><br>+"+phone_number+"</h2>";
+        document.getElementById("verify_phone_label").innerHTML = "<h2>Enter OTP sent to your phone number : <br><br>"+phone_number+"</h2>";
         $('#verifyOTPModal').modal({'backdrop': true});
     }
 

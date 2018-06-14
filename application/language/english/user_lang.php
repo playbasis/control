@@ -77,4 +77,4 @@ $lang['button_delete']                          = "Delete";
 $lang['button_enable']                          = "Enable";
 $lang['button_setup_phone']                     = "Setup";
 $lang['button_edit_phone']                      = "Edit";
-$lang['button_verify_phone']                    = "Verify";
+$lang['button_activate_phone']                  = "Activate";
