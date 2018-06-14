@@ -32,8 +32,8 @@ $lang['entry_max_retries']              = 'Max login attempts ';
 $lang['entry_timeout']                  = 'Timeout for inactivity';
 $lang['entry_email_verification']       = 'Allow only verified email to login';
 $lang['entry_player_authentication']    = 'Require player authentication for using API';
-$lang['entry_goods_alert_sms']          = 'Enable goods SMS alert feature';
-$lang['entry_goods_alert_users']        = 'Select users to receive SMS alert';
+$lang['entry_goods_alert_sms']          = 'Enable goods alert feature';
+$lang['entry_goods_alert_users']        = 'Select users to get alert';
 $lang['placeholder_min_char']           = 'Numeric, if blank or 0 mean no minimum';
 $lang['placeholder_max_retries']        = 'Numeric, if blank or 0 mean no limit';
 

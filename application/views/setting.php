@@ -140,7 +140,7 @@
                         <td><?php echo $this->lang->line('entry_goods_alert_users'); ?>:</td>
                         <td>
                             <select class="chosen-select" multiple id="goods_alert_users" name="goods_alert_users[]" >
-                            <?php foreach($user_list as $user){?>
+                            <?php foreach($goods_alert_users as $user){?>
                                 <option <?php echo $user['alert_active']? 'selected' :''; ?> value="<?php echo $user['_id']; ?>" data="<?php echo $user['_id']?>"><?php echo $user['firstname']." ".$user['lastname'];?></option>
                             <?php } ?>
                             </select>

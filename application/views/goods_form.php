@@ -203,7 +203,7 @@
                             <td><?php echo $this->lang->line('entry_alert_enable'); ?>:</td>
                             <td>
                                 <input type="checkbox" name="alert_enable" id="alert_enable" value=true <?php echo $alert_enable ? "checked":""?> /> Enable?<br>
-                                <input type="text" name="alert_ratio" id="alert_ratio" placeholder="Alert ratio" value="<?php echo isset($alert_ratio) ? $alert_ratio : set_value('alert_ratio'); ?>" size="5" class="tooltips" data-placement="right" title="To send SMS alert if the quantity is lesser than this number"/>
+                                <input type="text" name="alert_threshold" id="alert_threshold" placeholder="Alert threshold" value="<?php echo isset($alert_threshold) ? $alert_threshold : set_value('alert_threshold'); ?>" size="5" class="tooltips" data-placement="right" title="To alert admin if the quantity remaining lower than this number"/>
 
                             </td>
                         </tr>
@@ -1153,17 +1153,17 @@ $(document).ready(function(){
     $("#alert_enable").change(function(e){
         e.preventDefault();
         if (document.getElementById('alert_enable').checked) {
-            document.getElementById("alert_ratio").disabled = false;
+            document.getElementById("alert_threshold").disabled = false;
         } else {
-            document.getElementById("alert_ratio").value = null;
-            document.getElementById("alert_ratio").disabled = true;
+            document.getElementById("alert_threshold").value = null;
+            document.getElementById("alert_threshold").disabled = true;
         }
     });
 
     if (document.getElementById('alert_enable').checked) {
-        document.getElementById("alert_ratio").disabled = false;
+        document.getElementById("alert_threshold").disabled = false;
     } else {
-        document.getElementById("alert_ratio").disabled = true;
+        document.getElementById("alert_threshold").disabled = true;
     }
 
     $("#whitelist_enable").change(function(e){

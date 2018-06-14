@@ -95,7 +95,7 @@
                                     </select>
                                 </td>
                                 <?php } ?>
-                                <td></td>
+                                <td>total<br>(active)</td>
                                 <td>
                                     <select name="filter_status" style="width:95%">
                                         <?php if (isset($_GET['filter_status']) && $_GET['filter_status'] == 'enable') { ?>
@@ -162,7 +162,10 @@
                                         <?php if ($client_id) { ?>
                                             <td class="left"><?php echo ($goods['is_group']) ? "Yes" : ""; ?></td>
                                         <?php } ?>
-                                        <td class="right"><?php echo (isset($goods['quantity']) && !is_null($goods['quantity'])) ? $goods['quantity'] : 'Unlimited'; ?></td>
+                                        <td class="right">
+                                            <?php echo (isset($goods['quantity']) && !is_null($goods['quantity'])) ? $goods['quantity'] : 'Unlimited'; ?>
+                                            <?php echo (isset($goods['active_amount']) && !is_null($goods['active_amount'])) ? "(".$goods['active_amount'].")" : ''; ?>
+                                        </td>
                                         <td class="left"><?php echo ($goods['status']) ? "Enabled" : "Disabled"; ?></td>
                                         <td class="left"><?php if (isset($goods['date_start']) && $goods['date_start'] && strtotime(datetimeMongotoReadable($goods['date_start']))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($goods['date_start'])));} else { echo ""; }?></td>
                                         <td class="left"><?php if (isset($goods['date_end']) && $goods['date_end'] && strtotime(datetimeMongotoReadable($goods['date_end']))) {echo date('Y-m-d H:i:s', strtotime(datetimeMongotoReadable($goods['date_end'])));} else { echo ""; }?></td>

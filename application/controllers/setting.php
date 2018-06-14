@@ -144,18 +144,15 @@ class setting extends MY_Controller
         }
 
         $this->data['goods_alert_enabled'] = isset($setting['goods_alert_enabled']) ? $setting['goods_alert_enabled'] : false;
-
-        $user_ids = $this->User_model->getUserByClientId(array('client_id' => $client_id));
-        $user_list = array();
-        foreach ($user_ids as $user_id){
-            $user_info = $this->User_model->getById($user_id['user_id']);
-            if(isset($user_info['phone_number']) && $user_info['phone_number'] && isset($user_info['phone_status']) && $user_info['phone_status']){
+        $this->data['goods_alert_users'] = array();
+        if(isset($setting['goods_alert_users']) && $setting['goods_alert_users']){
+            $user_ids = $this->User_model->getUserByClientId(array('client_id' => $client_id));
+            foreach ($user_ids as $user_id){
+                $user_info = $this->User_model->getById($user_id['user_id']);
                 $user_info['alert_active'] = (in_array($user_info['_id']."", $setting['goods_alert_users'])) ? true : false;
-                $user_list[] = $user_info;
+                $this->data['goods_alert_users'][] = $user_info;
             }
         }
-        
-        $this->data['user_list'] = $user_list;
 
         $this->load->vars($this->data);
         $this->render_page('template');
