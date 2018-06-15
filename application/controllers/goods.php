@@ -1282,7 +1282,7 @@ class Goods extends MY_Controller
                     $param_array = array();
                     foreach ($goods['custom_param'] as $param){
                         if(strpos( $param['key'], POSTFIX_NUMERIC_PARAM ) == false){
-                            if ((isset($param['hidden']) && $param['hidden'])){
+                            if ((isset($param['hidden']) && $param['hidden']) || !isset($param['hidden'])){
                                 array_push($param_array, $param['key'].' : '.$param['value']);
                             }
                         }
