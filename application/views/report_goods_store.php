@@ -19,16 +19,19 @@
             <div class="report-filter">
                 <div>
                 <span>
-                    <?php echo $this->lang->line('filter_goods_id'); ?>
-                        <select class="chosen-select" multiple id="filter_goods_id" name="filter_goods_id" style="width:70%">
-                        <?php foreach ($goods_available as $good){
-                            $match =  array_search($good['_id'], $filter_goods_id);
-                            if (!is_null($match) && $match !== false) { ?>
-                                <option selected="selected" value="<?php echo $good['_id'] ?>"><?php echo $good['name']; ?></option>
-                            <?php } else { ?>
-                                <option value="<?php echo $good['_id'] ?>"><?php echo $good['name']; ?></option>
-                            <?php }
-                        }?>
+                    <?php echo $this->lang->line('filter_date_start'); ?>
+                        <input type="text" name="filter_date_start" value="<?php echo $filter_date_start; ?>" id="date-start" size="12" style="width:150px;"/>
+                </span>
+                <span>
+                    <?php echo $this->lang->line('filter_date_end'); ?>
+                    <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" style="width:150px;"/>
+                </span>
+                <span>
+                    <?php echo $this->lang->line('filter_status'); ?>
+                        <select class="chosen-select" id="filter_goods_status" name="filter_goods_status" style="height: 30px; width:80px">
+                        <option <?php if(!isset($filter_status) || (isset($filter_status) && ($filter_status == "enable"))) echo "selected"; ?> value="enable"><?php echo "Enable";?></option>
+                        <option <?php if(isset($filter_status) && $filter_status == "disable") echo "selected"; ?> value="disable"><?php echo "Disable"; ?></option>
+                            <option <?php if(isset($filter_status) && $filter_status == "all") echo "selected"; ?> value="all"><?php echo "All"; ?></option>
                     </select>
                 </span>
                 <span>
@@ -40,6 +43,21 @@
                 </span>
                 <span>
                     <a onclick="downloadFile();return true;" class="button"><i class="fa fa-download"></i></a>
+                </span>
+                </div>
+                <div>
+                <span>
+                    <?php echo $this->lang->line('filter_goods_id'); ?>
+                        <select class="chosen-select" multiple id="filter_goods_id" name="filter_goods_id" style="width:70%">
+                        <?php foreach ($goods_available as $good){
+                            $match =  array_search($good['_id'], $filter_goods_id);
+                            if (!is_null($match) && $match !== false) { ?>
+                                <option selected="selected" value="<?php echo $good['_id'] ?>"><?php echo $good['name']; ?></option>
+                            <?php } else { ?>
+                                <option value="<?php echo $good['_id'] ?>"><?php echo $good['name']; ?></option>
+                            <?php }
+                        }?>
+                    </select>
                 </span>
                 </div>
                 <div>
@@ -119,6 +137,18 @@
         // url = baseUrlPath+'report_reward/reward_badge?t='+d;
         url = baseUrlPath+'report_goods_store/goods_store_filter?t='+d;
 
+        var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
+
+        if (filter_date_start) {
+            url += '&date_start=' + encodeURIComponent(filter_date_start);
+        }
+
+        var filter_date_end = $('input[name=\'filter_date_end\']').attr('value');
+
+        if (filter_date_end) {
+            url += '&date_expire=' + encodeURIComponent(filter_date_end);
+        }
+
         var filter_tags = $('input[name=\'filter_tags\']').attr('value');
 
         if (filter_tags) {
@@ -140,6 +170,12 @@
                 url += '&goods_id=' + goods;
             }
         }
+
+        var filter_goods_status = $('select[name=\'filter_goods_status\']').attr('value');
+
+        if (filter_goods_status != 0) {
+            url += '&status=' + encodeURIComponent(filter_goods_status);
+        }
         
         location = url;
     }
@@ -147,6 +183,18 @@
     function downloadFile() {
         var d = new Date().getTime();
         url = baseUrlPath+'report_goods_store/actionDownload?t='+d;
+
+        var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
+
+        if (filter_date_start) {
+            url += '&date_start=' + encodeURIComponent(filter_date_start);
+        }
+
+        var filter_date_end = $('input[name=\'filter_date_end\']').attr('value');
+
+        if (filter_date_end) {
+            url += '&date_expire=' + encodeURIComponent(filter_date_end);
+        }
 
         var filter_tags = $('input[name=\'filter_tags\']').attr('value');
 
@@ -167,6 +215,12 @@
             url += '&goods_id=' + goods;
         }
 
+        var filter_goods_status = $('select[name=\'filter_goods_status\']').attr('value');
+
+        if (filter_goods_status != 0) {
+            url += '&status=' + encodeURIComponent(filter_goods_status);
+        }
+
         location = url;
     }
 </script>
@@ -174,6 +228,12 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript">
+    $(document).ready(function() {
+        $('#date-start').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
+
+        $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
+    });
+    
     $("#filter_goods_id").chosen({max_selected_options: 5});
 </script>
 
