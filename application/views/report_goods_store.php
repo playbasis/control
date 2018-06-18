@@ -74,14 +74,14 @@
                     <td width="115"  class="center"><?php echo $this->lang->line('column_goods_date_start'); ?></td>
                     <td width="115"  class="center"><?php echo $this->lang->line('column_goods_date_end'); ?></td>
                     <td width="115"  class="center"><?php echo $this->lang->line('column_goods_date_expire'); ?></td>
-                    <td width="50"  class="center"><?php echo $this->lang->line('column_goods_unit_price'); ?></td>
-                    <td width="50" class="center"><?php echo $this->lang->line('column_goods_quantity'); ?></td>
-                    <td width="69"  class="center"><?php echo $this->lang->line('column_goods_total_price'); ?></td>
-                    <td width="60" class="center"><?php echo $this->lang->line('column_goods_remaining'); ?></td>
                     <td width="50"  class="center"><?php echo $this->lang->line('column_goods_granted'); ?></td>
                     <td width="50"  class="center"><?php echo $this->lang->line('column_goods_expired'); ?></td>
                     <td width="50"  class="center"><?php echo $this->lang->line('column_goods_unused'); ?></td>
                     <td width="50"  class="center"><?php echo $this->lang->line('column_goods_used'); ?></td>
+                    <td width="50"  class="center"><?php echo $this->lang->line('column_goods_unit_price'); ?></td>
+                    <td width="50" class="center"><?php echo $this->lang->line('column_goods_quantity'); ?></td>
+                    <td width="69"  class="center"><?php echo $this->lang->line('column_goods_total_price'); ?></td>
+                    <td width="60" class="center"><?php echo $this->lang->line('column_goods_remaining'); ?></td>
                     <td width="50"  class="center"><?php echo $this->lang->line('column_goods_balance'); ?></td>
 
                 </tr>
@@ -103,14 +103,14 @@
                             <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_start']) ? implode("<br>", $report['date_start']) : ""; ?></td>
                             <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_end']) ? implode("<br>", $report['date_end']) : ""; ?></td>
                             <td style="word-wrap:break-word;" class="right"><?php echo isset($report['date_expire']) ? implode("<br>", $report['date_expire']) : ""; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['price'])&&!is_null($report['price']) ? $report['price']: ""; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['quantity'])&&!is_null($report['quantity']) ? $report['quantity']: ""; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['total_value'])&&!is_null($report['total_value']) ? $report['total_value']: ""; ?></td>
-                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['remaining'])&&!is_null($report['remaining']) ? $report['remaining']: ""; ?></td>
                             <td style="word-wrap:break-word;" class="right"><?php echo isset($report['granted'])&&!is_null($report['granted']) ? $report['granted']: ""; ?></td>
                             <td style="word-wrap:break-word;" class="right"><?php echo isset($report['expired'])&&!is_null($report['expired']) ? $report['expired']: ""; ?></td>
                             <td style="word-wrap:break-word;" class="right"><?php echo isset($report['unused'])&&!is_null($report['unused']) ? $report['unused']: ""; ?></td>
                             <td style="word-wrap:break-word;" class="right"><?php echo isset($report['used'])&&!is_null($report['used']) ? $report['used']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['price'])&&!is_null($report['price']) ? $report['price']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['quantity'])&&!is_null($report['quantity']) ? $report['quantity']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['total_value'])&&!is_null($report['total_value']) ? $report['total_value']: ""; ?></td>
+                            <td style="word-wrap:break-word;" class="right"><?php echo isset($report['remaining'])&&!is_null($report['remaining']) ? $report['remaining']: ""; ?></td>
                             <td style="word-wrap:break-word;" class="right"><?php echo isset($report['used_balance'])&&!is_null($report['granted']) ? $report['used_balance']: ""; ?></td>
                         </tr>
                     <?php } ?>
