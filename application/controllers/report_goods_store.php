@@ -271,7 +271,7 @@ class Report_goods_store extends MY_Controller
 
     private function getList($site_id)
     {
-        $goods_list = $this->Goods_model->getGroupsList($site_id, array('filter_tags' => 'RM1HOTDEALS'));
+        $goods_list = $this->Goods_model->getGroupsList($site_id, array('filter_tags' => 'RM1HOTDEALS', 'filter_status' => true));
         $goods_data = array();
         foreach ($goods_list as $goods_name){
             if($goods_name['is_group']){
