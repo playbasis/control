@@ -75,7 +75,8 @@ class Statistics  extends MY_Controller
                                                   'label' => $value);
                 }
             } elseif($type == 'month'){
-                $date = date("Y-m-d", strtotime("-30 days"));
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y'));
+                $date = date("Y-m-d", strtotime("-$day days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
@@ -87,7 +88,6 @@ class Statistics  extends MY_Controller
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $action_label = array();
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
                 for($i=$day; $i >= 1 ;$i--){
                     $action_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
@@ -238,7 +238,8 @@ class Statistics  extends MY_Controller
                 }
 
             } elseif($type == 'month'){
-                $date = date("Y-m-d", strtotime("-30 days"));
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
@@ -250,7 +251,6 @@ class Statistics  extends MY_Controller
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $goods_label = array();
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
                 for($i=$day; $i >= 1 ;$i--){
                     $goods_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
@@ -373,7 +373,8 @@ class Statistics  extends MY_Controller
                 }
 
             } elseif($type == 'month'){
-                $date = date("Y-m-d", strtotime("-30 days"));
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
@@ -385,7 +386,6 @@ class Statistics  extends MY_Controller
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $goods_label = array();
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
                 for($i=$day; $i >= 1 ;$i--){
                     $goods_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
@@ -497,7 +497,8 @@ class Statistics  extends MY_Controller
                                                  'label' => $badge[$key]);
                 }
             } elseif($type == 'month'){
-                $date = date("Y-m-d", strtotime("-30 days"));
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
@@ -509,7 +510,6 @@ class Statistics  extends MY_Controller
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $badge_label = array();
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
                 for($i=$day; $i >= 1 ;$i--){
                     $badge_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
@@ -640,7 +640,8 @@ class Statistics  extends MY_Controller
                                            'data' => $register_data[0],
                                            'label' => 'Players');
             } elseif($type == 'month'){
-                $date = date("Y-m-d", strtotime("-30 days"));
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
@@ -652,7 +653,6 @@ class Statistics  extends MY_Controller
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $register_label = array();
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
                 for($i=$day; $i >= 1 ;$i--){
                     $register_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
@@ -771,7 +771,8 @@ class Statistics  extends MY_Controller
                                         'data' => $mgm_data[0],
                                         'label' => 'MGM');
             } elseif($type == 'month'){
-                $date = date("Y-m-d", strtotime("-30 days"));
+                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
                 $date = $date_zone->format('Y-m-d H:i:s');
@@ -783,7 +784,6 @@ class Statistics  extends MY_Controller
                 $currentDate = strtotime($date);
                 $to = $currentDate + ("86399");
                 $mgm_label = array();
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
                 for($i=$day; $i >= 1 ;$i--){
                     $mgm_label[] = ''.date("d", strtotime("-".$i." days"));
                 }
