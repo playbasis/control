@@ -68,7 +68,7 @@
             <table class="list">
                 <thead>
                 <tr>
-                    <td class="center"><?php echo $this->lang->line('column_goods_name'); ?></td>
+                    <td width="200" class="center"><?php echo $this->lang->line('column_goods_name'); ?></td>
                     <td width="40" class="center"><?php echo $this->lang->line('column_goods_group'); ?></td>
                     <td width="120" class="center"><?php echo $this->lang->line('column_goods_batch'); ?></td>
                     <td width="115"  class="center"><?php echo $this->lang->line('column_goods_date_start'); ?></td>
