@@ -485,9 +485,9 @@ class Report_goods_store extends MY_Controller
             )
         );
 
-        $data['limit'] = 10000;
-        for ($i = 0; $i < $report_total/10000; $i++){
-            $data['start'] = ($i * 10000);
+        $data['limit'] = 10;
+        for ($i = 0; $i < $report_total/10; $i++){
+            $data['start'] = ($i * 10);
             $results = $this->Report_goods_model->getReportGoodsStore($data);
             foreach ($results as $result) {
                 if(isset($result['tags'])){
