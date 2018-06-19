@@ -457,37 +457,37 @@ class Report_goods_store extends MY_Controller
 
         $this->load->helper('export_data');
 
-        $exporter = new ExportDataCSV('browser', "GoodsStoreReport_" . date("YmdHis") . ".csv");
+        $date = date("YmdHis");
+        $data['limit'] = 50;
+        for ($i = 0; $i < $report_total/50; $i++){
+            $data['start'] = ($i * 50);
+            $exporter = new ExportDataCSV('browser', "GoodsStoreReport_" . $date . "_".$i.".csv");
 
-        $exporter->initialize(); // starts streaming data to web browser
+            $exporter->initialize(); // starts streaming data to web browser
 
-        $exporter->addRow(array(
-                $this->lang->line('column_goods_name'),
-                $this->lang->line('column_goods_group'),
-                $this->lang->line('column_goods_unit_price'),
-                $this->lang->line('column_goods_quantity'),
-                $this->lang->line('column_goods_total_price'),
-                $this->lang->line('column_goods_granted'),
-                $this->lang->line('column_goods_expired'),
-                $this->lang->line('column_goods_unused'),
-                $this->lang->line('column_goods_used'),
-                $this->lang->line('column_goods_balance'),
-                'total_'.$this->lang->line('column_goods_granted'),
-                'total_'.$this->lang->line('column_goods_expired'),
-                'total_'.$this->lang->line('column_goods_unused'),
-                'total_'.$this->lang->line('column_goods_used'),
-                'total_'.$this->lang->line('column_goods_balance'),
-                $this->lang->line('column_goods_remaining'),
-                $this->lang->line('column_goods_batch'),
-                $this->lang->line('column_goods_date_start'),
-                $this->lang->line('column_goods_date_end'),
-                $this->lang->line('column_goods_date_expire'),
-            )
-        );
-
-        $data['limit'] = 10;
-        for ($i = 0; $i < $report_total/10; $i++){
-            $data['start'] = ($i * 10);
+            $exporter->addRow(array(
+                    $this->lang->line('column_goods_name'),
+                    $this->lang->line('column_goods_group'),
+                    $this->lang->line('column_goods_unit_price'),
+                    $this->lang->line('column_goods_quantity'),
+                    $this->lang->line('column_goods_total_price'),
+                    $this->lang->line('column_goods_granted'),
+                    $this->lang->line('column_goods_expired'),
+                    $this->lang->line('column_goods_unused'),
+                    $this->lang->line('column_goods_used'),
+                    $this->lang->line('column_goods_balance'),
+                    'total_'.$this->lang->line('column_goods_granted'),
+                    'total_'.$this->lang->line('column_goods_expired'),
+                    'total_'.$this->lang->line('column_goods_unused'),
+                    'total_'.$this->lang->line('column_goods_used'),
+                    'total_'.$this->lang->line('column_goods_balance'),
+                    $this->lang->line('column_goods_remaining'),
+                    $this->lang->line('column_goods_batch'),
+                    $this->lang->line('column_goods_date_start'),
+                    $this->lang->line('column_goods_date_end'),
+                    $this->lang->line('column_goods_date_expire'),
+                )
+            );
             $results = $this->Report_goods_model->getReportGoodsStore($data);
             foreach ($results as $result) {
                 if(isset($result['tags'])){
@@ -597,8 +597,7 @@ class Report_goods_store extends MY_Controller
                     );
                 }
             }
+            $exporter->finalize();
         }
-        $exporter->finalize();
-
     }
 }
