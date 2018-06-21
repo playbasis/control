@@ -96,6 +96,22 @@
             </div>
         </div>
     </div>
+    <div class="row-fluid">
+        <div class="box span4 noMargin" onTablet="span12" onDesktop="span4">
+            <div class="box-header">
+                <h2><i class="icon-certificate"></i><span class="break"></span>Action Value<span class="break"></span>
+                    <div id="action_value_sort" class="btn-group" data-toggle="buttons-radio" >
+                        <button rel="day" type="button" class="btn options btn-mini">Daily</button>
+                        <button rel="weekly" type="button" class="btn options btn-mini active">Weekly</button>
+                        <button rel="month" type="button" class="btn options btn-mini">Monthly</button>
+                    </div><span class="break"></span><button type="button" id="download_action_value_graph"><i class="icon-download"></i></button>
+                </h2>
+            </div>
+            <div id="chart_content6" class="box-content">
+                <canvas id="myChart6" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -165,6 +181,70 @@
         link = document.createElement('a');
         link.setAttribute('href', img);
         link.setAttribute('download', 'action_graph');
+        link.click();
+    });
+
+    $.ajax({
+        url: baseUrlPath+'statistics/getActionAmountData',
+        data: {},
+        context: document.body
+    }).done(function(data){
+        var myArray = JSON.parse(data);
+        var ctx = document.getElementById("myChart6").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: myArray.label,
+                datasets: myArray.data
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    });
+
+    $('#action_value_sort button').live('click', function(){
+        $('#myChart6').remove(); // this is my <canvas> element
+        $('#chart_content6').append('<canvas id="myChart6" width="400" height="400"></canvas>');
+        var e = $(this).attr('rel');
+        $.ajax({
+            url: baseUrlPath+'statistics/getActionAmountData/'+ e,
+            data: {},
+            context: document.body
+        }).done(function(data){
+            var myArray = JSON.parse(data);
+            var ctx = document.getElementById("myChart6").getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: myArray.label,
+                    datasets: myArray.data
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
+        });
+    });
+
+    $('#download_action_value_graph').live('click', function(){
+        var canvas = document.getElementById("myChart6");
+        var img    = canvas.toDataURL("image/png");
+        link = document.createElement('a');
+        link.setAttribute('href', img);
+        link.setAttribute('download', 'action_value_graph');
         link.click();
     });
 
