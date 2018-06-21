@@ -148,16 +148,17 @@ class Report_goods_model extends MY_Model
 
         if(isset($data['filter_tags']) && $data['filter_tags']){
             $tags = explode(',', $data['filter_tags']);
-            $this->mongo_db->where_in('tags', array_merge(array('RM1HOTDEALS'), $tags));
-        } else {
-            $this->mongo_db->where_in('tags', array('RM1HOTDEALS'));
+            $this->mongo_db->where_in('tags', $tags);
+        }
+
+        if(isset($data['filter_status'])){
+            $this->mongo_db->where('status', $data['filter_status']);
         }
 
         if(isset($data['distinct_id']) && is_array($data['distinct_id']) && $data['distinct_id']){
             $this->mongo_db->where_in('_id', $data['distinct_id']);
         }
-
-        $this->mongo_db->where('status', true);
+        
         $this->mongo_db->where('deleted', false);
         return $this->mongo_db->count('playbasis_goods_distinct_to_client');
 
@@ -174,9 +175,11 @@ class Report_goods_model extends MY_Model
 
         if(isset($data['filter_tags']) && $data['filter_tags']){
             $tags = explode(',', $data['filter_tags']);
-            $this->mongo_db->where_in('tags', array_merge(array('RM1HOTDEALS'), $tags));
-        } else {
-            $this->mongo_db->where_in('tags', array('RM1HOTDEALS'));
+            $this->mongo_db->where_in('tags', $tags);
+        }
+        
+        if(isset($data['filter_status'])){
+            $this->mongo_db->where('status', $data['filter_status']);
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
@@ -191,8 +194,7 @@ class Report_goods_model extends MY_Model
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
-
-        $this->mongo_db->where('status', true);
+     
         $this->mongo_db->where('deleted', false);
         return $this->mongo_db->get('playbasis_goods_distinct_to_client');
 
