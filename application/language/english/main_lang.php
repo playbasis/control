@@ -256,6 +256,14 @@ $lang['tab_sms']                 = 'SMS';
 $lang['tab_push']                = 'Push Notification';
 $lang['tab_limits']              = 'Limits';
 
+//column
+$lang['column_date']             = 'Date/Time';
+$lang['column_addon']            = 'Addon';
+$lang['column_paybill']          = 'Paybill';
+$lang['column_topup']            = 'Topup';
+$lang['column_reload_for_others']= 'Reload_for_others';
+$lang['column_want']             = 'Want';
+
 // Error
 $lang['error_upload_1']          = 'Warning: The uploaded file exceeds the upload_max_filesize directive in php.ini!';
 $lang['error_upload_2']          = 'Warning: The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form!';
