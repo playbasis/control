@@ -7,7 +7,11 @@
                     <button rel="day" type="button" class="btn options btn-mini">Daily</button>
                     <button rel="weekly" type="button" class="btn options btn-mini active">Weekly</button>
                     <button rel="month" type="button" class="btn options btn-mini">Monthly</button>
-                </div><span class="break"></span><button href="#" type="button" id="download_action_graph"><i class="icon-download"></i></button>
+                </div>
+                <span class="break"></span>
+                <button href="#" type="button" id="download_action_graph"><i class="icon-download"></i></button>
+                <button href="#" type="button" id="download_action_report"><i class="icon-cloud-download"></i></button>
+
                 </h2>
             </div>
 
@@ -19,11 +23,14 @@
         <div class="box span4 noMargin" onTablet="span12" onDesktop="span4">
             <div class="box-header">
                 <h2><i class="icon-gift"></i><span class="break"></span>Goods SuperDeal<span class="break"></span>
-                <div id="goods_superdeal_sort" class="btn-group" data-toggle="buttons-radio" >
-                    <button rel="day" type="button" class="btn options btn-mini">Daily</button>
-                    <button rel="weekly" type="button" class="btn options btn-mini active">Weekly</button>
-                    <button rel="month" type="button" class="btn options btn-mini">Monthly</button>
-                </div><span class="break"></span><button type="button" id="download_goods_superdeal_graph"><i class="icon-download"></i></button>
+                    <div id="goods_superdeal_sort" class="btn-group" data-toggle="buttons-radio" >
+                        <button rel="day" type="button" class="btn options btn-mini">Daily</button>
+                        <button rel="weekly" type="button" class="btn options btn-mini active">Weekly</button>
+                        <button rel="month" type="button" class="btn options btn-mini">Monthly</button>
+                    </div>
+                    <span class="break"></span>
+                    <button type="button" id="download_goods_superdeal_graph"><i class="icon-download"></i></button>
+                    <button href="#" type="button" id="download_goods_superdeal_report"><i class="icon-cloud-download"></i></button>
                 </h2>
             </div>
 
@@ -34,11 +41,13 @@
         <div class="box span4 noMargin" onTablet="span12" onDesktop="span4">
             <div class="box-header">
                 <h2><i class="icon-certificate"></i><span class="break"></span>Goods Monthly<span class="break"></span>
-                <div id="goods_monthly_sort" class="btn-group" data-toggle="buttons-radio" >
-                    <button rel="day" type="button" class="btn options btn-mini">Daily</button>
-                    <button rel="weekly" type="button" class="btn options btn-mini active">Weekly</button>
-                    <button rel="month" type="button" class="btn options btn-mini">Monthly</button>
-                </div><span class="break"></span><button type="button" id="download_goods_monthly_graph"><i class="icon-download"></i></button>
+                    <div id="goods_monthly_sort" class="btn-group" data-toggle="buttons-radio" >
+                        <button rel="day" type="button" class="btn options btn-mini">Daily</button>
+                        <button rel="weekly" type="button" class="btn options btn-mini active">Weekly</button>
+                        <button rel="month" type="button" class="btn options btn-mini">Monthly</button>
+                    </div>
+                    <span class="break"></span><button type="button" id="download_goods_monthly_graph"><i class="icon-download"></i></button>
+                    <button href="#" type="button" id="download_goods_monthly_report"><i class="icon-cloud-download"></i></button>
                 </h2>
             </div>
 
@@ -56,7 +65,9 @@
                         <button rel="day" type="button" class="btn options btn-mini">Daily</button>
                         <button rel="weekly" type="button" class="btn options btn-mini active">Weekly</button>
                         <button rel="month" type="button" class="btn options btn-mini">Monthly</button>
-                    </div><span class="break"></span><button type="button" id="download_badge_graph"><i class="icon-download"></i></button>
+                    </div>
+                    <span class="break"></span><button type="button" id="download_badge_graph"><i class="icon-download"></i></button>
+                    <button href="#" type="button" id="download_badge_report"><i class="icon-cloud-download"></i></button>
                 </h2>
             </div>
 
@@ -72,7 +83,9 @@
                         <button rel="day" type="button" class="btn options btn-mini">Daily</button>
                         <button rel="weekly" type="button" class="btn options btn-mini active">Weekly</button>
                         <button rel="month" type="button" class="btn options btn-mini">Monthly</button>
-                    </div><span class="break"></span><button type="button" id="download_register_graph"><i class="icon-download"></i></button>
+                    </div>
+                    <span class="break"></span><button type="button" id="download_register_graph"><i class="icon-download"></i></button>
+                    <button href="#" type="button" id="download_register_report"><i class="icon-cloud-download"></i></button>
                 </h2>
             </div>
 
@@ -87,7 +100,9 @@
                         <button rel="day" type="button" class="btn options btn-mini">Daily</button>
                         <button rel="weekly" type="button" class="btn options btn-mini active">Weekly</button>
                         <button rel="month" type="button" class="btn options btn-mini">Monthly</button>
-                    </div><span class="break"></span><button type="button" id="download_mgm_graph"><i class="icon-download"></i></button>
+                    </div>
+                    <span class="break"></span><button type="button" id="download_mgm_graph"><i class="icon-download"></i></button>
+                    <button href="#" type="button" id="download_mgm_report"><i class="icon-cloud-download"></i></button>
                 </h2>
             </div>
 
@@ -104,7 +119,9 @@
                         <button rel="day" type="button" class="btn options btn-mini">Daily</button>
                         <button rel="weekly" type="button" class="btn options btn-mini active">Weekly</button>
                         <button rel="month" type="button" class="btn options btn-mini">Monthly</button>
-                    </div><span class="break"></span><button type="button" id="download_action_value_graph"><i class="icon-download"></i></button>
+                    </div>
+                    <span class="break"></span><button type="button" id="download_action_value_graph"><i class="icon-download"></i></button>
+                    <button href="#" type="button" id="download_action_value_report"><i class="icon-cloud-download"></i></button>
                 </h2>
             </div>
             <div id="chart_content6" class="box-content">
@@ -184,6 +201,11 @@
         link.click();
     });
 
+    $('#download_action_report').live('click', function(){
+        var e = $('#action_sort button').filter('.active').attr('rel');
+        location = baseUrlPath+'statistics/downloadActionData/'+e;
+    });
+
     $.ajax({
         url: baseUrlPath+'statistics/getActionAmountData',
         data: {},
@@ -246,6 +268,11 @@
         link.setAttribute('href', img);
         link.setAttribute('download', 'action_value_graph');
         link.click();
+    });
+
+    $('#download_action_value_report').live('click', function(){
+        var e = $('#action_value_sort button').filter('.active').attr('rel');
+        location = baseUrlPath+'statistics/downloadActionAmountData/'+e;
     });
 
     $.ajax({
@@ -312,6 +339,11 @@
         link.click();
     });
 
+    $('#download_goods_superdeal_report').live('click', function(){
+        var e = $('#goods_superdeal_sort button').filter('.active').attr('rel');
+        location = baseUrlPath+'statistics/downloadGoodsSuperData/'+e;
+    });
+
     $.ajax({
         url: baseUrlPath+'statistics/getGoodsMonthlyData',
         data: {},
@@ -374,6 +406,11 @@
         link.setAttribute('href', img);
         link.setAttribute('download', 'goods_monthly_graph');
         link.click();
+    });
+
+    $('#download_goods_monthly_report').live('click', function(){
+        var e = $('#goods_monthly_sort button').filter('.active').attr('rel');
+        location = baseUrlPath+'statistics/downloadGoodsMonthlyData/'+e;
     });
 
     $.ajax({
@@ -440,6 +477,11 @@
         link.click();
     });
 
+    $('#download_badge_report').live('click', function(){
+        var e = $('#badge_sort button').filter('.active').attr('rel');
+        location = baseUrlPath+'statistics/downloadBadgeData/'+e;
+    });
+
     $.ajax({
         url: baseUrlPath+'statistics/getRegisterData',
         data: {},
@@ -504,6 +546,11 @@
         link.click();
     });
 
+    $('#download_register_report').live('click', function(){
+        var e = $('#register_sort button').filter('.active').attr('rel');
+        location = baseUrlPath+'statistics/downloadRegisterData/'+e;
+    });
+
     $.ajax({
         url: baseUrlPath+'statistics/getMGMData',
         data: {},
@@ -566,6 +613,11 @@
         link.setAttribute('href', img);
         link.setAttribute('download', 'mgm_graph');
         link.click();
+    });
+
+    $('#download_mgm_report').live('click', function(){
+        var e = $('#mgm_sort button').filter('.active').attr('rel');
+        location = baseUrlPath+'statistics/downloadMGMData/'+e;
     });
 
 </script>
