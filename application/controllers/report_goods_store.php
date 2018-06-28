@@ -292,26 +292,18 @@ class Report_goods_store extends MY_Controller
                         unset($goods_total_data[$key]);
                         continue;
                     }
-                    if(array_key_exists('status', $v)){
-                        if($v['status'] == 'used'){
-                            array_push($total_used_array, $v);
-                        } else {
-                            $d = new MongoDate();
-                            $e = isset($v['date_expire']) ? $v['date_expire']: $d;
-                            if($d > $e){
-                                array_push($total_expire_array, $v);
-                            }
-                            else{
+                    $d = new MongoDate();
+                    $e = isset($v['date_expire']) ? $v['date_expire']: $d;
+                    if($d > $e){
+                        array_push($total_expire_array, $v);
+                    } else {
+                        if(array_key_exists('status', $v)){
+                            if($v['status'] = 'used'){
+                                array_push($total_used_array, $v);
+                            } else {
                                 array_push($total_active_array, $v);
                             }
-                        }
-                    } else {
-                        $d = new MongoDate();
-                        $e = isset($v['date_expire']) ? $v['date_expire']: $d;
-                        if($d > $e){
-                            array_push($total_expire_array, $v);
-                        }
-                        else{
+                        } else {
                             array_push($total_active_array, $v);
                         }
                     }
@@ -321,26 +313,18 @@ class Report_goods_store extends MY_Controller
                         unset($goods_period_data[$key]);
                         continue;
                     }
-                    if(array_key_exists('status', $v)){
-                        if($v['status'] = 'used'){
-                            array_push($used_array, $v);
-                        } else {
-                            $d = new MongoDate();
-                            $e = isset($v['date_expire']) ? $v['date_expire']: $d;
-                            if($d > $e){
-                                array_push($expire_array, $v);
-                            }
-                            else{
+                    $d = new MongoDate();
+                    $e = isset($v['date_expire']) ? $v['date_expire']: $d;
+                    if($d > $e){
+                        array_push($expire_array, $v);
+                    } else {
+                        if(array_key_exists('status', $v)){
+                            if($v['status'] = 'used'){
+                                array_push($used_array, $v);
+                            } else {
                                 array_push($active_array, $v);
                             }
-                        }
-                    } else {
-                        $d = new MongoDate();
-                        $e = isset($v['date_expire']) ? $v['date_expire']: $d;
-                        if($d > $e){
-                            array_push($expire_array, $v);
-                        }
-                        else{
+                        } else {
                             array_push($active_array, $v);
                         }
                     }
@@ -638,26 +622,18 @@ class Report_goods_store extends MY_Controller
                             unset($goods_total_data[$key]);
                             continue;
                         }
-                        if(array_key_exists('status', $v)){
-                            if($v['status'] == 'used'){
-                                array_push($total_used_array, $v);
-                            } else {
-                                $d = new MongoDate();
-                                $e = isset($v['date_expire']) ? $v['date_expire']: $d;
-                                if($d > $e){
-                                    array_push($total_expire_array, $v);
-                                }
-                                else{
+                        $d = new MongoDate();
+                        $e = isset($v['date_expire']) ? $v['date_expire']: $d;
+                        if($d > $e){
+                            array_push($total_expire_array, $v);
+                        } else {
+                            if(array_key_exists('status', $v)){
+                                if($v['status'] = 'used'){
+                                    array_push($total_used_array, $v);
+                                } else {
                                     array_push($total_active_array, $v);
                                 }
-                            }
-                        } else {
-                            $d = new MongoDate();
-                            $e = isset($v['date_expire']) ? $v['date_expire']: $d;
-                            if($d > $e){
-                                array_push($total_expire_array, $v);
-                            }
-                            else{
+                            } else {
                                 array_push($total_active_array, $v);
                             }
                         }
@@ -667,26 +643,18 @@ class Report_goods_store extends MY_Controller
                             unset($goods_period_data[$key]);
                             continue;
                         }
-                        if(array_key_exists('status', $v)){
-                            if($v['status'] = 'used'){
-                                array_push($used_array, $v);
-                            } else {
-                                $d = new MongoDate();
-                                $e = isset($v['date_expire']) ? $v['date_expire']: $d;
-                                if($d > $e){
-                                    array_push($expire_array, $v);
-                                }
-                                else{
+                        $d = new MongoDate();
+                        $e = isset($v['date_expire']) ? $v['date_expire']: $d;
+                        if($d > $e){
+                            array_push($expire_array, $v);
+                        } else {
+                            if(array_key_exists('status', $v)){
+                                if($v['status'] = 'used'){
+                                    array_push($used_array, $v);
+                                } else {
                                     array_push($active_array, $v);
                                 }
-                            }
-                        } else {
-                            $d = new MongoDate();
-                            $e = isset($v['date_expire']) ? $v['date_expire']: $d;
-                            if($d > $e){
-                                array_push($expire_array, $v);
-                            }
-                            else{
+                            } else {
                                 array_push($active_array, $v);
                             }
                         }

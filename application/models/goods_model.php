@@ -511,8 +511,6 @@ class Goods_model extends MY_Model
 
     public function getAllGoodsByDistinctID($client_id, $site_id, $distinct_id)
     {
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('distinct_id', new MongoId($distinct_id));
         return $this->mongo_db->get('playbasis_goods_to_client');
     }
