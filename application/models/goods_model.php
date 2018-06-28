@@ -541,6 +541,15 @@ class Goods_model extends MY_Model
                 $this->mongo_db->where('status', $data['status']);
             }
         }
+
+        if(isset($data['date_start']) && isset($data['date_end'])){
+            if(isset($data['status']) &&  $data['status'] == 'used'){
+                $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lt' => new MongoDate(strtotime($data['date_end']))));
+            } else {
+                $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lt' => new MongoDate(strtotime($data['date_end']))));
+            }
+        }
+
         $results = $this->mongo_db->get("playbasis_goods_log");
 
         return $results;

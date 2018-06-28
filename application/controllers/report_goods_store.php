@@ -83,6 +83,31 @@ class Report_goods_store extends MY_Controller
         $filter_tags = null;
         $filter_goods_distinct = array();
         $filter_goods_data = array();
+
+        if ($this->input->get('date_start')) {
+            $filter_date_start = $this->input->get('date_start');
+            $parameter_url .= "&date_start=" . $filter_date_start;
+        } else {
+            $date = date("Y-m-d", strtotime("-7 days"));
+            $previousDate = strtotime($date);
+            $filter_date_start = date("Y-m-d H:i:s", $previousDate);
+        }
+
+        if ($this->input->get('date_expire')) {
+            $filter_date_end = $this->input->get('date_expire');
+            $parameter_url .= "&date_expire=" . $filter_date_end;
+            if(strpos($filter_date_end, '00:00:00')){
+                $currentDate = strtotime($filter_date_end);
+                $futureDate = $currentDate + ("86399");
+                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            }
+        } else {
+            $date = date("Y-m-d");
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate + ("86399");
+            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+        }
+
         if ($this->input->get('tags')) {
             $filter_tags = $this->input->get('tags');
             $parameter_url .= "&tags=" . $filter_tags;
@@ -97,10 +122,21 @@ class Report_goods_store extends MY_Controller
                 if(isset($goods_data['distinct_id'])){
                     $filter_goods_distinct[] = $goods_data['distinct_id'];
                 }
-
             }
         } else {
             $filter_goods_id = array();
+        }
+
+        if ($this->input->get('status')){
+            $filter_status = $this->input->get('status');
+            $parameter_url .= "&status=" . $filter_status;
+            if($filter_status == "all" ){
+                $status = null;
+            } else {
+                $status = $filter_status == "disable" ? false : true;
+            }
+        } else {
+            $status = true;
         }
 
         $limit = ($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
@@ -111,7 +147,8 @@ class Report_goods_store extends MY_Controller
             'start' => $offset,
             'limit' => $limit,
             'distinct_id' => $filter_goods_distinct,
-            'filter_tags' => $filter_tags
+            'filter_tags' => $filter_tags,
+            'filter_status' => $status
         );
 
         $report_total = 0;
@@ -140,12 +177,23 @@ class Report_goods_store extends MY_Controller
                 $remaining_goods = $goods_data ? array_filter(array_column($goods_data, 'quantity')) : 0;
                 $quantity = $goods_data ? sizeof($goods_data) : 0;
                 $remaining = $remaining_goods ? sizeof($remaining_goods) : 0;
-                $unused_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'active'));
+                $granted_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'granted', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end)) : array();
+                $granted = $granted_data ? sizeof($granted_data) : 0 ;
+                $unused_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'active', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end));
                 $unused = $unused_data ? sizeof($unused_data) : 0;
-                $expired_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'expired'));
+                $expired_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'expired', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end));
                 $expired = $expired_data ? sizeof($expired_data) : 0;
-                $used_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'used'));
+                $used_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'used' , 'date_start' => $filter_date_start, 'date_end' => $filter_date_end));
                 $used = $used_data ? sizeof($used_data) : 0;
+
+                $total_granted_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'granted')) : array();
+                $total_granted = $total_granted_data ? sizeof($total_granted_data) : 0 ;
+                $total_unused_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'active'));
+                $total_unused = $total_unused_data ? sizeof($total_unused_data) : 0;
+                $total_expired_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'expired'));
+                $total_expired = $total_expired_data ? sizeof($total_expired_data) : 0;
+                $total_used_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'used'));
+                $total_used = $total_used_data ? sizeof($total_used_data) : 0;
                 $data_row = array(
                     'goods_name' => $result['name'],
                     'group' => $result['is_group'],
@@ -155,10 +203,14 @@ class Report_goods_store extends MY_Controller
                     'date_expire' => $date_expire,
                     'quantity' => $quantity,
                     'remaining' => $remaining,
-                    'granted' => $quantity - $remaining,
+                    'granted' => $granted,
                     'unused' => $unused,
                     'used' => $used,
-                    'expired' => $expired
+                    'expired' => $expired,
+                    'total_granted' => $total_granted,
+                    'total_unused' => $total_unused,
+                    'total_used' => $total_used,
+                    'total_expired' => $total_expired,
                 );
                 if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && isset($result['tags'])) {
                     $searchword = 'PRICE';
@@ -168,20 +220,31 @@ class Report_goods_store extends MY_Controller
                     $data_row['price'] = isset($price[1]) ? $price[1] : 0;
                     $data_row['total_value'] = isset($price[1]) ? floatval($price[1]) * floatval($data_row['quantity']) : 0;
                     $data_row['used_balance'] = isset($price[1]) ? floatval($price[1]) * floatval($data_row['used']) : 0;
+                    $data_row['total_used_balance'] = isset($price[1]) ? floatval($price[1]) * floatval($data_row['total_used']) : 0;
                 }
 
                 $this->data['reports'][] = $data_row;
             } else {
                 $goods_data = $this->Goods_model->getAllGoodsByDistinctID($client_id, $site_id, $result['_id']);
-                $granted_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'granted')) : array();
+                $granted_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'granted', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end)) : array();
                 $granted = $granted_data ? sizeof($granted_data) : 0 ;
-                $remaining = $granted_data ? $goods_data[0]['quantity'] : 0;
-                $unused_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'active')) : array();
+                $remaining = isset($goods_data[0]['quantity']) ? $goods_data[0]['quantity'] : "unlimited";
+                $unused_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'active', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end)) : array();
                 $unused = $unused_data ? sizeof($unused_data) : 0;
-                $expired_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'expired')) : array();
+                $expired_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'expired', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end)) : array();
                 $expired = $expired_data ? sizeof($expired_data) : 0;
-                $used_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'used')) : array();
+                $used_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'used', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end)) : array();
                 $used = $used_data ? sizeof($used_data) : 0;
+
+                $total_granted_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'granted')) : array();
+                $total_granted = $total_granted_data ? sizeof($total_granted_data) : 0 ;
+                $total_unused_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'active'));
+                $total_unused = $total_unused_data ? sizeof($total_unused_data) : 0;
+                $total_expired_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'expired'));
+                $total_expired = $total_expired_data ? sizeof($total_expired_data) : 0;
+                $total_used_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'used'));
+                $total_used = $total_used_data ? sizeof($total_used_data) : 0;
+                
                 $data_row = array(
                     'goods_name' => $result['name'],
                     'group' => $result['is_group'],
@@ -189,12 +252,16 @@ class Report_goods_store extends MY_Controller
                     'date_start' => isset($result['date_start']) ? array(datetimeMongotoReadable($result['date_start'])) : array(),
                     'date_end' => isset($result['date_expire']) ? array(datetimeMongotoReadable($result['date_expire'])) : array(),
                     'date_expire' => isset($result['date_expired_coupon']) ? array(datetimeMongotoReadable($result['date_expired_coupon'])) : array(),
-                    'quantity' => $granted + $remaining,
+                    'quantity' => $total_granted + $remaining,
                     'remaining' => $remaining,
                     'granted' => $granted,
                     'unused' => $unused,
                     'used' => $used,
-                    'expired' => $expired
+                    'expired' => $expired,
+                    'total_granted' => $total_granted,
+                    'total_unused' => $total_unused,
+                    'total_used' => $total_used,
+                    'total_expired' => $total_expired,
                 );
                 if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && isset($result['tags'])) {
                     $searchword = 'PRICE';
@@ -204,6 +271,7 @@ class Report_goods_store extends MY_Controller
                     $data_row['price'] = isset($price[1]) ? $price[1] : 0;
                     $data_row['total_value'] = isset($price[1]) ? floatval($price[1]) * floatval($data_row['quantity']) : 0;
                     $data_row['used_balance'] = isset($price[1]) ? floatval($price[1]) * floatval($data_row['used']) : 0;
+                    $data_row['total_used_balance'] = isset($price[1]) ? floatval($price[1]) * floatval($data_row['total_used']) : 0;
                 }
 
                 $this->data['reports'][] = $data_row;
@@ -263,6 +331,9 @@ class Report_goods_store extends MY_Controller
         $this->data['pagination_total_rows'] = $config["total_rows"];
         $this->data['filter_tags'] = $filter_tags;
         $this->data['filter_goods_id'] = $filter_goods_id;
+        $this->data['filter_date_start'] = $filter_date_start;
+        $this->data['filter_date_end'] = $filter_date_end;
+        $this->data['filter_status'] = $filter_status;
 
         $this->data['main'] = 'report_goods_store';
         $this->load->vars($this->data);
@@ -271,7 +342,7 @@ class Report_goods_store extends MY_Controller
 
     private function getList($site_id)
     {
-        $goods_list = $this->Goods_model->getGroupsList($site_id, array('filter_tags' => 'RM1HOTDEALS', 'filter_status' => true));
+        $goods_list = $this->Goods_model->getGroupsList($site_id);
         $goods_data = array();
         foreach ($goods_list as $goods_name){
             if($goods_name['is_group']){
@@ -313,12 +384,50 @@ class Report_goods_store extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
+
+        if ($this->input->get('date_start')) {
+            $filter_date_start = $this->input->get('date_start');
+            $parameter_url .= "&date_start=" . $filter_date_start;
+        } else {
+            $date = date("Y-m-d", strtotime("-7 days"));
+            $previousDate = strtotime($date);
+            $filter_date_start = date("Y-m-d H:i:s", $previousDate);
+        }
+
+        if ($this->input->get('date_expire')) {
+            $filter_date_end = $this->input->get('date_expire');
+            $parameter_url .= "&date_expire=" . $filter_date_end;
+            if(strpos($filter_date_end, '00:00:00')){
+                $currentDate = strtotime($filter_date_end);
+                $futureDate = $currentDate + ("86399");
+                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            }
+        } else {
+            $date = date("Y-m-d");
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate + ("86399");
+            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+        }
+
+        if ($this->input->get('status')){
+            $filter_status = $this->input->get('status');
+            $parameter_url .= "&status=" . $filter_status;
+            if($filter_status == "all" ){
+                $status = null;
+            } else {
+                $status = $filter_status == "disable" ? false : true;
+            }
+        } else {
+            $status = true;
+        }
+
         $filter_tags = null;
         $filter_goods_distinct = array();
         $filter_goods_data = array();
         if ($this->input->get('tags')) {
             $filter_tags = $this->input->get('tags');
         }
+
         if ($this->input->get('goods_id')){
             $filter_goods_id = $this->input->get('goods_id');
             $filter_goods_id = explode(',', $filter_goods_id);
@@ -335,7 +444,8 @@ class Report_goods_store extends MY_Controller
             'client_id' => $client_id,
             'site_id' => $site_id,
             'distinct_id' => $filter_goods_distinct,
-            'filter_tags' => $filter_tags
+            'filter_tags' => $filter_tags,
+            'filter_status' => $status
         );
         $report_total = 0;
 
@@ -346,33 +456,38 @@ class Report_goods_store extends MY_Controller
         $this->data['reports'] = array();
 
         $this->load->helper('export_data');
-
-        $exporter = new ExportDataCSV('browser', "GoodsStoreReport_" . date("YmdHis") . ".csv");
+        $exporter = new ExportDataCSV('browser', "GoodsStoreReport_" . date("YmdHis") .".csv");
 
         $exporter->initialize(); // starts streaming data to web browser
 
         $exporter->addRow(array(
                 $this->lang->line('column_goods_name'),
                 $this->lang->line('column_goods_group'),
-                $this->lang->line('column_goods_batch'),
-                $this->lang->line('column_goods_date_start'),
-                $this->lang->line('column_goods_date_end'),
-                $this->lang->line('column_goods_date_expire'),
                 $this->lang->line('column_goods_unit_price'),
                 $this->lang->line('column_goods_quantity'),
                 $this->lang->line('column_goods_total_price'),
-                $this->lang->line('column_goods_remaining'),
                 $this->lang->line('column_goods_granted'),
                 $this->lang->line('column_goods_expired'),
                 $this->lang->line('column_goods_unused'),
                 $this->lang->line('column_goods_used'),
-                $this->lang->line('column_goods_balance')
+                $this->lang->line('column_goods_balance'),
+                'total_'.$this->lang->line('column_goods_granted'),
+                'total_'.$this->lang->line('column_goods_expired'),
+                'total_'.$this->lang->line('column_goods_unused'),
+                'total_'.$this->lang->line('column_goods_used'),
+                'total_'.$this->lang->line('column_goods_balance'),
+                $this->lang->line('column_goods_remaining'),
+                $this->lang->line('column_goods_batch'),
+                $this->lang->line('column_goods_date_start'),
+                $this->lang->line('column_goods_date_end'),
+                $this->lang->line('column_goods_date_expire'),
             )
         );
 
-        $data['limit'] = 10000;
-        for ($i = 0; $i < $report_total/10000; $i++){
-            $data['start'] = ($i * 10000);
+        $data['limit'] = 50;
+        for ($i = 0; $i < $report_total/50; $i++){
+            $data['start'] = ($i * 50);
+
             $results = $this->Report_goods_model->getReportGoodsStore($data);
             foreach ($results as $result) {
                 if(isset($result['tags'])){
@@ -395,28 +510,46 @@ class Report_goods_store extends MY_Controller
                     $remaining_goods = $goods_data ? array_filter(array_column($goods_data, 'quantity')) : 0;
                     $quantity = $goods_data ? sizeof($goods_data) : 0;
                     $remaining = $remaining_goods ? sizeof($remaining_goods) : 0;
-                    $unused_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'active'));
+
+                    $granted_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'granted', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end)) : array();
+                    $granted = $granted_data ? sizeof($granted_data) : 0 ;
+                    $unused_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'active', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end));
                     $unused = $unused_data ? sizeof($unused_data) : 0;
-                    $expired_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'expired'));
+                    $expired_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'expired', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end));
                     $expired = $expired_data ? sizeof($expired_data) : 0;
-                    $used_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'used'));
+                    $used_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'used', 'date_start' => $filter_date_start, 'date_end' => $filter_date_end));
                     $used = $used_data ? sizeof($used_data) : 0;
+
+                    $total_granted_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'granted')) : array();
+                    $total_granted = $total_granted_data ? sizeof($total_granted_data) : 0 ;
+                    $total_unused_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'active'));
+                    $total_unused = $total_unused_data ? sizeof($total_unused_data) : 0;
+                    $total_expired_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'expired'));
+                    $total_expired = $total_expired_data ? sizeof($total_expired_data) : 0;
+                    $total_used_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'group' => $result['name'], 'status' => 'used'));
+                    $total_used = $total_used_data ? sizeof($total_used_data) : 0;
+
                     $exporter->addRow(array(
                         $result['name'],
                         $result['is_group'] ? "yes" : "no",
-                        isset($result['batch_name']) ? implode("\n", $result['batch_name']) : "",
-                        isset($date_start) ? implode("\n", $date_start) : "",
-                        isset($date_end) ? implode("\n", $date_end) : "",
-                        isset($date_expire) ? implode("\n", $date_expire) : "",
                         isset($price[1]) ? $price[1] : 0,
                         $quantity,
                         isset($price[1]) ? floatval($price[1]) * floatval($quantity) : 0,
-                        $remaining,
-                        $quantity - $remaining,
+                        $granted,
                         $expired,
                         $unused,
                         $used,
-                        isset($price[1]) ? floatval($price[1]) * floatval($used) : 0)
+                        isset($price[1]) ? floatval($price[1]) * floatval($used) : 0,
+                        $total_granted,
+                        $total_expired,
+                        $total_unused,
+                        $total_used,
+                        isset($price[1]) ? floatval($price[1]) * floatval($total_used) : 0,
+                        $remaining,
+                        isset($result['batch_name']) ? implode("\n", $result['batch_name']) : "",
+                        isset($date_start) ? implode("\n", $date_start) : "",
+                        isset($date_end) ? implode("\n", $date_end) : "",
+                        isset($date_expire) ? implode("\n", $date_expire) : "")
                     );
 
                 } else {
@@ -430,27 +563,41 @@ class Report_goods_store extends MY_Controller
                     $expired = $expired_data ? sizeof($expired_data) : 0;
                     $used_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'used')) : array();
                     $used = $used_data ? sizeof($used_data) : 0;
+
+                    $total_granted_data = $goods_data ? $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'granted')) : array();
+                    $total_granted = $total_granted_data ? sizeof($total_granted_data) : 0 ;
+                    $total_unused_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'active'));
+                    $total_unused = $total_unused_data ? sizeof($total_unused_data) : 0;
+                    $total_expired_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'expired'));
+                    $total_expired = $total_expired_data ? sizeof($total_expired_data) : 0;
+                    $total_used_data = $this->Goods_model->getGoodsLog(array('client_id' => $client_id, 'site_id' => $site_id, 'goods_id' => $goods_data[0]['goods_id'], 'status' => 'used'));
+                    $total_used = $total_used_data ? sizeof($total_used_data) : 0;
+
                     $exporter->addRow(array(
                         $result['name'],
                         $result['is_group'] ? "yes" : "no",
-                        isset($result['batch_name'][0]) ? $result['batch_name'][0] : "",
-                        isset($result['date_start']) ? datetimeMongotoReadable($result['date_start']) : "",
-                        isset($result['date_expire']) ? datetimeMongotoReadable($result['date_expire']) : "",
-                        isset($result['date_expired_coupon']) ? datetimeMongotoReadable($result['date_expired_coupon']) : "",
                         isset($price[1]) ? $price[1] : 0,
-                        $granted + $remaining,
+                        $total_granted + $remaining,
                         isset($price[1]) ? floatval($price[1]) * floatval($quantity) : 0,
-                        $remaining,
                         $granted,
                         $expired,
                         $unused,
                         $used,
-                        isset($price[1]) ? floatval($price[1]) * floatval($used) : 0)
+                        isset($price[1]) ? floatval($price[1]) * floatval($used) : 0,
+                        $total_granted,
+                        $total_expired,
+                        $total_unused,
+                        $total_used,
+                        isset($price[1]) ? floatval($price[1]) * floatval($total_used) : 0,
+                        $remaining,
+                        isset($result['batch_name'][0]) ? $result['batch_name'][0] : "",
+                        isset($result['date_start']) ? datetimeMongotoReadable($result['date_start']) : "",
+                        isset($result['date_expire']) ? datetimeMongotoReadable($result['date_expire']) : "",
+                        isset($result['date_expired_coupon']) ? datetimeMongotoReadable($result['date_expired_coupon']) : "")
                     );
                 }
             }
         }
         $exporter->finalize();
-
     }
 }
