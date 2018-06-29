@@ -222,7 +222,7 @@ class Report_goods_store extends MY_Controller
                         continue;
                     }
                     if(array_key_exists('status', $v)){
-                        if($v['status'] = 'used'){
+                        if($v['status'] == 'used'){
                             array_push($used_array, $v);
                         } else {
                             $d = new MongoDate();
@@ -298,7 +298,7 @@ class Report_goods_store extends MY_Controller
                         array_push($total_expire_array, $v);
                     } else {
                         if(array_key_exists('status', $v)){
-                            if($v['status'] = 'used'){
+                            if($v['status'] == 'used'){
                                 array_push($total_used_array, $v);
                             } else {
                                 array_push($total_active_array, $v);
@@ -319,7 +319,7 @@ class Report_goods_store extends MY_Controller
                         array_push($expire_array, $v);
                     } else {
                         if(array_key_exists('status', $v)){
-                            if($v['status'] = 'used'){
+                            if($v['status'] == 'used'){
                                 array_push($used_array, $v);
                             } else {
                                 array_push($active_array, $v);
@@ -598,7 +598,7 @@ class Report_goods_store extends MY_Controller
                         array_push($total_expire_array, $v);
                     } else {
                         if(array_key_exists('status', $v)){
-                            if($v['status'] = 'used'){
+                            if($v['status'] == 'used'){
                                 array_push($total_used_array, $v);
                             } else {
                                 array_push($total_active_array, $v);
@@ -619,7 +619,7 @@ class Report_goods_store extends MY_Controller
                         array_push($expire_array, $v);
                     } else {
                         if(array_key_exists('status', $v)){
-                            if($v['status'] = 'used'){
+                            if($v['status'] == 'used'){
                                 array_push($used_array, $v);
                             } else {
                                 array_push($active_array, $v);
@@ -698,7 +698,7 @@ class Report_goods_store extends MY_Controller
                         continue;
                     }
                     if(array_key_exists('status', $v)){
-                        if($v['status'] = 'used'){
+                        if($v['status'] == 'used'){
                             array_push($used_array, $v);
                         } else {
                             $d = new MongoDate();

@@ -297,10 +297,11 @@
                     csvContent += "\r\n";
                 });
 
+                var d = new Date().getTime();
                 var encodedUri = encodeURI(csvContent);
                 var link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "my_data.csv");
+                link.setAttribute("download", "reportGoodsStore" +d + ".csv");
                 link.innerHTML = "Click Here to download";
                 document.body.appendChild(link); // Required for FF
 
