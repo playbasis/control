@@ -525,10 +525,29 @@ class Goods_model extends MY_Model
         if(isset($data['group'])) {
             $this->mongo_db->where('group', $data['group']);
         }
+        $d = new MongoDate();
+        if(isset($data['status'])) {
+            if ($data['status'] == 'granted') {
+                $this->mongo_db->where('receiver_id', array('$exists' => false));
+            } elseif ($data['status'] == 'active') {
+                $this->mongo_db->where_gt('date_expire', $d);
+                $this->mongo_db->where('$or', array(array('status' => array('$exists' => false)), array('status' => 'receiver')));
+            } elseif ($data['status'] == 'expired'){
+                $this->mongo_db->where_lt('date_expire', $d);
+                $this->mongo_db->where('$or', array(array('status' => array('$exists' => false)), array('status' => 'receiver')));
+            } else {
+                $this->mongo_db->where('status', $data['status']);
+            }
+        }
 
         if(isset($data['date_start']) && isset($data['date_end'])){
-            $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lt' => new MongoDate(strtotime($data['date_end']))));
+            if(isset($data['status']) &&  $data['status'] == 'used'){
+                $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lt' => new MongoDate(strtotime($data['date_end']))));
+            } else {
+                $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lt' => new MongoDate(strtotime($data['date_end']))));
+            }
         }
+
         $results = $this->mongo_db->get("playbasis_goods_log");
 
         return $results;
