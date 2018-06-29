@@ -143,7 +143,30 @@
         </div>
     </div>
 </div>
+
+<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <h1>Please Wait</h1>
+    </div>
+    <div class="modal-body">
+        <div class="offset5 ">
+            <i class="fa fa-spinner fa-spin fa-5x"></i>
+        </div>
+    </div>
+</div>
+
+<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript">
+    $(document).ready(function() {
+        $('#date-start').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
+
+        $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
+    });
+    
+    $("#filter_goods_id").chosen({max_selected_options: 5});
+    var $pleaseWaitDialog = $('#pleaseWaitDialog');
     function filter() {
         var d = new Date().getTime();
         // url = baseUrlPath+'report_reward/reward_badge?t='+d;
@@ -188,64 +211,103 @@
         if (filter_goods_status != 0) {
             url += '&status=' + encodeURIComponent(filter_goods_status);
         }
-        
-        location = url;
-    }
-
-    function downloadFile() {
-        var d = new Date().getTime();
-        url = baseUrlPath+'report_goods_store/actionDownload?t='+d;
-
-        var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
-
-        if (filter_date_start) {
-            url += '&date_start=' + encodeURIComponent(filter_date_start);
-        }
-
-        var filter_date_end = $('input[name=\'filter_date_end\']').attr('value');
-
-        if (filter_date_end) {
-            url += '&date_expire=' + encodeURIComponent(filter_date_end);
-        }
-
-        var filter_tags = $('input[name=\'filter_tags\']').attr('value');
-
-        if (filter_tags) {
-            url += '&tags=' + encodeURIComponent(filter_tags);
-        }
-        var filter_goods_id = $('select[name=\'filter_goods_id\']').val();
-
-        if (filter_goods_id != null) {
-            var goods = ""
-            filter_goods_id.forEach(function(element) {
-                if(goods == ""){
-                    goods = encodeURIComponent(element);
-                } else {
-                    goods += encodeURIComponent(',' + element);
-                }
-            });
-            url += '&goods_id=' + goods;
-        }
-
-        var filter_goods_status = $('select[name=\'filter_goods_status\']').attr('value');
-
-        if (filter_goods_status != 0) {
-            url += '&status=' + encodeURIComponent(filter_goods_status);
-        }
 
         location = url;
     }
-</script>
-<link id="bootstrap-style2" href="<?php echo base_url();?>javascript/bootstrap/chosen.min.css" rel="stylesheet">
-<script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/chosen.jquery.min.js"></script>
-<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/jquery-ui-timepicker-addon.js"></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#date-start').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
 
-        $('#date-end').datetimepicker({dateFormat: 'yy-mm-dd',timeFormat: "HH:mm:ss"});
-    });
-    
-    $("#filter_goods_id").chosen({max_selected_options: 5});
+    async function downloadFile() {
+        $pleaseWaitDialog.modal();
+        setTimeout(function(){
+            var d = new Date().getTime();
+            url1 = baseUrlPath+'report_goods_store/actionDownload?t='+d;
+
+            var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
+
+            if (filter_date_start) {
+                url1 += '&date_start=' + encodeURIComponent(filter_date_start);
+            }
+
+            var filter_date_end = $('input[name=\'filter_date_end\']').attr('value');
+
+            if (filter_date_end) {
+                url1 += '&date_expire=' + encodeURIComponent(filter_date_end);
+            }
+
+            var filter_tags = $('input[name=\'filter_tags\']').attr('value');
+
+            if (filter_tags) {
+                url1 += '&tags=' + encodeURIComponent(filter_tags);
+            }
+            var filter_goods_id = $('select[name=\'filter_goods_id\']').val();
+
+            if (filter_goods_id != null) {
+                var goods = ""
+                filter_goods_id.forEach(function(element) {
+                    if(goods == ""){
+                        goods = encodeURIComponent(element);
+                    } else {
+                        goods += encodeURIComponent(',' + element);
+                    }
+                });
+                url1 += '&goods_id=' + goods;
+            }
+
+            var filter_goods_status = $('select[name=\'filter_goods_status\']').attr('value');
+
+            if (filter_goods_status != 0) {
+                url1 += '&status=' + encodeURIComponent(filter_goods_status);
+            }
+
+
+            var page = <?php echo $pagination_total_pages ?>;
+            var rows = [["name", "group", "unit_price", "quantity", "total_price", "granted", "expired", "unused", "used", "balance", "total_granted",
+                "total_expired", "total_unused", "total_used", "total_balance", "remaining", "batch", "date_start", "date_end", "date_expire" ]];
+            var i;
+            var check =false;
+            for(i = 0 ; i < page ; i++){
+                $.ajax({
+                    url: url1 + '&per_page=' + (i*10),
+                    async : false,
+                    dataType: 'text',
+                    success: function (data) {
+                        var k = JSON.parse(data);
+                        for(j=0; j< k.length;j++){
+                            rows.push(k[j]);
+                        }
+
+                    }
+                });
+            }
+
+            if(i == page) {
+                let csvContent = "data:text/csv;charset=utf-8,";
+                rows.forEach(function (rowArray) {
+                    for(item = 0 ; item < rowArray.length ; item++){
+                        if(Array.isArray(rowArray[item])){
+                            csvContent += '"';
+                            for(items =0 ; items < rowArray[item].length; items++){
+                                csvContent += rowArray[item][items] + "\n";
+                            }
+                            csvContent += '"' + ',';
+                        } else {
+                            csvContent += '"' +rowArray[item] + '"' + ',';
+                        }
+
+                    }
+                    csvContent += "\r\n";
+                });
+
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "my_data.csv");
+                link.innerHTML = "Click Here to download";
+                document.body.appendChild(link); // Required for FF
+
+                link.click();
+                $pleaseWaitDialog.modal('hide');
+            }
+        }, 100);
+    }
 </script>
 
