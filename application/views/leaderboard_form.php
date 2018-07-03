@@ -264,7 +264,7 @@
                                                                             <div class="span2 text-center">
                                                                                 <img src="<?php echo $item['reward_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">
                                                                             </div>
-                                                                            <div class="span7"><?php echo $item['reward_data']['name'];?></div>
+                                                                            <div class="span7"><?php echo isset($item['reward_data']['group']) ? $item['reward_data']['group'] : $item['reward_data']['name'];?></div>
                                                                             <div class="span1">
                                                                                 <small>value</small>
                                                                                 <input type="text" name="rewards[<?php echo $key ?>][goods][<?php echo $item['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $item['reward_value'] ?>">
@@ -459,7 +459,7 @@
                         <div class="span2 image text-center">
                             <img height="50" width="50" src="<?php echo S3_IMAGE.$goods_items[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                         </div>
-                        <div class="span9 title"><?php echo $goods_items[$i]['name'];?></div>
+                        <div class="span9 title"><?php echo isset($goods_items[$i]['group']) ? $goods_items[$i]['group'] : $goods_items[$i]['name'];?></div>
                     </div>
                 </label>
             <?php } ?>
@@ -1320,7 +1320,7 @@
                     }
 
                     var goodsItemHtml = '<div class="clearfix item-wrapper goods-item-wrapper" data-id-goods="'+id+'">\
-                            <div class="span2 text-center"><img src="'+img+'" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">\
+                            <div class="span2 text-center"><img width="100" src="'+img+'" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">\
                             </div>\
                             <div class="span7">'+title+'</div>\
                             <div class="span1">\
