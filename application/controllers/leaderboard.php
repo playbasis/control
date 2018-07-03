@@ -321,8 +321,18 @@ class Leaderboard extends MY_Controller
 
         $this->data['pushes'] = $this->Feature_model->getFeatureExistByClientId($this->data['client_id'],
             'push') ? $this->Push_model->listTemplatesBySiteId($this->data['site_id']) : null;
-
-        $this->data['goods_items'] = $this->Goods_model->getGoodsBySiteId($this->data);
+        
+        $group_list = $this->Goods_model->getGroupsList($this->session->userdata('site_id'),array('filter_group' => true));
+        $in_goods = array();
+        foreach ($group_list as $group_name){
+            $goods_group_detail =  $this->Goods_model->getGoodsIDByName($this->session->userdata('client_id'), $this->session->userdata('site_id'), "", $group_name['name'],false);
+            array_push($in_goods, new MongoId($goods_group_detail));
+        }
+        $this->data['goods_items'] = $this->Goods_model->getGoodsBySiteId(array(
+            'site_id' => $this->session->userdata('site_id'),
+            'sort' => 'sort_order',
+            'specific' => array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ))
+        ));
 
         $this->data['customPoints'] = $this->Quest_model->getCustomPoints($this->data);
 
