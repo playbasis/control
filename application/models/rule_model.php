@@ -1066,16 +1066,69 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function countRuleUsage($client_id, $site_id, $rule_id){
-        $this->set_site_mongodb($site_id);
+    private function getRuleUsageCounter($client_id, $site_id, $rule_id)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('rule_id', $rule_id);
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_rule_usage_counter');
+        return $result ? $result[0] : null;
+    }
 
+    private function updateRuleUsageCounter($client_id, $site_id, $rule_id, $date, $amount)
+    {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('rule_id', $rule_id);
+        $this->mongo_db->limit(1);
+        $this->mongo_db->set('date',new MongoDate($date));
+        $this->mongo_db->inc('counter',$amount);
+        $result = $this->mongo_db->findAndModify('playbasis_rule_usage_counter', array('upsert' => true, 'new' => true));
+        return $result;
+    }
+
+    private function countRuleUsageInPeriod($client_id, $site_id, $rule_id, $start_date = null, $end_date = null){
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('rule_id', $rule_id);
 
-        $result = $this->mongo_db->count("playbasis_rule_log");
+        if(!is_null($start_date)){
+            $this->mongo_db->where_gte('date_added',new MongoDate($start_date));
+        }
+        if(!is_null($end_date)) {
+            $this->mongo_db->where_lt('date_added', new MongoDate($end_date));
+        }
 
+        $result = $this->mongo_db->count("playbasis_rule_log");
         return $result;
+    }
+
+    public function countRuleUsage($client_id, $site_id, $rule_id){
+        $this->set_site_mongodb($site_id);
+
+        $currentYMD = date("Y-m-d");
+        $currentDate = strtotime("$currentYMD 00:00:00");
+        $ruleUsageCounter = $this->getRuleUsageCounter($client_id, $site_id, $rule_id);
+        if(is_null($ruleUsageCounter)){
+            // new rule, no counter log
+            $counter_incache = $this->countRuleUsageInPeriod($client_id, $site_id, $rule_id, null, $currentDate);
+            $this->updateRuleUsageCounter($client_id, $site_id, $rule_id, $currentDate, $counter_incache);
+        }else{
+            if($ruleUsageCounter['date']->sec == $currentDate){
+                // the counter is up to date
+                $counter_incache = $ruleUsageCounter['counter'];
+
+            }else{
+                // the counter is not updated for a while
+                $counter_incache = $this->countRuleUsageInPeriod($client_id, $site_id, $rule_id, $ruleUsageCounter['date']->sec, $currentDate);
+                $result = $this->updateRuleUsageCounter($client_id, $site_id, $rule_id, $currentDate, $counter_incache);
+                $counter_incache = $result['counter'];
+            }
+        }
+        // count log for today
+        $counter = $this->countRuleUsageInPeriod($client_id, $site_id, $rule_id, $currentDate, null);
+        return $counter + $counter_incache;
     }
 
     public function calculateFrequency($site_id, $from = null, $to = null)
