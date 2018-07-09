@@ -17,7 +17,7 @@ class Report_reward_model extends MY_Model
         $this->mongo_db->where('reward_type', "BADGE");
 
         if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
-            $this->mongo_db->where('date_modified', array(
+            $this->mongo_db->where('date_added', array(
                 '$gt' => new MongoDate(strtotime($data['date_start'])),
                 '$lte' => new MongoDate(strtotime($data['date_expire']))
             ));
@@ -48,7 +48,7 @@ class Report_reward_model extends MY_Model
         $this->mongo_db->where('reward_type', "BADGE");
 
         if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
-            $this->mongo_db->where('date_modified', array(
+            $this->mongo_db->where('date_added', array(
                 '$gt' => new MongoDate(strtotime($data['date_start'])),
                 '$lte' => new MongoDate(strtotime($data['date_expire']))
             ));
