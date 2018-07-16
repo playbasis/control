@@ -1450,9 +1450,9 @@ class Goods_model extends MY_Model
 
     public function editGoodsGroupLog($group, $data)
     {
-        $this->mongo_db->where('group', $group);
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('group', $group);
         $this->mongo_db->set('group', $data['name']);
         $this->mongo_db->update_all('playbasis_goods_log');
     }
@@ -2231,7 +2231,8 @@ class Goods_model extends MY_Model
     public function redeemLogCount($data, $goods_id, $group=false, $from = null, $to = null)
     {
         $this->set_site_mongodb($data['site_id']);
-        $query = array('client_id' => $data['client_id']);
+        $query = array('client_id' => $data['client_id'],
+                       'site_id' => $data['site_id']);
         if ($from || $to) {
             $query['date_added'] = array();
         }
@@ -2242,8 +2243,6 @@ class Goods_model extends MY_Model
             $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
         }
         $this->mongo_db->where($query);
-        $this->mongo_db->where('site_id', $data['site_id']);
-
         
         if($group){
             $this->mongo_db->where('group', $goods_id);
@@ -2261,6 +2260,7 @@ class Goods_model extends MY_Model
         $reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
         $query = array(
             'client_id' => $data['client_id'],
+            'site_id' => $data['site_id']
         );
         if ($from || $to) {
             $query['date_added'] = array();
@@ -2276,7 +2276,6 @@ class Goods_model extends MY_Model
         } else {
             $query['goods_id'] = array('$in' => is_array($goods_id) ? $goods_id : array($goods_id));
         }
-        $query['site_id'] = $data['site_id'];
 
         $result = $this->mongo_db->command(array(
             'mapReduce' => 'playbasis_goods_log',
