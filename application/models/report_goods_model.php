@@ -13,14 +13,7 @@ class Report_goods_model extends MY_Model
     {
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-
-        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
-            $this->mongo_db->where('date_added', array(
-                '$gt' => new MongoDate(strtotime($data['date_start'])),
-                '$lte' => new MongoDate(strtotime($data['date_expire']))
-            ));
-        }
-
+        
         if (!empty($data['goods_id']) && !empty($data['group'])) {
             if(sizeof($data['group']) == 1){
                 $group = array('group' => $data['group'][0]);
@@ -62,6 +55,13 @@ class Report_goods_model extends MY_Model
             } else {
                 $this->mongo_db->where('status', $data['status']);
             }
+        }
+
+        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
+            $this->mongo_db->where('date_added', array(
+                '$gt' => new MongoDate(strtotime($data['date_start'])),
+                '$lte' => new MongoDate(strtotime($data['date_expire']))
+            ));
         }
 
         // $results = $this->mongo_db->count("playbasis_goods_to_player");
@@ -75,13 +75,6 @@ class Report_goods_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
-        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
-            $this->mongo_db->where('date_added', array(
-                '$gt' => new MongoDate(strtotime($data['date_start'])),
-                '$lte' => new MongoDate(strtotime($data['date_expire']))
-            ));
-        }
-
         if (!empty($data['goods_id']) && !empty($data['group'])) {
             if(sizeof($data['group']) == 1){
                 $group = array('group' => $data['group'][0]);
@@ -123,6 +116,13 @@ class Report_goods_model extends MY_Model
             } else {
                 $this->mongo_db->where('status', $data['status']);
             }
+        }
+
+        if (isset($data['date_start']) && $data['date_start'] != '' && isset($data['date_expire']) && $data['date_expire'] != '') {
+            $this->mongo_db->where('date_added', array(
+                '$gt' => new MongoDate(strtotime($data['date_start'])),
+                '$lte' => new MongoDate(strtotime($data['date_expire']))
+            ));
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
