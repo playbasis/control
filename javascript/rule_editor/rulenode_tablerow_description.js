@@ -329,7 +329,8 @@ toolstip = {
 			field_desc:{
 				reward_name:'reward name',
 				quantity:'amount of point to award',
-				custom_log:'custom parameter to log'
+				custom_log:'custom parameter to log',
+				hidden_reward:"to hide the reward from event response"
 			}
 		},
 		exp:{
@@ -337,7 +338,8 @@ toolstip = {
 			field_desc:{
 				reward_name:'reward name',
 				quantity:'amount of exp to award',
-				custom_log:'custom parameter to log'
+				custom_log:'custom parameter to log',
+				hidden_reward:"to hide the reward from event response"
 			}
 		},
 		badge:{
@@ -367,7 +369,8 @@ toolstip = {
 			field_desc:{
 				reward_name:'name of custom point to award',
 				quantity:'amount of custom point to award',
-				custom_log:'custom parameter to log'
+				custom_log:'custom parameter to log',
+				hidden_reward:"to hide the reward from event response"
 			}
 		}
 	},

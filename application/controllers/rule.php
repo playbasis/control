@@ -132,6 +132,18 @@ class Rule extends MY_Controller
                             );
                         }
                     }
+
+                    if(!in_array($reward["name"],array("badge","customPointReward","goods"))) {
+                        $reward['dataSet'][] = array(
+                            'field_type' => "boolean",
+                            'label' => "Hide response?",
+                            'param_name' => "hidden_reward",
+                            'placeholder' => "",
+                            'sortOrder' => "0",
+                            'value' => "false",
+
+                        );
+                    }
                 }
             }
         }
