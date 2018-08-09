@@ -595,6 +595,11 @@ class Goods_model extends MY_Model
             'alert_enable' => isset($data['alert_enable']) ? (bool)$data['alert_enable'] : false,
             'alert_threshold' => isset($data['alert_threshold']) ? (int)$data['alert_threshold'] : 0,
         );
+
+        if(!$is_group){
+            $data_insert['goods_id'] = new MongoID($data['goods_id']);
+        }
+
         if (isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']) {
             $date_start_another = strtotime($data['date_start']);
             $date_expire_another = strtotime($data['date_expire']);
