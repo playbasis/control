@@ -25,7 +25,12 @@ class Report_goods_model extends MY_Model
             } else{
                 $goods = array('goods_id' => array('$in' => $data['goods_id']));
             }
-            $this->mongo_db->where('$or', array($group, $goods));
+
+            if(isset($data['status']) && $data['status'] == 'active'){
+                $this->mongo_db->where('$and', array(array('$or' => array(array('status' => array('$exists' => false)) , array('status' => 'receiver'))), array('$or' => array($group, $goods))));
+            } else {
+                $this->mongo_db->where('$or', array($group, $goods));
+            }
         } elseif (!empty($data['group'])){
             if(sizeof($data['group']) == 1){
                 $this->mongo_db->where('group', $data['group'][0]);
@@ -46,7 +51,9 @@ class Report_goods_model extends MY_Model
 
         if(isset($data['status']) && !is_null($data['status'])){
             if($data['status'] == 'active') {
-                $this->mongo_db->where(array('$or' => array(array('status' => array('$exists' => false)) , array('status' => 'receiver'))));
+                if (empty($data['goods_id']) || empty($data['group'])) {
+                    $this->mongo_db->where(array('$or' => array(array('status' => array('$exists' => false)) , array('status' => 'receiver'))));
+                }
                 $this->mongo_db->where('date_expire', array('$gt' => new MongoDate()));
             } elseif($data['status'] == 'expired') {
                 $this->mongo_db->where('date_expire', array('$lt' => new MongoDate()));
@@ -86,7 +93,11 @@ class Report_goods_model extends MY_Model
             } else{
                 $goods = array('goods_id' => array('$in' => $data['goods_id']));
             }
-            $this->mongo_db->where('$or', array($group, $goods));
+            if(isset($data['status']) && $data['status'] == 'active'){
+                $this->mongo_db->where('$and', array(array('$or' => array(array('status' => array('$exists' => false)) , array('status' => 'receiver'))), array('$or' => array($group, $goods))));
+            } else {
+                $this->mongo_db->where('$or', array($group, $goods));
+            }
         } elseif (!empty($data['group'])){
             if(sizeof($data['group']) == 1){
                 $this->mongo_db->where('group', $data['group'][0]);
@@ -107,7 +118,9 @@ class Report_goods_model extends MY_Model
 
         if(isset($data['status']) && !is_null($data['status'])){
             if($data['status'] == 'active') {
-                $this->mongo_db->where(array('$or' => array(array('status' => array('$exists' => false)) , array('status' => 'receiver'))));
+                if (empty($data['goods_id']) || empty($data['group'])) {
+                    $this->mongo_db->where(array('$or' => array(array('status' => array('$exists' => false)) , array('status' => 'receiver'))));
+                }
                 $this->mongo_db->where('date_expire', array('$gt' => new MongoDate()));
             } elseif($data['status'] == 'expired') {
                 $this->mongo_db->where('date_expire', array('$lt' => new MongoDate()));

@@ -254,7 +254,12 @@ class Report_goods extends MY_Controller
 
             $goods_name = isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'];
             $index = array_search($goods_name,array_column($goods_distinct, 'name'));
-            $tags = isset($goods_distinct[$index]['tags']) ? $goods_distinct[$index]['tags'] : null;
+            if(is_numeric($index)){
+                $tags = isset($goods_distinct[$index]['tags']) ? $goods_distinct[$index]['tags'] : null;
+            } else {
+                $tags = null;
+            }
+
             $data_row = array(
                 'cl_player_id' => isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
                 'date_added' => $date_added ,
