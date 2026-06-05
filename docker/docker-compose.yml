@@ -12,15 +12,23 @@ services:
 
     app:
         build: ./app
+        depends_on:
+            - mongo
         # links:
             #- mongo_ambassador:mongo
         environment:
-            - MONGO_HOSTBASE=192.168.99.101:27017
-            - MONGO_USERNAME=admin
-            - MONGO_PASSWORD=mongodbpasswordplaybasis
+            - MONGO_HOSTBASE=mongo:27017
+            - MONGO_USERNAME=
+            - MONGO_PASSWORD=
         volumes:
             - ../:/var/www/control/
             - /tmp:/var/www/control/application/cache/
+        # restart: always
+
+    mongo:
+        image: mongo:3.6
+        volumes:
+            - mongo_data:/data/db
         # restart: always
 
     # mongo_ambassador:
@@ -29,3 +37,6 @@ services:
     #         - "27017"
     #     environment:
     #         - MONGO_PORT_27017_TCP=tcp://54.169.196.240:27017
+
+volumes:
+    mongo_data:
