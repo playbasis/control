@@ -1,16 +1,10 @@
 FROM php:5-fpm
 MAINTAINER Burachit Tongthai <burachit.t@playbasis.com> (@rookawa)
 
-RUN apt-get update && apt-get install -y \
-        php-pear \
-        php5-dev \
-        libcurl4-gnutls-dev \
-    && docker-php-ext-install \
-        json \
-        curl
-
-RUN pecl install mongo
-RUN echo 'extension=mongo.so' | tee /usr/local/etc/php/conf.d/mongo.ini
+# The official PHP image already includes PECL/PHPIZE tooling and the
+# json/curl extensions. Debian php* packages are pinned out in this image.
+RUN pecl install mongo-1.6.16 \
+    && echo 'extension=mongo.so' > /usr/local/etc/php/conf.d/mongo.ini
 
 COPY config/php.ini /usr/local/etc/php/
 
