@@ -3,7 +3,7 @@ MAINTAINER Burachit Tongthai <burachit.t@playbasis.com> (@rookawa)
 
 # The official PHP image already includes PECL/PHPIZE tooling and the
 # json/curl extensions. Debian php* packages are pinned out in this image.
-RUN pecl install mongo-1.6.16 \
+RUN pecl install https://pecl.php.net/get/mongo-1.6.16.tgz \
     && echo 'extension=mongo.so' > /usr/local/etc/php/conf.d/mongo.ini
 
 COPY config/php.ini /usr/local/etc/php/
