@@ -14,7 +14,10 @@ class Setting_model extends MY_Model
         $results = $this->mongo_db->get("playbasis_setting");
         $results = $results ? $results[0] : null;
 
-        if ($results['password_policy_enable'] == false) {
+        if (!$results) {
+            return array();
+        }
+        if (!isset($results['password_policy_enable']) || $results['password_policy_enable'] == false) {
             unset($results['password_policy']);
         }
         return $results;
