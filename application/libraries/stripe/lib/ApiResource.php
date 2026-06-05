@@ -2,7 +2,7 @@
 
 namespace Stripe;
 
-abstract class ApiResource extends Object
+abstract class ApiResource extends StripeObject
 {
     private static $HEADERS_TO_PERSIST = array('Stripe-Account' => true, 'Stripe-Version' => true);
 
@@ -59,7 +59,7 @@ abstract class ApiResource extends Object
     public static function classUrl()
     {
         $base = static::className();
-        return "/v1/${base}s";
+        return "/v1/{$base}s";
     }
 
     /**
