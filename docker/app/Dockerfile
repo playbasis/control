@@ -11,7 +11,13 @@ RUN set -eux; \
         /etc/apt/sources.list; \
     echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until; \
     apt-get update; \
-    apt-get install -y --no-install-recommends --allow-unauthenticated libssl1.0-dev; \
+    apt-get install -y --no-install-recommends --allow-unauthenticated \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        libssl1.0-dev; \
+    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/; \
+    docker-php-ext-install gd; \
     pecl install https://pecl.php.net/get/mongo-1.6.16.tgz; \
     echo 'extension=mongo.so' > /usr/local/etc/php/conf.d/mongo.ini; \
     apt-get purge -y --auto-remove libssl1.0-dev; \
