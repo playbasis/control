@@ -19,7 +19,7 @@ services:
             - MONGO_USERNAME=admin
             - MONGO_PASSWORD=mongodbpasswordplaybasis
         volumes:
-            - ~/sandbox/control-test/:/var/www/control/
+            - ../:/var/www/control/
             - /tmp:/var/www/control/application/cache/
         # restart: always
 
