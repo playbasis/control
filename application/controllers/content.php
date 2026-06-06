@@ -766,7 +766,13 @@ class Content extends MY_Controller
         $this->error['message'] = null;
 
         if ($this->input->post('selected') && $this->error['message'] == null) {
-            foreach ($this->input->post('selected') as $content_id) {
+            $selectedContents = $this->input->post('selected');
+
+            foreach ($selectedContents as $content_id) {
+                if (preg_match('/^[0-9a-f]{24}$/i', (string)$content_id) !== 1) {
+                    continue;
+                }
+
                 $this->Content_model->deleteContent($content_id);
             }
 
