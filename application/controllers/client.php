@@ -637,9 +637,14 @@ class Client extends MY_Controller
         $this->load->model('Plan_model');
 
         $this->data['users'] = array();
+        $client_id = $this->input->get('client_id');
+        if (!preg_match('/^[0-9a-f]{24}$/i', (string)$client_id)) {
+            redirect('/client', 'refresh');
+            return;
+        }
 
         $data = array(
-            'client_id' => $this->input->get('client_id'),
+            'client_id' => $client_id,
         );
 
         $results = $this->User_model->getUserByClientId($data);
@@ -665,7 +670,7 @@ class Client extends MY_Controller
         $this->data['list_client_id'] = $data['client_id'];
         //$this->data['groups'] = $this->User_model->getUserGroups();
 
-        $this->data['groups'] = $this->User_group_to_client_model->fetchAllUserGroups($this->input->get('client_id'));
+        $this->data['groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
 
 
         $this->load->vars($this->data);
