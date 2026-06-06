@@ -384,6 +384,10 @@ class User extends MY_Controller
             $selectedUsers = $this->input->post('selected');
 
             foreach ($selectedUsers as $selectedUser) {
+                if (preg_match('/^[0-9a-f]{24}$/i', (string)$selectedUser) !== 1) {
+                    continue;
+                }
+
                 $this->User_model->deleteUser($selectedUser);
             }
 
@@ -402,9 +406,15 @@ class User extends MY_Controller
 
         if ($this->input->post('user_id') && $this->error['warning'] == null) {
 
-            if ($this->checkOwnerUser($this->input->post('user_id'))) {
+            $user_id = $this->input->post('user_id');
+            if (preg_match('/^[0-9a-f]{24}$/i', (string)$user_id) !== 1) {
+                $this->output->set_output(json_encode($json));
+                return;
+            }
 
-                $this->User_model->deleteUser($this->input->post('user_id'));
+            if ($this->checkOwnerUser($user_id)) {
+
+                $this->User_model->deleteUser($user_id);
             }
 
             $this->session->data['success'] = $this->lang->line('text_success_delete');
