@@ -1788,7 +1788,7 @@ function Close() {
 }
 
 /*-- BACKGROUNDS --*/
-function _resizeBackgroundImage($imw, $imh, $cw, $ch, $resize=0, $repx, $repy, $pba=array(), $size=array()) {	// mPDF 5.6.10
+function _resizeBackgroundImage($imw, $imh, $cw, $ch, $resize=0, $repx=null, $repy=null, $pba=array(), $size=array()) {	// mPDF 5.6.10
 	// pba is background positioning area (from CSS background-origin) may not always be set [x,y,w,h]
 	// size is from CSS3 background-size - takes precendence over old resize 
 	//	$w - absolute length or % or auto or cover | contain
@@ -10675,7 +10675,7 @@ function Rotate($angle,$x=-1,$y=-1)
 
 
 
-function CircularText($x, $y, $r, $text, $align='top', $fontfamily='', $fontsize=0, $fontstyle='', $kerning=120, $fontwidth=100, $divider) {	// mPDF 5.5.23
+function CircularText($x, $y, $r, $text, $align='top', $fontfamily='', $fontsize=0, $fontstyle='', $kerning=120, $fontwidth=100, $divider='') {	// mPDF 5.5.23
 	if (!class_exists('directw', false)) { include(_MPDF_PATH.'classes/directw.php'); }
 	if (empty($this->directw)) { $this->directw = new directw($this); }
 	$this->directw->CircularText($x, $y, $r, $text, $align, $fontfamily, $fontsize, $fontstyle, $kerning, $fontwidth, $divider);	// mPDF 5.5.23
@@ -11422,7 +11422,7 @@ function Header($content='') {
 
 
 /*-- TABLES --*/
-function TableHeaderFooter($content='',$tablestartpage='',$tablestartcolumn ='',$horf = 'H',$level, $firstSpread=true, $finalSpread=true) {
+function TableHeaderFooter($content='',$tablestartpage='',$tablestartcolumn ='',$horf = 'H',$level=0, $firstSpread=true, $finalSpread=true) {
   if(($horf=='H' || $horf=='F') && !empty($content) && !empty($content[0])) {	// mPDF 5.6.61
 	$table = &$this->table[1][1];
 	// Advance down page by half width of top border
@@ -13397,7 +13397,7 @@ function WriteHTML($html,$sub=0,$init=true,$close=true) {
 
 /*-- CSS-POSITION --*/
 
-function WriteFixedPosHTML($html='',$x, $y, $w, $h, $overflow='visible', $bounding=array()) {
+function WriteFixedPosHTML($html='',$x=0, $y=0, $w=0, $h=0, $overflow='visible', $bounding=array()) {
 	// $overflow can be 'hidden', 'visible' or 'auto' - 'auto' causes autofit to size
 	// Annotations disabled - enabled in mPDF 5.0
 	// Links do work
@@ -14196,7 +14196,7 @@ function _borderPadding($a, $b, &$px, &$py) {
 
 
 /*-- CSS-PAGE --*/
-function SetPagedMediaCSS($name='', $first, $oddEven) {
+function SetPagedMediaCSS($name='', $first=false, $oddEven='') {
 	if ($oddEven == 'E') { 
 		if ($this->directionality=='rtl') { $side = 'R'; }
 		else { $side = 'L'; }
@@ -21682,7 +21682,7 @@ function _EllipseArc($x0, $y0, $rx, $ry, $seg = 1, $part=false, $start=false) {	
 
 
 
-function PaintDivLnBorder($state=0,$blvl=0,$h) {
+function PaintDivLnBorder($state=0,$blvl=0,$h=0) {
 	// $state = 0 normal; 1 top; 2 bottom; 3 top and bottom
 	$this->ColDetails[$this->CurrCol]['bottom_margin'] = $this->y + $h; 
 
@@ -22562,7 +22562,7 @@ function finaliseCellLineHeight($lhxt, $maxfontsize, $maxlineHeight, $lhfixed, $
 	return $maxlineHeight; 
 }
 
-function TableWordWrap($maxwidth, $forcewrap = 0, $textbuffer = '', $def_fontsize, $returnarray=false) {	// NB ** returnarray used in flowchart
+function TableWordWrap($maxwidth, $forcewrap = 0, $textbuffer = '', $def_fontsize=0, $returnarray=false) {	// NB ** returnarray used in flowchart
    $biggestword=0;
    $toonarrow=false;
 
@@ -23017,7 +23017,7 @@ function TableWordWrap($maxwidth, $forcewrap = 0, $textbuffer = '', $def_fontsiz
 }
 
 
-function TableCheckMinWidth($maxwidth, $forcewrap = 0, $textbuffer) {
+function TableCheckMinWidth($maxwidth, $forcewrap = 0, $textbuffer=array()) {
 	$biggestword=0;
 	$toonarrow=false;
 	if ((count($textbuffer) == 0) or ((count($textbuffer) == 1) && ($textbuffer[0][0] == ''))) { return 0; }
@@ -30147,7 +30147,7 @@ function reverse_letters_preg_callback($matches) {
 	return $this->reverse_letters($matches[1]);
 }
 
-function magic_reverse_dir(&$chunk, $join=true, $dir) { 
+function magic_reverse_dir(&$chunk, $join=true, $dir='') {
    if ($this->usingCoreFont) { return 0; }
    if ($this->biDirectional)  {
 	// mPDF 5.4.05 Include PUA for non-indexed Arabic glyphs
