@@ -115,7 +115,11 @@ class Report_goods_store extends MY_Controller
         if ($this->input->get('goods_id')){
             $filter_goods_id = $this->input->get('goods_id');
             $parameter_url .= "&goods_id=" . $filter_goods_id;
-            $filter_goods_id = explode(',', $filter_goods_id);
+            $filter_goods_id = $this->parseGoodsIds($filter_goods_id);
+            if ($filter_goods_id === false) {
+                redirect('/report/goods_store', 'refresh');
+                return;
+            }
             foreach ($filter_goods_id as $value){
                 $goods_data = $this->Goods_model->getGoodsOfClientPrivate($value);
                 $filter_goods_data[] = $goods_data;
@@ -539,6 +543,20 @@ class Report_goods_store extends MY_Controller
         return $goods_data;
     }
 
+    private function parseGoodsIds($goods_id)
+    {
+        $ids = explode(',', $goods_id);
+        $valid_ids = array();
+        foreach ($ids as $id) {
+            $id = trim($id);
+            if (!preg_match('/^[0-9a-f]{24}$/i', (string)$id)) {
+                return false;
+            }
+            $valid_ids[] = $id;
+        }
+        return $valid_ids;
+    }
+
     private function validateAccess()
     {
         if ($this->User_model->isAdmin()) {
@@ -611,7 +629,11 @@ class Report_goods_store extends MY_Controller
 
         if ($this->input->get('goods_id')){
             $filter_goods_id = $this->input->get('goods_id');
-            $filter_goods_id = explode(',', $filter_goods_id);
+            $filter_goods_id = $this->parseGoodsIds($filter_goods_id);
+            if ($filter_goods_id === false) {
+                redirect('/report/goods_store', 'refresh');
+                return;
+            }
             foreach ($filter_goods_id as $value){
                 $goods_data = $this->Goods_model->getGoodsOfClientPrivate($value);
                 $filter_goods_data[] = $goods_data;
