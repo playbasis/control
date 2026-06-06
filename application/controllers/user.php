@@ -608,7 +608,10 @@ class User extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             require_once(APPPATH . '/libraries/jcryption/sqAES.php');
             require_once(APPPATH . '/libraries/jcryption/JCryption.php');
-            JCryption::decrypt();
+            if (isset($_POST[JCryption::POST_KEY])) {
+                JCryption::decrypt();
+            }
+            $format = isset($_REQUEST['format']) ? $_REQUEST['format'] : null;
             $this->data['message'] = null;
             if ($this->form_validation->run()) {
                 $this->load->model('User_model');
@@ -627,7 +630,7 @@ class User extends MY_Controller
                     } else {
                         $redirect = '/';
                     }
-                    if ($_REQUEST['format'] == 'json') {
+                    if ($format == 'json') {
                         echo json_encode(array('status' => 'success', 'message' => ''));
                         exit();
                     }
@@ -639,13 +642,13 @@ class User extends MY_Controller
                 }else{
                     $msg_alert = $this->lang->line('error_login');
                 }
-                if ($_REQUEST['format'] == 'json') {
+                if ($format == 'json') {
                     echo json_encode(array('status' => 'error', 'message' => $msg_alert));
                     exit();
                 }
                 $this->data['message'] = $msg_alert;
             } else {
-                if ($_REQUEST['format'] == 'json') {
+                if ($format == 'json') {
                     echo json_encode(array('status' => 'error', 'message' => validation_errors()));
                     exit();
                 }
