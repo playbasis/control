@@ -285,7 +285,7 @@ class  MY_Controller  extends  CI_Controller  {
         $is_free_plan = $user_plan['_id'] == FREE_PLAN;
         $is_plan_price_gt_0 = $user_plan['price'] > 0;
         $is_displayed_plan = in_array($user_plan['_id'], $this->Plan_model->getDisplayedPlans());
-        $client_has_date_billing = array_key_exists('date_billing', $client);
+        $client_has_date_billing = is_array($client) && array_key_exists('date_billing', $client);
         return array(
             'is_free_plan' => $is_free_plan,
             'is_paid_plan' => $is_plan_price_gt_0,
