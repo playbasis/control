@@ -115,6 +115,10 @@ class Client extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        if (!$this->isValidMongoId($client_id)) {
+            redirect('/client', 'refresh');
+            return;
+        }
         $this->data['form'] = 'client/update/' . $client_id;
 
         $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'),
@@ -513,6 +517,11 @@ class Client extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isValidMongoId($id)
+    {
+        return preg_match('/^[0-9a-f]{24}$/i', (string)$id) === 1;
     }
 
     private function checkOwnerClient($clientId)
