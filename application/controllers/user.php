@@ -961,6 +961,10 @@ class User extends MY_Controller
         if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
             if ($this->input->post('selected') && $this->error['warning'] == null) {
                 foreach ($this->input->post('selected') as $user_id) {
+                    if (preg_match('/^[0-9a-f]{24}$/i', (string)$user_id) !== 1) {
+                        continue;
+                    }
+
                     $initial_password = get_random_password(8, 8);
                     $this->User_model->insertNewPassword($user_id, $initial_password);
                     $this->User_model->enableUser($user_id);
