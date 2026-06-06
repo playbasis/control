@@ -216,7 +216,13 @@ class App extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $secret = $this->App_model->resetToken($this->input->post('platform_id'));
+            $platform_id = $this->input->post('platform_id');
+            if (preg_match('/^[0-9a-f]{24}$/i', (string)$platform_id) !== 1) {
+                $this->output->set_output(json_encode($json));
+                return;
+            }
+
+            $secret = $this->App_model->resetToken($platform_id);
 
             $json['success'] = $this->lang->line('text_success');
             $json['secret'] = $secret;
