@@ -46,7 +46,7 @@ abstract class REST2_Controller extends REST_Controller
 
         /* 0.2 Adjust $this->request->body */
         if (!empty($this->request->body)) {
-            if (is_array($this->request->body) && count(count($this->request->body) == 1) && array_key_exists(0, $this->request->body)) {
+            if (is_array($this->request->body) && count($this->request->body) == 1 && array_key_exists(0, $this->request->body)) {
                 $this->request->body = $this->request->body[0];
             }
             if (gettype($this->request->body) == 'string') {
