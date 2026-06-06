@@ -17,7 +17,7 @@ RUN set -eux; \
         libpng-dev \
         libssl1.0-dev; \
     docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/; \
-    docker-php-ext-install gd; \
+    docker-php-ext-install bcmath gd; \
     pecl install https://pecl.php.net/get/mongo-1.6.16.tgz; \
     echo 'extension=mongo.so' > /usr/local/etc/php/conf.d/mongo.ini; \
     apt-get purge -y --auto-remove libssl1.0-dev; \
