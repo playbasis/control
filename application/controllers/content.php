@@ -212,6 +212,11 @@ class Content extends MY_Controller
 
     public function update($content_id)
     {
+        if (!is_string($content_id) || !preg_match('/^[0-9a-f]{24}$/i', $content_id)) {
+            redirect('/content', 'refresh');
+            return;
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
