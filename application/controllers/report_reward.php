@@ -150,9 +150,13 @@ class Report_reward extends MY_Controller
         if ($this->input->get('badge_id')) {
             $filter_badge_id = $this->input->get('badge_id');
             $parameter_url .= "&badge_id=" . $filter_badge_id;
-            $filter_badge_id = explode(',', $filter_badge_id);
-            foreach ($filter_badge_id as &$badge_id){
-                $badge_id = new MongoId($badge_id);
+            $filter_badge_id = $this->parseBadgeIds($filter_badge_id);
+            if ($filter_badge_id === false) {
+                redirect('/report_reward/reward_badge', 'refresh');
+                return;
+            }
+            foreach ($filter_badge_id as $index => $badge_id){
+                $filter_badge_id[$index] = new MongoId($badge_id);
             }
         } else {
             $filter_badge_id = array();
@@ -279,6 +283,20 @@ class Report_reward extends MY_Controller
 
     }
 
+    private function parseBadgeIds($badge_id)
+    {
+        $ids = explode(',', $badge_id);
+        $valid_ids = array();
+        foreach ($ids as $id) {
+            $id = trim($id);
+            if (!preg_match('/^[0-9a-f]{24}$/i', (string)$id)) {
+                return false;
+            }
+            $valid_ids[] = $id;
+        }
+        return $valid_ids;
+    }
+
     private function validateAccess()
     {
         if ($this->User_model->isAdmin()) {
@@ -363,9 +381,13 @@ class Report_reward extends MY_Controller
         if ($this->input->get('badge_id')) {
             $filter_badge_id = $this->input->get('badge_id');
             $parameter_url .= "&badge_id=" . $filter_badge_id;
-            $filter_badge_id = explode(',', $filter_badge_id);
-            foreach ($filter_badge_id as &$badge_id){
-                $badge_id = new MongoId($badge_id);
+            $filter_badge_id = $this->parseBadgeIds($filter_badge_id);
+            if ($filter_badge_id === false) {
+                redirect('/report_reward/reward_badge', 'refresh');
+                return;
+            }
+            foreach ($filter_badge_id as $index => $badge_id){
+                $filter_badge_id[$index] = new MongoId($badge_id);
             }
         } else {
             $filter_badge_id = '';
