@@ -642,7 +642,11 @@ class Reward_control extends MY_Controller
         $json = array();
 
         if ($this->input->get('file_id')) {
-            $sequence_file = $this->Sequence_model->retrieveSequenceFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_id'));
+            $file_id = $this->input->get('file_id');
+            if (!$this->isValidMongoId($file_id)) {
+                return;
+            }
+            $sequence_file = $this->Sequence_model->retrieveSequenceFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$file_id);
         }
 
         if ($this->input->get('file_name')) {
@@ -669,7 +673,11 @@ class Reward_control extends MY_Controller
     public function getCustomRewardFile()
     {
         if ($this->input->get('file_id')) {
-            $sequence_file = $this->Custom_reward_model->retrieveCustomRewardFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_id'));
+            $file_id = $this->input->get('file_id');
+            if (!$this->isValidMongoId($file_id)) {
+                return;
+            }
+            $sequence_file = $this->Custom_reward_model->retrieveCustomRewardFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$file_id);
         }
 
         if ($this->input->get('file_name')) {
@@ -695,7 +703,11 @@ class Reward_control extends MY_Controller
     public function getCustomParamConditionFile()
     {
         if ($this->input->get('file_id')) {
-            $sequence_file = $this->Custom_param_condition_model->retrieveCustomParamConditionFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_id'));
+            $file_id = $this->input->get('file_id');
+            if (!$this->isValidMongoId($file_id)) {
+                return;
+            }
+            $sequence_file = $this->Custom_param_condition_model->retrieveCustomParamConditionFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$file_id);
         }
 
         if ($this->input->get('file_name')) {
@@ -716,6 +728,11 @@ class Reward_control extends MY_Controller
             }
             $exporter->finalize();
         }
+    }
+
+    private function isValidMongoId($id)
+    {
+        return preg_match('/^[0-9a-f]{24}$/i', (string)$id) === 1;
     }
 
     private function validateModify()
