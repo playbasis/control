@@ -150,9 +150,13 @@ class Report_custompoint extends MY_Controller
         if ($this->input->get('reward_id')) {
             $filter_reward_id = $this->input->get('reward_id');
             $parameter_url .= "&reward_id=" . $filter_reward_id;
-            $filter_reward_id = explode(',', $filter_reward_id);
-            foreach ($filter_reward_id as &$reward_id){
-                $reward_id = new MongoId($reward_id);
+            $filter_reward_id = $this->parseRewardIds($filter_reward_id);
+            if ($filter_reward_id === false) {
+                redirect('/report/rewards_custompoint', 'refresh');
+                return;
+            }
+            foreach ($filter_reward_id as $index => $reward_id){
+                $filter_reward_id[$index] = new MongoId($reward_id);
             }
         } else {
             $filter_reward_id = array();
@@ -290,6 +294,20 @@ class Report_custompoint extends MY_Controller
 
     }
 
+    private function parseRewardIds($reward_id)
+    {
+        $ids = explode(',', $reward_id);
+        $valid_ids = array();
+        foreach ($ids as $id) {
+            $id = trim($id);
+            if (!preg_match('/^[0-9a-f]{24}$/i', (string)$id)) {
+                return false;
+            }
+            $valid_ids[] = $id;
+        }
+        return $valid_ids;
+    }
+
     private function validateAccess()
     {
         if ($this->User_model->isAdmin()) {
@@ -374,9 +392,13 @@ class Report_custompoint extends MY_Controller
         if ($this->input->get('reward_id')) {
             $filter_reward_id = $this->input->get('reward_id');
             $parameter_url .= "&reward_id=" . $filter_reward_id;
-            $filter_reward_id = explode(',', $filter_reward_id);
-            foreach ($filter_reward_id as &$reward_id){
-                $reward_id = new MongoId($reward_id);
+            $filter_reward_id = $this->parseRewardIds($filter_reward_id);
+            if ($filter_reward_id === false) {
+                redirect('/report/rewards_custompoint', 'refresh');
+                return;
+            }
+            foreach ($filter_reward_id as $index => $reward_id){
+                $filter_reward_id[$index] = new MongoId($reward_id);
             }
         } else {
             $filter_reward_id = '';
