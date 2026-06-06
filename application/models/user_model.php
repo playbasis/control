@@ -913,6 +913,10 @@ class User_model extends MY_Model
     {
         $this->set_site_mongodb($this->site_id);
 
+        if (!$site_id || !preg_match('/^[0-9a-f]{24}$/i', (string)$site_id)) {
+            return true;
+        }
+
         if ($this->checkSiteId($site_id) > 0) {
             $this->site_id = new MongoId($site_id);
             $this->session->set_userdata('site_id', $this->site_id);
