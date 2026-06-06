@@ -152,6 +152,10 @@ class Report_quest extends MY_Controller
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
             $parameter_url .= "&action_id=" . $filter_action_id;
+            if (!$this->isValidMongoId($filter_action_id)) {
+                redirect('/report/quest', 'refresh');
+                return;
+            }
         } else {
             $filter_action_id = '';
         }
@@ -279,6 +283,11 @@ class Report_quest extends MY_Controller
 
     }
 
+    private function isValidMongoId($id)
+    {
+        return preg_match('/^[0-9a-f]{24}$/i', (string)$id) === 1;
+    }
+
     private function validateAccess()
     {
         if ($this->User_model->isAdmin()) {
@@ -361,6 +370,10 @@ class Report_quest extends MY_Controller
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
             $parameter_url .= "&action_id=" . $filter_action_id;
+            if (!$this->isValidMongoId($filter_action_id)) {
+                redirect('/report/quest', 'refresh');
+                return;
+            }
         } else {
             $filter_action_id = '';
         }
