@@ -644,5 +644,4 @@ class Report_goods extends MY_Controller
         $exporter->finalize();
 
     }
-
 }
