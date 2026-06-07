@@ -80,6 +80,52 @@ class Report_custompoint extends MY_Controller
         $this->getRewardsList($offset, site_url('report_custompoint/page'));
     }
 
+    private function getDefaultCustompointReportDateStart()
+    {
+        return date("Y-m-d H:i:s", strtotime(date("Y-m-d", strtotime("-7 days"))));
+    }
+
+    private function getDefaultCustompointReportDateEnd()
+    {
+        return date("Y-m-d H:i:s", strtotime(date("Y-m-d")) + 86399);
+    }
+
+    private function getCustompointReportDateFilter($value, $fallback, $end_of_day = false)
+    {
+        if (!is_string($value)) {
+            return $fallback;
+        }
+
+        $value = trim($value);
+        if ($value === '') {
+            return $fallback;
+        }
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            $format = 'Y-m-d';
+        } elseif (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $value)) {
+            $format = 'Y-m-d H:i:s';
+        } else {
+            return $fallback;
+        }
+
+        $date = DateTime::createFromFormat($format, $value);
+        $errors = DateTime::getLastErrors();
+        if (!$date || (is_array($errors) && ($errors['warning_count'] > 0 || $errors['error_count'] > 0))) {
+            return $fallback;
+        }
+
+        if ($date->format($format) !== $value) {
+            return $fallback;
+        }
+
+        if ($end_of_day && $format === 'Y-m-d H:i:s' && strpos($value, '00:00:00') !== false) {
+            return $date->modify('+86399 seconds')->format("Y-m-d H:i:s");
+        }
+
+        return $value;
+    }
+
     public function getRewardsList($offset, $url)
     {
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
@@ -95,32 +141,24 @@ class Report_custompoint extends MY_Controller
         $this->load->model('Badge_model');
 
         if ($this->input->get('date_start')) {
-            $filter_date_start = $this->input->get('date_start');
+            $filter_date_start = $this->getCustompointReportDateFilter(
+                $this->input->get('date_start'),
+                $this->getDefaultCustompointReportDateStart()
+            );
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-7 days"));
-            $previousDate = strtotime($date);
-            $filter_date_start = date("Y-m-d H:i:s", $previousDate);
+            $filter_date_start = $this->getDefaultCustompointReportDateStart();
         }
 
         if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
+            $filter_date_end = $this->getCustompointReportDateFilter(
+                $this->input->get('date_expire'),
+                $this->getDefaultCustompointReportDateEnd(),
+                true
+            );
             $parameter_url .= "&date_expire=" . $filter_date_end;
-
-            if(strpos($filter_date_end, '00:00:00')){
-                //--> This will enable to search on the day until the time 23:59:59
-                $currentDate = strtotime($filter_date_end);
-                $futureDate = $currentDate + ("86399");
-                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-                //--> end*/
-            }
         } else {
-            //--> This will enable to search on the current day until the time 23:59:59
-            $date = date("Y-m-d");
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            //--> end
+            $filter_date_end = $this->getDefaultCustompointReportDateEnd();
         }
 
         if ($this->input->get('time_zone')){
@@ -320,32 +358,24 @@ class Report_custompoint extends MY_Controller
         $this->load->model('Badge_model');
 
         if ($this->input->get('date_start')) {
-            $filter_date_start = $this->input->get('date_start');
+            $filter_date_start = $this->getCustompointReportDateFilter(
+                $this->input->get('date_start'),
+                $this->getDefaultCustompointReportDateStart()
+            );
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-7 days"));
-            $previousDate = strtotime($date);
-            $filter_date_start = date("Y-m-d H:i:s", $previousDate);
+            $filter_date_start = $this->getDefaultCustompointReportDateStart();
         }
 
         if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
+            $filter_date_end = $this->getCustompointReportDateFilter(
+                $this->input->get('date_expire'),
+                $this->getDefaultCustompointReportDateEnd(),
+                true
+            );
             $parameter_url .= "&date_expire=" . $filter_date_end;
-
-            if(strpos($filter_date_end, '00:00:00')){
-                //--> This will enable to search on the day until the time 23:59:59
-                $currentDate = strtotime($filter_date_end);
-                $futureDate = $currentDate + ("86399");
-                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-                //--> end*/
-            }
         } else {
-            //--> This will enable to search on the current day until the time 23:59:59
-            $date = date("Y-m-d");
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            //--> end
+            $filter_date_end = $this->getDefaultCustompointReportDateEnd();
         }
 
         if ($this->input->get('time_zone')){
