@@ -86,6 +86,10 @@ class Badge extends MY_Controller
                 }
 
                 $badge_data = $this->input->post();
+                if (isset($badge_data['category']) && $badge_data['category'] !== ''
+                    && (!is_string($badge_data['category']) || preg_match('/^[0-9a-f]{24}$/i', $badge_data['category']) !== 1)) {
+                    $this->data['message'] = $this->lang->line('error_warning');
+                }
 
                 if ($this->form_validation->run() && $this->data['message'] == null) {
 
@@ -192,6 +196,10 @@ class Badge extends MY_Controller
             }
 
             $badge_data = $this->input->post();
+            if (isset($badge_data['category']) && $badge_data['category'] !== ''
+                && (!is_string($badge_data['category']) || preg_match('/^[0-9a-f]{24}$/i', $badge_data['category']) !== 1)) {
+                $this->data['message'] = $this->lang->line('error_warning');
+            }
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 if ($this->User_model->getClientId()) {
