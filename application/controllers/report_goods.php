@@ -358,6 +358,23 @@ class Report_goods extends MY_Controller
         return $goods_data;
     }
 
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
+            return true;
+        }
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access',
+                'report/action') && $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private function getGoodsTags($goods_distinct, $index)
     {
         if (!is_numeric($index) || !isset($goods_distinct[$index]) || !array_key_exists('tags', $goods_distinct[$index])) {
@@ -383,23 +400,6 @@ class Report_goods extends MY_Controller
         })));
 
         return isset($value[1]) ? $value[1] : "";
-    }
-
-    private function validateAccess()
-    {
-        if ($this->User_model->isAdmin()) {
-            return true;
-        }
-        $this->load->model('Feature_model');
-        $client_id = $this->User_model->getClientId();
-
-        if ($this->User_model->hasPermission('access',
-                'report/action') && $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')
-        ) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public function actionDownload()
