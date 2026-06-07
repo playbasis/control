@@ -194,8 +194,12 @@ class Leaderboard extends MY_Controller
 
             foreach ($leaderboards as $key => $leaderboard) {
                 if (isset($leaderboard['selected_org']) && ($leaderboard['selected_org'] != "")) {
-                    $org_info = $this->Store_org_model->retrieveOrganizeById(new MongoID($leaderboard['selected_org']));
-                    $leaderboards[$key]['selected_org'] = $org_info['name'];
+                    if (is_string($leaderboard['selected_org']) && preg_match('/^[0-9a-f]{24}$/i', $leaderboard['selected_org']) === 1) {
+                        $org_info = $this->Store_org_model->retrieveOrganizeById(new MongoID($leaderboard['selected_org']));
+                        $leaderboards[$key]['selected_org'] = isset($org_info['name']) ? $org_info['name'] : '';
+                    } else {
+                        $leaderboards[$key]['selected_org'] = '';
+                    }
                 }
             }
             $this->data['leaderboards'] = $leaderboards;
