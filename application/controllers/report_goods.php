@@ -254,11 +254,7 @@ class Report_goods extends MY_Controller
 
             $goods_name = isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'];
             $index = array_search($goods_name,array_column($goods_distinct, 'name'));
-            if(is_numeric($index)){
-                $tags = isset($goods_distinct[$index]['tags']) ? $goods_distinct[$index]['tags'] : null;
-            } else {
-                $tags = null;
-            }
+            $tags = $this->getGoodsTags($goods_distinct, $index);
 
             $data_row = array(
                 'cl_player_id' => isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
@@ -268,21 +264,13 @@ class Report_goods extends MY_Controller
                 'date_gifted' => isset($result['status']) && $result['status'] == 'sender' ? $date_modified : null,
                 'goods_name' => $goods_name,
                 'code' => isset($result['code']) ? $result['code'] : null,
-                'tags' => $tags,
+                'tags' => $tags ? $tags : null,
                 'value' => $result['amount'],
                 'status' => $status
             );
-            if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && isset($goods_distinct[$index]['tags'])) {
-                $searchword = 'CAT';
-                $category = explode("=", implode("", array_filter($goods_distinct[$index]['tags'], function ($var) use ($searchword) {
-                    return preg_match("/\b$searchword\b/i", $var);
-                })));
-                $data_row['category'] = isset($category[1]) ? $category[1] : "";
-                $searchword = 'PRICE';
-                $price = explode("=", implode("", array_filter($goods_distinct[$index]['tags'], function ($var) use ($searchword) {
-                    return preg_match("/\b$searchword\b/i", $var);
-                })));
-                $data_row['price'] = isset($price[1]) ? $price[1] : "";
+            if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true)) {
+                $data_row['category'] = $this->getGoodsTagValue($tags, 'CAT');
+                $data_row['price'] = $this->getGoodsTagValue($tags, 'PRICE');
             }
             $this->data['reports'][] = $data_row;
         }
@@ -368,6 +356,33 @@ class Report_goods extends MY_Controller
         }
 
         return $goods_data;
+    }
+
+    private function getGoodsTags($goods_distinct, $index)
+    {
+        if (!is_numeric($index) || !isset($goods_distinct[$index]) || !array_key_exists('tags', $goods_distinct[$index])) {
+            return array();
+        }
+
+        $tags = $goods_distinct[$index]['tags'];
+        if (is_array($tags)) {
+            return $tags;
+        }
+
+        if (is_string($tags) && $tags !== '') {
+            return explode(',', $tags);
+        }
+
+        return array();
+    }
+
+    private function getGoodsTagValue($tags, $searchword)
+    {
+        $value = explode("=", implode("", array_filter($tags, function($var) use ($searchword) {
+            return preg_match("/\b$searchword\b/i", $var);
+        })));
+
+        return isset($value[1]) ? $value[1] : "";
     }
 
     private function validateAccess()
@@ -589,14 +604,11 @@ class Report_goods extends MY_Controller
                 }
                 $goods_name = isset($result['group']) && $result['group'] ? $result['group'] : $result['goods_name'];
                 $index = array_search($goods_name,array_column($goods_distinct, 'name'));
-                $tags = isset($goods_distinct[$index]['tags']) ? implode(',', $goods_distinct[$index]['tags']) : null;
+                $goods_tags = $this->getGoodsTags($goods_distinct, $index);
+                $tags = $goods_tags ? implode(',', $goods_tags) : null;
                 if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true)) {
-                    $searchword = 'CAT';
-                    $category = explode("=", implode("", array_filter($goods_distinct[$index]['tags'], function($var) use ($searchword) { return preg_match("/\b$searchword\b/i", $var); })));
-                    $category = isset($category[1]) ? $category[1] : "";
-                    $searchword = 'PRICE';
-                    $price = explode("=", implode("", array_filter($goods_distinct[$index]['tags'], function($var) use ($searchword) { return preg_match("/\b$searchword\b/i", $var); })));
-                    $price = isset($price[1]) ? $price[1] : "";
+                    $category = $this->getGoodsTagValue($goods_tags, 'CAT');
+                    $price = $this->getGoodsTagValue($goods_tags, 'PRICE');
                     $exporter->addRow($data_row = array(
                         isset($result['cl_player_id']) ? $result['cl_player_id'] : null,
                         $goods_name,
