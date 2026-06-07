@@ -57,12 +57,27 @@ class Language extends MY_Controller
                 $site_id = $this->User_model->getSiteId();
                 $selectedLanguages = $this->input->post('selected');
 
-                foreach ($selectedLanguages as $selectedLanguage) {
-                    $result = $this->Language_model->deleteLanguage($client_id,$site_id,$selectedLanguage);
+                if ($selectedLanguages && !is_array($selectedLanguages)) {
+                    $selectedLanguages = array($selectedLanguages);
                 }
 
-                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-                redirect('/language', 'refresh');
+                if ($selectedLanguages) {
+                    foreach ($selectedLanguages as $selectedLanguage) {
+                        if (!$this->isMongoId($selectedLanguage)) {
+                            $this->error['warning'] = 'Invalid language id';
+                            break;
+                        }
+                    }
+
+                    if (!isset($this->error['warning']) || $this->error['warning'] == null) {
+                        foreach ($selectedLanguages as $selectedLanguage) {
+                            $result = $this->Language_model->deleteLanguage($client_id,$site_id,$selectedLanguage);
+                        }
+
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                        redirect('/language', 'refresh');
+                    }
+                }
             }
         }
 
@@ -136,6 +151,10 @@ class Language extends MY_Controller
 
     public function update($language_id)
     {
+        if (!$this->isMongoId($language_id)) {
+            redirect('/language', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -263,6 +282,10 @@ class Language extends MY_Controller
         $this->data['main'] = 'language_form';
 
         if (!is_null($language_id)) {
+            if (!$this->isMongoId($language_id)) {
+                redirect('/language', 'refresh');
+            }
+
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
             $language_info = $this->Language_model->retrieveLanguageByID($client_id, $site_id, $language_id);
@@ -328,5 +351,10 @@ class Language extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 }
