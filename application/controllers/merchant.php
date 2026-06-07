@@ -85,9 +85,9 @@ class Merchant extends MY_Controller
             'trim|max_length[255]|xss_clean');
         $this->form_validation->set_rules('merchant-status', $this->lang->line('entry_status'), 'trim|xss_clean');
 
-        $newBranches = $this->input->post('newBranches');
+        $newBranches = $this->normalizeNewBranches($this->input->post('newBranches'));
 
-        if ($newBranches != false && !empty($newBranches)) {
+        if (!empty($newBranches)) {
             $i = 0;
             foreach ($newBranches as $branch) {
                 if (!empty($branch['branchName'])) {
@@ -106,19 +106,11 @@ class Merchant extends MY_Controller
 
             if ($this->form_validation->run()) {
                 $merchant_data = $this->input->post();
+                $merchant_data['newBranches'] = $newBranches;
 
                 $batch_data = array();
 
-                if (isset($merchant_data['newBranches']) && !empty($merchant_data['newBranches'])) {
-                    $postArr = array_map('array_filter', $merchant_data['newBranches']);
-                    foreach ($postArr as $key => $branch) {
-                        if (!array_key_exists('branchName', $branch)) {
-                            unset($postArr[$key]);
-                        }
-                    }
-                    $merchant_data['newBranches'] = array_values($postArr);
-
-
+                if (!empty($merchant_data['newBranches'])) {
                     foreach ($merchant_data['newBranches'] as $branch) {
                         array_push($batch_data, array(
                             'client_id' => $client_id,
@@ -204,8 +196,8 @@ class Merchant extends MY_Controller
         $this->form_validation->set_rules('merchant-status', $this->lang->line('entry_status'), 'trim|xss_clean');
 
         // New Branch(es)
-        $newBranches = $this->input->post('newBranches');
-        if ($newBranches != false && !empty($newBranches)) {
+        $newBranches = $this->normalizeNewBranches($this->input->post('newBranches'));
+        if (!empty($newBranches)) {
             $i = 0;
             foreach ($newBranches as $branch) {
                 if (!empty($branch['branchName'])) {
@@ -226,6 +218,7 @@ class Merchant extends MY_Controller
 
             if ($this->form_validation->run()) {
                 $merchant_data = $this->input->post();
+                $merchant_data['newBranches'] = $newBranches;
 
                 $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroups($client_id, $site_id,
                     $merchant_id);
@@ -234,16 +227,7 @@ class Merchant extends MY_Controller
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
 
-                if ($newBranches != false && !empty($newBranches)) {
-
-                    $postArr = array_map('array_filter', $merchant_data['newBranches']);
-                    foreach ($postArr as $key => $branch) {
-                        if (!array_key_exists('branchName', $branch)) {
-                            unset($postArr[$key]);
-                        }
-                    }
-                    $merchant_data['newBranches'] = array_values($postArr);
-
+                if (!empty($merchant_data['newBranches'])) {
                     $batch_data = array();
                     foreach ($merchant_data['newBranches'] as $branch) {
                         array_push($batch_data, array(
@@ -596,6 +580,27 @@ class Merchant extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    private function normalizeNewBranches($newBranches)
+    {
+        if (!is_array($newBranches)) {
+            return array();
+        }
+
+        $branches = array();
+        foreach ($newBranches as $branch) {
+            if (!is_array($branch)) {
+                continue;
+            }
+            $branch = array_filter($branch);
+            if (!array_key_exists('branchName', $branch)) {
+                continue;
+            }
+            $branches[] = $branch;
+        }
+
+        return $branches;
     }
 
     private function validateModify()
