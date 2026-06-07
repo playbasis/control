@@ -375,33 +375,6 @@ class Report_goods extends MY_Controller
         }
     }
 
-    private function getGoodsTags($goods_distinct, $index)
-    {
-        if (!is_numeric($index) || !isset($goods_distinct[$index]) || !array_key_exists('tags', $goods_distinct[$index])) {
-            return array();
-        }
-
-        $tags = $goods_distinct[$index]['tags'];
-        if (is_array($tags)) {
-            return $tags;
-        }
-
-        if (is_string($tags) && $tags !== '') {
-            return explode(',', $tags);
-        }
-
-        return array();
-    }
-
-    private function getGoodsTagValue($tags, $searchword)
-    {
-        $value = explode("=", implode("", array_filter($tags, function($var) use ($searchword) {
-            return preg_match("/\b$searchword\b/i", $var);
-        })));
-
-        return isset($value[1]) ? $value[1] : "";
-    }
-
     public function actionDownload()
     {
         $parameter_url = "?t=" . rand();
@@ -642,5 +615,32 @@ class Report_goods extends MY_Controller
         }
         $exporter->finalize();
 
+    }
+
+    private function getGoodsTags($goods_distinct, $index)
+    {
+        if (!is_numeric($index) || !isset($goods_distinct[$index]) || !array_key_exists('tags', $goods_distinct[$index])) {
+            return array();
+        }
+
+        $tags = $goods_distinct[$index]['tags'];
+        if (is_array($tags)) {
+            return $tags;
+        }
+
+        if (is_string($tags) && $tags !== '') {
+            return explode(',', $tags);
+        }
+
+        return array();
+    }
+
+    private function getGoodsTagValue($tags, $searchword)
+    {
+        $value = explode("=", implode("", array_filter($tags, function($var) use ($searchword) {
+            return preg_match("/\b$searchword\b/i", $var);
+        })));
+
+        return isset($value[1]) ? $value[1] : "";
     }
 }
