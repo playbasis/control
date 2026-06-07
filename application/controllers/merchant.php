@@ -230,6 +230,42 @@ class Merchant extends MY_Controller
                 $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroups($client_id, $site_id,
                     $merchant_id);
 
+                $invalidGoodsGroups = false;
+                if (!empty($merchant_data['mc_goodsGroups'])) {
+                    if (!is_array($merchant_data['mc_goodsGroups'])) {
+                        $invalidGoodsGroups = true;
+                    } else {
+                        foreach ($merchant_data['mc_goodsGroups'] as $ggvalue) {
+                            if (!is_array($ggvalue) || empty($ggvalue['goodsGroup']) || empty($ggvalue['allowBranches']) || !is_array($ggvalue['allowBranches'])) {
+                                $invalidGoodsGroups = true;
+                                break;
+                            }
+                            $tmp_gg = preg_split("/(mc_gg_)/", $ggvalue['goodsGroup']);
+                            if (!isset($tmp_gg[1]) || $tmp_gg[1] === '') {
+                                $invalidGoodsGroups = true;
+                                break;
+                            }
+                            foreach ($ggvalue['allowBranches'] as $allowBranch) {
+                                if (!is_string($allowBranch)) {
+                                    $invalidGoodsGroups = true;
+                                    break 2;
+                                }
+                                $tmp_array = explode(':', $allowBranch, 2);
+                                if (count($tmp_array) !== 2 || !preg_match('/^[0-9a-f]{24}$/i', $tmp_array[0]) || $tmp_array[1] === '') {
+                                    $invalidGoodsGroups = true;
+                                    break 2;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if ($invalidGoodsGroups) {
+                    $this->data['message'] = 'Invalid goods group branch selection.';
+                    $this->getForm($merchant_id);
+                    return;
+                }
+
                 $data['_id'] = $merchant_id;
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
@@ -287,7 +323,7 @@ class Merchant extends MY_Controller
 
                         $gg_data['newAllowBranches'] = array();
                         foreach ($ggvalue['allowBranches'] as &$allowBranch) {
-                            $tmp_array = explode(':', $allowBranch);
+                            $tmp_array = explode(':', $allowBranch, 2);
                             $tmp_array['b_id'] = new MongoId($tmp_array[0]);
                             $tmp_array['b_name'] = $tmp_array[1];
                             unset($tmp_array[0]);
