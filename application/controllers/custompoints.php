@@ -303,6 +303,10 @@ class Custompoints extends MY_Controller
         $this->data['main'] = 'custompoints_form';
 
         if (isset($custompoints_id) && ($custompoints_id != 0)) {
+            if (!$this->isMongoId($custompoints_id)) {
+                redirect('/custompoints', 'refresh');
+            }
+
             if ($this->User_model->getClientId()) {
                 $custompoints_info = $this->Custompoints_model->getCustompoint($custompoints_id);
             }
@@ -404,6 +408,10 @@ class Custompoints extends MY_Controller
 
     public function update($custompoints_id)
     {
+        if (!$this->isMongoId($custompoints_id)) {
+            redirect('/custompoints', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -493,14 +501,28 @@ class Custompoints extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $reward_id) {
-                $audit_id = $this->Custompoints_model->auditBeforeCustomPoint('delete', $reward_id, $this->User_model->getId());
-                $this->Custompoints_model->deleteCustompoints($reward_id);
-                $this->Custompoints_model->auditAfterCustomPoint('delete', $reward_id, $this->User_model->getId(), $audit_id);
+            $selected_custompoints = $this->input->post('selected');
+            if (!is_array($selected_custompoints)) {
+                $selected_custompoints = array($selected_custompoints);
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/custompoints', 'refresh');
+            foreach ($selected_custompoints as $reward_id) {
+                if (!$this->isMongoId($reward_id)) {
+                    $this->error['warning'] = 'Invalid custompoints id';
+                    break;
+                }
+            }
+
+            if ($this->error['warning'] == null) {
+                foreach ($selected_custompoints as $reward_id) {
+                    $audit_id = $this->Custompoints_model->auditBeforeCustomPoint('delete', $reward_id, $this->User_model->getId());
+                    $this->Custompoints_model->deleteCustompoints($reward_id);
+                    $this->Custompoints_model->auditAfterCustomPoint('delete', $reward_id, $this->User_model->getId(), $audit_id);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/custompoints', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -612,6 +634,11 @@ class Custompoints extends MY_Controller
         $array_custompoints = array();
         foreach($this->input->post('array_custompoints') as $customPoint_id){
             if($customPoint_id == "on")continue;
+            if (!$this->isMongoId($customPoint_id)) {
+                $this->jsonErrorResponse('Invalid custompoints id');
+                return;
+            }
+
             $currency_info = $this->Custompoints_model->getCustompoint($customPoint_id);
 
             unset($currency_info['_id']);
@@ -626,6 +653,11 @@ class Custompoints extends MY_Controller
         }
 
         $this->output->set_output(json_encode($array_custompoints));
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     private function datetimeMongotoReadable($dateTimeMongo)
