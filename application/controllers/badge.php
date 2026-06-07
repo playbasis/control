@@ -162,6 +162,10 @@ class Badge extends MY_Controller
 
     public function update($badge_id)
     {
+        if (!$this->isMongoId($badge_id)) {
+            redirect('/badge', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -244,29 +248,41 @@ class Badge extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $badge_id) {
-                if ($this->checkOwnerBadge($badge_id)) {
-
-                    if ($this->User_model->getClientId()) {
-                        if (!$this->Badge_model->checkBadgeIsSponsor($badge_id)) {
-                            $audit_id = $this->Badge_model->auditBeforeBadge('delete', $badge_id, $this->User_model->getId());
-                            $this->Badge_model->deleteBadgeClient($badge_id);
-                            $this->Badge_model->auditAfterBadge('delete', $badge_id, $this->User_model->getId(), $audit_id);
-                        } else {
-                            redirect('/badge', 'refresh');
-                        }
-                    } else {
-                        $this->Badge_model->deleteBadge($badge_id);
-                        $audit_id = $this->Badge_model->auditBeforeBadge('delete', $badge_id, $this->User_model->getId());
-                        $this->Badge_model->deleteClientBadgeFromAdmin($badge_id);
-                        $this->Badge_model->auditAfterBadge('delete', $badge_id, $this->User_model->getId(), $audit_id);
-                    }
-
+            $selected_badges = $this->input->post('selected');
+            foreach ($selected_badges as $badge_id) {
+                if (!$this->isMongoId($badge_id)) {
+                    $this->error['warning'] = 'Invalid badge id';
+                    break;
                 }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/badge', 'refresh');
+            if ($this->error['warning'] == null) {
+                foreach ($selected_badges as $badge_id) {
+                    if ($this->checkOwnerBadge($badge_id)) {
+
+                        if ($this->User_model->getClientId()) {
+                            if (!$this->Badge_model->checkBadgeIsSponsor($badge_id)) {
+                                $audit_id = $this->Badge_model->auditBeforeBadge('delete', $badge_id, $this->User_model->getId());
+                                $this->Badge_model->deleteBadgeClient($badge_id);
+                                $this->Badge_model->auditAfterBadge('delete', $badge_id, $this->User_model->getId(), $audit_id);
+                            } else {
+                                redirect('/badge', 'refresh');
+                            }
+                        } else {
+                            $this->Badge_model->deleteBadge($badge_id);
+                            $audit_id = $this->Badge_model->auditBeforeBadge('delete', $badge_id, $this->User_model->getId());
+                            $this->Badge_model->deleteClientBadgeFromAdmin($badge_id);
+                            $this->Badge_model->auditAfterBadge('delete', $badge_id, $this->User_model->getId(), $audit_id);
+                        }
+
+                    }
+                }
+            }
+
+            if ($this->error['warning'] == null) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/badge', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -1046,6 +1062,11 @@ class Badge extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     private function validateAccess()
