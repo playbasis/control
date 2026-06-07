@@ -105,6 +105,10 @@ class Level extends MY_Controller
 
     public function update($level_id)
     {
+        if (!$this->isMongoId($level_id)) {
+            redirect('/level', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -210,20 +214,33 @@ class Level extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
+            $selected_levels = $this->input->post('selected');
+            if (!is_array($selected_levels)) {
+                $selected_levels = array($selected_levels);
+            }
 
-            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
-                foreach ($this->input->post('selected') as $level_id) {
-                    $this->Level_model->deleteLevelSite($level_id);
-                }
-            } else {
-                foreach ($this->input->post('selected') as $level_id) {
-                    $this->Level_model->deleteLevel($level_id);
+            foreach ($selected_levels as $level_id) {
+                if (!$this->isMongoId($level_id)) {
+                    $this->error['warning'] = 'Invalid level id';
+                    break;
                 }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            if ($this->error['warning'] == null) {
+                if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+                    foreach ($selected_levels as $level_id) {
+                        $this->Level_model->deleteLevelSite($level_id);
+                    }
+                } else {
+                    foreach ($selected_levels as $level_id) {
+                        $this->Level_model->deleteLevel($level_id);
+                    }
+                }
 
-            redirect('/level', 'refresh');
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+
+                redirect('/level', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -383,6 +400,10 @@ class Level extends MY_Controller
         }
 
         if (isset($level_id) && ($level_id != 0)) {
+            if (!$this->isMongoId($level_id)) {
+                redirect('/level', 'refresh');
+            }
+
             if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
                 $level_info = $this->Level_model->getLevelSite($level_id);
             } else {
@@ -496,6 +517,11 @@ class Level extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 }
 
