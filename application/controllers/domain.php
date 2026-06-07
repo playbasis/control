@@ -213,9 +213,21 @@ class Domain extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
                 $client_id = $this->User_model->getClientId();
                 $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+                if (!is_array($plan_subscription) ||
+                    !array_key_exists('plan_id', $plan_subscription) ||
+                    !$plan_subscription['plan_id']
+                ) {
+                    redirect('/logout', 'refresh');
+                    return;
+                }
 
                 // get Plan limit_others.domain
-                $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "domain");
+                try {
+                    $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "domain");
+                } catch (Exception $e) {
+                    redirect('/logout', 'refresh');
+                    return;
+                }
 
                 // Get current client site
                 $usage = $this->Client_model->getSitesByClientId($client_id);
@@ -242,8 +254,6 @@ class Domain extends MY_Controller
                     $site_id = $this->Domain_model->addDomain($d_data);
 
                     if ($site_id) {
-                        $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-
                         // bind plan to client in playbasis_permission
                         $this->Client_model->addPlanToPermission(array(
                             'client_id' => $client_id->{'$id'},
