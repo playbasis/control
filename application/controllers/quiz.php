@@ -188,7 +188,12 @@ class Quiz extends MY_Controller
         $this->load->model('Plan_model');
         // Get Limit
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $limit_quiz = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'quiz');
+        try {
+            $limit_quiz = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'quiz');
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
 
         $this->data['message'] = null;
         if ($limit_quiz && $quizs >= $limit_quiz) {
