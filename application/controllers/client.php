@@ -172,8 +172,22 @@ class Client extends MY_Controller
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
-        if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $client_id) {
+        $selected = $this->input->post('selected');
+        if ($selected && $this->error['warning'] == null) {
+            if (!is_array($selected)) {
+                $this->error['warning'] = $this->lang->line('error_required');
+            } else {
+                foreach ($selected as $client_id) {
+                    if (!is_scalar($client_id) || !preg_match('/^[0-9a-f]{24}$/i', (string)$client_id)) {
+                        $this->error['warning'] = $this->lang->line('error_required');
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($selected && $this->error['warning'] == null) {
+            foreach ($selected as $client_id) {
                 if ($this->checkOwnerClient($client_id)) {
                     $this->Client_model->deleteClient($client_id);
                     $this->Client_model->deleteClientPersmission($client_id);
