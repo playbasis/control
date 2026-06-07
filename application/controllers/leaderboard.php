@@ -110,6 +110,10 @@ class Leaderboard extends MY_Controller
 
     public function update($leaderboard_id)
     {
+        if (!$this->isMongoId($leaderboard_id)) {
+            redirect('/leaderboard', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -353,15 +357,32 @@ class Leaderboard extends MY_Controller
         $this->error['message'] = null;
 
         if ($this->input->post('selected') && $this->error['message'] == null) {
-            foreach ($this->input->post('selected') as $leaderboard_id) {
-                $this->Leaderboard_model->deleteLeaderBoard($leaderboard_id);
+            $selected_leaderboards = $this->input->post('selected');
+            foreach ($selected_leaderboards as $leaderboard_id) {
+                if (!$this->isMongoId($leaderboard_id)) {
+                    $this->error['warning'] = 'Invalid leaderboard id';
+                    break;
+                }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/leaderboard', 'refresh');
+            if (!isset($this->error['warning'])) {
+                foreach ($selected_leaderboards as $leaderboard_id) {
+                    $this->Leaderboard_model->deleteLeaderBoard($leaderboard_id);
+                }
+            }
+
+            if (!isset($this->error['warning'])) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/leaderboard', 'refresh');
+            }
         }
 
         $this->getList(0);
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     private function validateModify()
