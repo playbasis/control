@@ -157,6 +157,12 @@ class Player extends MY_Controller
             return;
         }
         $paremSet = $this->input->get('filter_sort');
+
+        if ($this->hasInvalidObjectIdFilter($paremSet)) {
+            $this->output->set_output($this->invalidFilterIdResponse());
+            return;
+        }
+
         $paramSet = explode("|", $paremSet);
 
         $paramSet = array_filter($paramSet);
@@ -407,6 +413,10 @@ class Player extends MY_Controller
 
     public function actionDonut()
     {
+        if ($this->hasInvalidObjectIdFilter($this->input->get('filter_sort'))) {
+            return $this->invalidFilterIdResponse();
+        }
+
         $json = array();
 
         $data = $this->filterData();
@@ -480,6 +490,10 @@ class Player extends MY_Controller
 
     public function rewardDonut()
     {
+        if ($this->hasInvalidObjectIdFilter($this->input->get('filter_sort'))) {
+            return $this->invalidFilterIdResponse();
+        }
+
         $json = array();
 
         $data = $this->filterData();
@@ -566,6 +580,60 @@ class Player extends MY_Controller
         }
 
         return $output;
+    }
+
+    private function invalidFilterIdResponse()
+    {
+        return json_encode(array(
+            'donut' => array(),
+            'options' => array(),
+            'error' => 'invalid filter id'
+        ));
+    }
+
+    private function hasInvalidObjectIdFilter($filter_sort)
+    {
+        if (!$filter_sort) {
+            return false;
+        }
+
+        $sort = explode('|', $filter_sort);
+
+        foreach ($sort as $value) {
+            $sort_explode = explode(':', $value, 2);
+            $filter_name = isset($sort_explode[0]) ? $sort_explode[0] : '';
+
+            if ($filter_name !== 'action_id' && $filter_name !== 'reward_id') {
+                continue;
+            }
+
+            $filter_value = isset($sort_explode[1]) ? $sort_explode[1] : '';
+            $filter_ids = explode('-', $filter_value);
+            $has_id = false;
+
+            foreach ($filter_ids as $filter_id) {
+                if ($filter_id === '') {
+                    continue;
+                }
+
+                $has_id = true;
+
+                if (!$this->isMongoId($filter_id)) {
+                    return true;
+                }
+            }
+
+            if (!$has_id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     private function filterData()
