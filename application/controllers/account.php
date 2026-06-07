@@ -851,21 +851,6 @@ class Account extends MY_Controller
         return $interval->format($fmt);
     }
 
-    private function check_valid_payment($client)
-    {
-        $date_start = array_key_exists('date_start',
-            $client) && !empty($client['date_start']) ? $client['date_start']->sec : null;
-        $date_expire = array_key_exists('date_expire',
-            $client) && !empty($client['date_expire']) ? $client['date_expire']->sec : null;
-        $t = time();
-        return ($date_start ? $date_start <= $t : DEFAULT_VALID_STATUS_IF_DATE_IS_NOT_SET) && ($date_expire ? $t <= $date_expire : DEFAULT_VALID_STATUS_IF_DATE_IS_NOT_SET);
-    }
-
-    private function check_valid_payment_channel($channel)
-    {
-        return in_array($channel, array(PAYMENT_CHANNEL_PAYPAL, PAYMENT_CHANNEL_STRIPE));
-    }
-
     private function getCurrentPlanContext()
     {
         $plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
@@ -886,6 +871,21 @@ class Account extends MY_Controller
             'subscription' => $plan_subscription,
             'plan' => $plan
         );
+    }
+
+    private function check_valid_payment($client)
+    {
+        $date_start = array_key_exists('date_start',
+            $client) && !empty($client['date_start']) ? $client['date_start']->sec : null;
+        $date_expire = array_key_exists('date_expire',
+            $client) && !empty($client['date_expire']) ? $client['date_expire']->sec : null;
+        $t = time();
+        return ($date_start ? $date_start <= $t : DEFAULT_VALID_STATUS_IF_DATE_IS_NOT_SET) && ($date_expire ? $t <= $date_expire : DEFAULT_VALID_STATUS_IF_DATE_IS_NOT_SET);
+    }
+
+    private function check_valid_payment_channel($channel)
+    {
+        return in_array($channel, array(PAYMENT_CHANNEL_PAYPAL, PAYMENT_CHANNEL_STRIPE));
     }
 
     private function validateAccess()
