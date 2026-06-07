@@ -52,11 +52,10 @@ class Widget extends MY_Controller
                 'site_id' => $site_id
             ));
 
-            $this->load->model('Client_model');
-            $this->load->model('Plan_model');
-            $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-            // get Plan display
-            $plan_widget = $this->Plan_model->getPlanDisplayWidget($plan_subscription["plan_id"]);
+            $plan_widget = $this->getCurrentPlanWidget($client_id);
+            if ($plan_widget === false) {
+                return;
+            }
         }
 
         $this->data['plan_widget'] = $plan_widget;
@@ -118,14 +117,14 @@ class Widget extends MY_Controller
             );
             $sw_data = $this->Widget_model->getWidgetSocialsSite($w_data);
 
-            $this->load->model('Client_model');
-            $this->load->model('Plan_model');
-            $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-            // get Plan display
-            $plan_widget = $this->Plan_model->getPlanDisplayWidget($plan_subscription["plan_id"]);
+            $plan_widget = $this->getCurrentPlanWidget($client_id);
+            if ($plan_widget === false) {
+                return;
+            }
 
             if (!(isset($plan_widget['social']) && $plan_widget['social'])) {
                 redirect('/widget', 'refresh');
+                return;
             }
         }
 
@@ -158,22 +157,69 @@ class Widget extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        if ($data) {
+        if (!is_scalar($data_callback)) {
+            $data_callback = '';
+        }
+
+        if (is_array($data)) {
             foreach ($data as $d) {
+                if (!$this->isValidSocialWidgetRow($d)) {
+                    continue;
+                }
+
                 $s_data = array(
                     'client_id' => $client_id,
                     'site_id' => $site_id,
-                    'provider' => $d['name'],
-                    'key' => $d['key'],
-                    'secret' => $d['secret'],
-                    'sort_order' => $d['sort_order'],
+                    'provider' => (string)$d['name'],
+                    'key' => (string)$d['key'],
+                    'secret' => (string)$d['secret'],
+                    'sort_order' => (string)$d['sort_order'],
                     'status' => $d['status'],
-                    'callback' => $data_callback
+                    'callback' => (string)$data_callback
                 );
                 $this->Widget_model->updateWidgetSocials($s_data);
             }
         }
         $this->output->set_output(json_encode(array('status' => 'success')));
+    }
+
+    private function getCurrentPlanWidget($client_id)
+    {
+        $this->load->model('Client_model');
+        $this->load->model('Plan_model');
+
+        $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+        if (!is_array($plan_subscription) ||
+            !array_key_exists('plan_id', $plan_subscription) ||
+            !$plan_subscription['plan_id']
+        ) {
+            redirect('/logout', 'refresh');
+            return false;
+        }
+
+        try {
+            $plan_widget = $this->Plan_model->getPlanDisplayWidget($plan_subscription['plan_id']);
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return false;
+        }
+
+        return is_array($plan_widget) ? $plan_widget : array();
+    }
+
+    private function isValidSocialWidgetRow($data)
+    {
+        if (!is_array($data)) {
+            return false;
+        }
+
+        foreach (array('name', 'key', 'secret', 'sort_order', 'status') as $field) {
+            if (!isset($data[$field]) || !is_scalar($data[$field])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 
