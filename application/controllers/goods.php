@@ -547,6 +547,10 @@ class Goods extends MY_Controller
     }
 
     public function update($goods_id){
+        if (!$this->isMongoId($goods_id)) {
+            redirect('/goods', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -774,6 +778,11 @@ class Goods extends MY_Controller
     public function updateGoodsFromAjax($goods_id)
     {
         if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            if (!$this->isMongoId($goods_id)) {
+                $this->outputInvalidGoodsId();
+                return;
+            }
+
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
 
@@ -787,6 +796,12 @@ class Goods extends MY_Controller
                 $group = isset($goods_info['group']) ? $goods_info['group'] : null;
                 $goods_data = $this->input->post();
                 $filter_data = $this->input->get();
+                if (!$this->isValidGoodsFilter($filter_data)) {
+                    $this->outputInvalidGoodsId();
+                    return;
+                }
+                $this->removeNonScalarGoodsGroupCouponFilters($filter_data);
+
                 $goods_data['client_id'] = $client_id;
                 $goods_data['site_id'] = $site_id;
                 if($group){
@@ -821,6 +836,11 @@ class Goods extends MY_Controller
     public function deleteGoodsFromAjax($goods_id)
     {
         if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            if (!$this->isMongoId($goods_id)) {
+                $this->outputInvalidGoodsId();
+                return;
+            }
+
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
 
@@ -833,6 +853,12 @@ class Goods extends MY_Controller
                 $goods_info = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
                 $group = isset($goods_info['group']) ? $goods_info['group'] : null;
                 $filter_data = $this->input->get();
+                if (!$this->isValidGoodsFilter($filter_data)) {
+                    $this->outputInvalidGoodsId();
+                    return;
+                }
+                $this->removeNonScalarGoodsGroupCouponFilters($filter_data);
+
                 $goods_data['client_id'] = $client_id;
                 $goods_data['site_id'] = $site_id;
                 if($group){
@@ -870,6 +896,11 @@ class Goods extends MY_Controller
     public function upload($goods_id)
     {
         if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            if (!$this->isMongoId($goods_id)) {
+                $this->outputInvalidGoodsId();
+                return;
+            }
+
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
 
@@ -938,38 +969,48 @@ class Goods extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $goods_id) {
-                if ($this->checkOwnerGoods($goods_id)) {
-
-                    if ($this->User_model->getClientId()) {
-                        if (!$this->Goods_model->checkGoodsIsSponsor($goods_id)) {
-                            $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
-                            if ($goods_info && array_key_exists('group', $goods_info)) {
-                                $this->Goods_model->deleteGoodsDistinct($this->User_model->getSiteId(), $goods_info['group']);
-                                $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
-                                $this->Goods_model->deleteGoodsGroupClient($goods_info['group'], $this->User_model->getClientId(), $this->User_model->getSiteId());
-                                $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
-                            } else {
-                                $this->Goods_model->deleteGoodsDistinct($this->User_model->getSiteId(), $goods_info['name']);
-                                $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
-                                $this->Goods_model->deleteGoodsClient($goods_id);
-                                $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
-                            }
-                        } else {
-                            redirect('/goods', 'refresh');
-                        }
-                    } else {
-                        $this->Goods_model->deleteGoods($goods_id);
-                        $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
-                        $this->Goods_model->deleteGoodsClientFromAdmin($goods_id);
-                        $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
-                    }
-
+            $selected_goods = $this->input->post('selected');
+            foreach ($selected_goods as $goods_id) {
+                if (!$this->isMongoId($goods_id)) {
+                    $this->error['warning'] = $this->lang->line('error_goods_id');
+                    break;
                 }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect($_SERVER['HTTP_REFERER'], 'refresh');
+            if ($this->error['warning'] == null) {
+                foreach ($selected_goods as $goods_id) {
+                    if ($this->checkOwnerGoods($goods_id)) {
+
+                        if ($this->User_model->getClientId()) {
+                            if (!$this->Goods_model->checkGoodsIsSponsor($goods_id)) {
+                                $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+                                if ($goods_info && array_key_exists('group', $goods_info)) {
+                                    $this->Goods_model->deleteGoodsDistinct($this->User_model->getSiteId(), $goods_info['group']);
+                                    $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
+                                    $this->Goods_model->deleteGoodsGroupClient($goods_info['group'], $this->User_model->getClientId(), $this->User_model->getSiteId());
+                                    $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
+                                } else {
+                                    $this->Goods_model->deleteGoodsDistinct($this->User_model->getSiteId(), $goods_info['name']);
+                                    $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
+                                    $this->Goods_model->deleteGoodsClient($goods_id);
+                                    $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
+                                }
+                            } else {
+                                redirect('/goods', 'refresh');
+                            }
+                        } else {
+                            $this->Goods_model->deleteGoods($goods_id);
+                            $audit_id = $this->Goods_model->auditBeforeGoods('delete', $goods_id, $this->User_model->getId());
+                            $this->Goods_model->deleteGoodsClientFromAdmin($goods_id);
+                            $this->Goods_model->auditAfterGoods('delete', $goods_id, $this->User_model->getId(), $audit_id);
+                        }
+
+                    }
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect($_SERVER['HTTP_REFERER'], 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -1385,6 +1426,10 @@ class Goods extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         if (isset($goods_id) && ($goods_id != 0)) {
+            if (!$this->isMongoId($goods_id)) {
+                redirect('/goods', 'refresh');
+            }
+
             if ($client_id) {
                 $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
             } else {
@@ -1707,10 +1752,17 @@ class Goods extends MY_Controller
     public function getGoodsGroupAjax($goods_id = null)
     {
 
-        $offset = $this->input->get('page') ? $this->input->get('page') - 1 : 0;
+        $page = $this->input->get('page');
+        $page = is_scalar($page) && is_numeric($page) && intval($page) > 0 ? intval($page) : 1;
+        $offset = $page - 1;
         $limit = 10;
 
         if (isset($goods_id) && ($goods_id != 0)) {
+            if (!$this->isMongoId($goods_id)) {
+                $this->outputInvalidGoodsId();
+                return;
+            }
+
             if ($this->User_model->getClientId()) {
                 $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
             } else {
@@ -1728,7 +1780,12 @@ class Goods extends MY_Controller
             );
 
             $this->data['filter'] = array();
-            if (isset($_GET['filter_goods'])) {
+            if (isset($_GET['filter_goods']) && $_GET['filter_goods'] !== '') {
+                if (!$this->isMongoId($_GET['filter_goods'])) {
+                    $this->outputInvalidGoodsId();
+                    return;
+                }
+
                 $this->data['filter']['filter_goods'] = $_GET['filter_goods'];
                 $data['filter_goods'] = $_GET['filter_goods'];
             }
@@ -1736,13 +1793,15 @@ class Goods extends MY_Controller
                 $this->data['filter']['filter_batch'] = $_GET['filter_batch'];
                 $data['filter_batch'] = $_GET['filter_batch'];
             }
-            if (isset($_GET['filter_coupon_name'])) {
-                $this->data['filter']['filter_coupon_name'] =  $_GET['filter_coupon_name'];
-                $data['filter_name'] = $_GET['filter_coupon_name'];
+            $filter_coupon_name = $this->getScalarGoodsGroupCouponFilter('filter_coupon_name');
+            if ($filter_coupon_name !== null) {
+                $this->data['filter']['filter_coupon_name'] =  $filter_coupon_name;
+                $data['filter_name'] = $filter_coupon_name;
             }
-            if (isset($_GET['filter_voucher_code'])) {
-                $this->data['filter']['filter_voucher_code'] =  $_GET['filter_voucher_code'];
-                $data['filter_voucher_code'] = $_GET['filter_voucher_code'];
+            $filter_voucher_code = $this->getScalarGoodsGroupCouponFilter('filter_voucher_code');
+            if ($filter_voucher_code !== null) {
+                $this->data['filter']['filter_voucher_code'] =  $filter_voucher_code;
+                $data['filter_voucher_code'] = $filter_voucher_code;
             }
 
             if (isset($_GET['filter_date_start'])) {
@@ -1778,6 +1837,10 @@ class Goods extends MY_Controller
     public function downloadGoodsGroup($goods_id = null)
     {
         if (isset($goods_id) && ($goods_id != 0)) {
+            if (!$this->isMongoId($goods_id)) {
+                redirect('/goods', 'refresh');
+            }
+
             if ($this->User_model->getClientId()) {
                 $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
             } else {
@@ -1793,7 +1856,11 @@ class Goods extends MY_Controller
             );
 
             $this->data['filter'] = array();
-            if (isset($_GET['filter_goods'])) {
+            if (isset($_GET['filter_goods']) && $_GET['filter_goods'] !== '') {
+                if (!$this->isMongoId($_GET['filter_goods'])) {
+                    redirect('/goods', 'refresh');
+                }
+
                 $this->data['filter']['filter_goods'] = $_GET['filter_goods'];
                 $data['filter_goods'] = $_GET['filter_goods'];
             }
@@ -1801,13 +1868,15 @@ class Goods extends MY_Controller
                 $this->data['filter']['filter_batch'] = $_GET['filter_batch'];
                 $data['filter_batch'] = $_GET['filter_batch'];
             }
-            if (isset($_GET['filter_coupon_name'])) {
-                $this->data['filter']['filter_coupon_name'] =  $_GET['filter_coupon_name'];
-                $data['filter_name'] = $_GET['filter_coupon_name'];
+            $filter_coupon_name = $this->getScalarGoodsGroupCouponFilter('filter_coupon_name');
+            if ($filter_coupon_name !== null) {
+                $this->data['filter']['filter_coupon_name'] =  $filter_coupon_name;
+                $data['filter_name'] = $filter_coupon_name;
             }
-            if (isset($_GET['filter_voucher_code'])) {
-                $this->data['filter']['filter_voucher_code'] =  $_GET['filter_voucher_code'];
-                $data['filter_voucher_code'] = $_GET['filter_voucher_code'];
+            $filter_voucher_code = $this->getScalarGoodsGroupCouponFilter('filter_voucher_code');
+            if ($filter_voucher_code !== null) {
+                $this->data['filter']['filter_voucher_code'] =  $filter_voucher_code;
+                $data['filter_voucher_code'] = $filter_voucher_code;
             }
 
             if (isset($_GET['filter_date_start'])) {
@@ -1943,6 +2012,10 @@ class Goods extends MY_Controller
     private function checkOwnerGoods($goodsId)
     {
         $error = null;
+        if (!$this->isMongoId($goodsId)) {
+            return false;
+        }
+
         if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
 
             $goods_info = $this->Goods_model->getGoodsToClient($goodsId);
@@ -1971,8 +2044,53 @@ class Goods extends MY_Controller
         }
     }
 
+    private function isMongoId($id)
+    {
+        if (is_object($id) && method_exists($id, '__toString')) {
+            $id = (string)$id;
+        }
+
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
+    }
+
+    private function isValidGoodsFilter($filter)
+    {
+        return !is_array($filter) ||
+            !isset($filter['filter_goods']) ||
+            $filter['filter_goods'] === '' ||
+            $this->isMongoId($filter['filter_goods']);
+    }
+
+    private function getScalarGoodsGroupCouponFilter($filter_name)
+    {
+        if (!isset($_GET[$filter_name]) || !is_scalar($_GET[$filter_name])) {
+            return null;
+        }
+        return $_GET[$filter_name];
+    }
+
+    private function removeNonScalarGoodsGroupCouponFilters(&$filter_data)
+    {
+        foreach (array('filter_coupon_name', 'filter_voucher_code') as $filter_name) {
+            if (isset($filter_data[$filter_name]) && !is_scalar($filter_data[$filter_name])) {
+                unset($filter_data[$filter_name]);
+            }
+        }
+    }
+
+    private function outputInvalidGoodsId()
+    {
+        $this->output->set_status_header('404');
+        echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_goods_id')));
+    }
+
     public function increase_order($goods_id)
     {
+        if (!$this->isMongoId($goods_id)) {
+            $json = array('error' => $this->lang->line('error_goods_id'));
+            $this->output->set_output(json_encode($json));
+            return;
+        }
 
         if ($this->User_model->getClientId()) {
             $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
@@ -1995,6 +2113,11 @@ class Goods extends MY_Controller
 
     public function decrease_order($goods_id)
     {
+        if (!$this->isMongoId($goods_id)) {
+            $json = array('error' => $this->lang->line('error_goods_id'));
+            $this->output->set_output(json_encode($json));
+            return;
+        }
 
         if ($this->User_model->getClientId()) {
             $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
@@ -2016,6 +2139,10 @@ class Goods extends MY_Controller
 
     public function checkGoodsIsPublic($goods_id)
     {
+        if (!$this->isMongoId($goods_id)) {
+            return true;
+        }
+
         $allGoodsFromClients = $this->Goods_model->checkGoodsIsPublic($goods_id);
 
         if (isset($allGoodsFromClients[0]['client_id'])) {
