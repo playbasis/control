@@ -437,8 +437,9 @@ class FileManager extends MY_Controller
         $json = array();
 
         if (isset($this->input->post['directory'])) {
-            if (isset($_FILES['image']) && $_FILES['image']['tmp_name']) {
-                $filename = basename(html_entity_decode($_FILES['image']['name'], ENT_QUOTES, 'UTF-8'));
+            if ($this->isValidUploadEntry('image')) {
+                $upload = $_FILES['image'];
+                $filename = basename(html_entity_decode($upload['name'], ENT_QUOTES, 'UTF-8'));
 
                 $t = explode('.', $filename);
                 $type = end($t);
@@ -455,7 +456,7 @@ class FileManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_directory');
                 }
 
-                if ($_FILES['image']['size'] > MAX_UPLOADED_FILE_SIZE) {
+                if ($upload['size'] > MAX_UPLOADED_FILE_SIZE) {
                     $json['error'] = $this->lang->line('error_file_size');
                 }
 
@@ -468,7 +469,7 @@ class FileManager extends MY_Controller
                     'application/x-shockwave-flash'
                 );
 
-                if (!in_array($_FILES['image']['type'], $allowed)) {
+                if (!in_array($upload['type'], $allowed)) {
                     $json['error'] = $this->lang->line('error_file_type');
                 }
 
@@ -484,8 +485,8 @@ class FileManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_file_type');
                 }
 
-                if ($_FILES['image']['error'] != UPLOAD_ERR_OK) {
-                    $json['error'] = 'error_upload_' . $_FILES['image']['error'];
+                if ($upload['error'] != UPLOAD_ERR_OK) {
+                    $json['error'] = 'error_upload_' . $upload['error'];
                 }
             } else {
                 $json['error'] = $this->lang->line('error_file');
@@ -499,7 +500,7 @@ class FileManager extends MY_Controller
         }
 
         if (!isset($json['error'])) {
-            if (@move_uploaded_file($_FILES['image']['tmp_name'], $directory . '/' . $filename)) {
+            if (@move_uploaded_file($upload['tmp_name'], $directory . '/' . $filename)) {
                 $json['success'] = $this->lang->line('text_uploaded');
             } else {
                 $json['error'] = $this->lang->line('error_uploaded');
@@ -516,8 +517,9 @@ class FileManager extends MY_Controller
 
         if ($this->input->post('directory') || $this->input->post('directory') == "") {
 
-            if ($_FILES['image'] && $_FILES['image']['tmp_name']) {
-                $filename = basename(html_entity_decode($_FILES['image']['name'], ENT_QUOTES, 'UTF-8'));
+            if ($this->isValidUploadEntry('image')) {
+                $upload = $_FILES['image'];
+                $filename = basename(html_entity_decode($upload['name'], ENT_QUOTES, 'UTF-8'));
 
                 $t = explode('.', $filename);
                 $type = end($t);
@@ -534,13 +536,19 @@ class FileManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_directory');
                 }
 
-                if ($_FILES['image']['size'] > MAX_UPLOADED_FILE_SIZE) {
+                if ($upload['size'] > MAX_UPLOADED_FILE_SIZE) {
                     $json['error'] = $this->lang->line('error_file_size');
                 }
 
-                $image_info = getimagesize($_FILES["image"]["tmp_name"]);
-                $image_width = $image_info[0];
-                $image_height = $image_info[1];
+                $image_info = @getimagesize($upload['tmp_name']);
+                if ($image_info === false) {
+                    $json['error'] = $this->lang->line('error_file_type');
+                    $image_width = 0;
+                    $image_height = 0;
+                } else {
+                    $image_width = $image_info[0];
+                    $image_height = $image_info[1];
+                }
 
                 //if($image_width < 500 || $image_width >1000){
                 if ($image_width > MEDIA_MANAGER_MAX_IMAGE_WIDTH) {
@@ -567,7 +575,7 @@ class FileManager extends MY_Controller
                     'application/x-shockwave-flash'
                 );
 
-                if (!in_array($_FILES['image']['type'], $allowed)) {
+                if (!in_array($upload['type'], $allowed)) {
                     $json['error'] = $this->lang->line('error_file_type');
                 }
 
@@ -583,8 +591,8 @@ class FileManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_file_type');
                 }
 
-                if ($_FILES['image']['error'] != UPLOAD_ERR_OK) {
-                    $json['error'] = 'error_upload_' . $_FILES['image']['error'];
+                if ($upload['error'] != UPLOAD_ERR_OK) {
+                    $json['error'] = 'error_upload_' . $upload['error'];
                 }
             } else {
                 $json['error'] = $this->lang->line('error_file');
@@ -597,7 +605,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_permission');
         }
 
-        if ($this->validateMediaManagerAccess()) {
+        if (!isset($json['error']) && $this->validateMediaManagerAccess()) {
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
 
@@ -605,11 +613,17 @@ class FileManager extends MY_Controller
             $this->load->model('Permission_model');
             // Get Limit
             $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-            $limit_images = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'image');
+            try {
+                $limit_images = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'image');
+            } catch (Exception $e) {
+                $json['error'] = $this->lang->line('error_uploaded');
+            }
 
-            $size = $this->Image_model->getTotalSize($client_id);
-            if ($limit_images && ($size + $_FILES['image']['size'] > $limit_images)) {
-                $json['error'] = $this->lang->line('error_overall_size_limit_reached');
+            if (!isset($json['error'])) {
+                $size = $this->Image_model->getTotalSize($client_id);
+                if ($limit_images && ($size + $upload['size'] > $limit_images)) {
+                    $json['error'] = $this->lang->line('error_overall_size_limit_reached');
+                }
             }
         }
 
@@ -633,7 +647,7 @@ class FileManager extends MY_Controller
                     $site_id = $this->User_model->getSiteId();
                     $user_id = $this->User_model->getId();
 
-                    $this->Image_model->registerImageToSite($client_id, $site_id, $user_id, $_FILES['image']['size'], $filename,
+                    $this->Image_model->registerImageToSite($client_id, $site_id, $user_id, $upload['size'], $filename,
                         $url);
 
                     $this->Image_model->resize('data/' . $filename, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH,
@@ -649,6 +663,19 @@ class FileManager extends MY_Controller
         }
 
         $this->output->set_output(json_encode($json));
+    }
+
+    private function isValidUploadEntry($field)
+    {
+        if (!isset($_FILES[$field]) || !is_array($_FILES[$field])) {
+            return false;
+        }
+        foreach (array('name', 'tmp_name', 'size', 'type', 'error') as $key) {
+            if (!isset($_FILES[$field][$key]) || !is_scalar($_FILES[$field][$key])) {
+                return false;
+            }
+        }
+        return $_FILES[$field]['tmp_name'] !== '';
     }
 
     private function validateMediaManagerAccess()
