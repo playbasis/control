@@ -340,6 +340,16 @@ class Store_org extends MY_Controller
                             echo json_encode(array('status' => 'node organize require'));
                             die;
                         }
+                        if(preg_match('/^[0-9a-f]{24}$/i', $organize) !== 1){
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'error'));
+                            die;
+                        }
+                        if($parent && preg_match('/^[0-9a-f]{24}$/i', $parent) !== 1){
+                            $this->output->set_status_header('400');
+                            echo json_encode(array('status' => 'error'));
+                            die;
+                        }
 
                         $node_chk =$this->Store_org_model->retrieveNodeByNameAndOrganize($client_id, $site_id, $name, $organize);
                         if($node_chk){
@@ -365,6 +375,16 @@ class Store_org extends MY_Controller
                             if(!$organize){
                                 $this->output->set_status_header('400');
                                 echo json_encode(array('status' => 'node organize require'));
+                                die;
+                            }
+                            if(preg_match('/^[0-9a-f]{24}$/i', $organize) !== 1){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'error'));
+                                die;
+                            }
+                            if($parent && preg_match('/^[0-9a-f]{24}$/i', $parent) !== 1){
+                                $this->output->set_status_header('400');
+                                echo json_encode(array('status' => 'error'));
                                 die;
                             }
 
