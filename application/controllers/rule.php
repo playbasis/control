@@ -289,6 +289,9 @@ class Rule extends MY_Controller
 
     public function setRuleState()
     {
+        $ruleId = $this->input->post('ruleId');
+        $stateInput = $this->input->post('state');
+
         if ($this->User_model->isAdmin()) {
             $siteId = null;
             $clientId = null;
@@ -297,15 +300,16 @@ class Rule extends MY_Controller
             $clientId = $this->User_model->getClientId();
         }
 
-        if (!$this->input->post('ruleId') &&
-            !$this->input->post('state')
+        if (!$ruleId ||
+            $stateInput === false ||
+            !$this->isMongoId($ruleId)
         ) {
             $this->jsonErrorResponse();
             return;
         }
 
         //after clean channge disable to be 0 because 0-string is lost in network
-        if ($this->input->post('state') == 'disable') {
+        if ($stateInput == 'disable') {
             $state = '0';
         } else {
             $state = '1';
@@ -319,7 +323,7 @@ class Rule extends MY_Controller
         // $this->jsonResponse($params);
         $this->output->set_output(json_encode(
             $this->Rule_model->changeRuleState(
-                $this->input->post('ruleId'),
+                $ruleId,
                 $state,
                 $siteId,
                 $clientId)));
@@ -384,9 +388,18 @@ class Rule extends MY_Controller
 
         $client_id = $this->input->post("client_id");
         $site_id = $this->input->post("site_id");
+        $rules = $this->normalizeMongoIds($this->input->post('array_rules'));
+
+        if (!$this->isMongoId($client_id) ||
+            !$this->isMongoId($site_id) ||
+            !$this->validateMongoIds($rules)
+        ) {
+            $this->jsonErrorResponse();
+            return;
+        }
 
         $array_rules = array();
-        foreach($this->input->post('array_rules') as $rule){
+        foreach($rules as $rule){
             $rule_info = $this->Rule_model->getRuleForExport($client_id, $site_id,  $rule);
             $rule_info['client_id'] = null;
             $rule_info['site_id'] = null;
@@ -636,7 +649,7 @@ class Rule extends MY_Controller
     public function jsonCloneRule()
     {
         $id = $this->input->post("id");
-        if (!$id) {
+        if (!$id || !$this->isMongoId($id)) {
             $this->jsonErrorResponse();
             return;
         }
@@ -668,7 +681,19 @@ class Rule extends MY_Controller
         $id = $this->input->post("id");
         $client_id = $this->input->post("client_id");
         $site_id = $this->input->post("site_id");
+        if (!$this->isMongoId($id) ||
+            !$this->isMongoId($client_id) ||
+            !$this->isMongoId($site_id)
+        ) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
         $rule = $this->Rule_model->getById($id);
+        if (!$rule || !isset($rule['jigsaw_set']) || !is_array($rule['jigsaw_set'])) {
+            $this->jsonErrorResponse();
+            return;
+        }
         $result = $this->User_model->get_api_key_secret($client_id, $site_id);
 
         // extract the rule parameters
@@ -711,7 +736,8 @@ class Rule extends MY_Controller
             $clientId = $this->User_model->getClientId();
         }
         /*start  : Wrap all of this to be reqireParam('post','rulesID')*/
-        if (!$this->input->post('ruleId')) {
+        $ruleId = $this->input->post('ruleId');
+        if (!$ruleId || !$this->isMongoId($ruleId)) {
             $this->jsonErrorResponse();
             return;
         }
@@ -723,7 +749,7 @@ class Rule extends MY_Controller
 
         $this->output->set_output(json_encode(
             $this->Rule_model->deleteRule(
-                $this->input->post('ruleId'),
+                $ruleId,
                 $siteId,
                 $clientId)));
     }
@@ -821,7 +847,8 @@ class Rule extends MY_Controller
             $clientId = $this->User_model->getClientId();
         }
 
-        if (!$this->input->get('ruleId')) {
+        $ruleId = $this->input->get('ruleId');
+        if (!$ruleId || !$this->isMongoId($ruleId)) {
             $this->jsonErrorResponse();
             return;
         }
@@ -829,7 +856,7 @@ class Rule extends MY_Controller
         $rule = $this->Rule_model->getRuleById(
             $siteId,
             $clientId,
-            $this->input->get('ruleId'));
+            $ruleId);
 
         if ($rule) {
             $this->output->set_output(
@@ -848,6 +875,39 @@ class Rule extends MY_Controller
                 'msg' => $msg
             )
         );
+    }
+
+    private function normalizeMongoIds($ids)
+    {
+        if (!$ids) {
+            return array();
+        }
+
+        if (!is_array($ids)) {
+            return array($ids);
+        }
+
+        return $ids;
+    }
+
+    private function validateMongoIds($ids)
+    {
+        if (!$ids) {
+            return false;
+        }
+
+        foreach ($ids as $id) {
+            if (!$this->isMongoId($id)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     private function makeListOfId($arr, $field)
