@@ -228,11 +228,16 @@ class Quest extends MY_Controller
 
         // Get Limit
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $lmts = $this->Plan_model->getPlanLimitById(
-            $plan_id,
-            'others',
-            array('quest', 'mission')
-        );
+        try {
+            $lmts = $this->Plan_model->getPlanLimitById(
+                $plan_id,
+                'others',
+                array('quest', 'mission')
+            );
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
 
         $this->data['message'] = array();
         if ($lmts['quest'] && $quests >= $lmts['quest']) {
@@ -1419,7 +1424,12 @@ class Quest extends MY_Controller
 
         // Get Limit
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $lmts = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'mission');
+        try {
+            $lmts = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'mission');
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
 
         $this->data['message'] = array();
         if (isset($lmts['mission']) && $missions >= $lmts['mission']) {
