@@ -27,15 +27,47 @@ class Package extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+        if (!is_array($plan_subscription) ||
+            !array_key_exists('plan_id', $plan_subscription) ||
+            !$plan_subscription['plan_id']
+        ) {
+            redirect('/logout', 'refresh');
+            return;
+        }
+
         $currentPlan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-        $currentLimitPlayers = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "player");
+        if (!is_array($currentPlan)) {
+            redirect('/logout', 'refresh');
+            return;
+        }
+
+        try {
+            $currentLimitPlayers = $this->Plan_model->getPlanLimitById($plan_subscription['plan_id'], "others", "player");
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
+        if (!is_array($currentLimitPlayers)) {
+            $currentLimitPlayers = array('limit_users' => $currentLimitPlayers);
+        } elseif (!array_key_exists('limit_users', $currentLimitPlayers)) {
+            $currentLimitPlayers['limit_users'] = null;
+        }
         $num_users = $this->Player_model->getTotalPlayers($site_id, $client_id);
 
         $rewards = array();
-        foreach ($currentPlan['reward_to_plan'] as $i => $reward) {
+        $reward_to_plan = isset($currentPlan['reward_to_plan']) && is_array($currentPlan['reward_to_plan'])
+            ? $currentPlan['reward_to_plan']
+            : array();
+        foreach ($reward_to_plan as $i => $reward) {
+            if (!is_array($reward) || !array_key_exists('reward_id', $reward)) {
+                continue;
+            }
             $theReward = $this->Reward_model->getReward($reward['reward_id']);
-            $rewards[$i]['name'] = $theReward['name'];
-            $rewards[$i]['limit'] = $reward['limit'];
+            if (!is_array($theReward)) {
+                continue;
+            }
+            $rewards[$i]['name'] = isset($theReward['name']) ? $theReward['name'] : null;
+            $rewards[$i]['limit'] = isset($reward['limit']) ? $reward['limit'] : null;
         }
 
         $this->data['num_users'] = $num_users;
