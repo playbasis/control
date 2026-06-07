@@ -304,9 +304,15 @@ class Report_goods_store extends MY_Controller
                     'total_used' => $total_used,
                     'total_expired' => $total_expired,
                 );
-                if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && isset($result['tags'])) {
+                $tags = isset($result['tags']) ? $result['tags'] : array();
+                if (is_string($tags) && $tags !== '') {
+                    $tags = explode(',', $tags);
+                } elseif (!is_array($tags)) {
+                    $tags = array();
+                }
+                if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && $tags) {
                     $searchword = 'PRICE';
-                    $price = explode("=RM", implode("", array_filter($result['tags'], function ($var) use ($searchword) {
+                    $price = explode("=RM", implode("", array_filter($tags, function ($var) use ($searchword) {
                         return preg_match("/\b$searchword\b/i", $var);
                     })));
                     $data_row['price'] = isset($price[1]) ? $price[1] : 0;
@@ -431,9 +437,15 @@ class Report_goods_store extends MY_Controller
                     'total_expired' => $total_expired,
                 );
 
-                if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && isset($result['tags'])) {
+                $tags = isset($result['tags']) ? $result['tags'] : array();
+                if (is_string($tags) && $tags !== '') {
+                    $tags = explode(',', $tags);
+                } elseif (!is_array($tags)) {
+                    $tags = array();
+                }
+                if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && $tags) {
                     $searchword = 'PRICE';
-                    $price = explode("=RM", implode("", array_filter($result['tags'], function ($var) use ($searchword) {
+                    $price = explode("=RM", implode("", array_filter($tags, function ($var) use ($searchword) {
                         return preg_match("/\b$searchword\b/i", $var);
                     })));
                     $data_row['price'] = isset($price[1]) ? $price[1] : 0;
@@ -635,9 +647,16 @@ class Report_goods_store extends MY_Controller
         $data['start'] = $offset;
         $results = $this->Report_goods_model->getReportGoodsStore($data);
         foreach ($results as $result) {
-            if(isset($result['tags'])){
+            $price = array();
+            $tags = isset($result['tags']) ? $result['tags'] : array();
+            if (is_string($tags) && $tags !== '') {
+                $tags = explode(',', $tags);
+            } elseif (!is_array($tags)) {
+                $tags = array();
+            }
+            if($tags){
                 $searchword = 'PRICE';
-                $price = explode("=RM", implode("", array_filter($result['tags'], function ($var) use ($searchword) {
+                $price = explode("=RM", implode("", array_filter($tags, function ($var) use ($searchword) {
                     return preg_match("/\b$searchword\b/i", $var);
                 })));
             }
