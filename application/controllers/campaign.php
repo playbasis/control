@@ -119,6 +119,10 @@ class Campaign extends MY_Controller
 
     public function update($campaign_id)
     {
+        if (preg_match('/^[0-9a-f]{24}$/i', $campaign_id) !== 1) {
+            redirect('/campaign', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -189,12 +193,24 @@ class Campaign extends MY_Controller
         $this->error['message'] = null;
 
         if ($this->input->post('selected') && $this->error['message'] == null) {
-            foreach ($this->input->post('selected') as $campaign_id) {
-                $this->Campaign_model->deleteCampaign(new MongoId($campaign_id));
+            $selected_campaigns = $this->input->post('selected');
+            foreach ($selected_campaigns as $campaign_id) {
+                if (preg_match('/^[0-9a-f]{24}$/i', $campaign_id) !== 1) {
+                    $this->error['warning'] = 'Invalid campaign id';
+                    break;
+                }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/campaign', 'refresh');
+            if ($this->error['message'] == null && !isset($this->error['warning'])) {
+                foreach ($selected_campaigns as $campaign_id) {
+                    $this->Campaign_model->deleteCampaign(new MongoId($campaign_id));
+                }
+            }
+
+            if ($this->error['message'] == null && !isset($this->error['warning'])) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/campaign', 'refresh');
+            }
         }
 
         $this->getList(0);
