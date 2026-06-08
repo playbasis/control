@@ -737,6 +737,12 @@ class Quiz extends MY_Controller
             $this->jsonErrorResponse();
             return;
         }
+        foreach ($array_quizs as $quiz) {
+            if (!is_array($quiz)) {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
