@@ -585,8 +585,10 @@ class Custompoints extends MY_Controller
             foreach($array_custompoints as $custompoint) {
                 $custompoint['client_id'] = $client_id;
                 $custompoint['site_id'] = $site_id;
-                if (!empty($custompoint['tags'])){
+                if (isset($custompoint['tags']) && is_array($custompoint['tags']) && !empty($custompoint['tags'])){
                     $custompoint['tags'] = implode(',', $custompoint['tags']);
+                } elseif (!isset($custompoint['tags']) || !is_string($custompoint['tags'])) {
+                    $custompoint['tags'] = null;
                 }
                 $insert = $this->Custompoints_model->insertCustompoints($custompoint);
                 //$import_result = $this->Quiz_model->addQuizToClient($quiz2);
