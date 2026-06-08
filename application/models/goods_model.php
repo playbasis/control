@@ -563,6 +563,16 @@ class Goods_model extends MY_Model
         return isset($result[0]['whitelist_enable']) ? $result[0]['whitelist_enable'] : false;
     }
 
+    private function normalizedImage($data)
+    {
+        if (!isset($data['image']) || !is_scalar($data['image'])) {
+            return '';
+        }
+
+        $image = trim((string)$data['image']);
+        return $image === '' ? '' : html_entity_decode($image, ENT_QUOTES, 'UTF-8');
+    }
+
     public function addGoodsDistinct($data, $is_group)
     {
         if (!empty($data['tags'])){
@@ -577,7 +587,7 @@ class Goods_model extends MY_Model
             'deleted' => false,
             'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
             'per_user_include_inactive'=> isset($data['per_user_include_inactive']) ? $data['per_user_include_inactive'] : false,
-            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'image' => $this->normalizedImage($data),
             'status' => (bool)$data['status'],
             'sort_order' => (int)$data['sort_order'] | 1,
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
@@ -686,7 +696,7 @@ class Goods_model extends MY_Model
         }
 
         if (isset($data['image'])) {
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->set('image', $this->normalizedImage($data));
         }
 
         if (isset($data['alert_enable']) && $data['alert_enable']){
@@ -1058,7 +1068,7 @@ class Goods_model extends MY_Model
             'quantity' => (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null,
             'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
             'per_user_include_inactive' => (isset($data['per_user_include_inactive']) && !empty($data['per_user_include_inactive'])) ? (bool)$data['per_user_include_inactive'] : false,
-            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'image' => $this->normalizedImage($data),
             'status' => (bool)$data['status'],
             'sort_order' => (int)$data['sort_order'] | 1,
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
@@ -1205,7 +1215,7 @@ class Goods_model extends MY_Model
             'quantity' => (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null,
             'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
             'per_user_include_inactive' => (isset($data['per_user_include_inactive']) && !empty($data['per_user_include_inactive'])) ? (bool)$data['per_user_include_inactive'] : false,
-            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'image' => $this->normalizedImage($data),
             'status' => (bool)$data['status'],
             'sort_order' => (int)$data['sort_order'] | 1,
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
@@ -1331,7 +1341,7 @@ class Goods_model extends MY_Model
 
         if (isset($data['image'])) {
             $this->mongo_db->where('_id', new MongoID($goods_id));
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->set('image', $this->normalizedImage($data));
             $this->mongo_db->update('playbasis_goods');
         }
     }
@@ -1399,7 +1409,7 @@ class Goods_model extends MY_Model
         }
 
         if (isset($data['image'])) {
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->set('image', $this->normalizedImage($data));
         }
 
         $this->mongo_db->set('organize_id', isset($data['organize_id']) ? new MongoID($data['organize_id']) : null);
@@ -1444,7 +1454,7 @@ class Goods_model extends MY_Model
         }
 
         if (isset($data['image'])) {
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->set('image', $this->normalizedImage($data));
         }
 
         $this->mongo_db->set('organize_id', isset($data['organize_id']) ? new MongoID($data['organize_id']) : null);
@@ -1695,7 +1705,7 @@ class Goods_model extends MY_Model
 
         if (isset($data['image'])) {
             $this->mongo_db->where('goods_id', new MongoID($goods_id));
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->set('image', $this->normalizedImage($data));
             $this->mongo_db->update_all('playbasis_goods_to_client');
         }
     }

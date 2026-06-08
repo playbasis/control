@@ -1453,6 +1453,11 @@ class Goods extends MY_Controller
         } else {
             $this->data['tags'] = null;
         }
+        if (is_string($this->data['tags']) && $this->data['tags'] !== '') {
+            $this->data['tags'] = explode(',', $this->data['tags']);
+        } elseif (!is_array($this->data['tags'])) {
+            $this->data['tags'] = array();
+        }
 
         if ($this->input->post('custom_param')) {
             $this->data['custom_param'] = $this->input->post('custom_param');
@@ -2031,6 +2036,16 @@ class Goods extends MY_Controller
         }
     }
 
+    private function normalizedImage($data)
+    {
+        if (!isset($data['image']) || !is_scalar($data['image'])) {
+            return '';
+        }
+
+        $image = trim((string)$data['image']);
+        return $image === '' ? '' : html_entity_decode($image, ENT_QUOTES, 'UTF-8');
+    }
+
     private function addGoods($handle, $data, $redeem, $list_client_id, $list_site_id)
     {
         $list = array();
@@ -2049,7 +2064,7 @@ class Goods extends MY_Controller
             'quantity' => (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null,
             'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
             'per_user_include_inactive' => (isset($data['per_user_include_inactive']) && !empty($data['per_user_include_inactive'])) ? (bool)$data['per_user_include_inactive'] : false,
-            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'image' => $this->normalizedImage($data),
             'status' => (bool)$data['status'],
             'deleted' => false,
             'sponsor' => isset($data['sponsor']) ? $data['sponsor'] : false,
