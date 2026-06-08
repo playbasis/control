@@ -1218,6 +1218,17 @@ class Content extends MY_Controller
 
         $array_contents = json_decode($this->input->post('array_contents'),true);
         $array_details = $this->input->post('array_details');
+        if (!is_array($array_contents)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_contents as $content) {
+            if (!is_array($content) || !isset($content['node_id']) || !is_scalar($content['node_id']) || $content['node_id'] === '') {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $validation_result = array();
