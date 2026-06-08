@@ -101,6 +101,16 @@ class Client_model extends MY_Model
         return $results;
     }
 
+    private function normalizedImage($data)
+    {
+        if (!isset($data['image']) || !is_scalar($data['image'])) {
+            return '';
+        }
+
+        $image = trim((string)$data['image']);
+        return $image === '' ? '' : html_entity_decode($image, ENT_QUOTES, 'UTF-8');
+    }
+
     public function addClient($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -120,7 +130,7 @@ class Client_model extends MY_Model
         );
 
         if (isset($data['image'])) {
-            $insert_data['image'] = html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8');
+            $insert_data['image'] = $this->normalizedImage($data);
         }
 
         return $this->mongo_db->insert('playbasis_client', $insert_data);
@@ -142,7 +152,7 @@ class Client_model extends MY_Model
             $data['date_expire'] ? new MongoDate(strtotime($data['date_expire'])) : null);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         if (isset($data['image'])) {
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->set('image', $this->normalizedImage($data));
         }
 
         $this->mongo_db->update('playbasis_client');
@@ -508,7 +518,7 @@ class Client_model extends MY_Model
             'mobile' => '',
             'email' => $data['email'],
             'company' => isset($data['company_name']) ? $data['company_name'] : null,
-            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'image' => $this->normalizedImage($data),
             'status' => true,
             'deleted' => false,
             'date_start' => $date_start,

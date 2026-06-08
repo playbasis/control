@@ -217,21 +217,21 @@ class Client extends MY_Controller
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
-        if ($this->input->get('filter_name')) {
+        if ($this->input->get('filter_name') && is_scalar($this->input->get('filter_name'))) {
             $filter_name = $this->input->get('filter_name');
             $parameter_url .= "&filter_name=" . $filter_name;
         } else {
             $filter_name = null;
         }
 
-        if ($this->input->get('sort')) {
+        if ($this->input->get('sort') && is_scalar($this->input->get('sort'))) {
             $sort = $this->input->get('sort');
             $parameter_url .= "&sort=" . $sort;
         } else {
             $sort = 'first_name';
         }
 
-        if ($this->input->get('order')) {
+        if ($this->input->get('order') && is_scalar($this->input->get('order'))) {
             $order = $this->input->get('order');
             $parameter_url .= "&order=" . $order;
         } else {
