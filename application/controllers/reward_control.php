@@ -4,6 +4,32 @@ require APPPATH . '/libraries/MY_Controller.php';
 
 class Reward_control extends MY_Controller
 {
+    private function normalizeTags($tags)
+    {
+        if (is_array($tags)) {
+            return $tags;
+        }
+        if (is_string($tags)) {
+            return explode(',', $tags);
+        }
+        return array();
+    }
+
+    private function normalizeDataListTags($data_list)
+    {
+        if (!is_array($data_list)) {
+            return $data_list;
+        }
+
+        foreach ($data_list as $key => $item) {
+            if (is_array($item)) {
+                $data_list[$key]['tags'] = $this->normalizeTags(isset($item['tags']) ? $item['tags'] : null);
+            }
+        }
+
+        return $data_list;
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -539,6 +565,9 @@ class Reward_control extends MY_Controller
             $this->data['data_list'] = $this->Custom_param_condition_model->retrieveCustomParamCondition($filter);
             $config['total_rows'] = $this->Custom_param_condition_model->getTotalCustomParamCondition($filter);
         }
+        if (isset($this->data['data_list'])) {
+            $this->data['data_list'] = $this->normalizeDataListTags($this->data['data_list']);
+        }
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
 
@@ -628,7 +657,7 @@ class Reward_control extends MY_Controller
         if ($this->input->post('tags')) {
             $this->data['tags'] = explode(',', $this->input->post('tags'));
         } elseif (isset($data_info['tags'])) {
-            $this->data['tags'] = $data_info['tags'];
+            $this->data['tags'] = $this->normalizeTags($data_info['tags']);
         } else {
             $this->data['tags'] = '';
         }
