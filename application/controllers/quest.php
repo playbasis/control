@@ -696,6 +696,11 @@ class Quest extends MY_Controller
             $this->data['editQuest']['sort_order'] = isset($editQuest['sort_order']) ? $editQuest['sort_order'] : false;
             $this->data['editQuest']['status'] = isset($editQuest['status']) ? $editQuest['status'] : false;
             $this->data['editQuest']['tags'] = isset($editQuest['tags']) ? $editQuest['tags'] : null;
+            if (is_string($this->data['editQuest']['tags']) && $this->data['editQuest']['tags'] !== '') {
+                $this->data['editQuest']['tags'] = explode(',', $this->data['editQuest']['tags']);
+            } elseif (!is_array($this->data['editQuest']['tags'])) {
+                $this->data['editQuest']['tags'] = array();
+            }
 
             $countQuest = 0;
             $countCustomPoints = 0;
