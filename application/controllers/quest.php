@@ -96,13 +96,13 @@ class Quest extends MY_Controller
             'sort' => 'sort_order'
         );
 
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
         if (isset($_GET['filter_status'])) {
             $filter['filter_status'] = $_GET['filter_status'] == "active" ? true : false;
         }
-        if (isset($_GET['filter_tags'])) {
+        if (isset($_GET['filter_tags']) && is_scalar($_GET['filter_tags'])) {
             $filter['filter_tags'] = $_GET['filter_tags'];
         }
         if (isset($_GET['sort_order'])) {
