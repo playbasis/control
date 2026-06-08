@@ -289,7 +289,7 @@ class Report_goods_store extends MY_Controller
                 $data_row = array(
                     'goods_name' => $result['name'],
                     'group' => $result['is_group'],
-                    'batch' => $result['batch_name'],
+                    'batch' => $this->normalizeBatchList(isset($result['batch_name']) ? $result['batch_name'] : null),
                     'date_start' => $date_start,
                     'date_end' => $date_end,
                     'date_expire' => $date_expire,
@@ -415,7 +415,7 @@ class Report_goods_store extends MY_Controller
                 $data_row = array(
                     'goods_name' => $result['name'],
                     'group' => $result['is_group'],
-                    'batch' => $result['batch_name'],
+                    'batch' => $this->normalizeBatchList(isset($result['batch_name']) ? $result['batch_name'] : null),
                     'date_start' => $date_start,
                     'date_end' => $date_end,
                     'date_expire' => $date_expire,
@@ -506,6 +506,19 @@ class Report_goods_store extends MY_Controller
         $this->data['main'] = 'report_goods_store';
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    private function normalizeBatchList($batch_name)
+    {
+        if (is_array($batch_name)) {
+            return $batch_name;
+        }
+
+        if ($batch_name === null || $batch_name === false || $batch_name === '') {
+            return array();
+        }
+
+        return array($batch_name);
     }
 
     private function convert_mongo_date(&$item, $key)
