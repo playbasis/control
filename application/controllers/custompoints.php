@@ -397,6 +397,11 @@ class Custompoints extends MY_Controller
         } else {
             $this->data['tags'] = '';
         }
+        if (is_string($this->data['tags']) && $this->data['tags'] !== '') {
+            $this->data['tags'] = explode(',', $this->data['tags']);
+        } elseif (!is_array($this->data['tags'])) {
+            $this->data['tags'] = array();
+        }
 
         $this->load->vars($this->data);
         $this->render_page('template');
