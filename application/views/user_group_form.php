@@ -40,7 +40,7 @@
 							<div class="scrollbox tooltips" data-placement="right" title="What features / menus can the user group have access to">
 								<?php if(isset($temp_features) && (isset($all_features))){?>
 									<?php if(isset($temp_features['permission']['access'])){?>
-										<?php $temp_features_access = $temp_features['permission']['access'];?>
+										<?php $temp_features_access = is_array($temp_features['permission']['access']) ? $temp_features['permission']['access'] : array();?>
 
 										<?php for($i = 0; $i<count($all_features); $i++){?>
 										<?php $feature_lowercase = implode("_", explode(" ",strtolower($all_features[$i]['link'])));?>
@@ -66,7 +66,7 @@
 									<?php //$permissions = array(); $permissions = unserialize($user_group_info['permission']);?>
 									<?php $permissions = array(); $permissions = $user_group_info['permission'];?>
 									<?php if(isset($permissions['access'])){ ?>
-										<?php $permissions_access = $permissions['access'];?>
+										<?php $permissions_access = is_array($permissions['access']) ? $permissions['access'] : array();?>
 										<?php for($i = 0; $i<count($all_features); $i++){?>
 										<?php $feature_lowercase = implode("_", explode(" ",strtolower($all_features[$i]['link'])));?>
 											<?php if(in_array($feature_lowercase, $permissions_access)){?>
@@ -105,7 +105,7 @@
 							<div class = "scrollbox tooltips" data-placement="right" title="What features / menus can the user group modify">
 								<?php if(isset($temp_features) && (isset($all_features))){?>
 									<?php if(isset($temp_features['permission']['modify'])){?>
-										<?php $temp_features_modify = $temp_features['permission']['modify'];?>
+										<?php $temp_features_modify = is_array($temp_features['permission']['modify']) ? $temp_features['permission']['modify'] : array();?>
 
 										<?php for($i = 0; $i<count($all_features); $i++){?>
 										<?php $feature_lowercase = implode("_", explode(" ",strtolower($all_features[$i]['link'])));?>
@@ -131,7 +131,7 @@
 									<?php //$permissions = array(); $permissions = unserialize($user_group_info['permission']);?>
 									<?php $permissions = array(); $permissions = $user_group_info['permission'];?>
 									<?php if(isset($permissions['modify'])){ ?>
-										<?php $permissions_modify = $permissions['modify'];?>
+										<?php $permissions_modify = is_array($permissions['modify']) ? $permissions['modify'] : array();?>
 										<?php for($i = 0; $i<count($all_features); $i++){?>
 										<?php $feature_lowercase = implode("_", explode(" ",strtolower($all_features[$i]['link'])));?>
 											<?php if(in_array($feature_lowercase, $permissions_modify)){?>
