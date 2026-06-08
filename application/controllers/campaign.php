@@ -235,6 +235,12 @@ class Campaign extends MY_Controller
             );
             $campaigns  = $this->Campaign_model->getCampaign($client_id, $site_id, $filter);
             if($campaigns) foreach($campaigns as &$campaign){
+                if (isset($campaign['tags']) && is_string($campaign['tags'])) {
+                    $campaign['tags'] = explode(',', $campaign['tags']);
+                } elseif (!isset($campaign['tags']) || !is_array($campaign['tags'])) {
+                    $campaign['tags'] = array();
+                }
+
                 if (isset($campaign['image'])) {
                     $info = pathinfo($campaign['image']);
                     if (isset($info['extension'])) {
