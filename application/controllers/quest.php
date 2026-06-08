@@ -1282,6 +1282,13 @@ class Quest extends MY_Controller
             $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($filter);
 
             foreach ($this->data['quests'] as &$quest) {
+                if (isset($quest['tags'])) {
+                    if (is_string($quest['tags']) && $quest['tags'] !== '') {
+                        $quest['tags'] = explode(',', $quest['tags']);
+                    } elseif (!is_array($quest['tags'])) {
+                        $quest['tags'] = array();
+                    }
+                }
                 //                $quest['image'] = $this->Image_model->resize($quest['image'], 100, 100);
                 $info = pathinfo($quest['image']);
                 if (isset($info['extension'])) {
