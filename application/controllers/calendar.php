@@ -51,15 +51,12 @@ class Calendar extends MY_Controller
         if ($this->input->server('REQUEST_METHOD') === 'POST') {
             $this->data['message'] = null;
 
-            if (empty($_FILES) || !isset($_FILES['file']['tmp_name'])) {
+            if (!$this->isValidUploadEntry('file')) {
                 $this->data['message'] = $this->lang->line('error_file');
             }
 
-            if (isset($_FILES['file']['name']) && empty($_FILES['file']['name'])) {
-                $this->data['message'] = $this->lang->line('error_file');
-            }
-
-            if (isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
+            if ($this->data['message'] == null) {
+                $upload = $_FILES['file'];
                 $maxsize = 2097152;
                 $csv_mimetypes = array(
                     'text/csv',
@@ -74,16 +71,16 @@ class Calendar extends MY_Controller
                     'application/txt',
                 );
 
-                if (($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
+                if (($upload['size'] >= $maxsize) || ($upload["size"] == 0)) {
                     $this->data['message'] = $this->lang->line('error_file_too_large');
                 }
 
-                if (!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
+                if (!in_array($upload['type'], $csv_mimetypes) && (!empty($upload["type"]))) {
                     $this->data['message'] = $this->lang->line('error_type_accepted');
                 }
 
-                $json = file_get_contents($_FILES['file']['tmp_name']);
-                if (!$json) {
+                $json = $this->data['message'] == null ? file_get_contents($upload['tmp_name']) : false;
+                if ($this->data['message'] == null && !$json) {
                     $this->data['message'] = $this->lang->line('error_upload');
                 }
                 $data = json_decode($json);
@@ -238,14 +235,15 @@ class Calendar extends MY_Controller
     private function getListPlaces()
     {
         $places = $this->_client->listCalendars($this->_gcal);
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
 
         foreach ($places as $place) {
             $this->data['places'][] = array(
                 'placeID' => $place['calendar_id'],
                 'name' => $place['summary'],
                 'description' => $place['description'],
-                'selected' => ($this->input->post('selected') && in_array($place['id'],
-                        $this->input->post('selected'))),
+                'selected' => in_array($place['id'], $selected),
             );
         }
 
@@ -259,6 +257,8 @@ class Calendar extends MY_Controller
     private function getListWebhooks()
     {
         $webhooks = $this->Googles_model->listWebhooks();
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
 
         foreach ($webhooks as $webhook) {
             $this->data['webhooks'][] = array(
@@ -269,8 +269,7 @@ class Calendar extends MY_Controller
                 'callback_url' => $webhook['callback_url'],
                 'date_expire' => isset($webhook['date_expire']) && $webhook['date_expire'] ? date('d M Y H:m:s',
                     $webhook['date_expire']->sec) : null,
-                'selected' => ($this->input->post('selected') && in_array($webhook['calendar_id'],
-                        $this->input->post('selected'))),
+                'selected' => in_array($webhook['calendar_id'], $selected),
             );
         }
 
@@ -288,6 +287,19 @@ class Calendar extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isValidUploadEntry($field)
+    {
+        if (!isset($_FILES[$field]) || !is_array($_FILES[$field])) {
+            return false;
+        }
+        foreach (array('name', 'tmp_name', 'size', 'type', 'error') as $key) {
+            if (!isset($_FILES[$field][$key]) || !is_scalar($_FILES[$field][$key])) {
+                return false;
+            }
+        }
+        return $_FILES[$field]['name'] !== '' && $_FILES[$field]['tmp_name'] !== '';
     }
 
     private function validateAccess()
