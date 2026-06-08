@@ -1147,6 +1147,10 @@ class Goods extends MY_Controller
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $slot_total = 0;
         $this->data['slots'] = $slot_total;
+        $selected_goods = $this->input->post('selected');
+        if (!is_array($selected_goods)) {
+            $selected_goods = array();
+        }
 
         if ($this->User_model->hasPermission('access', 'store_org') &&
             $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org')
@@ -1200,8 +1204,7 @@ class Goods extends MY_Controller
                     'status' => $result['status'],
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($result['_id'], $selected_goods),
                     'is_public' => $goodsIsPublic,
                     'organize_name' => $org_name
                 );
@@ -1300,7 +1303,7 @@ class Goods extends MY_Controller
                     'sort_order' => $goods['sort_order'],
                     'date_start' => $goods['date_start'],
                     'date_end' => $goods['date_expire'],
-                    'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
+                    'selected' => in_array($goods['_id'], $selected_goods),
                     'white_list' => isset($goods['distinct_id']) ? $this->Goods_model->checkGoodsWhiteList($site_id, $goods['distinct_id']) : false,
                     'custom_param' => isset($goods['custom_param']) && $param_array? $param_array : null,
                     'sponsor' => isset($goods['sponsor']) ? $goods['sponsor'] : null,
