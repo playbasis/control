@@ -228,9 +228,11 @@ class Lithium extends MY_Controller
     private function getListEvents()
     {
         $events = $this->Lithium_model->listEvents($this->User_model->getSiteId());
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
         foreach ($events as $event) {
             $this->data['events'][] = array_merge($event, array(
-                'selected' => ($this->input->post('selected') && in_array($event['id'], $this->input->post('selected')))
+                'selected' => in_array($event['id'], $selected)
             ));
         }
         $this->data['main'] = 'lithium_event';
@@ -243,6 +245,8 @@ class Lithium extends MY_Controller
         $subscriptions = $this->_api->subscriptions();
         $this->Lithium_model->saveSubscriptions($this->User_model->getSiteId(),
             $this->formatSubscription($subscriptions));
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
         foreach ($subscriptions as $subscription) {
             $id = $subscription->event_type->{'$'};
             $this->data['subscriptions'][] = array(
@@ -250,7 +254,7 @@ class Lithium extends MY_Controller
                 'type' => $this->Lithium_model->getEventType($id),
                 'token' => $subscription->token->{'$'},
                 'callback' => $subscription->callback_url->{'$'},
-                'selected' => ($this->input->post('selected') && in_array($id, $this->input->post('selected'))),
+                'selected' => in_array($id, $selected),
             );
         }
         $this->data['main'] = 'lithium_subscription';
