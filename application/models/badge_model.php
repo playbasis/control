@@ -657,6 +657,16 @@ class Badge_model extends MY_Model
         return $this->mongo_db->batch_insert('playbasis_badge_to_client', $badges, array("w" => 0, "j" => false));
     }
 
+    private function normalizedImage($data)
+    {
+        if (!isset($data['image']) || !is_scalar($data['image'])) {
+            return '';
+        }
+
+        $image = trim((string)$data['image']);
+        return $image === '' ? '' : html_entity_decode($image, ENT_QUOTES, 'UTF-8');
+    }
+
     public function addBadge($data, $isTemplate = false)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -669,7 +679,7 @@ class Badge_model extends MY_Model
             'quantity' => (isset($data['quantity']) && !($data['quantity'] === "")) ? (int)$data['quantity'] : null,
             'category' => (isset($data['category']) && !empty($data['category'])) ? new MongoID($data['category']) : null,
             'per_user' => (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null,
-            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'image' => $this->normalizedImage($data),
             'status' => (bool)$data['status'],
             'visible' => (bool)$data['visible'],
             'auto_notify' => (bool)$data['auto_notify'],
@@ -708,7 +718,7 @@ class Badge_model extends MY_Model
             'quantity' => (isset($data['quantity']) && !($data['quantity'] === "")) ? (int)$data['quantity'] : null,
             'category' => (isset($data['category']) && !empty($data['category'])) ? new MongoID($data['category']) : null,
             'per_user' => (isset($data['per_user']) && !($data['per_user'] === "")) ? (int)$data['per_user'] : null,
-            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'image' => $this->normalizedImage($data),
             'status' => (bool)$data['status'],
             'visible' => (bool)$data['visible'],
             'auto_notify' => (bool)$data['auto_notify'],
@@ -758,7 +768,7 @@ class Badge_model extends MY_Model
 
         if (isset($data['image'])) {
             $this->mongo_db->where('_id', new MongoID($badge_id));
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->set('image', $this->normalizedImage($data));
             $this->mongo_db->update('playbasis_badge');
         }
     }
@@ -807,8 +817,7 @@ class Badge_model extends MY_Model
                 $this->mongo_db->set("date_modified", new MongoDate());
 
                 if (isset($data['image'])) {
-                    $this->mongo_db->set('image',
-                        html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+                    $this->mongo_db->set('image', $this->normalizedImage($data));
                 }
                 $this->mongo_db->where('_id', new MongoID($badge_id));
                 $this->mongo_db->update('playbasis_badge_to_client');
@@ -846,7 +855,7 @@ class Badge_model extends MY_Model
 
         if (isset($data['image'])) {
             $this->mongo_db->where('badge_id', new MongoID($badge_id));
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->set('image', $this->normalizedImage($data));
             $this->mongo_db->update_all('playbasis_badge_to_client');
         }
     }
@@ -1110,7 +1119,7 @@ class Badge_model extends MY_Model
         $badge2["redeem"] = isset($badge2["redeem"]) ? (bool)$badge2["redeem"] : false;
         $badge2["visible"] = isset($badge2["visible"]) ? (bool)$badge2["visible"] : false;
         $badge2["auto_notify"] = isset($badge2["auto_notify"]) ? (bool)$badge2["auto_notify"] : false;
-        $badge2["image"] = html_entity_decode($badge2['image'], ENT_QUOTES, "UTF-8");
+        $badge2["image"] = $this->normalizedImage($badge2);
 
         return ($badge1["stackable"] == (int)$badge2["stackable"] &&
             $badge1["substract"] == (int)$badge2["substract"] &&

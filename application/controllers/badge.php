@@ -811,6 +811,11 @@ class Badge extends MY_Controller
         } else {
             $this->data['tags'] = null;
         }
+        if (is_string($this->data['tags'])) {
+            $this->data['tags'] = explode(',', $this->data['tags']);
+        } elseif (!is_array($this->data['tags'])) {
+            $this->data['tags'] = array();
+        }
 
         if ($this->input->post('hint')) {
             $this->data['hint'] = $this->input->post('hint');
