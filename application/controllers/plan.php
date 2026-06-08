@@ -222,15 +222,13 @@ class Plan extends MY_Controller
 
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
 
-        if ($this->input->get('sort')) {
-            $sort = $this->input->get('sort');
-        } else {
+        $sort = $this->input->get('sort');
+        if (!$sort || !is_scalar($sort)) {
             $sort = 'name';
         }
 
-        if ($this->input->get('order')) {
-            $order = $this->input->get('order');
-        } else {
+        $order = $this->input->get('order');
+        if (!$order || !is_scalar($order)) {
             $order = 'ASC';
         }
 
