@@ -129,7 +129,16 @@ class User_model extends MY_Model
     {
         $this->set_site_mongodb($this->site_id);
 
-        $regex = new MongoRegex("/^" . preg_quote(utf8_strtolower($this->input->post('email'))) . "$/i");
+        $email = $this->input->post('email');
+        if (!is_scalar($email)) {
+            return false;
+        }
+        $email = trim((string)$email);
+        if ($email === '') {
+            return false;
+        }
+
+        $regex = new MongoRegex("/^" . preg_quote(utf8_strtolower($email)) . "$/i");
         $this->mongo_db->where('username', $regex);
 
         if ($this->mongo_db->count('user') == 0) {
@@ -140,9 +149,8 @@ class User_model extends MY_Model
             }
 
             // $username = $this->input->post('username');
-            $username = $this->input->post('email');
+            $username = $email;
             $firstname = $this->input->post('firstname');
-            $email = $this->input->post('email');
             $lastname = $this->input->post('lastname');
 
             if ($this->User_model->getClientId()) {

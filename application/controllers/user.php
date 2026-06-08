@@ -32,6 +32,21 @@ class User extends MY_Controller
         $this->lang->load("login", $lang['folder']);
     }
 
+    private function scalarPostValue($field)
+    {
+        $value = $this->input->post($field);
+        if (!is_scalar($value)) {
+            return null;
+        }
+
+        return trim((string)$value);
+    }
+
+    private function invalidFieldMessage($label)
+    {
+        return $this->lang->line($label) . ' is invalid.';
+    }
+
     public function index()
     {
 
@@ -127,7 +142,7 @@ class User extends MY_Controller
             'limit' => $config['per_page'],
             'start' => $offset
         );
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
@@ -261,6 +276,12 @@ class User extends MY_Controller
             $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
             if ($this->form_validation->run()) {
+                $email = $this->scalarPostValue('email');
+                if ($email === null || $email === '') {
+                    $this->session->set_flashdata('fail', $this->invalidFieldMessage('form_email'));
+                    redirect('user/insert');
+                }
+
                 // get Plan limit_others.user
                 $user_limit = null;
                 try {
@@ -336,25 +357,30 @@ class User extends MY_Controller
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
-                $email = $this->input->post('email');
-                $data['email'] = $email;
-                $check_email = $this->User_model->findEmail($data);
-
-                if (!$check_email) {
-                    $user_id = $this->User_model->insertUser();
-
-                    if ($user_id) {
-                        $data = array(
-                            'client_id' => $this->input->post('client_id'),
-                            'user_id' => $user_id
-                        );
-                        $this->User_model->addUserToClient($data);
-                    }
-
-                    $this->session->data['success'] = $this->lang->line('text_success');
-                    $json['success'] = $this->lang->line('text_success');
+                $email = $this->scalarPostValue('email');
+                if ($email === null || $email === '') {
+                    $json['error'] = $this->invalidFieldMessage('form_email');
                 } else {
-                    $json['error'] = 'The Email provided already exists';
+                    $data['email'] = $email;
+                    $check_email = $this->User_model->findEmail($data);
+
+                    if (!$check_email) {
+                        $user_id = $this->User_model->insertUser();
+
+                        if ($user_id) {
+                            $data = array(
+                                'client_id' => $this->input->post('client_id'),
+                                'user_id' => $user_id
+                            );
+                            $this->User_model->addUserToClient($data);
+                            $this->session->data['success'] = $this->lang->line('text_success');
+                            $json['success'] = $this->lang->line('text_success');
+                        } else {
+                            $json['error'] = $this->lang->line('text_fail');
+                        }
+                    } else {
+                        $json['error'] = 'The Email provided already exists';
+                    }
                 }
 
             } else {
@@ -456,13 +482,8 @@ class User extends MY_Controller
 
         $client_id = $this->User_model->getClientId();
 
-        if ($this->input->get('filter_name')) {
-
-            if ($this->input->get('filter_name')) {
-                $filter_name = $this->input->get('filter_name');
-            } else {
-                $filter_name = null;
-            }
+        $filter_name = $this->input->get('filter_name');
+        if ($filter_name && is_scalar($filter_name)) {
 
             $data = array(
                 'filter_name' => $filter_name
