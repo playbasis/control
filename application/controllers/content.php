@@ -1228,6 +1228,23 @@ class Content extends MY_Controller
                 return;
             }
         }
+        if (!is_array($array_details)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_contents as $content_index => $content) {
+            if (!isset($array_details[$content_index]) || !is_array($array_details[$content_index]) ||
+                !isset($array_details[$content_index]['title'], $array_details[$content_index]['summary'], $array_details[$content_index]['detail'])) {
+                $this->jsonErrorResponse();
+                return;
+            }
+            if (!is_scalar($array_details[$content_index]['title']) ||
+                !is_scalar($array_details[$content_index]['summary']) ||
+                !is_scalar($array_details[$content_index]['detail'])) {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
