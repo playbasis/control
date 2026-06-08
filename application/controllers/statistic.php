@@ -331,8 +331,10 @@ class Statistic extends CI_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        if ($this->input->get('filter_sort')) {
-            $sort = explode('|', $this->input->get('filter_sort'));
+        $sort_data = array();
+        $filter_sort = $this->input->get('filter_sort');
+        if (is_string($filter_sort) && $filter_sort !== '') {
+            $sort = explode('|', $filter_sort);
 
             if (is_array($sort)) {
                 foreach ($sort as $value) {
@@ -346,9 +348,6 @@ class Statistic extends CI_Controller
                     }
                 }
             }
-
-        } else {
-            $sort_data = array();
         }
 
         if ($this->input->get('filter_page')) {
