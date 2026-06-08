@@ -1,6 +1,6 @@
 <?php
 function find_template($data, $type, $template_id) {
-    if (isset($data['feedbacks']) && array_key_exists($type, $data['feedbacks'])) foreach ($data['feedbacks'][$type] as $_template_id => $val) {
+    if (isset($data['feedbacks']) && is_array($data['feedbacks']) && array_key_exists($type, $data['feedbacks']) && is_array($data['feedbacks'][$type])) foreach ($data['feedbacks'][$type] as $_template_id => $val) {
         if ($_template_id == $template_id) {
             return $val;
         }
