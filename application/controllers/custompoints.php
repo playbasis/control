@@ -571,6 +571,17 @@ class Custompoints extends MY_Controller
         }
 
         $array_custompoints = json_decode($this->input->post('array_custompoints'),true);
+        if (!is_array($array_custompoints)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_custompoints as $custompoint) {
+            if (!is_array($custompoint) || !isset($custompoint['name']) || !is_scalar($custompoint['name']) || $custompoint['name'] === '') {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $validation_result = array();
