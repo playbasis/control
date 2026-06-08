@@ -71,15 +71,16 @@ class setting extends MY_Controller
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['app_status'] = (isset($data['app_status']) && $data['app_status'] == "true") ? true : false;
-                if(isset($data['app_period']['date_start']) && $data['app_period']['date_start'] && isset($data['app_period']['date_end']) && $data['app_period']['date_end']){
-                    if($data['app_period']['date_start'] > $data['app_period']['date_end']){
+                $app_date_start = isset($data['app_period']['date_start']) ? $this->appPeriodTimestamp($data['app_period']['date_start']) : null;
+                $app_date_end = isset($data['app_period']['date_end']) ? $this->appPeriodTimestamp($data['app_period']['date_end']) : null;
+                if($app_date_start !== null && $app_date_end !== null){
+                    if($app_date_start > $app_date_end){
                         $this->data['message'] = $this->lang->line('error_date');
                     }
-                    $data['app_period']['date_start'] = new MongoDate(strtotime($data['app_period']['date_start']));
-                    $data['app_period']['date_end'] = new MongoDate(strtotime($data['app_period']['date_end']));
+                    $data['app_period']['date_start'] = new MongoDate($app_date_start);
+                    $data['app_period']['date_end'] = new MongoDate($app_date_end);
                 }else{
-                    if((isset($data['app_period']['date_start']) && $data['app_period']['date_start']) ||
-                       (isset($data['app_period']['date_end']) && $data['app_period']['date_end'])){
+                    if($app_date_start !== null || $app_date_end !== null){
                         $this->data['message'] = $this->lang->line('error_date');
                     }
                     $data['app_period'] = null;
@@ -95,7 +96,7 @@ class setting extends MY_Controller
                 $data['email_verification_enable'] = (isset($data['email_verification_enable']) && $data['email_verification_enable'] == "on") ? true : false;
                 $data['player_authentication_enable'] = (isset($data['player_authentication_enable']) && $data['player_authentication_enable'] == "on") ? true : false;
                 $data['goods_alert_enabled'] = (isset($data['goods_alert_enabled']) && $data['goods_alert_enabled'] == "true") ? true : false;
-                $data['timeout'] = $this->wordToTime($data['timeout']);
+                $data['timeout'] = $this->wordToTime($this->normalizeTimeoutWord(isset($data['timeout']) ? $data['timeout'] : null));
                 if(is_null($this->data['message'])) {
                     if($data['goods_alert_enabled'] == true && !isset($data['goods_alert_users'])){
                         $this->data['message'] = $this->lang->line('error_alert_set_users');
@@ -137,7 +138,7 @@ class setting extends MY_Controller
             $this->data['app_status'] = true;
         }
         $this->data['timeout'] = isset($setting['timeout']) ? $this->timeToWord($setting['timeout']) : null;
-        $timeout_list = array(60, 300, 900, 3600, 7200, 86400, 604800, 1209600, -1);
+        $timeout_list = $this->getTimeoutList();
         $this->data['timeout_list'] = array();
         foreach ($timeout_list as $key => $time) {
             $this->data['timeout_list'][$key] = $this->timeToWord($time);
@@ -146,6 +147,7 @@ class setting extends MY_Controller
         $this->data['goods_alert_enabled'] = isset($setting['goods_alert_enabled']) ? $setting['goods_alert_enabled'] : false;
         $this->data['goods_alert_users'] = array();
         $user_alert_list = (isset($setting['goods_alert_users']) && $setting['goods_alert_users']) ? $setting['goods_alert_users'] : array();
+        $user_alert_list = is_array($user_alert_list) ? $user_alert_list : array();
         $user_ids = $this->User_model->getUserByClientId(array('client_id' => $client_id));
         foreach ($user_ids as $user_id){
             $user_info = $this->User_model->getById($user_id['user_id']);
@@ -209,6 +211,37 @@ class setting extends MY_Controller
 
         $print = ($count == 1) ? '1 ' . $name : "$count {$name}s";
         return $print;
+    }
+
+    private function getTimeoutList()
+    {
+        return array(60, 300, 900, 3600, 7200, 86400, 604800, 1209600, -1);
+    }
+
+    private function normalizeTimeoutWord($timeout)
+    {
+        if (!is_scalar($timeout)) {
+            return "Forever";
+        }
+
+        $timeout = (string)$timeout;
+        foreach ($this->getTimeoutList() as $time) {
+            if ($timeout === $this->timeToWord($time)) {
+                return $timeout;
+            }
+        }
+
+        return "Forever";
+    }
+
+    private function appPeriodTimestamp($date)
+    {
+        if (!is_scalar($date) || !$date) {
+            return null;
+        }
+
+        $timestamp = strtotime((string)$date);
+        return $timestamp === false ? null : $timestamp;
     }
 
     private function wordToTime($word)
