@@ -2381,6 +2381,17 @@ class Quest extends MY_Controller
         }
 
         $array_quests = json_decode($this->input->post('array_quests'),true);
+        if (!is_array($array_quests)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_quests as $quest) {
+            if (!is_array($quest)) {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $validation_result = array();
