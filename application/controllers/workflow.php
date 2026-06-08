@@ -42,6 +42,11 @@ class Workflow extends MY_Controller
         }
     }
 
+    private function workflowRoleString($value)
+    {
+        return is_scalar($value) ? (string)$value : '';
+    }
+
     public function index()
     {
         if (!$this->validateAccess()) {
@@ -530,7 +535,8 @@ class Workflow extends MY_Controller
                         'store_org')
                 ) {
                     foreach ($data['organize_id'] as $i => $node) {
-                        if ((isset($data['organize_role'][$i]) && !empty($data['organize_role'][$i])) && !(isset($data['organize_node'][$i]) && !empty($data['organize_node'][$i]))) {
+                        $role_string = isset($data['organize_role'][$i]) ? $this->workflowRoleString($data['organize_role'][$i]) : '';
+                        if ($role_string && !(isset($data['organize_node'][$i]) && !empty($data['organize_node'][$i]))) {
                             //$_POST['organize_id'][$i] = "";
                             $_POST['organize_node'][$i] = "";
                             $check_status = false;
@@ -569,11 +575,12 @@ class Workflow extends MY_Controller
 
                                             //set role of content
                                             if (isset($data['organize_role'][$i])) {
+                                                $role_string = $this->workflowRoleString($data['organize_role'][$i]);
 
                                                 $temp = $this->Workflow_model->getRole($client_id, $site_id, $pb_player_id,
                                                     $data['organize_node'][$i]);
 
-                                                $role_array = explode(",", $data['organize_role'][$i]);
+                                                $role_array = explode(",", $role_string);
 
                                                 if (isset($temp[0]['roles'])) {
                                                     // Unset role which different from input
@@ -586,7 +593,7 @@ class Workflow extends MY_Controller
                                                 }
 
                                                 // Set content role if input is not empty
-                                                if (!empty($data['organize_role'][$i])) {
+                                                if ($role_string) {
 
                                                     foreach ($role_array as $role) {
 
@@ -658,6 +665,7 @@ class Workflow extends MY_Controller
                 }
             } else {
                 $data = $this->input->post();
+                $first_role_string = isset($data['organize_role'][0]) ? $this->workflowRoleString($data['organize_role'][0]) : '';
 
                 if ($data['password'] != $data['confirm_password']) {
                     $this->data['message'] = $this->lang->line('text_fail_confirm_password');
@@ -666,7 +674,7 @@ class Workflow extends MY_Controller
                     }
                 } elseif ($this->User_model->hasPermission('access', 'store_org') &&
                     $this->Feature_model->getFeatureExistByClientId($this->User_model->getClientId(), 'store_org') &&
-                    (isset($data['organize_role'][0]) && !empty($data['organize_role'][0])) &&
+                    $first_role_string &&
                     !(isset($data['organize_node'][0]) && !empty($data['organize_node'][0]))
                 ) {
                     $_POST['organize_node'][0] = "";
@@ -691,8 +699,9 @@ class Workflow extends MY_Controller
                                         $data['organize_node'][0]);
                                     if ($status->success) {
                                         //set role of player
-                                        if (isset($data['organize_role'][0]) && !empty($data['organize_role'][0])) {
-                                            $role_array = explode(",", $data['organize_role'][0]);
+                                        $role_string = isset($data['organize_role'][0]) ? $this->workflowRoleString($data['organize_role'][0]) : '';
+                                        if ($role_string) {
+                                            $role_array = explode(",", $role_string);
                                             $status1 = null;
                                             foreach ($role_array as $role) {
                                                 $role = str_replace(' ', '', $role);
@@ -765,7 +774,7 @@ class Workflow extends MY_Controller
         if (isset($_POST['username'])) {
             $this->data['requester'] = $_POST;
 
-            $this->data['requester']['tags'] = explode(',', $this->input->post('tags'));
+            $this->data['requester']['tags'] = $this->input->post('tags');
             if ($this->data['org_status']) {
                 if (isset($_POST['organize_id']) && !empty($_POST['organize_id'])) {
                     $this->data['organize_id'] = $_POST['organize_id'];
@@ -825,6 +834,16 @@ class Workflow extends MY_Controller
                 $this->data['organize_type'][] = "";
                 $this->data['organize_node'][] = "";
                 $this->data['organize_role'][] = "";
+            }
+        }
+
+        if (isset($this->data['requester']['tags'])) {
+            if (is_string($this->data['requester']['tags'])
+                && $this->data['requester']['tags'] !== ''
+                && $this->data['requester']['tags'] !== 'null') {
+                $this->data['requester']['tags'] = explode(',', $this->data['requester']['tags']);
+            } elseif (!is_array($this->data['requester']['tags'])) {
+                $this->data['requester']['tags'] = array();
             }
         }
 
