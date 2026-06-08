@@ -3,6 +3,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Quiz_model extends MY_Model
 {
+    private function quizDate($value)
+    {
+        if (!is_scalar($value) || !$value) {
+            return null;
+        }
+
+        $timestamp = strtotime((string)$value);
+        return $timestamp === false ? null : new MongoDate($timestamp);
+    }
+
     public function getQuiz($quiz_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -95,10 +105,10 @@ class Quiz_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['date_start'])) {
-            $data['date_start'] = $data['date_start'] ? new MongoDate(strtotime($data['date_start'])) : null;
+            $data['date_start'] = $this->quizDate($data['date_start']);
         }
         if (isset($data['date_expire'])) {
-            $data['date_expire'] = $data['date_expire'] ? new MongoDate(strtotime($data['date_expire'])) : null;
+            $data['date_expire'] = $this->quizDate($data['date_expire']);
         }
 
         $data = array_merge($data, array(
@@ -143,19 +153,11 @@ class Quiz_model extends MY_Model
         }
 
         if (isset($data['date_start'])) {
-            if ($data['date_start'] != '') {
-                $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
-            } else {
-                $this->mongo_db->set('date_start', null);
-            }
+            $this->mongo_db->set('date_start', $this->quizDate($data['date_start']));
         }
 
         if (isset($data['date_expire'])) {
-            if ($data['date_expire'] != '') {
-                $this->mongo_db->set('date_expire', new MongoDate(strtotime($data['date_expire'])));
-            } else {
-                $this->mongo_db->set('date_expire', null);
-            }
+            $this->mongo_db->set('date_expire', $this->quizDate($data['date_expire']));
         }
 
         if (isset($data['grades']) && !is_null($data['grades'])) {
