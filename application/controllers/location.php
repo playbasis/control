@@ -257,6 +257,12 @@ class Location extends MY_Controller
 
         $this->data['locations'] = $this->Location_model->retrieveLocation($filter);
         foreach($this->data['locations'] as &$location){
+            if (isset($location['tags']) && is_string($location['tags'])) {
+                $location['tags'] = explode(',', $location['tags']);
+            } elseif (!isset($location['tags']) || !is_array($location['tags'])) {
+                $location['tags'] = array();
+            }
+
             if($location['object_type'] == "item"){
                 $location['object_name'] = $this->Badge_model->getNameOfBadgeID($client_id, $site_id, $location['object_id']);
             }else if($location['object_type'] == "store"){
@@ -440,6 +446,11 @@ class Location extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
 }
