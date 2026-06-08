@@ -153,10 +153,10 @@ class Player extends MY_Controller
             |lelel:1-6|gender:m|action:like|action_value:1-100|reward:coin|reward_value:1-100
         */
 
-        if (!$this->input->get('filter_sort')) {
+        $paremSet = $this->input->get('filter_sort');
+        if (!is_string($paremSet) || $paremSet === '') {
             return;
         }
-        $paremSet = $this->input->get('filter_sort');
 
         if ($this->hasInvalidObjectIdFilter($paremSet)) {
             $this->output->set_output($this->invalidFilterIdResponse());
@@ -166,6 +166,9 @@ class Player extends MY_Controller
         $paramSet = explode("|", $paremSet);
 
         $paramSet = array_filter($paramSet);
+        if (!$paramSet) {
+            return;
+        }
 
         $value = end($paramSet);
 
@@ -593,7 +596,7 @@ class Player extends MY_Controller
 
     private function hasInvalidObjectIdFilter($filter_sort)
     {
-        if (!$filter_sort) {
+        if (!is_string($filter_sort) || $filter_sort === '') {
             return false;
         }
 
@@ -639,8 +642,10 @@ class Player extends MY_Controller
     private function filterData()
     {
 
-        if ($this->input->get('filter_sort')) {
-            $sort = explode('|', $this->input->get('filter_sort'));
+        $sort_data = array();
+        $filter_sort = $this->input->get('filter_sort');
+        if (is_string($filter_sort) && $filter_sort !== '') {
+            $sort = explode('|', $filter_sort);
 
             if (is_array($sort)) {
                 foreach ($sort as $value) {
@@ -668,9 +673,6 @@ class Player extends MY_Controller
                     }
                 }
             }
-
-        } else {
-            $sort_data = array();
         }
 
         $data = array(
@@ -697,10 +699,16 @@ class Player extends MY_Controller
             'page' => 1
         );
 
-        foreach ($paramList as $key => $value) {
-            if ($this->input->get($key)) {
-                $paramList[$key] = $this->input->get($key);
+        foreach (array('sort', 'order') as $key) {
+            $value = $this->input->get($key);
+            if (is_scalar($value) && $value !== '') {
+                $paramList[$key] = (string)$value;
             }
+        }
+
+        $page = $this->input->get('page');
+        if (is_scalar($page) && is_numeric($page) && intval($page) > 0) {
+            $paramList['page'] = intval($page);
         }
         return $paramList;
     }
