@@ -1289,6 +1289,13 @@ class Goods extends MY_Controller
                     }
                 }
 
+                $tags = isset($goods['tags']) ? $goods['tags'] : array();
+                if (is_string($tags) && $tags !== '') {
+                    $tags = explode(',', $tags);
+                } elseif (!is_array($tags)) {
+                    $tags = array();
+                }
+
                 $this->data['goods_list'][] = array(
                     'goods_id' => $goods['_id'],
                     'name' => $is_group ? $goods['group'] : $goods['name'],
@@ -1306,7 +1313,7 @@ class Goods extends MY_Controller
                     'sponsor' => isset($goods['sponsor']) ? $goods['sponsor'] : null,
                     'is_group' => $is_group,
                     'organize_name' => $org_name,
-                    'tags' => isset($goods['tags']) ? $goods['tags'] : null
+                    'tags' => $tags
                 );
             }
         }
