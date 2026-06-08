@@ -77,19 +77,7 @@ class Webhook extends MY_Controller
 
                 $postData = $this->input->post();
                 if (isset($postData['body_key']) && isset($postData['body_value'])){
-                    $body = array();
-                    foreach ($postData['body_key'] as $key => $val){
-                        if (!empty($val)) {
-                            $body = array_merge($body, array(
-                                $val => $postData['body_value'][$key]
-                            ));
-                        }
-                    }
-                    unset($postData['body_key']);
-                    unset($postData['body_value']);
-                    $postData = array_merge($postData, array(
-                        'body' => $body
-                    ));
+                    $this->buildBodyData($postData);
                 }
 
                 if (!$this->Webhook_model->getTemplateByName($this->User_model->getSiteId(), $postData['name'])) {
@@ -141,19 +129,7 @@ class Webhook extends MY_Controller
 
                 $postData = $this->input->post();
                 if (isset($postData['body_key']) && isset($postData['body_value'])){
-                    $body = array();
-                    foreach ($postData['body_key'] as $key => $val){
-                        if (!empty($val)) {
-                            $body = array_merge($body, array(
-                                $val => $postData['body_value'][$key]
-                            ));
-                        }
-                    }
-                    unset($postData['body_key']);
-                    unset($postData['body_value']);
-                    $postData = array_merge($postData, array(
-                        'body' => $body
-                    ));
+                    $this->buildBodyData($postData);
                 }
 
                 $c = $this->Webhook_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'));
@@ -203,6 +179,29 @@ class Webhook extends MY_Controller
         }
 
         $this->getList(0);
+    }
+
+    private function buildBodyData(&$postData)
+    {
+        $body = array();
+        $bodyKeys = $postData['body_key'];
+        $bodyValues = $postData['body_value'];
+
+        if (is_array($bodyKeys) && is_array($bodyValues)) {
+            foreach ($bodyKeys as $key => $val) {
+                if (is_scalar($val) && !empty($val)) {
+                    $body[(string)$val] = isset($bodyValues[$key]) && is_scalar($bodyValues[$key])
+                        ? (string)$bodyValues[$key]
+                        : '';
+                }
+            }
+        }
+
+        unset($postData['body_key']);
+        unset($postData['body_value']);
+        $postData = array_merge($postData, array(
+            'body' => $body
+        ));
     }
 
     private function getList($offset, $ajax = false)
