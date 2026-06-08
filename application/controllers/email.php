@@ -21,6 +21,16 @@ class Email extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
+    private function emailDomainName($email)
+    {
+        if (!is_scalar($email) || !$email) {
+            return null;
+        }
+
+        $parts = explode("@", (string)$email);
+        return isset($parts[1]) && $parts[1] !== '' ? $parts[1] : null;
+    }
+
     public function index()
     {
         if (!$this->validateAccess()) {
@@ -189,6 +199,10 @@ class Email extends MY_Controller
 
         $this->data['templates'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+        $selected_templates = $this->input->post('selected');
+        if (!is_array($selected_templates)) {
+            $selected_templates = array();
+        }
 
         $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order');
 
@@ -203,8 +217,7 @@ class Email extends MY_Controller
                     'body' => $template['body'],
                     'status' => $template['status'],
                     'sort_order' => $template['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($template['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($template['_id'], $selected_templates),
                 );
             }
         }
@@ -217,11 +230,10 @@ class Email extends MY_Controller
                     'verification_status' => "Success" ,
                 );
             }else {
-                $email = explode("@", $domain['email']);
-                $domain_name = $email[1];
+                $domain_name = $this->emailDomainName(isset($domain['email']) ? $domain['email'] : null);
 
                 // check domain's status from amazon ses
-                $domain_verification = $this->amazon_ses->get_identity_verification($domain_name);
+                $domain_verification = $domain_name ? $this->amazon_ses->get_identity_verification($domain_name) : null;
                 if (isset($domain_verification['VerificationStatus']) && $domain_verification['VerificationStatus'] == "Success") {
                     $data = array('client_id'=>$client_id,
                         'site_id'=>$site_id,
@@ -411,8 +423,12 @@ class Email extends MY_Controller
                     $data['client_id'] = $client_id;
                     $data['site_id'] = $site_id;
 
-                    $email = explode("@",$data['email']);
-                    $domain_name = $email[1];
+                    $domain_name = $this->emailDomainName(isset($data['email']) ? $data['email'] : null);
+                    if (!$domain_name) {
+                        echo json_encode(array('status' => 'error', 'message' => validation_errors() ? validation_errors() : $this->lang->line('form_email')));
+                        die();
+                    }
+                    $data['email'] = (string)$data['email'];
                     $email_sent = false;
 
                     // check if the domain has been set by other site
