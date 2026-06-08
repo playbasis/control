@@ -834,7 +834,7 @@ class User_model extends MY_Model
 
     public function hasPermission($key, $value)
     {
-        if (isset($this->permission[$key])) {
+        if (is_array($this->permission) && isset($this->permission[$key]) && is_array($this->permission[$key])) {
             return in_array($value, $this->permission[$key]);
         } else {
             return false;
