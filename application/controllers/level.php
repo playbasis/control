@@ -238,15 +238,13 @@ class Level extends MY_Controller
 
         $config['base_url'] = site_url('level/page');
 
-        if ($this->input->get('sort')) {
-            $sort = $this->input->get('sort');
-        } else {
+        $sort = $this->input->get('sort');
+        if (!$sort || !is_scalar($sort)) {
             $sort = 'level';
         }
 
-        if ($this->input->get('order')) {
-            $order = $this->input->get('order');
-        } else {
+        $order = $this->input->get('order');
+        if (!$order || !is_scalar($order)) {
             $order = 'ASC';
         }
 
