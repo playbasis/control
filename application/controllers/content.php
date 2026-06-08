@@ -394,22 +394,23 @@ class Content extends MY_Controller
             'sort' => 'sort_order'
         );
 
-        if (isset($_GET['filter_tags']) && !empty($_GET['filter_tags'])) {
+        if (isset($_GET['filter_tags']) && !empty($_GET['filter_tags']) && is_scalar($_GET['filter_tags'])) {
             $filter['filter_tags'] = $_GET['filter_tags'];
             $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
         }
 
-        if (isset($_GET['filter_id']) && !empty($_GET['filter_id'])) {
+        if (isset($_GET['filter_id']) && !empty($_GET['filter_id']) && is_scalar($_GET['filter_id'])) {
             $filter['filter_id'] = $_GET['filter_id'];
             $parameter_url .= "&filter_id=" . $_GET['filter_id'];
         }
 
-        if (isset($_GET['title']) && !empty($_GET['title'])) {
+        if (isset($_GET['title']) && !empty($_GET['title']) && is_scalar($_GET['title'])) {
             $filter['title'] = $_GET['title'];
             $parameter_url .= "&title=" . $_GET['title'];
         }
 
-        if (isset($_GET['category']) && !empty($_GET['category'])) {
+        if (isset($_GET['category']) && is_string($_GET['category']) &&
+            preg_match('/^[0-9a-f]{24}$/i', $_GET['category']) === 1) {
             $filter['category'] = $_GET['category'];
             $parameter_url .= "&category=" . $_GET['category'];
         }
