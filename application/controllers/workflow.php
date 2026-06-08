@@ -341,22 +341,22 @@ class Workflow extends MY_Controller
             'limit' => $limit
         );
 
-        if (isset($_GET['filter_name']) && $_GET['filter_name']) {
+        if (isset($_GET['filter_name']) && $_GET['filter_name'] && is_scalar($_GET['filter_name'])) {
             $data['filter_name'] = $_GET['filter_name'];
             $parameter_url .= "&filter_name=" . $_GET['filter_name'];
         }
 
-        if (isset($_GET['filter_id']) && $_GET['filter_id']) {
+        if (isset($_GET['filter_id']) && $_GET['filter_id'] && is_scalar($_GET['filter_id'])) {
             $data['filter_id'] = $_GET['filter_id'];
             $parameter_url .= "&filter_id=" . $_GET['filter_id'];
         }
 
-        if (isset($_GET['filter_email'] ) && $_GET['filter_email']) {
+        if (isset($_GET['filter_email'] ) && $_GET['filter_email'] && is_scalar($_GET['filter_email'])) {
             $data['filter_email'] = $_GET['filter_email'];
             $parameter_url .= "&filter_email=" . $_GET['filter_email'];
         }
 
-        if (isset($_GET['filter_tag']) && $_GET['filter_tag']) {
+        if (isset($_GET['filter_tag']) && $_GET['filter_tag'] && is_scalar($_GET['filter_tag'])) {
             $data['filter_tag'] = explode(',', $_GET['filter_tag']);
             $parameter_url .= "&filter_tag=" . $_GET['filter_tag'];
         }
