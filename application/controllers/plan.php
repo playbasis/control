@@ -72,6 +72,7 @@ class Plan extends MY_Controller
         $this->form_validation->set_rules('limit_num_client', $this->lang->line('entry_limit_num_clients'), 'numeric');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $this->normalizePlanPost();
 
             $this->data['message'] = null;
 
@@ -124,6 +125,7 @@ class Plan extends MY_Controller
             'trim|numeric');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $this->normalizePlanPost();
 
             $this->data['message'] = null;
 
@@ -630,6 +632,15 @@ class Plan extends MY_Controller
             return true;
         } else {
             return false;
+        }
+    }
+
+    private function normalizePlanPost()
+    {
+        foreach (array('name', 'description', 'price', 'display', 'status', 'limit_num_client', 'sort_order') as $field) {
+            if (isset($_POST[$field]) && !is_scalar($_POST[$field])) {
+                $_POST[$field] = '';
+            }
         }
     }
 

@@ -311,6 +311,20 @@ class Plan_model extends MY_Model
         return $rewards_data;
     }
 
+    private function planScalar($data, $field, $default = '')
+    {
+        if (!isset($data[$field]) || !is_scalar($data[$field])) {
+            return $default;
+        }
+
+        return $data[$field];
+    }
+
+    private function planText($data, $field)
+    {
+        return (string)$this->planScalar($data, $field, '');
+    }
+
     public function addPlan($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -322,8 +336,8 @@ class Plan_model extends MY_Model
         }
 
         $dinsert = array(
-            'name' => $data['name'] | '',
-            'description' => $data['description'] | '',
+            'name' => $this->planText($data, 'name'),
+            'description' => $this->planText($data, 'description'),
             'price' => intval($data['price']),
             'display' => (bool)$data['display'],
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
@@ -423,8 +437,8 @@ class Plan_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($plan_id));
-        $this->mongo_db->set('name', $data['name']);
-        $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('name', $this->planText($data, 'name'));
+        $this->mongo_db->set('description', $this->planText($data, 'description'));
         $this->mongo_db->set('price', intval($data['price']));
         $this->mongo_db->set('display', (bool)$data['display']);
         $this->mongo_db->set('limit_num_client',
