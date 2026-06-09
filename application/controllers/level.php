@@ -68,6 +68,7 @@ class Level extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            $this->normalizeLevelPost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -120,6 +121,7 @@ class Level extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            $this->normalizeLevelPost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -469,6 +471,13 @@ class Level extends MY_Controller
         $this->load->vars($this->data);
         $this->render_page('template');
 //        $this->render_page('level_form');
+    }
+
+    private function normalizeLevelPost()
+    {
+        if (isset($_POST['level_title']) && !is_scalar($_POST['level_title'])) {
+            $_POST['level_title'] = '';
+        }
     }
 
     private function validateModify()
