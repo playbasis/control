@@ -381,7 +381,7 @@ class Webhook extends MY_Controller
 
     private function validateModify()
     {
-        if ($this->User_model->hasPermission('modify', 'sms')) {
+        if ($this->User_model->hasPermission('modify', 'webhook')) {
             return true;
         } else {
             return false;
