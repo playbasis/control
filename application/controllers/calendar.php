@@ -203,11 +203,20 @@ class Calendar extends MY_Controller
         if ($this->_gcal) {
             /* POST */
             if ($this->input->post('selected')) {
+                $selected = $this->normalizeSelectedResourceIds($this->input->post('selected'));
+                if ($selected === false) {
+                    $this->session->set_flashdata('fail', $this->lang->line('error_selection'));
+                    redirect('/calendar/webhook', 'refresh');
+                }
                 $success = false;
                 $fail = false;
-                foreach ($this->input->post('selected') as $resource_id) {
+                foreach ($selected as $resource_id) {
                     $subscription = $this->Googles_model->getSubscription($resource_id);
-                    $channel_id = $subscription['channel_id'];
+                    if (!$subscription || !isset($subscription['channel_id']) || $subscription['channel_id'] === '' || !is_scalar($subscription['channel_id'])) {
+                        $fail = $this->lang->line('error_selection');
+                        continue;
+                    }
+                    $channel_id = (string)$subscription['channel_id'];
                     try {
                         $this->_client->unwatchCalendar($this->_gcal, $channel_id, $resource_id);
                         $this->Googles_model->removeWebhook($channel_id, $resource_id);
@@ -233,6 +242,27 @@ class Calendar extends MY_Controller
             $this->load->vars($this->data);
             $this->render_page('template');
         }
+    }
+
+    private function normalizeSelectedResourceIds($selected)
+    {
+        if ($selected === false || $selected === null || $selected === '') {
+            return array();
+        }
+
+        if (!is_array($selected)) {
+            $selected = array($selected);
+        }
+
+        $resources = array();
+        foreach ($selected as $resource_id) {
+            if ($resource_id === false || $resource_id === null || $resource_id === '' || !is_scalar($resource_id)) {
+                return false;
+            }
+            $resources[] = (string)$resource_id;
+        }
+
+        return $resources;
     }
 
     private function getListPlaces()
