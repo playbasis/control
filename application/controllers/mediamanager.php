@@ -99,19 +99,15 @@ class MediaManager extends MY_Controller
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
 
-            if (!$this->validateAccess()) {
-                $this->output->set_status_header('401');
-                $this->output->set_output(json_encode(array(
-                    'status' => 'error',
-                    'message' => $this->lang->line('error_access')
-                )));
+            if (!$this->requireMediaManagerAccess()) {
+                return;
             }
 
             switch ($_SERVER['REQUEST_METHOD']) {
                 case "GET":
                     if (isset($fileId)) {
                         try {
-                            $result = $this->Image_model->retrieveImage($fileId);
+                            $result = $this->Image_model->retrieveImage($client_id, $site_id, $fileId);
                             if (isset($result['_id'])) {
                                 $result['_id'] = $result['_id'] . "";
                             }
@@ -211,9 +207,12 @@ class MediaManager extends MY_Controller
                     }
                     break;
                 case "DELETE":
+                    if (!$this->requireMediaManagerModify()) {
+                        return;
+                    }
                     if (isset($fileId)) {
                         try {
-                            $result = $this->Image_model->deleteImage($fileId);
+                            $result = $this->Image_model->deleteImage($client_id, $site_id, $fileId);
                             if ($result) {
                                 $this->output->set_status_header('200');
                                 $response = array('status' => 'success');
@@ -242,7 +241,42 @@ class MediaManager extends MY_Controller
         }
     }
 
+    private function requireMediaManagerAccess()
+    {
+        if (!$this->validateAccess()) {
+            $this->output->set_status_header('401');
+            $this->output->set_output(json_encode(array(
+                'status' => 'error',
+                'message' => $this->lang->line('error_access')
+            )));
+            return false;
+        }
+
+        return true;
+    }
+
+    private function requireMediaManagerModify()
+    {
+        if (!$this->requireMediaManagerAccess()) {
+            return false;
+        }
+
+        if (!$this->validateModify()) {
+            $this->output->set_status_header('401');
+            $this->output->set_output(json_encode(array(
+                'status' => 'error',
+                'message' => $this->lang->line('error_permission')
+            )));
+            return false;
+        }
+
+        return true;
+    }
+
     public function insertFolder(){
+        if (!$this->requireMediaManagerModify()) {
+            return;
+        }
         $query_data = $this->input->get(null, true);
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -252,27 +286,74 @@ class MediaManager extends MY_Controller
     }
 
     public function unsetAllFile(){
+        if (!$this->requireMediaManagerModify()) {
+            return;
+        }
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->unsetAllFile($query_data);
         $this->output->set_output(json_encode($result));
     }
 
     public function deleteFolder(){
+        if (!$this->requireMediaManagerModify()) {
+            return;
+        }
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->deleteFolder_model($query_data);
         $this->output->set_output(json_encode($result));
     }
 
     public function updateImageCategory(){
+        if (!$this->requireMediaManagerModify()) {
+            return;
+        }
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
+        if (!isset($query_data['folder_id']) || ($query_data['folder_id'] !== 'root' && !$this->isValidMongoId($query_data['folder_id']))) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->updateImageCategory($query_data);
         $this->output->set_output(json_encode($result));
     }
 
     public function updateFolderName(){
+        if (!$this->requireMediaManagerModify()) {
+            return;
+        }
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->updateFolder($query_data);
         $this->output->set_output(json_encode($result));
+    }
+
+    private function hasValidMongoIdParam($params, $key)
+    {
+        return is_array($params) && isset($params[$key]) && $this->isValidMongoId($params[$key]);
+    }
+
+    private function isValidMongoId($id)
+    {
+        return is_scalar($id) && preg_match('/^[0-9a-f]{24}$/i', (string)$id) === 1;
     }
 
     public function image()
