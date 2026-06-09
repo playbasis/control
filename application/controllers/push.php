@@ -22,6 +22,20 @@ class Push extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
+    private function normalizeTemplatePost()
+    {
+        foreach (array('name', 'body', 'sort_order', 'status') as $field) {
+            if (isset($_POST[$field]) && !is_scalar($_POST[$field])) {
+                $_POST[$field] = '';
+            }
+        }
+    }
+
+    private function templateBodyText($body)
+    {
+        return is_scalar($body) ? htmlentities((string)$body) : '';
+    }
+
     public function index()
     {
         if (!$this->validateAccess()) {
@@ -68,6 +82,7 @@ class Push extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -115,6 +130,7 @@ class Push extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -284,9 +300,9 @@ class Push extends MY_Controller
         }
 
         if ($this->input->post('body')) {
-            $this->data['body'] = htmlentities($this->input->post('body'));
+            $this->data['body'] = $this->templateBodyText($this->input->post('body'));
         } elseif (!empty($info)) {
-            $this->data['body'] = htmlentities($info['body']);
+            $this->data['body'] = $this->templateBodyText($info['body']);
         } else {
             $this->data['body'] = '';
         }
