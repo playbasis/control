@@ -23,18 +23,8 @@ class Statistic extends CI_Controller
 
     public function getStatisticData()
     {
-
-        if ($this->input->get('date_start')) {
-            $date_start = strtotime($this->input->get('date_start'));
-        } else {
-            $date_start = strtotime(' -30 day');
-        }
-
-        if ($this->input->get('date_expire')) {
-            $date_expire = strtotime($this->input->get('date_expire'));
-        } else {
-            $date_expire = strtotime('today');
-        }
+        $date_start = $this->statisticDateTimestamp($this->input->get('date_start'), strtotime(' -30 day'));
+        $date_expire = $this->statisticDateTimestamp($this->input->get('date_expire'), strtotime('today'));
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -91,6 +81,21 @@ class Statistic extends CI_Controller
         $this->Statistic_model->set_read_preference_primary();
 
         $this->output->set_output(json_encode($json));
+    }
+
+    private function statisticDateTimestamp($value, $fallback)
+    {
+        if (!is_scalar($value)) {
+            return $fallback;
+        }
+
+        $value = trim((string)$value);
+        if ($value === '') {
+            return $fallback;
+        }
+
+        $timestamp = strtotime($value);
+        return $timestamp !== false ? $timestamp : $fallback;
     }
 
     public function getDailyActionmeaturement()
