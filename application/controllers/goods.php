@@ -26,6 +26,35 @@ class Goods extends MY_Controller
         $this->load->model('Feature_model');
     }
 
+    private function hasUploadEntry($field)
+    {
+        if (!isset($_FILES[$field]) || !is_array($_FILES[$field]) || !array_key_exists('tmp_name', $_FILES[$field])) {
+            return false;
+        }
+
+        $tmpName = $_FILES[$field]['tmp_name'];
+        if (is_array($tmpName)) {
+            return !empty($tmpName);
+        }
+
+        return $tmpName !== '';
+    }
+
+    private function isValidUploadEntry($field)
+    {
+        if (!$this->hasUploadEntry($field)) {
+            return false;
+        }
+
+        foreach (array('name', 'tmp_name', 'size', 'type', 'error') as $key) {
+            if (!array_key_exists($key, $_FILES[$field]) || !is_scalar($_FILES[$field][$key])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function index()
     {
 
@@ -118,11 +147,12 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_limit');
             }
 
-            if (empty($_FILES) || !isset($_FILES['file']['tmp_name'])) {
+            if (!$this->isValidUploadEntry('file')) {
                 $this->data['message'] = $this->lang->line('error_file');
             }
 
-            if (isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
+            if ($this->data['message'] == null) {
+                $upload = $_FILES['file'];
 
                 $maxsize = 4194304;
                 $csv_mimetypes = array(
@@ -138,16 +168,16 @@ class Goods extends MY_Controller
                     'application/txt',
                 );
 
-                if (($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
+                if (($upload['size'] >= $maxsize) || ($upload["size"] == 0)) {
                     $this->data['message'] = $this->lang->line('error_file_too_large');
                 }
 
-                if (!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
+                if (!in_array($upload['type'], $csv_mimetypes) && (!empty($upload["type"]))) {
                     $this->data['message'] = $this->lang->line('error_type_accepted');
                 }
 
-                $handle = fopen($_FILES['file']['tmp_name'], "r");
-                if (!$handle) {
+                $handle = $this->data['message'] == null ? fopen($upload['tmp_name'], "r") : false;
+                if ($this->data['message'] == null && !$handle) {
                     $this->data['message'] = $this->lang->line('error_upload');
                 }
             }
@@ -194,11 +224,12 @@ class Goods extends MY_Controller
             $whitelist_data = array();
             $whitelist_enable = $this->input->post('whitelist_enable') ? true : false;
             if ($this->data['message'] == null && $whitelist_enable) {
-                if (empty($_FILES) || !isset($_FILES['whitelist_file']['tmp_name']) || $_FILES['whitelist_file']['tmp_name'] == '') {
+                if (!$this->isValidUploadEntry('whitelist_file')) {
                     $this->data['message'] = $this->lang->line('error_file_whitelist');
                 }
 
                 if ( $this->data['message'] == null ) {
+                    $whitelistUpload = $_FILES['whitelist_file'];
 
                     $maxsize = 4194304;
                     $csv_mimetypes = array(
@@ -214,23 +245,23 @@ class Goods extends MY_Controller
                         'application/txt',
                     );
 
-                    if (($_FILES['whitelist_file']['size'] >= $maxsize) || ($_FILES["whitelist_file"]["size"] == 0)) {
+                    if (($whitelistUpload['size'] >= $maxsize) || ($whitelistUpload["size"] == 0)) {
                         $this->data['message'] = $this->lang->line('error_file_too_large_whitelist');
                     }
 
-                    if (!in_array($_FILES['whitelist_file']['type'], $csv_mimetypes) && (!empty($_FILES["whitelist_file"]["type"]))) {
+                    if (!in_array($whitelistUpload['type'], $csv_mimetypes) && (!empty($whitelistUpload["type"]))) {
                         $this->data['message'] = $this->lang->line('error_type_accepted_whitelist');
                     }
 
-                    $handle_whitelist = fopen($_FILES['whitelist_file']['tmp_name'], "r");
-                    if (!$handle_whitelist) {
+                    $handle_whitelist = $this->data['message'] == null ? fopen($whitelistUpload['tmp_name'], "r") : false;
+                    if ($this->data['message'] == null && !$handle_whitelist) {
                         $this->data['message'] = $this->lang->line('error_upload_whitelist');
                     }
 
                     if ( $this->data['message'] == null){
                         // prepare data of user white list
                         $this->generateWhiteListData($handle_whitelist,$whitelist_data);
-                        $whitelist_data['file_name'] = $_FILES['whitelist_file']['name'];
+                        $whitelist_data['file_name'] = $whitelistUpload['name'];
 
                     }
 
@@ -414,11 +445,12 @@ class Goods extends MY_Controller
             $whitelist_data = array();
             $whitelist_enable = $this->input->post('whitelist_enable') ? true : false;
             if ($this->data['message'] == null && $whitelist_enable) {
-                if (empty($_FILES) || !isset($_FILES['whitelist_file']['tmp_name']) || $_FILES['whitelist_file']['tmp_name'] == '') {
+                if (!$this->isValidUploadEntry('whitelist_file')) {
                     $this->data['message'] = $this->lang->line('error_file_whitelist');
                 }
 
                 if ( $this->data['message'] == null ) {
+                    $whitelistUpload = $_FILES['whitelist_file'];
 
                     $maxsize = 4194304;
                     $csv_mimetypes = array(
@@ -434,23 +466,23 @@ class Goods extends MY_Controller
                         'application/txt',
                     );
 
-                    if (($_FILES['whitelist_file']['size'] >= $maxsize) || ($_FILES["whitelist_file"]["size"] == 0)) {
+                    if (($whitelistUpload['size'] >= $maxsize) || ($whitelistUpload["size"] == 0)) {
                         $this->data['message'] = $this->lang->line('error_file_too_large_whitelist');
                     }
 
-                    if (!in_array($_FILES['whitelist_file']['type'], $csv_mimetypes) && (!empty($_FILES["whitelist_file"]["type"]))) {
+                    if (!in_array($whitelistUpload['type'], $csv_mimetypes) && (!empty($whitelistUpload["type"]))) {
                         $this->data['message'] = $this->lang->line('error_type_accepted_whitelist');
                     }
 
-                    $handle = fopen($_FILES['whitelist_file']['tmp_name'], "r");
-                    if (!$handle) {
+                    $handle = $this->data['message'] == null ? fopen($whitelistUpload['tmp_name'], "r") : false;
+                    if ($this->data['message'] == null && !$handle) {
                         $this->data['message'] = $this->lang->line('error_upload_whitelist');
                     }
 
                     if ( $this->data['message'] == null){
                         // prepare data of user white list
                         $this->generateWhiteListData($handle,$whitelist_data);
-                        $whitelist_data['file_name'] = $_FILES['whitelist_file']['name'];
+                        $whitelist_data['file_name'] = $whitelistUpload['name'];
                     }
 
                 }
@@ -635,12 +667,17 @@ class Goods extends MY_Controller
             if ($this->data['message'] == null && $whitelist_enable) {
 
                 $distinct_info = $this->Goods_model->getGoodsDistinctByID($site_id,$distinct_id);
+                $hasWhitelistUpload = $this->hasUploadEntry('whitelist_file');
+                $validWhitelistUpload = $this->isValidUploadEntry('whitelist_file');
                 if ( (!isset($distinct_info['whitelist_enable']) || $distinct_info['whitelist_enable'] == false) &&
-                     (empty($_FILES) || !isset($_FILES['whitelist_file']['tmp_name']) || $_FILES['whitelist_file']['tmp_name'] == '')) {
+                     !$validWhitelistUpload) {
+                    $this->data['message'] = $this->lang->line('error_file_whitelist');
+                } elseif ($hasWhitelistUpload && !$validWhitelistUpload) {
                     $this->data['message'] = $this->lang->line('error_file_whitelist');
                 }
 
-                if ( $this->data['message'] == null && (isset($_FILES['whitelist_file']['tmp_name']) && $_FILES['whitelist_file']['tmp_name'] != '') ) {
+                if ( $this->data['message'] == null && $validWhitelistUpload ) {
+                    $whitelistUpload = $_FILES['whitelist_file'];
 
                     $maxsize = 4194304;
                     $csv_mimetypes = array(
@@ -656,23 +693,23 @@ class Goods extends MY_Controller
                         'application/txt',
                     );
 
-                    if (($_FILES['whitelist_file']['size'] >= $maxsize) || ($_FILES["whitelist_file"]["size"] == 0)) {
+                    if (($whitelistUpload['size'] >= $maxsize) || ($whitelistUpload["size"] == 0)) {
                         $this->data['message'] = $this->lang->line('error_file_too_large_whitelist');
                     }
 
-                    if (!in_array($_FILES['whitelist_file']['type'], $csv_mimetypes) && (!empty($_FILES["whitelist_file"]["type"]))) {
+                    if (!in_array($whitelistUpload['type'], $csv_mimetypes) && (!empty($whitelistUpload["type"]))) {
                         $this->data['message'] = $this->lang->line('error_type_accepted_whitelist');
                     }
 
-                    $handle = fopen($_FILES['whitelist_file']['tmp_name'], "r");
-                    if (!$handle) {
+                    $handle = $this->data['message'] == null ? fopen($whitelistUpload['tmp_name'], "r") : false;
+                    if ($this->data['message'] == null && !$handle) {
                         $this->data['message'] = $this->lang->line('error_upload_whitelist');
                     }
 
                     if ( $this->data['message'] == null){
                         // prepare data of user white list
                         $this->generateWhiteListData($handle,$whitelist_data);
-                        $whitelist_data['file_name'] = $_FILES['whitelist_file']['name'];
+                        $whitelist_data['file_name'] = $whitelistUpload['name'];
                     }
 
                 }
@@ -741,7 +778,7 @@ class Goods extends MY_Controller
                             $this->Goods_model->auditAfterGoods('update', $goods_id, $this->User_model->getId(), $audit_id);
 
                             //update whitelist
-                            if(isset($goods_data['whitelist_enable']) && ($goods_data['whitelist_enable'] == true) && (isset($_FILES['whitelist_file']['tmp_name']) && $_FILES['whitelist_file']['tmp_name'] != '')) {
+                            if(isset($goods_data['whitelist_enable']) && ($goods_data['whitelist_enable'] == true) && $validWhitelistUpload) {
                                 $this->Goods_model->deleteGoodsWhiteList($client_id, $site_id, $distinct_id);
                                 $whitelist_data['cl_player_id_list'] = $this->generateWhiteListBatch($whitelist_data['cl_player_id_list'], $client_id, $site_id, $distinct_id);
                                 $this->Goods_model->setGoodsWhiteList($client_id, $site_id, $distinct_id, $whitelist_data);
@@ -880,7 +917,15 @@ class Goods extends MY_Controller
                     die();
                 }
   
-                if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && !empty($_FILES['file']['tmp_name'])) {
+                $hasFileUpload = $this->hasUploadEntry('file');
+                $validFileUpload = $this->isValidUploadEntry('file');
+                if ($hasFileUpload && !$validFileUpload) {
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_file')));
+                    die();
+                }
+
+                if ($validFileUpload) {
+                    $upload = $_FILES['file'];
                     $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
                     $goods_data = array(
                         'name' => $goods_info['group'],
@@ -899,7 +944,12 @@ class Goods extends MY_Controller
                         $goods_data['organize_id'] = $goods_info['organize_id'];
                         $goods_data['organize_role'] = $goods_info['organize_role'];
                     }
-                    $handle = fopen($_FILES['file']['tmp_name'], "r");
+                    $handle = fopen($upload['tmp_name'], "r");
+                    if (!$handle) {
+                        echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_upload')));
+                        die();
+                    }
+
                     $audit_id = $this->Goods_model->auditBeforeGoods('upload', $goods_id, $this->User_model->getId());
                     $this->addGoods($handle, $goods_data, $goods_info['redeem'], array($client_id), array($site_id));
 
