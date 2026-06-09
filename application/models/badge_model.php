@@ -676,10 +676,10 @@ class Badge_model extends MY_Model
             'sort_order' => (int)$data['sort_order'] | 1,
             'date_modified' => $d,
             'date_added' => $d,
-            'name' => $data['name'] | '',
-            'description' => $data['description'] | '',
+            'name' => $this->badgeText($data, 'name'),
+            'description' => $this->badgeText($data, 'description'),
             'tags' => $data['tags'],
-            'hint' => $data['hint'] | '',
+            'hint' => $this->badgeText($data, 'hint'),
             'language_id' => (int)1,
             'deleted' => false,
             'sponsor' => isset($data['sponsor']) ? (bool)$data['sponsor'] : false,
@@ -715,10 +715,10 @@ class Badge_model extends MY_Model
             'sort_order' => (int)$data['sort_order'] | 1,
             'date_modified' => $d,
             'date_added' => $d,
-            'name' => $data['name'] | '',
-            'description' => $data['description'] | '',
+            'name' => $this->badgeText($data, 'name'),
+            'description' => $this->badgeText($data, 'description'),
             'tags' => $data['tags'],
-            'hint' => $data['hint'] | '',
+            'hint' => $this->badgeText($data, 'hint'),
             'language_id' => (int)1,
             'deleted' => false,
             'sponsor' => isset($data['sponsor']) ? (bool)$data['sponsor'] : false,
@@ -726,6 +726,20 @@ class Badge_model extends MY_Model
             'redeem' => isset($data['redeem']) ? (bool)$data['redeem'] : false,
             "is_template" => isset($data["is_template"]) ? (bool)$data["is_template"] : false,
         ));
+    }
+
+    private function badgeScalar($data, $field, $default = '')
+    {
+        if (!isset($data[$field]) || !is_scalar($data[$field])) {
+            return $default;
+        }
+
+        return $data[$field];
+    }
+
+    private function badgeText($data, $field)
+    {
+        return (string)$this->badgeScalar($data, $field, '');
     }
 
     public function editBadge($badge_id, $data)
@@ -745,10 +759,10 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('auto_notify', (bool)$data['auto_notify']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate());
-        $this->mongo_db->set('name', $data['name']);
-        $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('name', $this->badgeText($data, 'name'));
+        $this->mongo_db->set('description', $this->badgeText($data, 'description'));
         $this->mongo_db->set('tags', $data['tags']);
-        $this->mongo_db->set('hint', $data['hint']);
+        $this->mongo_db->set('hint', $this->badgeText($data, 'hint'));
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
         $this->mongo_db->set('claim', isset($data['claim']) ? (bool)$data['claim'] : false);
@@ -775,11 +789,12 @@ class Badge_model extends MY_Model
                     $new_badge = $this->addBadge($data);
                     $this->mongo_db->set("badge_id", $new_badge);
                     $this->mongo_db->unset_field("is_template");
-                    if ($badge["name"] == $data["name"]) {
-                        $this->mongo_db->set("name", "Cloned from " . $data["name"]);
+                    $name = $this->badgeText($data, 'name');
+                    if ($badge["name"] == $name) {
+                        $this->mongo_db->set("name", "Cloned from " . $name);
                     }
                 } else {
-                    $this->mongo_db->set("name", $data["name"]);
+                    $this->mongo_db->set("name", $this->badgeText($data, 'name'));
                 }
                 $data = $_data;
 
@@ -794,9 +809,9 @@ class Badge_model extends MY_Model
                 $this->mongo_db->set('visible', (bool)$data['visible']);
                 $this->mongo_db->set('auto_notify', (bool)$data['auto_notify']);
                 $this->mongo_db->set('sort_order', (int)$data['sort_order']);
-                $this->mongo_db->set('description', $data['description']);
+                $this->mongo_db->set('description', $this->badgeText($data, 'description'));
                 $this->mongo_db->set('tags', $data['tags']);
-                $this->mongo_db->set('hint', $data['hint']);
+                $this->mongo_db->set('hint', $this->badgeText($data, 'hint'));
                 $this->mongo_db->set('language_id', (int)1);
                 $this->mongo_db->set('sponsor',
                     isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
@@ -833,10 +848,10 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('auto_notify', (bool)$data['auto_notify']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate());
-        $this->mongo_db->set('name', $data['name']);
-        $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('name', $this->badgeText($data, 'name'));
+        $this->mongo_db->set('description', $this->badgeText($data, 'description'));
         $this->mongo_db->set('tags', $data['tags']);
-        $this->mongo_db->set('hint', $data['hint']);
+        $this->mongo_db->set('hint', $this->badgeText($data, 'hint'));
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
         $this->mongo_db->set('claim', isset($data['claim']) ? (bool)$data['claim'] : false);
