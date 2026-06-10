@@ -438,6 +438,11 @@ class App extends MY_Controller
 
     public function platform_edit($platform_id)
     {
+        if (!$this->checkOwnerPlatForm($platform_id)) {
+            $this->session->set_flashdata("fail", $this->lang->line("error_permission"));
+            redirect('app', 'refresh');
+        }
+
         $app = $this->App_model->getPlatform($platform_id);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -506,6 +511,10 @@ class App extends MY_Controller
 
     public function add_platform($app_id)
     {
+        if (!$this->checkOwnerApp($app_id)) {
+            $this->session->set_flashdata("fail", $this->lang->line("error_permission"));
+            redirect('app', 'refresh');
+        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -604,6 +613,11 @@ class App extends MY_Controller
 
     public function edit_app($app_id)
     {
+        if (!$this->checkOwnerApp($app_id)) {
+            $this->session->set_flashdata("fail", $this->lang->line("error_permission"));
+            redirect('app', 'refresh');
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $this->data['message'] = null;
