@@ -28,6 +28,11 @@ class Widget extends MY_Controller
 
     public function index()
     {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -93,6 +98,11 @@ class Widget extends MY_Controller
 
     public function social_login()
     {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -150,8 +160,43 @@ class Widget extends MY_Controller
         $this->render_page('template');
     }
 
+    private function validateModify()
+    {
+        if ($this->User_model->hasPermission('modify', 'widget')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
+            return true;
+        }
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access',
+                'widget') && $this->Feature_model->getFeatureExistByClientId($client_id, 'widget')
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function social_manage()
     {
+        if (!$this->validateModify()) {
+            $this->output->set_status_header('403');
+            $this->output->set_output(json_encode(array(
+                'status' => 'error',
+                'message' => $this->lang->line('error_permission')
+            )));
+            return;
+        }
+
         $data = $this->input->post('socials');
         $data_callback = $this->input->post('socials_callback');
 
