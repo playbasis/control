@@ -57,6 +57,10 @@ class Report_weekly extends CI_Controller
 
     public function generate($indicated = null,$ref = null)
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This report job can only be run from the command line.', 403);
+        }
+
         $msg = array();
         $this->utility->elapsed_time('report');
 
