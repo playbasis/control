@@ -333,6 +333,11 @@ class Sms extends MY_Controller
 
     public function setup()
     {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -353,6 +358,11 @@ class Sms extends MY_Controller
         }
 
         if ($this->input->post()) {
+            if (!$this->validateModify()) {
+                echo "<script>alert('" . $this->lang->line('error_permission') . "'); history.go(-1);</script>";
+                die();
+            }
+
             if ($this->form_validation->run()) {
 
                 $sms_data = $this->input->post();
