@@ -432,6 +432,10 @@ class Cron extends CI_Controller
 
     public function processActionLogStat()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         set_time_limit(MAX_EXECUTION_TIME);
         ini_set('memory_limit', MAX_MEMORY);
 
