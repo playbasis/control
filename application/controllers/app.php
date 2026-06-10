@@ -210,6 +210,11 @@ class App extends MY_Controller
         $this->render_page('template');
     }
 
+    private function isValidMongoId($id)
+    {
+        return preg_match('/^[0-9a-f]{24}$/i', (string)$id) === 1;
+    }
+
     public function reset()
     {
         $json = array();
@@ -438,6 +443,10 @@ class App extends MY_Controller
 
     public function platform_edit($platform_id)
     {
+        if (!$this->isValidMongoId($platform_id)) {
+            redirect('app', 'refresh');
+        }
+
         if (!$this->checkOwnerPlatForm($platform_id)) {
             $this->session->set_flashdata("fail", $this->lang->line("error_permission"));
             redirect('app', 'refresh');
@@ -511,6 +520,10 @@ class App extends MY_Controller
 
     public function add_platform($app_id)
     {
+        if (preg_match('/^[0-9a-f]{24}$/i', (string)$app_id) !== 1) {
+            redirect('app', 'refresh');
+        }
+
         if (!$this->checkOwnerApp($app_id)) {
             $this->session->set_flashdata("fail", $this->lang->line("error_permission"));
             redirect('app', 'refresh');
@@ -613,6 +626,10 @@ class App extends MY_Controller
 
     public function edit_app($app_id)
     {
+        if (preg_match('/^[0-9a-f]{24}$/i', (string)$app_id) !== 1) {
+            redirect('app', 'refresh');
+        }
+
         if (!$this->checkOwnerApp($app_id)) {
             $this->session->set_flashdata("fail", $this->lang->line("error_permission"));
             redirect('app', 'refresh');
