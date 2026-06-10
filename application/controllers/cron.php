@@ -78,6 +78,13 @@ class Cron extends CI_Controller
         $this->load->library('parser');
     }
 
+    private function requireCliRequest()
+    {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+    }
+
     public function notifyInactiveClients()
     {
         $today = time();
@@ -2547,6 +2554,8 @@ class Cron extends CI_Controller
 
     public function processGameItemDeduct()
     {
+        $this->requireCliRequest();
+
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Game');
 
         if ($clients) {
@@ -2623,6 +2632,8 @@ class Cron extends CI_Controller
 
     public function processGameReset()
     {
+        $this->requireCliRequest();
+
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Game');
 
         if ($clients) {
@@ -2702,6 +2713,8 @@ class Cron extends CI_Controller
 
     public function processTokenDeductByCampaign()
     {
+        $this->requireCliRequest();
+
         $campaign = $this->campaign_model->getActiveCampaign(new MongoId(CLIENT_ID_HSBCHK), new MongoId(SITE_ID_HSBCHK));
 
         if (!$campaign) {
