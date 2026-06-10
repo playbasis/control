@@ -336,6 +336,11 @@ class Push extends MY_Controller
 
     public function ios()
     {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -354,6 +359,11 @@ class Push extends MY_Controller
 
 
         if ($this->input->post()) {
+            if (!$this->validateModify()) {
+                echo "<script>alert('" . $this->lang->line('error_permission') . "'); history.go(-1);</script>";
+                die();
+            }
+
             if ($this->form_validation->run()) {
                 $postData = $this->input->post();
 
@@ -373,6 +383,11 @@ class Push extends MY_Controller
 
     public function android()
     {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -386,6 +401,11 @@ class Push extends MY_Controller
         $this->data['push'] = $this->Push_model->getAndroidSetup($client_id, $site_id);
 
         if ($this->input->post()) {
+            if (!$this->validateModify()) {
+                echo "<script>alert('" . $this->lang->line('error_permission') . "'); history.go(-1);</script>";
+                die();
+            }
+
             if ($this->form_validation->run()) {
                 $postData = $this->input->post();
                 $data = $this->User_model->getClientId() ? array_merge($postData, array(
