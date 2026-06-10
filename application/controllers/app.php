@@ -214,6 +214,14 @@ class App extends MY_Controller
     {
         $json = array();
 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
+            (!$this->validateModify() || !$this->checkOwnerPlatForm($this->input->post('platform_id')))
+        ) {
+            $json['error'] = $this->lang->line('error_permission');
+            $this->output->set_output(json_encode($json));
+            return;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $secret = $this->App_model->resetToken($this->input->post('platform_id'));
