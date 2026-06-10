@@ -1301,6 +1301,9 @@ class Cron extends CI_Controller
 
     public function processLeaderBoard()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
 
         // Step 1. get leaderboard configuration
         $result = array();
