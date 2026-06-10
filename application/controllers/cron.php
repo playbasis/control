@@ -557,6 +557,10 @@ class Cron extends CI_Controller
 
     public function pullFullContact()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $results = $this->player_model->findRecentPlayers(DAYS_TO_BECOME_ACTIVE);
         $emails = $this->player_model->findDistinctEmails($results);
         $emails = $this->player_model->findNewEmails($emails);
@@ -573,6 +577,10 @@ class Cron extends CI_Controller
 
     public function pullFullContactForDemo()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $results = $this->player_model->findPlayersBySiteId(new MongoId(DEMO_SITE_ID));
         $emails = array_map('index_email', $results);
         $emails = $this->player_model->findNewEmails($emails);
