@@ -12,6 +12,9 @@ class Test_amazon_ses extends CI_Controller
 
     function index()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This test suite can only be run from the command line.', 403);
+        }
 
         // Load the required libraries
         $this->load->library('unit_test');
