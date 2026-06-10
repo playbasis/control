@@ -308,6 +308,17 @@ class User extends MY_Controller
 
     public function insert_ajax()
     {
+        if (!$this->User_model->isLogged()) {
+            $this->output->set_status_header('401');
+            $this->output->set_output(json_encode(array('error' => $this->lang->line('error_access'))));
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->output->set_status_header('403');
+            $this->output->set_output(json_encode(array('error' => $this->lang->line('error_permission'))));
+            return;
+        }
 
         //Rules need to be set
         // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
@@ -328,6 +339,22 @@ class User extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $this->data['message'] = null;
+            $client_id = $this->getInsertAjaxClientId();
+            $user_group_id = $this->input->post('user_group');
+
+            if (!$client_id) {
+                $this->data['message'] = $this->lang->line('error_permission');
+                $json['error'] = $this->data['message'];
+            } elseif (!$this->isValidObjectId($user_group_id) ||
+                !$this->User_group_to_client_model->getUserGroupInfo($client_id, $user_group_id)
+            ) {
+                $this->data['message'] = $this->lang->line('error_permission');
+                $json['error'] = $this->data['message'];
+            } else {
+                $_POST['client_id'] = $client_id;
+                $_POST['user_group'] = $user_group_id;
+                $_POST['status'] = '0';
+            }
 
             /*if($this->checkLimitUser($this->input->post('client_id'))){
                 $this->data['message'] = $this->lang->line('error_limit');
@@ -363,6 +390,34 @@ class User extends MY_Controller
         }
 
         $this->output->set_output(json_encode($json));
+    }
+
+    private function getInsertAjaxClientId()
+    {
+        $client_id = $this->User_model->getClientId();
+        if ($client_id) {
+            return (string)$client_id;
+        }
+
+        $client_id = $this->input->post('client_id');
+        if ($this->isValidObjectId($client_id)) {
+            return (string)$client_id;
+        }
+
+        return null;
+    }
+
+    private function isValidObjectId($value)
+    {
+        if (is_object($value) && method_exists($value, '__toString')) {
+            $value = (string)$value;
+        } elseif (is_scalar($value)) {
+            $value = (string)$value;
+        } else {
+            return false;
+        }
+
+        return preg_match('/^[0-9a-f]{24}$/i', $value) === 1;
     }
 
     public function delete()
