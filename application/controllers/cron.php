@@ -396,6 +396,10 @@ class Cron extends CI_Controller
 
     public function archiveWebServiceLog()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         set_time_limit(0);
         $results = $this->service_model->archive(MONTHS_TO_STORE_IN_SERVICE_LOG, S3_BUCKET, S3_FOLDER);
         print('Total records archived = ' . $results);
