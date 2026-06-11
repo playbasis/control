@@ -75,7 +75,7 @@ $route['player/password/reset/'.ANY_STRING] = 'user/player_reset_password/$1';
 $route['player/password/reset'] = 'user/player_reset_password';
 $route['player/email/verify/'.ANY_STRING] = 'user/player_verify_email/$1';
 
-$route['404_override'] = 'error/error_404';
+$route['404_override'] = 'error_page/error_404';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

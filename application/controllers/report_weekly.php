@@ -46,7 +46,7 @@ class Report_weekly extends CI_Controller
         $this->load->model('goods_model');
         $this->load->model('player_model');
         $this->load->model('reward_model');
-        $this->load->model('tool/error', 'error');
+        $this->load->model('tool/error_model', 'error');
         $this->load->model('tool/respond', 'resp');
         $this->load->model('tool/utility', 'utility');
         $this->load->library('mongo_db');

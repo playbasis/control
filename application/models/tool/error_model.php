@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Error extends CI_Model
+class Error_model extends CI_Model
 {
     public function __construct()
     {
