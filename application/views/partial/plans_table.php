@@ -267,16 +267,31 @@
 
 <?php
 
-    	$plans = json_decode( file_get_contents( base_url().'json/plans.json') , true );
-    	$full_feature_plan = end($plans);
+        $plans = json_decode( file_get_contents( FCPATH.'json/plans.json') , true );
+        $plans = is_array($plans) ? $plans : array();
+        $full_feature_plan = end($plans);
+        $full_feature_plan = is_array($full_feature_plan) ? $full_feature_plan : array();
+        $full_feature_plan['kits'] = isset($full_feature_plan['kits']) && is_array($full_feature_plan['kits']) ? $full_feature_plan['kits'] : array();
 
     	$res_plans_detail = json_decode( file_get_contents( API_SERVER.'/playbasis/plans' ) );
 
     	$plans_id = array();
-    	if( !empty( $res_plans_detail->response ) ){
+        if( is_object($res_plans_detail) && !empty( $res_plans_detail->response ) && (is_array($res_plans_detail->response) || is_object($res_plans_detail->response)) ){
     		$plans_detail = $res_plans_detail->response;
     		$plans_id = get_plans_id($plans_detail);	
     	}
+
+        $normalize_plan_list = function ($value) {
+            if (is_array($value)) {
+                return $value;
+            }
+
+            if ($value === null || $value === false || $value === '') {
+                return array();
+            }
+
+            return array($value);
+        };
     	
     	function get_plans_id($plans_detail){
     		$plans_id = array();
@@ -331,13 +346,20 @@
 				</div>
 
 				<?php foreach ($full_feature_plan['kits'] as $kit) : ?>
-					<div class="item-plan-kit <?php echo $kit['name'] ?>">
+					<?php
+						if (!is_array($kit)) {
+							continue;
+						}
+						$kit_name = isset($kit['name']) ? $kit['name'] : '';
+						$kit_features = $normalize_plan_list(isset($kit['feature']) ? $kit['feature'] : array());
+					?>
+					<div class="item-plan-kit <?php echo $kit_name ?>">
 						<div class="item-plan-kit-check">
-							<img src="<?php echo base_url();?>image/kits-banner/<?php echo $kit['name'] ?>.jpg">
+							<img src="<?php echo base_url();?>image/kits-banner/<?php echo $kit_name ?>.jpg">
 						</div>
 						<div class="item-plan-kit-detail">
 							<ul>
-								<?php foreach ($kit['feature'] as $feature) : ?>
+								<?php foreach ($kit_features as $feature) : ?>
 									<li>&nbsp;</li>
 								<?php endforeach; ?>
 							</ul>
@@ -352,39 +374,56 @@
 		<div class="plan-content">
 
 			<?php foreach ($plans as $key => $plan) : ?>
-				<div class="item-plan-wrapper <?php echo $plan['name'] ?>">
+				<?php
+					if (!is_array($plan)) {
+						continue;
+					}
+					$plan_name = isset($plan['name']) ? $plan['name'] : '';
+					$plan_title = isset($plan['title']) ? $plan['title'] : '';
+					$plan_price = isset($plan['price']) ? $plan['price'] : '';
+					$plan_main_features = $normalize_plan_list(isset($plan['main_feature']) ? $plan['main_feature'] : array());
+					$plan_kits = isset($plan['kits']) && is_array($plan['kits']) ? $plan['kits'] : array();
+				?>
+				<div class="item-plan-wrapper <?php echo $plan_name ?>">
 					<div class="item-plan-head">
-						<?php if( $plan['name'] == 'free' ): ?>
+						<?php if( $plan_name == 'free' ): ?>
 							<div class="title">&nbsp;</div>
-							<h3 class="price"><?php echo $plan['price'] ?><span></span></h3>
-						<?php elseif ($plan['name'] == 'enterprise' ): ?>
-							<div class="title"><?php echo $plan['title'] ?></div>
-							<h3 class="price"><?php echo $plan['price'] ?><span></span></h3>
+							<h3 class="price"><?php echo $plan_price ?><span></span></h3>
+						<?php elseif ($plan_name == 'enterprise' ): ?>
+							<div class="title"><?php echo $plan_title ?></div>
+							<h3 class="price"><?php echo $plan_price ?><span></span></h3>
 						<?php else: ?>
-							<div class="title"><?php echo $plan['title'] ?></div>
-							<h3 class="price"><?php echo $plan['price'] ?><span>/mo</span></h3>
+							<div class="title"><?php echo $plan_title ?></div>
+							<h3 class="price"><?php echo $plan_price ?><span>/mo</span></h3>
 						<?php endif; ?>
 					</div>
 					<div class="item-plan-main-feature">
 						<ul>
-							<?php foreach ($plan['main_feature'] as $main_feature) : ?>
+							<?php foreach ($plan_main_features as $main_feature) : ?>
 								<li><?php echo $main_feature; ?></li>
 							<?php endforeach; ?>
 						</ul>
 					</div>
 
-					<?php foreach ($plan['kits'] as $kit) : ?>
-						<div class="item-plan-kit <?php echo $kit['name'] ?>" kit-name="<?php echo $kit['name'] ?>">
+					<?php foreach ($plan_kits as $kit) : ?>
+						<?php
+							if (!is_array($kit)) {
+								continue;
+							}
+							$kit_name = isset($kit['name']) ? $kit['name'] : '';
+							$kit_features = $normalize_plan_list(isset($kit['feature']) ? $kit['feature'] : array());
+						?>
+						<div class="item-plan-kit <?php echo $kit_name ?>" kit-name="<?php echo $kit_name ?>">
 							<div class="item-plan-kit-check">
-								<?php if( !empty( array_filter($kit['feature']) ) ): ?>
+								<?php if( !empty( array_filter($kit_features) ) ): ?>
 									<a href="javascript:void(0)" title="View Detail" data-toggle="tooltip" class="btn-view-kit-detail"><i class="ion-ios-checkmark-outline"></i>
-										<img class="check" src="<?php echo base_url();?>image/kits-banner/<?php echo $kit['name'] ?>.jpg">
+										<img class="check" src="<?php echo base_url();?>image/kits-banner/<?php echo $kit_name ?>.jpg">
 									</a>
 								<?php endif; ?>
 							</div>
 							<div class="item-plan-kit-detail">
 								<ul>
-									<?php foreach ($kit['feature'] as $feature) : ?>
+									<?php foreach ($kit_features as $feature) : ?>
 										<li><?php echo !empty($feature)? $feature :  '&nbsp;' ; ?></li>
 									<?php endforeach; ?>
 								</ul>
@@ -394,27 +433,23 @@
 
 					<?php $current_plan_id = !empty( $user_plan['_id']->{'$id'} ) ? $user_plan['_id']->{'$id'} : ''; ?>
 					<div class="item-plan-kit text-center item-plan-action">
-						<?php if( !empty($plans_id[ $plan['name'] ]) ): ?>
-							<?php if( $plan['name'] == 'enterprise' ): ?>
-								
-								<?php if( $current_plan_id != $plans_id[ $plan['name'] ] ): ?>
-									<a href="mailto:info@playbasis.com" data-plan-id="<?php echo $plans_id[ $plan['name'] ];  ?>" class="btn plan-btn plan-enterprise-btn">Email us</a>
+							<?php if( !empty($plans_id[ $plan_name ]) ): ?>
+								<?php if( $plan_name == 'enterprise' ): ?>
+									<?php if( $current_plan_id != $plans_id[ $plan_name ] ): ?>
+										<a href="mailto:info@playbasis.com" data-plan-id="<?php echo $plans_id[ $plan_name ];  ?>" class="btn plan-btn plan-enterprise-btn">Email us</a>
+									<?php else: ?>
+										<span class="current-plan-text">Current Plan</span>
+									<?php endif; ?>
 								<?php else: ?>
-									<span class="current-plan-text">Current Plan</span>
+									<?php if( $current_plan_id != $plans_id[ $plan_name ] ): ?>
+										<a href="javascript:void(0)"  data-plan-id="<?php echo $plans_id[ $plan_name ];  ?>" class="btn plan-btn">Choose Plan</a>
+									<?php else: ?>
+										<span class="current-plan-text">Current Plan</span>
+									<?php endif; ?>
 								<?php endif; ?>
-
-							<?php else: ?>
-								
-								<?php if( $current_plan_id != $plans_id[ $plan['name'] ] ): ?>
-									<a href="javascript:void(0)"  data-plan-id="<?php echo $plans_id[ $plan['name'] ];  ?>" class="btn plan-btn">Choose Plan</a>
-								<?php else: ?>
-									<span class="current-plan-text">Current Plan</span>
-								<?php endif; ?>
-								
 							<?php endif; ?>
-						<?php endif; ?>
 
-					</div>
+						</div>
 
 				</div>
 			<?php endforeach; ?>
