@@ -3,6 +3,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Webhook_model extends MY_Model
 {
+    private function templateScalar($data, $field, $default = '')
+    {
+        if (!isset($data[$field]) || !is_scalar($data[$field])) {
+            return $default;
+        }
+
+        return $data[$field];
+    }
+
+    private function templateText($data, $field)
+    {
+        return (string)$this->templateScalar($data, $field, '');
+    }
+
     public function getTemplate($template_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -89,11 +103,11 @@ class Webhook_model extends MY_Model
         return $this->mongo_db->insert('playbasis_webhook_to_client', array(
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
-            'name' => $data['name'] | '',
-            'url' => $data['url'] | '',
+            'name' => $this->templateText($data, 'name'),
+            'url' => $this->templateText($data, 'url'),
             'body' => isset($data['body']) && !empty($data['body']) ? $data['body'] : null,
-            'status' => (bool)$data['status'],
-            'sort_order' => (int)$data['sort_order'] | 1,
+            'status' => (bool)$this->templateScalar($data, 'status', false),
+            'sort_order' => (int)$this->templateScalar($data, 'sort_order', 0) | 1,
             'deleted' => false,
             'date_modified' => $dt,
             'date_added' => $dt,
@@ -111,13 +125,13 @@ class Webhook_model extends MY_Model
         }
 
         $this->mongo_db->where('_id', new MongoID($template_id));
-        $this->mongo_db->set("name", $data["name"]);
+        $this->mongo_db->set("name", $this->templateText($data, 'name'));
         $this->mongo_db->set('client_id', new MongoID($data['client_id']));
         $this->mongo_db->set('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->set('status', (bool)$data['status']);
-        $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+        $this->mongo_db->set('status', (bool)$this->templateScalar($data, 'status', false));
+        $this->mongo_db->set('sort_order', (int)$this->templateScalar($data, 'sort_order', 0));
         $this->mongo_db->set('body', $data['body']);
-        $this->mongo_db->set('url', $data['url']);
+        $this->mongo_db->set('url', $this->templateText($data, 'url'));
         $this->mongo_db->set("date_modified", new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->update('playbasis_webhook_to_client');
         return true;

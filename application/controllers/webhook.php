@@ -67,6 +67,7 @@ class Webhook extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -123,6 +124,7 @@ class Webhook extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -136,9 +138,10 @@ class Webhook extends MY_Controller
                     $this->buildBodyData($postData);
                 }
 
-                $c = $this->Webhook_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'));
+                $templateName = isset($postData['name']) ? $this->templateText($postData['name']) : '';
+                $c = $this->Webhook_model->getTemplateByName($this->User_model->getSiteId(), $templateName);
                 $info = $this->Webhook_model->getTemplate($template_id);
-                if ($c === 0 || ($c === 1 && $info && $info['name'] == $this->input->post('name'))) {
+                if ($c === 0 || ($c === 1 && $info && $info['name'] == $templateName)) {
                     $success = $this->Webhook_model->editTemplate($template_id, array_merge($postData, array(
                         'client_id' => $this->User_model->getClientId(),
                         'site_id' => $this->User_model->getSiteId(),
@@ -334,18 +337,20 @@ class Webhook extends MY_Controller
             $info = $this->Webhook_model->getTemplate($template_id);
         }
 
-        if ($this->input->post('name')) {
-            $this->data['name'] = $this->input->post('name');
-        } elseif (!empty($info)) {
-            $this->data['name'] = $info['name'];
+        $name = $this->input->post('name');
+        if ($name !== false) {
+            $this->data['name'] = $this->templateText($name);
+        } elseif (!empty($info) && isset($info['name'])) {
+            $this->data['name'] = $this->templateText($info['name']);
         } else {
             $this->data['name'] = '';
         }
 
-        if ($this->input->post('url')) {
-            $this->data['url'] = $this->input->post('url');
-        } elseif (!empty($info)) {
-            $this->data['url'] = $info['url'];
+        $url = $this->input->post('url');
+        if ($url !== false) {
+            $this->data['url'] = $this->templateText($url);
+        } elseif (!empty($info) && isset($info['url'])) {
+            $this->data['url'] = $this->templateText($info['url']);
         } else {
             $this->data['url'] = '';
         }
@@ -358,16 +363,18 @@ class Webhook extends MY_Controller
             $this->data['body'] = '';
         }
 
-        if ($this->input->post('sort_order')) {
-            $this->data['sort_order'] = $this->input->post('sort_order');
-        } elseif (!empty($info)) {
-            $this->data['sort_order'] = $info['sort_order'];
+        $sort_order = $this->input->post('sort_order');
+        if ($sort_order !== false) {
+            $this->data['sort_order'] = $this->templateText($sort_order);
+        } elseif (!empty($info) && isset($info['sort_order'])) {
+            $this->data['sort_order'] = $this->templateText($info['sort_order']);
         } else {
             $this->data['sort_order'] = 0;
         }
 
-        if ($this->input->post('status')) {
-            $this->data['status'] = $this->input->post('status');
+        $status = $this->input->post('status');
+        if ($status !== false) {
+            $this->data['status'] = (bool)$this->templateText($status);
         } elseif (!empty($info)) {
             $this->data['status'] = $info['status'];
         } else {
@@ -411,6 +418,19 @@ class Webhook extends MY_Controller
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
+    private function normalizeTemplatePost()
+    {
+        foreach (array('name', 'url', 'sort_order', 'status') as $field) {
+            if (isset($_POST[$field]) && !is_scalar($_POST[$field])) {
+                $_POST[$field] = '';
+            }
+        }
+    }
+
+    private function templateText($value)
+    {
+        return is_scalar($value) ? (string)$value : '';
+    }
 
     private function validateModify()
     {
