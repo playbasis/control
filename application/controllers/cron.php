@@ -1480,6 +1480,10 @@ class Cron extends CI_Controller
 
     public function processImportTransaction()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
@@ -1571,6 +1575,10 @@ class Cron extends CI_Controller
 
     public function processImportPlayer()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
@@ -1626,6 +1634,10 @@ class Cron extends CI_Controller
 
     public function processImportStoreOrg()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
@@ -1693,6 +1705,10 @@ class Cron extends CI_Controller
 
     public function processImportContent()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
