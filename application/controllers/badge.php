@@ -318,6 +318,10 @@ class Badge extends MY_Controller
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $slot_total = 0;
         $this->data['slots'] = $slot_total;
+        $selected_badges = $this->input->post('selected');
+        if (!is_array($selected_badges)) {
+            $selected_badges = array();
+        }
 
         if ($this->User_model->getUserGroupId() == $setting_group_id) {
             $data['client_id'] = $client_id;
@@ -392,8 +396,7 @@ class Badge extends MY_Controller
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
                     'tags' => isset($result['tags']) ? $result['tags'] : null,
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($result['_id'], $selected_badges),
                     'is_public' => $badgeIsPublic,
                     // 'sponsor' => $result['sponsor']
                 );
@@ -503,8 +506,7 @@ class Badge extends MY_Controller
                                 'visible' => (isset($badge_info['visible']) && $badge_info['visible'] == false) ? false: true ,
                                 'image' => $image,
                                 'sort_order' => $badge_info['sort_order'],
-                                'selected' => ($this->input->post('selected') && in_array($badge_info['_id'],
-                                        $this->input->post('selected'))),
+                                'selected' => in_array($badge_info['_id'], $selected_badges),
                                 'sponsor' => isset($badge_info['sponsor']) ? $badge_info['sponsor'] : null,
                                 "is_template" => isset($badge_info["is_template"]) ? $badge_info["is_template"] : false
                             );
@@ -593,6 +595,10 @@ class Badge extends MY_Controller
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $slot_total = 0;
         $this->data['slots'] = $slot_total;
+        $selected_badges = $this->input->post('selected');
+        if (!is_array($selected_badges)) {
+            $selected_badges = array();
+        }
 
         if ($this->User_model->getUserGroupId() == $setting_group_id) {
             $data['client_id'] = $client_id;
@@ -648,8 +654,7 @@ class Badge extends MY_Controller
                     'visible' => (isset($result['visible']) && $result['visible'] == false) ? false: true ,
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($result['_id'], $selected_badges),
                     'is_public' => $badgeIsPublic,
                     'sponsor' => isset($badge_info['sponsor']) ? $badge_info['sponsor'] : null
                 );
@@ -728,8 +733,7 @@ class Badge extends MY_Controller
                                 'visible' => (isset($badge_info['visible']) && $badge_info['visible'] == false) ? false: true ,
                                 'image' => $image,
                                 'sort_order' => $badge_info['sort_order'],
-                                'selected' => ($this->input->post('selected') && in_array($badge_info['_id'],
-                                        $this->input->post('selected'))),
+                                'selected' => in_array($badge_info['_id'], $selected_badges),
                                 'sponsor' => isset($badge_info['sponsor']) ? $badge_info['sponsor'] : null
                             );
                         }
