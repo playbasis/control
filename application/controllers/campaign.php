@@ -20,6 +20,21 @@ class Campaign extends MY_Controller
         $this->lang->load("campaign", $lang['folder']);
     }
 
+    private function scalarValue($value, $default = '')
+    {
+        if (!is_scalar($value)) {
+            return $default;
+        }
+
+        return trim((string)$value);
+    }
+
+    private function campaignImage($campaign_data)
+    {
+        $image = isset($campaign_data['image']) ? $this->scalarValue($campaign_data['image']) : '';
+        return $image === '' ? '' : html_entity_decode($image, ENT_QUOTES, 'UTF-8');
+    }
+
     public function index()
     {
         if (!$this->validateAccess()) {
@@ -81,7 +96,7 @@ class Campaign extends MY_Controller
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
                 $data['name'] = $campaign_data['name'];
-                $data['image'] = isset($campaign_data['image']) ? html_entity_decode($campaign_data['image'], ENT_QUOTES, 'UTF-8') : '';
+                $data['image'] = $this->campaignImage($campaign_data);
                 $data['date_start'] = null;
                 $data['date_end'] = null;
                 $data['weight'] = isset($campaign_data['weight']) && $campaign_data['weight'] ? intval($campaign_data['weight']) : 0;
@@ -145,7 +160,7 @@ class Campaign extends MY_Controller
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['_id'] = $campaign_id;
                 $data['name'] = $campaign_data['name'];
-                $data['image'] = isset($campaign_data['image']) ? html_entity_decode($campaign_data['image'], ENT_QUOTES, 'UTF-8') : '';
+                $data['image'] = $this->campaignImage($campaign_data);
                 $data['date_start'] = null;
                 $data['date_end'] = null;
                 $data['weight'] = isset($campaign_data['weight']) && $campaign_data['weight'] ? intval($campaign_data['weight']) : 0;
@@ -346,8 +361,9 @@ class Campaign extends MY_Controller
             $this->data['name'] = '';
         }
 
-        if ($this->input->post('image')) {
-            $this->data['image'] = $this->input->post('image');
+        $postedImage = $this->scalarValue($this->input->post('image'));
+        if ($postedImage !== '') {
+            $this->data['image'] = $postedImage;
         } elseif (isset($campaign_info['image']) && !empty($campaign_info['image'])) {
             $this->data['image'] = $campaign_info['image'];
         } else {
@@ -400,6 +416,11 @@ class Campaign extends MY_Controller
             $this->data['tags'] = $campaign_info['tags'];
         } else {
             $this->data['tags'] = '';
+        }
+        if (is_string($this->data['tags']) && $this->data['tags'] !== '') {
+            $this->data['tags'] = explode(',', $this->data['tags']);
+        } elseif (!is_array($this->data['tags'])) {
+            $this->data['tags'] = array();
         }
 
         $this->load->vars($this->data);
