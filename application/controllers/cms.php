@@ -43,12 +43,12 @@ class CMS extends MY_Controller
 
         $user_info = $this->User_model->getUserInfo($this->User_model->getId());
         $userGroup = $this->User_group_model->getUserGroupInfo($user_info['user_group_id']);
-        $permission = $userGroup['permission'];
-        $access = $permission['access'];
-        $modify = $permission['modify'];
+        $permission = isset($userGroup['permission']) && is_array($userGroup['permission']) ? $userGroup['permission'] : array();
+        $access = isset($permission['access']) && is_array($permission['access']) ? $permission['access'] : array();
+        $modify = isset($permission['modify']) && is_array($permission['modify']) ? $permission['modify'] : array();
 
-        $editor = array_search('cms', $modify) != -1 ? true : false;
-        $contributor = array_search('cms', $access) != -1 ? true : false;
+        $editor = array_search('cms', $modify) !== false ? true : false;
+        $contributor = array_search('cms', $access) !== false ? true : false;
 
         if ($editor || $contributor) {
             $this->data['role'] = $editor ? 'editor' : 'contributor';

@@ -1923,10 +1923,10 @@ class User extends MY_Controller
             $site_slug = $client == $cms['client_id'] ? $site_slug : false;
 
             $userGroup = $this->User_group_model->getUserGroupInfo($user['user_group_id']);
-            $permission = $userGroup['permission'];
-            $modify = $permission['modify'];
+            $permission = isset($userGroup['permission']) && is_array($userGroup['permission']) ? $userGroup['permission'] : array();
+            $modify = isset($permission['modify']) && is_array($permission['modify']) ? $permission['modify'] : array();
 
-            $editor = array_search('cms', $modify) != -1 ? true : false;
+            $editor = array_search('cms', $modify) !== false ? true : false;
 
             $role = $editor ? 'editor' : 'contributor';
             $response = array(
