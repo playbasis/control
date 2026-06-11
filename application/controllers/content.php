@@ -1271,6 +1271,34 @@ class Content extends MY_Controller
 
         $array_contents = json_decode($this->input->post('array_contents'),true);
         $array_details = $this->input->post('array_details');
+        if (!is_array($array_contents)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_contents as $content) {
+            if (!is_array($content) || !isset($content['node_id']) || !is_scalar($content['node_id']) || $content['node_id'] === '') {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
+        if (!is_array($array_details)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_contents as $content_index => $content) {
+            if (!isset($array_details[$content_index]) || !is_array($array_details[$content_index]) ||
+                !isset($array_details[$content_index]['title'], $array_details[$content_index]['summary'], $array_details[$content_index]['detail'])) {
+                $this->jsonErrorResponse();
+                return;
+            }
+            if (!is_scalar($array_details[$content_index]['title']) ||
+                !is_scalar($array_details[$content_index]['summary']) ||
+                !is_scalar($array_details[$content_index]['detail'])) {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $validation_result = array();
