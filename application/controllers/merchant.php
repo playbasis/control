@@ -434,11 +434,23 @@ class Merchant extends MY_Controller
             $result = null;
             if (!empty($remove_id)) {
                 if (is_array($remove_id)) {
+                    foreach ($remove_id as $id_entry) {
+                        if (preg_match('/^[0-9a-f]{24}$/i', $id_entry) !== 1) {
+                            $this->output->set_status_header('401');
+                            echo json_encode(array('status' => 'error'));
+                            die();
+                        }
+                    }
                     foreach ($remove_id as &$id_entry) {
                         $id_entry = new MongoId($id_entry);
                     }
                     $result = $this->Merchant_model->removeBranchesByIdArray($remove_id);
                 } elseif (is_string($remove_id)) {
+                    if (preg_match('/^[0-9a-f]{24}$/i', $remove_id) !== 1) {
+                        $this->output->set_status_header('401');
+                        echo json_encode(array('status' => 'error'));
+                        die();
+                    }
                     $result = $this->Merchant_model->removeBranchById($remove_id);
                 }
             }
