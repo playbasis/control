@@ -4,6 +4,17 @@ require APPPATH . '/libraries/MY_Controller.php';
 
 class Badge extends MY_Controller
 {
+    private function normalizeTags($tags)
+    {
+        if (is_array($tags)) {
+            return $tags;
+        }
+        if (is_string($tags)) {
+            return explode(',', $tags);
+        }
+        return array();
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -383,6 +394,7 @@ class Badge extends MY_Controller
                     $category = $this->Badge_model->retrieveItemCategoryById($result['category']);
                     $result['category'] = $category['name'];
                 }
+                $result['tags'] = $this->normalizeTags(isset($result['tags']) ? $result['tags'] : null);
                 $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
                 $this->data['badges'][] = array(
                     'badge_id' => $result['_id'],
@@ -494,6 +506,7 @@ class Badge extends MY_Controller
                             $badge_info['category'] = $category['name'];
                         }
                         if (!$badge_info['deleted']) {
+                            $badge_info['tags'] = $this->normalizeTags(isset($badge_info['tags']) ? $badge_info['tags'] : null);
                             $this->data['badges'][] = array(
                                 'badge_id' => $badge_info['_id'],
                                 'name' => $badge_info['name'],
@@ -721,6 +734,7 @@ class Badge extends MY_Controller
                             $badge_info['category'] = $category['name'];
                         }
                         if (!$badge_info['deleted']) {
+                            $badge_info['tags'] = $this->normalizeTags(isset($badge_info['tags']) ? $badge_info['tags'] : null);
                             $this->data['badges'][] = array(
                                 'badge_id' => $badge_info['_id'],
                                 'name' => $badge_info['name'],
