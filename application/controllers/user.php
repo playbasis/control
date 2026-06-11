@@ -2104,17 +2104,32 @@ class User extends MY_Controller
 
         return $OTP;
     }
+
+    private function requireLoggedInJsonUserId()
+    {
+        $user_id = $this->session->userdata('user_id');
+        if (!$user_id) {
+            echo json_encode(array('status' => 'fail', 'msg' => 'Please login to continue'));
+            return false;
+        }
+
+        return $user_id;
+    }
     
     public function requestOTP()
     {
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-        $user_id = $this->session->userdata('user_id');
+        $user_id = $this->requireLoggedInJsonUserId();
+        if (!$user_id) {
+            return;
+        }
+
         $phone_number = $this->input->post('phone_number');
 
         $check_phone_number = $this->User_model->checkPhoneNumber($phone_number);
 
         if(is_null($check_phone_number)) {
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
             $OTP_code = $this->generateOTP(6);
 
             // send SMS
@@ -2142,11 +2157,19 @@ class User extends MY_Controller
 
     public function resendOTP()
     {
+        $user_id = $this->requireLoggedInJsonUserId();
+        if (!$user_id) {
+            return;
+        }
+
+        $user_info = $this->User_model->getUserInfo($user_id);
+        if (!$user_info) {
+            echo json_encode(array('status' => 'fail', 'msg' => 'User not found'));
+            return;
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
-        $user_id = $this->session->userdata('user_id');
-        $user_info = $this->User_model->getUserInfo($user_id);
-
         $phone_number = $user_info['phone_number'];
         $OTP_code = $this->generateOTP(6);
 
@@ -2172,9 +2195,17 @@ class User extends MY_Controller
 
     public function verifyOTP()
     {
-        $user_id = $this->session->userdata('user_id');
+        $user_id = $this->requireLoggedInJsonUserId();
+        if (!$user_id) {
+            return;
+        }
+
         $OTP_code = $this->input->post('otp_number');
         $user_info = $this->User_model->getUserInfo($user_id);
+        if (!$user_info) {
+            echo json_encode(array('status' => 'fail', 'msg' => 'The OTP is invalid'));
+            return;
+        }
 
         if(isset($user_info['otp_code']) && ($OTP_code == $user_info['otp_code'])){
             $now = new Datetime(datetimeMongotoReadable(new MongoDate()));
