@@ -613,6 +613,10 @@ class Cron extends CI_Controller
     /* Improve quality of stored FullContact records by using Facebook/Twitter ID */
     public function improveFullContactForDemo()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $results = $this->player_model->findPlayersBySiteId(new MongoId(DEMO_SITE_ID));
         foreach ($results as $result) {
             print($result['email'] . "\n");
