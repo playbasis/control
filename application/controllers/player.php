@@ -153,13 +153,22 @@ class Player extends MY_Controller
             |lelel:1-6|gender:m|action:like|action_value:1-100|reward:coin|reward_value:1-100
         */
 
-        if (!$this->input->get('filter_sort')) {
+        $paremSet = $this->input->get('filter_sort');
+        if (!is_string($paremSet) || $paremSet === '') {
             return;
         }
-        $paremSet = $this->input->get('filter_sort');
+
+        if ($this->hasInvalidObjectIdFilter($paremSet)) {
+            $this->output->set_output($this->invalidFilterIdResponse());
+            return;
+        }
+
         $paramSet = explode("|", $paremSet);
 
         $paramSet = array_filter($paramSet);
+        if (!$paramSet) {
+            return;
+        }
 
         $value = end($paramSet);
 
@@ -407,6 +416,10 @@ class Player extends MY_Controller
 
     public function actionDonut()
     {
+        if ($this->hasInvalidObjectIdFilter($this->input->get('filter_sort'))) {
+            return $this->invalidFilterIdResponse();
+        }
+
         $json = array();
 
         $data = $this->filterData();
@@ -480,6 +493,10 @@ class Player extends MY_Controller
 
     public function rewardDonut()
     {
+        if ($this->hasInvalidObjectIdFilter($this->input->get('filter_sort'))) {
+            return $this->invalidFilterIdResponse();
+        }
+
         $json = array();
 
         $data = $this->filterData();
@@ -568,11 +585,67 @@ class Player extends MY_Controller
         return $output;
     }
 
+    private function invalidFilterIdResponse()
+    {
+        return json_encode(array(
+            'donut' => array(),
+            'options' => array(),
+            'error' => 'invalid filter id'
+        ));
+    }
+
+    private function hasInvalidObjectIdFilter($filter_sort)
+    {
+        if (!is_string($filter_sort) || $filter_sort === '') {
+            return false;
+        }
+
+        $sort = explode('|', $filter_sort);
+
+        foreach ($sort as $value) {
+            $sort_explode = explode(':', $value, 2);
+            $filter_name = isset($sort_explode[0]) ? $sort_explode[0] : '';
+
+            if ($filter_name !== 'action_id' && $filter_name !== 'reward_id') {
+                continue;
+            }
+
+            $filter_value = isset($sort_explode[1]) ? $sort_explode[1] : '';
+            $filter_ids = explode('-', $filter_value);
+            $has_id = false;
+
+            foreach ($filter_ids as $filter_id) {
+                if ($filter_id === '') {
+                    continue;
+                }
+
+                $has_id = true;
+
+                if (!$this->isMongoId($filter_id)) {
+                    return true;
+                }
+            }
+
+            if (!$has_id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
+    }
+
     private function filterData()
     {
 
-        if ($this->input->get('filter_sort')) {
-            $sort = explode('|', $this->input->get('filter_sort'));
+        $sort_data = array();
+        $filter_sort = $this->input->get('filter_sort');
+        if (is_string($filter_sort) && $filter_sort !== '') {
+            $sort = explode('|', $filter_sort);
 
             if (is_array($sort)) {
                 foreach ($sort as $value) {
@@ -600,9 +673,6 @@ class Player extends MY_Controller
                     }
                 }
             }
-
-        } else {
-            $sort_data = array();
         }
 
         $data = array(
@@ -629,10 +699,16 @@ class Player extends MY_Controller
             'page' => 1
         );
 
-        foreach ($paramList as $key => $value) {
-            if ($this->input->get($key)) {
-                $paramList[$key] = $this->input->get($key);
+        foreach (array('sort', 'order') as $key) {
+            $value = $this->input->get($key);
+            if (is_scalar($value) && $value !== '') {
+                $paramList[$key] = (string)$value;
             }
+        }
+
+        $page = $this->input->get('page');
+        if (is_scalar($page) && is_numeric($page) && intval($page) > 0) {
+            $paramList['page'] = intval($page);
         }
         return $paramList;
     }
