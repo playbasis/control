@@ -460,6 +460,11 @@ class App extends MY_Controller
             redirect('app', 'refresh');
         }
 
+        if (!$this->checkOwnerPlatForm($platform_id)) {
+            $this->session->set_flashdata("fail", $this->lang->line("error_permission"));
+            redirect('app', 'refresh');
+        }
+
         $app = $this->App_model->getPlatform($platform_id);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -532,6 +537,11 @@ class App extends MY_Controller
     public function add_platform($app_id)
     {
         if (preg_match('/^[0-9a-f]{24}$/i', (string)$app_id) !== 1) {
+            redirect('app', 'refresh');
+        }
+
+        if (!$this->checkOwnerApp($app_id)) {
+            $this->session->set_flashdata("fail", $this->lang->line("error_permission"));
             redirect('app', 'refresh');
         }
 
@@ -637,6 +647,11 @@ class App extends MY_Controller
     public function edit_app($app_id)
     {
         if (preg_match('/^[0-9a-f]{24}$/i', (string)$app_id) !== 1) {
+            redirect('app', 'refresh');
+        }
+
+        if (!$this->checkOwnerApp($app_id)) {
+            $this->session->set_flashdata("fail", $this->lang->line("error_permission"));
             redirect('app', 'refresh');
         }
 
