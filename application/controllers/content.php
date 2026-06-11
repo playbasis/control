@@ -1286,13 +1286,14 @@ class Content extends MY_Controller
                                 $language_id = $chk_abbr['_id'];
                             }else{
                                 //no language and abbreviation found so create new language
+                                $language_tags = (isset($content_to_language['tags']) && is_array($content_to_language['tags'])) ? implode($content_to_language['tags']) : null;
                                 $language_id = $this->Language_model->insertLanguage(array(
                                     'client_id' => $client_id,
                                     'site_id' => $site_id,
                                     'language' =>$content_to_language['language'],
                                     'abbreviation' =>$content_to_language['abbreviation'],
                                     'status' => true,
-                                    'tags' => isset($content_to_language['tags']) ? implode($content_to_language['tags']) : null,
+                                    'tags' => $language_tags,
                                 ));
                             }
                         }
