@@ -87,6 +87,10 @@ class Cron extends CI_Controller
 
     public function notifyInactiveClients()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $today = time();
         $refDate = strtotime("-" . ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS . " day", $today);
         $clients = $this->client_model->listAllActiveClients($refDate);
@@ -186,6 +190,10 @@ class Cron extends CI_Controller
 
     public function notifyNearLimitUsage()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $sites = $this->client_model->listAllActivesSites();
         if ($sites) {
             foreach ($sites as $site) {
@@ -248,6 +256,10 @@ class Cron extends CI_Controller
 
     public function remindClientsToSetupSubscription()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $clients = $this->client_model->listClientsWithoutDateBilling();
         if ($clients) {
             foreach ($clients as $client) {
@@ -299,6 +311,10 @@ class Cron extends CI_Controller
 
     public function remindClientsEndOfTrialPeriod()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $clients = $this->client_model->listClientsWithDateBilling();
         if ($clients) {
             foreach ($clients as $client) {
@@ -364,6 +380,10 @@ class Cron extends CI_Controller
 
     public function notifyClientsShutdownAPI()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $today = time();
         $clients = $this->client_model->listExpiredClients($today);
         if ($clients) {
