@@ -49,6 +49,7 @@ $lang['error_upload']           = 'Our system cannot access your uploaded file.'
 $lang['error_file_too_large']           = 'File too large. File must be less than 2 megabytes.';
 $lang['error_type_accepted']           = 'Invalid file type. Only JSON types are accepted.';
 $lang['error_json']           = 'Invalid JSON data.';
+$lang['error_selection']           = 'Invalid selected webhook.';
 
 $lang['button_watch']          	= 'Watch';
 $lang['button_delete']          	= 'Delete';

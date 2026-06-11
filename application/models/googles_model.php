@@ -47,6 +47,11 @@ class Googles_model extends MY_Model
 
     public function getSubscription($resource_id)
     {
+        $resource_id = $this->normalizeWebhookId($resource_id);
+        if ($resource_id === false) {
+            return null;
+        }
+
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $this->session->userdata('client_id'));
         $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
@@ -87,12 +92,27 @@ class Googles_model extends MY_Model
 
     public function removeWebhook($channel_id, $resource_id)
     {
+        $channel_id = $this->normalizeWebhookId($channel_id);
+        $resource_id = $this->normalizeWebhookId($resource_id);
+        if ($channel_id === false || $resource_id === false) {
+            return false;
+        }
+
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $this->session->userdata('client_id'));
         $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
         $this->mongo_db->where('channel_id', $channel_id);
         $this->mongo_db->where('resource_id', $resource_id);
         $this->mongo_db->delete_all('playbasis_google_subscription');
+    }
+
+    private function normalizeWebhookId($value)
+    {
+        if ($value === false || $value === null || $value === '' || !is_scalar($value)) {
+            return false;
+        }
+
+        return (string)$value;
     }
 
     public function listAlmostExpiredCalendarChannels()
