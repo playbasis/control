@@ -174,12 +174,24 @@ class Merchant extends MY_Controller
         $this->error['message'] = null;
 
         if ($this->input->post('selected') && $this->error['message'] == null) {
-            foreach ($this->input->post('selected') as $merchant_id) {
-                $this->Merchant_model->deleteMerchant($merchant_id);
+            $selected_merchants = $this->input->post('selected');
+            foreach ($selected_merchants as $merchant_id) {
+                if (preg_match('/^[0-9a-f]{24}$/i', $merchant_id) !== 1) {
+                    $this->error['warning'] = 'Invalid merchant id';
+                    break;
+                }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/merchant', 'refresh');
+            if (!isset($this->error['warning'])) {
+                foreach ($selected_merchants as $merchant_id) {
+                    $this->Merchant_model->deleteMerchant($merchant_id);
+                }
+            }
+
+            if (!isset($this->error['warning'])) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/merchant', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -187,6 +199,10 @@ class Merchant extends MY_Controller
 
     public function update($merchant_id)
     {
+        if (preg_match('/^[0-9a-f]{24}$/i', $merchant_id) !== 1) {
+            redirect('/merchant', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -356,6 +372,11 @@ class Merchant extends MY_Controller
 
         if (!empty($merchant_id)) {
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                if (preg_match('/^[0-9a-f]{24}$/i', $merchant_id) !== 1) {
+                    $this->output->set_status_header('401');
+                    echo json_encode(array('status' => 'error'));
+                    die();
+                }
                 $client_id = $this->User_model->getClientId();
                 $site_id = $this->User_model->getSiteId();
 
@@ -552,6 +573,10 @@ class Merchant extends MY_Controller
         $this->data['main'] = 'merchant_form';
 
         if (isset($merchant_id) && ($merchant_id != 0)) {
+            if (preg_match('/^[0-9a-f]{24}$/i', $merchant_id) !== 1) {
+                redirect('/merchant', 'refresh');
+            }
+
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
 
