@@ -21,6 +21,26 @@ class Custompoints extends MY_Controller
         $this->lang->load("custompoints", $lang['folder']);
     }
 
+    private function scalarPostValue($field, $default = null)
+    {
+        $value = $this->input->post($field);
+        if (!is_scalar($value)) {
+            return $default;
+        }
+
+        return trim((string)$value);
+    }
+
+    private function requiredFieldMessage($label)
+    {
+        $required = $this->lang->line('required');
+        if ($required) {
+            return sprintf($required, $this->lang->line($label));
+        }
+
+        return $this->lang->line($label);
+    }
+
     public function index()
     {
 
@@ -110,11 +130,20 @@ class Custompoints extends MY_Controller
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 $custompoints_data = $this->input->post();
+                $name = $this->scalarPostValue('name');
+                if ($name === null || $name === '') {
+                    $this->data['message'] = $this->requiredFieldMessage('entry_name');
+                }
 
-                $chk_name = $this->Custompoints_model->getCustompointByName( $site_id, $custompoints_data['name']);
+                if ($this->data['message'] == null) {
+                    $custompoints_data['name'] = $name;
+                    $custompoints_data['tags'] = $this->scalarPostValue('tags', '');
+                }
+
+                $chk_name = $this->data['message'] == null ? $this->Custompoints_model->getCustompointByName( $site_id, $custompoints_data['name']) : false;
                 if($chk_name){
                     $this->data['message'] = $this->lang->line('text_error_duplicate_custom_point');
-                }else {
+                } elseif ($this->data['message'] == null) {
                     $data['client_id'] = $this->User_model->getClientId();
                     $data['site_id'] = $this->User_model->getSiteId();
                     $data['name'] = $custompoints_data['name'];
@@ -399,8 +428,9 @@ class Custompoints extends MY_Controller
             $this->data['changing_per_period'] = $custompoints_info['energy_props']['changing_per_period'];
         }
 
-        if ($this->input->post('tags')) {
-            $this->data['tags'] = explode(',', $this->input->post('tags'));
+        $postedTags = $this->scalarPostValue('tags', '');
+        if ($postedTags !== '') {
+            $this->data['tags'] = explode(',', $postedTags);
         } elseif (isset($custompoints_info['tags'])) {
             $this->data['tags'] = $custompoints_info['tags'];
         } else {
@@ -459,11 +489,20 @@ class Custompoints extends MY_Controller
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 $custompoints_data = $this->input->post();
+                $name = $this->scalarPostValue('name');
+                if ($name === null || $name === '') {
+                    $this->data['message'] = $this->requiredFieldMessage('entry_name');
+                }
 
-                $chk_name = $this->Custompoints_model->getCustompointByNameButNotID( $this->User_model->getSiteId(), $custompoints_data['name'], $custompoints_id);
+                if ($this->data['message'] == null) {
+                    $custompoints_data['name'] = $name;
+                    $custompoints_data['tags'] = $this->scalarPostValue('tags', '');
+                }
+
+                $chk_name = $this->data['message'] == null ? $this->Custompoints_model->getCustompointByNameButNotID( $this->User_model->getSiteId(), $custompoints_data['name'], $custompoints_id) : false;
                 if($chk_name){
                     $this->data['message'] = $this->lang->line('text_error_duplicate_custom_point');
-                }else {
+                } elseif ($this->data['message'] == null) {
 
                     $data['client_id'] = $this->User_model->getClientId();
                     $data['site_id'] = $this->User_model->getSiteId();
