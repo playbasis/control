@@ -205,6 +205,10 @@ class Push extends MY_Controller
 
         $this->data['templates'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+        $selected_templates = $this->input->post('selected');
+        if (!is_array($selected_templates)) {
+            $selected_templates = array();
+        }
 
         $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order');
 
@@ -219,8 +223,7 @@ class Push extends MY_Controller
                     'body' => $template['body'],
                     'status' => $template['status'],
                     'sort_order' => $template['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($template['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($template['_id'], $selected_templates),
                 );
             }
         }
