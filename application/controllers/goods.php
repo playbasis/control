@@ -2491,7 +2491,12 @@ class Goods extends MY_Controller
 
     public function getWhitelistFile()
     {
-        $whitelist_file = $this->Goods_model->retrieveWhiteListFile($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('distinct_id'));
+        $distinct_id = $this->input->get('distinct_id');
+        if (!$this->isValidWhitelistDistinctId($distinct_id)) {
+            return;
+        }
+
+        $whitelist_file = $this->Goods_model->retrieveWhiteListFile($this->User_model->getClientId(),$this->User_model->getSiteId(),$distinct_id);
 
         if(isset($whitelist_file['file_content'])){
             $this->load->helper('export_data');
@@ -2506,5 +2511,10 @@ class Goods extends MY_Controller
             $exporter->finalize();
         }
 
+    }
+
+    private function isValidWhitelistDistinctId($distinct_id)
+    {
+        return is_string($distinct_id) && preg_match('/^[0-9a-f]{24}$/i', $distinct_id) === 1;
     }
 }
