@@ -337,11 +337,14 @@ class Report_weekly extends CI_Controller
         $arr = array();
         /* process group */
 
-        $group_list = $this->Goods_model->getGroupsList($opts['site_id'], array('filter_group' => true));;
+        $group_list = $this->goods_model->getGroupsList($opts['site_id'], array('filter_group' => true));;
         $in_goods = array();
         $group_data = array();
         foreach ($group_list as $group_name){
             $goods_group_id =  $this->goods_model->getGoodsIDByName($opts['client_id'], $opts['site_id'], "", $group_name['name'], false);
+            if (!$this->isMongoId($goods_group_id)) {
+                continue;
+            }
             array_push($in_goods, new MongoId($goods_group_id));
         }
         $opts['specific'] = array('$or' => array(array("group" => array('$exists' => false ) ), array("goods_id" => array('$in' => $in_goods ) ) ));
@@ -529,6 +532,11 @@ class Report_weekly extends CI_Controller
             $this->get_basic_stat('GLOBAL_MAU_', $conf, $master['GLOBAL_MAU_AVERAGE_NUM'],
                 $master['GLOBAL_MAU_AVERAGE_PREV_NUM'])
         );
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 }
 
