@@ -159,9 +159,13 @@ class Report extends MY_Controller
 
 
         if ($this->input->get('action_id')) {
-            $filter_action_id = $this->input->get('action_id');
-            $parameter_url .= "&action_id=" . $filter_action_id;
-            $filter_action_id = explode(',', $filter_action_id);
+            $action_id = $this->input->get('action_id');
+            $parameter_url .= "&action_id=" . $action_id;
+            $filter_action_id = $this->parseActionIds($action_id);
+            if ($filter_action_id === false) {
+                redirect('/report/action', 'refresh');
+                return;
+            }
             $filter_action = array();
             foreach ($filter_action_id as $action){
                 $match =  array_search(new MongoId($action), array_column($this->data['actions'],'action_id'));
@@ -341,8 +345,11 @@ class Report extends MY_Controller
         }
 
         if ($this->input->get('action_id')) {
-            $filter_action_id = $this->input->get('action_id');
-            $filter_action_id = explode(',', $filter_action_id);
+            $filter_action_id = $this->parseActionIds($this->input->get('action_id'));
+            if ($filter_action_id === false) {
+                redirect('/report/action', 'refresh');
+                return;
+            }
             $filter_action = array();
             foreach ($filter_action_id as $action){
                 $match =  array_search(new MongoId($action), array_column($this->data['actions'],'action_id'));
@@ -428,6 +435,20 @@ class Report extends MY_Controller
             $dateTimeMongo = "0000-00-00 00:00:00";
         }
         return $dateTimeMongo;
+    }
+
+    private function parseActionIds($action_id)
+    {
+        $ids = explode(',', $action_id);
+        $valid_ids = array();
+        foreach ($ids as $id) {
+            $id = trim($id);
+            if (!preg_match('/^[0-9a-f]{24}$/i', (string)$id)) {
+                return false;
+            }
+            $valid_ids[] = $id;
+        }
+        return $valid_ids;
     }
 
     private function validateAccess()
