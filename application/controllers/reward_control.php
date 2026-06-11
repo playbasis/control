@@ -273,11 +273,12 @@ class Reward_control extends MY_Controller
             
             $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
-            if (empty($_FILES) || !isset($_FILES['file']['tmp_name']) || $_FILES['file']['tmp_name'] == '') {
+            if (!$this->isValidUploadEntry('file')) {
                 $this->data['message'] = $this->lang->line('error_file');
             }
 
             if ( $this->data['message'] == null && $this->form_validation->run() ) {
+                $upload = $_FILES['file'];
 
                 $maxsize = 4194304;
                 $csv_mimetypes = array(
@@ -293,16 +294,16 @@ class Reward_control extends MY_Controller
                     'application/txt',
                 );
 
-                if (($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
+                if (($upload['size'] >= $maxsize) || ($upload["size"] == 0)) {
                     $this->data['message'] = $this->lang->line('error_file_too_large');
                 }
 
-                if (!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
+                if (!in_array($upload['type'], $csv_mimetypes) && (!empty($upload["type"]))) {
                     $this->data['message'] = $this->lang->line('error_type_accepted');
                 }
 
-                $handle = fopen($_FILES['file']['tmp_name'], "r");
-                if (!$handle) {
+                $handle = $this->data['message'] == null ? fopen($upload['tmp_name'], "r") : false;
+                if ($this->data['message'] == null && !$handle) {
                     $this->data['message'] = $this->lang->line('error_upload');
                 }
 
@@ -310,7 +311,7 @@ class Reward_control extends MY_Controller
                     $data = $this->input->post();
                     $data['client_id'] = $client_id;
                     $data['site_id'] = $site_id;
-                    $data['file_name'] = $_FILES['file']['name'];
+                    $data['file_name'] = $upload['name'];
 
                     if($type == 'sequence_reward'){
                         // prepare data of sequence number
@@ -390,7 +391,11 @@ class Reward_control extends MY_Controller
             
             $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
-            if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
+            if (!empty($_FILES) && isset($_FILES['file']) &&
+                (!isset($_FILES['file']['tmp_name']) || $_FILES['file']['tmp_name'] !== '')) {
+                if (!$this->isValidUploadEntry('file')) {
+                    $this->data['message'] = $this->lang->line('error_file');
+                }
 
                 $maxsize = 4194304;
                 $csv_mimetypes = array(
@@ -406,20 +411,26 @@ class Reward_control extends MY_Controller
                     'application/txt',
                 );
 
-                if (($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
+                if ($this->data['message'] == null) {
+                    $upload = $_FILES['file'];
+                }
+
+                if ($this->data['message'] == null && (($upload['size'] >= $maxsize) || ($upload["size"] == 0))) {
                     $this->data['message'] = $this->lang->line('error_file_too_large');
                 }
 
-                if (!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
+                if ($this->data['message'] == null && !in_array($upload['type'], $csv_mimetypes) && (!empty($upload["type"]))) {
                     $this->data['message'] = $this->lang->line('error_type_accepted');
                 }
 
-                $handle = fopen($_FILES['file']['tmp_name'], "r");
-                if (!$handle) {
+                $handle = $this->data['message'] == null ? fopen($upload['tmp_name'], "r") : false;
+                if ($this->data['message'] == null && !$handle) {
                     $this->data['message'] = $this->lang->line('error_upload');
                 }
 
-                $data['file_name'] = $_FILES['file']['name'];
+                if ($this->data['message'] == null) {
+                    $data['file_name'] = $upload['name'];
+                }
 
                 if ( $this->data['message'] == null) {
                     // prepare data of sequence number
@@ -794,6 +805,19 @@ class Reward_control extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isValidUploadEntry($field)
+    {
+        if (!isset($_FILES[$field]) || !is_array($_FILES[$field])) {
+            return false;
+        }
+        foreach (array('name', 'tmp_name', 'size', 'type', 'error') as $key) {
+            if (!isset($_FILES[$field][$key]) || !is_scalar($_FILES[$field][$key])) {
+                return false;
+            }
+        }
+        return $_FILES[$field]['tmp_name'] !== '';
     }
 
     private function validateAccess()
