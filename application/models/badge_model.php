@@ -1083,7 +1083,11 @@ class Badge_model extends MY_Model
                 $badge["status"] = false;
                 $badge["client_id"] = $client_id;
                 $badge["site_id"] = $site_id;
-                isset($badge["tags"]) ? $badge["tags"] = implode(',',$badge['tags']) : null;
+                if (isset($badge["tags"]) && is_array($badge["tags"]) && !empty($badge["tags"])) {
+                    $badge["tags"] = implode(',', $badge['tags']);
+                } elseif (!isset($badge["tags"]) || !is_string($badge["tags"])) {
+                    $badge["tags"] = null;
+                }
 
                 $this->addBadgeToClient($badge);
             }
