@@ -425,6 +425,10 @@ class App extends MY_Controller
 
             if ($this->input->post('platform_selected')) {
                 foreach ($this->input->post('platform_selected') as $platform_id) {
+                    if (preg_match('/^[0-9a-f]{24}$/i', (string)$platform_id) !== 1) {
+                        continue;
+                    }
+
                     if ($this->checkOwnerPlatForm($platform_id)) {
 
                         $this->App_model->deletePlatform($platform_id);
