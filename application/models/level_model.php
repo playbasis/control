@@ -197,7 +197,7 @@ class Level_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $data_insert = array(
-            'level_title' => $data['level_title'] | '',
+            'level_title' => $this->normalizedLevelTitle($data),
             'level' => (int)$data['level'] | 0,
             'exp' => (int)$data['exp'] | 0,
             'image' => $this->normalizedImage($data),
@@ -210,6 +210,15 @@ class Level_model extends MY_Model
 
         $exp_id = $this->mongo_db->insert('playbasis_exp_table', $data_insert);
         return $exp_id;
+    }
+
+    private function normalizedLevelTitle($data)
+    {
+        if (!isset($data['level_title']) || !is_scalar($data['level_title'])) {
+            return '';
+        }
+
+        return (string)$data['level_title'];
     }
 
     public function addLevelSite($data)
@@ -241,7 +250,7 @@ class Level_model extends MY_Model
                         $data_insert = array(
                             'client_id' => new MongoID($data['client_id']),
                             'site_id' => new MongoID($data['site_id']),
-                            'level_title' => $data['level_title'] | '',
+                            'level_title' => $this->normalizedLevelTitle($data),
                             'level' => (int)$data['level'],
                             'exp' => (int)$data['exp'] | 0,
                             'image' => $this->normalizedImage($data),
@@ -263,7 +272,7 @@ class Level_model extends MY_Model
                         $data_insert = array(
                             'client_id' => new MongoID($data['client_id']),
                             'site_id' => new MongoID($data['site_id']),
-                            'level_title' => $data['level_title'] | '',
+                            'level_title' => $this->normalizedLevelTitle($data),
                             'level' => (int)$data['level'],
                             'exp' => (int)$data['exp'] | 0,
                             'image' => $this->normalizedImage($data),
@@ -284,7 +293,7 @@ class Level_model extends MY_Model
                     $data_insert = array(
                         'client_id' => new MongoID($data['client_id']),
                         'site_id' => new MongoID($data['site_id']),
-                        'level_title' => $data['level_title'] | '',
+                        'level_title' => $this->normalizedLevelTitle($data),
                         'level' => (int)$data['level'],
                         'exp' => (int)$data['exp'] | 0,
                         'image' => $this->normalizedImage($data),
@@ -300,7 +309,7 @@ class Level_model extends MY_Model
                     $data_insert = array(
                         'client_id' => new MongoID($data['client_id']),
                         'site_id' => new MongoID($data['site_id']),
-                        'level_title' => $data['level_title'] | '',
+                        'level_title' => $this->normalizedLevelTitle($data),
                         'level' => (int)$data['level'],
                         'exp' => (int)$data['exp'] | 0,
                         'image' => $this->normalizedImage($data),
@@ -328,7 +337,7 @@ class Level_model extends MY_Model
 
         $this->mongo_db->where('_id', new MongoID($level_id));
         if (isset($data['level_title'])) {
-            $this->mongo_db->set('level_title', $data['level_title']);
+            $this->mongo_db->set('level_title', $this->normalizedLevelTitle($data));
         }
         if (isset($data['level'])) {
             $this->mongo_db->set('level', (int)$data['level']);
@@ -379,7 +388,7 @@ class Level_model extends MY_Model
 
                 $this->mongo_db->where('_id', new MongoID($level_id));
                 if (isset($data['level_title'])) {
-                    $this->mongo_db->set('level_title', $data['level_title']);
+                    $this->mongo_db->set('level_title', $this->normalizedLevelTitle($data));
                 }
                 if (isset($data['level'])) {
                     $this->mongo_db->set('level', (int)$data['level']);
@@ -414,7 +423,7 @@ class Level_model extends MY_Model
 
                 $this->mongo_db->where('_id', new MongoID($level_id));
                 if (isset($data['level_title'])) {
-                    $this->mongo_db->set('level_title', $data['level_title']);
+                    $this->mongo_db->set('level_title', $this->normalizedLevelTitle($data));
                 }
                 if (isset($data['level'])) {
                     $this->mongo_db->set('level', (int)$data['level']);
@@ -449,7 +458,7 @@ class Level_model extends MY_Model
 
             $this->mongo_db->where('_id', new MongoID($level_id));
             if (isset($data['level_title'])) {
-                $this->mongo_db->set('level_title', $data['level_title']);
+                $this->mongo_db->set('level_title', $this->normalizedLevelTitle($data));
             }
             if (isset($data['level'])) {
                 $this->mongo_db->set('level', (int)$data['level']);
