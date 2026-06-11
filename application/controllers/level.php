@@ -297,6 +297,9 @@ class Level extends MY_Controller
             $site_id = "";
         }
 
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
+
         if ($results) {
             foreach ($results as $result) {
 
@@ -306,8 +309,7 @@ class Level extends MY_Controller
                     'title' => $result['level_title'],
                     'exp' => number_format($result['exp'], 0),
                     'status' => ($result['status'] == false) ? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'),
-                    'selected' => $this->input->post('selected') && in_array($result['level_id'],
-                            $this->input->post('selected')),
+                    'selected' => in_array($result['level_id'], $selected),
                 );
             }
         }
