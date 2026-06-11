@@ -15,6 +15,15 @@ class CI_Session {
     private $_match_useragent;
 
     var $flash_key = 'flash'; // prefix for "flash" variables (eg. flash:new:message)
+    var $object;
+    var $_sess_encrypt_cookie;
+    var $encryption;
+    var $session_id_ttl;
+
+    function __construct()
+    {
+        $this->CI_Session();
+    }
 
     function CI_Session()
     {
