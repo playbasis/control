@@ -127,6 +127,10 @@ class Cron extends CI_Controller
 
     public function notifyFreeActiveClientsToSubscribe()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $today = time();
         $refDate = strtotime("-" . ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS . " day", $today);
         $clients = $this->client_model->listAllActiveClients($refDate);
