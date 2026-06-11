@@ -291,10 +291,10 @@ class MediaManager extends MY_Controller
     {
         $json = array();
 
-        if (!empty($this->input->post['directory'])) {
-            $directory = DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post['directory']);
-        } else {
-            $directory = DIR_IMAGE . 'data/';
+        $directory = $this->dataLocalPath(!empty($this->input->post['directory']) ? $this->input->post['directory'] : '');
+        if ($directory === false) {
+            $this->output->set_output(json_encode($json));
+            return;
         }
 
         $allowed = array(
@@ -367,9 +367,14 @@ class MediaManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_filename');
                 }
 
-                $directory = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post('directory')), '/');
+                $clean_directory = $this->cleanRelativePath($this->input->post('directory'));
+                if ($clean_directory === false) {
+                    $json['error'] = $this->lang->line('error_directory');
+                }
 
-                if (!is_dir($directory)) {
+                $directory = $this->dataLocalPath($clean_directory);
+
+                if (!isset($json['error']) && !is_dir($directory)) {
                     $json['error'] = $this->lang->line('error_directory');
                 }
 
@@ -458,12 +463,13 @@ class MediaManager extends MY_Controller
             $this->s3->setEndpoint("s3-ap-southeast-1.amazonaws.com");
 
             //move the file
+            $s3_directory = $this->dataS3Prefix($clean_directory);
+            $s3_key = $s3_directory . "/" . $filename;
+
             if ($this->s3->putObjectFile($_FILES['file']['tmp_name'], "elasticbeanstalk-ap-southeast-1-007834438823",
-                rtrim('data/' . str_replace('../', '', $this->input->post('directory')), '/') . "/" . $filename,
-                S3::ACL_PUBLIC_READ)
+                $s3_key, S3::ACL_PUBLIC_READ)
             ) {
-                $url = rtrim(S3_IMAGE . 'data/' . str_replace('../', '', $this->input->post('directory')),
-                        '/') . "/" . urlencode($filename);
+                $url = S3_IMAGE . $s3_directory . "/" . urlencode($filename);
                 @copy($url, $directory . '/' . $filename);
 
                 $client_id = $this->User_model->getClientId();
@@ -471,12 +477,11 @@ class MediaManager extends MY_Controller
                 $user_id = $this->User_model->getId();
 
                 $this->Image_model->registerImageToSite($client_id, $site_id, $user_id, $_FILES['file']['size'], $filename,
-                    rtrim('data/' . str_replace('../', '', $this->input->post('directory')),
-                        '/') . "/" . urlencode($filename));
+                    $s3_directory . "/" . urlencode($filename));
 
-                $this->Image_model->resize('data/' . $filename, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH,
+                $this->Image_model->resize($s3_key, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH,
                     MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT);
-                $this->Image_model->resize('data/' . $filename, MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH,
+                $this->Image_model->resize($s3_key, MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH,
                     MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT);
 
                 $json['success'] = $this->lang->line('text_uploaded');
@@ -491,6 +496,76 @@ class MediaManager extends MY_Controller
             $this->output->set_status_header('400');
         }
         $this->output->set_output(json_encode($json));
+    }
+
+    private function cleanRelativePath($path)
+    {
+        if (is_array($path)) {
+            return false;
+        }
+
+        $path = html_entity_decode((string)$path, ENT_QUOTES, 'UTF-8');
+
+        if (strpos($path, "\0") !== false) {
+            return false;
+        }
+
+        $path = trim($path);
+
+        if ($path === '') {
+            return '';
+        }
+
+        if (preg_match('/^[a-z][a-z0-9+.-]*:\/\//i', $path)) {
+            return false;
+        }
+
+        if ($path[0] === '/' || strpos($path, '\\') !== false) {
+            return false;
+        }
+
+        if (preg_match('/[^A-Za-z0-9_\\.\\-\\/ ]/', $path)) {
+            return false;
+        }
+
+        $clean = array();
+        $segments = explode('/', $path);
+
+        foreach ($segments as $segment) {
+            if ($segment === '') {
+                continue;
+            }
+
+            if ($segment === '.' || strpos($segment, '..') !== false) {
+                return false;
+            }
+
+            $clean[] = $segment;
+        }
+
+        return implode('/', $clean);
+    }
+
+    private function dataLocalPath($path)
+    {
+        $path = $this->cleanRelativePath($path);
+
+        if ($path === false) {
+            return false;
+        }
+
+        return rtrim(DIR_IMAGE . 'data/' . $path, '/');
+    }
+
+    private function dataS3Prefix($path)
+    {
+        $path = $this->cleanRelativePath($path);
+
+        if ($path === false || $path === '') {
+            return 'data';
+        }
+
+        return 'data/' . $path;
     }
 
     private function validateModify()
