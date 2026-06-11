@@ -87,7 +87,7 @@ class import extends MY_Controller
             'client_id' => $client_id,
             'site_id' => $site_id
         );
-        if (isset($_GET['filter_import_type'])) {
+        if (isset($_GET['filter_import_type']) && is_scalar($_GET['filter_import_type'])) {
             $filter['filter_import_type'] = $_GET['filter_import_type'];
             $parameter_url .= "&filter_import_type=" . $_GET['filter_import_type'];
         }
@@ -151,6 +151,19 @@ class import extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    private function isValidUploadEntry($field)
+    {
+        if (!isset($_FILES[$field]) || !is_array($_FILES[$field])) {
+            return false;
+        }
+        foreach (array('name', 'tmp_name', 'size', 'type', 'error') as $key) {
+            if (!isset($_FILES[$field][$key]) || !is_scalar($_FILES[$field][$key])) {
+                return false;
+            }
+        }
+        return $_FILES[$field]['tmp_name'] !== '';
     }
 
     public function insert()
@@ -384,11 +397,12 @@ class import extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if ((empty($_FILES) || !isset($_FILES['file']['tmp_name']) || $_FILES['file']['tmp_name'] == '') && $this->data['message'] == null) {
+            if (!$this->isValidUploadEntry('file') && $this->data['message'] == null) {
                 $this->data['message'] = $this->lang->line('error_file');
             }
 
-            if (isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '' && $this->data['message'] == null) {
+            if ($this->data['message'] == null) {
+                $upload = $_FILES['file'];
 
                 $maxsize = 2097152;
                 $csv_mimetypes = array(
@@ -404,16 +418,16 @@ class import extends MY_Controller
                     'application/txt',
                 );
 
-                if (($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
+                if (($upload['size'] >= $maxsize) || ($upload["size"] == 0)) {
                     $this->data['message'] = $this->lang->line('error_file_too_large');
                 }
 
-                if (!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
+                if (!in_array($upload['type'], $csv_mimetypes) && (!empty($upload["type"]))) {
                     $this->data['message'] = $this->lang->line('error_type_accepted');
                 }
 
-                $handle = fopen($_FILES['file']['tmp_name'], "r");
-                if (!$handle) {
+                $handle = $this->data['message'] == null ? fopen($upload['tmp_name'], "r") : false;
+                if ($this->data['message'] == null && !$handle) {
                     $this->data['message'] = $this->lang->line('error_upload');
                 }
             }
@@ -624,7 +638,7 @@ class import extends MY_Controller
         $filteredImportDataByName = array();
         $filteredImportDataByRoutine = array();
 
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filteredImportDataByName = $this->import_model->retrieveImportDataByName($client_id, $site_id, $_GET['filter_name']);
             foreach($filteredImportDataByName as &$data){
                 $data = $data['_id']."";
@@ -632,11 +646,11 @@ class import extends MY_Controller
             $filter['import_name'] = $_GET['filter_name'];
             $parameter_url .= "&filter_name=" . $_GET['filter_name'];
         }
-        if (isset($_GET['filter_import_method'])) {
+        if (isset($_GET['filter_import_method']) && is_scalar($_GET['filter_import_method'])) {
             $filter['filter_import_method'] = $_GET['filter_import_method'];
             $parameter_url .= "&filter_import_method=" . $_GET['filter_import_method'];
         }
-        if (isset($_GET['filter_import_type'])) {
+        if (isset($_GET['filter_import_type']) && is_scalar($_GET['filter_import_type'])) {
             $filter['filter_import_type'] = $_GET['filter_import_type'];
             $parameter_url .= "&filter_import_type=" . $_GET['filter_import_type'];
         }
