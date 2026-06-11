@@ -64,6 +64,52 @@ class Report_goods extends MY_Controller
         $this->getGoodsList(0, site_url('report_goods/page'));
     }
 
+    private function getDefaultGoodsReportDateStart()
+    {
+        return date("Y-m-d H:i:s", strtotime(date("Y-m-d", strtotime("-7 days"))));
+    }
+
+    private function getDefaultGoodsReportDateEnd()
+    {
+        return date("Y-m-d H:i:s", strtotime(date("Y-m-d")) + 86399);
+    }
+
+    private function getGoodsReportDateFilter($value, $fallback, $end_of_day = false)
+    {
+        if (!is_string($value)) {
+            return $fallback;
+        }
+
+        $value = trim($value);
+        if ($value === '') {
+            return $fallback;
+        }
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            $format = 'Y-m-d';
+        } elseif (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $value)) {
+            $format = 'Y-m-d H:i:s';
+        } else {
+            return $fallback;
+        }
+
+        $date = DateTime::createFromFormat($format, $value);
+        $errors = DateTime::getLastErrors();
+        if (!$date || (is_array($errors) && ($errors['warning_count'] > 0 || $errors['error_count'] > 0))) {
+            return $fallback;
+        }
+
+        if ($date->format($format) !== $value) {
+            return $fallback;
+        }
+
+        if ($end_of_day && $format === 'Y-m-d H:i:s' && strpos($value, '00:00:00') !== false) {
+            return $date->modify('+86399 seconds')->format("Y-m-d H:i:s");
+        }
+
+        return $value;
+    }
+
     public function getGoodsList($offset, $url)
     {
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
@@ -81,32 +127,24 @@ class Report_goods extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         if ($this->input->get('date_start')) {
-            $filter_date_start = $this->input->get('date_start');
+            $filter_date_start = $this->getGoodsReportDateFilter(
+                $this->input->get('date_start'),
+                $this->getDefaultGoodsReportDateStart()
+            );
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-7 days"));
-            $previousDate = strtotime($date);
-            $filter_date_start = date("Y-m-d H:i:s", $previousDate);
+            $filter_date_start = $this->getDefaultGoodsReportDateStart();
         }
 
         if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
+            $filter_date_end = $this->getGoodsReportDateFilter(
+                $this->input->get('date_expire'),
+                $this->getDefaultGoodsReportDateEnd(),
+                true
+            );
             $parameter_url .= "&date_expire=" . $filter_date_end;
-
-            if(strpos($filter_date_end, '00:00:00')){
-                //--> This will enable to search on the day until the time 23:59:59
-                $currentDate = strtotime($filter_date_end);
-                $futureDate = $currentDate + ("86399");
-                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-                //--> end*/
-            }
         } else {
-            //--> This will enable to search on the current day until the time 23:59:59
-            $date = date("Y-m-d");
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            //--> end
+            $filter_date_end = $this->getDefaultGoodsReportDateEnd();
         }
 
         $UTC_7 = new DateTimeZone("Asia/Bangkok");
@@ -429,27 +467,22 @@ class Report_goods extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         if ($this->input->get('date_start')) {
-            $filter_date_start = $this->input->get('date_start');
+            $filter_date_start = $this->getGoodsReportDateFilter(
+                $this->input->get('date_start'),
+                $this->getDefaultGoodsReportDateStart()
+            );
         } else {
-            $date = date("Y-m-d", strtotime("-7 days"));
-            $previousDate = strtotime($date);
-            $filter_date_start = date("Y-m-d H:i:s", $previousDate);
+            $filter_date_start = $this->getDefaultGoodsReportDateStart();
         }
 
         if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
-            if(strpos($filter_date_end, '00:00:00')){
-                //--> This will enable to search on the day until the time 23:59:59
-                $currentDate = strtotime($filter_date_end);
-                $futureDate = $currentDate + ("86399");
-                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-                //--> end*/
-            }
+            $filter_date_end = $this->getGoodsReportDateFilter(
+                $this->input->get('date_expire'),
+                $this->getDefaultGoodsReportDateEnd(),
+                true
+            );
         } else {
-            $date = date("Y-m-d");
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            $filter_date_end = $this->getDefaultGoodsReportDateEnd();
         }
 
         $UTC_7 = new DateTimeZone("Asia/Bangkok");
