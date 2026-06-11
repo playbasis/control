@@ -3,6 +3,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Plan_model extends MY_Model
 {
+    private function normalizeLimitRequests($limit_req)
+    {
+        $requests = array();
+        if (!is_array($limit_req)) {
+            return $requests;
+        }
+        foreach ($limit_req as $item) {
+            if (!is_array($item) || !isset($item['field']) || !is_scalar($item['field']) || empty($item['field'])) {
+                continue;
+            }
+            // strip only first path of the api and lowercase
+            $field = strtolower(preg_replace(
+                "/(\w+)\/.*/", '${1}',
+                $item['field']));
+            if (substr($field, 0, 1) != "/") {
+                $field = "/" . $field;
+            }
+            $limit = isset($item['limit']) ? $item['limit'] : null;
+            $requests[$field] = ($limit != null && $limit !== '' && is_scalar($limit) ? intval($limit) : null);
+        }
+        return $requests;
+    }
+
     public function getPlan($plan_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -398,22 +421,7 @@ class Plan_model extends MY_Model
             $dinsert['limit_cms'] = $limit_cms;
         }
         if (isset($data['limit_req'])) {
-            $limit_req = array();
-            for ($i = 0; $i < sizeof($data['limit_req']); $i++) {
-                $item = $data['limit_req'][$i];
-                if (!$item['field']) {
-                    continue;
-                }
-                // strip only first path of the api and lowercase
-                $item['field'] = strtolower(preg_replace(
-                    "/(\w+)\/.*/", '${1}',
-                    $item['field']));
-                if (substr($item['field'], 0, 1) != "/") {
-                    $item['field'] = "/" . $item['field'];
-                }
-                $limit_req[$item['field']] = ($item['limit'] != null && $item['limit'] !== '' ? intval($item['limit']) : null);
-            }
-            $dinsert['limit_requests'] = $limit_req;
+            $dinsert['limit_requests'] = $this->normalizeLimitRequests($data['limit_req']);
         }
         return $this->mongo_db->insert('playbasis_plan', $dinsert);
     }
@@ -502,22 +510,7 @@ class Plan_model extends MY_Model
             $this->mongo_db->set('limit_cms', $limit_cms);
         }
         if (isset($data['limit_req'])) {
-            $limit_req = array();
-            for ($i = 0; $i < sizeof($data['limit_req']); $i++) {
-                $item = $data['limit_req'][$i];
-                if (!$item['field']) {
-                    continue;
-                }
-                // strip only first path of the api and lowercase
-                $item['field'] = strtolower(preg_replace(
-                    "/(\w+)\/.*/", '${1}',
-                    $item['field']));
-                if (substr($item['field'], 0, 1) != "/") {
-                    $item['field'] = "/" . $item['field'];
-                }
-                $limit_req[$item['field']] = ($item['limit'] != null && $item['limit'] !== '' ? intval($item['limit']) : null);
-            }
-            $this->mongo_db->set('limit_requests', $limit_req);
+            $this->mongo_db->set('limit_requests', $this->normalizeLimitRequests($data['limit_req']));
         }
 
         $this->mongo_db->update('playbasis_plan');
