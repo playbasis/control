@@ -142,14 +142,16 @@ class Account extends MY_Controller
         }
 
         /* find details of the subscribed plan of the client */
-        $plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
-        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-        if (!array_key_exists('price', $plan)) {
-            $plan['price'] = DEFAULT_PLAN_PRICE;
+        $plan_context = $this->getCurrentPlanContext();
+        if ($plan_context === false) {
+            redirect('/logout', 'refresh');
+            return;
         }
+        $plan_subscription = $plan_context['subscription'];
+        $plan = $plan_context['plan'];
         $price = $plan['price'];
         $this->session->set_userdata('plan', $plan);
-        $plan_days_total = array_key_exists('limit_others', $plan) && array_key_exists('trial',
+        $plan_days_total = isset($plan['limit_others']) && is_array($plan['limit_others']) && array_key_exists('trial',
             $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
         if ($plan_days_total == null) {
             $plan_days_total = 0;
@@ -572,11 +574,13 @@ class Account extends MY_Controller
         $this->data['main'] = 'partial/landingpage_partial';
 
         /* find details of the subscribed plan of the client */
-        $plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
-        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-        if (!array_key_exists('price', $plan)) {
-            $plan['price'] = DEFAULT_PLAN_PRICE;
+        $plan_context = $this->getCurrentPlanContext();
+        if ($plan_context === false) {
+            redirect('/logout', 'refresh');
+            return;
         }
+        $plan_subscription = $plan_context['subscription'];
+        $plan = $plan_context['plan'];
         $price = $plan['price'];
         $plan_free_flag = $price <= 0;
         $plan_paid_flag = !$plan_free_flag;
@@ -854,6 +858,28 @@ class Account extends MY_Controller
         $_to = new DateTime(date("Y-m-d", $to));
         $interval = $_from->diff($_to);
         return $interval->format($fmt);
+    }
+
+    private function getCurrentPlanContext()
+    {
+        $plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
+        if (!is_array($plan_subscription) || !array_key_exists('plan_id', $plan_subscription)) {
+            return false;
+        }
+
+        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+        if (!is_array($plan)) {
+            return false;
+        }
+
+        if (!array_key_exists('price', $plan)) {
+            $plan['price'] = DEFAULT_PLAN_PRICE;
+        }
+
+        return array(
+            'subscription' => $plan_subscription,
+            'plan' => $plan
+        );
     }
 
     private function check_valid_payment($client)
