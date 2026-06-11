@@ -430,6 +430,9 @@ class User_model extends MY_Model
         $this->mongo_db->where('username', $regex);
         $this->mongo_db->limit(1);
         $Q = $this->mongo_db->get('user');
+        if (empty($Q)) {
+            return;
+        }
         $user_info = $Q[0];
         $is_locked = (isset($user_info['locked']) && $user_info['locked']) ? $user_info['locked'] : false;
 
