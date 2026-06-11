@@ -152,6 +152,14 @@ class MediaManager extends MY_Controller
                         }
                     } else {
                         $query_data = $this->input->get(null, true);
+                        if (isset($query_data['folder']) && $query_data['folder'] === '') {
+                            $query_data['folder'] = 'false';
+                        }
+                        if (isset($query_data['folder']) && $query_data['folder'] !== 'false' && !$this->isValidMongoId($query_data['folder'])) {
+                            $this->output->set_status_header('400');
+                            $this->output->set_output(json_encode(array('status' => 'error')));
+                            return;
+                        }
 
                         $result = $this->Image_model->retrieveImages($client_id, $site_id, $query_data);
                         $folder = $this->Image_model->retrieveFolder($client_id, $site_id);
@@ -253,26 +261,61 @@ class MediaManager extends MY_Controller
 
     public function unsetAllFile(){
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->unsetAllFile($query_data);
         $this->output->set_output(json_encode($result));
     }
 
     public function deleteFolder(){
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->deleteFolder_model($query_data);
         $this->output->set_output(json_encode($result));
     }
 
     public function updateImageCategory(){
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
+        if (!isset($query_data['folder_id']) || ($query_data['folder_id'] !== 'root' && !$this->isValidMongoId($query_data['folder_id']))) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->updateImageCategory($query_data);
         $this->output->set_output(json_encode($result));
     }
 
     public function updateFolderName(){
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->updateFolder($query_data);
         $this->output->set_output(json_encode($result));
+    }
+
+    private function hasValidMongoIdParam($params, $key)
+    {
+        return is_array($params) && isset($params[$key]) && $this->isValidMongoId($params[$key]);
+    }
+
+    private function isValidMongoId($id)
+    {
+        return is_scalar($id) && preg_match('/^[0-9a-f]{24}$/i', (string)$id) === 1;
     }
 
     public function image()
