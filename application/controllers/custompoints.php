@@ -598,6 +598,17 @@ class Custompoints extends MY_Controller
         }
 
         $array_custompoints = json_decode($this->input->post('array_custompoints'),true);
+        if (!is_array($array_custompoints)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_custompoints as $custompoint) {
+            if (!is_array($custompoint) || !isset($custompoint['name']) || !is_scalar($custompoint['name']) || $custompoint['name'] === '') {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $validation_result = array();
@@ -612,8 +623,10 @@ class Custompoints extends MY_Controller
             foreach($array_custompoints as $custompoint) {
                 $custompoint['client_id'] = $client_id;
                 $custompoint['site_id'] = $site_id;
-                if (!empty($custompoint['tags'])){
+                if (isset($custompoint['tags']) && is_array($custompoint['tags']) && !empty($custompoint['tags'])){
                     $custompoint['tags'] = implode(',', $custompoint['tags']);
+                } elseif (!isset($custompoint['tags']) || !is_string($custompoint['tags'])) {
+                    $custompoint['tags'] = null;
                 }
                 $insert = $this->Custompoints_model->insertCustompoints($custompoint);
                 //$import_result = $this->Quiz_model->addQuizToClient($quiz2);
