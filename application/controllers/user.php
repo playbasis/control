@@ -868,34 +868,40 @@ class User extends MY_Controller
                 if (empty($plan_id)) {
                     $plan_id = FREE_PLAN;
                 } // default is free plan
-                $plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
-
-                if ($this->form_validation->run()) {
-
-                    if ($user_id = $this->User_model->insertUser()) { // [1] firstly insert a user into "user"
-                        $user_info = $this->User_model->getUserInfo($user_id);
-
-                        $client_id = $this->Client_model->insertClient($this->input->post(),
-                            $plan); // [2] then insert a new client into "playbasis_client"
-
-                        $data = $this->input->post();
-                        $data['client_id'] = $client_id;
-                        $data['user_id'] = $user_info['_id'];
-                        $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
-
-                        $this->Client_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
-                            'client_id' => $client_id->{'$id'},
-                            'plan_id' => $plan['_id']->{'$id'},
-                            'site_id' => null,
-                        ));
-
-                        $success = true;
-                        $message = $this->lang->line('text_email_sent');
-                    } else {
-                        $message = $this->lang->line('text_fail');
-                    }
+                if (!$this->isMongoId($plan_id)) {
+                    $message = "Invalid plan id";
                 } else {
-                    $message = strip_tags(validation_errors());
+                    $plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
+
+                    if (!$plan) {
+                        $message = "Invalid plan id";
+                    } elseif ($this->form_validation->run()) {
+
+                        if ($user_id = $this->User_model->insertUser()) { // [1] firstly insert a user into "user"
+                            $user_info = $this->User_model->getUserInfo($user_id);
+
+                            $client_id = $this->Client_model->insertClient($this->input->post(),
+                                $plan); // [2] then insert a new client into "playbasis_client"
+
+                            $data = $this->input->post();
+                            $data['client_id'] = $client_id;
+                            $data['user_id'] = $user_info['_id'];
+                            $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
+
+                            $this->Client_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
+                                'client_id' => $client_id->{'$id'},
+                                'plan_id' => $plan['_id']->{'$id'},
+                                'site_id' => null,
+                            ));
+
+                            $success = true;
+                            $message = $this->lang->line('text_email_sent');
+                        } else {
+                            $message = $this->lang->line('text_fail');
+                        }
+                    } else {
+                        $message = strip_tags(validation_errors());
+                    }
                 }
             } else {
                 $message = "Unsupported HTTP method";
@@ -916,7 +922,17 @@ class User extends MY_Controller
     {
         $user_id = $this->input->get('i');
 
-        $user_info = $this->User_model->getUserInfo(new MongoId($user_id));
+        if (!$this->isMongoId($user_id)) {
+            $this->renderInvalidSignupLink();
+            return;
+        }
+
+        $user_info = $this->User_model->getUserInfo($user_id);
+
+        if (!$user_info) {
+            $this->renderInvalidSignupLink();
+            return;
+        }
 
         $this->data['user_before_info'] = $user_info;
         $this->data['url_resend'] = site_url('user/resend_signup_email?i=' . $user_id . "");
@@ -933,7 +949,17 @@ class User extends MY_Controller
     {
         $user_id = $this->input->get('i');
 
-        $user_info = $this->User_model->getUserInfo(new MongoId($user_id));
+        if (!$this->isMongoId($user_id)) {
+            $this->renderInvalidSignupLink();
+            return;
+        }
+
+        $user_info = $this->User_model->getUserInfo($user_id);
+
+        if (!$user_info) {
+            $this->renderInvalidSignupLink();
+            return;
+        }
 
         $this->load->library('parser');
         $this->load->library('email');
@@ -951,6 +977,14 @@ class User extends MY_Controller
         $this->email($user_info['email'], '[Playbasis] Please activate your account', $htmlMessage);
 
         redirect('user/signup_finish?i=' . $user_id, 'refresh');
+    }
+
+    private function renderInvalidSignupLink()
+    {
+        $this->data['topic_message'] = 'Your validation key is invalid,';
+        $this->data['message'] = 'Please contact Playbasis.';
+        $this->data['main'] = 'partial/something_wrong';
+        $this->render_page('template_beforelogin');
     }
 
     public function list_pending_users()
