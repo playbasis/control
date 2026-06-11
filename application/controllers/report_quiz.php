@@ -180,7 +180,7 @@ class Report_quiz extends MY_Controller
             $filter_time_zone = "Asia/Bangkok";
         }
 
-        if ($this->input->get('username')) {
+        if ($this->input->get('username') && is_scalar($this->input->get('username'))) {
             $filter_username = $this->input->get('username');
             $parameter_url .= "&username=" . $filter_username;
         } else {
@@ -416,7 +416,7 @@ class Report_quiz extends MY_Controller
             $filter_time_zone = "Asia/Bangkok";
         }
 
-        if ($this->input->get('username')) {
+        if ($this->input->get('username') && is_scalar($this->input->get('username'))) {
             $filter_username = $this->input->get('username');
             $parameter_url .= "&username=" . $filter_username;
         } else {
