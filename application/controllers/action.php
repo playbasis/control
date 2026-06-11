@@ -152,6 +152,10 @@ class Action extends MY_Controller
 
     public function update($action_id)
     {
+        if (!$this->isMongoId($action_id)) {
+            redirect('/action', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -228,20 +232,31 @@ class Action extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-
-            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
-                foreach ($this->input->post('selected') as $action_id) {
-                    $this->Action_model->deleteActionClient($action_id);
-                }
-            } else {
-                foreach ($this->input->post('selected') as $action_id) {
-                    $this->Action_model->delete($action_id);
+            $selected_actions = $this->input->post('selected');
+            foreach ($selected_actions as $action_id) {
+                if (!$this->isMongoId($action_id)) {
+                    $this->error['warning'] = 'Invalid action id';
+                    break;
                 }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            if ($this->error['warning'] == null) {
+                if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+                    foreach ($selected_actions as $action_id) {
+                        $this->Action_model->deleteActionClient($action_id);
+                    }
+                } else {
+                    foreach ($selected_actions as $action_id) {
+                        $this->Action_model->delete($action_id);
+                    }
+                }
+            }
 
-            redirect('/action', 'refresh');
+            if ($this->error['warning'] == null) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+
+                redirect('/action', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -507,8 +522,18 @@ class Action extends MY_Controller
         }
     }
 
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
+    }
+
     public function increase_order($action_id)
     {
+        if (!$this->isMongoId($action_id)) {
+            $json = array('error' => 'Invalid action id');
+            $this->output->set_output(json_encode($json));
+            return;
+        }
 
         if ($this->User_model->getClientId()) {
             $client_id = $this->User_model->getClientId();
@@ -528,6 +553,11 @@ class Action extends MY_Controller
 
     public function decrease_order($action_id)
     {
+        if (!$this->isMongoId($action_id)) {
+            $json = array('error' => 'Invalid action id');
+            $this->output->set_output(json_encode($json));
+            return;
+        }
 
         if ($this->User_model->getClientId()) {
             $client_id = $this->User_model->getClientId();
