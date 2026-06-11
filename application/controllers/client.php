@@ -682,6 +682,11 @@ class Client extends MY_Controller
             return;
         }
 
+        if (!$this->User_model->isAdmin() && (string)$client_id !== (string)$this->User_model->getClientId()) {
+            show_error($this->lang->line('error_permission'), 403);
+            return;
+        }
+
         $data = array(
             'client_id' => $client_id,
         );
