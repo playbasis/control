@@ -77,6 +77,7 @@ class Leaderboard_model extends MY_Model
     public function createLeaderBoard($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->normalizeSelectedOrg($data);
 
         $date = new MongoDate();
         $date_array = array(
@@ -92,6 +93,8 @@ class Leaderboard_model extends MY_Model
 
     public function updateLeaderBoard($data)
     {
+        $this->normalizeSelectedOrg($data);
+
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->where('_id', new MongoID($data['_id']));
@@ -110,6 +113,15 @@ class Leaderboard_model extends MY_Model
         $update = $this->mongo_db->update('playbasis_leaderboard');
 
         return $update;
+    }
+
+    private function normalizeSelectedOrg(&$data)
+    {
+        if (isset($data['selected_org']) && $data['selected_org'] !== '' &&
+            (!is_string($data['selected_org']) || preg_match('/^[0-9a-f]{24}$/i', $data['selected_org']) !== 1)
+        ) {
+            $data['selected_org'] = '';
+        }
     }
 
     public function deleteLeaderBoard($leaderboard_id)
