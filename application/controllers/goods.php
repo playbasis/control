@@ -77,9 +77,13 @@ class Goods extends MY_Controller
     {
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
-        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
         // Get Limit
-        $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
+        try {
+            $limit = $this->getGoodsLimit($site_id);
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
         if ($limit){
             // Get Usage
             $usage = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id));
@@ -332,9 +336,13 @@ class Goods extends MY_Controller
     {
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
-        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
         // Get Limit
-        $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
+        try {
+            $limit = $this->getGoodsLimit($site_id);
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
         if ($limit){
             // Get Usage
             $usage = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id));
@@ -2260,8 +2268,11 @@ class Goods extends MY_Controller
         /* check limit for goods group */
         $site_id = $this->User_model->getSiteId();
 
-        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
+        try {
+            $limit = $this->getGoodsLimit($site_id);
+        } catch (Exception $e) {
+            throw new Exception('Cannot process your request because the goods plan limit is unavailable');
+        }
         if ($limit) {
             $usage = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id));
             if ($usage + count($list) > $limit) {
@@ -2470,6 +2481,12 @@ class Goods extends MY_Controller
         }
 
         return $result;
+    }
+
+    private function getGoodsLimit($site_id)
+    {
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+        return $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
     }
 
     public function getWhitelistFile()
