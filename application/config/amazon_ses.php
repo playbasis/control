@@ -5,8 +5,8 @@
  * @see ../libraries/Amazon_ses.php
  */
 // Amazon credentials
-$config['amazon_ses_secret_key'] = 'dKWWcZvO8QnOIge2mWGVhn0vC4JwYD6a5Xbxeuto';
-$config['amazon_ses_access_key'] = 'AKIAJHDIP22PG7RAODHA';
+$config['amazon_ses_secret_key'] = getenv('AMAZON_SES_SECRET_KEY') ?: '';
+$config['amazon_ses_access_key'] = getenv('AMAZON_SES_ACCESS_KEY') ?: '';
 
 // Adresses
 $config['amazon_ses_from'] = '';

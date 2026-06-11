@@ -22,8 +22,7 @@ $config['use_ssl'] = TRUE;
 |
 */
 
-//$config['verify_peer'] = TRUE;
-$config['verify_peer'] = FALSE;
+$config['verify_peer'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +33,7 @@ $config['verify_peer'] = FALSE;
 |
 */
 
-$config['access_key'] = 'AKIAIXA7TRPI53FODBGA';
+$config['access_key'] = getenv('S3_KEY') ?: '';
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +44,7 @@ $config['access_key'] = 'AKIAIXA7TRPI53FODBGA';
 |
 */
 
-$config['secret_key'] = 'OkPieozFKd62MA5eJgbD//HELeFmExg7ADdN/lse';
+$config['secret_key'] = getenv('S3_SECRET') ?: '';
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +55,7 @@ $config['secret_key'] = 'OkPieozFKd62MA5eJgbD//HELeFmExg7ADdN/lse';
 |
 */
 
-$config['endpoint'] = 's3-ap-southeast-1.amazonaws.com';
+$config['endpoint'] = getenv('S3_ENDPOINT') ?: 's3-ap-southeast-1.amazonaws.com';
 
 /*
 |--------------------------------------------------------------------------
@@ -68,7 +67,7 @@ $config['endpoint'] = 's3-ap-southeast-1.amazonaws.com';
 |
 */
 
-$config['get_from_enviroment'] = FALSE;
+$config['get_from_enviroment'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,7 +97,7 @@ $config['secret_key_envname'] = 'S3_SECRET';
 */
 
 if ($config['get_from_enviroment']){
-	$config['access_key'] = getenv($config['access_key_envname']);
-	$config['secret_key'] = getenv($config['secret_key_envname']);
+	$config['access_key'] = getenv($config['access_key_envname']) ?: '';
+	$config['secret_key'] = getenv($config['secret_key_envname']) ?: '';
 
 }
