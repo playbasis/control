@@ -791,6 +791,12 @@ class Content extends MY_Controller
     public function push($content_id)
     {
         if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            if (!is_string($content_id) || !preg_match('/^[0-9a-f]{24}$/i', $content_id)) {
+                $this->output->set_status_header('400');
+                echo json_encode(array('status' => 'error'));
+                return;
+            }
+
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!$this->validatePushAccess()) {
                     $this->output->set_status_header('401');
