@@ -298,8 +298,11 @@ class Statistic extends CI_Controller
         $this->data['total_players'] = $total_players;
 
         $plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
-        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-        $this->data['reset_quest'] = array_key_exists('reset_quest', $plan) && $plan['reset_quest'];
+        $plan = null;
+        if (is_array($plan_subscription) && array_key_exists('plan_id', $plan_subscription)) {
+            $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+        }
+        $this->data['reset_quest'] = is_array($plan) && array_key_exists('reset_quest', $plan) && $plan['reset_quest'];
 
         $this->load->library('parser');
         $html = $this->parser->parse('player_isotope', $this->data, true);
@@ -328,8 +331,10 @@ class Statistic extends CI_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        if ($this->input->get('filter_sort')) {
-            $sort = explode('|', $this->input->get('filter_sort'));
+        $sort_data = array();
+        $filter_sort = $this->input->get('filter_sort');
+        if (is_string($filter_sort) && $filter_sort !== '') {
+            $sort = explode('|', $filter_sort);
 
             if (is_array($sort)) {
                 foreach ($sort as $value) {
@@ -343,9 +348,6 @@ class Statistic extends CI_Controller
                     }
                 }
             }
-
-        } else {
-            $sort_data = array();
         }
 
         if ($this->input->get('filter_page')) {
