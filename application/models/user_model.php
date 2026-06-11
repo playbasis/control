@@ -63,7 +63,15 @@ class User_model extends MY_Model
     {
         $this->set_site_mongodb($this->site_id);
 
+        $user_id = $this->normalizeUserId($user_id);
+        if ($user_id === null || !$this->canModifyUser($user_id)) {
+            return false;
+        }
+
         $find_salt = $this->getUserInfo($user_id);
+        if (!$find_salt) {
+            return false;
+        }
         $salt = $find_salt['salt'];
 
         $check_email = isset($data['email']) && !is_null($data['email']) && !$this->findEmail($data);
@@ -424,10 +432,49 @@ class User_model extends MY_Model
     {
         $this->set_site_mongodb($this->site_id);
 
+        $user_id = $this->normalizeUserId($user_id);
+        if ($user_id === null || !$this->canModifyUser($user_id)) {
+            return false;
+        }
+
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->delete("user");
         $this->mongo_db->where('user_id', new MongoID($user_id));
-        $this->mongo_db->delete("user_to_client");
+        return $this->mongo_db->delete("user_to_client");
+    }
+
+    private function canModifyUser($user_id)
+    {
+        $user_id = $this->normalizeUserId($user_id);
+        if ($user_id === null) {
+            return false;
+        }
+
+        if ($this->getUserGroupId() == $this->getAdminGroupID()) {
+            return true;
+        }
+
+        if (!$this->client_id) {
+            return false;
+        }
+
+        $this->mongo_db->where('client_id', new MongoID($this->client_id));
+        $this->mongo_db->where('user_id', new MongoID($user_id));
+
+        return $this->mongo_db->count("user_to_client") > 0;
+    }
+
+    private function normalizeUserId($user_id)
+    {
+        if (is_object($user_id) && method_exists($user_id, '__toString')) {
+            $user_id = (string)$user_id;
+        } elseif (is_scalar($user_id)) {
+            $user_id = (string)$user_id;
+        } else {
+            return null;
+        }
+
+        return preg_match('/^[0-9a-f]{24}$/i', $user_id) === 1 ? $user_id : null;
     }
 
     public function login($u, $p, &$is_locked = false)

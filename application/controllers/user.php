@@ -191,6 +191,11 @@ class User extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'user/update/' . $user_id;
 
+        if (!$this->validateModify() || !$this->checkOwnerUser($user_id)) {
+            $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+            redirect('/user', 'refresh');
+        }
+
         //Rules need to be set
 
         // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
@@ -423,6 +428,10 @@ class User extends MY_Controller
         }
 
 
+        if ($this->input->post('selected') && !is_array($this->input->post('selected'))) {
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             $selectedUsers = $this->input->post('selected');
 
@@ -446,6 +455,10 @@ class User extends MY_Controller
 
         $json = array();
         $this->error['warning'] = null;
+
+        if (!$this->validateModify()) {
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
 
         if ($this->input->post('user_id') && $this->error['warning'] == null) {
 
@@ -588,7 +601,9 @@ class User extends MY_Controller
 
         if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
 
-            $users = $this->User_model->getUserByClientId($this->User_model->getClientId());
+            $users = $this->User_model->getUserByClientId(array(
+                'client_id' => $this->User_model->getClientId()
+            ));
 
             $has = false;
 
