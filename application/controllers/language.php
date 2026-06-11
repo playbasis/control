@@ -225,6 +225,14 @@ class Language extends MY_Controller
 
 
         $this->data['languages'] = $this->Language_model->retrieveLanguage($filter);
+        foreach ($this->data['languages'] as &$language) {
+            if (isset($language['tags']) && is_string($language['tags'])) {
+                $language['tags'] = explode(',', $language['tags']);
+            } elseif (!isset($language['tags']) || !is_array($language['tags'])) {
+                $language['tags'] = array();
+            }
+        }
+        unset($language);
         $config['total_rows'] = $this->Language_model->getTotalLanguage($filter);
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
