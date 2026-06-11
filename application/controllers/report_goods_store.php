@@ -93,19 +93,12 @@ class Report_goods_store extends MY_Controller
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
 
-        if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=" . $filter_date_end;
-            if(strpos($filter_date_end, '00:00:00')){
-                $currentDate = strtotime($filter_date_end);
-                $futureDate = $currentDate + ("86399");
-                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            }
+        $date_expire = $this->input->get('date_expire');
+        if ($this->isValidFilterDate($date_expire)) {
+            $filter_date_end = $this->normalizeFilterDateEnd($date_expire);
+            $parameter_url .= "&date_expire=" . (string)$date_expire;
         } else {
-            $date = date("Y-m-d");
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            $filter_date_end = $this->defaultFilterDateEnd();
         }
 
         if ($this->input->get('tags')) {
@@ -550,6 +543,31 @@ class Report_goods_store extends MY_Controller
         }
     }
 
+    private function isValidFilterDate($value)
+    {
+        return is_scalar($value) && $value !== '' && strtotime((string)$value) !== false;
+    }
+
+    private function normalizeFilterDateEnd($value)
+    {
+        $date = (string)$value;
+        if (strpos($date, '00:00:00') !== false) {
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate + 86399;
+            return date("Y-m-d H:i:s", $futureDate);
+        }
+
+        return $date;
+    }
+
+    private function defaultFilterDateEnd()
+    {
+        $date = date("Y-m-d");
+        $currentDate = strtotime($date);
+        $futureDate = $currentDate + 86399;
+        return date("Y-m-d H:i:s", $futureDate);
+    }
+
     private function getList($site_id)
     {
         $goods_list = $this->Goods_model->getGroupsList($site_id);
@@ -618,19 +636,12 @@ class Report_goods_store extends MY_Controller
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
 
-        if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=" . $filter_date_end;
-            if(strpos($filter_date_end, '00:00:00')){
-                $currentDate = strtotime($filter_date_end);
-                $futureDate = $currentDate + ("86399");
-                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            }
+        $date_expire = $this->input->get('date_expire');
+        if ($this->isValidFilterDate($date_expire)) {
+            $filter_date_end = $this->normalizeFilterDateEnd($date_expire);
+            $parameter_url .= "&date_expire=" . (string)$date_expire;
         } else {
-            $date = date("Y-m-d");
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            $filter_date_end = $this->defaultFilterDateEnd();
         }
 
         if ($this->input->get('status')){
