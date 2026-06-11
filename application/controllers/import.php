@@ -218,6 +218,10 @@ class import extends MY_Controller
         $this->data['site_id'] = $this->User_model->getSiteId();
 
         if ($import_id) {
+            if (!$this->isMongoId($import_id)) {
+                redirect('/import', 'refresh');
+            }
+
             $this->data = array_merge($this->data, $this->import_model->retrieveSingleImportData($import_id));
         }
 
@@ -227,6 +231,10 @@ class import extends MY_Controller
 
     public function update($import_id)
     {
+        if (!$this->isMongoId($import_id)) {
+            redirect('/import', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -282,12 +290,26 @@ class import extends MY_Controller
         $this->error['message'] = null;
 
         if ($this->input->post('selected') && $this->error['message'] == null) {
-            foreach ($this->input->post('selected') as $import_id) {
-                $this->import_model->deleteImportData($import_id);
+            $selected_imports = $this->input->post('selected');
+            if (!is_array($selected_imports)) {
+                $selected_imports = array($selected_imports);
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/import', 'refresh');
+            foreach ($selected_imports as $import_id) {
+                if (!$this->isMongoId($import_id)) {
+                    $this->error['message'] = 'Invalid import id';
+                    break;
+                }
+            }
+
+            if ($this->error['message'] == null) {
+                foreach ($selected_imports as $import_id) {
+                    $this->import_model->deleteImportData($import_id);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/import', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -317,6 +339,11 @@ class import extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     public function adhoc()
