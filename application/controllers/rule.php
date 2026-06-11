@@ -342,6 +342,11 @@ class Rule extends MY_Controller
         }
 
         $input = json_decode(html_entity_decode($this->input->post('json')), true);
+        if (!is_array($input)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
         $input['user'] = $this->User_model->getId();
         $this->output->set_output(json_encode($this->Rule_model->saveRule($input)));
     }
