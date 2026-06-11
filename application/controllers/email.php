@@ -76,6 +76,7 @@ class Email extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -88,7 +89,7 @@ class Email extends MY_Controller
                     $this->input->post('name'))
                 ) {
                     $data = $this->input->post();
-                    $data['body'] = $this->purify($this->input->post('body'));
+                    $data['body'] = $this->purify((string)$this->input->post('body'));
                     $template_id = $this->Email_model->addTemplate(array_merge($data, array(
                         'client_id' => $this->User_model->getClientId(),
                         'site_id' => $this->User_model->getSiteId(),
@@ -130,6 +131,7 @@ class Email extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -142,7 +144,7 @@ class Email extends MY_Controller
                 $info = $this->Email_model->getTemplate($template_id);
                 if ($c === 0 || ($c === 1 && $info && $info['name'] == $this->input->post('name'))) {
                     $data = $this->input->post();
-                    $data['body'] = $this->purify($this->input->post('body'));
+                    $data['body'] = $this->purify((string)$this->input->post('body'));
                     $success = $this->Email_model->editTemplate($template_id, array_merge($data, array(
                         'client_id' => $this->User_model->getClientId(),
                         'site_id' => $this->User_model->getSiteId(),
@@ -354,9 +356,9 @@ class Email extends MY_Controller
         }
 
         if ($this->input->post('body')) {
-            $this->data['body'] = $this->input->post('body');
+            $this->data['body'] = $this->templateBodyText($this->input->post('body'));
         } elseif (!empty($info)) {
-            $this->data['body'] = htmlentities($info['body']);
+            $this->data['body'] = $this->templateBodyText($info['body'], true);
         } else {
             $this->data['body'] = '';
         }
@@ -548,6 +550,25 @@ class Email extends MY_Controller
 
         $success = $this->Email_model->decreaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
+    }
+
+    private function normalizeTemplatePost()
+    {
+        foreach (array('name', 'body', 'sort_order', 'status') as $field) {
+            if (isset($_POST[$field]) && !is_scalar($_POST[$field])) {
+                $_POST[$field] = '';
+            }
+        }
+    }
+
+    private function templateBodyText($body, $escape = false)
+    {
+        if (!is_scalar($body)) {
+            return '';
+        }
+
+        $body = (string)$body;
+        return $escape ? htmlentities($body) : $body;
     }
 
     private function validateModify()
