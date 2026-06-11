@@ -188,6 +188,10 @@ class  MY_Controller  extends  CI_Controller  {
                     }
                 }
                 $user_plan = $this->User_model->getPlan();
+                if (empty($user_plan)) {
+                    redirect('/logout', 'refresh');
+                    return;
+                }
                 if (!array_key_exists('price', $user_plan)) $user_plan['price'] = DEFAULT_PLAN_PRICE;
                 $this->data['user_plan'] = $user_plan;
                 /*if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
@@ -217,34 +221,34 @@ class  MY_Controller  extends  CI_Controller  {
                 );
             }else{
                 if($this->data['client_id']){
-                    // check to see if there is an associated plan, otherwise we output error no site
+                    // Missing plan data leaves the logged-in session unusable.
                     $user_plan = $this->User_model->getPlan();
+                    if (empty($user_plan)) {
+                        redirect('/logout', 'refresh');
+                        return;
+                    }
                     if (!array_key_exists('price', $user_plan)) $user_plan['price'] = DEFAULT_PLAN_PRICE;
                     $this->data['user_plan'] = $user_plan;
-                    if (!empty($user_plan)) {
-                        if (array_key_exists('feature_to_plan', $user_plan)) foreach ($user_plan['feature_to_plan'] as $feature_id) {
-                            $value = $this->Feature_model->getFeature($feature_id);
-                            if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
-                                $this->data['features']['others'][] = array(
-                                    'feature_id' => $value['_id'],
-                                    'name' => $value['name'],
-                                    'icon' => $value['icon'],
-                                    'link' =>$value['link']
-                                );
-                            }
-                        }
-
-                        /*if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
-                            $this->data['features'][] = array(
-                                'feature_id' => new MongoId(),
-                                'name' => 'Sms (old)',
-                                'icon' => 'fa-mail-forward',
-                                'link' => 'sms'
+                    if (array_key_exists('feature_to_plan', $user_plan)) foreach ($user_plan['feature_to_plan'] as $feature_id) {
+                        $value = $this->Feature_model->getFeature($feature_id);
+                        if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
+                            $this->data['features']['others'][] = array(
+                                'feature_id' => $value['_id'],
+                                'name' => $value['name'],
+                                'icon' => $value['icon'],
+                                'link' =>$value['link']
                             );
-                        }*/
-                    } else {
-                        $this->data['check_site_exists'] = false;
+                        }
                     }
+
+                    /*if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
+                        $this->data['features'][] = array(
+                            'feature_id' => new MongoId(),
+                            'name' => 'Sms (old)',
+                            'icon' => 'fa-mail-forward',
+                            'link' => 'sms'
+                        );
+                    }*/
                     $client = $this->Client_model->getClient($this->data['client_id']);
                     $this->data['account'] = $this->set_account($user_plan, $client);
                 }else{
