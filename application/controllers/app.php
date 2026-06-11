@@ -525,6 +525,9 @@ class App extends MY_Controller
 
     public function add_platform($app_id)
     {
+        if (preg_match('/^[0-9a-f]{24}$/i', (string)$app_id) !== 1) {
+            redirect('app', 'refresh');
+        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -623,6 +626,10 @@ class App extends MY_Controller
 
     public function edit_app($app_id)
     {
+        if (preg_match('/^[0-9a-f]{24}$/i', (string)$app_id) !== 1) {
+            redirect('app', 'refresh');
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $this->data['message'] = null;
