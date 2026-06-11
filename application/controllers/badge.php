@@ -88,6 +88,7 @@ class Badge extends MY_Controller
         $this->form_validation->set_rules('substract', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->normalizeBadgePost();
 
             if ($this->checkLimitBadge()) {
                 $this->data['message'] = null;
@@ -203,6 +204,7 @@ class Badge extends MY_Controller
         $this->form_validation->set_rules('substract', "", '');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
+            $this->normalizeBadgePost();
 
             $this->data['message'] = null;
 
@@ -830,18 +832,20 @@ class Badge extends MY_Controller
 
         }
 
-        if ($this->input->post('name')) {
-            $this->data['name'] = $this->input->post('name');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['name'] = $badge_info['name'];
+        $name = $this->input->post('name');
+        if ($name !== false) {
+            $this->data['name'] = $this->badgeText($name);
+        } elseif (isset($badge_id) && ($badge_id != 0) && isset($badge_info['name'])) {
+            $this->data['name'] = $this->badgeText($badge_info['name']);
         } else {
             $this->data['name'] = '';
         }
 
-        if ($this->input->post('description')) {
-            $this->data['description'] = htmlentities($this->input->post('description'));
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['description'] = htmlentities($badge_info['description']);
+        $description = $this->input->post('description');
+        if ($description !== false) {
+            $this->data['description'] = htmlentities($this->badgeText($description));
+        } elseif (isset($badge_id) && ($badge_id != 0) && isset($badge_info['description'])) {
+            $this->data['description'] = htmlentities($this->badgeText($badge_info['description']));
         } else {
             $this->data['description'] = '';
         }
@@ -859,10 +863,11 @@ class Badge extends MY_Controller
             $this->data['tags'] = array();
         }
 
-        if ($this->input->post('hint')) {
-            $this->data['hint'] = $this->input->post('hint');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['hint'] = $badge_info['hint'];
+        $hint = $this->input->post('hint');
+        if ($hint !== false) {
+            $this->data['hint'] = $this->badgeText($hint);
+        } elseif (isset($badge_id) && ($badge_id != 0) && isset($badge_info['hint'])) {
+            $this->data['hint'] = $this->badgeText($badge_info['hint']);
         } else {
             $this->data['hint'] = '';
         }
@@ -1011,6 +1016,20 @@ class Badge extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function normalizeBadgePost()
+    {
+        foreach (array('name', 'description', 'hint') as $field) {
+            if (isset($_POST[$field]) && !is_scalar($_POST[$field])) {
+                $_POST[$field] = '';
+            }
+        }
+    }
+
+    private function badgeText($value)
+    {
+        return is_scalar($value) ? (string)$value : '';
     }
 
     private function checkLimitBadge()
