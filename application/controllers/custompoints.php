@@ -68,7 +68,12 @@ class Custompoints extends MY_Controller
         $this->load->model('Plan_model');
         // Get Limit
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $limit_custompoints = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'custompoint');
+        try {
+            $limit_custompoints = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'custompoint');
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
 
         $this->data['message'] = null;
 
