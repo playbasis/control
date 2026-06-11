@@ -1320,11 +1320,28 @@ class Content extends MY_Controller
             return;
         }
 
+        $posted_contents = $this->input->post('array_contents');
+        if (!is_array($posted_contents)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        $content_ids = array();
+        foreach ($posted_contents as $content_id) {
+            if ($content_id == "on") {
+                continue;
+            }
+            if (!is_scalar($content_id) || preg_match('/^[0-9a-f]{24}$/i', (string)$content_id) !== 1) {
+                $this->jsonErrorResponse();
+                return;
+            }
+            $content_ids[] = (string)$content_id;
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $array_contents = array();
-        foreach($this->input->post('array_contents') as $content_id){
-            if($content_id == "on")continue;
+        foreach($content_ids as $content_id){
             $content_info = $this->Content_model->retrieveContent($client_id, $site_id, $content_id);
             $content_category_name = null;
             if(isset($content_info['category']) && $content_info['category']){
