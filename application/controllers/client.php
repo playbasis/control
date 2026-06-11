@@ -90,7 +90,15 @@ class Client extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_email_is_used');
             }
 
-            if ($this->form_validation->run() && $this->data['message'] == null) {
+            $form_valid = $this->form_validation->run();
+
+            if ($form_valid && $this->data['message'] == null &&
+                !$this->isValidMongoId($this->input->post('plan_id'))
+            ) {
+                $this->data['message'] = $this->lang->line('error_required');
+            }
+
+            if ($form_valid && $this->data['message'] == null) {
 
                 $client_id = $this->Client_model->addClient($this->input->post());
 
@@ -140,7 +148,15 @@ class Client extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if ($this->form_validation->run() && $this->data['message'] == null) {
+            $form_valid = $this->form_validation->run();
+
+            if ($form_valid && $this->data['message'] == null &&
+                !$this->isValidMongoId($this->input->post('plan_id'))
+            ) {
+                $this->data['message'] = $this->lang->line('error_required');
+            }
+
+            if ($form_valid && $this->data['message'] == null) {
 
                 $this->Client_model->editClient($client_id, $this->input->post());
 
