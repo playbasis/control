@@ -237,7 +237,11 @@ class Account extends MY_Controller
 
             $this->form_validation->set_rules('plan', $this->lang->line('form_package'), 'trim|required');
             $this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
+            $plan_id = $this->input->post('plan');
             $channel = $this->input->post('channel');
+            if ($plan_id && !$this->isMongoId($plan_id)) {
+                $this->data['message'] = 'Invalid plan';
+            }
             if (!$this->check_valid_payment_channel($channel)) {
                 $this->data['message'] = 'Invalid payment channel';
             }
@@ -249,71 +253,76 @@ class Account extends MY_Controller
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 $success = true;
 
-                $selected_plan = $this->Plan_model->getPlanById(new MongoId($this->input->post('plan')));
-                if (!array_key_exists('price', $selected_plan)) {
-                    $selected_plan['price'] = DEFAULT_PLAN_PRICE;
-                }
+                $selected_plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
+                if (!is_array($selected_plan)) {
+                    $this->data['message'] = 'Invalid plan';
+                    $success = false;
+                } else {
+                    if (!array_key_exists('price', $selected_plan)) {
+                        $selected_plan['price'] = DEFAULT_PLAN_PRICE;
+                    }
 
-                $plan_free_flag = $selected_plan['price'] <= 0;
-                $date_today = time();
-                $trial_days = 0;
-                $modify = false;
-                switch ($mode) {
-                    case PURCHASE_SUBSCRIBE:
-                        $days_total = array_key_exists('limit_others', $selected_plan) && array_key_exists('trial',
-                            $selected_plan['limit_others']) ? $selected_plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
-                        $date_trial_end = strtotime("+" . $days_total . " day", $date_today);
-                        $trial_days = $plan_free_flag ? 0 : $this->find_diff_in_days($date_today,
-                            $date_trial_end); // free account would not get trial days when they decide to subscribe
-                        break;
-                    case PURCHASE_UPGRADE:
-                    case PURCHASE_DOWNGRADE:
-                        $date_billing = array_key_exists('date_billing',
-                            $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
-                        $days_remaining = $this->find_diff_in_days($date_today, $date_billing);
-                        $trial_days = $days_remaining >= 0 ? $days_remaining : 0;
-                        $modify = true;
-                        break;
-                    default:
-                        log_message('error', 'Invalid mode = ' . $mode);
-                        break;
-                }
+                    $plan_free_flag = $selected_plan['price'] <= 0;
+                    $date_today = time();
+                    $trial_days = 0;
+                    $modify = false;
+                    switch ($mode) {
+                        case PURCHASE_SUBSCRIBE:
+                            $days_total = isset($selected_plan['limit_others']) && is_array($selected_plan['limit_others']) && array_key_exists('trial',
+                                $selected_plan['limit_others']) ? $selected_plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+                            $date_trial_end = strtotime("+" . $days_total . " day", $date_today);
+                            $trial_days = $plan_free_flag ? 0 : $this->find_diff_in_days($date_today,
+                                $date_trial_end); // free account would not get trial days when they decide to subscribe
+                            break;
+                        case PURCHASE_UPGRADE:
+                        case PURCHASE_DOWNGRADE:
+                            $date_billing = array_key_exists('date_billing',
+                                $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
+                            $days_remaining = $this->find_diff_in_days($date_today, $date_billing);
+                            $trial_days = $days_remaining >= 0 ? $days_remaining : 0;
+                            $modify = true;
+                            break;
+                        default:
+                            log_message('error', 'Invalid mode = ' . $mode);
+                            break;
+                    }
 
-                /* set the parameters for payment */
-                $this->data['heading_title'] = $this->lang->line('order_title');
-                $this->data['params'] = array(
-                    'plan_id' => $selected_plan['_id'],
-                    'plan_name' => $selected_plan['name'],
-                    'price' => $selected_plan['price'],
-                    'trial_days' => $trial_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial_days,
-                    'callback' => API_SERVER . '/notification',
-                    'modify' => $modify,
-                );
+                    /* set the parameters for payment */
+                    $this->data['heading_title'] = $this->lang->line('order_title');
+                    $this->data['params'] = array(
+                        'plan_id' => $selected_plan['_id'],
+                        'plan_name' => $selected_plan['name'],
+                        'price' => $selected_plan['price'],
+                        'trial_days' => $trial_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial_days,
+                        'callback' => API_SERVER . '/notification',
+                        'modify' => $modify,
+                    );
 
-                $plan_id = $this->data['params']['plan_id'] . '';
-                switch ($channel) {
-                    case PAYMENT_CHANNEL_PAYPAL:
-                        $this->data['main'] = 'account_purchase_paypal';
-                        break;
-                    case PAYMENT_CHANNEL_STRIPE:
-                        require_once(APPPATH . '/libraries/stripe/init.php');
-                        \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
-                        try {
-                            $plan = \Stripe\Plan::retrieve($plan_id);
-                        } catch (Exception $e) {
-                            \Stripe\Plan::create(array(
-                                'amount' => $this->data['params']['price'] * 100,
-                                'interval' => 'month',
-                                'name' => $this->data['params']['plan_name'],
-                                'currency' => 'usd',
-                                'id' => $plan_id,
-                                'trial_period_days' => $this->data['params']['trial_days'],
-                            ));
-                        }
-                        $this->data['params']['publishable_key'] = STRIPE_PUBLISHABLE_KEY;
-                        $this->data['main'] = 'account_purchase_stripe';
-                        $this->data['form'] = 'account/stripe';
-                        break;
+                    $plan_id = $this->data['params']['plan_id'] . '';
+                    switch ($channel) {
+                        case PAYMENT_CHANNEL_PAYPAL:
+                            $this->data['main'] = 'account_purchase_paypal';
+                            break;
+                        case PAYMENT_CHANNEL_STRIPE:
+                            require_once(APPPATH . '/libraries/stripe/init.php');
+                            \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+                            try {
+                                $plan = \Stripe\Plan::retrieve($plan_id);
+                            } catch (Exception $e) {
+                                \Stripe\Plan::create(array(
+                                    'amount' => $this->data['params']['price'] * 100,
+                                    'interval' => 'month',
+                                    'name' => $this->data['params']['plan_name'],
+                                    'currency' => 'usd',
+                                    'id' => $plan_id,
+                                    'trial_period_days' => $this->data['params']['trial_days'],
+                                ));
+                            }
+                            $this->data['params']['publishable_key'] = STRIPE_PUBLISHABLE_KEY;
+                            $this->data['main'] = 'account_purchase_stripe';
+                            $this->data['form'] = 'account/stripe';
+                            break;
+                    }
                 }
             }
         }
@@ -860,6 +869,11 @@ class Account extends MY_Controller
     private function check_valid_payment_channel($channel)
     {
         return in_array($channel, array(PAYMENT_CHANNEL_PAYPAL, PAYMENT_CHANNEL_STRIPE));
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     private function validateAccess()
