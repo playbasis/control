@@ -210,6 +210,11 @@ class App extends MY_Controller
         $this->render_page('template');
     }
 
+    private function isValidMongoId($id)
+    {
+        return preg_match('/^[0-9a-f]{24}$/i', (string)$id) === 1;
+    }
+
     public function reset()
     {
         $json = array();
@@ -438,6 +443,10 @@ class App extends MY_Controller
 
     public function platform_edit($platform_id)
     {
+        if (!$this->isValidMongoId($platform_id)) {
+            redirect('app', 'refresh');
+        }
+
         $app = $this->App_model->getPlatform($platform_id);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
