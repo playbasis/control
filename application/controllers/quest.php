@@ -541,6 +541,10 @@ class Quest extends MY_Controller
         $data['site_id'] = $this->User_model->getSiteId();
 
         if (isset($quest_id) && !empty($quest_id)) {
+            if (!$this->isMongoId($quest_id)) {
+                redirect('/quest', 'refresh');
+            }
+
             $data['quest_id'] = $quest_id;
             $editQuest = $this->Quest_model->getQuestByClientSiteId($data);
         } else {
@@ -1225,6 +1229,12 @@ class Quest extends MY_Controller
 
     public function increase_order($quest_id)
     {
+        if (!$this->isMongoId($quest_id)) {
+            $json = array('error' => 'Invalid quest id');
+            $this->output->set_output(json_encode($json));
+            return;
+        }
+
         if ($this->User_model->getClientId()) {
             $client_id = $this->User_model->getClientId();
             $this->Quest_model->increaseOrderByOneClient($quest_id, $client_id);
@@ -1237,6 +1247,12 @@ class Quest extends MY_Controller
 
     public function decrease_order($quest_id)
     {
+        if (!$this->isMongoId($quest_id)) {
+            $json = array('error' => 'Invalid quest id');
+            $this->output->set_output(json_encode($json));
+            return;
+        }
+
         if ($this->User_model->getClientId()) {
             $client_id = $this->User_model->getClientId();
             $this->Quest_model->decreaseOrderByOneClient($quest_id, $client_id);
@@ -1335,22 +1351,35 @@ class Quest extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['message'] == null) {
-
-            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
-                foreach ($this->input->post('selected') as $quest_id) {
-                    $this->Quest_model->deleteQuestClient($quest_id);
-                }
-            } else {
-                /*
-                foreach ($this->input->post('selected') as $action_id) {
-                    $this->Action_model->delete($action_id);
-                }
-                 */
+            $selected_quests = $this->input->post('selected');
+            if (!is_array($selected_quests)) {
+                $selected_quests = array($selected_quests);
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            foreach ($selected_quests as $quest_id) {
+                if (!$this->isMongoId($quest_id)) {
+                    $this->error['message'] = 'Invalid quest id';
+                    break;
+                }
+            }
 
-            redirect('/quest', 'refresh');
+            if ($this->error['message'] == null) {
+                if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+                    foreach ($selected_quests as $quest_id) {
+                        $this->Quest_model->deleteQuestClient($quest_id);
+                    }
+                } else {
+                    /*
+                    foreach ($selected_quests as $action_id) {
+                        $this->Action_model->delete($action_id);
+                    }
+                     */
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+
+                redirect('/quest', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -1382,17 +1411,23 @@ class Quest extends MY_Controller
         if (!$pb_player_id) {
             $message[] = '"pb_player_id" is not sent';
         }
+        $selected_quests = $selected;
+        if ($selected && !is_array($selected_quests)) {
+            $selected_quests = array($selected_quests);
+        }
+        if ($selected && !$this->areMongoIds($selected_quests)) {
+            $message[] = 'Invalid quest id';
+        }
+        if ($pb_player_id && !$this->isMongoId($pb_player_id)) {
+            $message[] = 'Invalid player id';
+        }
         if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
             $message[] = 'Super-admin cannot use this function';
         }
-        if ($selected && $pb_player_id && $this->error['warning'] == null && $this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+        if ($selected && $pb_player_id && empty($message) && $this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
             $success = true;
-            if (is_array($selected)) {
-                foreach ($selected as $quest_id) {
-                    $success = $success && $this->Quest_model->resetQuestClient($quest_id, $pb_player_id);
-                }
-            } else {
-                $success = $this->Quest_model->resetQuestClient($selected, $pb_player_id);
+            foreach ($selected_quests as $quest_id) {
+                $success = $success && $this->Quest_model->resetQuestClient($quest_id, $pb_player_id);
             }
             if (!$success) {
                 $message[] = 'There is an error in processing quest reset for the player';
@@ -1406,6 +1441,10 @@ class Quest extends MY_Controller
 
     public function edit($quest_id)
     {
+        if (!$this->isMongoId($quest_id)) {
+            redirect('/quest', 'refresh');
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $missions = $this->Quest_model->getTotalMissionsClientSite(array(
@@ -1681,6 +1720,30 @@ class Quest extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        if (is_object($id) && method_exists($id, '__toString')) {
+            $id = (string)$id;
+        }
+
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
+    }
+
+    private function areMongoIds($ids)
+    {
+        if (!is_array($ids)) {
+            return false;
+        }
+
+        foreach ($ids as $id) {
+            if (!$this->isMongoId($id)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function playQuest($quest_id = null)
@@ -2429,8 +2492,14 @@ class Quest extends MY_Controller
         $data['client_id'] = $this->User_model->getClientId();
         $data['site_id'] = $this->User_model->getSiteId();
 
+        $quest_ids = $this->input->post('array_quests');
+        if (!is_array($quest_ids) || !$this->areMongoIds($quest_ids)) {
+            $this->jsonErrorResponse('Invalid quest id');
+            return;
+        }
+
         $array_quests = array();
-        foreach($this->input->post('array_quests') as $quest_id){
+        foreach($quest_ids as $quest_id){
             $data['quest_id'] = $quest_id;
             $quest_info = $this->Quest_model->getQuestByClientSiteId($data);
             unset($quest_info['_id']);
