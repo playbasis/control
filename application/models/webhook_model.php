@@ -95,6 +95,42 @@ class Webhook_model extends MY_Model
         return $this->mongo_db->count("playbasis_webhook_to_client");
     }
 
+    private function mongoId($id)
+    {
+        if (is_object($id) && method_exists($id, '__toString')) {
+            $id = (string)$id;
+        } elseif (is_scalar($id)) {
+            $id = (string)$id;
+        } else {
+            return null;
+        }
+
+        return preg_match('/^[0-9a-f]{24}$/i', $id) === 1 ? new MongoID($id) : null;
+    }
+
+    private function applyCurrentTemplateScope($data = array())
+    {
+        $client_id = isset($data['client_id']) ? $data['client_id'] : $this->session->userdata('client_id');
+        $client_id = $this->mongoId($client_id);
+        if ($client_id) {
+            $this->mongo_db->where('client_id', $client_id);
+        }
+
+        $site_id = isset($data['site_id']) ? $data['site_id'] : $this->session->userdata('site_id');
+        $site_id = $this->mongoId($site_id);
+        if ($site_id) {
+            $this->mongo_db->where('site_id', $site_id);
+        }
+
+        return true;
+    }
+
+    private function canModifyWebhook()
+    {
+        $this->load->model('User_model');
+        return $this->User_model->hasPermission('modify', 'webhook');
+    }
+
     public function addTemplate($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -119,6 +155,7 @@ class Webhook_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($template_id));
+        $this->applyCurrentTemplateScope($data);
         $templates = $this->mongo_db->get("playbasis_webhook_to_client");
         if (!$templates) {
             return false;
@@ -133,6 +170,7 @@ class Webhook_model extends MY_Model
         $this->mongo_db->set('body', $data['body']);
         $this->mongo_db->set('url', $this->templateText($data, 'url'));
         $this->mongo_db->set("date_modified", new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->applyCurrentTemplateScope($data);
         $this->mongo_db->update('playbasis_webhook_to_client');
         return true;
     }
@@ -142,12 +180,14 @@ class Webhook_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($template_id));
+        $this->applyCurrentTemplateScope();
         $templates = $this->mongo_db->get("playbasis_webhook_to_client");
         if (!$templates) {
             return false;
         }
 
         $this->mongo_db->where('_id', new MongoID($template_id));
+        $this->applyCurrentTemplateScope();
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->set('status', false);
@@ -159,13 +199,19 @@ class Webhook_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if (!$this->canModifyWebhook()) {
+            return false;
+        }
+
         $this->mongo_db->where('_id', new MongoID($template_id));
+        $this->applyCurrentTemplateScope();
         $templates = $this->mongo_db->get('playbasis_webhook_to_client');
         if (!$templates) {
             return false;
         }
 
         $this->mongo_db->where('_id', new MongoID($template_id));
+        $this->applyCurrentTemplateScope();
         $this->mongo_db->set('sort_order', $templates[0]['sort_order'] + 1);
         $this->mongo_db->update('playbasis_webhook_to_client');
         return true;
@@ -175,13 +221,19 @@ class Webhook_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if (!$this->canModifyWebhook()) {
+            return false;
+        }
+
         $this->mongo_db->where('_id', new MongoID($template_id));
+        $this->applyCurrentTemplateScope();
         $templates = $this->mongo_db->get('playbasis_webhook_to_client');
         if (!$templates || $templates[0]['sort_order'] <= 0) {
             return false;
         }
 
         $this->mongo_db->where('_id', new MongoID($template_id));
+        $this->applyCurrentTemplateScope();
         $this->mongo_db->set('sort_order', $templates[0]['sort_order'] - 1);
         $this->mongo_db->update('playbasis_webhook_to_client');
         return true;
