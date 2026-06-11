@@ -399,6 +399,14 @@ class Quiz extends MY_Controller
             $quiz_info = array_merge($quiz_info, $quiz);
         }
 
+        if (isset($quiz_info['tags'])) {
+            if (is_string($quiz_info['tags']) && $quiz_info['tags'] !== '') {
+                $quiz_info['tags'] = explode(',', $quiz_info['tags']);
+            } elseif (!is_array($quiz_info['tags'])) {
+                $quiz_info['tags'] = array();
+            }
+        }
+
         $this->data['quiz'] = $quiz_info;
 
         $data['client_id'] = $this->User_model->getClientId();
