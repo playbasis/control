@@ -895,7 +895,7 @@ class Content extends MY_Controller
         }
     }
 
-    private function initiateContentPush($deviceTokens = array(), $notificationData, $type = null)
+    private function initiateContentPush($deviceTokens, $notificationData, $type = null)
     {
         $type = strtolower($type);
 

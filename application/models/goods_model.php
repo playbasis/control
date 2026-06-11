@@ -1891,7 +1891,7 @@ class Goods_model extends MY_Model
         return $this->mongo_db->get('playbasis_goods_to_player');
     }
 
-    public function listRedeemedGoodsBySite($site_id, $fields = array(), $data)
+    public function listRedeemedGoodsBySite($site_id, $fields, $data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         if ($fields) {
