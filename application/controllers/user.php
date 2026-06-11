@@ -1045,12 +1045,17 @@ class User extends MY_Controller
                     if ($user) {
                         /* find plan of this user */
                         $client_id = $this->User_model->getClientIdByUserId($user_id);
+                        $price = DEFAULT_PLAN_PRICE;
                         $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-                        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-                        if (!array_key_exists('price', $plan)) {
-                            $plan['price'] = DEFAULT_PLAN_PRICE;
+                        if (is_array($plan_subscription) && array_key_exists('plan_id', $plan_subscription)) {
+                            $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+                            if (is_array($plan)) {
+                                if (!array_key_exists('price', $plan)) {
+                                    $plan['price'] = DEFAULT_PLAN_PRICE;
+                                }
+                                $price = $plan['price'];
+                            }
                         }
-                        $price = $plan['price'];
                         $free_flag = $price <= 0;
                         $paid_flag = !$free_flag;
                         /* proceed by sending email */
