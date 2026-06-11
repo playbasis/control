@@ -1163,6 +1163,10 @@ class Cron extends CI_Controller
 
     public function notifyClientsToSetupMobile()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $clients = $this->client_model->listAllActiveClientsWithoutMobile();
         if ($clients) {
             foreach ($clients as $client) {
