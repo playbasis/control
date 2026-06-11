@@ -200,6 +200,12 @@ class User extends MY_Controller
                 redirect('user/update/' . $user_id, 'refresh');
             }
 
+            $user_group = $this->input->post('user_group');
+            if ($user_group !== null && $user_group !== '' && !$this->isMongoId($user_group)) {
+                $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                redirect('user/update/' . $user_id, 'refresh');
+            }
+
             //Check to see if it passes the form validation
 
             if ($this->form_validation->run()) {
@@ -259,6 +265,12 @@ class User extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!$this->validateModify()) {
                 $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+                redirect('user/insert', 'refresh');
+            }
+
+            $user_group = $this->input->post('user_group');
+            if ($user_group !== null && $user_group !== '' && !$this->isMongoId($user_group)) {
+                $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
                 redirect('user/insert', 'refresh');
             }
 
