@@ -181,7 +181,7 @@ class CI_Xmlrpcs extends CI_Xmlrpc
 
 		if ($data == '')
 		{
-			$data = $HTTP_RAW_POST_DATA;
+			$data = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : file_get_contents('php://input');
 		}
 
 		//-------------------------------------
