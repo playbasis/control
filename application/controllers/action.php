@@ -279,7 +279,7 @@ class Action extends MY_Controller
             'site_id' => $site_id,
             'sort' => 'name'
         );
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
         if (isset($_GET['filter_status'])) {
@@ -350,7 +350,7 @@ class Action extends MY_Controller
             'site_id' => $site_id,
             'sort' => 'sort_order'
         );
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
