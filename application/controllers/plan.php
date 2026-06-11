@@ -461,7 +461,7 @@ class Plan extends MY_Controller
         if ($this->input->post('limit_noti')) {
             $this->data['limit_noti'] = $this->input->post('limit_noti');
         } elseif (!empty($plan_info) && isset($plan_info['limit_notifications'])) {
-            $this->data['limit_noti'] = $plan_info["limit_notifications"];
+            $this->data['limit_noti'] = is_array($plan_info["limit_notifications"]) ? $plan_info["limit_notifications"] : array();
             // merge with default, prevent missing fields
             $this->data["limit_noti"] = array_merge(
                 $default_limit_noti,
@@ -492,7 +492,7 @@ class Plan extends MY_Controller
         if ($this->input->post('limit_others')) {
             $this->data['limit_others'] = $this->input->post('limit_others');
         } elseif (!empty($plan_info) && isset($plan_info['limit_others'])) {
-            $this->data['limit_others'] = $plan_info["limit_others"];
+            $this->data['limit_others'] = is_array($plan_info["limit_others"]) ? $plan_info["limit_others"] : array();
             // merge with default, prevent missing fields
             foreach ($this->data['limit_others'] as $k => $v) {
                 if (!array_key_exists($k, $default_limit_others)) {
@@ -543,7 +543,7 @@ class Plan extends MY_Controller
         if ($this->input->post('limit_widget')) {
             $this->data['limit_widget'] = $this->input->post('limit_widget');
         } elseif (!empty($plan_info) && isset($plan_info['limit_widget'])) {
-            $this->data['limit_widget'] = $plan_info["limit_widget"];
+            $this->data['limit_widget'] = is_array($plan_info["limit_widget"]) ? $plan_info["limit_widget"] : array();
             // merge with default, prevent missing fields
             foreach ($this->data['limit_widget'] as $k => $v) {
                 if (!array_key_exists($k, $default_limit_widgets)) {
@@ -559,7 +559,7 @@ class Plan extends MY_Controller
         if ($this->input->post('limit_cms')) {
             $this->data['limit_cms'] = $this->input->post('limit_cms');
         } elseif (!empty($plan_info) && isset($plan_info['limit_cms'])) {
-            $this->data['limit_cms'] = $plan_info["limit_cms"];
+            $this->data['limit_cms'] = is_array($plan_info["limit_cms"]) ? $plan_info["limit_cms"] : array();
             // merge with default, prevent missing fields
             foreach ($this->data['limit_cms'] as $k => $v) {
                 if (!array_key_exists($k, $default_limit_cms)) {
