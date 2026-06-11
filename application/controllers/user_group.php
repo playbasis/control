@@ -114,7 +114,7 @@ class User_group extends MY_Controller
             $this->data['success'] = '';
         }
 
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter = array(
                 'filter_name' => $_GET['filter_name']
             );
@@ -145,6 +145,10 @@ class User_group extends MY_Controller
 
     public function update($user_group_id)
     {
+        if (!$this->isMongoId($user_group_id)) {
+            redirect('/user_group', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -223,6 +227,9 @@ class User_group extends MY_Controller
     public function getForm($user_group_id = 0)
     {
         if ((isset($user_group_id) && $user_group_id != 0)) {
+            if (!$this->isMongoId($user_group_id)) {
+                redirect('/user_group', 'refresh');
+            }
 
             if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
                 $user_group_info = $this->User_group_model->getUserGroupInfo($user_group_id);
@@ -258,6 +265,21 @@ class User_group extends MY_Controller
             redirect('/user_group', 'refresh');
         }
 
+        if (!$selectedUserGroups) {
+            redirect('/user_group', 'refresh');
+        }
+
+        if (!is_array($selectedUserGroups)) {
+            $selectedUserGroups = array($selectedUserGroups);
+        }
+
+        foreach ($selectedUserGroups as $selectedUserGroup) {
+            if (!$this->isMongoId($selectedUserGroup)) {
+                $this->session->set_flashdata('fail', 'Invalid user group id');
+                redirect('/user_group', 'refresh');
+            }
+        }
+
         foreach ($selectedUserGroups as $selectedUserGroup) {
 
             $check = $this->User_group_model->checkUsersInUserGroup($selectedUserGroup);
@@ -283,13 +305,8 @@ class User_group extends MY_Controller
     {
         $json = array();
 
-        if ($this->input->get('filter_name')) {
-
-            if ($this->input->get('filter_name')) {
-                $filter_name = $this->input->get('filter_name');
-            } else {
-                $filter_name = null;
-            }
+        $filter_name = $this->input->get('filter_name');
+        if ($filter_name && is_scalar($filter_name)) {
 
             $data = array(
                 'filter_name' => $filter_name
@@ -336,6 +353,11 @@ class User_group extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
 }
