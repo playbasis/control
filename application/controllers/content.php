@@ -89,7 +89,12 @@ class Content extends MY_Controller
 
 //        Get Limit
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $limit_content = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'content');
+        try {
+            $limit_content = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'content');
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
 
         $this->data['message'] = null;
 
