@@ -265,6 +265,8 @@ class Plan extends MY_Controller
         $total = $this->Plan_model->getTotalPlans($data);
 
         $results = $this->Plan_model->getPlans($data);
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
 
         if ($results) {
             foreach ($results as $result) {
@@ -277,8 +279,7 @@ class Plan extends MY_Controller
                     'price' => array_key_exists('price', $result) ? $result['price'] : DEFAULT_PLAN_PRICE,
                     'display' => array_key_exists('display', $result) ? $result['display'] : DEFAULT_PLAN_DISPLAY,
                     'status' => $result['status'],
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($result['_id'], $selected),
                 );
             }
         }
