@@ -1341,7 +1341,8 @@ class User extends MY_Controller
         $client_id = $branch['client_id'];
         $site_id = $branch['site_id'];
         $merchant = $this->Merchant_model->findMerchantByBranchId($branch_id);
-        $group_list = array_map('user_index_goods_group', $this->Merchant_model->findGoodsByBranchId($branch_id));
+        $branch_goods_list = $this->normalizeMerchantList($this->Merchant_model->findGoodsByBranchId($branch_id));
+        $group_list = array_map('user_index_goods_group', $branch_goods_list);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = $this->input->post();
             $group = isset($data['group']) ? $data['group'] : null;
@@ -1360,8 +1361,8 @@ class User extends MY_Controller
                 }
             }
 
-            $goods_list = array_map('user_index_goods_id',
-                $this->Goods_model->listGoodsByGroupAndCode($group, $coupon, array('goods_id')));
+            $goods_result = $this->normalizeMerchantList($this->Goods_model->listGoodsByGroupAndCode($group, $coupon, array('goods_id')));
+            $goods_list = array_map('user_index_goods_id', $goods_result);
             if (!$goods_list) {
                 if ($this->input->post('format') == 'json') {
                     /* invalid = FAIL */
@@ -1374,9 +1375,11 @@ class User extends MY_Controller
             }
             $redeemed_goods_list = $this->Goods_model->listRedeemedGoods($goods_list,
                 array('goods_id', 'cl_player_id', 'pb_player_id'));
+            $redeemed_goods_list = $this->normalizeMerchantList($redeemed_goods_list);
             $goods_list_redeemed = array_map('user_index_goods_id', $redeemed_goods_list);
             $verified_goods_list = $this->Goods_model->listVerifiedGoods($goods_list,
                 array('goods_id', 'branch', 'date_added'));
+            $verified_goods_list = $this->normalizeMerchantList($verified_goods_list);
             $goods_list_verified = array_map('user_index_goods_id', $verified_goods_list);
             $goods_list_ok = array_diff($goods_list_redeemed,
                 $goods_list_verified); // coupon is redeemed but not yet exercised (found record in "playbasis_goods_to_player", not "playbasis_merchant_goodsgroup_redeem_log")
@@ -1662,6 +1665,11 @@ class User extends MY_Controller
             }
         }
         throw new Exception('Cannot find goods record given goods_id: ' . $goods_id);
+    }
+
+    private function normalizeMerchantList($value)
+    {
+        return is_array($value) ? $value : array();
     }
 
     private function email($to, $subject, $message)
