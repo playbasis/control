@@ -265,7 +265,7 @@ class Location extends MY_Controller
             'site_id' => $site_id,
             'sort' => 'name'
         );
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
@@ -273,6 +273,12 @@ class Location extends MY_Controller
 
         $this->data['locations'] = $this->Location_model->retrieveLocation($filter);
         foreach($this->data['locations'] as &$location){
+            if (isset($location['tags']) && is_string($location['tags'])) {
+                $location['tags'] = explode(',', $location['tags']);
+            } elseif (!isset($location['tags']) || !is_array($location['tags'])) {
+                $location['tags'] = array();
+            }
+
             if($location['object_type'] == "item"){
                 $location['object_name'] = $this->Badge_model->getNameOfBadgeID($client_id, $site_id, $location['object_id']);
             }else if($location['object_type'] == "store"){
