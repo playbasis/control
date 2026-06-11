@@ -165,6 +165,11 @@ class User extends MY_Controller
 
     public function update($user_id)
     {
+        if (!$this->isMongoId($user_id)) {
+            $this->session->set_flashdata('fail', 'Invalid user id');
+            redirect('/user', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
@@ -427,6 +432,10 @@ class User extends MY_Controller
 
     public function getForm($user_id = 0)
     {
+        if ($user_id != 0 && !$this->isMongoId($user_id)) {
+            $this->session->set_flashdata('fail', 'Invalid user id');
+            redirect('/user', 'refresh');
+        }
 
         if ((isset($user_id)) && $user_id != 0) {
             $user_info = $this->User_model->getUserInfo($user_id);
@@ -532,6 +541,11 @@ class User extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     private function checkOwnerUser($user_id)
