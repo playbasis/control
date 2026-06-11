@@ -184,7 +184,7 @@ class Custompoints extends MY_Controller
             'sort' => 'name'
         );
 
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
             $parameter_url .= "&filter_name=" . $_GET['filter_name'];
         }
@@ -208,7 +208,7 @@ class Custompoints extends MY_Controller
             $filter['filter_pending_support'] = $_GET['filter_pending_support'] == "true" ? true : false;
             $parameter_url .= "&filter_pending_support=" . $_GET['filter_pending_support'];
         }
-        if (isset($_GET['filter_tags'])) {
+        if (isset($_GET['filter_tags']) && is_scalar($_GET['filter_tags'])) {
             $filter['filter_tags'] = $_GET['filter_tags'];
             $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
         }
