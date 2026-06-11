@@ -182,6 +182,16 @@ class Level_model extends MY_Model
         return $level_data;
     }
 
+    private function normalizedImage($data)
+    {
+        if (!isset($data['image']) || !is_scalar($data['image'])) {
+            return '';
+        }
+
+        $image = trim((string)$data['image']);
+        return $image === '' ? '' : html_entity_decode($image, ENT_QUOTES, 'UTF-8');
+    }
+
     public function addLevel($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -190,7 +200,7 @@ class Level_model extends MY_Model
             'level_title' => $data['level_title'] | '',
             'level' => (int)$data['level'] | 0,
             'exp' => (int)$data['exp'] | 0,
-            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'image' => $this->normalizedImage($data),
             // 'tags' => $data['tags']|'' ,
             'tags' => (isset($data['tags'])) ? $data['tags'] : 0,
             'status' => (bool)$data['status'],
@@ -234,8 +244,7 @@ class Level_model extends MY_Model
                             'level_title' => $data['level_title'] | '',
                             'level' => (int)$data['level'],
                             'exp' => (int)$data['exp'] | 0,
-                            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES,
-                                'UTF-8') : '',
+                            'image' => $this->normalizedImage($data),
                             // 'tags' => $data['tags']|'' ,
                             'tags' => (isset($data['tags'])) ? $data['tags'] : 0,
                             'status' => (bool)$data['status'],
@@ -257,8 +266,7 @@ class Level_model extends MY_Model
                             'level_title' => $data['level_title'] | '',
                             'level' => (int)$data['level'],
                             'exp' => (int)$data['exp'] | 0,
-                            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES,
-                                'UTF-8') : '',
+                            'image' => $this->normalizedImage($data),
                             // 'tags' => $data['tags']|'' ,
                             'tags' => (isset($data['tags'])) ? $data['tags'] : 0,
                             'status' => (bool)$data['status'],
@@ -279,7 +287,7 @@ class Level_model extends MY_Model
                         'level_title' => $data['level_title'] | '',
                         'level' => (int)$data['level'],
                         'exp' => (int)$data['exp'] | 0,
-                        'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+                        'image' => $this->normalizedImage($data),
                         // 'tags' => $data['tags']|'' ,
                         'tags' => (isset($data['tags'])) ? $data['tags'] : 0,
                         'status' => (bool)$data['status'],
@@ -295,7 +303,7 @@ class Level_model extends MY_Model
                         'level_title' => $data['level_title'] | '',
                         'level' => (int)$data['level'],
                         'exp' => (int)$data['exp'] | 0,
-                        'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+                        'image' => $this->normalizedImage($data),
                         // 'tags' => $data['tags']|'' ,
                         'tags' => (isset($data['tags'])) ? $data['tags'] : 0,
                         'status' => (bool)$data['status'],
@@ -329,7 +337,7 @@ class Level_model extends MY_Model
             $this->mongo_db->set('exp', (int)$data['exp']);
         }
         if (isset($data['image'])) {
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->set('image', $this->normalizedImage($data));
         }
         if (isset($data['tags'])) {
             $this->mongo_db->set('tags', $data['tags']);
@@ -380,7 +388,7 @@ class Level_model extends MY_Model
                     $this->mongo_db->set('exp', (int)$data['exp']);
                 }
                 if (isset($data['image'])) {
-                    $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+                    $this->mongo_db->set('image', $this->normalizedImage($data));
                 }
                 if (isset($data['tags'])) {
                     $this->mongo_db->set('tags', $data['tags']);
@@ -415,7 +423,7 @@ class Level_model extends MY_Model
                     $this->mongo_db->set('exp', (int)$data['exp']);
                 }
                 if (isset($data['image'])) {
-                    $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+                    $this->mongo_db->set('image', $this->normalizedImage($data));
                 }
                 if (isset($data['tags'])) {
                     $this->mongo_db->set('tags', $data['tags']);
@@ -450,7 +458,7 @@ class Level_model extends MY_Model
                 $this->mongo_db->set('exp', (int)$data['exp']);
             }
             if (isset($data['image'])) {
-                $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+                $this->mongo_db->set('image', $this->normalizedImage($data));
             }
             if (isset($data['tags'])) {
                 $this->mongo_db->set('tags', $data['tags']);
