@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class  MY_Controller  extends  CI_Controller  {
 
-    function MY_Controller ()  {
+    public function __construct()  {
         parent::__construct();
         $this->load->model('User_model');
         $this->load->model('Client_model');
@@ -22,6 +22,10 @@ class  MY_Controller  extends  CI_Controller  {
             $this->input->set_cookie("site_id", null);
         }
 
+    }
+
+    public function MY_Controller()  {
+        $this->__construct();
     }
 
     function render_page($view) {
