@@ -1,5 +1,5 @@
 <?php
-/*defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 class Domain extends MY_Controller
 {
@@ -520,5 +520,5 @@ class Domain extends MY_Controller
             return false;
         }
     }
-}*/
+}
 ?>
