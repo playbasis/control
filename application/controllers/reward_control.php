@@ -22,6 +22,21 @@ class Reward_control extends MY_Controller
         $this->lang->load("reward_control", $lang['folder']);
     }
 
+    private function areMongoIds($ids)
+    {
+        if (!is_array($ids)) {
+            return false;
+        }
+
+        foreach ($ids as $id) {
+            if (!$this->isValidMongoId($id)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function index()
     {
 
@@ -60,7 +75,7 @@ class Reward_control extends MY_Controller
                 $client_id = $this->User_model->getClientId();
                 $site_id = $this->User_model->getSiteId();
                 $selectedSequences = $this->input->post('selected');
-                if($selectedSequences && is_array($selectedSequences)) {
+                if($selectedSequences && is_array($selectedSequences) && $this->areMongoIds($selectedSequences)) {
                     foreach ($selectedSequences as $selectedSequence) {
                         $result = $this->Sequence_model->deleteSequence($client_id,$site_id,$selectedSequence);
                     }
@@ -115,7 +130,7 @@ class Reward_control extends MY_Controller
                 $site_id = $this->User_model->getSiteId();
                 $selectedCustomRewards = $this->input->post('selected');
 
-                if($selectedCustomRewards && is_array($selectedCustomRewards)) {
+                if($selectedCustomRewards && is_array($selectedCustomRewards) && $this->areMongoIds($selectedCustomRewards)) {
                     foreach ($selectedCustomRewards as $selectedCustomReward) {
                         $result = $this->Custom_reward_model->deleteCustomReward($client_id, $site_id, $selectedCustomReward);
                     }
@@ -170,7 +185,7 @@ class Reward_control extends MY_Controller
                 $site_id = $this->User_model->getSiteId();
                 $selectedCustomParamConditions = $this->input->post('selected');
 
-                if($selectedCustomParamConditions && is_array($selectedCustomParamConditions)) {
+                if($selectedCustomParamConditions && is_array($selectedCustomParamConditions) && $this->areMongoIds($selectedCustomParamConditions)) {
                     foreach ($selectedCustomParamConditions as $selectedCustomParamCondition) {
                             $result = $this->Custom_param_condition_model->deleteCustomParamCondition($client_id, $site_id, $selectedCustomParamCondition);
                     }
@@ -320,6 +335,10 @@ class Reward_control extends MY_Controller
 
     public function update($type, $item_id)
     {
+        if (!$this->isValidMongoId($item_id)) {
+            redirect('/reward_control', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -593,6 +612,10 @@ class Reward_control extends MY_Controller
     public function getForm($type,$item_id = null)
     {
         if (!is_null($item_id)) {
+            if (!$this->isValidMongoId($item_id)) {
+                redirect('/reward_control', 'refresh');
+            }
+
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
             if($type == 'sequence_reward'){
