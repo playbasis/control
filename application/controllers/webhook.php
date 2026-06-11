@@ -243,6 +243,8 @@ class Webhook extends MY_Controller
 
         $templates = $this->Webhook_model->listTemplatesBySiteId($site_id, $paging_data);
         $total = $this->Webhook_model->getTotalTemplatesBySiteId($site_id, $paging_data);
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
 
         foreach ($templates as $template) {
             if (!$template['deleted']) {
@@ -257,8 +259,7 @@ class Webhook extends MY_Controller
                         )) : null,
                     'status' => $template['status'],
                     'sort_order' => $template['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($template['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($template['_id'], $selected),
                 );
             }
         }
