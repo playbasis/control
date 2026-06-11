@@ -107,6 +107,10 @@ class Plan extends MY_Controller
 
     public function update($plan_id)
     {
+        if (!$this->isMongoId($plan_id)) {
+            redirect('/plan', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -176,32 +180,47 @@ class Plan extends MY_Controller
         $this->load->model('Client_model');
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $plan_id) {
+            $selected_plans = $this->input->post('selected');
+            if (!is_array($selected_plans)) {
+                $selected_plans = array($selected_plans);
+            }
 
-                $all_clients_in_plan = $this->Plan_model->getClientByPlan($plan_id);
+            foreach ($selected_plans as $plan_id) {
+                if (!$this->isMongoId($plan_id)) {
+                    $this->error['warning'] = 'Invalid plan id';
+                    break;
+                }
+            }
 
-                $c = array();
+            if ($this->error['warning'] == null) {
+                foreach ($selected_plans as $plan_id) {
 
-                foreach ($all_clients_in_plan as $client) {
-                    $the_client_id = $client['client_id'];
+                    $all_clients_in_plan = $this->Plan_model->getClientByPlan($plan_id);
 
-                    $temp = $this->Client_model->getClient($the_client_id);
-                    if (!$temp['deleted']) {
-                        $c[] = $temp;
+                    $c = array();
+
+                    foreach ($all_clients_in_plan as $client) {
+                        $the_client_id = $client['client_id'];
+
+                        $temp = $this->Client_model->getClient($the_client_id);
+                        if (!$temp['deleted']) {
+                            $c[] = $temp;
+                        }
+                    }
+
+                    if (empty($c)) {
+                        $this->Plan_model->deletePlan($plan_id);
+
+                    } else {
+                        $p = $this->Plan_model->getPlan($plan_id);
+                        $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                        redirect('/plan', 'refresh');
                     }
                 }
 
-                if (empty($c)) {
-                    $this->Plan_model->deletePlan($plan_id);
-
-                } else {
-                    $p = $this->Plan_model->getPlan($plan_id);
-                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
-                    redirect('/plan', 'refresh');
-                }
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/plan', 'refresh');
             }
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/plan', 'refresh');
         }
 
         $this->getList(0);
@@ -323,6 +342,10 @@ class Plan extends MY_Controller
     {
 
         if ($plan_id && ($_SERVER['REQUEST_METHOD'] != 'POST')) {
+            if (!$this->isMongoId($plan_id)) {
+                redirect('/plan', 'refresh');
+            }
+
             $plan_info = $this->Plan_model->getPlan($plan_id);
         }
 
@@ -647,6 +670,9 @@ class Plan extends MY_Controller
 
     public function getClientsByPlanId($plan_id)
     {
+        if (!$plan_id || !$this->isMongoId($plan_id)) {
+            return array();
+        }
 
         $allClientsInThisPlan = $this->Plan_model->getClientByPlanOnlyClient($plan_id);
 
@@ -692,6 +718,11 @@ class Plan extends MY_Controller
             return false;
         }
         return true;
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 }
 
