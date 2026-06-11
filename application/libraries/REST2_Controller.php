@@ -42,11 +42,11 @@ abstract class REST2_Controller extends REST_Controller
         $this->load->model('rest_model');
         $this->load->model('auth_model');
         $this->load->model('client_model');
-        $this->load->model('tool/error', 'error');
+        $this->load->model('tool/error_model', 'error');
 
         /* 0.2 Adjust $this->request->body */
         if (!empty($this->request->body)) {
-            if (is_array($this->request->body) && count(count($this->request->body) == 1) && array_key_exists(0, $this->request->body)) {
+            if (is_array($this->request->body) && count($this->request->body) == 1 && array_key_exists(0, $this->request->body)) {
                 $this->request->body = $this->request->body[0];
             }
             if (gettype($this->request->body) == 'string') {
@@ -188,7 +188,7 @@ abstract class REST2_Controller extends REST_Controller
             call_user_func_array($method, $args);
         } catch (Exception $e) {
             ini_set('mongo.allow_empty_keys', TRUE);
-            $this->load->model('tool/error', 'error');
+            $this->load->model('tool/error_model', 'error');
             $msg = $e->getMessage();
             log_message('error', $msg);
             /* 3.2 Log response (exception) */

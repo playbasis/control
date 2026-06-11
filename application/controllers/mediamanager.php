@@ -99,19 +99,15 @@ class MediaManager extends MY_Controller
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
 
-            if (!$this->validateAccess()) {
-                $this->output->set_status_header('401');
-                $this->output->set_output(json_encode(array(
-                    'status' => 'error',
-                    'message' => $this->lang->line('error_access')
-                )));
+            if (!$this->requireMediaManagerAccess()) {
+                return;
             }
 
             switch ($_SERVER['REQUEST_METHOD']) {
                 case "GET":
                     if (isset($fileId)) {
                         try {
-                            $result = $this->Image_model->retrieveImage($fileId);
+                            $result = $this->Image_model->retrieveImage($client_id, $site_id, $fileId);
                             if (isset($result['_id'])) {
                                 $result['_id'] = $result['_id'] . "";
                             }
@@ -152,6 +148,14 @@ class MediaManager extends MY_Controller
                         }
                     } else {
                         $query_data = $this->input->get(null, true);
+                        if (isset($query_data['folder']) && $query_data['folder'] === '') {
+                            $query_data['folder'] = 'false';
+                        }
+                        if (isset($query_data['folder']) && $query_data['folder'] !== 'false' && !$this->isValidMongoId($query_data['folder'])) {
+                            $this->output->set_status_header('400');
+                            $this->output->set_output(json_encode(array('status' => 'error')));
+                            return;
+                        }
 
                         $result = $this->Image_model->retrieveImages($client_id, $site_id, $query_data);
                         $folder = $this->Image_model->retrieveFolder($client_id, $site_id);
@@ -211,9 +215,12 @@ class MediaManager extends MY_Controller
                     }
                     break;
                 case "DELETE":
+                    if (!$this->requireMediaManagerModify()) {
+                        return;
+                    }
                     if (isset($fileId)) {
                         try {
-                            $result = $this->Image_model->deleteImage($fileId);
+                            $result = $this->Image_model->deleteImage($client_id, $site_id, $fileId);
                             if ($result) {
                                 $this->output->set_status_header('200');
                                 $response = array('status' => 'success');
@@ -242,7 +249,42 @@ class MediaManager extends MY_Controller
         }
     }
 
+    private function requireMediaManagerAccess()
+    {
+        if (!$this->validateAccess()) {
+            $this->output->set_status_header('401');
+            $this->output->set_output(json_encode(array(
+                'status' => 'error',
+                'message' => $this->lang->line('error_access')
+            )));
+            return false;
+        }
+
+        return true;
+    }
+
+    private function requireMediaManagerModify()
+    {
+        if (!$this->requireMediaManagerAccess()) {
+            return false;
+        }
+
+        if (!$this->validateModify()) {
+            $this->output->set_status_header('401');
+            $this->output->set_output(json_encode(array(
+                'status' => 'error',
+                'message' => $this->lang->line('error_permission')
+            )));
+            return false;
+        }
+
+        return true;
+    }
+
     public function insertFolder(){
+        if (!$this->requireMediaManagerModify()) {
+            return;
+        }
         $query_data = $this->input->get(null, true);
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -252,27 +294,74 @@ class MediaManager extends MY_Controller
     }
 
     public function unsetAllFile(){
+        if (!$this->requireMediaManagerModify()) {
+            return;
+        }
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->unsetAllFile($query_data);
         $this->output->set_output(json_encode($result));
     }
 
     public function deleteFolder(){
+        if (!$this->requireMediaManagerModify()) {
+            return;
+        }
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->deleteFolder_model($query_data);
         $this->output->set_output(json_encode($result));
     }
 
     public function updateImageCategory(){
+        if (!$this->requireMediaManagerModify()) {
+            return;
+        }
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
+        if (!isset($query_data['folder_id']) || ($query_data['folder_id'] !== 'root' && !$this->isValidMongoId($query_data['folder_id']))) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->updateImageCategory($query_data);
         $this->output->set_output(json_encode($result));
     }
 
     public function updateFolderName(){
+        if (!$this->requireMediaManagerModify()) {
+            return;
+        }
         $query_data = $this->input->get(null, true);
+        if (!$this->hasValidMongoIdParam($query_data, 'elementID')) {
+            $this->output->set_status_header('400');
+            $this->output->set_output(json_encode(false));
+            return;
+        }
         $result = $this->Image_model->updateFolder($query_data);
         $this->output->set_output(json_encode($result));
+    }
+
+    private function hasValidMongoIdParam($params, $key)
+    {
+        return is_array($params) && isset($params[$key]) && $this->isValidMongoId($params[$key]);
+    }
+
+    private function isValidMongoId($id)
+    {
+        return is_scalar($id) && preg_match('/^[0-9a-f]{24}$/i', (string)$id) === 1;
     }
 
     public function image()
@@ -291,10 +380,10 @@ class MediaManager extends MY_Controller
     {
         $json = array();
 
-        if (!empty($this->input->post['directory'])) {
-            $directory = DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post['directory']);
-        } else {
-            $directory = DIR_IMAGE . 'data/';
+        $directory = $this->dataLocalPath(!empty($this->input->post['directory']) ? $this->input->post['directory'] : '');
+        if ($directory === false) {
+            $this->output->set_output(json_encode($json));
+            return;
         }
 
         $allowed = array(
@@ -348,6 +437,19 @@ class MediaManager extends MY_Controller
         $this->output->set_output(json_encode($json));
     }
 
+    private function isValidUploadEntry($field)
+    {
+        if (!isset($_FILES[$field]) || !is_array($_FILES[$field])) {
+            return false;
+        }
+        foreach (array('name', 'tmp_name', 'size', 'type', 'error') as $key) {
+            if (!isset($_FILES[$field][$key]) || !is_scalar($_FILES[$field][$key])) {
+                return false;
+            }
+        }
+        return $_FILES[$field]['tmp_name'] !== '';
+    }
+
     public function upload_s3()
     {
 
@@ -355,8 +457,9 @@ class MediaManager extends MY_Controller
 
         if ($this->input->post('directory') || $this->input->post('directory') == "") {
 
-            if ($_FILES['file'] && $_FILES['file']['tmp_name']) {
-                $filename = basename(html_entity_decode($_FILES['file']['name'], ENT_QUOTES, 'UTF-8'));
+            if ($this->isValidUploadEntry('file')) {
+                $upload = $_FILES['file'];
+                $filename = basename(html_entity_decode($upload['name'], ENT_QUOTES, 'UTF-8'));
 
                 $t = explode('.', $filename);
                 $type = end($t);
@@ -367,19 +470,30 @@ class MediaManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_filename');
                 }
 
-                $directory = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post('directory')), '/');
-
-                if (!is_dir($directory)) {
+                $clean_directory = $this->cleanRelativePath($this->input->post('directory'));
+                if ($clean_directory === false) {
                     $json['error'] = $this->lang->line('error_directory');
                 }
 
-                if ($_FILES['file']['size'] > MAX_UPLOADED_FILE_SIZE) {
+                $directory = $this->dataLocalPath($clean_directory);
+
+                if (!isset($json['error']) && !is_dir($directory)) {
+                    $json['error'] = $this->lang->line('error_directory');
+                }
+
+                if ($upload['size'] > MAX_UPLOADED_FILE_SIZE) {
                     $json['error'] = $this->lang->line('error_file_size');
                 }
 
-                $image_info = getimagesize($_FILES['file']['tmp_name']);
-                $image_width = $image_info[0];
-                $image_height = $image_info[1];
+                $image_info = @getimagesize($upload['tmp_name']);
+                if ($image_info === false) {
+                    $json['error'] = $this->lang->line('error_file_type');
+                    $image_width = 0;
+                    $image_height = 0;
+                } else {
+                    $image_width = $image_info[0];
+                    $image_height = $image_info[1];
+                }
 
                 //if($image_width < 500 || $image_width >1000){
                 if ($image_width > MEDIA_MANAGER_MAX_IMAGE_WIDTH) {
@@ -406,7 +520,7 @@ class MediaManager extends MY_Controller
                     'application/x-shockwave-flash'
                 );
 
-                if (!in_array($_FILES['file']['type'], $allowed)) {
+                if (!in_array($upload['type'], $allowed)) {
                     $json['error'] = $this->lang->line('error_file_type');
                 }
 
@@ -422,8 +536,8 @@ class MediaManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_file_type');
                 }
 
-                if ($_FILES['file']['error'] != UPLOAD_ERR_OK) {
-                    $json['error'] = 'error_upload_' . $_FILES['file']['error'];
+                if ($upload['error'] != UPLOAD_ERR_OK) {
+                    $json['error'] = 'error_upload_' . $upload['error'];
                 }
             } else {
                 $json['error'] = $this->lang->line('error_file');
@@ -442,13 +556,21 @@ class MediaManager extends MY_Controller
 
         $this->load->model('Plan_model');
         $this->load->model('Permission_model');
-        // Get Limit
-        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $limit_images = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'image');
+        if (!isset($json['error'])) {
+            // Get Limit
+            $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+            try {
+                $limit_images = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'image');
+            } catch (Exception $e) {
+                $json['error'] = $this->lang->line('error_uploaded');
+            }
 
-        $size = $this->Image_model->getTotalSize($client_id);
-        if ($limit_images && ($size + $_FILES['file']['size'] > $limit_images)) {
-            $json['error'] = $this->lang->line('error_overall_size_limit_reached');
+            if (!isset($json['error'])) {
+                $size = $this->Image_model->getTotalSize($client_id);
+                if ($limit_images && ($size + $upload['size'] > $limit_images)) {
+                    $json['error'] = $this->lang->line('error_overall_size_limit_reached');
+                }
+            }
         }
 
         if (!isset($json['error'])) {
@@ -458,12 +580,13 @@ class MediaManager extends MY_Controller
             $this->s3->setEndpoint("s3-ap-southeast-1.amazonaws.com");
 
             //move the file
+            $s3_directory = $this->dataS3Prefix($clean_directory);
+            $s3_key = $s3_directory . "/" . $filename;
+
             if ($this->s3->putObjectFile($_FILES['file']['tmp_name'], "elasticbeanstalk-ap-southeast-1-007834438823",
-                rtrim('data/' . str_replace('../', '', $this->input->post('directory')), '/') . "/" . $filename,
-                S3::ACL_PUBLIC_READ)
+                $s3_key, S3::ACL_PUBLIC_READ)
             ) {
-                $url = rtrim(S3_IMAGE . 'data/' . str_replace('../', '', $this->input->post('directory')),
-                        '/') . "/" . urlencode($filename);
+                $url = S3_IMAGE . $s3_directory . "/" . urlencode($filename);
                 @copy($url, $directory . '/' . $filename);
 
                 $client_id = $this->User_model->getClientId();
@@ -471,12 +594,11 @@ class MediaManager extends MY_Controller
                 $user_id = $this->User_model->getId();
 
                 $this->Image_model->registerImageToSite($client_id, $site_id, $user_id, $_FILES['file']['size'], $filename,
-                    rtrim('data/' . str_replace('../', '', $this->input->post('directory')),
-                        '/') . "/" . urlencode($filename));
+                    $s3_directory . "/" . urlencode($filename));
 
-                $this->Image_model->resize('data/' . $filename, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH,
+                $this->Image_model->resize($s3_key, MEDIA_MANAGER_SMALL_THUMBNAIL_WIDTH,
                     MEDIA_MANAGER_SMALL_THUMBNAIL_HEIGHT);
-                $this->Image_model->resize('data/' . $filename, MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH,
+                $this->Image_model->resize($s3_key, MEDIA_MANAGER_LARGE_THUMBNAIL_WIDTH,
                     MEDIA_MANAGER_LARGE_THUMBNAIL_HEIGHT);
 
                 $json['success'] = $this->lang->line('text_uploaded');
@@ -491,6 +613,76 @@ class MediaManager extends MY_Controller
             $this->output->set_status_header('400');
         }
         $this->output->set_output(json_encode($json));
+    }
+
+    private function cleanRelativePath($path)
+    {
+        if (is_array($path)) {
+            return false;
+        }
+
+        $path = html_entity_decode((string)$path, ENT_QUOTES, 'UTF-8');
+
+        if (strpos($path, "\0") !== false) {
+            return false;
+        }
+
+        $path = trim($path);
+
+        if ($path === '') {
+            return '';
+        }
+
+        if (preg_match('/^[a-z][a-z0-9+.-]*:\/\//i', $path)) {
+            return false;
+        }
+
+        if ($path[0] === '/' || strpos($path, '\\') !== false) {
+            return false;
+        }
+
+        if (preg_match('/[^A-Za-z0-9_\\.\\-\\/ ]/', $path)) {
+            return false;
+        }
+
+        $clean = array();
+        $segments = explode('/', $path);
+
+        foreach ($segments as $segment) {
+            if ($segment === '') {
+                continue;
+            }
+
+            if ($segment === '.' || strpos($segment, '..') !== false) {
+                return false;
+            }
+
+            $clean[] = $segment;
+        }
+
+        return implode('/', $clean);
+    }
+
+    private function dataLocalPath($path)
+    {
+        $path = $this->cleanRelativePath($path);
+
+        if ($path === false) {
+            return false;
+        }
+
+        return rtrim(DIR_IMAGE . 'data/' . $path, '/');
+    }
+
+    private function dataS3Prefix($path)
+    {
+        $path = $this->cleanRelativePath($path);
+
+        if ($path === false || $path === '') {
+            return 'data';
+        }
+
+        return 'data/' . $path;
     }
 
     private function validateModify()

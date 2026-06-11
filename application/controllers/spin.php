@@ -74,15 +74,29 @@ class spin extends MY_Controller
                 $this->load->library('Rest');
 
 
-                if(isset($data_select['selected']) && $data_select['selected']) foreach ($data_select['selected'] as $index => $player){
-                    $action = explode(',',$player);
+                $selected_players = array();
+                if (isset($data_select['selected']) && $data_select['selected']) {
+                    $selected_players = is_array($data_select['selected']) ? $data_select['selected'] : array($data_select['selected']);
+                }
+                foreach ($selected_players as $index => $player){
+                    if (!is_scalar($player)) {
+                        continue;
+                    }
+                    $action = explode(',', (string)$player, 2);
+                    if (count($action) < 2 || $action[0] === '' || !is_numeric($action[1])) {
+                        continue;
+                    }
+                    $manual_grant = intval($action[1]);
+                    if ($manual_grant <= 0) {
+                        continue;
+                    }
                     $pb_player_id = $this->player_model->getPlaybasisId(array(
                         'client_id' => $client_id,
                         'site_id' => $site_id,
                         'cl_player_id' => $action[0]
                     ));
                     if ($pb_player_id) {
-                        for($i=0; $i< intval($action[1]); $i++){
+                        for($i=0; $i< $manual_grant; $i++){
                             $this->rest->post('Engine/rule',
                                 array(
                                     'token' => $token,
@@ -111,11 +125,12 @@ class spin extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if (empty($_FILES) || !isset($_FILES['file']['tmp_name'])) {
+            if (!$this->isValidUploadEntry('file')) {
                 $this->data['message'] = $this->lang->line('error_file');
             }
 
-            if (isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
+            if (is_null($this->data['message'])) {
+                $upload = $_FILES['file'];
 
                 $maxsize = 2097152;
                 $csv_mimetypes = array(
@@ -131,16 +146,16 @@ class spin extends MY_Controller
                     'application/txt',
                 );
 
-                if (($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
+                if (($upload['size'] >= $maxsize) || ($upload["size"] == 0)) {
                     $this->data['message'] = $this->lang->line('error_file_too_large');
                 }
 
-                if (!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
+                if (!in_array($upload['type'], $csv_mimetypes) && (!empty($upload["type"]))) {
                     $this->data['message'] = $this->lang->line('error_type_accepted');
                 }
 
                 if(is_null($this->data['message'])){
-                    $handle = fopen($_FILES['file']['tmp_name'], "r");
+                    $handle = fopen($upload['tmp_name'], "r");
                     if (!$handle) {
                         $this->data['message'] = $this->lang->line('error_upload');
                     } else {
@@ -201,6 +216,19 @@ class spin extends MY_Controller
         $this->data['report'] = $player_action_info;
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    private function isValidUploadEntry($field)
+    {
+        if (!isset($_FILES[$field]) || !is_array($_FILES[$field])) {
+            return false;
+        }
+        foreach (array('name', 'tmp_name', 'size', 'type', 'error') as $key) {
+            if (!isset($_FILES[$field][$key]) || !is_scalar($_FILES[$field][$key])) {
+                return false;
+            }
+        }
+        return $_FILES[$field]['tmp_name'] !== '';
     }
 
     private function validateModify()

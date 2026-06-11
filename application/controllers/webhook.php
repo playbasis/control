@@ -67,6 +67,7 @@ class Webhook extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -77,19 +78,7 @@ class Webhook extends MY_Controller
 
                 $postData = $this->input->post();
                 if (isset($postData['body_key']) && isset($postData['body_value'])){
-                    $body = array();
-                    foreach ($postData['body_key'] as $key => $val){
-                        if (!empty($val)) {
-                            $body = array_merge($body, array(
-                                $val => $postData['body_value'][$key]
-                            ));
-                        }
-                    }
-                    unset($postData['body_key']);
-                    unset($postData['body_value']);
-                    $postData = array_merge($postData, array(
-                        'body' => $body
-                    ));
+                    $this->buildBodyData($postData);
                 }
 
                 if (!$this->Webhook_model->getTemplateByName($this->User_model->getSiteId(), $postData['name'])) {
@@ -117,6 +106,10 @@ class Webhook extends MY_Controller
 
     public function update($template_id)
     {
+        if (!$this->isMongoId($template_id)) {
+            redirect('/webhook', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -131,6 +124,7 @@ class Webhook extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -141,24 +135,13 @@ class Webhook extends MY_Controller
 
                 $postData = $this->input->post();
                 if (isset($postData['body_key']) && isset($postData['body_value'])){
-                    $body = array();
-                    foreach ($postData['body_key'] as $key => $val){
-                        if (!empty($val)) {
-                            $body = array_merge($body, array(
-                                $val => $postData['body_value'][$key]
-                            ));
-                        }
-                    }
-                    unset($postData['body_key']);
-                    unset($postData['body_value']);
-                    $postData = array_merge($postData, array(
-                        'body' => $body
-                    ));
+                    $this->buildBodyData($postData);
                 }
 
-                $c = $this->Webhook_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'));
+                $templateName = isset($postData['name']) ? $this->templateText($postData['name']) : '';
+                $c = $this->Webhook_model->getTemplateByName($this->User_model->getSiteId(), $templateName);
                 $info = $this->Webhook_model->getTemplate($template_id);
-                if ($c === 0 || ($c === 1 && $info && $info['name'] == $this->input->post('name'))) {
+                if ($c === 0 || ($c === 1 && $info && $info['name'] == $templateName)) {
                     $success = $this->Webhook_model->editTemplate($template_id, array_merge($postData, array(
                         'client_id' => $this->User_model->getClientId(),
                         'site_id' => $this->User_model->getSiteId(),
@@ -195,14 +178,52 @@ class Webhook extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $template_id) {
-                $this->Webhook_model->deleteTemplate($template_id);
+            $selected_templates = $this->input->post('selected');
+            if (!is_array($selected_templates)) {
+                $selected_templates = array($selected_templates);
             }
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/webhook', 'refresh');
+
+            foreach ($selected_templates as $template_id) {
+                if (!$this->isMongoId($template_id)) {
+                    $this->error['warning'] = 'Invalid template id';
+                    break;
+                }
+            }
+
+            if ($this->error['warning'] == null) {
+                foreach ($selected_templates as $template_id) {
+                    $this->Webhook_model->deleteTemplate($template_id);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/webhook', 'refresh');
+            }
         }
 
         $this->getList(0);
+    }
+
+    private function buildBodyData(&$postData)
+    {
+        $body = array();
+        $bodyKeys = $postData['body_key'];
+        $bodyValues = $postData['body_value'];
+
+        if (is_array($bodyKeys) && is_array($bodyValues)) {
+            foreach ($bodyKeys as $key => $val) {
+                if (is_scalar($val) && !empty($val)) {
+                    $body[(string)$val] = isset($bodyValues[$key]) && is_scalar($bodyValues[$key])
+                        ? (string)$bodyValues[$key]
+                        : '';
+                }
+            }
+        }
+
+        unset($postData['body_key']);
+        unset($postData['body_value']);
+        $postData = array_merge($postData, array(
+            'body' => $body
+        ));
     }
 
     private function getList($offset, $ajax = false)
@@ -224,6 +245,8 @@ class Webhook extends MY_Controller
 
         $templates = $this->Webhook_model->listTemplatesBySiteId($site_id, $paging_data);
         $total = $this->Webhook_model->getTotalTemplatesBySiteId($site_id, $paging_data);
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
 
         foreach ($templates as $template) {
             if (!$template['deleted']) {
@@ -238,8 +261,7 @@ class Webhook extends MY_Controller
                         )) : null,
                     'status' => $template['status'],
                     'sort_order' => $template['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($template['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($template['_id'], $selected),
                 );
             }
         }
@@ -308,21 +330,27 @@ class Webhook extends MY_Controller
     {
         $info = null;
         if (isset($template_id) && $template_id) {
+            if (!$this->isMongoId($template_id)) {
+                redirect('/webhook', 'refresh');
+            }
+
             $info = $this->Webhook_model->getTemplate($template_id);
         }
 
-        if ($this->input->post('name')) {
-            $this->data['name'] = $this->input->post('name');
-        } elseif (!empty($info)) {
-            $this->data['name'] = $info['name'];
+        $name = $this->input->post('name');
+        if ($name !== false) {
+            $this->data['name'] = $this->templateText($name);
+        } elseif (!empty($info) && isset($info['name'])) {
+            $this->data['name'] = $this->templateText($info['name']);
         } else {
             $this->data['name'] = '';
         }
 
-        if ($this->input->post('url')) {
-            $this->data['url'] = $this->input->post('url');
-        } elseif (!empty($info)) {
-            $this->data['url'] = $info['url'];
+        $url = $this->input->post('url');
+        if ($url !== false) {
+            $this->data['url'] = $this->templateText($url);
+        } elseif (!empty($info) && isset($info['url'])) {
+            $this->data['url'] = $this->templateText($info['url']);
         } else {
             $this->data['url'] = '';
         }
@@ -335,16 +363,18 @@ class Webhook extends MY_Controller
             $this->data['body'] = '';
         }
 
-        if ($this->input->post('sort_order')) {
-            $this->data['sort_order'] = $this->input->post('sort_order');
-        } elseif (!empty($info)) {
-            $this->data['sort_order'] = $info['sort_order'];
+        $sort_order = $this->input->post('sort_order');
+        if ($sort_order !== false) {
+            $this->data['sort_order'] = $this->templateText($sort_order);
+        } elseif (!empty($info) && isset($info['sort_order'])) {
+            $this->data['sort_order'] = $this->templateText($info['sort_order']);
         } else {
             $this->data['sort_order'] = 0;
         }
 
-        if ($this->input->post('status')) {
-            $this->data['status'] = $this->input->post('status');
+        $status = $this->input->post('status');
+        if ($status !== false) {
+            $this->data['status'] = (bool)$this->templateText($status);
         } elseif (!empty($info)) {
             $this->data['status'] = $info['status'];
         } else {
@@ -368,20 +398,43 @@ class Webhook extends MY_Controller
 
     public function increase_order($template_id)
     {
+        if (!$this->isMongoId($template_id)) {
+            $this->output->set_output(json_encode(array('success' => false)));
+            return;
+        }
+
         $success = $this->Webhook_model->increaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
     public function decrease_order($template_id)
     {
+        if (!$this->isMongoId($template_id)) {
+            $this->output->set_output(json_encode(array('success' => false)));
+            return;
+        }
+
         $success = $this->Webhook_model->decreaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
+    private function normalizeTemplatePost()
+    {
+        foreach (array('name', 'url', 'sort_order', 'status') as $field) {
+            if (isset($_POST[$field]) && !is_scalar($_POST[$field])) {
+                $_POST[$field] = '';
+            }
+        }
+    }
+
+    private function templateText($value)
+    {
+        return is_scalar($value) ? (string)$value : '';
+    }
 
     private function validateModify()
     {
-        if ($this->User_model->hasPermission('modify', 'sms')) {
+        if ($this->User_model->hasPermission('modify', 'webhook')) {
             return true;
         } else {
             return false;
@@ -403,6 +456,11 @@ class Webhook extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 }
 

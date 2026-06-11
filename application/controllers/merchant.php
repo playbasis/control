@@ -85,9 +85,9 @@ class Merchant extends MY_Controller
             'trim|max_length[255]|xss_clean');
         $this->form_validation->set_rules('merchant-status', $this->lang->line('entry_status'), 'trim|xss_clean');
 
-        $newBranches = $this->input->post('newBranches');
+        $newBranches = $this->normalizeNewBranches($this->input->post('newBranches'));
 
-        if ($newBranches != false && !empty($newBranches)) {
+        if (!empty($newBranches)) {
             $i = 0;
             foreach ($newBranches as $branch) {
                 if (!empty($branch['branchName'])) {
@@ -106,19 +106,11 @@ class Merchant extends MY_Controller
 
             if ($this->form_validation->run()) {
                 $merchant_data = $this->input->post();
+                $merchant_data['newBranches'] = $newBranches;
 
                 $batch_data = array();
 
-                if (isset($merchant_data['newBranches']) && !empty($merchant_data['newBranches'])) {
-                    $postArr = array_map('array_filter', $merchant_data['newBranches']);
-                    foreach ($postArr as $key => $branch) {
-                        if (!array_key_exists('branchName', $branch)) {
-                            unset($postArr[$key]);
-                        }
-                    }
-                    $merchant_data['newBranches'] = array_values($postArr);
-
-
+                if (!empty($merchant_data['newBranches'])) {
                     foreach ($merchant_data['newBranches'] as $branch) {
                         array_push($batch_data, array(
                             'client_id' => $client_id,
@@ -174,12 +166,24 @@ class Merchant extends MY_Controller
         $this->error['message'] = null;
 
         if ($this->input->post('selected') && $this->error['message'] == null) {
-            foreach ($this->input->post('selected') as $merchant_id) {
-                $this->Merchant_model->deleteMerchant($merchant_id);
+            $selected_merchants = $this->input->post('selected');
+            foreach ($selected_merchants as $merchant_id) {
+                if (preg_match('/^[0-9a-f]{24}$/i', $merchant_id) !== 1) {
+                    $this->error['warning'] = 'Invalid merchant id';
+                    break;
+                }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/merchant', 'refresh');
+            if (!isset($this->error['warning'])) {
+                foreach ($selected_merchants as $merchant_id) {
+                    $this->Merchant_model->deleteMerchant($merchant_id);
+                }
+            }
+
+            if (!isset($this->error['warning'])) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/merchant', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -187,6 +191,10 @@ class Merchant extends MY_Controller
 
     public function update($merchant_id)
     {
+        if (preg_match('/^[0-9a-f]{24}$/i', $merchant_id) !== 1) {
+            redirect('/merchant', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -204,8 +212,8 @@ class Merchant extends MY_Controller
         $this->form_validation->set_rules('merchant-status', $this->lang->line('entry_status'), 'trim|xss_clean');
 
         // New Branch(es)
-        $newBranches = $this->input->post('newBranches');
-        if ($newBranches != false && !empty($newBranches)) {
+        $newBranches = $this->normalizeNewBranches($this->input->post('newBranches'));
+        if (!empty($newBranches)) {
             $i = 0;
             foreach ($newBranches as $branch) {
                 if (!empty($branch['branchName'])) {
@@ -226,24 +234,52 @@ class Merchant extends MY_Controller
 
             if ($this->form_validation->run()) {
                 $merchant_data = $this->input->post();
+                $merchant_data['newBranches'] = $newBranches;
 
                 $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroups($client_id, $site_id,
                     $merchant_id);
+
+                $invalidGoodsGroups = false;
+                if (!empty($merchant_data['mc_goodsGroups'])) {
+                    if (!is_array($merchant_data['mc_goodsGroups'])) {
+                        $invalidGoodsGroups = true;
+                    } else {
+                        foreach ($merchant_data['mc_goodsGroups'] as $ggvalue) {
+                            if (!is_array($ggvalue) || empty($ggvalue['goodsGroup']) || empty($ggvalue['allowBranches']) || !is_array($ggvalue['allowBranches'])) {
+                                $invalidGoodsGroups = true;
+                                break;
+                            }
+                            $tmp_gg = preg_split("/(mc_gg_)/", $ggvalue['goodsGroup']);
+                            if (!isset($tmp_gg[1]) || $tmp_gg[1] === '') {
+                                $invalidGoodsGroups = true;
+                                break;
+                            }
+                            foreach ($ggvalue['allowBranches'] as $allowBranch) {
+                                if (!is_string($allowBranch)) {
+                                    $invalidGoodsGroups = true;
+                                    break 2;
+                                }
+                                $tmp_array = explode(':', $allowBranch, 2);
+                                if (count($tmp_array) !== 2 || !preg_match('/^[0-9a-f]{24}$/i', $tmp_array[0]) || $tmp_array[1] === '') {
+                                    $invalidGoodsGroups = true;
+                                    break 2;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if ($invalidGoodsGroups) {
+                    $this->data['message'] = 'Invalid goods group branch selection.';
+                    $this->getForm($merchant_id);
+                    return;
+                }
 
                 $data['_id'] = $merchant_id;
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
 
-                if ($newBranches != false && !empty($newBranches)) {
-
-                    $postArr = array_map('array_filter', $merchant_data['newBranches']);
-                    foreach ($postArr as $key => $branch) {
-                        if (!array_key_exists('branchName', $branch)) {
-                            unset($postArr[$key]);
-                        }
-                    }
-                    $merchant_data['newBranches'] = array_values($postArr);
-
+                if (!empty($merchant_data['newBranches'])) {
                     $batch_data = array();
                     foreach ($merchant_data['newBranches'] as $branch) {
                         array_push($batch_data, array(
@@ -287,7 +323,7 @@ class Merchant extends MY_Controller
 
                         $gg_data['newAllowBranches'] = array();
                         foreach ($ggvalue['allowBranches'] as &$allowBranch) {
-                            $tmp_array = explode(':', $allowBranch);
+                            $tmp_array = explode(':', $allowBranch, 2);
                             $tmp_array['b_id'] = new MongoId($tmp_array[0]);
                             $tmp_array['b_name'] = $tmp_array[1];
                             unset($tmp_array[0]);
@@ -356,6 +392,11 @@ class Merchant extends MY_Controller
 
         if (!empty($merchant_id)) {
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                if (preg_match('/^[0-9a-f]{24}$/i', $merchant_id) !== 1) {
+                    $this->output->set_status_header('401');
+                    echo json_encode(array('status' => 'error'));
+                    die();
+                }
                 $client_id = $this->User_model->getClientId();
                 $site_id = $this->User_model->getSiteId();
 
@@ -434,11 +475,23 @@ class Merchant extends MY_Controller
             $result = null;
             if (!empty($remove_id)) {
                 if (is_array($remove_id)) {
+                    foreach ($remove_id as $id_entry) {
+                        if (preg_match('/^[0-9a-f]{24}$/i', $id_entry) !== 1) {
+                            $this->output->set_status_header('401');
+                            echo json_encode(array('status' => 'error'));
+                            die();
+                        }
+                    }
                     foreach ($remove_id as &$id_entry) {
                         $id_entry = new MongoId($id_entry);
                     }
                     $result = $this->Merchant_model->removeBranchesByIdArray($remove_id);
                 } elseif (is_string($remove_id)) {
+                    if (preg_match('/^[0-9a-f]{24}$/i', $remove_id) !== 1) {
+                        $this->output->set_status_header('401');
+                        echo json_encode(array('status' => 'error'));
+                        die();
+                    }
                     $result = $this->Merchant_model->removeBranchById($remove_id);
                 }
             }
@@ -484,7 +537,7 @@ class Merchant extends MY_Controller
             'sort' => 'sort_order'
         );
 
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
@@ -540,6 +593,10 @@ class Merchant extends MY_Controller
         $this->data['main'] = 'merchant_form';
 
         if (isset($merchant_id) && ($merchant_id != 0)) {
+            if (preg_match('/^[0-9a-f]{24}$/i', $merchant_id) !== 1) {
+                redirect('/merchant', 'refresh');
+            }
+
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
 
@@ -596,6 +653,27 @@ class Merchant extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    private function normalizeNewBranches($newBranches)
+    {
+        if (!is_array($newBranches)) {
+            return array();
+        }
+
+        $branches = array();
+        foreach ($newBranches as $branch) {
+            if (!is_array($branch)) {
+                continue;
+            }
+            $branch = array_filter($branch);
+            if (!array_key_exists('branchName', $branch)) {
+                continue;
+            }
+            $branches[] = $branch;
+        }
+
+        return $branches;
     }
 
     private function validateModify()

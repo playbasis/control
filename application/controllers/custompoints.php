@@ -21,6 +21,26 @@ class Custompoints extends MY_Controller
         $this->lang->load("custompoints", $lang['folder']);
     }
 
+    private function scalarPostValue($field, $default = null)
+    {
+        $value = $this->input->post($field);
+        if (!is_scalar($value)) {
+            return $default;
+        }
+
+        return trim((string)$value);
+    }
+
+    private function requiredFieldMessage($label)
+    {
+        $required = $this->lang->line('required');
+        if ($required) {
+            return sprintf($required, $this->lang->line($label));
+        }
+
+        return $this->lang->line($label);
+    }
+
     public function index()
     {
 
@@ -68,7 +88,12 @@ class Custompoints extends MY_Controller
         $this->load->model('Plan_model');
         // Get Limit
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $limit_custompoints = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'custompoint');
+        try {
+            $limit_custompoints = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'custompoint');
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
 
         $this->data['message'] = null;
 
@@ -105,11 +130,20 @@ class Custompoints extends MY_Controller
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 $custompoints_data = $this->input->post();
+                $name = $this->scalarPostValue('name');
+                if ($name === null || $name === '') {
+                    $this->data['message'] = $this->requiredFieldMessage('entry_name');
+                }
 
-                $chk_name = $this->Custompoints_model->getCustompointByName( $site_id, $custompoints_data['name']);
+                if ($this->data['message'] == null) {
+                    $custompoints_data['name'] = $name;
+                    $custompoints_data['tags'] = $this->scalarPostValue('tags', '');
+                }
+
+                $chk_name = $this->data['message'] == null ? $this->Custompoints_model->getCustompointByName( $site_id, $custompoints_data['name']) : false;
                 if($chk_name){
                     $this->data['message'] = $this->lang->line('text_error_duplicate_custom_point');
-                }else {
+                } elseif ($this->data['message'] == null) {
                     $data['client_id'] = $this->User_model->getClientId();
                     $data['site_id'] = $this->User_model->getSiteId();
                     $data['name'] = $custompoints_data['name'];
@@ -179,7 +213,7 @@ class Custompoints extends MY_Controller
             'sort' => 'name'
         );
 
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
             $parameter_url .= "&filter_name=" . $_GET['filter_name'];
         }
@@ -203,7 +237,7 @@ class Custompoints extends MY_Controller
             $filter['filter_pending_support'] = $_GET['filter_pending_support'] == "true" ? true : false;
             $parameter_url .= "&filter_pending_support=" . $_GET['filter_pending_support'];
         }
-        if (isset($_GET['filter_tags'])) {
+        if (isset($_GET['filter_tags']) && is_scalar($_GET['filter_tags'])) {
             $filter['filter_tags'] = $_GET['filter_tags'];
             $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
         }
@@ -303,6 +337,10 @@ class Custompoints extends MY_Controller
         $this->data['main'] = 'custompoints_form';
 
         if (isset($custompoints_id) && ($custompoints_id != 0)) {
+            if (!$this->isMongoId($custompoints_id)) {
+                redirect('/custompoints', 'refresh');
+            }
+
             if ($this->User_model->getClientId()) {
                 $custompoints_info = $this->Custompoints_model->getCustompoint($custompoints_id);
             }
@@ -390,12 +428,18 @@ class Custompoints extends MY_Controller
             $this->data['changing_per_period'] = $custompoints_info['energy_props']['changing_per_period'];
         }
 
-        if ($this->input->post('tags')) {
-            $this->data['tags'] = explode(',', $this->input->post('tags'));
+        $postedTags = $this->scalarPostValue('tags', '');
+        if ($postedTags !== '') {
+            $this->data['tags'] = explode(',', $postedTags);
         } elseif (isset($custompoints_info['tags'])) {
             $this->data['tags'] = $custompoints_info['tags'];
         } else {
             $this->data['tags'] = '';
+        }
+        if (is_string($this->data['tags']) && $this->data['tags'] !== '') {
+            $this->data['tags'] = explode(',', $this->data['tags']);
+        } elseif (!is_array($this->data['tags'])) {
+            $this->data['tags'] = array();
         }
 
         $this->load->vars($this->data);
@@ -404,6 +448,10 @@ class Custompoints extends MY_Controller
 
     public function update($custompoints_id)
     {
+        if (!$this->isMongoId($custompoints_id)) {
+            redirect('/custompoints', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -441,11 +489,20 @@ class Custompoints extends MY_Controller
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 $custompoints_data = $this->input->post();
+                $name = $this->scalarPostValue('name');
+                if ($name === null || $name === '') {
+                    $this->data['message'] = $this->requiredFieldMessage('entry_name');
+                }
 
-                $chk_name = $this->Custompoints_model->getCustompointByNameButNotID( $this->User_model->getSiteId(), $custompoints_data['name'], $custompoints_id);
+                if ($this->data['message'] == null) {
+                    $custompoints_data['name'] = $name;
+                    $custompoints_data['tags'] = $this->scalarPostValue('tags', '');
+                }
+
+                $chk_name = $this->data['message'] == null ? $this->Custompoints_model->getCustompointByNameButNotID( $this->User_model->getSiteId(), $custompoints_data['name'], $custompoints_id) : false;
                 if($chk_name){
                     $this->data['message'] = $this->lang->line('text_error_duplicate_custom_point');
-                }else {
+                } elseif ($this->data['message'] == null) {
 
                     $data['client_id'] = $this->User_model->getClientId();
                     $data['site_id'] = $this->User_model->getSiteId();
@@ -493,14 +550,28 @@ class Custompoints extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $reward_id) {
-                $audit_id = $this->Custompoints_model->auditBeforeCustomPoint('delete', $reward_id, $this->User_model->getId());
-                $this->Custompoints_model->deleteCustompoints($reward_id);
-                $this->Custompoints_model->auditAfterCustomPoint('delete', $reward_id, $this->User_model->getId(), $audit_id);
+            $selected_custompoints = $this->input->post('selected');
+            if (!is_array($selected_custompoints)) {
+                $selected_custompoints = array($selected_custompoints);
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/custompoints', 'refresh');
+            foreach ($selected_custompoints as $reward_id) {
+                if (!$this->isMongoId($reward_id)) {
+                    $this->error['warning'] = 'Invalid custompoints id';
+                    break;
+                }
+            }
+
+            if ($this->error['warning'] == null) {
+                foreach ($selected_custompoints as $reward_id) {
+                    $audit_id = $this->Custompoints_model->auditBeforeCustomPoint('delete', $reward_id, $this->User_model->getId());
+                    $this->Custompoints_model->deleteCustompoints($reward_id);
+                    $this->Custompoints_model->auditAfterCustomPoint('delete', $reward_id, $this->User_model->getId(), $audit_id);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/custompoints', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -571,6 +642,17 @@ class Custompoints extends MY_Controller
         }
 
         $array_custompoints = json_decode($this->input->post('array_custompoints'),true);
+        if (!is_array($array_custompoints)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_custompoints as $custompoint) {
+            if (!is_array($custompoint) || !isset($custompoint['name']) || !is_scalar($custompoint['name']) || $custompoint['name'] === '') {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $validation_result = array();
@@ -585,8 +667,10 @@ class Custompoints extends MY_Controller
             foreach($array_custompoints as $custompoint) {
                 $custompoint['client_id'] = $client_id;
                 $custompoint['site_id'] = $site_id;
-                if (!empty($custompoint['tags'])){
+                if (isset($custompoint['tags']) && is_array($custompoint['tags']) && !empty($custompoint['tags'])){
                     $custompoint['tags'] = implode(',', $custompoint['tags']);
+                } elseif (!isset($custompoint['tags']) || !is_string($custompoint['tags'])) {
+                    $custompoint['tags'] = null;
                 }
                 $insert = $this->Custompoints_model->insertCustompoints($custompoint);
                 //$import_result = $this->Quiz_model->addQuizToClient($quiz2);
@@ -612,6 +696,11 @@ class Custompoints extends MY_Controller
         $array_custompoints = array();
         foreach($this->input->post('array_custompoints') as $customPoint_id){
             if($customPoint_id == "on")continue;
+            if (!$this->isMongoId($customPoint_id)) {
+                $this->jsonErrorResponse('Invalid custompoints id');
+                return;
+            }
+
             $currency_info = $this->Custompoints_model->getCustompoint($customPoint_id);
 
             unset($currency_info['_id']);
@@ -626,6 +715,11 @@ class Custompoints extends MY_Controller
         }
 
         $this->output->set_output(json_encode($array_custompoints));
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     private function datetimeMongotoReadable($dateTimeMongo)

@@ -1,6 +1,7 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Error extends CI_Controller
+class Error_page extends CI_Controller
 {
     function error_404()
     {

@@ -23,18 +23,8 @@ class Statistic extends CI_Controller
 
     public function getStatisticData()
     {
-
-        if ($this->input->get('date_start')) {
-            $date_start = strtotime($this->input->get('date_start'));
-        } else {
-            $date_start = strtotime(' -30 day');
-        }
-
-        if ($this->input->get('date_expire')) {
-            $date_expire = strtotime($this->input->get('date_expire'));
-        } else {
-            $date_expire = strtotime('today');
-        }
+        $date_start = $this->statisticDateTimestamp($this->input->get('date_start'), strtotime(' -30 day'));
+        $date_expire = $this->statisticDateTimestamp($this->input->get('date_expire'), strtotime('today'));
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -91,6 +81,21 @@ class Statistic extends CI_Controller
         $this->Statistic_model->set_read_preference_primary();
 
         $this->output->set_output(json_encode($json));
+    }
+
+    private function statisticDateTimestamp($value, $fallback)
+    {
+        if (!is_scalar($value)) {
+            return $fallback;
+        }
+
+        $value = trim((string)$value);
+        if ($value === '') {
+            return $fallback;
+        }
+
+        $timestamp = strtotime($value);
+        return $timestamp !== false ? $timestamp : $fallback;
     }
 
     public function getDailyActionmeaturement()
@@ -298,8 +303,11 @@ class Statistic extends CI_Controller
         $this->data['total_players'] = $total_players;
 
         $plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
-        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-        $this->data['reset_quest'] = array_key_exists('reset_quest', $plan) && $plan['reset_quest'];
+        $plan = null;
+        if (is_array($plan_subscription) && array_key_exists('plan_id', $plan_subscription)) {
+            $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+        }
+        $this->data['reset_quest'] = is_array($plan) && array_key_exists('reset_quest', $plan) && $plan['reset_quest'];
 
         $this->load->library('parser');
         $html = $this->parser->parse('player_isotope', $this->data, true);
@@ -328,8 +336,10 @@ class Statistic extends CI_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        if ($this->input->get('filter_sort')) {
-            $sort = explode('|', $this->input->get('filter_sort'));
+        $sort_data = array();
+        $filter_sort = $this->input->get('filter_sort');
+        if (is_string($filter_sort) && $filter_sort !== '') {
+            $sort = explode('|', $filter_sort);
 
             if (is_array($sort)) {
                 foreach ($sort as $value) {
@@ -343,9 +353,6 @@ class Statistic extends CI_Controller
                     }
                 }
             }
-
-        } else {
-            $sort_data = array();
         }
 
         if ($this->input->get('filter_page')) {

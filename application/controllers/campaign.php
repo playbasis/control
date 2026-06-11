@@ -20,6 +20,21 @@ class Campaign extends MY_Controller
         $this->lang->load("campaign", $lang['folder']);
     }
 
+    private function scalarValue($value, $default = '')
+    {
+        if (!is_scalar($value)) {
+            return $default;
+        }
+
+        return trim((string)$value);
+    }
+
+    private function campaignImage($campaign_data)
+    {
+        $image = isset($campaign_data['image']) ? $this->scalarValue($campaign_data['image']) : '';
+        return $image === '' ? '' : html_entity_decode($image, ENT_QUOTES, 'UTF-8');
+    }
+
     public function index()
     {
         if (!$this->validateAccess()) {
@@ -81,15 +96,15 @@ class Campaign extends MY_Controller
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
                 $data['name'] = $campaign_data['name'];
-                $data['image'] = isset($campaign_data['image']) ? html_entity_decode($campaign_data['image'], ENT_QUOTES, 'UTF-8') : '';
+                $data['image'] = $this->campaignImage($campaign_data);
                 $data['date_start'] = null;
                 $data['date_end'] = null;
                 $data['weight'] = isset($campaign_data['weight']) && $campaign_data['weight'] ? intval($campaign_data['weight']) : 0;
                 $data['tags'] = $campaign_data['tags'];
 
-                if (isset($campaign_data['date_start']) && !empty($campaign_data['date_start']) && isset($campaign_data['date_end']) && !empty($campaign_data['date_end'])) {
-                    $date_start_another = strtotime($campaign_data['date_start']);
-                    $date_end_another = strtotime($campaign_data['date_end']);
+                $date_start_another = $this->campaignDateTimestamp($campaign_data, 'date_start');
+                $date_end_another = $this->campaignDateTimestamp($campaign_data, 'date_end');
+                if ($date_start_another !== null && $date_end_another !== null) {
                     if ($date_start_another < $date_end_another) {
                         $data['date_start'] = new MongoDate($date_start_another);
                         $data['date_end'] = new MongoDate($date_end_another);
@@ -97,12 +112,10 @@ class Campaign extends MY_Controller
                         $this->data['message'] = $this->lang->line('error_date_time');
                     }
                 } else {
-                    if (isset($campaign_data['date_start']) && $campaign_data['date_start']) {
-                        $date_start_another = strtotime($campaign_data['date_start']);
+                    if ($date_start_another !== null) {
                         $data['date_start'] = new MongoDate($date_start_another);
                     }
-                    if (isset($campaign_data['date_end']) && $campaign_data['date_end']) {
-                        $date_end_another = strtotime($campaign_data['date_end']);
+                    if ($date_end_another !== null) {
                         $data['date_end'] = new MongoDate($date_end_another);
                     }
                 }
@@ -119,6 +132,10 @@ class Campaign extends MY_Controller
 
     public function update($campaign_id)
     {
+        if (preg_match('/^[0-9a-f]{24}$/i', $campaign_id) !== 1) {
+            redirect('/campaign', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -141,15 +158,15 @@ class Campaign extends MY_Controller
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['_id'] = $campaign_id;
                 $data['name'] = $campaign_data['name'];
-                $data['image'] = isset($campaign_data['image']) ? html_entity_decode($campaign_data['image'], ENT_QUOTES, 'UTF-8') : '';
+                $data['image'] = $this->campaignImage($campaign_data);
                 $data['date_start'] = null;
                 $data['date_end'] = null;
                 $data['weight'] = isset($campaign_data['weight']) && $campaign_data['weight'] ? intval($campaign_data['weight']) : 0;
                 $data['tags'] = $campaign_data['tags'];
 
-                if (isset($campaign_data['date_start']) && $campaign_data['date_start'] && isset($campaign_data['date_end']) && $campaign_data['date_end']) {
-                    $date_start_another = strtotime($campaign_data['date_start']);
-                    $date_end_another = strtotime($campaign_data['date_end']);
+                $date_start_another = $this->campaignDateTimestamp($campaign_data, 'date_start');
+                $date_end_another = $this->campaignDateTimestamp($campaign_data, 'date_end');
+                if ($date_start_another !== null && $date_end_another !== null) {
                     if ($date_start_another < $date_end_another) {
                         $data['date_start'] = new MongoDate($date_start_another);
                         $data['date_end'] = new MongoDate($date_end_another);
@@ -157,12 +174,10 @@ class Campaign extends MY_Controller
                         $this->data['message'] = $this->lang->line('error_date_time');
                     }
                 } else {
-                    if (isset($campaign_data['date_start']) && $campaign_data['date_start']) {
-                        $date_start_another = strtotime($campaign_data['date_start']);
+                    if ($date_start_another !== null) {
                         $data['date_start'] = new MongoDate($date_start_another);
                     }
-                    if (isset($campaign_data['date_end']) && $campaign_data['date_end']) {
-                        $date_end_another = strtotime($campaign_data['date_end']);
+                    if ($date_end_another !== null) {
                         $data['date_end'] = new MongoDate($date_end_another);
                     }
                 }
@@ -189,12 +204,24 @@ class Campaign extends MY_Controller
         $this->error['message'] = null;
 
         if ($this->input->post('selected') && $this->error['message'] == null) {
-            foreach ($this->input->post('selected') as $campaign_id) {
-                $this->Campaign_model->deleteCampaign(new MongoId($campaign_id));
+            $selected_campaigns = $this->input->post('selected');
+            foreach ($selected_campaigns as $campaign_id) {
+                if (preg_match('/^[0-9a-f]{24}$/i', $campaign_id) !== 1) {
+                    $this->error['warning'] = 'Invalid campaign id';
+                    break;
+                }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/campaign', 'refresh');
+            if ($this->error['message'] == null && !isset($this->error['warning'])) {
+                foreach ($selected_campaigns as $campaign_id) {
+                    $this->Campaign_model->deleteCampaign(new MongoId($campaign_id));
+                }
+            }
+
+            if ($this->error['message'] == null && !isset($this->error['warning'])) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/campaign', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -235,6 +262,12 @@ class Campaign extends MY_Controller
             );
             $campaigns  = $this->Campaign_model->getCampaign($client_id, $site_id, $filter);
             if($campaigns) foreach($campaigns as &$campaign){
+                if (isset($campaign['tags']) && is_string($campaign['tags'])) {
+                    $campaign['tags'] = explode(',', $campaign['tags']);
+                } elseif (!isset($campaign['tags']) || !is_array($campaign['tags'])) {
+                    $campaign['tags'] = array();
+                }
+
                 if (isset($campaign['image'])) {
                     $info = pathinfo($campaign['image']);
                     if (isset($info['extension'])) {
@@ -324,8 +357,9 @@ class Campaign extends MY_Controller
             $this->data['name'] = '';
         }
 
-        if ($this->input->post('image')) {
-            $this->data['image'] = $this->input->post('image');
+        $postedImage = $this->scalarValue($this->input->post('image'));
+        if ($postedImage !== '') {
+            $this->data['image'] = $postedImage;
         } elseif (isset($campaign_info['image']) && !empty($campaign_info['image'])) {
             $this->data['image'] = $campaign_info['image'];
         } else {
@@ -348,16 +382,18 @@ class Campaign extends MY_Controller
 
         $this->data['no_image'] = S3_IMAGE . "cache/no_image-100x100.jpg";
 
-        if ($this->input->post('date_start')) {
-            $this->data['date_start'] = $this->input->post('date_start');
+        $postedDateStart = $this->campaignDatePostValue('date_start');
+        if ($postedDateStart !== '') {
+            $this->data['date_start'] = $postedDateStart;
         } elseif (isset($campaign_info['date_start'])) {
             $this->data['date_start'] = datetimeMongotoReadable($campaign_info['date_start']);
         } else {
             $this->data['date_start'] = "";
         }
 
-        if ($this->input->post('date_end')) {
-            $this->data['date_end'] = $this->input->post('date_end');
+        $postedDateEnd = $this->campaignDatePostValue('date_end');
+        if ($postedDateEnd !== '') {
+            $this->data['date_end'] = $postedDateEnd;
         } elseif (isset($campaign_info['date_end'])) {
             $this->data['date_end'] = datetimeMongotoReadable($campaign_info['date_end']);
         } else {
@@ -379,9 +415,39 @@ class Campaign extends MY_Controller
         } else {
             $this->data['tags'] = '';
         }
+        if (is_string($this->data['tags']) && $this->data['tags'] !== '') {
+            $this->data['tags'] = explode(',', $this->data['tags']);
+        } elseif (!is_array($this->data['tags'])) {
+            $this->data['tags'] = array();
+        }
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    private function campaignDateTimestamp($campaign_data, $field)
+    {
+        if (!isset($campaign_data[$field]) || !is_scalar($campaign_data[$field])) {
+            return null;
+        }
+
+        $date = trim((string)$campaign_data[$field]);
+        if ($date === '') {
+            return null;
+        }
+
+        $timestamp = strtotime($date);
+        return $timestamp === false ? null : $timestamp;
+    }
+
+    private function campaignDatePostValue($field)
+    {
+        $date = $this->input->post($field);
+        if (!is_scalar($date)) {
+            return '';
+        }
+
+        return (string)$date;
     }
 
     private function validateModify()

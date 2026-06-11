@@ -63,6 +63,52 @@ class Report_registration extends MY_Controller
         $this->getRegisteredPlayers(0, site_url('report_registration/page'));
     }
 
+    private function getDefaultRegistrationReportDateStart()
+    {
+        return date("Y-m-d H:i:s", strtotime(date("Y-m-d", strtotime("-30 days"))));
+    }
+
+    private function getDefaultRegistrationReportDateEnd()
+    {
+        return date("Y-m-d H:i:s", strtotime(date("Y-m-d")) + 86399);
+    }
+
+    private function getRegistrationReportDateFilter($value, $fallback, $end_of_day = false)
+    {
+        if (!is_string($value)) {
+            return $fallback;
+        }
+
+        $value = trim($value);
+        if ($value === '') {
+            return $fallback;
+        }
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            $format = 'Y-m-d';
+        } elseif (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $value)) {
+            $format = 'Y-m-d H:i:s';
+        } else {
+            return $fallback;
+        }
+
+        $date = DateTime::createFromFormat($format, $value);
+        $errors = DateTime::getLastErrors();
+        if (!$date || (is_array($errors) && ($errors['warning_count'] > 0 || $errors['error_count'] > 0))) {
+            return $fallback;
+        }
+
+        if ($date->format($format) !== $value) {
+            return $fallback;
+        }
+
+        if ($end_of_day && $format === 'Y-m-d H:i:s' && strpos($value, '00:00:00') !== false) {
+            return $date->modify('+86399 seconds')->format("Y-m-d H:i:s");
+        }
+
+        return $value;
+    }
+
     public function getRegisteredPlayers($offset, $url)
     {
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
@@ -78,38 +124,30 @@ class Report_registration extends MY_Controller
 
 
         if ($this->input->get('date_start')) {
-            $filter_date_start = $this->input->get('date_start');
+            $filter_date_start = $this->getRegistrationReportDateFilter(
+                $this->input->get('date_start'),
+                $this->getDefaultRegistrationReportDateStart()
+            );
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-30 days"));
-            $previousDate = strtotime($date);
-            $filter_date_start = date("Y-m-d H:i:s", $previousDate);
+            $filter_date_start = $this->getDefaultRegistrationReportDateStart();
         }
 
         if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
+            $filter_date_end = $this->getRegistrationReportDateFilter(
+                $this->input->get('date_expire'),
+                $this->getDefaultRegistrationReportDateEnd(),
+                true
+            );
             $parameter_url .= "&date_expire=" . $filter_date_end;
-
-            if(strpos($filter_date_end, '00:00:00')){
-                //--> This will enable to search on the day until the time 23:59:59
-                $currentDate = strtotime($filter_date_end);
-                $futureDate = $currentDate + ("86399");
-                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-                //--> end*/
-            }
         } else {
-            //--> This will enable to search on the current day until the time 23:59:59
-            $date = date("Y-m-d");
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            //--> end
+            $filter_date_end = $this->getDefaultRegistrationReportDateEnd();
         }
 
         if ($this->input->get('time_zone')){
             $UTC_7 = new DateTimeZone("Asia/Bangkok");
 
-            $filter_time_zone = $this->input->get('time_zone');
+            $filter_time_zone = $this->getValidTimeZone($this->input->get('time_zone'));
             $parameter_url .= "&time_zone=" . urlencode($filter_time_zone);
             $newTZ = new DateTimeZone($filter_time_zone);
             $date_start = new DateTime( $filter_date_start, $newTZ);
@@ -258,6 +296,19 @@ class Report_registration extends MY_Controller
         }
     }
 
+    private function getValidTimeZone($time_zone)
+    {
+        $default_time_zone = "Asia/Bangkok";
+
+        if (!is_string($time_zone) || $time_zone === '') {
+            return $default_time_zone;
+        }
+
+        $time_zones = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+
+        return in_array($time_zone, $time_zones, true) ? $time_zone : $default_time_zone;
+    }
+
     public function actionDownload()
     {
 
@@ -267,34 +318,29 @@ class Report_registration extends MY_Controller
         $this->load->model('Player_model');
 
         if ($this->input->get('date_start')) {
-            $filter_date_start = $this->input->get('date_start');
+            $filter_date_start = $this->getRegistrationReportDateFilter(
+                $this->input->get('date_start'),
+                $this->getDefaultRegistrationReportDateStart()
+            );
             $parameter_url .= "&date_start=" . $filter_date_start;
         } else {
-            $date = date("Y-m-d", strtotime("-30 days"));
-            $previousDate = strtotime($date);
-            $filter_date_start = date("Y-m-d H:i:s", $previousDate);
+            $filter_date_start = $this->getDefaultRegistrationReportDateStart();
         }
 
         if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
-            if(strpos($filter_date_end, '00:00:00')){
-                //--> This will enable to search on the day until the time 23:59:59
-                $currentDate = strtotime($filter_date_end);
-                $futureDate = $currentDate + ("86399");
-                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-                //--> end*/
-            }
+            $filter_date_end = $this->getRegistrationReportDateFilter(
+                $this->input->get('date_expire'),
+                $this->getDefaultRegistrationReportDateEnd(),
+                true
+            );
         } else {
-            $date = date("Y-m-d");
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            $filter_date_end = $this->getDefaultRegistrationReportDateEnd();
         }
 
         if ($this->input->get('time_zone')){
             $UTC_7 = new DateTimeZone("Asia/Bangkok");
 
-            $filter_time_zone = $this->input->get('time_zone');
+            $filter_time_zone = $this->getValidTimeZone($this->input->get('time_zone'));
             $newTZ = new DateTimeZone($filter_time_zone);
             $date_start = new DateTime( $filter_date_start, $newTZ);
             $date_start->setTimezone($UTC_7);

@@ -131,8 +131,11 @@ class Insights extends MY_Controller
         $compareDate = $this->input->get('compareDate', true);
         $actionCompareType = $this->input->get('actionCompareType', true);
 
-        $compareDateArray = explode("-", $compareDate);
-        $compareDateTimestamp = mktime(0, 0, 0, $compareDateArray[1], $compareDateArray[2], $compareDateArray[0]);
+        $compareDateTimestamp = $this->getCompareDateTimestamp($compareDate);
+        if ($compareDateTimestamp === false) {
+            $this->responseJson(array('success' => false, 'response' => array(), 'error' => 'Invalid compareDate'));
+            return;
+        }
 
         $n1 = date('Y-m-d', $compareDateTimestamp);
         $n2 = date('Y-m-d', strtotime('-1 day', $compareDateTimestamp));
@@ -187,8 +190,11 @@ class Insights extends MY_Controller
         $rewardType = $this->input->get('rewardType', true);
         $rewardCompareType = $this->input->get('rewardCompareType', true);
 
-        $compareDateArray = explode("-", $compareDate);
-        $compareDateTimestamp = mktime(0, 0, 0, $compareDateArray[1], $compareDateArray[2], $compareDateArray[0]);
+        $compareDateTimestamp = $this->getCompareDateTimestamp($compareDate);
+        if ($compareDateTimestamp === false) {
+            $this->responseJson(array('success' => false, 'response' => array(), 'error' => 'Invalid compareDate'));
+            return;
+        }
 
         $n1 = date('Y-m-d', $compareDateTimestamp);
         $n2 = date('Y-m-d', strtotime('-1 day', $compareDateTimestamp));
@@ -313,6 +319,23 @@ class Insights extends MY_Controller
         echo($res);
 
         return;
+    }
+
+    private function getCompareDateTimestamp($compareDate)
+    {
+        if (!is_string($compareDate) || !preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/', $compareDate, $matches)) {
+            return false;
+        }
+
+        $year = (int)$matches[1];
+        $month = (int)$matches[2];
+        $day = (int)$matches[3];
+
+        if (!checkdate($month, $day, $year)) {
+            return false;
+        }
+
+        return mktime(0, 0, 0, $month, $day, $year);
     }
 
     private function reFormatResponse($wrongFormattedResponse, $key = 'playbasis')

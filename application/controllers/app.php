@@ -78,17 +78,11 @@ class App extends MY_Controller
             $filter_name = null;
         }
 
-        if ($this->input->get('sort')) {
-            $sort = $this->input->get('sort');
-        } else {
-            $sort = 'site_name';
-        }
+        $sort = $this->input->get('sort');
+        $sort = is_scalar($sort) && $sort ? (string)$sort : 'site_name';
 
-        if ($this->input->get('order')) {
-            $order = $this->input->get('order');
-        } else {
-            $order = 'ASC';
-        }
+        $order = $this->input->get('order');
+        $order = is_scalar($order) && $order ? (string)$order : 'ASC';
 
         $limit = isset($params['limit']) ? $params['limit'] : $per_page;
 
@@ -158,12 +152,12 @@ class App extends MY_Controller
             $this->data['success'] = '';
         }
 
-        $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-        // get Plan limit_others.domain
-        $this->data['plan_limit_app'] = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others",
-            "app");
-        $this->data['plan_limit_platform'] = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"],
-            "others", "platform");
+        $plan_context = $this->getCurrentPlanLimits($client_id, array('app', 'platform'));
+        if ($plan_context === false) {
+            return;
+        }
+        $this->data['plan_limit_app'] = $plan_context['limits']['app'];
+        $this->data['plan_limit_platform'] = $plan_context['limits']['platform'];
 
         $this->data['total_app'] = $total;
         $this->data['total_platform'] = $total_platform;
@@ -219,9 +213,23 @@ class App extends MY_Controller
     {
         $json = array();
 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
+            (!$this->validateModify() || !$this->checkOwnerPlatForm($this->input->post('platform_id')))
+        ) {
+            $json['error'] = $this->lang->line('error_permission');
+            $this->output->set_output(json_encode($json));
+            return;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $secret = $this->App_model->resetToken($this->input->post('platform_id'));
+            $platform_id = $this->input->post('platform_id');
+            if (preg_match('/^[0-9a-f]{24}$/i', (string)$platform_id) !== 1) {
+                $this->output->set_output(json_encode($json));
+                return;
+            }
+
+            $secret = $this->App_model->resetToken($platform_id);
 
             $json['success'] = $this->lang->line('text_success');
             $json['secret'] = $secret;
@@ -257,11 +265,14 @@ class App extends MY_Controller
             $this->form_validation->set_rules('platform', $this->lang->line('form_site'),
                 'trim|required|min_length[3]|max_length[100]|xss_clean');
 
-            if (strtolower($this->input->post('platform')) == "ios") {
+            $platform_shape_valid = true;
+            $platform = $this->getPostedPlatform($platform_shape_valid);
+
+            if ($platform == "ios") {
                 $this->form_validation->set_rules('ios_bundle_id', $this->lang->line('form_ios_bundle_id'),
                     'trim|required|min_length[3]|max_length[100]|xss_clean');
 
-            } elseif (strtolower($this->input->post('platform')) == "android") {
+            } elseif ($platform == "android") {
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'),
                     'trim|required|min_length[3]|max_length[100]|xss_clean');
             } else {
@@ -269,12 +280,13 @@ class App extends MY_Controller
                     'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http|ip_is_public');
             }
 
-            if ($this->form_validation->run() && $this->data['message'] == null) {
+            if ($platform_shape_valid && $this->form_validation->run() && $this->data['message'] == null) {
 
-                $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-
-                // get Plan limit_others.domain
-                $limit_app = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "app");
+                $plan_context = $this->getCurrentPlanLimits($client_id, array('app', 'platform'));
+                if ($plan_context === false) {
+                    return;
+                }
+                $limit_app = $plan_context['limits']['app'];
 
                 // Get current client app
                 $data_filter_app = array('client_id' => $client_id);
@@ -287,9 +299,7 @@ class App extends MY_Controller
                     redirect("app");
                 }
 
-                // get Plan limit_others.domain
-                $limit_platform = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others",
-                    "platform");
+                $limit_platform = $plan_context['limits']['platform'];
 
                 // Get current client site
                 $data_filter_app = array('client_id' => $client_id);
@@ -308,7 +318,7 @@ class App extends MY_Controller
                 if (!$site) {
 
                     $data_platform = array();
-                    if (strtolower($this->input->post('platform')) == 'ios') {
+                    if ($platform == 'ios') {
                         if ($this->input->post('ios_bundle_id')) {
                             $data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
                         }
@@ -318,7 +328,7 @@ class App extends MY_Controller
                         if ($this->input->post('ios_ipad_store_id')) {
                             $data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
                         }
-                    } elseif (strtolower($this->input->post('platform')) == 'android') {
+                    } elseif ($platform == 'android') {
                         if ($this->input->post('android_package_name')) {
                             $data_platform["android_package_name"] = $this->input->post('android_package_name');
                         }
@@ -332,7 +342,7 @@ class App extends MY_Controller
                         "client_id" => $client_id,
                         "image" => $this->input->post('image'),
                         "app_color" => $this->input->post('app_color'),
-                        "platform" => strtolower($this->input->post('platform')),
+                        "platform" => $platform,
                         "data" => $data_platform
                     );
                     list($site_id, $keySecret) = $this->App_model->addApp($insert_data);
@@ -340,8 +350,7 @@ class App extends MY_Controller
                     /* switch to new app immediately */
                     $this->session->set_userdata('site_id', $site_id);
 
-                    $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-                    $plan_id = $plan_subscription['plan_id'] . "";
+                    $plan_id = $plan_context['plan_id'] . "";
 
                     /* bind plan to client in playbasis_permission */
                     $this->Client_model->addPlanToPermission(array(
@@ -419,6 +428,10 @@ class App extends MY_Controller
 
             if ($this->input->post('platform_selected')) {
                 foreach ($this->input->post('platform_selected') as $platform_id) {
+                    if (preg_match('/^[0-9a-f]{24}$/i', (string)$platform_id) !== 1) {
+                        continue;
+                    }
+
                     if ($this->checkOwnerPlatForm($platform_id)) {
 
                         $this->App_model->deletePlatform($platform_id);
@@ -465,10 +478,13 @@ class App extends MY_Controller
             $this->form_validation->set_rules('platform', $this->lang->line('form_site'),
                 'trim|required|min_length[3]|max_length[100]|xss_clean');
 
-            if (strtolower($this->input->post('platform')) == "ios") {
+            $platform_shape_valid = true;
+            $platform = $this->getPostedPlatform($platform_shape_valid);
+
+            if ($platform == "ios") {
                 $this->form_validation->set_rules('ios_bundle_id', $this->lang->line('form_ios_bundle_id'),
                     'trim|required|min_length[3]|max_length[100]|xss_clean');
-            } elseif (strtolower($this->input->post('platform')) == "android") {
+            } elseif ($platform == "android") {
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'),
                     'trim|required|min_length[3]|max_length[100]|xss_clean');
             } else {
@@ -476,9 +492,9 @@ class App extends MY_Controller
                     'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http|ip_is_public');
             }
 
-            if ($this->form_validation->run() && $this->data['message'] == null) {
+            if ($platform_shape_valid && $this->form_validation->run() && $this->data['message'] == null) {
                 $data_platform = array();
-                if (strtolower($this->input->post('platform')) == 'ios') {
+                if ($platform == 'ios') {
                     if ($this->input->post('ios_bundle_id')) {
                         $data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
                     }
@@ -488,7 +504,7 @@ class App extends MY_Controller
                     if ($this->input->post('ios_ipad_store_id')) {
                         $data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
                     }
-                } elseif (strtolower($this->input->post('platform')) == 'android') {
+                } elseif ($platform == 'android') {
                     if ($this->input->post('android_package_name')) {
                         $data_platform["android_package_name"] = $this->input->post('android_package_name');
                     }
@@ -499,7 +515,7 @@ class App extends MY_Controller
                 }
 
                 $edit_data = array(
-                    "platform" => strtolower($this->input->post('platform')),
+                    "platform" => $platform,
                     "data" => $data_platform
                 );
                 $this->App_model->editPlatform($platform_id, $edit_data);
@@ -539,10 +555,11 @@ class App extends MY_Controller
 
             $client_id = $this->User_model->getClientId();
 
-            $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-
-            // get Plan limit_others.domain
-            $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "platform");
+            $plan_context = $this->getCurrentPlanLimits($client_id, array('platform'));
+            if ($plan_context === false) {
+                return;
+            }
+            $limit = $plan_context['limits']['platform'];
 
             // Get current client site
             $data_filter_app = array('client_id' => $client_id);
@@ -558,10 +575,13 @@ class App extends MY_Controller
             $this->form_validation->set_rules('platform', $this->lang->line('form_site'),
                 'trim|required|min_length[3]|max_length[100]|xss_clean');
 
-            if (strtolower($this->input->post('platform')) == "ios") {
+            $platform_shape_valid = true;
+            $platform = $this->getPostedPlatform($platform_shape_valid);
+
+            if ($platform == "ios") {
                 $this->form_validation->set_rules('ios_bundle_id', $this->lang->line('form_ios_bundle_id'),
                     'trim|required|min_length[3]|max_length[100]|xss_clean');
-            } elseif (strtolower($this->input->post('platform')) == "android") {
+            } elseif ($platform == "android") {
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'),
                     'trim|required|min_length[3]|max_length[100]|xss_clean');
             } else {
@@ -569,9 +589,9 @@ class App extends MY_Controller
                     'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http|ip_is_public');
             }
 
-            if ($this->form_validation->run() && $this->data['message'] == null) {
+            if ($platform_shape_valid && $this->form_validation->run() && $this->data['message'] == null) {
                 $data_platform = array();
-                if (strtolower($this->input->post('platform')) == 'ios') {
+                if ($platform == 'ios') {
                     if ($this->input->post('ios_bundle_id')) {
                         $data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
                     }
@@ -581,7 +601,7 @@ class App extends MY_Controller
                     if ($this->input->post('ios_ipad_store_id')) {
                         $data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
                     }
-                } elseif (strtolower($this->input->post('platform')) == 'android') {
+                } elseif ($platform == 'android') {
                     if ($this->input->post('android_package_name')) {
                         $data_platform["android_package_name"] = $this->input->post('android_package_name');
                     }
@@ -591,12 +611,12 @@ class App extends MY_Controller
                     }
                 }
                 $check_data = array('site_id' => $app_id,
-                                    'platform' => strtolower($this->input->post('platform')),
+                                    'platform' => $platform,
                                     'data_platform' => $data_platform);
                 $site = $this->App_model->checkPlatformExists($check_data);
                 if(!$site){
                     $add_data = array(
-                        "platform" => strtolower($this->input->post('platform')),
+                        "platform" => $platform,
                         "data" => $data_platform
                     );
                     $this->App_model->addPlatform($app_id, $add_data);
@@ -817,6 +837,13 @@ class App extends MY_Controller
         }
     }
 
+    private function getPostedPlatform(&$valid_shape)
+    {
+        $platform = $this->input->post('platform');
+        $valid_shape = $platform === null || is_scalar($platform);
+        return is_scalar($platform) ? strtolower((string)$platform) : '';
+    }
+
     private function checkOwnerApp($app_id)
     {
 
@@ -893,6 +920,39 @@ class App extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function getCurrentPlanLimits($client_id, $fields)
+    {
+        $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+        if (!is_array($plan_subscription) ||
+            !array_key_exists('plan_id', $plan_subscription) ||
+            !$plan_subscription['plan_id']
+        ) {
+            redirect('/logout', 'refresh');
+            return false;
+        }
+
+        try {
+            $limits = $this->Plan_model->getPlanLimitById($plan_subscription['plan_id'], 'others', $fields);
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return false;
+        }
+
+        if (!is_array($limits)) {
+            $limits = array();
+        }
+        foreach ($fields as $field) {
+            if (!array_key_exists($field, $limits)) {
+                $limits[$field] = null;
+            }
+        }
+
+        return array(
+            'plan_id' => $plan_subscription['plan_id'],
+            'limits' => $limits
+        );
     }
 
 //    public function move_key_secret_to_platform(){

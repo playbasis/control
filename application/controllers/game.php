@@ -20,6 +20,16 @@ class game extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
+    private function worldResetDate($value)
+    {
+        if (!is_scalar($value) || !$value) {
+            return new MongoDate();
+        }
+
+        $timestamp = strtotime((string)$value);
+        return $timestamp === false ? new MongoDate() : new MongoDate($timestamp);
+    }
+
     public function index()
     {
         if (!$this->validateAccess('game')) {
@@ -170,101 +180,103 @@ class game extends MY_Controller
                 $client_id = $this->User_model->getClientId();
                 $site_id = $this->User_model->getSiteId();
                 $data = $this->input->post();
-                $game_data['game_name'] = $data['name'];
-                $game_data['image']     = $data['image'];
-                $game_data['status']    = (isset($data['status']) && ($data['status'] == "on")) ? true : false;
-                if($data['name'] == 'egg' || $data['name'] == 'pairs' || $data['name'] == 'catch_item') {
-                    $game_data['duration'] = $data['duration'] ? $data['duration'] : 1;
-                    if($data['name'] == 'egg') $game_data['action_time'] = $data['action_time'] ? $data['action_time'] : 1;
-                }
-                $game_id = $this->Game_model->updateGameSetting($client_id, $site_id, $game_data);
-                $exist_world = array();
-                if($game_id){
-                    foreach($data['worlds'] as $index => $world){
-                        if($data['name'] == 'farm' || $data['name'] == 'bingo'){
-                            $item_array = array();
-                            foreach($world['world_item'] as $row_index => $row){
-                                foreach($row as $column_index => $column) {
-                                    if(!empty($column['item_id'])){
-                                        $item_data['item_id']                          = new MongoId($column['item_id']);
-                                        $item_data['description']                      = $column['item_description'];
-                                        $item_data['item_config']['row']               = $row_index;
-                                        $item_data['item_config']['column']            = $column_index;
-                                        $item_data['item_config']['rule_id']              = new MongoId($column['rule_id']);
-                                        if($data['name'] == 'farm'){
-                                            $item_data['item_config']['days_to_deduct']    = (int)$column['item_deduct'];
-                                            $item_data['item_config']['amount_to_harvest'] = (int)$column['item_harvest'];
-                                        }
-                                        $this->Game_model->updateGameStageItem($client_id, $site_id, $game_id, $item_data);
-                                        array_push($item_array, $item_data['item_id']);
-                                    }
-
-                                }
-                            }
-
-                            if(isset($world['world_id'])){
-                                try{
-                                    array_push($exist_world, new MongoId($world['world_id']));
-                                } catch (Exception $e){
-
-                                }
-                            }
-                            $stage_data['stage_name']             = $world['world_name'];
-                            $stage_data['stage_level']            = (int)$world['world_level'];
-                            $stage_data['image']                  = $world['world_image'];
-                            $stage_data['category']               = isset($world['world_category']) && !empty($world['world_category']) ? new MongoId($world['world_category']): "";
-                            $stage_data['description']            = $world['world_description'];
-                            $stage_data['reset_enable']           = $world['reset_enable'];
-                            if ($world['reset_enable'] == 'on'){
-                                $stage_data['reset_date']         = !empty($world['reset_date']) ? new MongoDate(strtotime($world['reset_date'])) : new MongoDate();
-                                $stage_data['reset_duration']     = !empty($world['reset_duration']) ? (int)$world['reset_duration'] : 30;
-                            } else {
-                                $stage_data['reset_date']         = null;
-                                $stage_data['reset_duration']     = null;
-                            }
-                            $stage_data['item_list']              = $item_array;
-                            $stage_data['stage_config']['width']  = (int)$world['world_width'];
-                            $stage_data['stage_config']['height'] = (int)$world['world_height'];
-                        }
-                        if($data['name'] == 'egg' || $data['name'] == 'pairs' || $data['name'] == 'catch_item'){
-                            $stage_data['stage_name']             = $world['world_name'];
-                            $stage_data['stage_level']            = (int)$world['world_level'];
-                            $stage_data['image']                  = $world['world_image'];
-                            $stage_data['description']            = $world['world_description'];
-                            $stage_data['range_low']              = (int)$world['world_low'];
-                            $stage_data['range_high']             = (int)$world['world_high'];
-                            if(isset($world['world_id'])){
-                                try{
-                                    array_push($exist_world, new MongoId($world['world_id']));
-                                } catch (Exception $e){
-
-                                }
-                            }
-                        }
-                        if($stage_data){
-                            $stage = $this->Game_model->updateGameStage($client_id, $site_id, $game_id, $stage_data, isset($world['world_id']) ? $world['world_id'] : null );
-                            if($stage){
-                                try{
-                                    array_push($exist_world, new MongoId($stage));
-                                } catch (Exception $e){
-
-                                }
-                            }
-                            $stage_data = array();
-                        }
+                if ($this->validateGamePostIds($data)) {
+                    $game_data['game_name'] = $data['name'];
+                    $game_data['image']     = $data['image'];
+                    $game_data['status']    = (isset($data['status']) && ($data['status'] == "on")) ? true : false;
+                    if($data['name'] == 'egg' || $data['name'] == 'pairs' || $data['name'] == 'catch_item') {
+                        $game_data['duration'] = $data['duration'] ? $data['duration'] : 1;
+                        if($data['name'] == 'egg') $game_data['action_time'] = $data['action_time'] ? $data['action_time'] : 1;
                     }
-                    if($exist_world){
-                        $delete_stage_data['exclude_id'] = $exist_world;
-                        $to_delete_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_id, $delete_stage_data);
-                        if($to_delete_stage){
-                            foreach($to_delete_stage as $del_stage){
-                                if(!empty($del_stage['item_list'])){
-                                    $delete_item_data['del_items'] = $del_stage['item_list'];
-                                    $this->Game_model->deleteGameStageItem($client_id, $site_id, $game_id, $delete_item_data);
+                    $game_id = $this->Game_model->updateGameSetting($client_id, $site_id, $game_data);
+                    $exist_world = array();
+                    if($game_id){
+                        foreach($data['worlds'] as $index => $world){
+                            if($data['name'] == 'farm' || $data['name'] == 'bingo'){
+                                $item_array = array();
+                                foreach($world['world_item'] as $row_index => $row){
+                                    foreach($row as $column_index => $column) {
+                                        if(!empty($column['item_id'])){
+                                            $item_data['item_id']                          = new MongoId($column['item_id']);
+                                            $item_data['description']                      = $column['item_description'];
+                                            $item_data['item_config']['row']               = $row_index;
+                                            $item_data['item_config']['column']            = $column_index;
+                                            $item_data['item_config']['rule_id']              = new MongoId($column['rule_id']);
+                                            if($data['name'] == 'farm'){
+                                                $item_data['item_config']['days_to_deduct']    = (int)$column['item_deduct'];
+                                                $item_data['item_config']['amount_to_harvest'] = (int)$column['item_harvest'];
+                                            }
+                                            $this->Game_model->updateGameStageItem($client_id, $site_id, $game_id, $item_data);
+                                            array_push($item_array, $item_data['item_id']);
+                                        }
+
+                                    }
+                                }
+
+                                if(isset($world['world_id'])){
+                                    try{
+                                        array_push($exist_world, new MongoId($world['world_id']));
+                                    } catch (Exception $e){
+
+                                    }
+                                }
+                                $stage_data['stage_name']             = $world['world_name'];
+                                $stage_data['stage_level']            = (int)$world['world_level'];
+                                $stage_data['image']                  = $world['world_image'];
+                                $stage_data['category']               = isset($world['world_category']) && !empty($world['world_category']) ? new MongoId($world['world_category']): "";
+                                $stage_data['description']            = $world['world_description'];
+                                $stage_data['reset_enable']           = $world['reset_enable'];
+                                if ($world['reset_enable'] == 'on'){
+                                    $stage_data['reset_date']         = $this->worldResetDate(isset($world['reset_date']) ? $world['reset_date'] : null);
+                                    $stage_data['reset_duration']     = !empty($world['reset_duration']) ? (int)$world['reset_duration'] : 30;
+                                } else {
+                                    $stage_data['reset_date']         = null;
+                                    $stage_data['reset_duration']     = null;
+                                }
+                                $stage_data['item_list']              = $item_array;
+                                $stage_data['stage_config']['width']  = (int)$world['world_width'];
+                                $stage_data['stage_config']['height'] = (int)$world['world_height'];
+                            }
+                            if($data['name'] == 'egg' || $data['name'] == 'pairs' || $data['name'] == 'catch_item'){
+                                $stage_data['stage_name']             = $world['world_name'];
+                                $stage_data['stage_level']            = (int)$world['world_level'];
+                                $stage_data['image']                  = $world['world_image'];
+                                $stage_data['description']            = $world['world_description'];
+                                $stage_data['range_low']              = (int)$world['world_low'];
+                                $stage_data['range_high']             = (int)$world['world_high'];
+                                if(isset($world['world_id'])){
+                                    try{
+                                        array_push($exist_world, new MongoId($world['world_id']));
+                                    } catch (Exception $e){
+
+                                    }
                                 }
                             }
+                            if($stage_data){
+                                $stage = $this->Game_model->updateGameStage($client_id, $site_id, $game_id, $stage_data, isset($world['world_id']) ? $world['world_id'] : null );
+                                if($stage){
+                                    try{
+                                        array_push($exist_world, new MongoId($stage));
+                                    } catch (Exception $e){
 
-                            $this->Game_model->deleteGameStage($client_id, $site_id, $game_id, $delete_stage_data);
+                                    }
+                                }
+                                $stage_data = array();
+                            }
+                        }
+                        if($exist_world){
+                            $delete_stage_data['exclude_id'] = $exist_world;
+                            $to_delete_stage = $this->Game_model->getGameStage($client_id, $site_id, $game_id, $delete_stage_data);
+                            if($to_delete_stage){
+                                foreach($to_delete_stage as $del_stage){
+                                    if(!empty($del_stage['item_list'])){
+                                        $delete_item_data['del_items'] = $del_stage['item_list'];
+                                        $this->Game_model->deleteGameStageItem($client_id, $site_id, $game_id, $delete_item_data);
+                                    }
+                                }
+
+                                $this->Game_model->deleteGameStage($client_id, $site_id, $game_id, $delete_stage_data);
+                            }
                         }
                     }
                 }
@@ -291,6 +303,11 @@ class game extends MY_Controller
                     $client_id = $this->User_model->getClientId();
                     $site_id = $this->User_model->getSiteId();
                     $data = $this->input->post();
+                    if (!isset($data['game_id']) || !$this->isMongoId($data['game_id']) ||
+                        !isset($data['campaign_id']) || !$this->isMongoId($data['campaign_id'])) {
+                        throw new Exception('Invalid game campaign id');
+                    }
+
                     $game_data['game_id'] = new MongoId($data['game_id']);
                     $game_name = $this->Game_model->getGameNameByID($client_id, $site_id, $data['game_id']);
                     $game_data['game_name'] = $game_name ? $game_name : "";
@@ -325,8 +342,22 @@ class game extends MY_Controller
             $this->data['message'] = $this->lang->line('error_permission');
         } else {
             if ($this->input->post('selected')) {
-                foreach ($this->input->post('selected') as $game_campaign_id) {
-                    $this->Game_model->deleteGameCampaign($game_campaign_id);
+                $selected_campaigns = $this->input->post('selected');
+                if (!is_array($selected_campaigns)) {
+                    $selected_campaigns = array($selected_campaigns);
+                }
+
+                foreach ($selected_campaigns as $game_campaign_id) {
+                    if (!$this->isMongoId($game_campaign_id)) {
+                        $this->data['message'] = 'Invalid game campaign id';
+                        break;
+                    }
+                }
+
+                if (!isset($this->data['message']) || $this->data['message'] == null) {
+                    foreach ($selected_campaigns as $game_campaign_id) {
+                        $this->Game_model->deleteGameCampaign($game_campaign_id);
+                    }
                 }
             }
         }
@@ -347,6 +378,9 @@ class game extends MY_Controller
                 try {
                     $data = $this->input->post();
                     $status = $data['status'] && $data['status'] == "true" ? true : false;
+                    if (!isset($data['_id']) || !$this->isMongoId($data['_id'])) {
+                        throw new Exception('Invalid game campaign id');
+                    }
 
                     $game_campaign_id = $this->Game_model->updateStatusGameCampaign(new MongoId($data['_id']), $status);
                     $this->output->set_status_header('200');
@@ -805,6 +839,57 @@ class game extends MY_Controller
             echo json_encode($response);
             die();
         }
+    }
+
+    private function validateGamePostIds($data)
+    {
+        if (!isset($data['worlds']) || !is_array($data['worlds'])) {
+            return true;
+        }
+
+        $game_name = isset($data['name']) ? $data['name'] : '';
+        foreach ($data['worlds'] as $world) {
+            if (isset($world['world_id']) && $world['world_id'] !== '' && !$this->isMongoId($world['world_id'])) {
+                $this->data['message'] = 'Invalid game world id';
+                return false;
+            }
+
+            if (($game_name == 'farm' || $game_name == 'bingo') &&
+                isset($world['world_category']) && !empty($world['world_category']) &&
+                !$this->isMongoId($world['world_category'])) {
+                $this->data['message'] = 'Invalid game category id';
+                return false;
+            }
+
+            if (($game_name == 'farm' || $game_name == 'bingo') &&
+                isset($world['world_item']) && is_array($world['world_item'])) {
+                foreach ($world['world_item'] as $row) {
+                    if (!is_array($row)) {
+                        continue;
+                    }
+                    foreach ($row as $column) {
+                        if (!is_array($column) || empty($column['item_id'])) {
+                            continue;
+                        }
+                        if (!$this->isMongoId($column['item_id'])) {
+                            $this->data['message'] = 'Invalid game item id';
+                            return false;
+                        }
+                        if (!isset($column['rule_id']) || !$this->isMongoId($column['rule_id'])) {
+                            $this->data['message'] = 'Invalid game rule id';
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     private function validateModify($feature)

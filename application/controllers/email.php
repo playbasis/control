@@ -21,6 +21,16 @@ class Email extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
+    private function emailDomainName($email)
+    {
+        if (!is_scalar($email) || !$email) {
+            return null;
+        }
+
+        $parts = explode("@", (string)$email);
+        return isset($parts[1]) && $parts[1] !== '' ? $parts[1] : null;
+    }
+
     public function index()
     {
         if (!$this->validateAccess()) {
@@ -66,6 +76,7 @@ class Email extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -78,7 +89,7 @@ class Email extends MY_Controller
                     $this->input->post('name'))
                 ) {
                     $data = $this->input->post();
-                    $data['body'] = $this->purify($this->input->post('body'));
+                    $data['body'] = $this->purify((string)$this->input->post('body'));
                     $template_id = $this->Email_model->addTemplate(array_merge($data, array(
                         'client_id' => $this->User_model->getClientId(),
                         'site_id' => $this->User_model->getSiteId(),
@@ -103,6 +114,10 @@ class Email extends MY_Controller
 
     public function update($template_id)
     {
+        if (!$this->isMongoId($template_id)) {
+            redirect('/email', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -116,6 +131,7 @@ class Email extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -128,7 +144,7 @@ class Email extends MY_Controller
                 $info = $this->Email_model->getTemplate($template_id);
                 if ($c === 0 || ($c === 1 && $info && $info['name'] == $this->input->post('name'))) {
                     $data = $this->input->post();
-                    $data['body'] = $this->purify($this->input->post('body'));
+                    $data['body'] = $this->purify((string)$this->input->post('body'));
                     $success = $this->Email_model->editTemplate($template_id, array_merge($data, array(
                         'client_id' => $this->User_model->getClientId(),
                         'site_id' => $this->User_model->getSiteId(),
@@ -165,11 +181,26 @@ class Email extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $template_id) {
-                $this->Email_model->deleteTemplate($template_id);
+            $selected_templates = $this->input->post('selected');
+            if (!is_array($selected_templates)) {
+                $selected_templates = array($selected_templates);
             }
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/email', 'refresh');
+
+            foreach ($selected_templates as $template_id) {
+                if (!$this->isMongoId($template_id)) {
+                    $this->error['warning'] = 'Invalid template id';
+                    break;
+                }
+            }
+
+            if ($this->error['warning'] == null) {
+                foreach ($selected_templates as $template_id) {
+                    $this->Email_model->deleteTemplate($template_id);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/email', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -189,6 +220,10 @@ class Email extends MY_Controller
 
         $this->data['templates'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+        $selected_templates = $this->input->post('selected');
+        if (!is_array($selected_templates)) {
+            $selected_templates = array();
+        }
 
         $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order');
 
@@ -203,8 +238,7 @@ class Email extends MY_Controller
                     'body' => $template['body'],
                     'status' => $template['status'],
                     'sort_order' => $template['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($template['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($template['_id'], $selected_templates),
                 );
             }
         }
@@ -217,11 +251,10 @@ class Email extends MY_Controller
                     'verification_status' => "Success" ,
                 );
             }else {
-                $email = explode("@", $domain['email']);
-                $domain_name = $email[1];
+                $domain_name = $this->emailDomainName(isset($domain['email']) ? $domain['email'] : null);
 
                 // check domain's status from amazon ses
-                $domain_verification = $this->amazon_ses->get_identity_verification($domain_name);
+                $domain_verification = $domain_name ? $this->amazon_ses->get_identity_verification($domain_name) : null;
                 if (isset($domain_verification['VerificationStatus']) && $domain_verification['VerificationStatus'] == "Success") {
                     $data = array('client_id'=>$client_id,
                         'site_id'=>$site_id,
@@ -307,6 +340,10 @@ class Email extends MY_Controller
     {
         $info = null;
         if (isset($template_id) && $template_id) {
+            if (!$this->isMongoId($template_id)) {
+                redirect('/email', 'refresh');
+            }
+
             $info = $this->Email_model->getTemplate($template_id);
         }
 
@@ -319,9 +356,9 @@ class Email extends MY_Controller
         }
 
         if ($this->input->post('body')) {
-            $this->data['body'] = $this->input->post('body');
+            $this->data['body'] = $this->templateBodyText($this->input->post('body'));
         } elseif (!empty($info)) {
-            $this->data['body'] = htmlentities($info['body']);
+            $this->data['body'] = $this->templateBodyText($info['body'], true);
         } else {
             $this->data['body'] = '';
         }
@@ -411,8 +448,12 @@ class Email extends MY_Controller
                     $data['client_id'] = $client_id;
                     $data['site_id'] = $site_id;
 
-                    $email = explode("@",$data['email']);
-                    $domain_name = $email[1];
+                    $domain_name = $this->emailDomainName(isset($data['email']) ? $data['email'] : null);
+                    if (!$domain_name) {
+                        echo json_encode(array('status' => 'error', 'message' => validation_errors() ? validation_errors() : $this->lang->line('form_email')));
+                        die();
+                    }
+                    $data['email'] = (string)$data['email'];
                     $email_sent = false;
 
                     // check if the domain has been set by other site
@@ -491,14 +532,43 @@ class Email extends MY_Controller
 
     public function increase_order($template_id)
     {
+        if (!$this->isMongoId($template_id)) {
+            $this->output->set_output(json_encode(array('success' => false)));
+            return;
+        }
+
         $success = $this->Email_model->increaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
     public function decrease_order($template_id)
     {
+        if (!$this->isMongoId($template_id)) {
+            $this->output->set_output(json_encode(array('success' => false)));
+            return;
+        }
+
         $success = $this->Email_model->decreaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
+    }
+
+    private function normalizeTemplatePost()
+    {
+        foreach (array('name', 'body', 'sort_order', 'status') as $field) {
+            if (isset($_POST[$field]) && !is_scalar($_POST[$field])) {
+                $_POST[$field] = '';
+            }
+        }
+    }
+
+    private function templateBodyText($body, $escape = false)
+    {
+        if (!is_scalar($body)) {
+            return '';
+        }
+
+        $body = (string)$body;
+        return $escape ? htmlentities($body) : $body;
     }
 
     private function validateModify()
@@ -533,5 +603,10 @@ class Email extends MY_Controller
         $config = HTMLPurifier_Config::createDefault();
         $filter = new HTMLPurifier($config);
         return $filter->purify($html);
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 }

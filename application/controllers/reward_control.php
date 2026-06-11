@@ -4,6 +4,32 @@ require APPPATH . '/libraries/MY_Controller.php';
 
 class Reward_control extends MY_Controller
 {
+    private function normalizeTags($tags)
+    {
+        if (is_array($tags)) {
+            return $tags;
+        }
+        if (is_string($tags)) {
+            return explode(',', $tags);
+        }
+        return array();
+    }
+
+    private function normalizeDataListTags($data_list)
+    {
+        if (!is_array($data_list)) {
+            return $data_list;
+        }
+
+        foreach ($data_list as $key => $item) {
+            if (is_array($item)) {
+                $data_list[$key]['tags'] = $this->normalizeTags(isset($item['tags']) ? $item['tags'] : null);
+            }
+        }
+
+        return $data_list;
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -20,6 +46,21 @@ class Reward_control extends MY_Controller
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("reward_control", $lang['folder']);
+    }
+
+    private function areMongoIds($ids)
+    {
+        if (!is_array($ids)) {
+            return false;
+        }
+
+        foreach ($ids as $id) {
+            if (!$this->isValidMongoId($id)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function index()
@@ -60,7 +101,7 @@ class Reward_control extends MY_Controller
                 $client_id = $this->User_model->getClientId();
                 $site_id = $this->User_model->getSiteId();
                 $selectedSequences = $this->input->post('selected');
-                if($selectedSequences && is_array($selectedSequences)) {
+                if($selectedSequences && is_array($selectedSequences) && $this->areMongoIds($selectedSequences)) {
                     foreach ($selectedSequences as $selectedSequence) {
                         $result = $this->Sequence_model->deleteSequence($client_id,$site_id,$selectedSequence);
                     }
@@ -115,7 +156,7 @@ class Reward_control extends MY_Controller
                 $site_id = $this->User_model->getSiteId();
                 $selectedCustomRewards = $this->input->post('selected');
 
-                if($selectedCustomRewards && is_array($selectedCustomRewards)) {
+                if($selectedCustomRewards && is_array($selectedCustomRewards) && $this->areMongoIds($selectedCustomRewards)) {
                     foreach ($selectedCustomRewards as $selectedCustomReward) {
                         $result = $this->Custom_reward_model->deleteCustomReward($client_id, $site_id, $selectedCustomReward);
                     }
@@ -170,7 +211,7 @@ class Reward_control extends MY_Controller
                 $site_id = $this->User_model->getSiteId();
                 $selectedCustomParamConditions = $this->input->post('selected');
 
-                if($selectedCustomParamConditions && is_array($selectedCustomParamConditions)) {
+                if($selectedCustomParamConditions && is_array($selectedCustomParamConditions) && $this->areMongoIds($selectedCustomParamConditions)) {
                     foreach ($selectedCustomParamConditions as $selectedCustomParamCondition) {
                             $result = $this->Custom_param_condition_model->deleteCustomParamCondition($client_id, $site_id, $selectedCustomParamCondition);
                     }
@@ -232,11 +273,12 @@ class Reward_control extends MY_Controller
             
             $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
-            if (empty($_FILES) || !isset($_FILES['file']['tmp_name']) || $_FILES['file']['tmp_name'] == '') {
+            if (!$this->isValidUploadEntry('file')) {
                 $this->data['message'] = $this->lang->line('error_file');
             }
 
             if ( $this->data['message'] == null && $this->form_validation->run() ) {
+                $upload = $_FILES['file'];
 
                 $maxsize = 4194304;
                 $csv_mimetypes = array(
@@ -252,16 +294,16 @@ class Reward_control extends MY_Controller
                     'application/txt',
                 );
 
-                if (($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
+                if (($upload['size'] >= $maxsize) || ($upload["size"] == 0)) {
                     $this->data['message'] = $this->lang->line('error_file_too_large');
                 }
 
-                if (!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
+                if (!in_array($upload['type'], $csv_mimetypes) && (!empty($upload["type"]))) {
                     $this->data['message'] = $this->lang->line('error_type_accepted');
                 }
 
-                $handle = fopen($_FILES['file']['tmp_name'], "r");
-                if (!$handle) {
+                $handle = $this->data['message'] == null ? fopen($upload['tmp_name'], "r") : false;
+                if ($this->data['message'] == null && !$handle) {
                     $this->data['message'] = $this->lang->line('error_upload');
                 }
 
@@ -269,7 +311,7 @@ class Reward_control extends MY_Controller
                     $data = $this->input->post();
                     $data['client_id'] = $client_id;
                     $data['site_id'] = $site_id;
-                    $data['file_name'] = $_FILES['file']['name'];
+                    $data['file_name'] = $upload['name'];
 
                     if($type == 'sequence_reward'){
                         // prepare data of sequence number
@@ -320,6 +362,10 @@ class Reward_control extends MY_Controller
 
     public function update($type, $item_id)
     {
+        if (!$this->isValidMongoId($item_id)) {
+            redirect('/reward_control', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -345,7 +391,11 @@ class Reward_control extends MY_Controller
             
             $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
-            if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
+            if (!empty($_FILES) && isset($_FILES['file']) &&
+                (!isset($_FILES['file']['tmp_name']) || $_FILES['file']['tmp_name'] !== '')) {
+                if (!$this->isValidUploadEntry('file')) {
+                    $this->data['message'] = $this->lang->line('error_file');
+                }
 
                 $maxsize = 4194304;
                 $csv_mimetypes = array(
@@ -361,20 +411,26 @@ class Reward_control extends MY_Controller
                     'application/txt',
                 );
 
-                if (($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
+                if ($this->data['message'] == null) {
+                    $upload = $_FILES['file'];
+                }
+
+                if ($this->data['message'] == null && (($upload['size'] >= $maxsize) || ($upload["size"] == 0))) {
                     $this->data['message'] = $this->lang->line('error_file_too_large');
                 }
 
-                if (!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
+                if ($this->data['message'] == null && !in_array($upload['type'], $csv_mimetypes) && (!empty($upload["type"]))) {
                     $this->data['message'] = $this->lang->line('error_type_accepted');
                 }
 
-                $handle = fopen($_FILES['file']['tmp_name'], "r");
-                if (!$handle) {
+                $handle = $this->data['message'] == null ? fopen($upload['tmp_name'], "r") : false;
+                if ($this->data['message'] == null && !$handle) {
                     $this->data['message'] = $this->lang->line('error_upload');
                 }
 
-                $data['file_name'] = $_FILES['file']['name'];
+                if ($this->data['message'] == null) {
+                    $data['file_name'] = $upload['name'];
+                }
 
                 if ( $this->data['message'] == null) {
                     // prepare data of sequence number
@@ -523,7 +579,7 @@ class Reward_control extends MY_Controller
             'site_id' => $site_id,
             'sort' => 'name'
         );
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
@@ -538,6 +594,9 @@ class Reward_control extends MY_Controller
         } elseif ($this->data['tab_status'] == 'custom_param_condition') {
             $this->data['data_list'] = $this->Custom_param_condition_model->retrieveCustomParamCondition($filter);
             $config['total_rows'] = $this->Custom_param_condition_model->getTotalCustomParamCondition($filter);
+        }
+        if (isset($this->data['data_list'])) {
+            $this->data['data_list'] = $this->normalizeDataListTags($this->data['data_list']);
         }
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
@@ -593,6 +652,10 @@ class Reward_control extends MY_Controller
     public function getForm($type,$item_id = null)
     {
         if (!is_null($item_id)) {
+            if (!$this->isValidMongoId($item_id)) {
+                redirect('/reward_control', 'refresh');
+            }
+
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
             if($type == 'sequence_reward'){
@@ -628,7 +691,7 @@ class Reward_control extends MY_Controller
         if ($this->input->post('tags')) {
             $this->data['tags'] = explode(',', $this->input->post('tags'));
         } elseif (isset($data_info['tags'])) {
-            $this->data['tags'] = $data_info['tags'];
+            $this->data['tags'] = $this->normalizeTags($data_info['tags']);
         } else {
             $this->data['tags'] = '';
         }
@@ -642,7 +705,11 @@ class Reward_control extends MY_Controller
         $json = array();
 
         if ($this->input->get('file_id')) {
-            $sequence_file = $this->Sequence_model->retrieveSequenceFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_id'));
+            $file_id = $this->input->get('file_id');
+            if (!$this->isValidMongoId($file_id)) {
+                return;
+            }
+            $sequence_file = $this->Sequence_model->retrieveSequenceFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$file_id);
         }
 
         if ($this->input->get('file_name')) {
@@ -669,7 +736,11 @@ class Reward_control extends MY_Controller
     public function getCustomRewardFile()
     {
         if ($this->input->get('file_id')) {
-            $sequence_file = $this->Custom_reward_model->retrieveCustomRewardFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_id'));
+            $file_id = $this->input->get('file_id');
+            if (!$this->isValidMongoId($file_id)) {
+                return;
+            }
+            $sequence_file = $this->Custom_reward_model->retrieveCustomRewardFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$file_id);
         }
 
         if ($this->input->get('file_name')) {
@@ -695,7 +766,11 @@ class Reward_control extends MY_Controller
     public function getCustomParamConditionFile()
     {
         if ($this->input->get('file_id')) {
-            $sequence_file = $this->Custom_param_condition_model->retrieveCustomParamConditionFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$this->input->get('file_id'));
+            $file_id = $this->input->get('file_id');
+            if (!$this->isValidMongoId($file_id)) {
+                return;
+            }
+            $sequence_file = $this->Custom_param_condition_model->retrieveCustomParamConditionFileByID($this->User_model->getClientId(),$this->User_model->getSiteId(),$file_id);
         }
 
         if ($this->input->get('file_name')) {
@@ -718,6 +793,11 @@ class Reward_control extends MY_Controller
         }
     }
 
+    private function isValidMongoId($id)
+    {
+        return preg_match('/^[0-9a-f]{24}$/i', (string)$id) === 1;
+    }
+
     private function validateModify()
     {
         if ($this->User_model->hasPermission('modify', 'reward_control')) {
@@ -725,6 +805,19 @@ class Reward_control extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isValidUploadEntry($field)
+    {
+        if (!isset($_FILES[$field]) || !is_array($_FILES[$field])) {
+            return false;
+        }
+        foreach (array('name', 'tmp_name', 'size', 'type', 'error') as $key) {
+            if (!isset($_FILES[$field][$key]) || !is_scalar($_FILES[$field][$key])) {
+                return false;
+            }
+        }
+        return $_FILES[$field]['tmp_name'] !== '';
     }
 
     private function validateAccess()

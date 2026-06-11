@@ -64,16 +64,17 @@ class Custom_style_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         // Searching
-        if (isset($optionalParams['search']) && !is_null($optionalParams['search'])) {
-            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($optionalParams['search'])) . "/i");
+        $search = isset($optionalParams['search']) && is_scalar($optionalParams['search']) ? (string)$optionalParams['search'] : null;
+        if ($search !== null) {
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($search)) . "/i");
 
             $query = array( '$or' => array( array( "name" => $regex )));
             $this->mongo_db->where($query);
         }
-        if (isset($optionalParams['id']) && !is_null($optionalParams['id'])) {
+        if (isset($optionalParams['id']) && is_scalar($optionalParams['id'])) {
             //make sure 'id' is valid before passing here
             try {
-                $id = new MongoId($optionalParams['id']);
+                $id = new MongoId((string)$optionalParams['id']);
                 $this->mongo_db->where('_id', $id);
             } catch (Exception $e) {
             };
@@ -81,31 +82,35 @@ class Custom_style_model extends MY_Model
 
         // Sorting
         $sort_data = array('_id', 'name', 'key', 'value');
+        $order_param = isset($optionalParams['order']) && is_scalar($optionalParams['order']) ? (string)$optionalParams['order'] : null;
 
-        if (isset($optionalParams['order']) && (utf8_strtolower($optionalParams['order']) == 'desc')) {
+        if ($order_param !== null && (utf8_strtolower($order_param) == 'desc')) {
             $order = -1;
         } else {
             $order = 1;
         }
 
-        if (isset($optionalParams['sort']) && in_array($optionalParams['sort'], $sort_data)) {
-            $this->mongo_db->order_by(array($optionalParams['sort'] => $order));
+        $sort_param = isset($optionalParams['sort']) && is_scalar($optionalParams['sort']) ? (string)$optionalParams['sort'] : null;
+        if ($sort_param !== null && in_array($sort_param, $sort_data)) {
+            $this->mongo_db->order_by(array($sort_param => $order));
         } else {
             $this->mongo_db->order_by(array('name' => $order));
         }
 
         // Paging
         if (isset($optionalParams['offset']) || isset($optionalParams['limit'])) {
-            if ($optionalParams['offset'] < 0) {
-                $optionalParams['offset'] = 0;
+            $offset = isset($optionalParams['offset']) && is_scalar($optionalParams['offset']) && is_numeric($optionalParams['offset']) ? (int)$optionalParams['offset'] : 0;
+            $limit = isset($optionalParams['limit']) && is_scalar($optionalParams['limit']) && is_numeric($optionalParams['limit']) ? (int)$optionalParams['limit'] : 20;
+            if ($offset < 0) {
+                $offset = 0;
             }
 
-            if ($optionalParams['limit'] < 1) {
-                $optionalParams['limit'] = 20;
+            if ($limit < 1) {
+                $limit = 20;
             }
 
-            $this->mongo_db->limit((int)$optionalParams['limit']);
-            $this->mongo_db->offset((int)$optionalParams['offset']);
+            $this->mongo_db->limit($limit);
+            $this->mongo_db->offset($offset);
         }
 
         $this->mongo_db->where('client_id', $client_id);
@@ -177,6 +182,15 @@ class Custom_style_model extends MY_Model
         $update = $this->mongo_db->update_all('playbasis_custom_style_to_client');
 
         return $update;
+    }
+
+    function makeMongoIdObj(&$value)
+    {
+        if ($value instanceof MongoId) {
+            return;
+        }
+
+        $value = new MongoId($value);
     }
 
 }

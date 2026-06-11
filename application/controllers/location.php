@@ -58,20 +58,32 @@ class Location extends MY_Controller
                 $client_id = $this->User_model->getClientId();
                 $site_id = $this->User_model->getSiteId();
                 $selectedLocations = $this->input->post('selected');
+                if ($selectedLocations && !is_array($selectedLocations)) {
+                    $selectedLocations = array($selectedLocations);
+                }
 
-
+                if ($selectedLocations) {
                     foreach ($selectedLocations as $selectedLocation) {
-                        //$player = $this->Player_model->getPlayerById($selectedLocation, $site_id);
-                        $result = $this->Location_model->deleteLocation($client_id,$site_id,$selectedLocation);
-                        /*if (!$result->success) {
-                            $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
-                            redirect('/workflow', 'refresh');
-                        }*/
+                        if (!$this->isMongoId($selectedLocation)) {
+                            $this->error['warning'] = 'Invalid location id';
+                            break;
+                        }
                     }
 
-                    $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-                    redirect('/location', 'refresh');
+                    if (!isset($this->error['warning']) || $this->error['warning'] == null) {
+                        foreach ($selectedLocations as $selectedLocation) {
+                            //$player = $this->Player_model->getPlayerById($selectedLocation, $site_id);
+                            $result = $this->Location_model->deleteLocation($client_id,$site_id,$selectedLocation);
+                            /*if (!$result->success) {
+                                $this->session->set_flashdata('fail', $this->lang->line('text_fail_delete'));
+                                redirect('/workflow', 'refresh');
+                            }*/
+                        }
 
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                        redirect('/location', 'refresh');
+                    }
+                }
 
             }
         }
@@ -191,6 +203,10 @@ class Location extends MY_Controller
 
     public function update($location_id)
     {
+        if (!$this->isMongoId($location_id)) {
+            redirect('/location', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -249,7 +265,7 @@ class Location extends MY_Controller
             'site_id' => $site_id,
             'sort' => 'name'
         );
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
@@ -257,6 +273,12 @@ class Location extends MY_Controller
 
         $this->data['locations'] = $this->Location_model->retrieveLocation($filter);
         foreach($this->data['locations'] as &$location){
+            if (isset($location['tags']) && is_string($location['tags'])) {
+                $location['tags'] = explode(',', $location['tags']);
+            } elseif (!isset($location['tags']) || !is_array($location['tags'])) {
+                $location['tags'] = array();
+            }
+
             if($location['object_type'] == "item"){
                 $location['object_name'] = $this->Badge_model->getNameOfBadgeID($client_id, $site_id, $location['object_id']);
             }else if($location['object_type'] == "store"){
@@ -321,6 +343,10 @@ class Location extends MY_Controller
         $this->data['main'] = 'location_form';
 
         if (!is_null($location_id)) {
+            if (!$this->isMongoId($location_id)) {
+                redirect('/location', 'refresh');
+            }
+
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
             $location_info = $this->Location_model->retrieveLocationByID($client_id, $site_id, $location_id);
@@ -389,6 +415,11 @@ class Location extends MY_Controller
         } else {
             $this->data['tags'] = '';
         }
+        if (is_string($this->data['tags']) && $this->data['tags'] !== '') {
+            $this->data['tags'] = explode(',', $this->data['tags']);
+        } elseif (!is_array($this->data['tags'])) {
+            $this->data['tags'] = array();
+        }
 
         $this->load->vars($this->data);
         $this->render_page('template');
@@ -402,15 +433,35 @@ class Location extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->error['message'] = null;
+        $this->error['warning'] = null;
 
-        if ($this->input->post('selected') && $this->error['message'] == null) {
-            foreach ($this->input->post('selected') as $reward_id) {
-                $this->Custompoints_model->deleteCustompoints($reward_id);
+        if (!$this->validateModify()) {
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        if ($this->input->post('selected') && $this->error['warning'] == null) {
+            $selectedLocations = $this->input->post('selected');
+            if (!is_array($selectedLocations)) {
+                $selectedLocations = array($selectedLocations);
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/custompoints', 'refresh');
+            foreach ($selectedLocations as $location_id) {
+                if (!$this->isMongoId($location_id)) {
+                    $this->error['warning'] = 'Invalid location id';
+                    break;
+                }
+            }
+
+            if ($this->error['warning'] == null) {
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+                foreach ($selectedLocations as $location_id) {
+                    $this->Location_model->deleteLocation($client_id, $site_id, $location_id);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/location', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -440,6 +491,11 @@ class Location extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
 }

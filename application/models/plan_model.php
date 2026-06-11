@@ -3,6 +3,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Plan_model extends MY_Model
 {
+    private function normalizeLimitRequests($limit_req)
+    {
+        $requests = array();
+        if (!is_array($limit_req)) {
+            return $requests;
+        }
+        foreach ($limit_req as $item) {
+            if (!is_array($item) || !isset($item['field']) || !is_scalar($item['field']) || empty($item['field'])) {
+                continue;
+            }
+            // strip only first path of the api and lowercase
+            $field = strtolower(preg_replace(
+                "/(\w+)\/.*/", '${1}',
+                $item['field']));
+            if (substr($field, 0, 1) != "/") {
+                $field = "/" . $field;
+            }
+            $limit = isset($item['limit']) ? $item['limit'] : null;
+            $requests[$field] = ($limit != null && $limit !== '' && is_scalar($limit) ? intval($limit) : null);
+        }
+        return $requests;
+    }
+
     public function getPlan($plan_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -311,6 +334,20 @@ class Plan_model extends MY_Model
         return $rewards_data;
     }
 
+    private function planScalar($data, $field, $default = '')
+    {
+        if (!isset($data[$field]) || !is_scalar($data[$field])) {
+            return $default;
+        }
+
+        return $data[$field];
+    }
+
+    private function planText($data, $field)
+    {
+        return (string)$this->planScalar($data, $field, '');
+    }
+
     public function addPlan($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -322,8 +359,8 @@ class Plan_model extends MY_Model
         }
 
         $dinsert = array(
-            'name' => $data['name'] | '',
-            'description' => $data['description'] | '',
+            'name' => $this->planText($data, 'name'),
+            'description' => $this->planText($data, 'description'),
             'price' => intval($data['price']),
             'display' => (bool)$data['display'],
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
@@ -338,36 +375,16 @@ class Plan_model extends MY_Model
         }
 
         if (isset($data['feature_data'])) {
-            $feature = array();
-            foreach ($data['feature_data'] as $feature_value) {
-                array_push($feature, new MongoId($feature_value));
-            }
-            $dinsert['feature_to_plan'] = $feature;
+            $dinsert['feature_to_plan'] = $this->mongoIdListFromInput($data['feature_data']);
         }
         if (isset($data['action_data'])) {
-            $action = array();
-            foreach ($data['action_data'] as $action_value) {
-                array_push($action, new MongoId($action_value));
-            }
-            $dinsert['action_to_plan'] = $action;
+            $dinsert['action_to_plan'] = $this->mongoIdListFromInput($data['action_data']);
         }
         if (isset($data['jigsaw_data'])) {
-            $jigsaw = array();
-            foreach ($data['jigsaw_data'] as $jigsaw_value) {
-                array_push($jigsaw, new MongoId($jigsaw_value));
-            }
-            $dinsert['jigsaw_to_plan'] = $jigsaw;
+            $dinsert['jigsaw_to_plan'] = $this->mongoIdListFromInput($data['jigsaw_data']);
         }
         if (isset($data['reward_data'])) {
-            $reward = array();
-            foreach ($data['reward_data'] as $reward_value => $value) {
-                $arr_val = array(
-                    'reward_id' => new MongoId($value['reward_id']),
-                    'limit' => (isset($value['limit']) && $value['limit'] !== '') ? new MongoInt32($value['limit']) : null
-                );
-                array_push($reward, $arr_val);
-            }
-            $dinsert['reward_to_plan'] = $reward;
+            $dinsert['reward_to_plan'] = $this->rewardPlanRowsFromInput($data['reward_data']);
         }
         if (isset($data['limit_noti'])) {
             $limit_noti = array();
@@ -398,22 +415,7 @@ class Plan_model extends MY_Model
             $dinsert['limit_cms'] = $limit_cms;
         }
         if (isset($data['limit_req'])) {
-            $limit_req = array();
-            for ($i = 0; $i < sizeof($data['limit_req']); $i++) {
-                $item = $data['limit_req'][$i];
-                if (!$item['field']) {
-                    continue;
-                }
-                // strip only first path of the api and lowercase
-                $item['field'] = strtolower(preg_replace(
-                    "/(\w+)\/.*/", '${1}',
-                    $item['field']));
-                if (substr($item['field'], 0, 1) != "/") {
-                    $item['field'] = "/" . $item['field'];
-                }
-                $limit_req[$item['field']] = ($item['limit'] != null && $item['limit'] !== '' ? intval($item['limit']) : null);
-            }
-            $dinsert['limit_requests'] = $limit_req;
+            $dinsert['limit_requests'] = $this->normalizeLimitRequests($data['limit_req']);
         }
         return $this->mongo_db->insert('playbasis_plan', $dinsert);
     }
@@ -423,8 +425,8 @@ class Plan_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($plan_id));
-        $this->mongo_db->set('name', $data['name']);
-        $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('name', $this->planText($data, 'name'));
+        $this->mongo_db->set('description', $this->planText($data, 'description'));
         $this->mongo_db->set('price', intval($data['price']));
         $this->mongo_db->set('display', (bool)$data['display']);
         $this->mongo_db->set('limit_num_client',
@@ -433,45 +435,25 @@ class Plan_model extends MY_Model
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
         if (isset($data['feature_data'])) {
-            $feature = array();
-            foreach ($data['feature_data'] as $feature_value) {
-                array_push($feature, new MongoId($feature_value));
-            }
-            $this->mongo_db->set('feature_to_plan', $feature);
+            $this->mongo_db->set('feature_to_plan', $this->mongoIdListFromInput($data['feature_data']));
         } else {
             $feature = array();
             $this->mongo_db->set('feature_to_plan', $feature);
         }
         if (isset($data['action_data'])) {
-            $action = array();
-            foreach ($data['action_data'] as $action_value) {
-                array_push($action, new MongoId($action_value));
-            }
-            $this->mongo_db->set('action_to_plan', $action);
+            $this->mongo_db->set('action_to_plan', $this->mongoIdListFromInput($data['action_data']));
         } else {
             $action = array();
             $this->mongo_db->set('action_to_plan', $action);
         }
         if (isset($data['jigsaw_data'])) {
-            $jigsaw = array();
-            foreach ($data['jigsaw_data'] as $jigsaw_value) {
-                array_push($jigsaw, new MongoId($jigsaw_value));
-            }
-            $this->mongo_db->set('jigsaw_to_plan', $jigsaw);
+            $this->mongo_db->set('jigsaw_to_plan', $this->mongoIdListFromInput($data['jigsaw_data']));
         } else {
             $jigsaw = array();
             $this->mongo_db->set('jigsaw_to_plan', $jigsaw);
         }
         if (isset($data['reward_data'])) {
-            $reward = array();
-            foreach ($data['reward_data'] as $reward_value => $value) {
-                $arr_val = array(
-                    'reward_id' => new MongoId($value['reward_id']),
-                    'limit' => (isset($value['limit']) && $value['limit'] != '') ? new MongoInt32($value['limit']) : null
-                );
-                array_push($reward, $arr_val);
-            }
-            $this->mongo_db->set('reward_to_plan', $reward);
+            $this->mongo_db->set('reward_to_plan', $this->rewardPlanRowsFromInput($data['reward_data']));
         }
         if (isset($data['limit_noti'])) {
             $limit_noti = array();
@@ -502,22 +484,7 @@ class Plan_model extends MY_Model
             $this->mongo_db->set('limit_cms', $limit_cms);
         }
         if (isset($data['limit_req'])) {
-            $limit_req = array();
-            for ($i = 0; $i < sizeof($data['limit_req']); $i++) {
-                $item = $data['limit_req'][$i];
-                if (!$item['field']) {
-                    continue;
-                }
-                // strip only first path of the api and lowercase
-                $item['field'] = strtolower(preg_replace(
-                    "/(\w+)\/.*/", '${1}',
-                    $item['field']));
-                if (substr($item['field'], 0, 1) != "/") {
-                    $item['field'] = "/" . $item['field'];
-                }
-                $limit_req[$item['field']] = ($item['limit'] != null && $item['limit'] !== '' ? intval($item['limit']) : null);
-            }
-            $this->mongo_db->set('limit_requests', $limit_req);
+            $this->mongo_db->set('limit_requests', $this->normalizeLimitRequests($data['limit_req']));
         }
 
         $this->mongo_db->update('playbasis_plan');
@@ -677,6 +644,44 @@ class Plan_model extends MY_Model
         } else {
             throw new Exception("getPlanLimitById plan_id not found");
         }
+    }
+
+    private function isMongoIdString($value)
+    {
+        return is_scalar($value) && preg_match('/^[0-9a-f]{24}$/i', (string)$value);
+    }
+
+    private function mongoIdListFromInput($values)
+    {
+        $result = array();
+        if (!is_array($values)) {
+            return $result;
+        }
+        foreach ($values as $value) {
+            if ($this->isMongoIdString($value)) {
+                array_push($result, new MongoId((string)$value));
+            }
+        }
+        return $result;
+    }
+
+    private function rewardPlanRowsFromInput($values)
+    {
+        $result = array();
+        if (!is_array($values)) {
+            return $result;
+        }
+        foreach ($values as $value) {
+            if (!is_array($value) || !isset($value['reward_id']) || !$this->isMongoIdString($value['reward_id'])) {
+                continue;
+            }
+            $limit = isset($value['limit']) ? $value['limit'] : null;
+            $result[] = array(
+                'reward_id' => new MongoId((string)$value['reward_id']),
+                'limit' => ($limit !== null && $limit !== '' && is_scalar($limit) && is_numeric($limit)) ? new MongoInt32($limit) : null
+            );
+        }
+        return $result;
     }
 
     public function listDisplayPlans()

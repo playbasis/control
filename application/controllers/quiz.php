@@ -75,11 +75,11 @@ class Quiz extends MY_Controller
             'sort' => 'sort_order'
         );
 
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $parameter_url .= "&filter_name=" . $_GET['filter_name'];
             $filter['filter_name'] = $_GET['filter_name'];
         }
-        if (isset($_GET['filter_tags'])) {
+        if (isset($_GET['filter_tags']) && is_scalar($_GET['filter_tags'])) {
             $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
             $filter['filter_tags'] = $_GET['filter_tags'];
         }
@@ -154,6 +154,10 @@ class Quiz extends MY_Controller
 
     public function edit($quiz_id)
     {
+        if (!$this->isMongoId($quiz_id)) {
+            redirect('/quiz', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -171,6 +175,10 @@ class Quiz extends MY_Controller
         $quiz_info = array();
 
         if (isset($quiz_id) && ($quiz_id != 0)) {
+            if (!$this->isMongoId($quiz_id)) {
+                redirect('/quiz', 'refresh');
+            }
+
             if ($this->User_model->getClientId()) {
                 $quiz_info = $this->Quiz_model->getQuiz($quiz_id);
             } else {
@@ -188,7 +196,12 @@ class Quiz extends MY_Controller
         $this->load->model('Plan_model');
         // Get Limit
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $limit_quiz = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'quiz');
+        try {
+            $limit_quiz = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'quiz');
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
 
         $this->data['message'] = null;
         if ($limit_quiz && $quizs >= $limit_quiz) {
@@ -211,6 +224,10 @@ class Quiz extends MY_Controller
                         if ($qkey == "grades") {
                             foreach ($qvalue as $ggkey => $ggvalue) {
                                 $grades = array();
+                                if (!$this->isMongoId($ggkey)) {
+                                    $this->setInvalidIdMessage('grade');
+                                    continue;
+                                }
                                 $grades['grade_id'] = new MongoId($ggkey);
                                 foreach ($ggvalue as $gggkey => $gggvalue) {
 
@@ -223,6 +240,10 @@ class Quiz extends MY_Controller
 
                                                 foreach ($rvalue as $bkey => $bvalue) {
                                                     if (!empty($bvalue)) {
+                                                        if (!$this->isMongoId($bkey)) {
+                                                            $this->setInvalidIdMessage('badge');
+                                                            continue;
+                                                        }
                                                         $b["badge_id"] = new MongoId($bkey);
                                                         $b["badge_value"] = $bvalue;
 
@@ -245,6 +266,10 @@ class Quiz extends MY_Controller
 
                                                 foreach ($rvalue as $ckey => $cvalue) {
                                                     if (!empty($cvalue)) {
+                                                        if (!$this->isMongoId($ckey)) {
+                                                            $this->setInvalidIdMessage('custom point');
+                                                            continue;
+                                                        }
                                                         $c["custom_id"] = new MongoId($ckey);
                                                         $c["custom_value"] = $cvalue;
 
@@ -270,6 +295,10 @@ class Quiz extends MY_Controller
                             if ($qkey == "questions") {
                                 foreach ($qvalue as $qqkey => $qqvalue) {
                                     $questions = array();
+                                    if (!$this->isMongoId($qqkey)) {
+                                        $this->setInvalidIdMessage('question');
+                                        continue;
+                                    }
                                     $questions['question_id'] = new MongoId($qqkey);
 
                                     foreach ($qqvalue as $qqqkey => $qqqvalue) {
@@ -280,6 +309,11 @@ class Quiz extends MY_Controller
 
                                             foreach ($qqqvalue as $okey => $ovalue) {
                                                 $option = $ovalue;
+                                                if (!$this->isMongoId($okey)) {
+                                                    $this->setInvalidIdMessage('option');
+                                                    continue;
+                                                }
+
                                                 if(isset($ovalue['is_range_option']) && $ovalue['is_range_option'] == "on"){
                                                     if(!is_numeric($ovalue['range_min']) || !is_numeric($ovalue['range_max'])){
                                                         $this->data['message'] = "[Error in question '".$qqvalue["question"]."' ] ".$this->lang->line('error_range_error');
@@ -365,6 +399,14 @@ class Quiz extends MY_Controller
             $quiz_info = array_merge($quiz_info, $quiz);
         }
 
+        if (isset($quiz_info['tags'])) {
+            if (is_string($quiz_info['tags']) && $quiz_info['tags'] !== '') {
+                $quiz_info['tags'] = explode(',', $quiz_info['tags']);
+            } elseif (!is_array($quiz_info['tags'])) {
+                $quiz_info['tags'] = array();
+            }
+        }
+
         $this->data['quiz'] = $quiz_info;
 
         $data['client_id'] = $this->User_model->getClientId();
@@ -417,14 +459,27 @@ class Quiz extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-
-            foreach ($this->input->post('selected') as $quiz_id) {
-                $this->Quiz_model->delete($quiz_id);
+            $selected_quizs = $this->input->post('selected');
+            if (!is_array($selected_quizs)) {
+                $selected_quizs = array($selected_quizs);
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            foreach ($selected_quizs as $quiz_id) {
+                if (!$this->isMongoId($quiz_id)) {
+                    $this->error['warning'] = 'Invalid quiz id';
+                    break;
+                }
+            }
 
-            redirect('/quiz', 'refresh');
+            if ($this->error['warning'] == null) {
+                foreach ($selected_quizs as $quiz_id) {
+                    $this->Quiz_model->delete($quiz_id);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+
+                redirect('/quiz', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -483,6 +538,27 @@ class Quiz extends MY_Controller
         }
     }
 
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
+    }
+
+    private function extractMongoId($id)
+    {
+        if (is_array($id) && isset($id['$id'])) {
+            $id = $id['$id'];
+        }
+
+        return $this->isMongoId($id) ? $id : null;
+    }
+
+    private function setInvalidIdMessage($name)
+    {
+        if ($this->data['message'] == null) {
+            $this->data['message'] = 'Invalid ' . $name . ' id';
+        }
+    }
+
     function jsonErrorResponse($msg = 'Error, invalid request format or missing parameter')
     {
         echo json_encode(
@@ -514,7 +590,12 @@ class Quiz extends MY_Controller
         if (isset($quiz_info['grades']) && $quiz_info['grades']) {
             foreach($quiz_info['grades'] as &$grade){
                 if($function=='import') {
-                    $grade['grade_id'] = new MongoId($grade['grade_id']['$id']);
+                    $grade_id = isset($grade['grade_id']) ? $this->extractMongoId($grade['grade_id']) : null;
+                    if ($grade_id === null) {
+                        $this->push_validation_error($validation_result, 'GRADE_ID', 'Invalid grade id');
+                        continue;
+                    }
+                    $grade['grade_id'] = new MongoId($grade_id);
                 }
 
                 // convert Rewards
@@ -665,6 +746,17 @@ class Quiz extends MY_Controller
         }
 
         $array_quizs = json_decode($this->input->post('array_quizs'),true);
+        if (!is_array($array_quizs)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_quizs as $quiz) {
+            if (!is_array($quiz)) {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $validation_result = array();
@@ -675,10 +767,20 @@ class Quiz extends MY_Controller
 
             if (isset($quiz['questions']) && $quiz['questions']) {
                 foreach ($quiz['questions'] as &$question) {
-                    $question['question_id'] = new MongoId($question['question_id']['$id']);
+                    $question_id = isset($question['question_id']) ? $this->extractMongoId($question['question_id']) : null;
+                    if ($question_id === null) {
+                        $this->push_validation_error($validation_result, 'QUESTION_ID', 'Invalid question id');
+                        continue;
+                    }
+                    $question['question_id'] = new MongoId($question_id);
                     if (isset($question['options']) && $question['options']) {
                         foreach ($question['options'] as &$option) {
-                            $option['option_id'] = new MongoId($option['option_id']['$id']);
+                            $option_id = isset($option['option_id']) ? $this->extractMongoId($option['option_id']) : null;
+                            if ($option_id === null) {
+                                $this->push_validation_error($validation_result, 'OPTION_ID', 'Invalid option id');
+                                continue;
+                            }
+                            $option['option_id'] = new MongoId($option_id);
                         }
                     }
                 }
@@ -710,8 +812,17 @@ class Quiz extends MY_Controller
         }
 
         $array_quizs = array();
-        foreach($this->input->post('array_quizs') as $quiz_id){
+        $selected_quizs = $this->input->post('array_quizs');
+        if (!is_array($selected_quizs)) {
+            $selected_quizs = array($selected_quizs);
+        }
+
+        foreach($selected_quizs as $quiz_id){
             if($quiz_id == "on")continue;
+            if (!$this->isMongoId($quiz_id)) {
+                $this->jsonErrorResponse('Invalid quiz id');
+                return;
+            }
 
             $quiz_info = $this->Quiz_model->getQuiz($quiz_id);
             unset($quiz_info['_id']);

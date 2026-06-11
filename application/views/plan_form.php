@@ -43,6 +43,9 @@
         }
         $attributes = array('id' => 'form');
         echo form_open($form ,$attributes);
+        $feature_data = is_array($feature_data) ? $feature_data : array();
+        $action_data = is_array($action_data) ? $action_data : array();
+        $jigsaw_data = is_array($jigsaw_data) ? $jigsaw_data : array();
         ?>
             <div id="tab-general">
                 <table class="form">

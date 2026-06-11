@@ -1,5 +1,5 @@
 <?php
-/*defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 class Domain extends MY_Controller
 {
@@ -62,19 +62,19 @@ class Domain extends MY_Controller
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
-        if ($this->input->get('filter_name')) {
+        if ($this->input->get('filter_name') && is_scalar($this->input->get('filter_name'))) {
             $filter_name = $this->input->get('filter_name');
         } else {
             $filter_name = null;
         }
 
-        if ($this->input->get('sort')) {
+        if ($this->input->get('sort') && is_scalar($this->input->get('sort'))) {
             $sort = $this->input->get('sort');
         } else {
             $sort = 'domain_name';
         }
 
-        if ($this->input->get('order')) {
+        if ($this->input->get('order') && is_scalar($this->input->get('order'))) {
             $order = $this->input->get('order');
         } else {
             $order = 'ASC';
@@ -180,7 +180,14 @@ class Domain extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $this->Domain_model->resetToken($this->input->post('site_id'));
+            $site_id = $this->input->post('site_id');
+            if (!$this->isValidMongoId($site_id)) {
+                $json['error'] = $this->lang->line('error_required');
+                $this->output->set_output(json_encode($json));
+                return;
+            }
+
+            $this->Domain_model->resetToken($site_id);
 
             $json['success'] = $this->lang->line('text_success');
 
@@ -213,9 +220,21 @@ class Domain extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
                 $client_id = $this->User_model->getClientId();
                 $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+                if (!is_array($plan_subscription) ||
+                    !array_key_exists('plan_id', $plan_subscription) ||
+                    !$plan_subscription['plan_id']
+                ) {
+                    redirect('/logout', 'refresh');
+                    return;
+                }
 
                 // get Plan limit_others.domain
-                $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "domain");
+                try {
+                    $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "domain");
+                } catch (Exception $e) {
+                    redirect('/logout', 'refresh');
+                    return;
+                }
 
                 // Get current client site
                 $usage = $this->Client_model->getSitesByClientId($client_id);
@@ -242,8 +261,6 @@ class Domain extends MY_Controller
                     $site_id = $this->Domain_model->addDomain($d_data);
 
                     if ($site_id) {
-                        $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-
                         // bind plan to client in playbasis_permission
                         $this->Client_model->addPlanToPermission(array(
                             'client_id' => $client_id->{'$id'},
@@ -331,7 +348,13 @@ class Domain extends MY_Controller
                 $json['error'] = $this->data['message'];
             }
 
-            if($this->checkLimitDomain($this->input->post('client_id'))){
+            $client_id = $this->input->post('client_id');
+            if($this->data['message'] == null && !$this->isValidMongoId($client_id)){
+                $this->data['message'] = $this->lang->line('error_required');
+                $json['error'] = $this->data['message'];
+            }
+
+            if($this->data['message'] == null && $this->checkLimitDomain($client_id)){
                 $this->data['message'] = $this->lang->line('error_limit');
                 $json['error'] = $this->data['message'];
             }
@@ -346,10 +369,10 @@ class Domain extends MY_Controller
                     $site_id = $this->Domain_model->addDomain($this->input->post());
 
                     if ($site_id) {
-                        $plan_subscription = $this->Client_model->getPlanByClientId(new MongoID($this->input->post('client_id')));
+                        $plan_subscription = $this->Client_model->getPlanByClientId(new MongoID($client_id));
 
                         $this->Client_model->addPlanToPermission(array(
-                            'client_id' => $this->input->post('client_id'),
+                            'client_id' => $client_id,
                             'plan_id' => $plan_subscription['plan_id']->{'$id'},
                             'site_id' => $site_id->{'$id'},
                         ));
@@ -383,16 +406,26 @@ class Domain extends MY_Controller
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
-        if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $site_id) {
-                if($this->checkOwnerDomain($site_id)){
-
-                    $this->Domain_model->deleteDomain($site_id);
+        $selected = $this->input->post('selected');
+        if ($selected && $this->error['warning'] == null) {
+            foreach ($selected as $site_id) {
+                if(!$this->isValidMongoId($site_id)){
+                    $this->error['warning'] = $this->lang->line('error_required');
+                    break;
                 }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/domain', 'refresh');
+            if ($this->error['warning'] == null) {
+                foreach ($selected as $site_id) {
+                    if($this->checkOwnerDomain($site_id)){
+
+                        $this->Domain_model->deleteDomain($site_id);
+                    }
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/domain', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -407,11 +440,17 @@ class Domain extends MY_Controller
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
-        if ($this->input->post('site_id') && $this->error['warning'] == null) {
+        $site_id = $this->input->post('site_id');
+        if ($site_id && $this->error['warning'] == null) {
+            if(!$this->isValidMongoId($site_id)){
+                $json['error'] = $this->lang->line('error_required');
+                $this->output->set_output(json_encode($json));
+                return;
+            }
 
-            if($this->checkOwnerDomain($this->input->post('site_id'))){
+            if($this->checkOwnerDomain($site_id)){
 
-                $this->Domain_model->deleteDomain($this->input->post('site_id'));
+                $this->Domain_model->deleteDomain($site_id);
             }
 
             $this->session->data['success'] = $this->lang->line('text_success_delete');
@@ -510,6 +549,10 @@ class Domain extends MY_Controller
         }
     }
 
+    private function isValidMongoId($value){
+        return is_string($value) && preg_match('/^[a-fA-F0-9]{24}$/', $value);
+    }
+
     private function validateAccess(){
         if($this->User_model->isAdmin()){
             return true;
@@ -520,5 +563,5 @@ class Domain extends MY_Controller
             return false;
         }
     }
-}*/
+}
 ?>

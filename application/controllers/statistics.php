@@ -22,6 +22,11 @@ class Statistics  extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
+    private function previousMonthDayCount($now = null)
+    {
+        return (int)date('t', strtotime('first day of previous month', $now ?: time()));
+    }
+
     public function index()
     {
         $config['base_url'] = site_url('statistics');
@@ -75,7 +80,7 @@ class Statistics  extends MY_Controller
                                                   'label' => $value);
                 }
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y'));
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-$day days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -246,7 +251,7 @@ class Statistics  extends MY_Controller
                 }
 
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y'));
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-$day days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -345,7 +350,7 @@ class Statistics  extends MY_Controller
                         'label' => $value);
                 }
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y'));
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-$day days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -515,7 +520,7 @@ class Statistics  extends MY_Controller
                 }
 
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y'));
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-$day days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -624,7 +629,7 @@ class Statistics  extends MY_Controller
                 }
 
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -769,7 +774,7 @@ class Statistics  extends MY_Controller
                 }
 
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -919,7 +924,7 @@ class Statistics  extends MY_Controller
                 }
 
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -1064,7 +1069,7 @@ class Statistics  extends MY_Controller
                     );
                 }
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -1203,7 +1208,7 @@ class Statistics  extends MY_Controller
                                                  'label' => $badge[$key]);
                 }
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -1363,7 +1368,7 @@ class Statistics  extends MY_Controller
                     );
                 }
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -1454,7 +1459,7 @@ class Statistics  extends MY_Controller
                                            'data' => $register_data[0],
                                            'label' => 'Players');
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -1594,7 +1599,7 @@ class Statistics  extends MY_Controller
                     );
                 }
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -1675,7 +1680,7 @@ class Statistics  extends MY_Controller
                                         'data' => $mgm_data[0],
                                         'label' => 'MGM');
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);
@@ -1815,7 +1820,7 @@ class Statistics  extends MY_Controller
                     );
                 }
             } elseif($type == 'month'){
-                $day = cal_days_in_month(CAL_GREGORIAN, date('m') - 1 , date('Y')); // 31
+                $day = $this->previousMonthDayCount();
                 $date = date("Y-m-d", strtotime("-".$day." days"));
                 $date_zone = new DateTime($date, $UTC_8);
                 $date_zone->setTimezone($UTC_7);

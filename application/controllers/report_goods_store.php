@@ -93,19 +93,12 @@ class Report_goods_store extends MY_Controller
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
 
-        if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=" . $filter_date_end;
-            if(strpos($filter_date_end, '00:00:00')){
-                $currentDate = strtotime($filter_date_end);
-                $futureDate = $currentDate + ("86399");
-                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            }
+        $date_expire = $this->input->get('date_expire');
+        if ($this->isValidFilterDate($date_expire)) {
+            $filter_date_end = $this->normalizeFilterDateEnd($date_expire);
+            $parameter_url .= "&date_expire=" . (string)$date_expire;
         } else {
-            $date = date("Y-m-d");
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            $filter_date_end = $this->defaultFilterDateEnd();
         }
 
         if ($this->input->get('tags')) {
@@ -115,7 +108,11 @@ class Report_goods_store extends MY_Controller
         if ($this->input->get('goods_id')){
             $filter_goods_id = $this->input->get('goods_id');
             $parameter_url .= "&goods_id=" . $filter_goods_id;
-            $filter_goods_id = explode(',', $filter_goods_id);
+            $filter_goods_id = $this->parseGoodsIds($filter_goods_id);
+            if ($filter_goods_id === false) {
+                redirect('/report/goods_store', 'refresh');
+                return;
+            }
             foreach ($filter_goods_id as $value){
                 $goods_data = $this->Goods_model->getGoodsOfClientPrivate($value);
                 $filter_goods_data[] = $goods_data;
@@ -289,7 +286,7 @@ class Report_goods_store extends MY_Controller
                 $data_row = array(
                     'goods_name' => $result['name'],
                     'group' => $result['is_group'],
-                    'batch' => $result['batch_name'],
+                    'batch' => $this->normalizeBatchList(isset($result['batch_name']) ? $result['batch_name'] : null),
                     'date_start' => $date_start,
                     'date_end' => $date_end,
                     'date_expire' => $date_expire,
@@ -304,9 +301,15 @@ class Report_goods_store extends MY_Controller
                     'total_used' => $total_used,
                     'total_expired' => $total_expired,
                 );
-                if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && isset($result['tags'])) {
+                $tags = isset($result['tags']) ? $result['tags'] : array();
+                if (is_string($tags) && $tags !== '') {
+                    $tags = explode(',', $tags);
+                } elseif (!is_array($tags)) {
+                    $tags = array();
+                }
+                if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && $tags) {
                     $searchword = 'PRICE';
-                    $price = explode("=RM", implode("", array_filter($result['tags'], function ($var) use ($searchword) {
+                    $price = explode("=RM", implode("", array_filter($tags, function ($var) use ($searchword) {
                         return preg_match("/\b$searchword\b/i", $var);
                     })));
                     $data_row['price'] = isset($price[1]) ? $price[1] : 0;
@@ -415,7 +418,7 @@ class Report_goods_store extends MY_Controller
                 $data_row = array(
                     'goods_name' => $result['name'],
                     'group' => $result['is_group'],
-                    'batch' => $result['batch_name'],
+                    'batch' => $this->normalizeBatchList(isset($result['batch_name']) ? $result['batch_name'] : null),
                     'date_start' => $date_start,
                     'date_end' => $date_end,
                     'date_expire' => $date_expire,
@@ -431,9 +434,15 @@ class Report_goods_store extends MY_Controller
                     'total_expired' => $total_expired,
                 );
 
-                if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && isset($result['tags'])) {
+                $tags = isset($result['tags']) ? $result['tags'] : array();
+                if (is_string($tags) && $tags !== '') {
+                    $tags = explode(',', $tags);
+                } elseif (!is_array($tags)) {
+                    $tags = array();
+                }
+                if(defined('REPORT_CATEGORY_PRICE_DISPLAY') && (REPORT_CATEGORY_PRICE_DISPLAY == true) && $tags) {
                     $searchword = 'PRICE';
-                    $price = explode("=RM", implode("", array_filter($result['tags'], function ($var) use ($searchword) {
+                    $price = explode("=RM", implode("", array_filter($tags, function ($var) use ($searchword) {
                         return preg_match("/\b$searchword\b/i", $var);
                     })));
                     $data_row['price'] = isset($price[1]) ? $price[1] : 0;
@@ -508,6 +517,19 @@ class Report_goods_store extends MY_Controller
         $this->render_page('template');
     }
 
+    private function normalizeBatchList($batch_name)
+    {
+        if (is_array($batch_name)) {
+            return $batch_name;
+        }
+
+        if ($batch_name === null || $batch_name === false || $batch_name === '') {
+            return array();
+        }
+
+        return array($batch_name);
+    }
+
     private function convert_mongo_date(&$item, $key)
     {
         if (is_object($item)) {
@@ -519,6 +541,31 @@ class Report_goods_store extends MY_Controller
                 }
             }
         }
+    }
+
+    private function isValidFilterDate($value)
+    {
+        return is_scalar($value) && $value !== '' && strtotime((string)$value) !== false;
+    }
+
+    private function normalizeFilterDateEnd($value)
+    {
+        $date = (string)$value;
+        if (strpos($date, '00:00:00') !== false) {
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate + 86399;
+            return date("Y-m-d H:i:s", $futureDate);
+        }
+
+        return $date;
+    }
+
+    private function defaultFilterDateEnd()
+    {
+        $date = date("Y-m-d");
+        $currentDate = strtotime($date);
+        $futureDate = $currentDate + 86399;
+        return date("Y-m-d H:i:s", $futureDate);
     }
 
     private function getList($site_id)
@@ -537,6 +584,20 @@ class Report_goods_store extends MY_Controller
         }
 
         return $goods_data;
+    }
+
+    private function parseGoodsIds($goods_id)
+    {
+        $ids = explode(',', $goods_id);
+        $valid_ids = array();
+        foreach ($ids as $id) {
+            $id = trim($id);
+            if (!preg_match('/^[0-9a-f]{24}$/i', (string)$id)) {
+                return false;
+            }
+            $valid_ids[] = $id;
+        }
+        return $valid_ids;
     }
 
     private function validateAccess()
@@ -575,19 +636,12 @@ class Report_goods_store extends MY_Controller
             $filter_date_start = date("Y-m-d H:i:s", $previousDate);
         }
 
-        if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
-            $parameter_url .= "&date_expire=" . $filter_date_end;
-            if(strpos($filter_date_end, '00:00:00')){
-                $currentDate = strtotime($filter_date_end);
-                $futureDate = $currentDate + ("86399");
-                $filter_date_end = date("Y-m-d H:i:s", $futureDate);
-            }
+        $date_expire = $this->input->get('date_expire');
+        if ($this->isValidFilterDate($date_expire)) {
+            $filter_date_end = $this->normalizeFilterDateEnd($date_expire);
+            $parameter_url .= "&date_expire=" . (string)$date_expire;
         } else {
-            $date = date("Y-m-d");
-            $currentDate = strtotime($date);
-            $futureDate = $currentDate + ("86399");
-            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            $filter_date_end = $this->defaultFilterDateEnd();
         }
 
         if ($this->input->get('status')){
@@ -611,7 +665,11 @@ class Report_goods_store extends MY_Controller
 
         if ($this->input->get('goods_id')){
             $filter_goods_id = $this->input->get('goods_id');
-            $filter_goods_id = explode(',', $filter_goods_id);
+            $filter_goods_id = $this->parseGoodsIds($filter_goods_id);
+            if ($filter_goods_id === false) {
+                redirect('/report/goods_store', 'refresh');
+                return;
+            }
             foreach ($filter_goods_id as $value){
                 $goods_data = $this->Goods_model->getGoodsOfClientPrivate($value);
                 $filter_goods_data[] = $goods_data;
@@ -635,9 +693,16 @@ class Report_goods_store extends MY_Controller
         $data['start'] = $offset;
         $results = $this->Report_goods_model->getReportGoodsStore($data);
         foreach ($results as $result) {
-            if(isset($result['tags'])){
+            $price = array();
+            $tags = isset($result['tags']) ? $result['tags'] : array();
+            if (is_string($tags) && $tags !== '') {
+                $tags = explode(',', $tags);
+            } elseif (!is_array($tags)) {
+                $tags = array();
+            }
+            if($tags){
                 $searchword = 'PRICE';
-                $price = explode("=RM", implode("", array_filter($result['tags'], function ($var) use ($searchword) {
+                $price = explode("=RM", implode("", array_filter($tags, function ($var) use ($searchword) {
                     return preg_match("/\b$searchword\b/i", $var);
                 })));
             }

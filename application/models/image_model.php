@@ -217,16 +217,44 @@ class Image_model extends MY_Model
         return $this->mongo_db->insert('playbasis_folder', $data_insert);
     }
 
-    public function unsetAllFile($data){
-        $this->mongo_db->where('folder_id', new MongoId($data['elementID']));
-        $this->mongo_db->unset_field('folder_id');
-        return $this->mongo_db->update_all('playbasis_file');
+    public function unsetAllFile($data, $client_id = null, $site_id = null){
+        $scope = $this->mediaScope($client_id, $site_id);
+        if (!$scope) {
+            return false;
+        }
+        $client_id = $scope['client_id'];
+        $site_id = $scope['site_id'];
+        $this->set_site_mongodb($site_id);
+
+        try {
+            $this->mongo_db->where('folder_id', new MongoId($data['elementID']));
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->unset_field('folder_id');
+            return $this->mongo_db->update_all('playbasis_file');
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
-    public function deleteFolder_model($data){
-        $this->mongo_db->where('_id', new MongoId($data['elementID']));
-        $this->mongo_db->set('deleted', true);
-        return $this->mongo_db->update('playbasis_folder');
+    public function deleteFolder_model($data, $client_id = null, $site_id = null){
+        $scope = $this->mediaScope($client_id, $site_id);
+        if (!$scope) {
+            return false;
+        }
+        $client_id = $scope['client_id'];
+        $site_id = $scope['site_id'];
+        $this->set_site_mongodb($site_id);
+
+        try {
+            $this->mongo_db->where('_id', new MongoId($data['elementID']));
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->set('deleted', true);
+            return $this->mongo_db->update('playbasis_folder');
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     public function retrieveImages($client_id, $site_id, $optionalParams = array())
@@ -286,28 +314,98 @@ class Image_model extends MY_Model
         return $this->mongo_db->get("playbasis_file");
     }
 
-    public function updateImageCategory($optionalParams = array()){
-        $this->mongo_db->where('_id', new MongoId($optionalParams['elementID']));
+    public function updateImageCategory($optionalParams = array(), $client_id = null, $site_id = null){
+        $scope = $this->mediaScope($client_id, $site_id);
+        if (!$scope) {
+            return false;
+        }
+        $client_id = $scope['client_id'];
+        $site_id = $scope['site_id'];
+        $this->set_site_mongodb($site_id);
+
+        try {
+            $folder_id = null;
+            if ($optionalParams['folder_id'] != "root"){
+                $folder_id = new MongoId($optionalParams['folder_id']);
+                if (!$this->folderBelongsToSite($client_id, $site_id, $folder_id)) {
+                    return false;
+                }
+            }
+
+            $this->mongo_db->where('_id', new MongoId($optionalParams['elementID']));
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
+
             if ($optionalParams['folder_id'] == "root"){
                 $this->mongo_db->unset_field('folder_id');
             }else{
-                $this->mongo_db->set('folder_id', new MongoId($optionalParams['folder_id']));
+                $this->mongo_db->set('folder_id', $folder_id);
             }
-        return $this->mongo_db->update('playbasis_file');
+
+            return $this->mongo_db->update('playbasis_file');
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
-    public function updateFolder($data){
-        $this->mongo_db->where('_id', new MongoId($data['elementID']));
-        $this->mongo_db->set('folder_name', $data['new_name']);
-        return $this->mongo_db->update('playbasis_folder');
+    public function updateFolder($data, $client_id = null, $site_id = null){
+        $scope = $this->mediaScope($client_id, $site_id);
+        if (!$scope) {
+            return false;
+        }
+        $client_id = $scope['client_id'];
+        $site_id = $scope['site_id'];
+        $this->set_site_mongodb($site_id);
+
+        try {
+            $this->mongo_db->where('_id', new MongoId($data['elementID']));
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->set('folder_name', $data['new_name']);
+            return $this->mongo_db->update('playbasis_folder');
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
-    public function retrieveImage($image_id)
+    private function folderBelongsToSite($client_id, $site_id, $folder_id)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('_id', $folder_id);
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
+        $folder = $this->mongo_db->get('playbasis_folder');
+
+        return $folder ? true : false;
+    }
+
+    private function mediaScope($client_id = null, $site_id = null)
+    {
+        if ($client_id === null) {
+            $client_id = $this->session->userdata('client_id');
+        }
+        if ($site_id === null) {
+            $site_id = $this->session->userdata('site_id');
+        }
+
+        if ($client_id === null || $client_id === '' || $site_id === null || $site_id === '') {
+            return false;
+        }
+
+        return array(
+            'client_id' => $client_id,
+            'site_id' => $site_id
+        );
+    }
+
+    public function retrieveImage($client_id, $site_id, $image_id)
+    {
+        $this->set_site_mongodb($site_id);
 
         try {
             $this->mongo_db->where('_id', new MongoId($image_id));
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
         } catch (Exception $e) {
             return null;
         }
@@ -320,15 +418,17 @@ class Image_model extends MY_Model
         }
     }
 
-    public function deleteImage($image_id)
+    public function deleteImage($client_id, $site_id, $image_id)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->set_site_mongodb($site_id);
 
         try {
-            if ($image = $this->retrieveImage($image_id)) {
+            if ($image = $this->retrieveImage($client_id, $site_id, $image_id)) {
                 $this->s3->setEndpoint("s3-ap-southeast-1.amazonaws.com");
                 if ($this->s3->deleteObject("elasticbeanstalk-ap-southeast-1-007834438823", $image['url'])) {
                     $this->mongo_db->where('_id', new MongoId($image_id));
+                    $this->mongo_db->where('client_id', $client_id);
+                    $this->mongo_db->where('site_id', $site_id);
                     $c = $this->mongo_db->delete('playbasis_file');
                     if ($c) {
                         return true;

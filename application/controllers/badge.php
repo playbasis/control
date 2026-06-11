@@ -4,6 +4,17 @@ require APPPATH . '/libraries/MY_Controller.php';
 
 class Badge extends MY_Controller
 {
+    private function normalizeTags($tags)
+    {
+        if (is_array($tags)) {
+            return $tags;
+        }
+        if (is_string($tags)) {
+            return explode(',', $tags);
+        }
+        return array();
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -77,6 +88,7 @@ class Badge extends MY_Controller
         $this->form_validation->set_rules('substract', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->normalizeBadgePost();
 
             if ($this->checkLimitBadge()) {
                 $this->data['message'] = null;
@@ -86,6 +98,10 @@ class Badge extends MY_Controller
                 }
 
                 $badge_data = $this->input->post();
+                if (isset($badge_data['category']) && $badge_data['category'] !== ''
+                    && (!is_string($badge_data['category']) || preg_match('/^[0-9a-f]{24}$/i', $badge_data['category']) !== 1)) {
+                    $this->data['message'] = $this->lang->line('error_warning');
+                }
 
                 if ($this->form_validation->run() && $this->data['message'] == null) {
 
@@ -162,6 +178,10 @@ class Badge extends MY_Controller
 
     public function update($badge_id)
     {
+        if (!$this->isMongoId($badge_id)) {
+            redirect('/badge', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -184,6 +204,7 @@ class Badge extends MY_Controller
         $this->form_validation->set_rules('substract', "", '');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
+            $this->normalizeBadgePost();
 
             $this->data['message'] = null;
 
@@ -192,6 +213,10 @@ class Badge extends MY_Controller
             }
 
             $badge_data = $this->input->post();
+            if (isset($badge_data['category']) && $badge_data['category'] !== ''
+                && (!is_string($badge_data['category']) || preg_match('/^[0-9a-f]{24}$/i', $badge_data['category']) !== 1)) {
+                $this->data['message'] = $this->lang->line('error_warning');
+            }
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 if ($this->User_model->getClientId()) {
@@ -244,29 +269,41 @@ class Badge extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $badge_id) {
-                if ($this->checkOwnerBadge($badge_id)) {
-
-                    if ($this->User_model->getClientId()) {
-                        if (!$this->Badge_model->checkBadgeIsSponsor($badge_id)) {
-                            $audit_id = $this->Badge_model->auditBeforeBadge('delete', $badge_id, $this->User_model->getId());
-                            $this->Badge_model->deleteBadgeClient($badge_id);
-                            $this->Badge_model->auditAfterBadge('delete', $badge_id, $this->User_model->getId(), $audit_id);
-                        } else {
-                            redirect('/badge', 'refresh');
-                        }
-                    } else {
-                        $this->Badge_model->deleteBadge($badge_id);
-                        $audit_id = $this->Badge_model->auditBeforeBadge('delete', $badge_id, $this->User_model->getId());
-                        $this->Badge_model->deleteClientBadgeFromAdmin($badge_id);
-                        $this->Badge_model->auditAfterBadge('delete', $badge_id, $this->User_model->getId(), $audit_id);
-                    }
-
+            $selected_badges = $this->input->post('selected');
+            foreach ($selected_badges as $badge_id) {
+                if (!$this->isMongoId($badge_id)) {
+                    $this->error['warning'] = 'Invalid badge id';
+                    break;
                 }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/badge', 'refresh');
+            if ($this->error['warning'] == null) {
+                foreach ($selected_badges as $badge_id) {
+                    if ($this->checkOwnerBadge($badge_id)) {
+
+                        if ($this->User_model->getClientId()) {
+                            if (!$this->Badge_model->checkBadgeIsSponsor($badge_id)) {
+                                $audit_id = $this->Badge_model->auditBeforeBadge('delete', $badge_id, $this->User_model->getId());
+                                $this->Badge_model->deleteBadgeClient($badge_id);
+                                $this->Badge_model->auditAfterBadge('delete', $badge_id, $this->User_model->getId(), $audit_id);
+                            } else {
+                                redirect('/badge', 'refresh');
+                            }
+                        } else {
+                            $this->Badge_model->deleteBadge($badge_id);
+                            $audit_id = $this->Badge_model->auditBeforeBadge('delete', $badge_id, $this->User_model->getId());
+                            $this->Badge_model->deleteClientBadgeFromAdmin($badge_id);
+                            $this->Badge_model->auditAfterBadge('delete', $badge_id, $this->User_model->getId(), $audit_id);
+                        }
+
+                    }
+                }
+            }
+
+            if ($this->error['warning'] == null) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/badge', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -294,6 +331,10 @@ class Badge extends MY_Controller
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $slot_total = 0;
         $this->data['slots'] = $slot_total;
+        $selected_badges = $this->input->post('selected');
+        if (!is_array($selected_badges)) {
+            $selected_badges = array();
+        }
 
         if ($this->User_model->getUserGroupId() == $setting_group_id) {
             $data['client_id'] = $client_id;
@@ -355,6 +396,7 @@ class Badge extends MY_Controller
                     $category = $this->Badge_model->retrieveItemCategoryById($result['category']);
                     $result['category'] = $category['name'];
                 }
+                $result['tags'] = $this->normalizeTags(isset($result['tags']) ? $result['tags'] : null);
                 $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
                 $this->data['badges'][] = array(
                     'badge_id' => $result['_id'],
@@ -368,8 +410,7 @@ class Badge extends MY_Controller
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
                     'tags' => isset($result['tags']) ? $result['tags'] : null,
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($result['_id'], $selected_badges),
                     'is_public' => $badgeIsPublic,
                     // 'sponsor' => $result['sponsor']
                 );
@@ -467,6 +508,7 @@ class Badge extends MY_Controller
                             $badge_info['category'] = $category['name'];
                         }
                         if (!$badge_info['deleted']) {
+                            $badge_info['tags'] = $this->normalizeTags(isset($badge_info['tags']) ? $badge_info['tags'] : null);
                             $this->data['badges'][] = array(
                                 'badge_id' => $badge_info['_id'],
                                 'name' => $badge_info['name'],
@@ -479,8 +521,7 @@ class Badge extends MY_Controller
                                 'visible' => (isset($badge_info['visible']) && $badge_info['visible'] == false) ? false: true ,
                                 'image' => $image,
                                 'sort_order' => $badge_info['sort_order'],
-                                'selected' => ($this->input->post('selected') && in_array($badge_info['_id'],
-                                        $this->input->post('selected'))),
+                                'selected' => in_array($badge_info['_id'], $selected_badges),
                                 'sponsor' => isset($badge_info['sponsor']) ? $badge_info['sponsor'] : null,
                                 "is_template" => isset($badge_info["is_template"]) ? $badge_info["is_template"] : false
                             );
@@ -569,6 +610,10 @@ class Badge extends MY_Controller
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $slot_total = 0;
         $this->data['slots'] = $slot_total;
+        $selected_badges = $this->input->post('selected');
+        if (!is_array($selected_badges)) {
+            $selected_badges = array();
+        }
 
         if ($this->User_model->getUserGroupId() == $setting_group_id) {
             $data['client_id'] = $client_id;
@@ -624,8 +669,7 @@ class Badge extends MY_Controller
                     'visible' => (isset($result['visible']) && $result['visible'] == false) ? false: true ,
                     'image' => $image,
                     'sort_order' => $result['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($result['_id'], $selected_badges),
                     'is_public' => $badgeIsPublic,
                     'sponsor' => isset($badge_info['sponsor']) ? $badge_info['sponsor'] : null
                 );
@@ -692,6 +736,7 @@ class Badge extends MY_Controller
                             $badge_info['category'] = $category['name'];
                         }
                         if (!$badge_info['deleted']) {
+                            $badge_info['tags'] = $this->normalizeTags(isset($badge_info['tags']) ? $badge_info['tags'] : null);
                             $this->data['badges'][] = array(
                                 'badge_id' => $badge_info['_id'],
                                 'name' => $badge_info['name'],
@@ -704,8 +749,7 @@ class Badge extends MY_Controller
                                 'visible' => (isset($badge_info['visible']) && $badge_info['visible'] == false) ? false: true ,
                                 'image' => $image,
                                 'sort_order' => $badge_info['sort_order'],
-                                'selected' => ($this->input->post('selected') && in_array($badge_info['_id'],
-                                        $this->input->post('selected'))),
+                                'selected' => in_array($badge_info['_id'], $selected_badges),
                                 'sponsor' => isset($badge_info['sponsor']) ? $badge_info['sponsor'] : null
                             );
                         }
@@ -788,18 +832,20 @@ class Badge extends MY_Controller
 
         }
 
-        if ($this->input->post('name')) {
-            $this->data['name'] = $this->input->post('name');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['name'] = $badge_info['name'];
+        $name = $this->input->post('name');
+        if ($name !== false) {
+            $this->data['name'] = $this->badgeText($name);
+        } elseif (isset($badge_id) && ($badge_id != 0) && isset($badge_info['name'])) {
+            $this->data['name'] = $this->badgeText($badge_info['name']);
         } else {
             $this->data['name'] = '';
         }
 
-        if ($this->input->post('description')) {
-            $this->data['description'] = htmlentities($this->input->post('description'));
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['description'] = htmlentities($badge_info['description']);
+        $description = $this->input->post('description');
+        if ($description !== false) {
+            $this->data['description'] = htmlentities($this->badgeText($description));
+        } elseif (isset($badge_id) && ($badge_id != 0) && isset($badge_info['description'])) {
+            $this->data['description'] = htmlentities($this->badgeText($badge_info['description']));
         } else {
             $this->data['description'] = '';
         }
@@ -811,11 +857,17 @@ class Badge extends MY_Controller
         } else {
             $this->data['tags'] = null;
         }
+        if (is_string($this->data['tags'])) {
+            $this->data['tags'] = explode(',', $this->data['tags']);
+        } elseif (!is_array($this->data['tags'])) {
+            $this->data['tags'] = array();
+        }
 
-        if ($this->input->post('hint')) {
-            $this->data['hint'] = $this->input->post('hint');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['hint'] = $badge_info['hint'];
+        $hint = $this->input->post('hint');
+        if ($hint !== false) {
+            $this->data['hint'] = $this->badgeText($hint);
+        } elseif (isset($badge_id) && ($badge_id != 0) && isset($badge_info['hint'])) {
+            $this->data['hint'] = $this->badgeText($badge_info['hint']);
         } else {
             $this->data['hint'] = '';
         }
@@ -966,6 +1018,20 @@ class Badge extends MY_Controller
         }
     }
 
+    private function normalizeBadgePost()
+    {
+        foreach (array('name', 'description', 'hint') as $field) {
+            if (isset($_POST[$field]) && !is_scalar($_POST[$field])) {
+                $_POST[$field] = '';
+            }
+        }
+    }
+
+    private function badgeText($value)
+    {
+        return is_scalar($value) ? (string)$value : '';
+    }
+
     private function checkLimitBadge()
     {
 
@@ -1046,6 +1112,11 @@ class Badge extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 
     private function validateAccess()

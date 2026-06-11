@@ -68,6 +68,7 @@ class Level extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            $this->normalizeLevelPost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -105,6 +106,10 @@ class Level extends MY_Controller
 
     public function update($level_id)
     {
+        if (!$this->isMongoId($level_id)) {
+            redirect('/level', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -120,6 +125,7 @@ class Level extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            $this->normalizeLevelPost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -210,20 +216,33 @@ class Level extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
+            $selected_levels = $this->input->post('selected');
+            if (!is_array($selected_levels)) {
+                $selected_levels = array($selected_levels);
+            }
 
-            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
-                foreach ($this->input->post('selected') as $level_id) {
-                    $this->Level_model->deleteLevelSite($level_id);
-                }
-            } else {
-                foreach ($this->input->post('selected') as $level_id) {
-                    $this->Level_model->deleteLevel($level_id);
+            foreach ($selected_levels as $level_id) {
+                if (!$this->isMongoId($level_id)) {
+                    $this->error['warning'] = 'Invalid level id';
+                    break;
                 }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            if ($this->error['warning'] == null) {
+                if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+                    foreach ($selected_levels as $level_id) {
+                        $this->Level_model->deleteLevelSite($level_id);
+                    }
+                } else {
+                    foreach ($selected_levels as $level_id) {
+                        $this->Level_model->deleteLevel($level_id);
+                    }
+                }
 
-            redirect('/level', 'refresh');
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+
+                redirect('/level', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -238,15 +257,13 @@ class Level extends MY_Controller
 
         $config['base_url'] = site_url('level/page');
 
-        if ($this->input->get('sort')) {
-            $sort = $this->input->get('sort');
-        } else {
+        $sort = $this->input->get('sort');
+        if (!$sort || !is_scalar($sort)) {
             $sort = 'level';
         }
 
-        if ($this->input->get('order')) {
-            $order = $this->input->get('order');
-        } else {
+        $order = $this->input->get('order');
+        if (!$order || !is_scalar($order)) {
             $order = 'ASC';
         }
 
@@ -280,6 +297,9 @@ class Level extends MY_Controller
             $site_id = "";
         }
 
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
+
         if ($results) {
             foreach ($results as $result) {
 
@@ -289,8 +309,7 @@ class Level extends MY_Controller
                     'title' => $result['level_title'],
                     'exp' => number_format($result['exp'], 0),
                     'status' => ($result['status'] == false) ? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'),
-                    'selected' => $this->input->post('selected') && in_array($result['level_id'],
-                            $this->input->post('selected')),
+                    'selected' => in_array($result['level_id'], $selected),
                 );
             }
         }
@@ -383,6 +402,10 @@ class Level extends MY_Controller
         }
 
         if (isset($level_id) && ($level_id != 0)) {
+            if (!$this->isMongoId($level_id)) {
+                redirect('/level', 'refresh');
+            }
+
             if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
                 $level_info = $this->Level_model->getLevelSite($level_id);
             } else {
@@ -471,6 +494,13 @@ class Level extends MY_Controller
 //        $this->render_page('level_form');
     }
 
+    private function normalizeLevelPost()
+    {
+        if (isset($_POST['level_title']) && !is_scalar($_POST['level_title'])) {
+            $_POST['level_title'] = '';
+        }
+    }
+
     private function validateModify()
     {
 
@@ -496,6 +526,11 @@ class Level extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 }
 

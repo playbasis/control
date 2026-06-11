@@ -42,6 +42,30 @@ class Content extends MY_Controller
         }
     }
 
+    private function contentDate($value)
+    {
+        if (!is_scalar($value) || !$value) {
+            return null;
+        }
+
+        $timestamp = strtotime((string)$value);
+        return $timestamp === false ? null : new MongoDate($timestamp);
+    }
+
+    private function contentCsv($value)
+    {
+        if (!is_scalar($value) || !$value) {
+            return null;
+        }
+
+        return explode(',', (string)$value);
+    }
+
+    private function contentRoleString($value)
+    {
+        return is_scalar($value) ? (string)$value : '';
+    }
+
     public function index()
     {
 
@@ -89,7 +113,12 @@ class Content extends MY_Controller
 
 //        Get Limit
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $limit_content = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'content');
+        try {
+            $limit_content = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'content');
+        } catch (Exception $e) {
+            redirect('/logout', 'refresh');
+            return;
+        }
 
         $this->data['message'] = null;
 
@@ -124,13 +153,13 @@ class Content extends MY_Controller
                 $data['title'] = (isset($content_data['content_title']) && $content_data['content_title']) ? $content_data['content_title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
-                $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
-                $data['date_end'] = (isset($content_data['date_end']) && $content_data['date_end']) ? new MongoDate(strtotime($content_data['date_end'])) : null;
+                $data['date_start'] = isset($content_data['date_start']) ? $this->contentDate($content_data['date_start']) : null;
+                $data['date_end'] = isset($content_data['date_end']) ? $this->contentDate($content_data['date_end']) : null;
                 $data['image'] = (isset($content_data['image']) && $content_data['image']) ? $content_data['image'] : null;
-                $data['category'] = (isset($content_data['category']) && $content_data['category']) ? new MongoId($content_data['category']) : null;
+                $data['category'] = (isset($content_data['category']) && is_string($content_data['category']) && preg_match('/^[0-9a-f]{24}$/i', $content_data['category']) === 1) ? new MongoId($content_data['category']) : null;
                 $data['status'] = (isset($content_data['status']) && $content_data['status'] == 'on') ? true : false;
                 $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
-                $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
+                $data['tags'] = isset($content_data['tags']) ? $this->contentCsv($content_data['tags']) : null;
 
                 $check_content = $this->Content_model->findContent($client_id, $site_id, $data['node_id']);
                 if(!$check_content){
@@ -154,8 +183,9 @@ class Content extends MY_Controller
                                 $status = $this->Content_model->addContentToNode($insert."", $content_data['organize_node'][0]);
                                 if ($status->success) {
                                     //set role of player
-                                    if (isset($content_data['organize_role'][0]) && !empty($content_data['organize_role'][0])) {
-                                        $role_array = explode(",", $content_data['organize_role'][0]);
+                                    $role_string = isset($content_data['organize_role'][0]) ? $this->contentRoleString($content_data['organize_role'][0]) : '';
+                                    if ($role_string) {
+                                        $role_array = explode(",", $role_string);
                                         $status1 = null;
                                         foreach ($role_array as $role) {
                                             $role = str_replace(' ', '', $role);
@@ -212,6 +242,11 @@ class Content extends MY_Controller
 
     public function update($content_id)
     {
+        if (!is_string($content_id) || !preg_match('/^[0-9a-f]{24}$/i', $content_id)) {
+            redirect('/content', 'refresh');
+            return;
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -247,13 +282,13 @@ class Content extends MY_Controller
                 $data['title'] = (isset($content_data['content_title']) && $content_data['content_title']) ? $content_data['content_title'] : null;
                 $data['summary'] = (isset($content_data['summary']) && $content_data['summary']) ? $content_data['summary'] : null;
                 $data['detail'] = (isset($content_data['detail']) && $content_data['detail']) ? $content_data['detail'] : null;
-                $data['date_start'] = (isset($content_data['date_start']) && $content_data['date_start']) ? new MongoDate(strtotime($content_data['date_start'])) : null;
-                $data['date_end'] = (isset($content_data['date_end']) && $content_data['date_end']) ? new MongoDate(strtotime($content_data['date_end'])) : null;
+                $data['date_start'] = isset($content_data['date_start']) ? $this->contentDate($content_data['date_start']) : null;
+                $data['date_end'] = isset($content_data['date_end']) ? $this->contentDate($content_data['date_end']) : null;
                 $data['image'] = (isset($content_data['image']) && $content_data['image']) ? $content_data['image'] : null;
-                $data['category'] = (isset($content_data['category']) && $content_data['category']) ? new MongoId($content_data['category']) : null;
+                $data['category'] = (isset($content_data['category']) && is_string($content_data['category']) && preg_match('/^[0-9a-f]{24}$/i', $content_data['category']) === 1) ? new MongoId($content_data['category']) : null;
                 $data['status'] = isset($content_data['status']) ? true : false;
                 $data['pin'] = (isset($content_data['pin']) && $content_data['pin']) ? $content_data['pin'] : null;
-                $data['tags'] = (isset($content_data['tags']) && $content_data['tags']) ? explode(',', $content_data['tags']) : null;
+                $data['tags'] = isset($content_data['tags']) ? $this->contentCsv($content_data['tags']) : null;
                 
                 $check_content = $this->Content_model->findContent($data['client_id'], $site_id, $content_data['node_id'], $content_id);
                 if(!$check_content){
@@ -290,11 +325,12 @@ class Content extends MY_Controller
 
                                     //set role of content
                                     if (isset($content_data['organize_role'][$i])) {
+                                        $role_string = $this->contentRoleString($content_data['organize_role'][$i]);
 
                                         $temp = $this->Content_model->getRole($data['client_id'], $data['site_id'], $content_id,
                                             $content_data['organize_node'][$i]);
 
-                                        $role_array = explode(",", $content_data['organize_role'][$i]);
+                                        $role_array = explode(",", $role_string);
 
                                         if (isset($temp[0]['roles'])) {
                                             // Unset role which different from input
@@ -308,7 +344,7 @@ class Content extends MY_Controller
                                         }
 
                                         // Set content role if input is not empty
-                                        if (!empty($content_data['organize_role'][$i])) {
+                                        if ($role_string) {
 
                                             foreach ($role_array as $role) {
 
@@ -394,22 +430,23 @@ class Content extends MY_Controller
             'sort' => 'sort_order'
         );
 
-        if (isset($_GET['filter_tags']) && !empty($_GET['filter_tags'])) {
+        if (isset($_GET['filter_tags']) && !empty($_GET['filter_tags']) && is_scalar($_GET['filter_tags'])) {
             $filter['filter_tags'] = $_GET['filter_tags'];
             $parameter_url .= "&filter_tags=" . $_GET['filter_tags'];
         }
 
-        if (isset($_GET['filter_id']) && !empty($_GET['filter_id'])) {
+        if (isset($_GET['filter_id']) && !empty($_GET['filter_id']) && is_scalar($_GET['filter_id'])) {
             $filter['filter_id'] = $_GET['filter_id'];
             $parameter_url .= "&filter_id=" . $_GET['filter_id'];
         }
 
-        if (isset($_GET['title']) && !empty($_GET['title'])) {
+        if (isset($_GET['title']) && !empty($_GET['title']) && is_scalar($_GET['title'])) {
             $filter['title'] = $_GET['title'];
             $parameter_url .= "&title=" . $_GET['title'];
         }
 
-        if (isset($_GET['category']) && !empty($_GET['category'])) {
+        if (isset($_GET['category']) && is_string($_GET['category']) &&
+            preg_match('/^[0-9a-f]{24}$/i', $_GET['category']) === 1) {
             $filter['category'] = $_GET['category'];
             $parameter_url .= "&category=" . $_GET['category'];
         }
@@ -718,6 +755,11 @@ class Content extends MY_Controller
         } else {
             $this->data['tags'] = null;
         }
+        if (is_string($this->data['tags']) && $this->data['tags'] !== '') {
+            $this->data['tags'] = explode(',', $this->data['tags']);
+        } elseif (!is_array($this->data['tags'])) {
+            $this->data['tags'] = array();
+        }
 
         if ($this->input->post('organize_id')) {
             $this->data['organize_id'] = $this->input->post('organize_id');
@@ -766,7 +808,13 @@ class Content extends MY_Controller
         $this->error['message'] = null;
 
         if ($this->input->post('selected') && $this->error['message'] == null) {
-            foreach ($this->input->post('selected') as $content_id) {
+            $selectedContents = $this->input->post('selected');
+
+            foreach ($selectedContents as $content_id) {
+                if (preg_match('/^[0-9a-f]{24}$/i', (string)$content_id) !== 1) {
+                    continue;
+                }
+
                 $this->Content_model->deleteContent($content_id);
             }
 
@@ -780,6 +828,12 @@ class Content extends MY_Controller
     public function push($content_id)
     {
         if ($this->session->userdata('user_id') && $this->input->is_ajax_request()) {
+            if (!is_string($content_id) || !preg_match('/^[0-9a-f]{24}$/i', $content_id)) {
+                $this->output->set_status_header('400');
+                echo json_encode(array('status' => 'error'));
+                return;
+            }
+
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!$this->validatePushAccess()) {
                     $this->output->set_status_header('401');
@@ -895,7 +949,7 @@ class Content extends MY_Controller
         }
     }
 
-    private function initiateContentPush($deviceTokens = array(), $notificationData, $type = null)
+    private function initiateContentPush($deviceTokens, $notificationData, $type = null)
     {
         $type = strtolower($type);
 
@@ -1218,6 +1272,34 @@ class Content extends MY_Controller
 
         $array_contents = json_decode($this->input->post('array_contents'),true);
         $array_details = $this->input->post('array_details');
+        if (!is_array($array_contents)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_contents as $content) {
+            if (!is_array($content) || !isset($content['node_id']) || !is_scalar($content['node_id']) || $content['node_id'] === '') {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
+        if (!is_array($array_details)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+        foreach ($array_contents as $content_index => $content) {
+            if (!isset($array_details[$content_index]) || !is_array($array_details[$content_index]) ||
+                !isset($array_details[$content_index]['title'], $array_details[$content_index]['summary'], $array_details[$content_index]['detail'])) {
+                $this->jsonErrorResponse();
+                return;
+            }
+            if (!is_scalar($array_details[$content_index]['title']) ||
+                !is_scalar($array_details[$content_index]['summary']) ||
+                !is_scalar($array_details[$content_index]['detail'])) {
+                $this->jsonErrorResponse();
+                return;
+            }
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $validation_result = array();
@@ -1264,13 +1346,14 @@ class Content extends MY_Controller
                                 $language_id = $chk_abbr['_id'];
                             }else{
                                 //no language and abbreviation found so create new language
+                                $language_tags = (isset($content_to_language['tags']) && is_array($content_to_language['tags'])) ? implode($content_to_language['tags']) : null;
                                 $language_id = $this->Language_model->insertLanguage(array(
                                     'client_id' => $client_id,
                                     'site_id' => $site_id,
                                     'language' =>$content_to_language['language'],
                                     'abbreviation' =>$content_to_language['abbreviation'],
                                     'status' => true,
-                                    'tags' => isset($content_to_language['tags']) ? implode($content_to_language['tags']) : null,
+                                    'tags' => $language_tags,
                                 ));
                             }
                         }
@@ -1298,11 +1381,28 @@ class Content extends MY_Controller
             return;
         }
 
+        $posted_contents = $this->input->post('array_contents');
+        if (!is_array($posted_contents)) {
+            $this->jsonErrorResponse();
+            return;
+        }
+
+        $content_ids = array();
+        foreach ($posted_contents as $content_id) {
+            if ($content_id == "on") {
+                continue;
+            }
+            if (!is_scalar($content_id) || preg_match('/^[0-9a-f]{24}$/i', (string)$content_id) !== 1) {
+                $this->jsonErrorResponse();
+                return;
+            }
+            $content_ids[] = (string)$content_id;
+        }
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $array_contents = array();
-        foreach($this->input->post('array_contents') as $content_id){
-            if($content_id == "on")continue;
+        foreach($content_ids as $content_id){
             $content_info = $this->Content_model->retrieveContent($client_id, $site_id, $content_id);
             $content_category_name = null;
             if(isset($content_info['category']) && $content_info['category']){

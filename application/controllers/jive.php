@@ -311,6 +311,8 @@ class Jive extends MY_Controller
             $this->session->set_userdata('total_places', $this->_api->totalPlaces());
         }
         $total = $this->session->userdata('total_places');
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
 
         foreach ($places->list as $place) {
             $this->data['places'][] = array(
@@ -322,8 +324,7 @@ class Jive extends MY_Controller
                 'viewCount' => $place->viewCount,
                 'creator' => isset($place->creator) ? (isset($place->creator->displayName) ? $place->creator->displayName : $place->creator->id) : '',
                 'status' => $place->status,
-                'selected' => ($this->input->post('selected') && in_array($place->placeID,
-                        $this->input->post('selected'))),
+                'selected' => in_array($place->placeID, $selected),
             );
         }
 
@@ -404,10 +405,12 @@ class Jive extends MY_Controller
                 $this->Jive_model->totalEvents($this->User_model->getSiteId()));
         }
         $total = $this->session->userdata('total_events');
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
 
         foreach ($events as $event) {
             $this->data['events'][] = array_merge($event, array(
-                'selected' => ($this->input->post('selected') && in_array($event['id'], $this->input->post('selected')))
+                'selected' => in_array($event['id'], $selected)
             ));
         }
 
@@ -487,6 +490,8 @@ class Jive extends MY_Controller
             $this->session->set_userdata('total_webhooks', $this->_api->totalWebhooks());
         }
         $total = $this->session->userdata('total_webhooks');
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
 
         foreach ($webhooks->list as $webhook) {
             $this->data['webhooks'][] = array(
@@ -494,8 +499,7 @@ class Jive extends MY_Controller
                 'events' => isset($webhook->events) && !empty($webhook->events) ? $webhook->events : 'place',
                 'object' => $webhook->object,
                 'callback' => $webhook->callback,
-                'selected' => ($this->input->post('selected') && in_array($webhook->webhookID,
-                        $this->input->post('selected'))),
+                'selected' => in_array($webhook->webhookID, $selected),
             );
         }
 

@@ -21,6 +21,31 @@ class Action extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
+    private function scalarPostValue($field)
+    {
+        $value = $this->input->post($field);
+        if (!is_scalar($value)) {
+            return null;
+        }
+
+        return trim((string)$value);
+    }
+
+    private function requiredFieldMessage($label)
+    {
+        $required = $this->lang->line('required');
+        if ($required) {
+            return sprintf($required, $this->lang->line($label));
+        }
+
+        return $this->lang->line($label);
+    }
+
+    private function invalidFieldMessage($label)
+    {
+        return $this->lang->line($label) . ' is invalid.';
+    }
+
     public function index()
     {
 
@@ -95,55 +120,70 @@ class Action extends MY_Controller
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 $data = $this->input->post();
-                $data['client_id'] = $this->User_model->getClientId();
-                $data['site_id'] = $this->User_model->getSiteId();
-
-                if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
-
-                    $exists = $this->Action_model->checkActionExists($data);
-                    if ($exists) {
-                        $data['action_id'] = $exists['_id'];
-
-                        if ($this->Action_model->checkActionClientExists($data)) {
-                            $this->Action_model->editActionToClient($data['action_id'], $data);
-                        } else {
-                            $this->Action_model->addActionToClient($data);
-                        }
-                    } else {
-                        $data['action_id'] = $this->Action_model->addAction($data);
-                        $this->Action_model->addActionToClient($data);
-                    }
-
-                } else {
-
-                    $exists = $this->Action_model->checkActionExists($data);
-                    if (!$exists) {
-
-                        if ($this->input->post('client_id') != 'admin_only') {
-//                            $this->load->model('Domain_model');
-                            $this->load->model('App_model');
-
-                            $data_admin = $this->input->post();
-                            $data_admin['action_id'] = $this->Action_model->addAction($data);
-                            $data_admin['site_id'] = $data['site_id'];
-                            $sites = $this->App_model->getAppsByClientId($data_admin);
-
-                            foreach ($sites as $site) {
-                                $data_admin['site_id'] = $site['_id'];
-                                $this->Action_model->addActionToClient($data_admin);
-                            }
-                        } else {
-                            $this->Action_model->addAction($data);
-                        }
-                    } else {
-                        //Tell them that the action already exists
-                    }
-
+                $name = $this->scalarPostValue('name');
+                if ($name === null || $name === '') {
+                    $this->data['message'] = $this->requiredFieldMessage('form_action_name');
+                }
+                $description = $this->scalarPostValue('description');
+                if ($this->data['message'] == null && $description === null) {
+                    $this->data['message'] = $this->invalidFieldMessage('form_description');
                 }
 
-                $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                if ($this->data['message'] == null) {
+                    $data['name'] = $name;
+                    $data['description'] = $description;
+                    $data['client_id'] = $this->User_model->getClientId();
+                    $data['site_id'] = $this->User_model->getSiteId();
 
-                redirect('/action', 'refresh');
+                    if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+
+                        $exists = $this->Action_model->checkActionExists($data);
+                        if ($exists) {
+                            $data['action_id'] = $exists['_id'];
+
+                            if ($this->Action_model->checkActionClientExists($data)) {
+                                $this->Action_model->editActionToClient($data['action_id'], $data);
+                            } else {
+                                $this->Action_model->addActionToClient($data);
+                            }
+                        } else {
+                            $data['action_id'] = $this->Action_model->addAction($data);
+                            $this->Action_model->addActionToClient($data);
+                        }
+
+                    } else {
+
+                        $exists = $this->Action_model->checkActionExists($data);
+                        if (!$exists) {
+
+                            if ($this->input->post('client_id') != 'admin_only') {
+//                            $this->load->model('Domain_model');
+                                $this->load->model('App_model');
+
+                                $data_admin = $this->input->post();
+                                $data_admin['name'] = $name;
+                                $data_admin['description'] = $description;
+                                $data_admin['action_id'] = $this->Action_model->addAction($data);
+                                $data_admin['site_id'] = $data['site_id'];
+                                $sites = $this->App_model->getAppsByClientId($data_admin);
+
+                                foreach ($sites as $site) {
+                                    $data_admin['site_id'] = $site['_id'];
+                                    $this->Action_model->addActionToClient($data_admin);
+                                }
+                            } else {
+                                $this->Action_model->addAction($data);
+                            }
+                        } else {
+                            //Tell them that the action already exists
+                        }
+
+                    }
+
+                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
+
+                    redirect('/action', 'refresh');
+                }
             }
         }
 
@@ -152,6 +192,10 @@ class Action extends MY_Controller
 
     public function update($action_id)
     {
+        if (!$this->isMongoId($action_id)) {
+            redirect('/action', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -193,20 +237,33 @@ class Action extends MY_Controller
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
                 $data = $this->input->post();
-
-                if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
-                    $client_id = $this->User_model->getClientId();
-                    $data['client_id'] = $client_id;
-                    $site_id = $this->User_model->getSiteId();
-                    $data['site_id'] = $site_id;
-                    $this->Action_model->editActionToClient($action_id, $data);
-                } else {
-                    $this->Action_model->editAction($action_id, $data);
-                    $this->Action_model->editActionToClient($action_id, $data);
+                $name = $this->scalarPostValue('name');
+                if ($name === null || $name === '') {
+                    $this->data['message'] = $this->requiredFieldMessage('form_action_name');
+                }
+                $description = $this->scalarPostValue('description');
+                if ($this->data['message'] == null && $description === null) {
+                    $this->data['message'] = $this->invalidFieldMessage('form_description');
                 }
 
-                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                redirect('action', 'refresh');
+                if ($this->data['message'] == null) {
+                    $data['name'] = $name;
+                    $data['description'] = $description;
+
+                    if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+                        $client_id = $this->User_model->getClientId();
+                        $data['client_id'] = $client_id;
+                        $site_id = $this->User_model->getSiteId();
+                        $data['site_id'] = $site_id;
+                        $this->Action_model->editActionToClient($action_id, $data);
+                    } else {
+                        $this->Action_model->editAction($action_id, $data);
+                        $this->Action_model->editActionToClient($action_id, $data);
+                    }
+
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                    redirect('action', 'refresh');
+                }
             }
         }
 
@@ -228,20 +285,31 @@ class Action extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-
-            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
-                foreach ($this->input->post('selected') as $action_id) {
-                    $this->Action_model->deleteActionClient($action_id);
-                }
-            } else {
-                foreach ($this->input->post('selected') as $action_id) {
-                    $this->Action_model->delete($action_id);
+            $selected_actions = $this->input->post('selected');
+            foreach ($selected_actions as $action_id) {
+                if (!$this->isMongoId($action_id)) {
+                    $this->error['warning'] = 'Invalid action id';
+                    break;
                 }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            if ($this->error['warning'] == null) {
+                if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+                    foreach ($selected_actions as $action_id) {
+                        $this->Action_model->deleteActionClient($action_id);
+                    }
+                } else {
+                    foreach ($selected_actions as $action_id) {
+                        $this->Action_model->delete($action_id);
+                    }
+                }
+            }
 
-            redirect('/action', 'refresh');
+            if ($this->error['warning'] == null) {
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+
+                redirect('/action', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -264,7 +332,7 @@ class Action extends MY_Controller
             'site_id' => $site_id,
             'sort' => 'name'
         );
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
         if (isset($_GET['filter_status'])) {
@@ -335,7 +403,7 @@ class Action extends MY_Controller
             'site_id' => $site_id,
             'sort' => 'sort_order'
         );
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
@@ -507,8 +575,18 @@ class Action extends MY_Controller
         }
     }
 
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
+    }
+
     public function increase_order($action_id)
     {
+        if (!$this->isMongoId($action_id)) {
+            $json = array('error' => 'Invalid action id');
+            $this->output->set_output(json_encode($json));
+            return;
+        }
 
         if ($this->User_model->getClientId()) {
             $client_id = $this->User_model->getClientId();
@@ -528,6 +606,11 @@ class Action extends MY_Controller
 
     public function decrease_order($action_id)
     {
+        if (!$this->isMongoId($action_id)) {
+            $json = array('error' => 'Invalid action id');
+            $this->output->set_output(json_encode($json));
+            return;
+        }
 
         if ($this->User_model->getClientId()) {
             $client_id = $this->User_model->getClientId();

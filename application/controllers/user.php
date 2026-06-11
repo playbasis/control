@@ -32,6 +32,21 @@ class User extends MY_Controller
         $this->lang->load("login", $lang['folder']);
     }
 
+    private function scalarPostValue($field)
+    {
+        $value = $this->input->post($field);
+        if (!is_scalar($value)) {
+            return null;
+        }
+
+        return trim((string)$value);
+    }
+
+    private function invalidFieldMessage($label)
+    {
+        return $this->lang->line($label) . ' is invalid.';
+    }
+
     public function index()
     {
 
@@ -127,7 +142,7 @@ class User extends MY_Controller
             'limit' => $config['per_page'],
             'start' => $offset
         );
-        if (isset($_GET['filter_name'])) {
+        if (isset($_GET['filter_name']) && is_scalar($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
@@ -165,11 +180,21 @@ class User extends MY_Controller
 
     public function update($user_id)
     {
+        if (!$this->isMongoId($user_id)) {
+            $this->session->set_flashdata('fail', 'Invalid user id');
+            redirect('/user', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'user/update/' . $user_id;
+
+        if (!$this->validateModify() || !$this->checkOwnerUser($user_id)) {
+            $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+            redirect('/user', 'refresh');
+        }
 
         //Rules need to be set
 
@@ -192,6 +217,12 @@ class User extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$this->validateModify()) {
                 $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+                redirect('user/update/' . $user_id, 'refresh');
+            }
+
+            $user_group = $this->input->post('user_group');
+            if ($user_group !== null && $user_group !== '' && !$this->isMongoId($user_group)) {
+                $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
                 redirect('user/update/' . $user_id, 'refresh');
             }
 
@@ -257,10 +288,22 @@ class User extends MY_Controller
                 redirect('user/insert', 'refresh');
             }
 
+            $user_group = $this->input->post('user_group');
+            if ($user_group !== null && $user_group !== '' && !$this->isMongoId($user_group)) {
+                $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                redirect('user/insert', 'refresh');
+            }
+
             $client_id = $this->User_model->getClientId();
             $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
             if ($this->form_validation->run()) {
+                $email = $this->scalarPostValue('email');
+                if ($email === null || $email === '') {
+                    $this->session->set_flashdata('fail', $this->invalidFieldMessage('form_email'));
+                    redirect('user/insert');
+                }
+
                 // get Plan limit_others.user
                 $user_limit = null;
                 try {
@@ -308,6 +351,17 @@ class User extends MY_Controller
 
     public function insert_ajax()
     {
+        if (!$this->User_model->isLogged()) {
+            $this->output->set_status_header('401');
+            $this->output->set_output(json_encode(array('error' => $this->lang->line('error_access'))));
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->output->set_status_header('403');
+            $this->output->set_output(json_encode(array('error' => $this->lang->line('error_permission'))));
+            return;
+        }
 
         //Rules need to be set
         // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
@@ -328,6 +382,22 @@ class User extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $this->data['message'] = null;
+            $client_id = $this->getInsertAjaxClientId();
+            $user_group_id = $this->input->post('user_group');
+
+            if (!$client_id) {
+                $this->data['message'] = $this->lang->line('error_permission');
+                $json['error'] = $this->data['message'];
+            } elseif (!$this->isValidObjectId($user_group_id) ||
+                !$this->User_group_to_client_model->getUserGroupInfo($client_id, $user_group_id)
+            ) {
+                $this->data['message'] = $this->lang->line('error_permission');
+                $json['error'] = $this->data['message'];
+            } else {
+                $_POST['client_id'] = $client_id;
+                $_POST['user_group'] = $user_group_id;
+                $_POST['status'] = '0';
+            }
 
             /*if($this->checkLimitUser($this->input->post('client_id'))){
                 $this->data['message'] = $this->lang->line('error_limit');
@@ -336,25 +406,30 @@ class User extends MY_Controller
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
 
-                $email = $this->input->post('email');
-                $data['email'] = $email;
-                $check_email = $this->User_model->findEmail($data);
-
-                if (!$check_email) {
-                    $user_id = $this->User_model->insertUser();
-
-                    if ($user_id) {
-                        $data = array(
-                            'client_id' => $this->input->post('client_id'),
-                            'user_id' => $user_id
-                        );
-                        $this->User_model->addUserToClient($data);
-                    }
-
-                    $this->session->data['success'] = $this->lang->line('text_success');
-                    $json['success'] = $this->lang->line('text_success');
+                $email = $this->scalarPostValue('email');
+                if ($email === null || $email === '') {
+                    $json['error'] = $this->invalidFieldMessage('form_email');
                 } else {
-                    $json['error'] = 'The Email provided already exists';
+                    $data['email'] = $email;
+                    $check_email = $this->User_model->findEmail($data);
+
+                    if (!$check_email) {
+                        $user_id = $this->User_model->insertUser();
+
+                        if ($user_id) {
+                            $data = array(
+                                'client_id' => $this->input->post('client_id'),
+                                'user_id' => $user_id
+                            );
+                            $this->User_model->addUserToClient($data);
+                            $this->session->data['success'] = $this->lang->line('text_success');
+                            $json['success'] = $this->lang->line('text_success');
+                        } else {
+                            $json['error'] = $this->lang->line('text_fail');
+                        }
+                    } else {
+                        $json['error'] = 'The Email provided already exists';
+                    }
                 }
 
             } else {
@@ -363,6 +438,34 @@ class User extends MY_Controller
         }
 
         $this->output->set_output(json_encode($json));
+    }
+
+    private function getInsertAjaxClientId()
+    {
+        $client_id = $this->User_model->getClientId();
+        if ($client_id) {
+            return (string)$client_id;
+        }
+
+        $client_id = $this->input->post('client_id');
+        if ($this->isValidObjectId($client_id)) {
+            return (string)$client_id;
+        }
+
+        return null;
+    }
+
+    private function isValidObjectId($value)
+    {
+        if (is_object($value) && method_exists($value, '__toString')) {
+            $value = (string)$value;
+        } elseif (is_scalar($value)) {
+            $value = (string)$value;
+        } else {
+            return false;
+        }
+
+        return preg_match('/^[0-9a-f]{24}$/i', $value) === 1;
     }
 
     public function delete()
@@ -380,10 +483,18 @@ class User extends MY_Controller
         }
 
 
+        if ($this->input->post('selected') && !is_array($this->input->post('selected'))) {
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             $selectedUsers = $this->input->post('selected');
 
             foreach ($selectedUsers as $selectedUser) {
+                if (preg_match('/^[0-9a-f]{24}$/i', (string)$selectedUser) !== 1) {
+                    continue;
+                }
+
                 $this->User_model->deleteUser($selectedUser);
             }
 
@@ -400,11 +511,21 @@ class User extends MY_Controller
         $json = array();
         $this->error['warning'] = null;
 
+        if (!$this->validateModify()) {
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
         if ($this->input->post('user_id') && $this->error['warning'] == null) {
 
-            if ($this->checkOwnerUser($this->input->post('user_id'))) {
+            $user_id = $this->input->post('user_id');
+            if (preg_match('/^[0-9a-f]{24}$/i', (string)$user_id) !== 1) {
+                $this->output->set_output(json_encode($json));
+                return;
+            }
 
-                $this->User_model->deleteUser($this->input->post('user_id'));
+            if ($this->checkOwnerUser($user_id)) {
+
+                $this->User_model->deleteUser($user_id);
             }
 
             $this->session->data['success'] = $this->lang->line('text_success_delete');
@@ -417,6 +538,10 @@ class User extends MY_Controller
 
     public function getForm($user_id = 0)
     {
+        if ($user_id != 0 && !$this->isMongoId($user_id)) {
+            $this->session->set_flashdata('fail', 'Invalid user id');
+            redirect('/user', 'refresh');
+        }
 
         if ((isset($user_id)) && $user_id != 0) {
             $user_info = $this->User_model->getUserInfo($user_id);
@@ -456,13 +581,8 @@ class User extends MY_Controller
 
         $client_id = $this->User_model->getClientId();
 
-        if ($this->input->get('filter_name')) {
-
-            if ($this->input->get('filter_name')) {
-                $filter_name = $this->input->get('filter_name');
-            } else {
-                $filter_name = null;
-            }
+        $filter_name = $this->input->get('filter_name');
+        if ($filter_name && is_scalar($filter_name)) {
 
             $data = array(
                 'filter_name' => $filter_name
@@ -524,6 +644,11 @@ class User extends MY_Controller
         }
     }
 
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
+    }
+
     private function checkOwnerUser($user_id)
     {
 
@@ -531,7 +656,9 @@ class User extends MY_Controller
 
         if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
 
-            $users = $this->User_model->getUserByClientId($this->User_model->getClientId());
+            $users = $this->User_model->getUserByClientId(array(
+                'client_id' => $this->User_model->getClientId()
+            ));
 
             $has = false;
 
@@ -608,7 +735,10 @@ class User extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             require_once(APPPATH . '/libraries/jcryption/sqAES.php');
             require_once(APPPATH . '/libraries/jcryption/JCryption.php');
-            JCryption::decrypt();
+            if (isset($_POST[JCryption::POST_KEY])) {
+                JCryption::decrypt();
+            }
+            $format = isset($_REQUEST['format']) ? $_REQUEST['format'] : null;
             $this->data['message'] = null;
             if ($this->form_validation->run()) {
                 $this->load->model('User_model');
@@ -627,7 +757,7 @@ class User extends MY_Controller
                     } else {
                         $redirect = '/';
                     }
-                    if ($_REQUEST['format'] == 'json') {
+                    if ($format == 'json') {
                         echo json_encode(array('status' => 'success', 'message' => ''));
                         exit();
                     }
@@ -639,13 +769,13 @@ class User extends MY_Controller
                 }else{
                     $msg_alert = $this->lang->line('error_login');
                 }
-                if ($_REQUEST['format'] == 'json') {
+                if ($format == 'json') {
                     echo json_encode(array('status' => 'error', 'message' => $msg_alert));
                     exit();
                 }
                 $this->data['message'] = $msg_alert;
             } else {
-                if ($_REQUEST['format'] == 'json') {
+                if ($format == 'json') {
                     echo json_encode(array('status' => 'error', 'message' => validation_errors()));
                     exit();
                 }
@@ -841,34 +971,40 @@ class User extends MY_Controller
                 if (empty($plan_id)) {
                     $plan_id = FREE_PLAN;
                 } // default is free plan
-                $plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
-
-                if ($this->form_validation->run()) {
-
-                    if ($user_id = $this->User_model->insertUser()) { // [1] firstly insert a user into "user"
-                        $user_info = $this->User_model->getUserInfo($user_id);
-
-                        $client_id = $this->Client_model->insertClient($this->input->post(),
-                            $plan); // [2] then insert a new client into "playbasis_client"
-
-                        $data = $this->input->post();
-                        $data['client_id'] = $client_id;
-                        $data['user_id'] = $user_info['_id'];
-                        $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
-
-                        $this->Client_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
-                            'client_id' => $client_id->{'$id'},
-                            'plan_id' => $plan['_id']->{'$id'},
-                            'site_id' => null,
-                        ));
-
-                        $success = true;
-                        $message = $this->lang->line('text_email_sent');
-                    } else {
-                        $message = $this->lang->line('text_fail');
-                    }
+                if (!$this->isMongoId($plan_id)) {
+                    $message = "Invalid plan id";
                 } else {
-                    $message = strip_tags(validation_errors());
+                    $plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
+
+                    if (!$plan) {
+                        $message = "Invalid plan id";
+                    } elseif ($this->form_validation->run()) {
+
+                        if ($user_id = $this->User_model->insertUser()) { // [1] firstly insert a user into "user"
+                            $user_info = $this->User_model->getUserInfo($user_id);
+
+                            $client_id = $this->Client_model->insertClient($this->input->post(),
+                                $plan); // [2] then insert a new client into "playbasis_client"
+
+                            $data = $this->input->post();
+                            $data['client_id'] = $client_id;
+                            $data['user_id'] = $user_info['_id'];
+                            $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
+
+                            $this->Client_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
+                                'client_id' => $client_id->{'$id'},
+                                'plan_id' => $plan['_id']->{'$id'},
+                                'site_id' => null,
+                            ));
+
+                            $success = true;
+                            $message = $this->lang->line('text_email_sent');
+                        } else {
+                            $message = $this->lang->line('text_fail');
+                        }
+                    } else {
+                        $message = strip_tags(validation_errors());
+                    }
                 }
             } else {
                 $message = "Unsupported HTTP method";
@@ -889,7 +1025,17 @@ class User extends MY_Controller
     {
         $user_id = $this->input->get('i');
 
-        $user_info = $this->User_model->getUserInfo(new MongoId($user_id));
+        if (!$this->isMongoId($user_id)) {
+            $this->renderInvalidSignupLink();
+            return;
+        }
+
+        $user_info = $this->User_model->getUserInfo($user_id);
+
+        if (!$user_info) {
+            $this->renderInvalidSignupLink();
+            return;
+        }
 
         $this->data['user_before_info'] = $user_info;
         $this->data['url_resend'] = site_url('user/resend_signup_email?i=' . $user_id . "");
@@ -906,7 +1052,17 @@ class User extends MY_Controller
     {
         $user_id = $this->input->get('i');
 
-        $user_info = $this->User_model->getUserInfo(new MongoId($user_id));
+        if (!$this->isMongoId($user_id)) {
+            $this->renderInvalidSignupLink();
+            return;
+        }
+
+        $user_info = $this->User_model->getUserInfo($user_id);
+
+        if (!$user_info) {
+            $this->renderInvalidSignupLink();
+            return;
+        }
 
         $this->load->library('parser');
         $this->load->library('email');
@@ -924,6 +1080,14 @@ class User extends MY_Controller
         $this->email($user_info['email'], '[Playbasis] Please activate your account', $htmlMessage);
 
         redirect('user/signup_finish?i=' . $user_id, 'refresh');
+    }
+
+    private function renderInvalidSignupLink()
+    {
+        $this->data['topic_message'] = 'Your validation key is invalid,';
+        $this->data['message'] = 'Please contact Playbasis.';
+        $this->data['main'] = 'partial/something_wrong';
+        $this->render_page('template_beforelogin');
     }
 
     public function list_pending_users()
@@ -961,6 +1125,10 @@ class User extends MY_Controller
         if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
             if ($this->input->post('selected') && $this->error['warning'] == null) {
                 foreach ($this->input->post('selected') as $user_id) {
+                    if (preg_match('/^[0-9a-f]{24}$/i', (string)$user_id) !== 1) {
+                        continue;
+                    }
+
                     $initial_password = get_random_password(8, 8);
                     $this->User_model->insertNewPassword($user_id, $initial_password);
                     $this->User_model->enableUser($user_id);
@@ -968,12 +1136,17 @@ class User extends MY_Controller
                     if ($user) {
                         /* find plan of this user */
                         $client_id = $this->User_model->getClientIdByUserId($user_id);
+                        $price = DEFAULT_PLAN_PRICE;
                         $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-                        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-                        if (!array_key_exists('price', $plan)) {
-                            $plan['price'] = DEFAULT_PLAN_PRICE;
+                        if (is_array($plan_subscription) && array_key_exists('plan_id', $plan_subscription)) {
+                            $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+                            if (is_array($plan)) {
+                                if (!array_key_exists('price', $plan)) {
+                                    $plan['price'] = DEFAULT_PLAN_PRICE;
+                                }
+                                $price = $plan['price'];
+                            }
                         }
-                        $price = $plan['price'];
                         $free_flag = $price <= 0;
                         $paid_flag = !$free_flag;
                         /* proceed by sending email */
@@ -1259,7 +1432,8 @@ class User extends MY_Controller
         $client_id = $branch['client_id'];
         $site_id = $branch['site_id'];
         $merchant = $this->Merchant_model->findMerchantByBranchId($branch_id);
-        $group_list = array_map('user_index_goods_group', $this->Merchant_model->findGoodsByBranchId($branch_id));
+        $branch_goods_list = $this->normalizeMerchantList($this->Merchant_model->findGoodsByBranchId($branch_id));
+        $group_list = array_map('user_index_goods_group', $branch_goods_list);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = $this->input->post();
             $group = isset($data['group']) ? $data['group'] : null;
@@ -1278,8 +1452,8 @@ class User extends MY_Controller
                 }
             }
 
-            $goods_list = array_map('user_index_goods_id',
-                $this->Goods_model->listGoodsByGroupAndCode($group, $coupon, array('goods_id')));
+            $goods_result = $this->normalizeMerchantList($this->Goods_model->listGoodsByGroupAndCode($group, $coupon, array('goods_id')));
+            $goods_list = array_map('user_index_goods_id', $goods_result);
             if (!$goods_list) {
                 if ($this->input->post('format') == 'json') {
                     /* invalid = FAIL */
@@ -1292,9 +1466,11 @@ class User extends MY_Controller
             }
             $redeemed_goods_list = $this->Goods_model->listRedeemedGoods($goods_list,
                 array('goods_id', 'cl_player_id', 'pb_player_id'));
+            $redeemed_goods_list = $this->normalizeMerchantList($redeemed_goods_list);
             $goods_list_redeemed = array_map('user_index_goods_id', $redeemed_goods_list);
             $verified_goods_list = $this->Goods_model->listVerifiedGoods($goods_list,
                 array('goods_id', 'branch', 'date_added'));
+            $verified_goods_list = $this->normalizeMerchantList($verified_goods_list);
             $goods_list_verified = array_map('user_index_goods_id', $verified_goods_list);
             $goods_list_ok = array_diff($goods_list_redeemed,
                 $goods_list_verified); // coupon is redeemed but not yet exercised (found record in "playbasis_goods_to_player", not "playbasis_merchant_goodsgroup_redeem_log")
@@ -1582,6 +1758,11 @@ class User extends MY_Controller
         throw new Exception('Cannot find goods record given goods_id: ' . $goods_id);
     }
 
+    private function normalizeMerchantList($value)
+    {
+        return is_array($value) ? $value : array();
+    }
+
     private function email($to, $subject, $message)
     {
         $this->amazon_ses->from(EMAIL_FROM, 'Playbasis');
@@ -1833,10 +2014,10 @@ class User extends MY_Controller
             $site_slug = $client == $cms['client_id'] ? $site_slug : false;
 
             $userGroup = $this->User_group_model->getUserGroupInfo($user['user_group_id']);
-            $permission = $userGroup['permission'];
-            $modify = $permission['modify'];
+            $permission = isset($userGroup['permission']) && is_array($userGroup['permission']) ? $userGroup['permission'] : array();
+            $modify = isset($permission['modify']) && is_array($permission['modify']) ? $permission['modify'] : array();
 
-            $editor = array_search('cms', $modify) != -1 ? true : false;
+            $editor = array_search('cms', $modify) !== false ? true : false;
 
             $role = $editor ? 'editor' : 'contributor';
             $response = array(

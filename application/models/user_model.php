@@ -63,7 +63,15 @@ class User_model extends MY_Model
     {
         $this->set_site_mongodb($this->site_id);
 
+        $user_id = $this->normalizeUserId($user_id);
+        if ($user_id === null || !$this->canModifyUser($user_id)) {
+            return false;
+        }
+
         $find_salt = $this->getUserInfo($user_id);
+        if (!$find_salt) {
+            return false;
+        }
         $salt = $find_salt['salt'];
 
         $check_email = isset($data['email']) && !is_null($data['email']) && !$this->findEmail($data);
@@ -129,7 +137,16 @@ class User_model extends MY_Model
     {
         $this->set_site_mongodb($this->site_id);
 
-        $regex = new MongoRegex("/^" . preg_quote(utf8_strtolower($this->input->post('email'))) . "$/i");
+        $email = $this->input->post('email');
+        if (!is_scalar($email)) {
+            return false;
+        }
+        $email = trim((string)$email);
+        if ($email === '') {
+            return false;
+        }
+
+        $regex = new MongoRegex("/^" . preg_quote(utf8_strtolower($email)) . "$/i");
         $this->mongo_db->where('username', $regex);
 
         if ($this->mongo_db->count('user') == 0) {
@@ -140,9 +157,8 @@ class User_model extends MY_Model
             }
 
             // $username = $this->input->post('username');
-            $username = $this->input->post('email');
+            $username = $email;
             $firstname = $this->input->post('firstname');
-            $email = $this->input->post('email');
             $lastname = $this->input->post('lastname');
 
             if ($this->User_model->getClientId()) {
@@ -416,10 +432,49 @@ class User_model extends MY_Model
     {
         $this->set_site_mongodb($this->site_id);
 
+        $user_id = $this->normalizeUserId($user_id);
+        if ($user_id === null || !$this->canModifyUser($user_id)) {
+            return false;
+        }
+
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->delete("user");
         $this->mongo_db->where('user_id', new MongoID($user_id));
-        $this->mongo_db->delete("user_to_client");
+        return $this->mongo_db->delete("user_to_client");
+    }
+
+    private function canModifyUser($user_id)
+    {
+        $user_id = $this->normalizeUserId($user_id);
+        if ($user_id === null) {
+            return false;
+        }
+
+        if ($this->getUserGroupId() == $this->getAdminGroupID()) {
+            return true;
+        }
+
+        if (!$this->client_id) {
+            return false;
+        }
+
+        $this->mongo_db->where('client_id', new MongoID($this->client_id));
+        $this->mongo_db->where('user_id', new MongoID($user_id));
+
+        return $this->mongo_db->count("user_to_client") > 0;
+    }
+
+    private function normalizeUserId($user_id)
+    {
+        if (is_object($user_id) && method_exists($user_id, '__toString')) {
+            $user_id = (string)$user_id;
+        } elseif (is_scalar($user_id)) {
+            $user_id = (string)$user_id;
+        } else {
+            return null;
+        }
+
+        return preg_match('/^[0-9a-f]{24}$/i', $user_id) === 1 ? $user_id : null;
     }
 
     public function login($u, $p, &$is_locked = false)
@@ -430,6 +485,9 @@ class User_model extends MY_Model
         $this->mongo_db->where('username', $regex);
         $this->mongo_db->limit(1);
         $Q = $this->mongo_db->get('user');
+        if (empty($Q)) {
+            return;
+        }
         $user_info = $Q[0];
         $is_locked = (isset($user_info['locked']) && $user_info['locked']) ? $user_info['locked'] : false;
 
@@ -834,7 +892,7 @@ class User_model extends MY_Model
 
     public function hasPermission($key, $value)
     {
-        if (isset($this->permission[$key])) {
+        if (is_array($this->permission) && isset($this->permission[$key]) && is_array($this->permission[$key])) {
             return in_array($value, $this->permission[$key]);
         } else {
             return false;
@@ -912,6 +970,10 @@ class User_model extends MY_Model
     public function updateSiteId($site_id)
     {
         $this->set_site_mongodb($this->site_id);
+
+        if (!$site_id || !preg_match('/^[0-9a-f]{24}$/i', (string)$site_id)) {
+            return true;
+        }
 
         if ($this->checkSiteId($site_id) > 0) {
             $this->site_id = new MongoId($site_id);

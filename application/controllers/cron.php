@@ -78,8 +78,19 @@ class Cron extends CI_Controller
         $this->load->library('parser');
     }
 
+    private function requireCliRequest()
+    {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+    }
+
     public function notifyInactiveClients()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $today = time();
         $refDate = strtotime("-" . ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS . " day", $today);
         $clients = $this->client_model->listAllActiveClients($refDate);
@@ -120,6 +131,10 @@ class Cron extends CI_Controller
 
     public function notifyFreeActiveClientsToSubscribe()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $today = time();
         $refDate = strtotime("-" . ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS . " day", $today);
         $clients = $this->client_model->listAllActiveClients($refDate);
@@ -175,6 +190,10 @@ class Cron extends CI_Controller
 
     public function notifyNearLimitUsage()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $sites = $this->client_model->listAllActivesSites();
         if ($sites) {
             foreach ($sites as $site) {
@@ -237,6 +256,10 @@ class Cron extends CI_Controller
 
     public function remindClientsToSetupSubscription()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $clients = $this->client_model->listClientsWithoutDateBilling();
         if ($clients) {
             foreach ($clients as $client) {
@@ -288,6 +311,10 @@ class Cron extends CI_Controller
 
     public function remindClientsEndOfTrialPeriod()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $clients = $this->client_model->listClientsWithDateBilling();
         if ($clients) {
             foreach ($clients as $client) {
@@ -353,6 +380,10 @@ class Cron extends CI_Controller
 
     public function notifyClientsShutdownAPI()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $today = time();
         $clients = $this->client_model->listExpiredClients($today);
         if ($clients) {
@@ -396,6 +427,10 @@ class Cron extends CI_Controller
 
     public function archiveWebServiceLog()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         set_time_limit(0);
         $results = $this->service_model->archive(MONTHS_TO_STORE_IN_SERVICE_LOG, S3_BUCKET, S3_FOLDER);
         print('Total records archived = ' . $results);
@@ -432,6 +467,10 @@ class Cron extends CI_Controller
 
     public function processActionLogStat()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         set_time_limit(MAX_EXECUTION_TIME);
         ini_set('memory_limit', MAX_MEMORY);
 
@@ -557,6 +596,10 @@ class Cron extends CI_Controller
 
     public function pullFullContact()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $results = $this->player_model->findRecentPlayers(DAYS_TO_BECOME_ACTIVE);
         $emails = $this->player_model->findDistinctEmails($results);
         $emails = $this->player_model->findNewEmails($emails);
@@ -573,6 +616,10 @@ class Cron extends CI_Controller
 
     public function pullFullContactForDemo()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $results = $this->player_model->findPlayersBySiteId(new MongoId(DEMO_SITE_ID));
         $emails = array_map('index_email', $results);
         $emails = $this->player_model->findNewEmails($emails);
@@ -590,6 +637,10 @@ class Cron extends CI_Controller
     /* Improve quality of stored FullContact records by using Facebook/Twitter ID */
     public function improveFullContactForDemo()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $results = $this->player_model->findPlayersBySiteId(new MongoId(DEMO_SITE_ID));
         foreach ($results as $result) {
             print($result['email'] . "\n");
@@ -1148,6 +1199,10 @@ class Cron extends CI_Controller
 
     public function notifyClientsToSetupMobile()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $clients = $this->client_model->listAllActiveClientsWithoutMobile();
         if ($clients) {
             foreach ($clients as $client) {
@@ -1301,6 +1356,9 @@ class Cron extends CI_Controller
 
     public function processLeaderBoard()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
 
         // Step 1. get leaderboard configuration
         $result = array();
@@ -1473,6 +1531,10 @@ class Cron extends CI_Controller
 
     public function processImportTransaction()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
@@ -1564,6 +1626,10 @@ class Cron extends CI_Controller
 
     public function processImportPlayer()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
@@ -1619,6 +1685,10 @@ class Cron extends CI_Controller
 
     public function processImportStoreOrg()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
@@ -1686,6 +1756,10 @@ class Cron extends CI_Controller
 
     public function processImportContent()
     {
+        if (!$this->input->is_cli_request()) {
+            show_error('This cron job can only be run from the command line.', 403);
+        }
+
         $this->load->library('Rest');
 
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Import');
@@ -2547,6 +2621,8 @@ class Cron extends CI_Controller
 
     public function processGameItemDeduct()
     {
+        $this->requireCliRequest();
+
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Game');
 
         if ($clients) {
@@ -2623,6 +2699,8 @@ class Cron extends CI_Controller
 
     public function processGameReset()
     {
+        $this->requireCliRequest();
+
         $clients = $this->client_model->listClientActiveFeatureByFeatureName('Game');
 
         if ($clients) {
@@ -2702,6 +2780,8 @@ class Cron extends CI_Controller
 
     public function processTokenDeductByCampaign()
     {
+        $this->requireCliRequest();
+
         $campaign = $this->campaign_model->getActiveCampaign(new MongoId(CLIENT_ID_HSBCHK), new MongoId(SITE_ID_HSBCHK));
 
         if (!$campaign) {

@@ -90,7 +90,15 @@ class Client extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_email_is_used');
             }
 
-            if ($this->form_validation->run() && $this->data['message'] == null) {
+            $form_valid = $this->form_validation->run();
+
+            if ($form_valid && $this->data['message'] == null &&
+                !$this->isValidMongoId($this->input->post('plan_id'))
+            ) {
+                $this->data['message'] = $this->lang->line('error_required');
+            }
+
+            if ($form_valid && $this->data['message'] == null) {
 
                 $client_id = $this->Client_model->addClient($this->input->post());
 
@@ -115,6 +123,10 @@ class Client extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        if (!$this->isValidMongoId($client_id)) {
+            redirect('/client', 'refresh');
+            return;
+        }
         $this->data['form'] = 'client/update/' . $client_id;
 
         $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'),
@@ -136,7 +148,15 @@ class Client extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if ($this->form_validation->run() && $this->data['message'] == null) {
+            $form_valid = $this->form_validation->run();
+
+            if ($form_valid && $this->data['message'] == null &&
+                !$this->isValidMongoId($this->input->post('plan_id'))
+            ) {
+                $this->data['message'] = $this->lang->line('error_required');
+            }
+
+            if ($form_valid && $this->data['message'] == null) {
 
                 $this->Client_model->editClient($client_id, $this->input->post());
 
@@ -172,8 +192,22 @@ class Client extends MY_Controller
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
-        if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $client_id) {
+        $selected = $this->input->post('selected');
+        if ($selected && $this->error['warning'] == null) {
+            if (!is_array($selected)) {
+                $this->error['warning'] = $this->lang->line('error_required');
+            } else {
+                foreach ($selected as $client_id) {
+                    if (!is_scalar($client_id) || !preg_match('/^[0-9a-f]{24}$/i', (string)$client_id)) {
+                        $this->error['warning'] = $this->lang->line('error_required');
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($selected && $this->error['warning'] == null) {
+            foreach ($selected as $client_id) {
                 if ($this->checkOwnerClient($client_id)) {
                     $this->Client_model->deleteClient($client_id);
                     $this->Client_model->deleteClientPersmission($client_id);
@@ -217,21 +251,21 @@ class Client extends MY_Controller
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
-        if ($this->input->get('filter_name')) {
+        if ($this->input->get('filter_name') && is_scalar($this->input->get('filter_name'))) {
             $filter_name = $this->input->get('filter_name');
             $parameter_url .= "&filter_name=" . $filter_name;
         } else {
             $filter_name = null;
         }
 
-        if ($this->input->get('sort')) {
+        if ($this->input->get('sort') && is_scalar($this->input->get('sort'))) {
             $sort = $this->input->get('sort');
             $parameter_url .= "&sort=" . $sort;
         } else {
             $sort = 'first_name';
         }
 
-        if ($this->input->get('order')) {
+        if ($this->input->get('order') && is_scalar($this->input->get('order'))) {
             $order = $this->input->get('order');
             $parameter_url .= "&order=" . $order;
         } else {
@@ -515,6 +549,11 @@ class Client extends MY_Controller
         }
     }
 
+    private function isValidMongoId($id)
+    {
+        return preg_match('/^[0-9a-f]{24}$/i', (string)$id) === 1;
+    }
+
     private function checkOwnerClient($clientId)
     {
 
@@ -637,9 +676,14 @@ class Client extends MY_Controller
         $this->load->model('Plan_model');
 
         $this->data['users'] = array();
+        $client_id = $this->input->get('client_id');
+        if (!preg_match('/^[0-9a-f]{24}$/i', (string)$client_id)) {
+            redirect('/client', 'refresh');
+            return;
+        }
 
         $data = array(
-            'client_id' => $this->input->get('client_id'),
+            'client_id' => $client_id,
         );
 
         $results = $this->User_model->getUserByClientId($data);
@@ -665,7 +709,7 @@ class Client extends MY_Controller
         $this->data['list_client_id'] = $data['client_id'];
         //$this->data['groups'] = $this->User_model->getUserGroups();
 
-        $this->data['groups'] = $this->User_group_to_client_model->fetchAllUserGroups($this->input->get('client_id'));
+        $this->data['groups'] = $this->User_group_to_client_model->fetchAllUserGroups($client_id);
 
 
         $this->load->vars($this->data);

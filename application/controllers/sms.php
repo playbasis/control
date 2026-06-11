@@ -21,6 +21,20 @@ class Sms extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
+    private function normalizeTemplatePost()
+    {
+        foreach (array('name', 'body', 'sort_order', 'status') as $field) {
+            if (isset($_POST[$field]) && !is_scalar($_POST[$field])) {
+                $_POST[$field] = '';
+            }
+        }
+    }
+
+    private function templateBodyText($body)
+    {
+        return is_scalar($body) ? htmlentities((string)$body) : '';
+    }
+
     public function index()
     {
         if (!$this->validateAccess()) {
@@ -67,6 +81,7 @@ class Sms extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -100,6 +115,10 @@ class Sms extends MY_Controller
 
     public function update($template_id)
     {
+        if (!$this->isMongoId($template_id)) {
+            redirect('/sms', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -114,6 +133,7 @@ class Sms extends MY_Controller
             'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $this->normalizeTemplatePost();
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -161,11 +181,26 @@ class Sms extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $template_id) {
-                $this->Sms_model->deleteTemplate($template_id);
+            $selected_templates = $this->input->post('selected');
+            if (!is_array($selected_templates)) {
+                $selected_templates = array($selected_templates);
             }
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/sms', 'refresh');
+
+            foreach ($selected_templates as $template_id) {
+                if (!$this->isMongoId($template_id)) {
+                    $this->error['warning'] = 'Invalid template id';
+                    break;
+                }
+            }
+
+            if ($this->error['warning'] == null) {
+                foreach ($selected_templates as $template_id) {
+                    $this->Sms_model->deleteTemplate($template_id);
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/sms', 'refresh');
+            }
         }
 
         $this->getList(0);
@@ -185,6 +220,10 @@ class Sms extends MY_Controller
 
         $this->data['templates'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+        $selected_templates = $this->input->post('selected');
+        if (!is_array($selected_templates)) {
+            $selected_templates = array();
+        }
 
         $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order');
 
@@ -199,8 +238,7 @@ class Sms extends MY_Controller
                     'body' => $template['body'],
                     'status' => $template['status'],
                     'sort_order' => $template['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($template['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($template['_id'], $selected_templates),
                 );
             }
         }
@@ -269,6 +307,10 @@ class Sms extends MY_Controller
     {
         $info = null;
         if (isset($template_id) && $template_id) {
+            if (!$this->isMongoId($template_id)) {
+                redirect('/sms', 'refresh');
+            }
+
             $info = $this->Sms_model->getTemplate($template_id);
         }
 
@@ -281,9 +323,9 @@ class Sms extends MY_Controller
         }
 
         if ($this->input->post('body')) {
-            $this->data['body'] = htmlentities($this->input->post('body'));
+            $this->data['body'] = $this->templateBodyText($this->input->post('body'));
         } elseif (!empty($info)) {
-            $this->data['body'] = htmlentities($info['body']);
+            $this->data['body'] = $this->templateBodyText($info['body']);
         } else {
             $this->data['body'] = '';
         }
@@ -321,18 +363,33 @@ class Sms extends MY_Controller
 
     public function increase_order($template_id)
     {
+        if (!$this->isMongoId($template_id)) {
+            $this->output->set_output(json_encode(array('success' => false)));
+            return;
+        }
+
         $success = $this->Sms_model->increaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
     public function decrease_order($template_id)
     {
+        if (!$this->isMongoId($template_id)) {
+            $this->output->set_output(json_encode(array('success' => false)));
+            return;
+        }
+
         $success = $this->Sms_model->decreaseSortOrder($template_id);
         $this->output->set_output(json_encode(array('success' => $success)));
     }
 
     public function setup()
     {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -353,6 +410,11 @@ class Sms extends MY_Controller
         }
 
         if ($this->input->post()) {
+            if (!$this->validateModify()) {
+                echo "<script>alert('" . $this->lang->line('error_permission') . "'); history.go(-1);</script>";
+                die();
+            }
+
             if ($this->form_validation->run()) {
 
                 $sms_data = $this->input->post();
@@ -399,6 +461,11 @@ class Sms extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 }
 

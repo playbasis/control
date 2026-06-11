@@ -72,6 +72,7 @@ class Plan extends MY_Controller
         $this->form_validation->set_rules('limit_num_client', $this->lang->line('entry_limit_num_clients'), 'numeric');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $this->normalizePlanPost();
 
             $this->data['message'] = null;
 
@@ -107,6 +108,10 @@ class Plan extends MY_Controller
 
     public function update($plan_id)
     {
+        if (!$this->isMongoId($plan_id)) {
+            redirect('/plan', 'refresh');
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -124,6 +129,7 @@ class Plan extends MY_Controller
             'trim|numeric');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+            $this->normalizePlanPost();
 
             $this->data['message'] = null;
 
@@ -176,32 +182,47 @@ class Plan extends MY_Controller
         $this->load->model('Client_model');
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $plan_id) {
+            $selected_plans = $this->input->post('selected');
+            if (!is_array($selected_plans)) {
+                $selected_plans = array($selected_plans);
+            }
 
-                $all_clients_in_plan = $this->Plan_model->getClientByPlan($plan_id);
+            foreach ($selected_plans as $plan_id) {
+                if (!$this->isMongoId($plan_id)) {
+                    $this->error['warning'] = 'Invalid plan id';
+                    break;
+                }
+            }
 
-                $c = array();
+            if ($this->error['warning'] == null) {
+                foreach ($selected_plans as $plan_id) {
 
-                foreach ($all_clients_in_plan as $client) {
-                    $the_client_id = $client['client_id'];
+                    $all_clients_in_plan = $this->Plan_model->getClientByPlan($plan_id);
 
-                    $temp = $this->Client_model->getClient($the_client_id);
-                    if (!$temp['deleted']) {
-                        $c[] = $temp;
+                    $c = array();
+
+                    foreach ($all_clients_in_plan as $client) {
+                        $the_client_id = $client['client_id'];
+
+                        $temp = $this->Client_model->getClient($the_client_id);
+                        if (!$temp['deleted']) {
+                            $c[] = $temp;
+                        }
+                    }
+
+                    if (empty($c)) {
+                        $this->Plan_model->deletePlan($plan_id);
+
+                    } else {
+                        $p = $this->Plan_model->getPlan($plan_id);
+                        $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                        redirect('/plan', 'refresh');
                     }
                 }
 
-                if (empty($c)) {
-                    $this->Plan_model->deletePlan($plan_id);
-
-                } else {
-                    $p = $this->Plan_model->getPlan($plan_id);
-                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
-                    redirect('/plan', 'refresh');
-                }
+                $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                redirect('/plan', 'refresh');
             }
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/plan', 'refresh');
         }
 
         $this->getList(0);
@@ -222,15 +243,13 @@ class Plan extends MY_Controller
 
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
 
-        if ($this->input->get('sort')) {
-            $sort = $this->input->get('sort');
-        } else {
+        $sort = $this->input->get('sort');
+        if (!$sort || !is_scalar($sort)) {
             $sort = 'name';
         }
 
-        if ($this->input->get('order')) {
-            $order = $this->input->get('order');
-        } else {
+        $order = $this->input->get('order');
+        if (!$order || !is_scalar($order)) {
             $order = 'ASC';
         }
 
@@ -246,6 +265,8 @@ class Plan extends MY_Controller
         $total = $this->Plan_model->getTotalPlans($data);
 
         $results = $this->Plan_model->getPlans($data);
+        $selected = $this->input->post('selected');
+        $selected = is_array($selected) ? $selected : array();
 
         if ($results) {
             foreach ($results as $result) {
@@ -258,8 +279,7 @@ class Plan extends MY_Controller
                     'price' => array_key_exists('price', $result) ? $result['price'] : DEFAULT_PLAN_PRICE,
                     'display' => array_key_exists('display', $result) ? $result['display'] : DEFAULT_PLAN_DISPLAY,
                     'status' => $result['status'],
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'],
-                            $this->input->post('selected'))),
+                    'selected' => in_array($result['_id'], $selected),
                 );
             }
         }
@@ -319,10 +339,23 @@ class Plan extends MY_Controller
         $this->render_page('template');
     }
 
+    private function planFormText($value, $default = '')
+    {
+        if (!is_scalar($value)) {
+            $value = $default;
+        }
+
+        return htmlentities((string)$value);
+    }
+
     private function getForm($plan_id = null)
     {
 
         if ($plan_id && ($_SERVER['REQUEST_METHOD'] != 'POST')) {
+            if (!$this->isMongoId($plan_id)) {
+                redirect('/plan', 'refresh');
+            }
+
             $plan_info = $this->Plan_model->getPlan($plan_id);
         }
 
@@ -351,26 +384,26 @@ class Plan extends MY_Controller
         }
 
         if ($this->input->post('description')) {
-            $this->data['description'] = htmlentities($this->input->post('description'));
+            $this->data['description'] = $this->planFormText($this->input->post('description'));
         } elseif (!empty($plan_info)) {
-            $this->data['description'] = htmlentities($plan_info['description']);
+            $this->data['description'] = $this->planFormText($plan_info['description']);
         } else {
             $this->data['description'] = '';
         }
 
         if ($this->input->post('price')) {
-            $this->data['price'] = htmlentities($this->input->post('price'));
+            $this->data['price'] = $this->planFormText($this->input->post('price'));
         } elseif (!empty($plan_info)) {
-            $this->data['price'] = htmlentities(array_key_exists('price',
+            $this->data['price'] = $this->planFormText(array_key_exists('price',
                 $plan_info) ? $plan_info['price'] : DEFAULT_PLAN_PRICE);
         } else {
             $this->data['price'] = '';
         }
 
         if ($this->input->post('display')) {
-            $this->data['display'] = htmlentities($this->input->post('display'));
+            $this->data['display'] = $this->planFormText($this->input->post('display'));
         } elseif (!empty($plan_info)) {
-            $this->data['display'] = htmlentities(array_key_exists('display',
+            $this->data['display'] = $this->planFormText(array_key_exists('display',
                 $plan_info) ? $plan_info['display'] : DEFAULT_PLAN_DISPLAY);
         } else {
             $this->data['display'] = DEFAULT_PLAN_DISPLAY;
@@ -437,7 +470,7 @@ class Plan extends MY_Controller
         if ($this->input->post('limit_noti')) {
             $this->data['limit_noti'] = $this->input->post('limit_noti');
         } elseif (!empty($plan_info) && isset($plan_info['limit_notifications'])) {
-            $this->data['limit_noti'] = $plan_info["limit_notifications"];
+            $this->data['limit_noti'] = is_array($plan_info["limit_notifications"]) ? $plan_info["limit_notifications"] : array();
             // merge with default, prevent missing fields
             $this->data["limit_noti"] = array_merge(
                 $default_limit_noti,
@@ -468,7 +501,7 @@ class Plan extends MY_Controller
         if ($this->input->post('limit_others')) {
             $this->data['limit_others'] = $this->input->post('limit_others');
         } elseif (!empty($plan_info) && isset($plan_info['limit_others'])) {
-            $this->data['limit_others'] = $plan_info["limit_others"];
+            $this->data['limit_others'] = is_array($plan_info["limit_others"]) ? $plan_info["limit_others"] : array();
             // merge with default, prevent missing fields
             foreach ($this->data['limit_others'] as $k => $v) {
                 if (!array_key_exists($k, $default_limit_others)) {
@@ -519,7 +552,7 @@ class Plan extends MY_Controller
         if ($this->input->post('limit_widget')) {
             $this->data['limit_widget'] = $this->input->post('limit_widget');
         } elseif (!empty($plan_info) && isset($plan_info['limit_widget'])) {
-            $this->data['limit_widget'] = $plan_info["limit_widget"];
+            $this->data['limit_widget'] = is_array($plan_info["limit_widget"]) ? $plan_info["limit_widget"] : array();
             // merge with default, prevent missing fields
             foreach ($this->data['limit_widget'] as $k => $v) {
                 if (!array_key_exists($k, $default_limit_widgets)) {
@@ -535,7 +568,7 @@ class Plan extends MY_Controller
         if ($this->input->post('limit_cms')) {
             $this->data['limit_cms'] = $this->input->post('limit_cms');
         } elseif (!empty($plan_info) && isset($plan_info['limit_cms'])) {
-            $this->data['limit_cms'] = $plan_info["limit_cms"];
+            $this->data['limit_cms'] = is_array($plan_info["limit_cms"]) ? $plan_info["limit_cms"] : array();
             // merge with default, prevent missing fields
             foreach ($this->data['limit_cms'] as $k => $v) {
                 if (!array_key_exists($k, $default_limit_cms)) {
@@ -633,6 +666,15 @@ class Plan extends MY_Controller
         }
     }
 
+    private function normalizePlanPost()
+    {
+        foreach (array('name', 'description', 'price', 'display', 'status', 'limit_num_client', 'sort_order') as $field) {
+            if (isset($_POST[$field]) && !is_scalar($_POST[$field])) {
+                $_POST[$field] = '';
+            }
+        }
+    }
+
     private function validateAccess()
     {
         if ($this->User_model->isAdmin()) {
@@ -647,6 +689,9 @@ class Plan extends MY_Controller
 
     public function getClientsByPlanId($plan_id)
     {
+        if (!$plan_id || !$this->isMongoId($plan_id)) {
+            return array();
+        }
 
         $allClientsInThisPlan = $this->Plan_model->getClientByPlanOnlyClient($plan_id);
 
@@ -692,6 +737,11 @@ class Plan extends MY_Controller
             return false;
         }
         return true;
+    }
+
+    private function isMongoId($id)
+    {
+        return is_string($id) && preg_match('/^[0-9a-f]{24}$/i', $id) === 1;
     }
 }
 
