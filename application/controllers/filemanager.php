@@ -22,6 +22,87 @@ class FileManager extends MY_Controller
 
     }
 
+    private function cleanRelativePath($path, $allowEmpty = true)
+    {
+        if (is_array($path)) {
+            return false;
+        }
+
+        $path = html_entity_decode((string)$path, ENT_QUOTES, 'UTF-8');
+        if (strpos($path, "\0") !== false) {
+            return false;
+        }
+
+        $path = trim($path);
+
+        if ($path === '') {
+            return $allowEmpty ? '' : false;
+        }
+
+        if (strpos($path, '\\') !== false) {
+            return false;
+        }
+
+        if ($path[0] === '/' || preg_match('/^[a-z][a-z0-9+\-.]*:/i', $path)) {
+            return false;
+        }
+
+        if (preg_match('/[^A-Za-z0-9._\/ -]/', $path)) {
+            return false;
+        }
+
+        $parts = explode('/', $path);
+        $clean = array();
+        foreach ($parts as $part) {
+            if ($part === '' || $part === '.') {
+                continue;
+            }
+
+            if (strpos($part, '..') !== false) {
+                return false;
+            }
+
+            $clean[] = $part;
+        }
+
+        $path = implode('/', $clean);
+        if ($path === '' && !$allowEmpty) {
+            return false;
+        }
+
+        return $path;
+    }
+
+    private function cleanPathName($name)
+    {
+        $name = $this->cleanRelativePath($name, false);
+        if ($name === false || strpos($name, '/') !== false) {
+            return false;
+        }
+
+        return $name;
+    }
+
+    private function imageDataPath($path)
+    {
+        $path = $this->cleanRelativePath($path, true);
+        if ($path === false) {
+            return false;
+        }
+
+        return rtrim(DIR_IMAGE . 'data/' . $path, '/');
+    }
+
+    private function s3DataDirectory($path)
+    {
+        $path = $this->cleanRelativePath($path, true);
+        if ($path === false) {
+            return false;
+        }
+
+        return $path === '' ? 'data' : 'data/' . $path;
+    }
+
     public function index()
     {
 
@@ -67,8 +148,8 @@ class FileManager extends MY_Controller
         $json = array();
 
         if (isset($this->input->post['directory'])) {
-            $directories = glob(rtrim(DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post['directory']),
-                    '/') . '/*', GLOB_ONLYDIR);
+            $directory = $this->imageDataPath($this->input->post['directory']);
+            $directories = $directory === false ? false : glob(rtrim($directory, '/') . '/*', GLOB_ONLYDIR);
 
             if ($directories) {
                 $i = 0;
@@ -96,9 +177,9 @@ class FileManager extends MY_Controller
         $json = array();
 
         if (!empty($this->input->post['directory'])) {
-            $directory = DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post['directory']);
+            $directory = $this->imageDataPath($this->input->post['directory']);
         } else {
-            $directory = DIR_IMAGE . 'data/';
+            $directory = $this->imageDataPath('');
         }
 
         $allowed = array(
@@ -108,7 +189,7 @@ class FileManager extends MY_Controller
             '.gif'
         );
 
-        $files = glob(rtrim($directory, '/') . '/*');
+        $files = $directory === false ? false : glob(rtrim($directory, '/') . '/*');
 
         if ($files) {
             foreach ($files as $file) {
@@ -158,14 +239,19 @@ class FileManager extends MY_Controller
         $json = array();
 
         if (isset($this->input->post['directory'])) {
-            if (isset($this->input->post['name']) || $this->input->post['name']) {
-                $directory = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post['directory']), '/');
+            if (isset($this->input->post['name']) && $this->input->post['name']) {
+                $directory = $this->imageDataPath($this->input->post['directory']);
+                $name = $this->cleanPathName($this->input->post['name']);
 
-                if (!is_dir($directory)) {
+                if ($name === false) {
+                    $json['error'] = $this->lang->line('error_name');
+                }
+
+                if ($directory === false || !is_dir($directory)) {
                     $json['error'] = $this->lang->line('error_directory');
                 }
 
-                if (file_exists($directory . '/' . str_replace('../', '', $this->input->post['name']))) {
+                if ($name !== false && $directory !== false && file_exists($directory . '/' . $name)) {
                     $json['error'] = $this->lang->line('error_exists');
                 }
             } else {
@@ -180,7 +266,7 @@ class FileManager extends MY_Controller
         }
 
         if (!isset($json['error'])) {
-            mkdir($directory . '/' . str_replace('../', '', $this->input->post['name']), 0777);
+            mkdir($directory . '/' . $name, 0777);
 
             $json['success'] = $this->lang->line('text_create');
         }
@@ -194,14 +280,13 @@ class FileManager extends MY_Controller
         $json = array();
 
         if (isset($this->input->post['path'])) {
-            $path = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '',
-                    html_entity_decode($this->input->post['path'], ENT_QUOTES, 'UTF-8')), '/');
+            $path = $this->imageDataPath($this->input->post['path']);
 
-            if (!file_exists($path)) {
+            if ($path === false || !file_exists($path)) {
                 $json['error'] = $this->lang->line('error_select');
             }
 
-            if ($path == rtrim(DIR_IMAGE . 'data/', '/')) {
+            if ($path !== false && $path == $this->imageDataPath('')) {
                 $json['error'] = $this->lang->line('error_delete');
             }
         } else {
@@ -258,25 +343,23 @@ class FileManager extends MY_Controller
         $json = array();
 
         if (isset($this->input->post['from']) && isset($this->input->post['to'])) {
-            $from = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '',
-                    html_entity_decode($this->input->post['from'], ENT_QUOTES, 'UTF-8')), '/');
+            $from = $this->imageDataPath($this->input->post['from']);
 
-            if (!file_exists($from)) {
+            if ($from === false || !file_exists($from)) {
                 $json['error'] = $this->lang->line('error_missing');
             }
 
-            if ($from == DIR_IMAGE . 'data') {
+            if ($from !== false && $from == $this->imageDataPath('')) {
                 $json['error'] = $this->lang->line('error_default');
             }
 
-            $to = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '',
-                    html_entity_decode($this->input->post['to'], ENT_QUOTES, 'UTF-8')), '/');
+            $to = $this->imageDataPath($this->input->post['to']);
 
-            if (!file_exists($to)) {
+            if ($to === false || !file_exists($to)) {
                 $json['error'] = $this->lang->line('error_move');
             }
 
-            if (file_exists($to . '/' . basename($from))) {
+            if ($from !== false && $to !== false && file_exists($to . '/' . basename($from))) {
                 $json['error'] = $this->lang->line('error_exists');
             }
         } else {
@@ -302,27 +385,28 @@ class FileManager extends MY_Controller
         $json = array();
 
         if (isset($this->input->post['path']) && isset($this->input->post['name'])) {
-            if ((utf8_strlen($this->input->post['name']) < 3) || (utf8_strlen($this->input->post['name']) > 255)) {
+            $name = $this->cleanPathName($this->input->post['name']);
+            if ($name === false || (utf8_strlen($name) < 3) || (utf8_strlen($name) > 255)) {
                 $json['error'] = $this->lang->line('error_filename');
             }
 
-            $old_name = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '',
-                    html_entity_decode($this->input->post['path'], ENT_QUOTES, 'UTF-8')), '/');
+            $old_name = $this->imageDataPath($this->input->post['path']);
 
-            if (!file_exists($old_name) || $old_name == DIR_IMAGE . 'data') {
+            if ($old_name === false || !file_exists($old_name) || $old_name == $this->imageDataPath('')) {
                 $json['error'] = $this->lang->line('error_copy');
             }
 
-            if (is_file($old_name)) {
+            if ($old_name !== false && is_file($old_name)) {
                 $ext = strrchr($old_name, '.');
             } else {
                 $ext = '';
             }
 
-            $new_name = dirname($old_name) . '/' . str_replace('../', '',
-                    html_entity_decode($this->input->post['name'], ENT_QUOTES, 'UTF-8') . $ext);
+            if ($name !== false && $old_name !== false) {
+                $new_name = dirname($old_name) . '/' . $name . $ext;
+            }
 
-            if (file_exists($new_name)) {
+            if (isset($new_name) && file_exists($new_name)) {
                 $json['error'] = $this->lang->line('error_exists');
             }
         } else {
@@ -378,7 +462,7 @@ class FileManager extends MY_Controller
                 strlen(DIR_IMAGE . 'data/')) . '">' . utf8_substr($directory,
                 strlen(DIR_IMAGE . 'data/')) . '</option>';
 
-        $directories = glob(rtrim(str_replace('../', '', $directory), '/') . '/*', GLOB_ONLYDIR);
+        $directories = glob(rtrim($directory, '/') . '/*', GLOB_ONLYDIR);
 
         foreach ($directories as $directory) {
             $output .= $this->recursiveFolders($directory);
@@ -393,27 +477,28 @@ class FileManager extends MY_Controller
         $json = array();
 
         if (isset($this->input->post['path']) && isset($this->input->post['name'])) {
-            if ((utf8_strlen($this->input->post['name']) < 3) || (utf8_strlen($this->input->post['name']) > 255)) {
+            $name = $this->cleanPathName($this->input->post['name']);
+            if ($name === false || (utf8_strlen($name) < 3) || (utf8_strlen($name) > 255)) {
                 $json['error'] = $this->lang->line('error_filename');
             }
 
-            $old_name = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '',
-                    html_entity_decode($this->input->post['path'], ENT_QUOTES, 'UTF-8')), '/');
+            $old_name = $this->imageDataPath($this->input->post['path']);
 
-            if (!file_exists($old_name) || $old_name == DIR_IMAGE . 'data') {
+            if ($old_name === false || !file_exists($old_name) || $old_name == $this->imageDataPath('')) {
                 $json['error'] = $this->lang->line('error_rename');
             }
 
-            if (is_file($old_name)) {
+            if ($old_name !== false && is_file($old_name)) {
                 $ext = strrchr($old_name, '.');
             } else {
                 $ext = '';
             }
 
-            $new_name = dirname($old_name) . '/' . str_replace('../', '',
-                    html_entity_decode($this->input->post['name'], ENT_QUOTES, 'UTF-8') . $ext);
+            if ($name !== false && $old_name !== false) {
+                $new_name = dirname($old_name) . '/' . $name . $ext;
+            }
 
-            if (file_exists($new_name)) {
+            if (isset($new_name) && file_exists($new_name)) {
                 $json['error'] = $this->lang->line('error_exists');
             }
         }
@@ -449,9 +534,9 @@ class FileManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_filename');
                 }
 
-                $directory = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post['directory']), '/');
+                $directory = $this->imageDataPath($this->input->post['directory']);
 
-                if (!is_dir($directory)) {
+                if ($directory === false || !is_dir($directory)) {
                     $json['error'] = $this->lang->line('error_directory');
                 }
 
@@ -528,9 +613,10 @@ class FileManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_filename');
                 }
 
-                $directory = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '', $this->input->post('directory')), '/');
+                $directory = $this->imageDataPath($this->input->post('directory'));
+                $s3_directory = $this->s3DataDirectory($this->input->post('directory'));
 
-                if (!is_dir($directory)) {
+                if ($directory === false || $s3_directory === false || !is_dir($directory)) {
                     $json['error'] = $this->lang->line('error_directory');
                 }
 
@@ -621,11 +707,10 @@ class FileManager extends MY_Controller
 
             //move the file
             if ($this->s3->putObjectFile($_FILES['image']['tmp_name'], "elasticbeanstalk-ap-southeast-1-007834438823",
-                rtrim('data/' . str_replace('../', '', $this->input->post('directory')), '/') . "/" . $filename,
+                $s3_directory . "/" . $filename,
                 S3::ACL_PUBLIC_READ)
             ) {
-                $url = rtrim(S3_IMAGE . 'data/' . str_replace('../', '', $this->input->post('directory')),
-                        '/') . "/" . urlencode($filename);
+                $url = S3_IMAGE . $s3_directory . "/" . urlencode($filename);
                 @copy($url, $directory . '/' . $filename);
 
                 if ($this->validateMediaManagerAccess()) {
