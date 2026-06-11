@@ -431,6 +431,16 @@ class App_model extends MY_Model
         return $c > 0;
     }
 
+    private function normalizedImage($data)
+    {
+        if (!isset($data['image']) || !is_scalar($data['image'])) {
+            return '';
+        }
+
+        $image = trim((string)$data['image']);
+        return $image === '' ? '' : html_entity_decode($image, ENT_QUOTES, 'UTF-8');
+    }
+
     public function addApp($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -440,7 +450,7 @@ class App_model extends MY_Model
             'site_name' => $data['app_name'] | '',
             'api_key' => '',
             'api_secret' => '',
-            'image' => isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'image' => $this->normalizedImage($data),
             'app_color' => isset($data['app_color']) && !empty($data['app_color']) ? $data['app_color']: '',
             'status' => true,
             'deleted' => false,
@@ -483,7 +493,7 @@ class App_model extends MY_Model
 
         $this->mongo_db->where('_id', new MongoID($app_id));
         $this->mongo_db->set('site_name', $data['app_name']);
-        $this->mongo_db->set('image', isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '');
+        $this->mongo_db->set('image', $this->normalizedImage($data));
         $this->mongo_db->set('app_color',  isset($data['app_color']) && !empty($data['app_color']) ? $data['app_color']: '');
 
         return $this->mongo_db->update('playbasis_client_site');
