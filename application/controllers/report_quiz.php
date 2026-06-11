@@ -128,7 +128,7 @@ class Report_quiz extends MY_Controller
         if ($this->input->get('time_zone')){
             $UTC_7 = new DateTimeZone("Asia/Bangkok");
 
-            $filter_time_zone = $this->input->get('time_zone');
+            $filter_time_zone = $this->getValidTimeZone($this->input->get('time_zone'));
             $parameter_url .= "&time_zone=" . urlencode($filter_time_zone);
             $newTZ = new DateTimeZone($filter_time_zone);
             $date_start = new DateTime( $filter_date_start, $newTZ);
@@ -315,6 +315,19 @@ class Report_quiz extends MY_Controller
         }
     }
 
+    private function getValidTimeZone($time_zone)
+    {
+        $default_time_zone = "Asia/Bangkok";
+
+        if (!is_string($time_zone) || $time_zone === '') {
+            return $default_time_zone;
+        }
+
+        $time_zones = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+
+        return in_array($time_zone, $time_zones, true) ? $time_zone : $default_time_zone;
+    }
+
     public function actionDownload()
     {
 
@@ -357,7 +370,7 @@ class Report_quiz extends MY_Controller
         if ($this->input->get('time_zone')){
             $UTC_7 = new DateTimeZone("Asia/Bangkok");
 
-            $filter_time_zone = $this->input->get('time_zone');
+            $filter_time_zone = $this->getValidTimeZone($this->input->get('time_zone'));
             $newTZ = new DateTimeZone($filter_time_zone);
             $date_start = new DateTime( $filter_date_start, $newTZ);
             $date_start->setTimezone($UTC_7);
