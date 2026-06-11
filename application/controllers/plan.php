@@ -337,6 +337,15 @@ class Plan extends MY_Controller
         $this->render_page('template');
     }
 
+    private function planFormText($value, $default = '')
+    {
+        if (!is_scalar($value)) {
+            $value = $default;
+        }
+
+        return htmlentities((string)$value);
+    }
+
     private function getForm($plan_id = null)
     {
 
@@ -373,26 +382,26 @@ class Plan extends MY_Controller
         }
 
         if ($this->input->post('description')) {
-            $this->data['description'] = htmlentities($this->input->post('description'));
+            $this->data['description'] = $this->planFormText($this->input->post('description'));
         } elseif (!empty($plan_info)) {
-            $this->data['description'] = htmlentities($plan_info['description']);
+            $this->data['description'] = $this->planFormText($plan_info['description']);
         } else {
             $this->data['description'] = '';
         }
 
         if ($this->input->post('price')) {
-            $this->data['price'] = htmlentities($this->input->post('price'));
+            $this->data['price'] = $this->planFormText($this->input->post('price'));
         } elseif (!empty($plan_info)) {
-            $this->data['price'] = htmlentities(array_key_exists('price',
+            $this->data['price'] = $this->planFormText(array_key_exists('price',
                 $plan_info) ? $plan_info['price'] : DEFAULT_PLAN_PRICE);
         } else {
             $this->data['price'] = '';
         }
 
         if ($this->input->post('display')) {
-            $this->data['display'] = htmlentities($this->input->post('display'));
+            $this->data['display'] = $this->planFormText($this->input->post('display'));
         } elseif (!empty($plan_info)) {
-            $this->data['display'] = htmlentities(array_key_exists('display',
+            $this->data['display'] = $this->planFormText(array_key_exists('display',
                 $plan_info) ? $plan_info['display'] : DEFAULT_PLAN_DISPLAY);
         } else {
             $this->data['display'] = DEFAULT_PLAN_DISPLAY;
