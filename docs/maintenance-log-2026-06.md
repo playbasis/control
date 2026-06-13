@@ -27,6 +27,10 @@ These repositories do not currently rely on public CI checks as the merge gate. 
 - Preserve issue-specific checks for security, config, and tenant-guard changes.
 - Stop on conflicts, lint failures, or replay failures.
 
+## Continuation Ledger
+
+- 2026-06-13: Main session, `playbasis/control`, branch `codex/fix-media-thumbnail-path-scope`; scope: sanitize FileManager and MediaManager thumbnail `image` query paths before resize; intended files: `application/controllers/filemanager.php`, `application/controllers/mediamanager.php`, and this ledger; status: PR branch prepared; blockers: none.
+
 ## Public Message
 
 The reset should be presented candidly:
