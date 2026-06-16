@@ -607,7 +607,21 @@ class Email extends MY_Controller
 
     private function purify($html)
     {
-        include_once APPPATH . 'libraries/HTMLPurifier.auto.php';
+        $purifier = APPPATH . 'libraries/HTMLPurifier.auto.php';
+        if (!is_file($purifier)
+            || !is_file(APPPATH . 'libraries/HTMLPurifier/Bootstrap.php')
+            || !is_file(APPPATH . 'libraries/HTMLPurifier.autoload.php')
+        ) {
+            log_message('error', 'Missing HTMLPurifier library; escaping email template body');
+            return htmlspecialchars($html, ENT_QUOTES, 'UTF-8');
+        }
+
+        include_once $purifier;
+        if (!class_exists('HTMLPurifier_Config') || !class_exists('HTMLPurifier')) {
+            log_message('error', 'HTMLPurifier library unavailable; escaping email template body');
+            return htmlspecialchars($html, ENT_QUOTES, 'UTF-8');
+        }
+
         $config = HTMLPurifier_Config::createDefault();
         $filter = new HTMLPurifier($config);
         return $filter->purify($html);
