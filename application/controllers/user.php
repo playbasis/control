@@ -584,6 +584,11 @@ class User extends MY_Controller
             return;
         }
 
+        if (!$this->validateAccess()) {
+            $this->output->set_output(json_encode($json));
+            return;
+        }
+
         $client_id = $this->User_model->getClientId();
         if (!$client_id && !$this->User_model->isAdmin()) {
             $this->output->set_output(json_encode($json));
@@ -620,6 +625,10 @@ class User extends MY_Controller
             }
 
             foreach ($results_user as $result) {
+                if (!isset($result['username'])) {
+                    continue;
+                }
+
                 $json[] = array(
                     'username' => html_entity_decode($result['username'], ENT_QUOTES, 'UTF-8'),
                 );
