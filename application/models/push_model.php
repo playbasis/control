@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
 
 class Push_model extends MY_Model
 {
@@ -9,6 +8,11 @@ class Push_model extends MY_Model
         parent::__construct();
         $this->load->model('tool/utility', 'utility');
         $this->load->library('mongo_db');
+    }
+
+    private function ensureApnsLoaded()
+    {
+        require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
     }
 
     public function getTemplate($template_id)
@@ -286,6 +290,7 @@ class Push_model extends MY_Model
         $type = strtolower($type);
         switch ($type) {
             case "ios":
+                $this->ensureApnsLoaded();
                 $setup = $this->getIosSetup($data['data']['client_id'], $data['data']['site_id']);
                 if (!$setup) {
                     break;
