@@ -179,10 +179,15 @@ class Domain extends MY_Controller
         $json = array();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
             $site_id = $this->input->post('site_id');
             if (!$this->isValidMongoId($site_id)) {
                 $json['error'] = $this->lang->line('error_required');
+                $this->output->set_output(json_encode($json));
+                return;
+            }
+
+            if (!$this->validateModify() || !$this->checkOwnerDomain($site_id)) {
+                $json['error'] = $this->lang->line('error_permission');
                 $this->output->set_output(json_encode($json));
                 return;
             }
