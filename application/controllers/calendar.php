@@ -25,14 +25,15 @@ class Calendar extends MY_Controller
         $this->_client = null;
         $this->_gcal = null;
         if ($this->record) {
-            $this->_client = $this->googleapi->initialize($this->record['google_client_id'],
-                $this->record['google_client_secret'], base_url() . 'calendar/authorize');
-            if (isset($this->record['token'])) {
-                try {
+            try {
+                $this->_client = $this->googleapi->initialize($this->record['google_client_id'],
+                    $this->record['google_client_secret'], base_url() . 'calendar/authorize');
+                if (isset($this->record['token'])) {
                     $this->_gcal = $this->_client->setAccessToken($this->record['token'])->calendar();
-                } catch (Exception $e) {
-                    $this->data['message'] = $this->lang->line('text_fail_initialize_access_token') . ': ' . $e->getMessage();
                 }
+            } catch (Exception $e) {
+                $this->data['message'] = $this->lang->line('text_fail_initialize_access_token') . ': ' . $e->getMessage();
+                log_message('error', 'Calendar Google API initialization failed: ' . $e->getMessage());
             }
         }
     }
@@ -51,7 +52,11 @@ class Calendar extends MY_Controller
         if ($this->input->server('REQUEST_METHOD') === 'POST') {
             $this->data['message'] = null;
 
-            if (!$this->isValidUploadEntry('file')) {
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            if ($this->data['message'] == null && !$this->isValidUploadEntry('file')) {
                 $this->data['message'] = $this->lang->line('error_file');
             }
 
@@ -108,12 +113,23 @@ class Calendar extends MY_Controller
 
     public function authorize()
     {
+        if (!$this->validateAccess() || !$this->validateModify()) {
+            $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+            redirect('/calendar', 'refresh');
+        }
+
+        if (!$this->_client) {
+            $this->session->set_flashdata('fail', $this->lang->line('text_fail_initialize_access_token'));
+            redirect('/calendar', 'refresh');
+        }
+
         $code = $this->input->get('code');
         if (!empty($code)) {
             try {
                 $accessToken = $this->_client->authenticate($code);
                 if ($accessToken) {
-                    $this->Googles_model->updateToken($this->User_model->getSiteId(), (array)$accessToken);
+                    $this->Googles_model->updateToken($this->User_model->getClientId(),
+                        $this->User_model->getSiteId(), (array)$accessToken);
                 }
             } catch (Exception $e) {
                 $this->session->set_flashdata('fail',

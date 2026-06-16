@@ -22,7 +22,8 @@ class Jive extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
 
         $this->_api = null;
-        $this->jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
+        $this->jive = $this->Jive_model->getRegistration($this->User_model->getSiteId(),
+            $this->User_model->getClientId());
         if ($this->jive && isset($this->jive['token'])) {
             $this->_api = $this->jiveapi;
             try {
@@ -53,8 +54,11 @@ class Jive extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        if ($this->Jive_model->hasValidRegistration($this->User_model->getSiteId())) {
-            $this->data['jive'] = $this->Jive_model->getRegistration($this->User_model->getSiteId());
+        if ($this->Jive_model->hasValidRegistration($this->User_model->getSiteId(),
+            $this->User_model->getClientId())
+        ) {
+            $this->data['jive'] = $this->Jive_model->getRegistration($this->User_model->getSiteId(),
+                $this->User_model->getClientId());
         }
 
         $this->data['main'] = 'jive_setup';
@@ -107,6 +111,16 @@ class Jive extends MY_Controller
 
     public function authorize()
     {
+        if (!$this->validateAccess() || !$this->validateModify()) {
+            $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+            redirect('/jive', 'refresh');
+        }
+
+        if (!$this->jive) {
+            $this->session->set_flashdata('fail', $this->lang->line('error_access'));
+            redirect('/jive', 'refresh');
+        }
+
         $code = $this->input->get('code');
         if (!empty($code)) {
             $this->_api = $this->jiveapi;

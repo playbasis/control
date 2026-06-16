@@ -103,19 +103,36 @@ class Jive_model extends MY_Model
         array('id' => 'jive:webhook_disabled', 'type' => 'webhook', 'description' => 'Webhook has been disabled'),
     );
 
-    public function hasValidRegistration($site_id)
+    private function clientScopeFilter($client_id)
+    {
+        return array(
+            '$or' => array(
+                array('client_id' => $client_id),
+                array('client_id' => array('$exists' => false)),
+                array('client_id' => null)
+            )
+        );
+    }
+
+    public function hasValidRegistration($site_id, $client_id = null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('site_id', new MongoID($site_id));
+        if ($client_id) {
+            $this->mongo_db->where($this->clientScopeFilter($client_id));
+        }
         $this->mongo_db->where_ne('deleted', true);
         return $this->mongo_db->count("playbasis_jive_to_client") > 0;
     }
 
-    public function getRegistration($site_id)
+    public function getRegistration($site_id, $client_id = null)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->select(array('jive_tenant_id', 'jive_client_id', 'jive_client_secret', 'jive_url', 'token'));
         $this->mongo_db->where('site_id', new MongoID($site_id));
+        if ($client_id) {
+            $this->mongo_db->where($this->clientScopeFilter($client_id));
+        }
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_jive_to_client");
@@ -129,6 +146,7 @@ class Jive_model extends MY_Model
         $token['date_start'] = $d;
         $token['date_expire'] = new MongoDate($d->sec + $token['expires_in']);
         $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where($this->clientScopeFilter($client_id));
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->set('client_id', $client_id); // update missing client_id as well
         $this->mongo_db->set('token', $token);

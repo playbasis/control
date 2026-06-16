@@ -53,17 +53,23 @@ class Googles_model extends MY_Model
         ));
     }
 
-    public function updateToken($site_id, $token)
+    public function updateToken($client_id, $site_id, $token)
     {
-        $this->set_site_mongodb($site_id);
+        $scope = $this->resolveScope($client_id, $site_id);
+        if (!$scope) {
+            return false;
+        }
+
+        $this->set_site_mongodb($scope['site_id']);
         $d = new MongoDate(time());
         $token['date_start'] = $d;
         $token['date_expire'] = new MongoDate($d->sec + $token['expires_in']);
-        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where('client_id', $scope['client_id']);
+        $this->mongo_db->where('site_id', $scope['site_id']);
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->set('token', $token);
         $this->mongo_db->set('date_modified', $d);
-        $this->mongo_db->update("playbasis_google_to_client");
+        return $this->mongo_db->update("playbasis_google_to_client");
     }
 
     public function getSubscription($resource_id)
