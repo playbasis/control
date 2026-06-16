@@ -531,10 +531,19 @@ class FileManager extends MY_Controller
                 $upload = $_FILES['image'];
                 $filename = basename(html_entity_decode($upload['name'], ENT_QUOTES, 'UTF-8'));
 
-                $t = explode('.', $filename);
-                $type = end($t);
+                $type = strtolower((string)pathinfo($filename, PATHINFO_EXTENSION));
+                $allowed_mimes_by_extension = array(
+                    'jpg' => array('image/jpeg', 'image/pjpeg'),
+                    'jpeg' => array('image/jpeg', 'image/pjpeg'),
+                    'png' => array('image/png', 'image/x-png'),
+                    'gif' => array('image/gif')
+                );
 
                 $filename = md5($this->User_model->getClientId() . $this->User_model->getSiteId() . $filename) . "." . $type;
+
+                if (!isset($allowed_mimes_by_extension[$type])) {
+                    $json['error'] = $this->lang->line('error_file_type');
+                }
 
                 if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
                     $json['error'] = $this->lang->line('error_filename');
@@ -550,28 +559,11 @@ class FileManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_file_size');
                 }
 
-                $allowed = array(
-                    'image/jpeg',
-                    'image/pjpeg',
-                    'image/png',
-                    'image/x-png',
-                    'image/gif',
-                    'application/x-shockwave-flash'
-                );
-
-                if (!in_array($upload['type'], $allowed)) {
-                    $json['error'] = $this->lang->line('error_file_type');
-                }
-
-                $allowed = array(
-                    '.jpg',
-                    '.jpeg',
-                    '.gif',
-                    '.png',
-                    '.flv'
-                );
-
-                if (!in_array(strtolower(strrchr($filename, '.')), $allowed)) {
+                $image_info = @getimagesize($upload['tmp_name']);
+                $detected_type = ($image_info !== false && isset($image_info['mime'])) ? $image_info['mime'] : null;
+                if (!isset($allowed_mimes_by_extension[$type]) ||
+                    !in_array($detected_type, $allowed_mimes_by_extension[$type], true)
+                ) {
                     $json['error'] = $this->lang->line('error_file_type');
                 }
 
@@ -611,10 +603,19 @@ class FileManager extends MY_Controller
                 $upload = $_FILES['image'];
                 $filename = basename(html_entity_decode($upload['name'], ENT_QUOTES, 'UTF-8'));
 
-                $t = explode('.', $filename);
-                $type = end($t);
+                $type = strtolower((string)pathinfo($filename, PATHINFO_EXTENSION));
+                $allowed_mimes_by_extension = array(
+                    'jpg' => array('image/jpeg', 'image/pjpeg'),
+                    'jpeg' => array('image/jpeg', 'image/pjpeg'),
+                    'png' => array('image/png', 'image/x-png'),
+                    'gif' => array('image/gif')
+                );
 
                 $filename = md5($this->User_model->getClientId() . $this->User_model->getSiteId() . $filename) . "." . $type;
+
+                if (!isset($allowed_mimes_by_extension[$type])) {
+                    $json['error'] = $this->lang->line('error_file_type');
+                }
 
                 if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
                     $json['error'] = $this->lang->line('error_filename');
@@ -657,28 +658,10 @@ class FileManager extends MY_Controller
 //                    $json['error'] = $this->lang->line('error_square');
 //                }
 
-                $allowed = array(
-                    'image/jpeg',
-                    'image/pjpeg',
-                    'image/png',
-                    'image/x-png',
-                    'image/gif',
-                    'application/x-shockwave-flash'
-                );
-
-                if (!in_array($upload['type'], $allowed)) {
-                    $json['error'] = $this->lang->line('error_file_type');
-                }
-
-                $allowed = array(
-                    '.jpg',
-                    '.jpeg',
-                    '.gif',
-                    '.png',
-                    '.flv'
-                );
-
-                if (!in_array(strtolower(strrchr($filename, '.')), $allowed)) {
+                $detected_type = ($image_info !== false && isset($image_info['mime'])) ? $image_info['mime'] : null;
+                if (!isset($allowed_mimes_by_extension[$type]) ||
+                    !in_array($detected_type, $allowed_mimes_by_extension[$type], true)
+                ) {
                     $json['error'] = $this->lang->line('error_file_type');
                 }
 
