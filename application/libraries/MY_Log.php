@@ -49,10 +49,9 @@ class MY_Log {
         try
         {
             // If Raven_Client isn't already defined, include the autoloader
-            if ( ! class_exists('Raven_Client'))
+            if ( ! class_exists('Raven_Client') && ! $this->loadRavenAutoloader())
             {
-                require_once APPPATH . 'libraries/sentry/sentry/lib/Raven/Autoloader.php';
-                Raven_Autoloader::register();
+                return FALSE;
             }
             // Create a new Raven Client with the extra options if they exist
             if (empty($this->config['raven_config'])) {
@@ -82,6 +81,21 @@ class MY_Log {
         }
 
         return TRUE;
+    }
+    private function loadRavenAutoloader()
+    {
+        $autoloader = APPPATH . 'libraries/sentry/sentry/lib/Raven/Autoloader.php';
+        if (!is_file($autoloader)) {
+            return FALSE;
+        }
+
+        require_once $autoloader;
+        if (class_exists('Raven_Autoloader')) {
+            Raven_Autoloader::register();
+            return TRUE;
+        }
+
+        return class_exists('Raven_Client');
     }
     public function write_log($level, $msg, $php_error = FALSE)
     {
