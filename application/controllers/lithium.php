@@ -14,6 +14,7 @@ class Lithium extends MY_Controller
         }
 
         $this->load->model('Lithium_model');
+        $this->load->library('LithiumApi');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);

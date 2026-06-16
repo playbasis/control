@@ -148,6 +148,7 @@ class Utility extends CI_Model
         if (!is_array($data)) {
             return null;
         } // error
+        $this->load->library('amazon_ses');
         foreach ($data as $key => $value) {
             switch ($key) {
                 case 'from':

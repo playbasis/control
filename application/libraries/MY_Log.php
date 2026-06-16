@@ -5,6 +5,7 @@ class MY_Log {
     protected $_config;
     protected $_raven;
     protected $_raven_levels = array();
+    protected $_raven_initialized = FALSE;
     protected $_threshold = 1;
     protected $_levels = array('ERROR' => '1', 'DEBUG' => '2',  'INFO' => '3', 'ALL' => '4');
     public function __construct()
@@ -21,8 +22,30 @@ class MY_Log {
             $this->_date_fmt = $this->config['log_date_format'];
         }
 
-        // Environment check
-        if (!isset($this->config['raven_environments']) || !in_array(ENVIRONMENT, $this->config['raven_environments'])) return;
+    }
+    private function shouldUseRaven($level)
+    {
+        if (!isset($this->config['raven_environments']) || !in_array(ENVIRONMENT, $this->config['raven_environments'])) {
+            return FALSE;
+        }
+        if (empty($this->config['raven_client'])) {
+            return FALSE;
+        }
+
+        $thresholds = isset($this->config['raven_log_threshold']) ? $this->config['raven_log_threshold'] : array();
+        if (!is_array($thresholds)) {
+            $thresholds = array($thresholds);
+        }
+
+        return in_array($level, array_map('strtoupper', $thresholds));
+    }
+    private function initializeRaven()
+    {
+        if ($this->_raven_initialized) {
+            return $this->_raven !== null;
+        }
+        $this->_raven_initialized = TRUE;
+
         try
         {
             // If Raven_Client isn't already defined, include the autoloader
@@ -54,19 +77,24 @@ class MY_Log {
         {
             // Do nothing, since we don't want to stop loading of the site due
             // to a Raven misconfiguration or error.
+            $this->_raven = null;
+            return FALSE;
         }
+
+        return TRUE;
     }
-    public function write_log($level = 'error', $msg, $php_error = FALSE)
+    public function write_log($level, $msg, $php_error = FALSE)
     {
-        // Environment check
-        if (!isset($this->config['raven_environments']) || !in_array(ENVIRONMENT, $this->config['raven_environments'])) return;
         $level = strtoupper($level);
         if ( ! isset($this->_levels[$level]) OR ($this->_levels[$level] > $this->_threshold))
         {
             return FALSE;
         }
         // Skip log messages that are outside our threshold
-        if ( ! in_array($level, $this->config['raven_log_threshold'])) {
+        if (!$this->shouldUseRaven($level)) {
+            return FALSE;
+        }
+        if (!$this->initializeRaven()) {
             return FALSE;
         }
         // Push the message to Raven

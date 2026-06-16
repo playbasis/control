@@ -1776,6 +1776,7 @@ class User extends MY_Controller
 
     private function email($to, $subject, $message)
     {
+        $this->load->library('amazon_ses');
         $this->amazon_ses->from(EMAIL_FROM, 'Playbasis');
         $this->amazon_ses->to($to);
         $this->amazon_ses->bcc(array(EMAIL_FROM));
@@ -1892,6 +1893,7 @@ class User extends MY_Controller
 
                     $this->load->library('email');
                     $this->load->library('parser');
+                    $this->load->library('amazon_ses');
 
                     $data = array(
                         'url' => site_url('reset_password?key=' . $random_key),

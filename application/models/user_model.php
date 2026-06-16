@@ -234,6 +234,7 @@ class User_model extends MY_Model
 
     private function email($to, $subject, $message)
     {
+        $this->load->library('amazon_ses');
         $this->amazon_ses->from(EMAIL_FROM, 'Playbasis');
         $this->amazon_ses->to($to);
         $this->amazon_ses->bcc(array(EMAIL_FROM));
