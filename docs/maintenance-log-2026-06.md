@@ -23,11 +23,11 @@ These repositories do not currently rely on public CI checks as the merge gate. 
 
 - Replay candidate branches onto a fresh `origin/master`.
 - Run `git diff --check`.
-- Run `php -l` across tracked PHP files.
+- Run `php -l` across first-party tracked PHP files.
 - Preserve issue-specific checks for security, config, and tenant-guard changes.
 - Stop on conflicts, lint failures, or replay failures.
 
-The repositories include bundled legacy third-party adapters under `application/libraries`. Syntax failures in any PHP file are blockers. Deprecation warnings from untouched bundled adapters are tracked as compatibility debt rather than blocking unrelated fixes. If a change touches or depends on one of those adapters, verify that adapter directly and document the config/runtime assumptions in the PR.
+The repositories include bundled legacy third-party adapters under `application/libraries`. These adapters include integrations such as Google, HTMLPurifier, Sentry/Raven, Twilio, and similar historical dependencies. They are optional compatibility surfaces, not default blockers. If a change touches, autoloads, or depends on one of those adapters, verify that adapter directly and document the config/runtime assumptions in the PR. Issues in untouched optional adapters should be tracked as compatibility debt rather than blocking unrelated preservation fixes.
 
 ## Continuation Ledger
 

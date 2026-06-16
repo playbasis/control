@@ -10,7 +10,7 @@
 # Verification
 
 - [ ] `git diff --check`
-- [ ] PHP lint for changed PHP files, or full PHP lint if behavior changed
+- [ ] PHP lint for changed first-party PHP files; adapter lint only when the PR touches or depends on a bundled adapter
 - [ ] Runtime or replay check, if applicable
 
 Paste relevant output:
