@@ -30,19 +30,19 @@ For docs-only changes:
 git diff --check
 ```
 
-For PHP changes:
-
-```bash
-find . -path './vendor' -prune -o -path '*/node_modules/*' -prune -o -path './system' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
-```
-
-For first-party application work, it is acceptable to run a narrower lint pass that also excludes `application/libraries`:
+For first-party PHP changes:
 
 ```bash
 find . -path './vendor' -prune -o -path '*/node_modules/*' -prune -o -path './system' -prune -o -path './application/libraries' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
 ```
 
-This repository contains bundled legacy adapters such as Google, Sentry/Raven, Twilio, and other third-party libraries. Syntax errors are blockers. Deprecation warnings from untouched bundled adapters should be recorded as compatibility debt, but they should not block unrelated preservation, security, documentation, or setup fixes. If a PR changes or depends on a bundled adapter, lint that adapter directly and document the runtime/config assumptions.
+For adapter work, lint the adapter code that changed or is required by the behavior under review:
+
+```bash
+php -l application/libraries/path/to/adapter.php
+```
+
+This repository contains bundled legacy adapters such as Google, HTMLPurifier, Sentry/Raven, Twilio, and other third-party libraries. Those adapters are optional compatibility surfaces, not default blockers for unrelated preservation work. Do not require Twilio, Google, Sentry, HTMLPurifier, or similar bundled libraries for a PR unless the changed path uses them, autoloads them, or changes their integration behavior. Syntax or deprecation issues in untouched optional adapters should be recorded as compatibility debt; they should not block unrelated preservation, security, documentation, or setup fixes.
 
 For runtime work, prefer a fresh Docker start:
 
