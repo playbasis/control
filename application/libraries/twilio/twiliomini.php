@@ -12,7 +12,7 @@
  *
  *
  */
-require_once ("Services/Twilio.php");
+require_once __DIR__ . '/Services/Twilio.php';
 
 Class TwilioMini
 {
