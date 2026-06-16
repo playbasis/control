@@ -64,21 +64,39 @@ The compose file starts:
 - `app`, mounted at `/var/www/control/`.
 - `mongo`, using the `mongo:3.6` image.
 
-Important Docker environment variables used by the entrypoint:
+Important Docker environment variables used while generating or running local config:
 
 - `MONGO_HOSTBASE`
 - `MONGO_USERNAME`
 - `MONGO_PASSWORD`
 - `BASE_URL`
 - `DIR_IMAGE`
+- `ENCRYPTION_KEY`
+- `SESSION_ENCRYPT_COOKIE`
+- `COOKIE_DOMAIN`
+- `COOKIE_SECURE`
+- `COOKIE_HTTPONLY`
 
 Application and integration configuration is split across files under `application/config/`. Current env-backed values include:
 
+- `CAPTCHA_PUBLIC_KEY`
+- `CAPTCHA_PRIVATE_KEY`
+- `DEFAULT_PASSWORD`
+- `STRIPE_API_KEY`
+- `STRIPE_PUBLISHABLE_KEY`
+- `PAYPAL_MERCHANT_ID`
+- `PAYPAL_ENV`
+- `EMAIL_BCC_PLAYBASIS_EMAIL`
+- `EMAIL_DEBUG_MODE`
+- `FULLCONTACT_API_KEY`
+- `FULLCONTACT_CALLBACK_URL`
+- `GECKO_API_KEY`
 - `AMAZON_SES_SECRET_KEY`
 - `AMAZON_SES_ACCESS_KEY`
 - `S3_KEY`
 - `S3_SECRET`
 - `S3_ENDPOINT`
+- `S3_IMAGE`
 - `TWILIO_MODE`
 - `TWILIO_ACCOUNT_SID`
 - `TWILIO_AUTH_TOKEN`
@@ -88,6 +106,7 @@ Application and integration configuration is split across files under `applicati
 The legacy Node notification service reads `PORT`. Other integrations may still use legacy config files or sample files and should be reviewed before deployment.
 
 Do not commit live credentials. Use environment variables or deployment secrets for private keys and service tokens.
+Set `ENCRYPTION_KEY` before using generated configs in any shared environment. `DEFAULT_PASSWORD` is intentionally blank by default; only set it if you intentionally enable the legacy sign-up flow that depends on it.
 
 ## Verification
 
