@@ -566,7 +566,7 @@ class Cron extends CI_Controller
         print("records (processed) = " . $c . "\n");
     }
 
-    public function insertStatAction($m, $keys)
+    private function insertStatAction($m, $keys)
     {
         foreach ($m as $key => $value) {
             $data = explode('|', $key);
@@ -575,7 +575,7 @@ class Cron extends CI_Controller
         }
     }
 
-    public function insertStatActiveUser($m, $keys, $handler, $days=0, $batch_size=BACTH_SIZE)
+    private function insertStatActiveUser($m, $keys, $handler, $days=0, $batch_size=BACTH_SIZE)
     {
         $h = array();
         foreach ($m as $key => $value) {
@@ -1279,6 +1279,8 @@ class Cron extends CI_Controller
 
     public function energyUpdater()
     {
+        $this->requireCliRequest();
+
         $this->load->model('energy_model');
         $this->load->model('player_model');
 
@@ -1307,6 +1309,8 @@ class Cron extends CI_Controller
 
     public function energyInitialInsertion()
     {
+        $this->requireCliRequest();
+
         $this->load->model('energy_model');
         $this->load->model('player_model');
 
