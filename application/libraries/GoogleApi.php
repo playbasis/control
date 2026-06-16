@@ -1,10 +1,8 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once __DIR__ . '/Google/autoload.php';
-
 define('APPLICATION_NAME', 'Playbasis Dashboard');
 define('SCOPES', implode(' ', array(
-    Google_Service_Calendar::CALENDAR_READONLY)
+    'https://www.googleapis.com/auth/calendar.readonly')
 ));
 
 class GoogleApi
@@ -19,7 +17,16 @@ class GoogleApi
         $this->_config = $config;
     }
 
+    private function ensureGoogleLoaded() {
+        $adapter = __DIR__ . '/Google/autoload.php';
+        if (!is_file($adapter)) {
+            throw new RuntimeException('Missing Google adapter library');
+        }
+        require_once $adapter;
+    }
+
     public function initialize($clientId, $clientSecret, $redirectUri=null) {
+        $this->ensureGoogleLoaded();
         $this->_client = $this->getClient($clientId, $clientSecret, $redirectUri);
         return $this;
     }
@@ -59,6 +66,7 @@ class GoogleApi
     }
 
     public function calendar() {
+        $this->ensureGoogleLoaded();
         return new Google_Service_Calendar($this->_client);
     }
 
@@ -81,6 +89,7 @@ class GoogleApi
     }
 
     public function watchCalendar($gcal, $calendarId, $channelId, $data) {
+        $this->ensureGoogleLoaded();
         $model = new Google_Service_Calendar_Channel();
         $model->setId($channelId);
         $model->setType('web_hook');
@@ -90,6 +99,7 @@ class GoogleApi
     }
 
     public function unwatchCalendar($gcal, $channelId, $resourceId) {
+        $this->ensureGoogleLoaded();
         $model = new Google_Service_Calendar_Channel();
         $model->setId($channelId);
         $model->setResourceId($resourceId);
