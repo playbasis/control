@@ -51,7 +51,6 @@ class Report_weekly extends CI_Controller
         $this->load->model('tool/utility', 'utility');
         $this->load->library('mongo_db');
         $this->load->library('parser');
-        $this->load->library('mpdf');
         $this->load->library('rssparser');
     }
 

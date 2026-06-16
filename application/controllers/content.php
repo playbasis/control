@@ -2,7 +2,6 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
-require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
 
 class Content extends MY_Controller
 {
@@ -958,6 +957,7 @@ class Content extends MY_Controller
 
         switch ($type) {
             case "ios":
+                require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
                 $setup = $this->Push_model->getIosSetup($client_id, $site_id);
                 if (!$setup) {
                     throw new Exception("iOS push service has not been setup yet!: ");
