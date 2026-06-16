@@ -3,10 +3,64 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Image_model extends MY_Model
 {
+    private function noImageUrl($width, $height)
+    {
+        return S3_IMAGE . "cache/no_image-" . (int)$width . 'x' . (int)$height . ".jpg";
+    }
+
+    private function cleanRelativeImagePath($filename)
+    {
+        if (!is_scalar($filename)) {
+            return false;
+        }
+
+        $filename = urldecode((string)$filename);
+        if ($filename === '' || strpos($filename, "\0") !== false) {
+            return false;
+        }
+
+        $filename = trim($filename);
+        if ($filename === '') {
+            return false;
+        }
+
+        if (strpos($filename, '\\') !== false ||
+            $filename[0] === '/' ||
+            preg_match('/^[a-z][a-z0-9+\-.]*:/i', $filename) ||
+            preg_match('/[^A-Za-z0-9._\/ -]/', $filename)
+        ) {
+            return false;
+        }
+
+        $parts = explode('/', $filename);
+        $clean = array();
+        foreach ($parts as $part) {
+            if ($part === '' || $part === '.') {
+                continue;
+            }
+
+            if (strpos($part, '..') !== false) {
+                return false;
+            }
+
+            $clean[] = $part;
+        }
+
+        $filename = implode('/', $clean);
+        if ($filename === '' || strpos(basename($filename), '.') === false) {
+            return false;
+        }
+
+        return $filename;
+    }
+
     public function resize($filename, $width, $height)
     {
 
-        $filename = urldecode($filename);
+        $filename = $this->cleanRelativeImagePath($filename);
+        if ($filename === false) {
+            return $this->noImageUrl($width, $height);
+        }
 
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $filecopy = str_replace("/", "\\", $filename);
@@ -31,7 +85,7 @@ class Image_model extends MY_Model
             if (@fopen(S3_IMAGE . $filename, "r")) {
                 @copy(S3_IMAGE . $filename, DIR_IMAGE . $filecopy);
             } else {
-                return S3_IMAGE . "cache/no_image-" . $width . 'x' . $height . ".jpg";
+                return $this->noImageUrl($width, $height);
             }
         }
 
