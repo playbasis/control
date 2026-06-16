@@ -579,10 +579,21 @@ class User extends MY_Controller
     {
         $json = array();
 
+        if (!$this->User_model->isLogged()) {
+            $this->output->set_output(json_encode($json));
+            return;
+        }
+
         $client_id = $this->User_model->getClientId();
+        if (!$client_id && !$this->User_model->isAdmin()) {
+            $this->output->set_output(json_encode($json));
+            return;
+        }
 
         $filter_name = $this->input->get('filter_name');
         if ($filter_name && is_scalar($filter_name)) {
+            $filter_name = (string)$filter_name;
+            $filter_pattern = '/' . preg_quote($filter_name, '/') . '/';
 
             $data = array(
                 'filter_name' => $filter_name
@@ -596,7 +607,7 @@ class User extends MY_Controller
                 $UsersInfoForClientId = array();
                 foreach ($user_ids as $user_id) {
                     $user_info = $this->User_model->getUserInfo($user_id['user_id']);
-                    if (preg_match('/' . $filter_name . '/', $user_info['username'])) {
+                    if ($user_info && isset($user_info['username']) && preg_match($filter_pattern, $user_info['username'])) {
                         $UsersInfoForClientId[] = $user_info;
                     }
                 }
