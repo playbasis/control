@@ -14,6 +14,7 @@ class Jive extends MY_Controller
         }
 
         $this->load->model('Jive_model');
+        $this->load->library('JiveApi');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);

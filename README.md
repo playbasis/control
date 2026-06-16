@@ -79,6 +79,11 @@ Application and integration configuration is split across files under `applicati
 - `S3_KEY`
 - `S3_SECRET`
 - `S3_ENDPOINT`
+- `TWILIO_MODE`
+- `TWILIO_ACCOUNT_SID`
+- `TWILIO_AUTH_TOKEN`
+- `TWILIO_API_VERSION`
+- `TWILIO_NUMBER`
 
 The legacy Node notification service reads `PORT`. Other integrations may still use legacy config files or sample files and should be reviewed before deployment.
 

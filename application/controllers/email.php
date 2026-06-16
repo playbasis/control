@@ -21,6 +21,11 @@ class Email extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
     }
 
+    private function loadAmazonSes()
+    {
+        $this->load->library('amazon_ses');
+    }
+
     private function emailDomainName($email)
     {
         if (!is_scalar($email) || !$email) {
@@ -254,6 +259,7 @@ class Email extends MY_Controller
                 $domain_name = $this->emailDomainName(isset($domain['email']) ? $domain['email'] : null);
 
                 // check domain's status from amazon ses
+                $this->loadAmazonSes();
                 $domain_verification = $domain_name ? $this->amazon_ses->get_identity_verification($domain_name) : null;
                 if (isset($domain_verification['VerificationStatus']) && $domain_verification['VerificationStatus'] == "Success") {
                     $data = array('client_id'=>$client_id,
@@ -406,6 +412,7 @@ class Email extends MY_Controller
     private function sendEmailDomainVerification($to, $token){
         $this->load->library('email');
         $this->load->library('parser');
+        $this->loadAmazonSes();
 
         $data = array(
             'verification_token' => $token,
@@ -457,6 +464,7 @@ class Email extends MY_Controller
                     $email_sent = false;
 
                     // check if the domain has been set by other site
+                    $this->loadAmazonSes();
                     $domain_verification = $this->amazon_ses->get_identity_verification($domain_name);
                     if($domain_verification) {
                         $data['verification_status'] = $domain_verification['VerificationStatus'];

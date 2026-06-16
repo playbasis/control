@@ -18,27 +18,27 @@
 	/**
 	 * Mode ("sandbox" or "prod")
 	 **/
-	$config['mode']   = 'sandbox';
+	$config['mode']   = getenv('TWILIO_MODE') ?: 'sandbox';
 
 	/**
 	 * Account SID
 	 **/
-	$config['account_sid']   = 'AC052be2798628a15062d53c8456ae82af';
+	$config['account_sid']   = getenv('TWILIO_ACCOUNT_SID') ?: '';
 
 	/**
 	 * Auth Token
 	 **/
-	$config['auth_token']    = '93c40641409313cf26d950f37201182e';
+	$config['auth_token']    = getenv('TWILIO_AUTH_TOKEN') ?: '';
 
 	/**
 	 * API Version
 	 **/
-	$config['api_version']   = '2010-04-01';
+	$config['api_version']   = getenv('TWILIO_API_VERSION') ?: '2010-04-01';
 
 	/**
 	 * Twilio Phone Number
 	 **/
-	$config['number']        = '+14846042072';
+	$config['number']        = getenv('TWILIO_NUMBER') ?: '';
 
 
 /* End of file twilio.php */
