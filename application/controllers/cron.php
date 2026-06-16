@@ -438,6 +438,8 @@ class Cron extends CI_Controller
 
     public function preComputeJigsawLog()
     {
+        $this->requireCliRequest();
+
         $from = $this->jigsaw_model->getLastCalculateFrequencyTime();
         $to = new MongoDate(strtotime(date('Y-m-d', time()) . ' 00:00:00'));
         $results = $this->jigsaw_model->calculateFrequency($from, $to);
@@ -448,6 +450,8 @@ class Cron extends CI_Controller
 
     public function processActionLog()
     {
+        $this->requireCliRequest();
+
         set_time_limit(MAX_EXECUTION_TIME);
         $start = $this->player_model->findLatestProcessActionLogTime();
         $cursor = $this->player_model->listActionLog($start ? $start[0]['date_added'] : null);
@@ -663,6 +667,8 @@ class Cron extends CI_Controller
 
     public function listClientRegistration()
     {
+        $this->requireCliRequest();
+
         $this->load->library('Rest');
         $this->rest->initialize(array('server' => GECKO_URL));
 
@@ -1235,6 +1241,8 @@ class Cron extends CI_Controller
 
     public function renewCalendarWebhooks()
     {
+        $this->requireCliRequest();
+
         $this->load->library('GoogleApi');
         $webhooks = $this->googles_model->listAlmostExpiredCalendarChannels();
         if ($webhooks) {
@@ -2794,6 +2802,8 @@ class Cron extends CI_Controller
 
     public function processReportDBS($ref=null)
     {
+        $this->requireCliRequest();
+
         $to = $ref ? $ref : date('Y-m-d', strtotime('-1 day', time())); // yesterday is default
         $from = date('Y-m-d', strtotime('-1 week', strtotime($to)));
 
