@@ -6,11 +6,32 @@ define('EXPIRED_WITHIN_SEC', 2 * 24 * 60 * 60);
 class Googles_model extends MY_Model
 {
 
-    public function getRegistration()
+    private function resolveScope($client_id = null, $site_id = null)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $site_id = $site_id ?: $this->session->userdata('site_id');
+        $client_id = $client_id ?: $this->session->userdata('client_id');
+
+        if (!$site_id || !$client_id) {
+            return false;
+        }
+
+        return array(
+            'client_id' => $client_id,
+            'site_id' => $site_id
+        );
+    }
+
+    public function getRegistration($site_id = null, $client_id = null)
+    {
+        $scope = $this->resolveScope($client_id, $site_id);
+        if (!$scope) {
+            return null;
+        }
+
+        $this->set_site_mongodb($scope['site_id']);
         $this->mongo_db->select(array('google_client_id', 'google_client_secret', 'google_url', 'token'));
-        $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', $scope['client_id']);
+        $this->mongo_db->where('site_id', $scope['site_id']);
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_google_to_client");
@@ -61,13 +82,18 @@ class Googles_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function insertWebhook($calendar_id, $channel_id, $callback_url)
+    public function insertWebhook($calendar_id, $channel_id, $callback_url, $client_id = null, $site_id = null)
     {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $scope = $this->resolveScope($client_id, $site_id);
+        if (!$scope) {
+            return false;
+        }
+
+        $this->set_site_mongodb($scope['site_id']);
         $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         return $this->mongo_db->insert('playbasis_google_subscription', array(
-            'client_id' => $this->session->userdata('client_id'),
-            'site_id' => $this->session->userdata('site_id'),
+            'client_id' => $scope['client_id'],
+            'site_id' => $scope['site_id'],
             'channel_id' => $channel_id,
             'calendar_id' => $calendar_id,
             'callback_url' => $callback_url,
@@ -90,7 +116,7 @@ class Googles_model extends MY_Model
         return $this->mongo_db->get("playbasis_google_subscription");
     }
 
-    public function removeWebhook($channel_id, $resource_id)
+    public function removeWebhook($channel_id, $resource_id, $client_id = null, $site_id = null)
     {
         $channel_id = $this->normalizeWebhookId($channel_id);
         $resource_id = $this->normalizeWebhookId($resource_id);
@@ -98,9 +124,14 @@ class Googles_model extends MY_Model
             return false;
         }
 
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('client_id', $this->session->userdata('client_id'));
-        $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
+        $scope = $this->resolveScope($client_id, $site_id);
+        if (!$scope) {
+            return false;
+        }
+
+        $this->set_site_mongodb($scope['site_id']);
+        $this->mongo_db->where('client_id', $scope['client_id']);
+        $this->mongo_db->where('site_id', $scope['site_id']);
         $this->mongo_db->where('channel_id', $channel_id);
         $this->mongo_db->where('resource_id', $resource_id);
         $this->mongo_db->delete_all('playbasis_google_subscription');

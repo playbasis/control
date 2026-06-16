@@ -1247,7 +1247,11 @@ class Cron extends CI_Controller
         $webhooks = $this->googles_model->listAlmostExpiredCalendarChannels();
         if ($webhooks) {
             foreach ($webhooks as $webhook) {
-                $record = $this->googles_model->getRegistration($webhook['site_id']);
+                if (!isset($webhook['client_id'], $webhook['site_id'])) {
+                    continue;
+                }
+
+                $record = $this->googles_model->getRegistration($webhook['site_id'], $webhook['client_id']);
                 if ($record) {
                     $client = $this->googleapi->initialize($record['google_client_id'],
                         $record['google_client_secret']);
@@ -1261,11 +1265,11 @@ class Cron extends CI_Controller
                                 'site_id' => $webhook['site_id'] . '',
                                 'callback_url' => $webhook['callback_url']
                             ));
-                            $this->googles_model->insertWebhook($webhook['client_id'], $webhook['site_id'],
-                                $webhook['calendar_id'], $new_channel_id, $webhook['callback_url']);
+                            $this->googles_model->insertWebhook($webhook['calendar_id'], $new_channel_id,
+                                $webhook['callback_url'], $webhook['client_id'], $webhook['site_id']);
                             $client->unwatchCalendar($service, $channel_id, $webhook['resource_id']);
-                            $this->googles_model->removeWebhook($webhook['client_id'], $webhook['site_id'], $channel_id,
-                                $webhook['resource_id']);
+                            $this->googles_model->removeWebhook($channel_id, $webhook['resource_id'],
+                                $webhook['client_id'], $webhook['site_id']);
                         }
                     }
                 }
