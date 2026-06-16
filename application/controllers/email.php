@@ -607,7 +607,7 @@ class Email extends MY_Controller
 
     private function purify($html)
     {
-        include_once('application/libraries/HTMLPurifier.auto.php');
+        include_once APPPATH . 'libraries/HTMLPurifier.auto.php';
         $config = HTMLPurifier_Config::createDefault();
         $filter = new HTMLPurifier($config);
         return $filter->purify($html);

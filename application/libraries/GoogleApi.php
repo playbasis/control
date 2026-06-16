@@ -1,6 +1,6 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once ("Google/autoload.php");
+require_once __DIR__ . '/Google/autoload.php';
 
 define('APPLICATION_NAME', 'Playbasis Dashboard');
 define('SCOPES', implode(' ', array(
