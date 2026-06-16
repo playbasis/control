@@ -231,7 +231,7 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = 'playbasiscontrol';
+$config['encryption_key'] = getenv('ENCRYPTION_KEY') ?: '';
 
 /*
 |--------------------------------------------------------------------------
@@ -254,7 +254,7 @@ $config['encryption_key'] = 'playbasiscontrol';
 $config['sess_cookie_name']		= 'ci_session';
 $config['sess_expiration']		= 86400;
 $config['sess_expire_on_close']	= FALSE;
-$config['sess_encrypt_cookie']	= FALSE;
+$config['sess_encrypt_cookie']	= getenv('SESSION_ENCRYPT_COOKIE') ? filter_var(getenv('SESSION_ENCRYPT_COOKIE'), FILTER_VALIDATE_BOOLEAN) : FALSE;
 $config['sess_use_database']	= FALSE;
 $config['sess_table_name']		= 'ci_sessions';
 $config['sess_match_ip']		= FALSE;
@@ -273,10 +273,10 @@ $config['sess_time_to_update']	= 300;
 |
 */
 $config['cookie_prefix']	= "";
-$config['cookie_domain']	= ".pbapp.net";
+$config['cookie_domain']	= getenv('COOKIE_DOMAIN') ?: "";
 $config['cookie_path']		= "/";
-$config['cookie_secure']	= FALSE;
-$config['cookie_httponly'] 	= FALSE;
+$config['cookie_secure']	= getenv('COOKIE_SECURE') ? filter_var(getenv('COOKIE_SECURE'), FILTER_VALIDATE_BOOLEAN) : FALSE;
+$config['cookie_httponly'] 	= getenv('COOKIE_HTTPONLY') !== false ? filter_var(getenv('COOKIE_HTTPONLY'), FILTER_VALIDATE_BOOLEAN) : TRUE;
 
 /*
 |--------------------------------------------------------------------------

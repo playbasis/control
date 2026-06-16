@@ -19,18 +19,16 @@ if [ "$1" == php-fpm ]; then
     fi
 
     : ${BASE_URL:=http://localhost/}
-    : ${DIR_IMAGE:=/var/www/control/image/}
+    export DIR_IMAGE="${DIR_IMAGE:-/var/www/control/image/}"
 
     cd /var/www/control/application/config;
     if [ ! -f config.php ]; then
         cp config-sample.php config.php;
     fi
     sed -i -e "/base_url/s|= '.*'|= '$BASE_URL'|" config.php;
-    sed -i -e "/cookie_domain/s|= .*;|= '';|" config.php;
     if [ ! -f constants.php ]; then
         cp constants-sample.php constants.php;
     fi
-    sed -i -e "/define('DIR_IMAGE'/s|, '.*');|, '$DIR_IMAGE');|" constants.php;
     #cp database-example.php database.php;
     cp mongodb-sample.php mongodb.php;
     sed -i -e "/mongo_hostbase/s/= '.*:27017'/= \$_SERVER['MONGO_HOSTBASE']/" mongodb.php;

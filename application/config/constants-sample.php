@@ -38,14 +38,14 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
-define('CAPTCHA_PUBLIC_KEY', '6LcPOPgSAAAAAFELsbPGvNeEByjWavQNk1f7ZLSY');
-define('CAPTCHA_PRIVATE_KEY', '6LcPOPgSAAAAAIH3-5uY9DFrXpkTiBoTPsWuasGK');
+define('CAPTCHA_PUBLIC_KEY', getenv('CAPTCHA_PUBLIC_KEY') ?: '');
+define('CAPTCHA_PRIVATE_KEY', getenv('CAPTCHA_PRIVATE_KEY') ?: '');
 
-define('S3_IMAGE', 'https://images.pbapp.net/');
-define('DIR_IMAGE', 'C:\\Program Files (x86)\\Ampps\\www\\control\\image\\');
+define('S3_IMAGE', getenv('S3_IMAGE') ?: 'https://images.pbapp.net/');
+define('DIR_IMAGE', getenv('DIR_IMAGE') ?: '/var/www/control/image/');
 //define('DIR_IMAGE', './control/image/');
 
-define('DEFAULT_PASSWORD', 'playbasis');
+define('DEFAULT_PASSWORD', getenv('DEFAULT_PASSWORD') ?: '');
 
 define('DEFAULT_PLAN', '542a69e02cfa49be0c6755e4'); // default package when a user registers without plan
 define('BETA_TEST_PLAN', '52ea1eab8d8c89401c0000d8'); // beta plan
@@ -57,13 +57,13 @@ define('MAX_ALLOWED_TRIAL_DAYS', 90); // this is limited by PayPal
 define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
 define('PAYMENT_CHANNEL_STRIPE', 'Stripe');
 define('PAYMENT_CHANNEL_DEFAULT', PAYMENT_CHANNEL_STRIPE);
-define('STRIPE_API_KEY', 'sk_test_8ChxEiUQyzeiN7OgnnFDBBYG');
-define('STRIPE_PUBLISHABLE_KEY', 'pk_test_1dekH9esZmjybutm3r76RIhG');
-define('PAYPAL_MERCHANT_ID', 'CEUXV2RH33E92');
+define('STRIPE_API_KEY', getenv('STRIPE_API_KEY') ?: '');
+define('STRIPE_PUBLISHABLE_KEY', getenv('STRIPE_PUBLISHABLE_KEY') ?: '');
+define('PAYPAL_MERCHANT_ID', getenv('PAYPAL_MERCHANT_ID') ?: '');
 define('PAYPAL_MODIFY_NEW_SUBSCRIPTION_ONLY', 0);
 define('PAYPAL_MODIFY_EITHER_NEW_SUBSCRIPTION_OR_MODIFY', 1);
 define('PAYPAL_MODIFY_CURRENT_SUBSCRIPTION_ONLY', 2);
-define('PAYPAL_ENV', '');
+define('PAYPAL_ENV', getenv('PAYPAL_ENV') ?: '');
 define('PRODUCT_NAME', 'Playbasis API Subscription');
 define('PURCHASE_SUBSCRIBE', 0);
 define('PURCHASE_UPGRADE', 1);
@@ -94,8 +94,8 @@ define('MEDIA_MANAGER_MAX_IMAGE_HEIGHT', 4000);
 define('MEDIA_MANAGER_MAX_IMAGE_WIDTH', 4000);
 
 define('EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS', 'notifyInactiveClients');
-define('EMAIL_BCC_PLAYBASIS_EMAIL', 'pongsakorn.ruadsong@playbasis.com');
-define('EMAIL_DEBUG_MODE', true);
+define('EMAIL_BCC_PLAYBASIS_EMAIL', getenv('EMAIL_BCC_PLAYBASIS_EMAIL') ?: '');
+define('EMAIL_DEBUG_MODE', getenv('EMAIL_DEBUG_MODE') ? filter_var(getenv('EMAIL_DEBUG_MODE'), FILTER_VALIDATE_BOOLEAN) : false);
 define('EMAIL_TYPE_REPORT', 'report');
 define('EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION', 'remindClientsToSetupSubscription');
 define('EMAIL_TYPE_CLIENT_REGISTRATION', 'listClientRegistration');
@@ -104,16 +104,16 @@ define('EMAIL_TYPE_USER', 'user');
 define('GRACE_PERIOD_IN_DAYS', 5);
 
 define('FULLCONTACT_API', 'https://api.fullcontact.com');
-define('FULLCONTACT_API_KEY', '8f10cefa2030457a');
+define('FULLCONTACT_API_KEY', getenv('FULLCONTACT_API_KEY') ?: '');
 define('FULLCONTACT_RATE_LIMIT', 1); // per sec
-define('FULLCONTACT_CALLBACK_URL', 'https://api.pbapp.net/notification/%s');
+define('FULLCONTACT_CALLBACK_URL', getenv('FULLCONTACT_CALLBACK_URL') ?: 'https://api.pbapp.net/notification/%s');
 define('FULLCONTACT_REQUEST_OK', 200);
 define('FULLCONTACT_REQUEST_WEBHOOK_ACCEPTED', 202);
 define('FULLCONTACT_USER_AGENT', 'FullContact');
 
 define('DEMO_SITE_ID', '52ea1eac8d8c89401c0000e5');
 
-define('GECKO_API_KEY', '3b28853ec6792fb3cc0e94ad891d1659');
+define('GECKO_API_KEY', getenv('GECKO_API_KEY') ?: '');
 define('GECKO_URL', 'https://push.geckoboard.com/v1/send/');
 
 define('DATE_FREE_ACCOUNT_SHOULD_SETUP_MOBILE', '2015-06-01');
