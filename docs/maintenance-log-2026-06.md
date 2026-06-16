@@ -27,6 +27,8 @@ These repositories do not currently rely on public CI checks as the merge gate. 
 - Preserve issue-specific checks for security, config, and tenant-guard changes.
 - Stop on conflicts, lint failures, or replay failures.
 
+The repositories include bundled legacy third-party adapters under `application/libraries`. Syntax failures in any PHP file are blockers. Deprecation warnings from untouched bundled adapters are tracked as compatibility debt rather than blocking unrelated fixes. If a change touches or depends on one of those adapters, verify that adapter directly and document the config/runtime assumptions in the PR.
+
 ## Continuation Ledger
 
 - 2026-06-13: Main session, `playbasis/control`, branch `codex/fix-media-thumbnail-path-scope`; scope: sanitize FileManager and MediaManager thumbnail `image` query paths before resize; intended files: `application/controllers/filemanager.php`, `application/controllers/mediamanager.php`, and this ledger; status: PR branch prepared; blockers: none.

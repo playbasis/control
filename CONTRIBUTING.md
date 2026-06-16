@@ -36,6 +36,14 @@ For PHP changes:
 find . -path './vendor' -prune -o -path '*/node_modules/*' -prune -o -path './system' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
 ```
 
+For first-party application work, it is acceptable to run a narrower lint pass that also excludes `application/libraries`:
+
+```bash
+find . -path './vendor' -prune -o -path '*/node_modules/*' -prune -o -path './system' -prune -o -path './application/libraries' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
+```
+
+This repository contains bundled legacy adapters such as Google, Sentry/Raven, Twilio, and other third-party libraries. Syntax errors are blockers. Deprecation warnings from untouched bundled adapters should be recorded as compatibility debt, but they should not block unrelated preservation, security, documentation, or setup fixes. If a PR changes or depends on a bundled adapter, lint that adapter directly and document the runtime/config assumptions.
+
 For runtime work, prefer a fresh Docker start:
 
 ```bash
