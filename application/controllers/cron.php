@@ -967,6 +967,8 @@ class Cron extends CI_Controller
 
     public function insertCountries()
     {
+        $this->requireCliRequest();
+
         $countries = array();
         $countries[] = array("code" => "AF", "name" => "Afghanistan", "d_code" => "+93");
         $countries[] = array("code" => "AL", "name" => "Albania", "d_code" => "+355");
